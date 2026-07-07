@@ -290,7 +290,7 @@ export default function OnboardingPage() {
                   <div className="relative w-full max-w-md aspect-square rounded-2xl overflow-hidden">
                     <img 
                       src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/452e6a6c-dfb5-4b2f-890f-4242ef400721/generated_images/premium-isometric-illustration-of-a-sust-f36bea66-20251116234646.jpg"
-                      alt="Sustainable city with green buildings and nature"
+                      alt={t("step1.imageAlt")}
                       className="w-full h-full object-cover"
                     />
                   </div>
