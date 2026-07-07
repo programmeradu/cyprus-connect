@@ -124,7 +124,7 @@ function IntegrationsContent() {
       });
     } catch (error) {
       console.error('Failed to fetch user data:', error);
-      toast.error('Failed to load company data');
+      toast.error(t("toasts.companyLoadFail"));
     } finally {
       setLoadingUserData(false);
     }
