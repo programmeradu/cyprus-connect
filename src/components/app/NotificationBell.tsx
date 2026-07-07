@@ -199,13 +199,14 @@ export const NotificationBell = () => {
           setUnreadCount((prev) => Math.max(0, prev - 1));
         }
         
-        toast.success("Notification deleted");
+        toast.success(t("toasts.deleted"));
       }
     } catch (error) {
       console.error("Failed to delete notification:", error);
-      toast.error("Failed to delete notification");
+      toast.error(t("toasts.deleteError"));
     }
   };
+
 
   const getNotificationIcon = (type: string) => {
     const iconClassName = "w-5 h-5";
