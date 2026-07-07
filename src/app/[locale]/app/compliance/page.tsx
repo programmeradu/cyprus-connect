@@ -698,7 +698,7 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
       <PremiumCard className="p-4">
         <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
           <span className="w-1 h-1 rounded-full bg-primary" />
-          Activity Log
+          {t("audit.activityLog")}
         </h3>
         <div className="space-y-2">
           {logs.length === 0 ? (
