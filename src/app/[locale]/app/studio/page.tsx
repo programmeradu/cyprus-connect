@@ -575,8 +575,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
     
     setVideoError(
       isInvalidProtocol 
-        ? "Video URL format not supported in browser. Please try opening in a new tab."
-        : "Failed to load video. The video may still be processing or the URL may be expired."
+        ? t("toasts.videoErrorInvalid")
+        : t("toasts.videoErrorGeneric")
     );
   };
 
