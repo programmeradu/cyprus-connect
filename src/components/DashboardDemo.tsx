@@ -717,10 +717,10 @@ export const DashboardDemo = () => {
           try {
             const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
             const data = await response.json()
-            const city = data.address?.city || data.address?.town || data.address?.village || "Your Location"
+            const city = data.address?.city || data.address?.town || data.address?.village || t("weather.yourLocation")
             setLocation({ city, lat, lon })
           } catch (error) {
-            setLocation({ city: "Your Location", lat, lon })
+            setLocation({ city: t("weather.yourLocation"), lat, lon })
           }
         },
         (error) => {
@@ -820,14 +820,14 @@ export const DashboardDemo = () => {
       setHumidityInsight({ 
         type: "Tip", 
         text: weather.current.relative_humidity_2m > 70 
-          ? "High humidity? Optimize HVAC for energy savings!" 
-          : "Perfect humidity for natural ventilation strategies."
+          ? t("weather.fallbackHighHumidity") 
+          : t("weather.fallbackComfortableHumidity")
       })
       setWindInsight({ 
         type: "Insight", 
         text: weather.current.wind_speed_10m > 30 
-          ? "Strong winds boost renewable energy potential!" 
-          : "Calm day? Focus on passive cooling designs."
+          ? t("weather.fallbackStrongWind") 
+          : t("weather.fallbackCalmWind")
       })
     } finally {
       setInsightsLoading(false)
@@ -873,9 +873,9 @@ Keep response concise and practical for SMEs. Format with clear sections.`
       })
       
       const data = await response.json()
-      setCarbonResult(data.text || "Analysis failed")
+      setCarbonResult(data.text || t("carbon.analysisFailed"))
     } catch (error) {
-      setCarbonResult("Failed to analyze. Please try again.")
+      setCarbonResult(t("carbon.analysisFailed"))
     } finally {
       setCarbonAnalyzing(false)
     }
@@ -914,9 +914,9 @@ Format professionally for SME stakeholders. Keep concise.`
       })
       
       const data = await response.json()
-      setReportResult(data.text || "Generation failed")
+      setReportResult(data.text || t("report.generationFailed"))
     } catch (error) {
-      setReportResult("Failed to generate report. Please try again.")
+      setReportResult(t("report.generationFailed"))
     } finally {
       setReportGenerating(false)
     }
@@ -1015,7 +1015,7 @@ ${conversationHistory}Provide SHORT, actionable advice (2-3 sentences max). Be c
       setChatHistory(prev => [...prev, { role: 'assistant', content: fullResponse }])
       setAdvisorResponse("") // Clear temp response
     } catch (error) {
-      const errorMsg = "Failed to get advice. Please try again."
+      const errorMsg = t("weather.adviceError")
       setChatHistory(prev => [...prev, { role: 'assistant', content: errorMsg }])
       setAdvisorResponse("")
     } finally {
@@ -1133,13 +1133,24 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
   }
 
   const promptTemplates = [
-    "Solar panels on business rooftop with green energy theme",
-    "Diverse team celebrating sustainability achievement",
-    "Recycling and waste reduction infographic for SMEs",
-    "Carbon footprint reduction progress chart",
-    "Green office environment with plants and natural light",
-    "Electric vehicle fleet for business deliveries",
+    t("media.templates.solar"),
+    t("media.templates.team"),
+    t("media.templates.recycling"),
+    t("media.templates.carbon"),
+    t("media.templates.office"),
+    t("media.templates.fleet"),
   ]
+
+  const isDetectingLocation = location.city === "Detecting..."
+  const displayedLocation = isDetectingLocation ? t("weather.yourTown") : location.city
+  const mediaTypeLabel = mediaType === "image" ? t("media.image") : t("media.video")
+  const getInsightTypeLabel = (type: string) => {
+    const normalized = type.toLowerCase().replace(/\s+/g, "-")
+    if (normalized === "fun-fact") return t("weather.insightTypes.funFact")
+    if (normalized === "joke") return t("weather.insightTypes.joke")
+    if (normalized === "tip") return t("weather.insightTypes.tip")
+    return t("weather.insightTypes.insight")
+  }
 
   const getWeatherIcon = (code: number) => {
     if (code === 0) return (
@@ -1176,12 +1187,12 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
   }
 
   const getWeatherDescription = (code: number) => {
-    if (code === 0) return "Clear Sky"
-    if (code <= 3) return "Partly Cloudy"
-    if (code <= 48) return "Foggy"
-    if (code <= 67) return "Rainy"
-    if (code <= 77) return "Snowy"
-    return "Stormy"
+    if (code === 0) return t("weather.conditions.clear")
+    if (code <= 3) return t("weather.conditions.partlyCloudy")
+    if (code <= 48) return t("weather.conditions.foggy")
+    if (code <= 67) return t("weather.conditions.rainy")
+    if (code <= 77) return t("weather.conditions.snowy")
+    return t("weather.conditions.stormy")
   }
 
   return (
@@ -1658,7 +1669,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             
                             <div className="text-center mt-6">
                               <p className="text-xs text-gray-400">
-                                This report is generated using AI and should be reviewed by qualified professionals.
+                                {t("report.disclaimer")}
                               </p>
                             </div>
                           </div>
@@ -1690,14 +1701,14 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                   >
                     <PremiumCard className={`p-4 transition-all ${expandedWidget === "current" ? "ring-2 ring-primary" : ""}`}>
                       {weatherLoading ? (
-                        <div className="aspect-square flex items-center justify-center">
-                          <div className="text-sm text-muted-foreground">Loading...</div>
+                          <div className="aspect-square flex items-center justify-center">
+                           <div className="text-sm text-muted-foreground">{t("weather.loading")}</div>
                         </div>
                       ) : weather ? (
                         <div>
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <h4 className="text-sm font-bold">Current Weather</h4>
+                              <h4 className="text-sm font-bold">{t("weather.currentWeather")}</h4>
                               <p className="text-xs text-muted-foreground">{location.city}</p>
                             </div>
                             <div className="w-8 h-8">
@@ -1719,15 +1730,15 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               className="mt-3 pt-3 border-t border-border space-y-2"
                             >
                               <div className="flex justify-between text-xs">
-                                <span className="text-muted-foreground">Feels like</span>
+                                <span className="text-muted-foreground">{t("weather.feelsLike")}</span>
                                 <span className="font-medium">{weather.current.apparent_temperature}°C</span>
                               </div>
                               <div className="flex justify-between text-xs">
-                                <span className="text-muted-foreground">Cloud cover</span>
+                                <span className="text-muted-foreground">{t("weather.cloudCover")}</span>
                                 <span className="font-medium">{weather.current.cloud_cover}%</span>
                               </div>
                               <div className="flex justify-between text-xs">
-                                <span className="text-muted-foreground">Precipitation</span>
+                                <span className="text-muted-foreground">{t("weather.precipitation")}</span>
                                 <span className="font-medium">{weather.current.precipitation} mm</span>
                               </div>
                             </motion.div>
@@ -1735,7 +1746,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         </div>
                       ) : (
                         <div className="aspect-square flex items-center justify-center text-sm text-muted-foreground">
-                          No data
+                          {t("weather.noData")}
                         </div>
                       )}
                     </PremiumCard>
@@ -1757,7 +1768,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
                               </svg>
                             </div>
-                            <h4 className="text-xs font-bold mb-1">Humidity</h4>
+                            <h4 className="text-xs font-bold mb-1">{t("weather.humidity")}</h4>
                             <div className="text-2xl font-bold gradient-text mb-1">
                               {weather.current.relative_humidity_2m}%
                             </div>
@@ -1785,7 +1796,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               ) : humidityInsight ? (
                                 <div>
                                   <span className="text-[10px] font-bold text-primary uppercase tracking-wide">
-                                    {humidityInsight.type}:
+                                    {getInsightTypeLabel(humidityInsight.type)}:
                                   </span>
                                   <p className="text-[10px] text-muted-foreground leading-tight mt-1">
                                     {humidityInsight.text}
@@ -1793,14 +1804,14 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 </div>
                               ) : (
                                 <p className="text-[10px] text-muted-foreground">
-                                  {weather.current.relative_humidity_2m > 70 ? "High humidity" : weather.current.relative_humidity_2m > 40 ? "Comfortable" : "Low humidity"}
+                                  {weather.current.relative_humidity_2m > 70 ? t("weather.humidityHigh") : weather.current.relative_humidity_2m > 40 ? t("weather.humidityComfortable") : t("weather.humidityLow")}
                                 </p>
                               )}
                             </div>
                           </div>
                         ) : (
                           <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
-                            No data
+                            {t("weather.noData")}
                           </div>
                         )}
                       </PremiumCard>
@@ -1820,7 +1831,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2" strokeLinecap="round" />
                               </svg>
                             </div>
-                            <h4 className="text-xs font-bold mb-1">Wind</h4>
+                            <h4 className="text-xs font-bold mb-1">{t("weather.wind")}</h4>
                             <div className="text-2xl font-bold gradient-text">
                               {weather.current.wind_speed_10m}
                             </div>
@@ -1849,7 +1860,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               ) : windInsight ? (
                                 <div>
                                   <span className="text-[10px] font-bold text-primary uppercase tracking-wide">
-                                    {windInsight.type}:
+                                    {getInsightTypeLabel(windInsight.type)}:
                                   </span>
                                   <p className="text-[10px] text-muted-foreground leading-tight mt-1">
                                     {windInsight.text}
@@ -1857,14 +1868,14 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 </div>
                               ) : (
                                 <p className="text-[10px] text-muted-foreground">
-                                  {weather.current.wind_speed_10m > 30 ? "Strong winds" : weather.current.wind_speed_10m > 15 ? "Moderate" : "Light breeze"}
+                                  {weather.current.wind_speed_10m > 30 ? t("weather.windStrong") : weather.current.wind_speed_10m > 15 ? t("weather.windModerate") : t("weather.windLight")}
                                 </p>
                               )}
                             </div>
                           </div>
                         ) : (
                           <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
-                            No data
+                            {t("weather.noData")}
                           </div>
                         )}
                       </PremiumCard>
@@ -1882,7 +1893,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       {weather ? (
                         <div>
                           <div className="flex items-center justify-between mb-3">
-                            <h4 className="text-sm font-bold">7-Day Forecast</h4>
+                            <h4 className="text-sm font-bold">{t("weather.sevenDayForecast")}</h4>
                             <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2">
                               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                               <line x1="16" y1="2" x2="16" y2="6" strokeLinecap="round" />
@@ -1894,7 +1905,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <div className="space-y-2">
                             {weather.daily.temperature_2m_max.slice(0, expandedWidget === "forecast" ? 7 : 3).map((max, i) => (
                               <div key={i} className="flex items-center justify-between text-xs">
-                                <span className="font-medium w-12">Day {i + 1}</span>
+                                <span className="font-medium w-12">{t("weather.day", { day: i + 1 })}</span>
                                 <div className="flex items-center gap-2 flex-1">
                                   <span className="text-muted-foreground">{weather.daily.temperature_2m_min[i]}°</span>
                                   <div className="flex-1 h-1.5 bg-gradient-to-r from-blue-400 to-orange-400 rounded-full" />
@@ -1905,11 +1916,11 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           </div>
                           
                           {!expandedWidget && (
-                            <p className="text-xs text-primary text-center mt-3">Click to see more →</p>
+                            <p className="text-xs text-primary text-center mt-3">{t("weather.clickMore")}</p>
                           )}
                         </div>
                       ) : (
-                        <div className="py-8 text-center text-sm text-muted-foreground">No forecast data</div>
+                        <div className="py-8 text-center text-sm text-muted-foreground">{t("weather.noForecastData")}</div>
                       )}
                     </PremiumCard>
                   </motion.div>
@@ -1929,9 +1940,9 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           </svg>
                         </div>
                         <div>
-                          <h3 className="text-sm font-bold">AI Advisor</h3>
+                          <h3 className="text-sm font-bold">{t("weather.advisorTitle")}</h3>
                           <p className="text-xs text-muted-foreground">
-                            Sustainable Advice for your business in {location.city !== "Detecting..." ? location.city : "Your Town"}
+                            {t("weather.advisorSubtitle", { location: displayedLocation })}
                           </p>
                         </div>
                       </div>
@@ -1939,7 +1950,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         <button
                           onClick={() => setChatHistory([])}
                           className="px-2 py-1 rounded-lg bg-muted hover:bg-muted/80 text-xs transition-all"
-                          title="Clear conversation"
+                          title={t("weather.clearConversation")}
                         >
                           ✕
                         </button>
@@ -1960,9 +1971,9 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               <circle cx="12" cy="12" r="10" />
                             </svg>
                           </div>
-                          <p className="text-xs font-medium mb-1">Ask me anything!</p>
+                          <p className="text-xs font-medium mb-1">{t("weather.askEmptyTitle")}</p>
                           <p className="text-xs text-muted-foreground leading-relaxed">
-                            Get tailored sustainability advice for your business and location
+                            {t("weather.askEmptyBody")}
                           </p>
                         </motion.div>
                       )}
@@ -2036,7 +2047,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder="Ask about sustainability..."
+                        placeholder={t("weather.askPlaceholder")}
                         value={advisorQuestion}
                         onChange={(e) => setAdvisorQuestion(e.target.value)}
                         onKeyDown={(e) => {
@@ -2077,15 +2088,15 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                   <PremiumCard className="p-5 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
                     {/* Header */}
                     <div className="mb-6">
-                      <h4 className="text-base font-bold gradient-text mb-1">Media Studio</h4>
+                      <h4 className="text-base font-bold gradient-text mb-1">{t("media.title")}</h4>
                       <p className="text-xs text-muted-foreground">
-                        AI-Powered Creative Generation
+                        {t("media.subtitle")}
                       </p>
                     </div>
 
                     {/* Media Type Selection */}
                     <div className="mb-5">
-                      <label className="text-xs font-bold mb-2 block uppercase tracking-wide">Content Type</label>
+                      <label className="text-xs font-bold mb-2 block uppercase tracking-wide">{t("media.contentType")}</label>
                       <div className="grid grid-cols-2 gap-1">
                         <motion.button
                           onClick={() => setMediaType("image")}
@@ -2103,7 +2114,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               <circle cx="9" cy="9" r="2" />
                               <path d="M21 15l-5-5L5 21" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            <span className="text-[9px]">Image</span>
+                            <span className="text-[9px]">{t("media.image")}</span>
                           </div>
                           {mediaType === "image" && (
                             <motion.div
@@ -2128,7 +2139,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2">
                               <polygon points="5 3 19 12 5 21 5 3" />
                             </svg>
-                            <span className="text-[9px]">Video</span>
+                            <span className="text-[9px]">{t("media.video")}</span>
                           </div>
                           {mediaType === "video" && (
                             <motion.div
@@ -2143,9 +2154,9 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                     {/* Custom Prompt */}
                     <div className="mb-4">
-                      <label className="text-xs font-bold mb-2 block uppercase tracking-wide">Your Vision</label>
+                      <label className="text-xs font-bold mb-2 block uppercase tracking-wide">{t("media.visionLabel")}</label>
                       <textarea
-                        placeholder="Describe your campaign visual... (sustainability theme will be added automatically)"
+                        placeholder={t("media.visionPlaceholder")}
                         value={mediaPrompt}
                         onChange={(e) => setMediaPrompt(e.target.value)}
                         className="w-full px-2.5 py-2 rounded-lg border-2 border-border hover:border-primary/50 focus:border-primary bg-background text-xs min-h-[90px] resize-none transition-colors"
@@ -2154,12 +2165,12 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                     {/* Aspect Ratio */}
                     <div className="mb-5">
-                      <label className="text-xs font-bold mb-2 block uppercase tracking-wide">Platform Format</label>
+                      <label className="text-xs font-bold mb-2 block uppercase tracking-wide">{t("media.platformFormat")}</label>
                       <div className="grid grid-cols-3 gap-0.5">
                         {[
-                          { ratio: "1:1", label: "Square", icon: "▢" },
-                          { ratio: "16:9", label: "Landscape", icon: "▭" },
-                          { ratio: "9:16", label: "Story", icon: "▯" },
+                          { ratio: "1:1", label: t("media.square"), icon: "▢" },
+                          { ratio: "16:9", label: t("media.landscape"), icon: "▭" },
+                          { ratio: "9:16", label: t("media.story"), icon: "▯" },
                         ].map((option) => (
                           <motion.button
                             key={option.ratio}
@@ -2188,7 +2199,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <rect x="3" y="3" width="18" height="18" rx="2" />
                           <path d="M9 9h6v6H9z" />
                         </svg>
-                        Brand Integration
+                        {t("media.brandIntegration")}
                       </label>
                       
                       <input
@@ -2207,15 +2218,15 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <svg viewBox="0 0 24 24" className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
-                          <span className="text-[9px] font-medium text-muted-foreground">Upload Your Logo</span>
+                          <span className="text-[9px] font-medium text-muted-foreground">{t("media.uploadLogo")}</span>
                         </label>
                       ) : (
                         <div className="space-y-1.5">
                           <div className="flex items-center gap-1.5 p-1 rounded-lg bg-background border border-border">
-                            <img src={uploadedLogo} alt="Logo" className="w-7 h-7 object-contain rounded" />
+                            <img src={uploadedLogo} alt={t("media.logoAlt")} className="w-7 h-7 object-contain rounded" />
                             <div className="flex-1">
-                              <p className="text-[9px] font-medium">Logo uploaded</p>
-                              <p className="text-[9px] text-muted-foreground">Ready to apply</p>
+                              <p className="text-[9px] font-medium">{t("media.logoUploaded")}</p>
+                              <p className="text-[9px] text-muted-foreground">{t("media.logoReady")}</p>
                             </div>
                             <button
                               onClick={() => setUploadedLogo(null)}
@@ -2234,7 +2245,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               onChange={(e) => setUseBranding(e.target.checked)}
                               className="rounded w-2.5 h-2.5"
                             />
-                            <span className="text-[9px] font-medium">Apply logo to generated media</span>
+                            <span className="text-[9px] font-medium">{t("media.applyLogo")}</span>
                           </label>
                         </div>
                       )}
@@ -2262,14 +2273,14 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             >
                               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
                             </motion.svg>
-                            Generating {mediaType}...
+                            {t("media.generating", { type: mediaTypeLabel })}
                           </>
                         ) : (
                           <>
                             <svg viewBox="0 0 24 24" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                             </svg>
-                            Generate {mediaType === "image" ? "Image" : "Video"}
+                            {t("media.generate", { type: mediaTypeLabel })}
                           </>
                         )}
                       </span>
@@ -2305,7 +2316,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                           <circle cx="12" cy="12" r="3" />
                         </svg>
-                        Preview
+                        {t("media.preview")}
                       </div>
                     </motion.button>
                     
@@ -2326,7 +2337,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <rect x="14" y="14" width="7" height="7" />
                           <rect x="3" y="14" width="7" height="7" />
                         </svg>
-                        References
+                        {t("media.references")}
                         {mediaGallery.length > 0 && (
                           <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-xs font-bold rounded-full flex items-center justify-center">
                             {mediaGallery.length}
@@ -2355,7 +2366,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             >
                               <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 mb-4">
                                 {mediaType === "image" ? (
-                                  <img src={generatedMedia} alt="Generated" className="w-full rounded-2xl" />
+                                  <img src={generatedMedia} alt={t("media.generatedAlt")} className="w-full rounded-2xl" />
                                 ) : (
                                   <video src={generatedMedia} controls className="w-full rounded-2xl" />
                                 )}
@@ -2371,7 +2382,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                   <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
                                   </svg>
-                                  Download
+                                  {t("media.download")}
                                 </a>
                                 <button
                                   onClick={() => {
@@ -2383,7 +2394,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     <rect x="9" y="9" width="13" height="13" rx="2" />
                                     <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
                                   </svg>
-                                  Copy URL
+                                  {t("media.copyUrl")}
                                 </button>
                               </div>
                             </motion.div>
@@ -2403,15 +2414,15 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                   <path d="M21 15l-5-5L5 21" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                               </motion.div>
-                              <h4 className="text-base font-bold mb-2">No Media Generated Yet</h4>
+                              <h4 className="text-base font-bold mb-2">{t("media.emptyPreviewTitle")}</h4>
                               <p className="text-sm text-muted-foreground mb-4 max-w-md">
-                                Configure your settings in the control panel and generate your first sustainability campaign visual
+                                {t("media.emptyPreviewBody")}
                               </p>
                               <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
                                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                                   <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                 </svg>
-                                <span>All content is sustainability-optimized</span>
+                                <span>{t("media.sustainabilityOptimized")}</span>
                               </div>
                             </div>
                           )}
@@ -2430,16 +2441,16 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             <div>
                               <div className="flex items-center justify-between mb-4">
                                 <div>
-                                  <h4 className="text-sm font-bold">Your Gallery</h4>
+                                  <h4 className="text-sm font-bold">{t("media.galleryTitle")}</h4>
                                   <p className="text-xs text-muted-foreground">
-                                    {mediaGallery.length} {mediaGallery.length === 1 ? 'item' : 'items'} generated
+                                    {t("media.galleryCount", { count: mediaGallery.length })}
                                   </p>
                                 </div>
                                 <button
                                   onClick={() => setMediaGallery([])}
                                   className="px-2 py-1 rounded-lg bg-muted hover:bg-muted/80 text-xs font-medium transition-all"
                                 >
-                                  Clear All
+                                  {t("media.clearAll")}
                                 </button>
                               </div>
                               
@@ -2468,7 +2479,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                         <p className="text-xs text-white font-medium line-clamp-2">{item.prompt}</p>
                                         <div className="flex items-center gap-2 mt-2">
                                           <span className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-sm text-xs text-white font-medium">
-                                            {item.type}
+                                             {item.type === "image" ? t("media.image") : t("media.video")}
                                           </span>
                                         </div>
                                       </div>
@@ -2502,9 +2513,9 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                   <rect x="3" y="14" width="7" height="7" />
                                 </svg>
                               </motion.div>
-                              <h4 className="text-base font-bold mb-2">No References Yet</h4>
+                              <h4 className="text-base font-bold mb-2">{t("media.noReferencesTitle")}</h4>
                               <p className="text-sm text-muted-foreground max-w-md">
-                                Generated images and videos will appear here as templates and references for your future campaigns
+                                {t("media.noReferencesBody")}
                               </p>
                             </div>
                           )}
@@ -2520,7 +2531,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                         </svg>
-                        Quick Start Templates
+                        {t("media.templatesTitle")}
                       </h4>
                       <div className="grid grid-cols-2 gap-2">
                         {promptTemplates.slice(0, 4).map((template, i) => (
@@ -2557,13 +2568,13 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                   <circle cx="12" cy="12" r="2" fill="currentColor" />
                 </svg>
               </div>
-              <h4 className="text-sm font-bold mb-2">Try All Tools</h4>
+              <h4 className="text-sm font-bold mb-2">{t("cta.title")}</h4>
               <p className="text-xs text-muted-foreground mb-3">
-                Experience AI-powered sustainability management for your SME
+                {t("cta.description")}
               </p>
               <div className="flex justify-center">
                 <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-all">
-                  Get Started
+                  {t("cta.getStarted")}
                 </button>
               </div>
             </div>
