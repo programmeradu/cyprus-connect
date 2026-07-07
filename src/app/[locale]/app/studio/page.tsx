@@ -856,7 +856,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               </div>
 
               <p className="text-[9px] text-muted-foreground mb-3">
-                <strong>Prompt:</strong> {selectedMedia.prompt}
+                <strong>{t("preview.prompt")}</strong> {selectedMedia.prompt}
               </p>
 
               {/* Natural Language Editing */}
