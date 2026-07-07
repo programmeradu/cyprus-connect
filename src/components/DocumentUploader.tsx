@@ -53,6 +53,8 @@ const ACCEPTED_FILE_TYPES = {
 };
 
 export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderProps) {
+  const t = useTranslations("documentUploader");
+  const locale = useLocale();
   const [isDragging, setIsDragging] = useState(false);
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
