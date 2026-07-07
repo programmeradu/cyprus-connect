@@ -75,9 +75,10 @@ export const ActionCard = ({
         {/* Impact Level Badge */}
         <div className="mb-3">
           <span className={`inline-flex items-center text-[9px] uppercase px-2 py-0.5 rounded-md font-bold tracking-wider border ${impactLevelColors[difficulty]}`}>
-            {difficulty} Impact
+            {impactLabels[difficulty]}
           </span>
         </div>
+
 
         {/* Spacer to push button to bottom */}
         <div className="flex-1" />
