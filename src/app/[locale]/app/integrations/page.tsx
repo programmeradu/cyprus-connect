@@ -148,21 +148,21 @@ function IntegrationsContent() {
     const qbError = searchParams.get('qb_error');
     
     if (qbSuccess === 'true') {
-      toast.success('QuickBooks connected successfully!');
+      toast.success(t("toasts.qbConnected"));
       checkQbConnection();
       router.replace('/app/integrations');
     }
     
     if (qbError) {
-      const errorMessages: Record<string, string> = {
-        'missing_parameters': 'Authorization failed: Missing parameters',
-        'invalid_state': 'Authorization failed: Invalid state',
-        'missing_user': 'Authorization failed: User session expired',
-        'token_exchange_failed': 'Failed to exchange authorization code',
-        'storage_failed': 'Failed to store credentials',
-        'callback_failed': 'Authorization callback failed'
+      const messageMap: Record<string, string> = {
+        missing_parameters: t("toasts.qbErrors.missing_parameters"),
+        invalid_state: t("toasts.qbErrors.invalid_state"),
+        missing_user: t("toasts.qbErrors.missing_user"),
+        token_exchange_failed: t("toasts.qbErrors.token_exchange_failed"),
+        storage_failed: t("toasts.qbErrors.storage_failed"),
+        callback_failed: t("toasts.qbErrors.callback_failed"),
       };
-      toast.error(errorMessages[qbError] || 'QuickBooks connection failed');
+      toast.error(messageMap[qbError] || t("toasts.qbErrors.default"));
       router.replace('/app/integrations');
     }
   }, [searchParams]);
