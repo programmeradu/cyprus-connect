@@ -282,6 +282,13 @@
         "savedN": "✨ Generated and saved {count} personalized recommendations!",
         "saveFailed": "Failed to save AI recommendations",
         "generateFailed": "Failed to generate recommendations. Please try again."
+      },
+      "card": {
+        "completed": "Completed",
+        "markComplete": "Mark Complete",
+        "impactLow": "Low Impact",
+        "impactMedium": "Medium Impact",
+        "impactHigh": "High Impact"
       }
     },
     "settings": {
