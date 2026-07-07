@@ -602,13 +602,13 @@ export default function OnboardingPage() {
                         <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
                           <LeafIcon className="w-3 h-3 text-primary" />
                         </div>
-                        <h4 className="text-[10px] font-bold">Green Credits</h4>
+                        <h4 className="text-[10px] font-bold">{t("step3.greenCredits")}</h4>
                       </div>
                       <p className="text-xl font-bold mb-0.5">
                         1,250
                         <span className="text-xs font-normal text-green-500 ml-1.5">+50</span>
                       </p>
-                      <p className="text-[9px] text-muted-foreground">Credits earned this month</p>
+                      <p className="text-[9px] text-muted-foreground">{t("step3.creditsEarned")}</p>
                     </div>
 
                     {/* Leaderboard */}
