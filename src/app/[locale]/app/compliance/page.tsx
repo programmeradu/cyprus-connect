@@ -692,6 +692,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
 
 // Audit Tab Component - updated
 function AuditTab({ logs }: { logs: AuditLog[] }) {
+  const t = useTranslations("dashboard.compliance");
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <PremiumCard className="p-4">
