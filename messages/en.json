@@ -1489,5 +1489,23 @@
       "description": "Experience AI-powered sustainability management for your SME",
       "getStarted": "Get Started"
     }
+  },
+  "documentUpload": {
+    "processing": "Processing document...",
+    "uploadCta": "Upload utility bill or document",
+    "uploadHint": "PDF, JPEG, or PNG (max 10MB)",
+    "success": "Document processed successfully!",
+    "failed": "Failed to process document: {msg}",
+    "error": "Error",
+    "extracted": "Extracted Data",
+    "accountNumber": "Account Number",
+    "utilityType": "Utility Type",
+    "usageAmount": "Usage Amount",
+    "totalAmount": "Total Amount",
+    "billingPeriod": "Billing Period",
+    "viewRaw": "View Raw OCR Text",
+    "confidence": "{pct}% confidence",
+    "na": "N/A",
+    "unknownError": "Unknown error"
   }
 }
