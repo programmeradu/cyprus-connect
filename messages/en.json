@@ -1310,6 +1310,27 @@
       "report": "Report Generator",
       "weather": "Climate & AI",
       "media": "Media Studio"
+    },
+    "carbon": {
+      "title": "AI Carbon Footprint Analyzer",
+      "description": "Get instant AI-powered analysis of your emissions and actionable reduction strategies",
+      "electricityLabel": "Monthly Electricity (kWh)",
+      "electricityPlaceholder": "e.g., 5000",
+      "transportLabel": "Monthly Transport (km)",
+      "transportPlaceholder": "e.g., 2000",
+      "wasteLabel": "Monthly Waste (kg)",
+      "wastePlaceholder": "e.g., 500",
+      "analyzing": "Analyzing...",
+      "analyze": "Analyze Carbon Footprint",
+      "resultTitle": "AI Carbon Footprint Analysis",
+      "analysisFailed": "Analysis failed"
+    },
+    "news": {
+      "title": "Sustainability News",
+      "subtitle": "Latest environmental updates",
+      "loading": "Loading news...",
+      "empty": "No news available",
+      "readMore": "Read more"
     }
   }
 }
