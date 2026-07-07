@@ -849,7 +849,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       onLoadStart={() => setIsVideoLoading(true)}
                     >
                       <source src={selectedMedia.url} type="video/mp4" />
-                      Your browser does not support the video tag.
+                      {t("preview.videoUnsupported")}
                     </video>
                   </div>
                 )}
