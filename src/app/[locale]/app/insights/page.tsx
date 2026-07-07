@@ -663,7 +663,7 @@ export default function InsightsPage() {
               </div>
             ) : (
               <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
-                Complete your profile to see industry comparisons
+                {t("energySection.noPerformance")}
               </div>
             )}
           </div>
