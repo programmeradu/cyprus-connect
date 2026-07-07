@@ -154,7 +154,7 @@ export const PlanUsageIndicator = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          {planId === 'free' ? 'Upgrade Plan' : 'Manage Plan'} →
+          {planId === 'free' ? t("upgradePlan") : t("managePlan")} →
         </motion.button>
       </Link>
     </PremiumCard>
