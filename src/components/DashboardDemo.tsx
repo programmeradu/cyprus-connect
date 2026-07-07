@@ -570,6 +570,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
 }
 
 export const DashboardDemo = () => {
+  const t = useTranslations("dashboardDemo")
   // Random tab selection on mount
   useEffect(() => {
     const tabs: TabType[] = ["carbon", "report", "weather", "media"]
