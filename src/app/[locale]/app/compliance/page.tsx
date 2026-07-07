@@ -646,15 +646,15 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                 
                 <div className="space-y-1.5 mb-3 text-[10px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-light">Framework</span>
+                    <span className="text-muted-foreground font-light">{t("documents.framework")}</span>
                     <span className="font-medium">{doc.framework}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-light">Generated</span>
+                    <span className="text-muted-foreground font-light">{t("documents.generatedLabel")}</span>
                     <span className="font-medium">{new Date(doc.generatedAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-light">Due Date</span>
+                    <span className="text-muted-foreground font-light">{t("documents.dueDate")}</span>
                     <span className="font-medium">{new Date(doc.dueDate).toLocaleDateString()}</span>
                   </div>
                 </div>
