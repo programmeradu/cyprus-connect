@@ -723,9 +723,9 @@ function IntegrationsContent() {
               <TrendingUp className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-semibold mb-0.5">Industry Benchmarks</h3>
+              <h3 className="text-base font-semibold mb-0.5">{t("benchmarks.title")}</h3>
               <p className="text-[11px] text-muted-foreground">
-                Location-aware benchmarks with personalized insights
+                {t("benchmarks.subtitle")}
               </p>
             </div>
           </div>
