@@ -75,7 +75,7 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
       const lines = text.split("\n").filter(line => line.trim());
       
       if (lines.length < 2) {
-        throw new Error("CSV file is empty or invalid");
+        throw new Error(t("toasts.empty"));
       }
 
       const headers = lines[0].toLowerCase().split(",").map(h => h.trim());
@@ -117,13 +117,13 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
       if (transportTotal > 0) data.transport = transportTotal;
 
       if (Object.keys(data).length === 0) {
-        throw new Error("No valid data found. Please check column names (electricity, gas, water, waste, transport)");
+        throw new Error(t("toasts.noValidData"));
       }
 
       setParsedData(data);
-      toast.success("CSV parsed successfully!");
+      toast.success(t("toasts.parseSuccess"));
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to parse CSV";
+      const message = err instanceof Error ? err.message : t("toasts.parseFailed");
       setError(message);
       toast.error(message);
     } finally {
