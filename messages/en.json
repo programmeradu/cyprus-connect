@@ -6,14 +6,52 @@
     "signIn": "Sign In",
     "getStarted": "Get Started",
     "dashboard": "Dashboard",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "signOutError": "Failed to sign out",
+    "signOutSuccess": "Signed out successfully"
   },
   "hero": {
     "badge": "AI-Powered Sustainability Platform",
-    "title": "Transform Your Business with Sustainable Intelligence",
-    "subtitle": "Track, optimize, and report your environmental impact with AI-powered insights built for SMEs.",
-    "ctaPrimary": "Start Free Trial",
-    "ctaSecondary": "See How It Works"
+    "titleLine1": "Empowering SMEs",
+    "titleLine2": "to Lead on",
+    "titleLine3": "Sustainability",
+    "subtitle": "Experience AI-powered tools built for SMEs: Carbon footprint analysis, automated report generation, real-time sustainability news, climate data, and expert AI advisory.",
+    "ctaPrimary": "Get Started with VerdeIQ",
+    "ctaSecondary": "Watch Demo"
+  },
+  "pricing": {
+    "titleA": "Simple, Transparent",
+    "titleB": "Pricing",
+    "subtitle": "Choose the perfect plan for your sustainability journey. All plans include our core features with no hidden fees.",
+    "vatNoticeCY": "Prices shown include Cyprus VAT (19%). Invoices are issued by VerdeIQ in EUR.",
+    "eurNotice": "Billed in EUR for EU customers."
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create your account",
+    "loginSubtitle": "Sign in to continue your sustainability journey",
+    "registerSubtitle": "Start tracking your environmental impact today",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "rememberMe": "Remember me",
+    "forgot": "Forgot password?",
+    "signIn": "Sign In",
+    "signUp": "Create Account",
+    "signingIn": "Signing in…",
+    "creating": "Creating account…",
+    "orContinue": "or continue with",
+    "google": "Continue with Google",
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "switchToSignIn": "Sign in",
+    "switchToSignUp": "Sign up",
+    "passwordMismatch": "Passwords do not match",
+    "userExists": "Email already registered. Please sign in instead.",
+    "registrationFailed": "Registration failed. Please try again.",
+    "loginFailed": "Invalid email or password.",
+    "accountCreated": "Account created! Redirecting to dashboard…"
   },
   "footer": {
     "rights": "All rights reserved.",
