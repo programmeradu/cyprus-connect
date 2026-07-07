@@ -587,9 +587,9 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
               <SparkleIcon />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xs font-semibold mb-1">AI-Powered Report Generation</h3>
+              <h3 className="text-xs font-semibold mb-1">{t("documents.aiTitle")}</h3>
               <p className="text-[10px] text-muted-foreground font-light mb-3">
-                Automatically generate compliance reports based on your emissions data and regulatory requirements
+                {t("documents.aiDescription")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {["CSRD", "CDP", "GHG Protocol", "SEC"].map((framework) => (
