@@ -94,16 +94,17 @@ export const ActionCard = ({
                 : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30"
             }`}
           >
-            <span className="flex items-center justify-center gap-1.5">
+            <span className="flex items-center justify-center gap-1.5 min-w-0 break-words">
               {completed ? (
                 <>
-                  <CheckIcon className="w-3 h-3" />
-                  Completed
+                  <CheckIcon className="w-3 h-3 flex-shrink-0" />
+                  <span className="break-words">{t("completed")}</span>
                 </>
               ) : (
-                "Mark Complete"
+                <span className="break-words">{t("markComplete")}</span>
               )}
             </span>
+
           </button>
         )}
       </div>
