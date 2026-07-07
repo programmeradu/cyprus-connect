@@ -821,13 +821,13 @@ export default function InsightsPage() {
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
-              <p className="text-sm text-muted-foreground">Generating personalized AI recommendations...</p>
+              <p className="text-sm text-muted-foreground">{t("ai.generating")}</p>
             </div>
           </div>
         ) : (
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
             <p className="text-sm text-muted-foreground text-center">
-              Unable to generate AI recommendations. Please refresh to try again.
+              {t("ai.unable")}
             </p>
           </div>
         )}
