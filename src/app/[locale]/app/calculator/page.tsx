@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Badge } from "@/components/app/Badge";
 import { CarbonIcon, BoltIcon, FireIcon, WaterIcon, RecycleIcon, SparklesIcon, AIDocumentIcon } from "@/components/icons/CustomIcons";
@@ -16,6 +17,7 @@ import NextImage from "next/image";
 
 export default function CalculatorPage() {
   const router = useRouter();
+  const t = useTranslations("dashboard.calculator");
   const { data: session, isPending: isSessionLoading } = useSession();
   const { calculateBatch } = useEmissionCalculator();
   
