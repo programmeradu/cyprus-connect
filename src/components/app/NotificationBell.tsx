@@ -374,7 +374,7 @@ export const NotificationBell = () => {
                   }}
                   className="text-xs text-primary hover:text-primary/80 font-medium"
                 >
-                  Notification Settings
+                  {t("settings")}
                 </button>
               </div>
             )}
