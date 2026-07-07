@@ -149,7 +149,7 @@ export function FileUploadDialog({
         )
       );
 
-      toast.success(`${uploadedFile.file.name} uploaded successfully!`);
+      toast.success(t("toasts.success", { name: uploadedFile.file.name }));
     } catch (error) {
       console.error("Upload error:", error);
       setFiles((prev) =>
@@ -159,14 +159,15 @@ export function FileUploadDialog({
                 ...f,
                 status: "failed",
                 progress: 0,
-                error: error instanceof Error ? error.message : "Upload failed",
+                error: error instanceof Error ? error.message : t("toasts.uploadFailed"),
               }
             : f
         )
       );
-      toast.error(`Failed to upload ${uploadedFile.file.name}`);
+      toast.error(t("toasts.failed", { name: uploadedFile.file.name }));
     }
   };
+
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
