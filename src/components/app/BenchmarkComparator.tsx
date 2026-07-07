@@ -219,12 +219,13 @@ export function BenchmarkComparator() {
           {/* Upgrade prompt */}
           <div className="text-center space-y-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">
-                Professional Feature
+              <p className="text-xs font-semibold text-primary mb-1 break-words">
+                {t("proFeature")}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Compare your emissions against industry peers with regional and global insights
+              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
+                {t("proBlurb")}
               </p>
+
             </div>
             
             <PremiumButton
