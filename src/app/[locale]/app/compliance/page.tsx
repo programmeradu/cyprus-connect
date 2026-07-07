@@ -7,6 +7,7 @@ import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 // Custom thin SVG icons
 const ShieldCheckIcon = () => (
