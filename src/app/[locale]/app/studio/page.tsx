@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import NextImage from "next/image";
+import { useTranslations } from "next-intl";
 
 // Custom SVG Icons
 const RecentIcon = () => (
