@@ -21,6 +21,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   LineChart,
   Line,
