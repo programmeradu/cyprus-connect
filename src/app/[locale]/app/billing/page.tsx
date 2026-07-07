@@ -10,12 +10,15 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export default function BillingPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const { subscription, plan } = useSubscription();
   const [activeTab, setActiveTab] = useState<'overview' | 'plans'>('overview');
+  const t = useTranslations("dashboard.billing");
+  const tc = useTranslations("common");
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -28,7 +31,7 @@ export default function BillingPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{tc("loading")}</p>
         </div>
       </div>
     );
@@ -45,9 +48,9 @@ export default function BillingPage() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Billing & Subscriptions</h1>
+              <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
               <p className="text-sm text-muted-foreground">
-                Manage your subscription, payments, and billing information
+                {t("subtitle")}
               </p>
             </div>
             <PremiumButton
@@ -55,7 +58,7 @@ export default function BillingPage() {
               size="sm"
               onClick={() => router.push('/app')}
             >
-              ← Back to Dashboard
+              {tc("backToDashboard")}
             </PremiumButton>
           </div>
 
@@ -69,7 +72,7 @@ export default function BillingPage() {
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               }`}
             >
-              Overview
+              {t("tabOverview")}
             </button>
             <button
               onClick={() => setActiveTab('plans')}
@@ -79,7 +82,7 @@ export default function BillingPage() {
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               }`}
             >
-              Plans & Pricing
+              {t("tabPlans")}
             </button>
           </div>
         </div>
@@ -96,10 +99,10 @@ export default function BillingPage() {
           >
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold mb-3">
-                Choose Your <span className="gradient-text">Plan</span>
+                {t("chooseYour")} <span className="gradient-text">{t("plan")}</span>
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Unlock powerful sustainability features and scale your impact
+                {t("planSubtitle")}
               </p>
             </div>
             <PricingTable currentPlanId={subscription?.planId || 'free'} />
