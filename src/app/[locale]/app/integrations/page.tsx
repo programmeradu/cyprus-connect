@@ -907,7 +907,7 @@ function IntegrationsContent() {
               {/* Personalized Recommendations */}
               {benchmarkComparison.recommendations && benchmarkComparison.recommendations.length > 0 && (
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[11px] font-medium mb-3">Personalized Insights & Recommendations</p>
+                  <p className="text-[11px] font-medium mb-3">{t("benchmarks.recommendationsTitle")}</p>
                   <ul className="space-y-2">
                     {benchmarkComparison.recommendations.map((rec: string, i: number) => (
                       <li key={i} className="text-[11px] text-foreground flex items-start gap-2">
