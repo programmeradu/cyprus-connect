@@ -971,5 +971,99 @@
       "descUtility": "Upload your utility bill and we'll automatically extract the data using OCR technology.",
       "descDocument": "Upload your document and we'll automatically extract the data using OCR technology."
     }
+  },
+  "shared": {
+    "header": {
+      "defaultUser": "User",
+      "settings": "Settings",
+      "signOut": "Sign Out",
+      "signOutError": "Failed to sign out",
+      "signOutSuccess": "Signed out successfully"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "unread": "{count} unread",
+      "markAllRead": "Mark all read",
+      "empty": "No notifications yet",
+      "settings": "Notification Settings",
+      "toasts": {
+        "allRead": "All notifications marked as read",
+        "allReadError": "Failed to mark notifications as read",
+        "deleted": "Notification deleted",
+        "deleteError": "Failed to delete notification"
+      },
+      "time": {
+        "justNow": "Just now",
+        "minutes": "{n}m ago",
+        "hours": "{n}h ago",
+        "days": "{n}d ago"
+      }
+    },
+    "exportReport": {
+      "idle": "Export Report",
+      "loading": "Generating...",
+      "success": "Report exported successfully! 📄",
+      "noUser": "User not found. Please log in.",
+      "failed": "Failed to export report"
+    },
+    "fileUpload": {
+      "dropOrBrowse": "Drop files here or",
+      "browse": "browse",
+      "accepted": "Accepted: {types} • Max {size}MB",
+      "filesSelected": "{count} file selected",
+      "filesSelectedPlural": "{count} files selected",
+      "uploading": "Uploading...",
+      "done": "Done",
+      "status": {
+        "uploading": "Uploading... {progress}%",
+        "processing": "Processing...",
+        "completed": "Completed",
+        "failed": "Failed",
+        "pending": "Pending"
+      },
+      "toasts": {
+        "invalidType": "Invalid file type: {name}. Accepted: {types}",
+        "tooLarge": "File too large: {name}. Max size: {size}MB",
+        "success": "{name} uploaded successfully!",
+        "failed": "Failed to upload {name}",
+        "notAuth": "User not authenticated",
+        "uploadFailed": "Upload failed"
+      }
+    },
+    "accountingDialog": {
+      "title": "Connect Accounting Software",
+      "description": "Automatically import your expense and accounting data",
+      "comingSoon": "COMING SOON",
+      "comingSoonBtn": "Coming Soon",
+      "connect": "Connect {name}",
+      "connecting": "Connecting...",
+      "secureTitle": "Secure OAuth 2.0 Authentication",
+      "secureBody": "We use industry-standard OAuth 2.0 to securely connect to your accounting software. Your credentials are never stored on our servers. You can revoke access at any time from your accounting software settings.",
+      "toasts": {
+        "initiated": "{name} connection initiated!",
+        "authPopup": "Please complete the authorization in the popup window.",
+        "failed": "Failed to initiate connection. Please try again."
+      },
+      "quickbooks": {
+        "name": "QuickBooks Online",
+        "description": "Connect your QuickBooks account for automated expense tracking",
+        "features": [
+          "Auto-sync invoices and bills",
+          "Track business expenses",
+          "Generate financial reports",
+          "Real-time data updates"
+        ]
+      },
+      "xero": {
+        "name": "Xero",
+        "description": "Integrate with Xero for seamless accounting data import",
+        "features": [
+          "Import bank transactions",
+          "Sync expense categories",
+          "Access financial statements",
+          "Automated reconciliation"
+        ]
+      }
+    }
   }
 }
