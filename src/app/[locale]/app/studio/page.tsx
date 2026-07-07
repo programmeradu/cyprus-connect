@@ -233,7 +233,7 @@ export default function MediaStudioPage() {
       if (selectedMedia?.id === media.id) {
         setSelectedMedia(null);
       }
-      toast.success("Generation removed");
+      toast.success(t("toasts.removed"));
       return;
     }
 
