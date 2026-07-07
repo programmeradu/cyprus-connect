@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -10,6 +11,7 @@ import { useCustomer } from "autumn-js/react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Wifi, WifiOff, Lock } from "lucide-react";
 import { getEnergyZoneData } from "@/lib/energy-zones";
+
 
 interface CarbonIntensityData {
   carbonIntensity: number;
@@ -48,11 +50,13 @@ interface CostSavings {
 }
 
 export function EnergyCostCalculator() {
+  const t = useTranslations("energyCalc");
   const { convertAmount, formatAmount, selectedCurrency, refreshTrigger } = useCurrency();
   const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
   const [carbonData, setCarbonData] = useState<CarbonIntensityData | null>(null);
+
   const [spotPriceResponse, setSpotPriceResponse] = useState<SpotPriceResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [consumption, setConsumption] = useState<number>(50000);
@@ -185,12 +189,12 @@ export function EnergyCostCalculator() {
         
         <div className="relative z-10">
           <div className="mb-4">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-bold">Energy Cost Calculator</h3>
-              <Lock className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <h3 className="text-sm font-bold break-words min-w-0">{t("title")}</h3>
+              <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </div>
-            <p className="text-[10px] text-muted-foreground">
-              Real-time pricing & carbon data
+            <p className="text-[10px] text-muted-foreground break-words">
+              {t("subtitle")}
             </p>
           </div>
 
@@ -198,11 +202,11 @@ export function EnergyCostCalculator() {
           <div className="opacity-40 space-y-3 mb-6">
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
-                <p className="text-[9px] text-muted-foreground mb-1">Spot Price</p>
+                <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("spotPrice")}</p>
                 <p className="text-base font-bold">€••• <span className="text-[10px] font-normal">/MWh</span></p>
               </div>
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20">
-                <p className="text-[9px] text-muted-foreground mb-1">Carbon Intensity</p>
+                <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("carbonIntensity")}</p>
                 <p className="text-base font-bold">••• <span className="text-[10px] font-normal">gCO₂/kWh</span></p>
               </div>
             </div>
@@ -213,25 +217,26 @@ export function EnergyCostCalculator() {
           {/* Upgrade prompt */}
           <div className="text-center space-y-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">
-                Professional Feature
+              <p className="text-xs font-semibold text-primary mb-1 break-words">
+                {t("proFeature")}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Unlock real-time energy prices, carbon intensity data, and ROI calculations
+              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
+                {t("proBlurb")}
               </p>
             </div>
-            
+
             <PremiumButton
               onClick={() => router.push('/pricing')}
               className="w-full"
               size="sm"
             >
-              <Lock className="w-3 h-3 mr-1.5" />
-              <span className="text-[10px]">Upgrade to Professional</span>
+              <Lock className="w-3 h-3 mr-1.5 flex-shrink-0" />
+              <span className="text-[10px] break-words">{t("upgradeCta")}</span>
             </PremiumButton>
           </div>
         </div>
       </PremiumCard>
+
     );
   }
 
@@ -252,22 +257,22 @@ export function EnergyCostCalculator() {
   return (
     <PremiumCard className="p-4">
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-1">
-          <h3 className="text-sm font-bold">Energy Cost Calculator</h3>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <h3 className="text-sm font-bold break-words min-w-0">{t("title")}</h3>
           {isUsingFallback ? (
-            <WifiOff className="w-3.5 h-3.5 text-orange-500" />
+            <WifiOff className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
           ) : (
-            <Wifi className="w-3.5 h-3.5 text-green-500" />
+            <Wifi className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
           )}
         </div>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-[10px] text-muted-foreground break-words">
           {dataRegion} • {user?.countryCode || userZone}
         </p>
         {isUsingFallback && (
           <div className="flex items-start gap-1.5 mt-2 p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
             <AlertCircle className="w-3 h-3 text-orange-600 flex-shrink-0 mt-0.5" />
-            <p className="text-[9px] text-orange-600 leading-tight">
-              Using regional estimates • Real-time data not available for {dataRegion}
+            <p className="text-[9px] text-orange-600 leading-tight break-words">
+              {t("fallbackNote", { region: dataRegion })}
             </p>
           </div>
         )}
@@ -281,10 +286,10 @@ export function EnergyCostCalculator() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-[9px] text-muted-foreground mb-1">
-            Spot Price ({userBiddingZone}) {spotPriceResponse?.fallback && '~'}
+          <p className="text-[9px] text-muted-foreground mb-1 break-words">
+            {t("spotPriceZone", { zone: userBiddingZone })} {spotPriceResponse?.fallback && '~'}
           </p>
-          <p className="text-base font-bold">
+          <p className="text-base font-bold break-words">
             {formatAmount(convertAmount(spotPriceResponse?.data?.[0]?.price || 0, 'EUR'))}{' '}
             <span className="text-[10px] font-normal">/MWh</span>
           </p>
@@ -296,21 +301,22 @@ export function EnergyCostCalculator() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-[9px] text-muted-foreground mb-1">
-            Carbon Intensity {carbonData?.fallback && '~'}
+          <p className="text-[9px] text-muted-foreground mb-1 break-words">
+            {t("carbonIntensity")} {carbonData?.fallback && '~'}
           </p>
-          <p className="text-base font-bold">
+          <p className="text-base font-bold break-words">
             {carbonData?.carbonIntensity || 0}{' '}
             <span className="text-[10px] font-normal">gCO₂/kWh</span>
           </p>
         </motion.div>
       </div>
 
+
       {/* Input Controls */}
       <div className="space-y-3 mb-4">
         <div>
           <label className="block text-[10px] font-medium mb-1.5">
-            Annual Consumption (kWh)
+            {t("annualConsumption")}
           </label>
           <input
             type="range"
@@ -330,7 +336,7 @@ export function EnergyCostCalculator() {
 
         <div>
           <label className="block text-[10px] font-medium mb-1.5">
-            Efficiency Gain (%)
+            {t("efficiencyGain")}
           </label>
           <input
             type="range"
@@ -357,7 +363,7 @@ export function EnergyCostCalculator() {
           className="space-y-2"
         >
           <div className="p-3 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20">
-            <p className="text-[9px] text-muted-foreground mb-0.5">Annual Savings</p>
+            <p className="text-[9px] text-muted-foreground mb-0.5">{t("annualSavings")}</p>
             <p className="text-xl font-bold text-green-600">
               {formatAmount(savings.annualSavings)}
             </p>
@@ -368,12 +374,12 @@ export function EnergyCostCalculator() {
 
           <div className="grid grid-cols-2 gap-2">
             <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-0.5">CO₂ Cut</p>
-              <p className="text-sm font-bold">{savings.co2Reduction.toFixed(1)} <span className="text-[9px] font-normal">t/yr</span></p>
+              <p className="text-[9px] text-muted-foreground mb-0.5">{t("co2Cut")}</p>
+              <p className="text-sm font-bold">{savings.co2Reduction.toFixed(1)} <span className="text-[9px] font-normal">{t("tPerYr")}</span></p>
             </div>
             <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-0.5">ROI</p>
-              <p className="text-sm font-bold">{savings.roiMonths.toFixed(1)} <span className="text-[9px] font-normal">mo</span></p>
+              <p className="text-[9px] text-muted-foreground mb-0.5">{t("roi")}</p>
+              <p className="text-sm font-bold">{savings.roiMonths.toFixed(1)} <span className="text-[9px] font-normal">{t("mo")}</span></p>
             </div>
           </div>
         </motion.div>
@@ -384,7 +390,7 @@ export function EnergyCostCalculator() {
         className="w-full mt-3"
         size="sm"
       >
-        <span className="text-[10px]">Refresh Prices</span>
+        <span className="text-[10px]">{t("refresh")}</span>
       </PremiumButton>
     </PremiumCard>
   );

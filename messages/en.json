@@ -1507,5 +1507,24 @@
     "confidence": "{pct}% confidence",
     "na": "N/A",
     "unknownError": "Unknown error"
+  },
+  "energyCalc": {
+    "title": "Energy Cost Calculator",
+    "subtitle": "Real-time pricing & carbon data",
+    "spotPrice": "Spot Price",
+    "carbonIntensity": "Carbon Intensity",
+    "proFeature": "Professional Feature",
+    "proBlurb": "Unlock real-time energy prices, carbon intensity data, and ROI calculations",
+    "upgradeCta": "Upgrade to Professional",
+    "fallbackNote": "Using regional estimates • Real-time data not available for {region}",
+    "spotPriceZone": "Spot Price ({zone})",
+    "annualConsumption": "Annual Consumption (kWh)",
+    "efficiencyGain": "Efficiency Gain (%)",
+    "annualSavings": "Annual Savings",
+    "co2Cut": "CO₂ Cut",
+    "roi": "ROI",
+    "refresh": "Refresh Prices",
+    "tPerYr": "t/yr",
+    "mo": "mo"
   }
 }
