@@ -136,7 +136,7 @@ export const BillingDashboard = () => {
 
   const handleManageBilling = async () => {
     if (!session?.user) {
-      toast.error('Please sign in to manage billing');
+      toast.error(t("signInToManage"));
       return;
     }
 
@@ -156,7 +156,7 @@ export const BillingDashboard = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to open billing portal');
+        throw new Error(t("portalFailed"));
       }
 
       const { url } = await response.json();
@@ -169,7 +169,7 @@ export const BillingDashboard = () => {
       }
     } catch (error: any) {
       console.error('Billing portal error:', error);
-      toast.error('Failed to open billing portal');
+      toast.error(t("portalFailed"));
     } finally {
       setManagingBilling(false);
     }
