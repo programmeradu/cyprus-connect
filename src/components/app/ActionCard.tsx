@@ -29,11 +29,14 @@ export const ActionCard = ({
   points,
   className = ""
 }: ActionCardProps) => {
+  const t = useTranslations("dashboard.actions.card");
   const impactLevelColors = {
     low: "bg-primary/20 text-primary border-primary/30",
     medium: "bg-amber-500/20 text-amber-600 dark:text-amber-500 border-amber-500/30",
     high: "bg-red-500/20 text-red-600 dark:text-red-500 border-red-500/30"
   };
+  const impactLabels = { low: t("impactLow"), medium: t("impactMedium"), high: t("impactHigh") };
+
 
   return (
     <motion.div
