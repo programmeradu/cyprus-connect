@@ -471,10 +471,10 @@ export default function InsightsPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold gradient-text mb-1">
-            Sustainability Insights
+            {t("title")}
           </h1>
           <p className="text-sm text-muted-foreground flex items-center gap-2">
-            <span>Real-time data & AI-powered recommendations</span>
+            <span>{t("subtitle")}</span>
             {userLocation && (
               <>
                 <span className="text-muted-foreground/50">•</span>
@@ -490,7 +490,7 @@ export default function InsightsPage() {
           className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50 flex items-center gap-2"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
+          {t("refresh")}
         </button>
       </div>
 
