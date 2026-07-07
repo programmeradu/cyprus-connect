@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -176,6 +177,7 @@ interface Course {
 }
 
 export default function LearnPage() {
+  const t = useTranslations("dashboard.learn");
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
@@ -220,11 +222,11 @@ export default function LearnPage() {
         setCourses(data);
         setFilteredCourses(data);
       } else {
-        toast.error("Failed to load courses");
+        toast.error(t("toast.loadFailed"));
       }
     } catch (error) {
       console.error("Failed to load courses:", error);
-      toast.error("Failed to load courses");
+      toast.error(t("toast.loadFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -271,7 +273,7 @@ export default function LearnPage() {
       }
 
       // Show progress message since this can take a while
-      toast.info("Generating courses... This may take 2-3 minutes. Please wait.", {
+      toast.info(t("toast.generatingInfo"), {
         duration: 10000
       });
 
@@ -292,23 +294,23 @@ export default function LearnPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Failed to generate courses' }));
-        toast.error(error.error || 'Failed to generate courses');
+        const error = await response.json().catch(() => ({ error: t("toast.generateFail") }));
+        toast.error(error.error || t("toast.generateFail"));
         return;
       }
 
       const data = await response.json();
       
       if (data.coursesGenerated > 0) {
-        toast.success(`Successfully generated ${data.coursesGenerated} new course${data.coursesGenerated > 1 ? 's' : ''}!`);
+        toast.success(t("toast.generatedN", { count: data.coursesGenerated, plural: data.coursesGenerated > 1 ? "s" : "" }));
       } else {
-        toast.info(data.message || "No new courses needed at this time");
+        toast.info(data.message || t("toast.noNewNeeded"));
       }
       
       await loadCourses(); // Reload courses
     } catch (error) {
       console.error('Auto-generation failed:', error);
-      toast.error('Failed to generate courses. Please try again.');
+      toast.error(t("toast.generateFail"));
     } finally {
       setIsAutoGenerating(false);
     }
@@ -329,7 +331,7 @@ export default function LearnPage() {
       });
 
       if (response.ok) {
-        toast.success("Successfully enrolled!");
+        toast.success(t("toast.enrolledOk"));
         
         // Update local state to reflect enrollment immediately
         setCourses(prevCourses =>
@@ -343,15 +345,15 @@ export default function LearnPage() {
       } else {
         const data = await response.json();
         if (data.code === 'ALREADY_ENROLLED') {
-          toast.info("You're already enrolled in this course");
+          toast.info(t("toast.alreadyEnrolled"));
           router.push(`/app/learn/${courseId}`);
         } else {
-          toast.error(data.error || "Failed to enroll");
+          toast.error(data.error || t("toast.enrollFail"));
         }
       }
     } catch (error) {
       console.error("Failed to enroll:", error);
-      toast.error("Failed to enroll in course");
+      toast.error(t("toast.enrollFail"));
     }
   };
 
@@ -391,8 +393,8 @@ export default function LearnPage() {
   return (
     <>
       <AppHeader
-        title="Learning Center"
-        subtitle="AI-powered sustainability courses tailored for your business"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {/* AI Feature Banner */}
@@ -409,25 +411,23 @@ export default function LearnPage() {
             <div className="flex-1">
               <h3 className="font-bold mb-2 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
-                AI-Powered Learning Center
+                {t("aiCenter")}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Your learning center intelligently generates courses based on your company's emissions data, 
-                insights, and recommendations. Courses are automatically created when gaps are detected 
-                or when new sustainability challenges emerge.
+                {t("aiCenterBody")}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
                 <div className="p-3 bg-muted/30 rounded-lg">
-                  <p className="font-semibold mb-1">📊 Data-Driven</p>
-                  <p className="text-muted-foreground">Analyzes your emissions and metrics</p>
+                  <p className="font-semibold mb-1">{t("dataDrivenTitle")}</p>
+                  <p className="text-muted-foreground">{t("dataDrivenBody")}</p>
                 </div>
                 <div className="p-3 bg-muted/30 rounded-lg">
-                  <p className="font-semibold mb-1">🎯 Personalized</p>
-                  <p className="text-muted-foreground">Tailored to your industry & goals</p>
+                  <p className="font-semibold mb-1">{t("personalizedTitle")}</p>
+                  <p className="text-muted-foreground">{t("personalizedBody")}</p>
                 </div>
                 <div className="p-3 bg-muted/30 rounded-lg">
-                  <p className="font-semibold mb-1">🖼️ Rich Content</p>
-                  <p className="text-muted-foreground">Includes AI-generated videos & images</p>
+                  <p className="font-semibold mb-1">{t("richTitle")}</p>
+                  <p className="text-muted-foreground">{t("richBody")}</p>
                 </div>
               </div>
               <button
@@ -438,12 +438,12 @@ export default function LearnPage() {
                 {isAutoGenerating ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Generating Courses...
+                    {t("generatingCourses")}
                   </>
                 ) : (
                   <>
                     <CustomAIGenerateIcon className="w-4 h-4" />
-                    Generate My First Courses
+                    {t("generateFirst")}
                   </>
                 )}
               </button>
@@ -461,7 +461,7 @@ export default function LearnPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{courses.filter(c => c.isEnrolled).length}</p>
-              <p className="text-xs text-muted-foreground">Enrolled Courses</p>
+              <p className="text-xs text-muted-foreground">{t("enrolledCourses")}</p>
             </div>
           </div>
         </div>
@@ -481,7 +481,7 @@ export default function LearnPage() {
                   : 0}
                 %
               </p>
-              <p className="text-xs text-muted-foreground">Avg Progress</p>
+              <p className="text-xs text-muted-foreground">{t("avgProgress")}</p>
             </div>
           </div>
         </div>
@@ -495,7 +495,7 @@ export default function LearnPage() {
               <p className="text-2xl font-bold">
                 {courses.filter(c => c.isEnrolled && c.progress === 100).length}
               </p>
-              <p className="text-xs text-muted-foreground">Completed</p>
+              <p className="text-xs text-muted-foreground">{t("completedStat")}</p>
             </div>
           </div>
         </div>
@@ -507,7 +507,7 @@ export default function LearnPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{courses.length}</p>
-              <p className="text-xs text-muted-foreground">Total Courses</p>
+              <p className="text-xs text-muted-foreground">{t("totalCourses")}</p>
             </div>
           </div>
         </div>
@@ -544,7 +544,7 @@ export default function LearnPage() {
             }`}
           >
             <Search className="w-4 h-4" />
-            {searchQuery && <span className="hidden sm:inline">Searching...</span>}
+            {searchQuery && <span className="hidden sm:inline">{t("searching")}</span>}
           </button>
           
           <AnimatePresence>
@@ -562,7 +562,7 @@ export default function LearnPage() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search courses..."
+                      placeholder={t("searchPh")}
                       autoFocus
                       className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     />
@@ -584,7 +584,7 @@ export default function LearnPage() {
             }`}
           >
             <Filter className="w-4 h-4" />
-            {hasActiveFilters && <span className="hidden sm:inline">Active</span>}
+            {hasActiveFilters && <span className="hidden sm:inline">{t("active")}</span>}
           </button>
 
           <AnimatePresence>
@@ -596,7 +596,7 @@ export default function LearnPage() {
                 className="absolute right-0 top-full mt-2 w-72 glass-strong rounded-lg shadow-premium p-4 z-50"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-sm">Filters</h3>
+                  <h3 className="font-semibold text-sm">{tc("filters")}</h3>
                   {hasActiveFilters && (
                     <button
                       onClick={() => {
@@ -606,20 +606,20 @@ export default function LearnPage() {
                       }}
                       className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      Clear all
+                      {tc("clearAll")}
                     </button>
                   )}
                 </div>
 
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-medium mb-2">Industry</label>
+                    <label className="block text-xs font-medium mb-2">{t("industryFilter")}</label>
                     <select
                       value={selectedIndustry}
                       onChange={(e) => setSelectedIndustry(e.target.value)}
                       className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     >
-                      <option value="all">All Industries</option>
+                      <option value="all">{t("allIndustries")}</option>
                       {industries.map((industry) => (
                         <option key={industry} value={industry}>
                           {industry}
@@ -629,16 +629,16 @@ export default function LearnPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium mb-2">Difficulty</label>
+                    <label className="block text-xs font-medium mb-2">{t("difficulty")}</label>
                     <select
                       value={selectedDifficulty}
                       onChange={(e) => setSelectedDifficulty(e.target.value)}
                       className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                     >
-                      <option value="all">All Levels</option>
-                      <option value="beginner">Beginner</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="advanced">Advanced</option>
+                      <option value="all">{t("allLevels")}</option>
+                      <option value="beginner">{t("beginner")}</option>
+                      <option value="intermediate">{t("intermediate")}</option>
+                      <option value="advanced">{t("advanced")}</option>
                     </select>
                   </div>
                 </div>
@@ -655,7 +655,7 @@ export default function LearnPage() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <CustomPlayIcon className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-bold">Continue Learning</h2>
+              <h2 className="text-lg font-bold">{t("continueLearning")}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {enrolledCourses.map((course, index) => (
@@ -678,7 +678,7 @@ export default function LearnPage() {
             <div className="flex items-center gap-2 mb-4">
               <CustomSparklesIcon className="w-5 h-5 text-primary" />
               <h2 className="text-lg font-bold">
-                {enrolledCourses.length > 0 ? "Explore More Courses" : "Available Courses"}
+                {enrolledCourses.length > 0 ? t("exploreMore") : t("available")}
               </h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -700,7 +700,7 @@ export default function LearnPage() {
         {filteredCourses.length === 0 && (
           <div className="glass-strong rounded-xl p-12 text-center">
             <CustomBookIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-30" />
-            <p className="text-sm text-muted-foreground mb-4">No courses found</p>
+            <p className="text-sm text-muted-foreground mb-4">{t("noCourses")}</p>
             {hasActiveFilters && (
               <button
                 onClick={() => {
@@ -710,7 +710,7 @@ export default function LearnPage() {
                 }}
                 className="text-sm text-primary hover:underline"
               >
-                Clear filters
+                {t("clearFilters")}
               </button>
             )}
           </div>
@@ -729,6 +729,7 @@ interface CourseCardProps {
 }
 
 function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: CourseCardProps) {
+  const t = useTranslations("dashboard.learn");
   const getDifficultyColor = (level: string) => {
     if (!level) return "text-muted-foreground bg-muted";
     
@@ -791,7 +792,7 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
         {isEnrolled && course.progress !== undefined && (
           <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2">
             <div className="flex items-center justify-between text-xs text-white mb-1">
-              <span>Progress</span>
+              <span>{t("progress")}</span>
               <span>{course.progress}%</span>
             </div>
             <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
@@ -823,7 +824,7 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
               course.difficultyLevel
             )}`}
           >
-            {course.difficultyLevel}
+            {course.difficultyLevel && ["beginner","intermediate","advanced"].includes(course.difficultyLevel.toLowerCase()) ? t(course.difficultyLevel.toLowerCase() as any) : course.difficultyLevel}
           </span>
           {course.industry && (
             <span className="text-[10px] px-2 py-1 rounded-full bg-muted text-muted-foreground font-medium capitalize">
@@ -835,15 +836,15 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
         <div className="flex items-center gap-3 text-[10px] text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <CustomClockIcon className="w-3 h-3" />
-            <span>{course.estimatedHours}h</span>
+            <span>{t("hours", { value: course.estimatedHours })}</span>
           </div>
           <div className="flex items-center gap-1">
             <CustomModuleIcon className="w-3 h-3" />
-            <span>{course.moduleCount} modules</span>
+            <span>{t("modules", { count: course.moduleCount })}</span>
           </div>
           <div className="flex items-center gap-1">
             <CustomLessonIcon className="w-3 h-3" />
-            <span>{course.lessonCount} lessons</span>
+            <span>{t("lessons", { count: course.lessonCount })}</span>
           </div>
         </div>
 
@@ -855,7 +856,7 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
             }}
             className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-medium transition-colors"
           >
-            Enroll Now
+            {t("enrollNow")}
           </button>
         )}
 
@@ -867,7 +868,7 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
             }}
             className="w-full py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-xs font-medium transition-colors"
           >
-            {course.progress === 100 ? "Review Course" : "Continue Learning"}
+            {course.progress === 100 ? t("reviewCourse") : t("continueCourse")}
           </button>
         )}
       </div>
