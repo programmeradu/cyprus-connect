@@ -1000,13 +1000,13 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       </div>
                       <p className="text-xs font-medium mb-1">
                         {viewMode === "library" 
-                          ? "No saved content yet" 
-                          : "No generations yet"}
+                          ? t("sidebar.noSaved")
+                          : t("sidebar.noGenerations")}
                       </p>
                       <p className="text-[10px]">
                         {viewMode === "library" 
-                          ? "Click the star icon to save!" 
-                          : "Start creating!"}
+                          ? t("sidebar.saveHint")
+                          : t("sidebar.createHint")}
                       </p>
                     </div>
                   ) : (
