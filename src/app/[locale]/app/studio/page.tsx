@@ -695,17 +695,17 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
           {/* Context Type */}
           <div className="mb-3">
-            <label className="block text-[9px] font-medium mb-1">Content Context</label>
+            <label className="block text-[9px] font-medium mb-1">{t("creator.contextLabel")}</label>
             <select
               value={contextType}
               onChange={(e) => setContextType(e.target.value as ContextType)}
               className="w-full px-2 py-1.5 bg-background border border-border rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/50"
             >
-              <option value="custom">Custom Prompt</option>
-              <option value="company_data">Company Overview</option>
-              <option value="progress">Progress & Achievements</option>
-              <option value="insights">Data & Insights</option>
-              <option value="recommendations">Action Recommendations</option>
+              <option value="custom">{t("contextTypes.custom")}</option>
+              <option value="company_data">{t("contextTypes.company_data")}</option>
+              <option value="progress">{t("contextTypes.progress")}</option>
+              <option value="insights">{t("contextTypes.insights")}</option>
+              <option value="recommendations">{t("contextTypes.recommendations")}</option>
             </select>
           </div>
 
