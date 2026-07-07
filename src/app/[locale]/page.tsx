@@ -23,11 +23,11 @@ export default function Home() {
   const handleSignOut = async () => {
     const { error } = await authClient.signOut();
     if (error?.code) {
-      toast.error("Failed to sign out");
+      toast.error(tNav("signOutError"));
     } else {
       localStorage.removeItem("bearer_token");
       refetch();
-      toast.success("Signed out successfully");
+      toast.success(tNav("signOutSuccess"));
       router.push("/");
     }
   };
