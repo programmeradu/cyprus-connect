@@ -1489,5 +1489,23 @@
       "description": "Ζήστε τη διαχείριση βιωσιμότητας με AI για τη ΜμΕ σας",
       "getStarted": "Ξεκινήστε"
     }
+  },
+  "documentUpload": {
+    "processing": "Επεξεργασία εγγράφου...",
+    "uploadCta": "Ανέβασε λογαριασμό ή έγγραφο",
+    "uploadHint": "PDF, JPEG ή PNG (έως 10MB)",
+    "success": "Το έγγραφο επεξεργάστηκε!",
+    "failed": "Αποτυχία επεξεργασίας: {msg}",
+    "error": "Σφάλμα",
+    "extracted": "Δεδομένα που εντοπίστηκαν",
+    "accountNumber": "Αριθμός Λογαριασμού",
+    "utilityType": "Τύπος Λογ/σμού",
+    "usageAmount": "Κατανάλωση",
+    "totalAmount": "Σύνολο",
+    "billingPeriod": "Περίοδος Χρέωσης",
+    "viewRaw": "Δες OCR κείμενο",
+    "confidence": "{pct}% αξιοπιστία",
+    "na": "—",
+    "unknownError": "Άγνωστο σφάλμα"
   }
 }

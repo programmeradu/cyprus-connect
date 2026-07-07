@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { UtilityBillData, OCRResult } from '@/lib/ocr/types';
 import { toast } from 'sonner';
 import { Upload, FileText, Loader2, CheckCircle2, XCircle } from 'lucide-react';
@@ -14,6 +15,7 @@ interface UploadState {
 }
 
 export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data: UtilityBillData) => void }) {
+  const t = useTranslations('documentUpload');
   const [state, setState] = useState<UploadState>({
     loading: false,
     error: null,
@@ -58,20 +60,20 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
         documentId: data.documentId,
       });
 
-      toast.success('Document processed successfully! ✅');
-      
+      toast.success(t('success'));
+
       if (onUploadComplete && data.billData) {
         onUploadComplete(data.billData);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = error instanceof Error ? error.message : t('unknownError');
       setState({
         loading: false,
         error: errorMessage,
         ocrResult: null,
         billData: null,
       });
-      toast.error(`Failed to process document: ${errorMessage}`);
+      toast.error(t('failed', { msg: errorMessage }));
     }
   }
 
@@ -89,7 +91,7 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
         />
         <label
           htmlFor="file-upload"
-          className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-colors ${
+          className={`flex flex-col items-center justify-center w-full min-h-32 px-4 py-3 border-2 border-dashed rounded-xl transition-colors text-center ${
             state.loading
               ? 'border-muted bg-muted/20 cursor-not-allowed'
               : 'border-border hover:border-primary bg-background cursor-pointer'
@@ -98,13 +100,13 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
           {state.loading ? (
             <>
               <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
-              <p className="text-sm text-muted-foreground">Processing document...</p>
+              <p className="text-sm text-muted-foreground break-words">{t('processing')}</p>
             </>
           ) : (
             <>
               <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-              <p className="text-sm font-medium text-foreground">Upload utility bill or document</p>
-              <p className="text-xs text-muted-foreground mt-1">PDF, JPEG, or PNG (max 10MB)</p>
+              <p className="text-sm font-medium text-foreground break-words">{t('uploadCta')}</p>
+              <p className="text-xs text-muted-foreground mt-1 break-words">{t('uploadHint')}</p>
             </>
           )}
         </label>
@@ -114,9 +116,9 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
       {state.error && (
         <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
           <XCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-sm font-medium text-destructive">Error</p>
-            <p className="text-xs text-destructive/80">{state.error}</p>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-destructive">{t('error')}</p>
+            <p className="text-xs text-destructive/80 break-words">{state.error}</p>
           </div>
         </div>
       )}
@@ -126,36 +128,36 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
         <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle2 className="w-5 h-5 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">Extracted Data</h3>
+            <h3 className="text-sm font-semibold text-foreground break-words">{t('extracted')}</h3>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <p className="text-xs text-muted-foreground">Account Number</p>
-              <p className="text-sm font-medium">{state.billData.accountNumber || 'N/A'}</p>
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground break-words">{t('accountNumber')}</p>
+              <p className="text-sm font-medium break-words">{state.billData.accountNumber || t('na')}</p>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Utility Type</p>
-              <p className="text-sm font-medium capitalize">{state.billData.usageType}</p>
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground break-words">{t('utilityType')}</p>
+              <p className="text-sm font-medium capitalize break-words">{state.billData.usageType}</p>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Usage Amount</p>
-              <p className="text-sm font-medium">
-                {state.billData.usageAmount?.toFixed(2) || 'N/A'} {state.billData.usageUnit}
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground break-words">{t('usageAmount')}</p>
+              <p className="text-sm font-medium break-words">
+                {state.billData.usageAmount?.toFixed(2) || t('na')} {state.billData.usageUnit}
               </p>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Total Amount</p>
-              <p className="text-sm font-medium">
-                {state.billData.currency} {state.billData.totalAmount?.toFixed(2) || 'N/A'}
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground break-words">{t('totalAmount')}</p>
+              <p className="text-sm font-medium break-words">
+                {state.billData.currency} {state.billData.totalAmount?.toFixed(2) || t('na')}
               </p>
             </div>
           </div>
 
           {state.billData.billingPeriodStart && (
             <div className="mt-3 pt-3 border-t border-border/50">
-              <p className="text-xs text-muted-foreground">Billing Period</p>
-              <p className="text-sm font-medium">{state.billData.billingPeriodStart}</p>
+              <p className="text-xs text-muted-foreground break-words">{t('billingPeriod')}</p>
+              <p className="text-sm font-medium break-words">{state.billData.billingPeriodStart}</p>
             </div>
           )}
         </div>
@@ -164,15 +166,15 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
       {/* OCR Result Details */}
       {state.ocrResult && state.ocrResult.text && (
         <details className="group">
-          <summary className="flex items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
-            <FileText className="w-4 h-4" />
-            <span>View Raw OCR Text</span>
-            <span className="ml-auto text-xs">
-              {state.ocrResult.confidence && `${(state.ocrResult.confidence * 100).toFixed(0)}% confidence`}
+          <summary className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+            <FileText className="w-4 h-4 flex-shrink-0" />
+            <span className="break-words">{t('viewRaw')}</span>
+            <span className="ml-auto text-xs break-words">
+              {state.ocrResult.confidence && t('confidence', { pct: (state.ocrResult.confidence * 100).toFixed(0) })}
             </span>
           </summary>
           <div className="mt-2 p-3 rounded-lg bg-muted/30 max-h-48 overflow-y-auto">
-            <p className="text-xs whitespace-pre-wrap font-mono text-foreground/80">
+            <p className="text-xs whitespace-pre-wrap font-mono text-foreground/80 break-words">
               {state.ocrResult.text}
             </p>
           </div>
