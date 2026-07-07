@@ -407,7 +407,7 @@ function SettingsContent() {
                   className="w-full px-3 py-1.5 bg-background border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
                   <option value="">{t("selectCountry")}</option>
-                  <optgroup label="Africa">
+                  <optgroup label={t("regions.africa")}>
                     <option value="DZ">Algeria</option>
                     <option value="AO">Angola</option>
                     <option value="EG">Egypt</option>
@@ -424,7 +424,7 @@ function SettingsContent() {
                     <option value="ZM">Zambia</option>
                     <option value="ZW">Zimbabwe</option>
                   </optgroup>
-                  <optgroup label="Asia">
+                  <optgroup label={t("regions.asia")}>
                     <option value="AE">United Arab Emirates</option>
                     <option value="BD">Bangladesh</option>
                     <option value="CN">China</option>
@@ -447,7 +447,7 @@ function SettingsContent() {
                     <option value="UZ">Uzbekistan</option>
                     <option value="VN">Vietnam</option>
                   </optgroup>
-                  <optgroup label="Europe">
+                  <optgroup label={t("regions.europe")}>
                     <option value="AT">Austria</option>
                     <option value="BE">Belgium</option>
                     <option value="CH">Switzerland</option>
@@ -470,16 +470,16 @@ function SettingsContent() {
                     <option value="RO">Romania</option>
                     <option value="SE">Sweden</option>
                   </optgroup>
-                  <optgroup label="North America">
+                  <optgroup label={t("regions.northAmerica")}>
                     <option value="CA">Canada</option>
                     <option value="MX">Mexico</option>
                     <option value="US">United States</option>
                   </optgroup>
-                  <optgroup label="Oceania">
+                  <optgroup label={t("regions.oceania")}>
                     <option value="AU">Australia</option>
                     <option value="NZ">New Zealand</option>
                   </optgroup>
-                  <optgroup label="South America">
+                  <optgroup label={t("regions.southAmerica")}>
                     <option value="AR">Argentina</option>
                     <option value="BO">Bolivia</option>
                     <option value="BR">Brazil</option>
