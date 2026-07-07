@@ -969,7 +969,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                     }`}
                   >
                     <RecentIcon />
-                    Recent
+                    {t("recent")}
                   </button>
                   <button
                     onClick={() => setViewMode("library")}
@@ -980,7 +980,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                     }`}
                   >
                     <LibraryIcon />
-                    Library
+                    {t("library")}
                     {studioStats && viewMode === "library" && ` (${studioStats.savedCount})`}
                   </button>
                 </div>
