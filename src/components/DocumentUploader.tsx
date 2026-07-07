@@ -87,7 +87,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
     const validFiles = files.filter(file => {
       const isValid = Object.keys(ACCEPTED_FILE_TYPES).includes(file.type);
       if (!isValid) {
-        toast.error(`${file.name}: Unsupported file type`);
+        toast.error(t("toasts.unsupported", { name: file.name }));
       }
       return isValid;
     });
