@@ -510,14 +510,14 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
         setSelectedMedia(editedMedia);
         await loadStudioStats();
         
-        toast.success("Image edited successfully!", {
-          description: "Powered by Gemini 2.5 Flash Image"
+        toast.success(t("toasts.imageEdited"), {
+          description: t("toasts.imageEditedDesc")
         });
         setEditPrompt("");
       }
     } catch (error: any) {
       console.error("Image editing error:", error);
-      toast.error(error.message || "Failed to edit image");
+      toast.error(error.message || t("toasts.imageEditFailed"));
     } finally {
       setIsEditingImage(false);
     }
