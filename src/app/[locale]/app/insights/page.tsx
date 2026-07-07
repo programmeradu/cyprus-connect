@@ -421,13 +421,13 @@ export default function InsightsPage() {
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="text-center max-w-md">
           <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Unable to Load Insights</h2>
+          <h2 className="text-xl font-semibold mb-2">{t("unableToLoad")}</h2>
           <p className="text-sm text-muted-foreground mb-4">{error}</p>
           <button
             onClick={handleRefresh}
             className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all"
           >
-            Try Again
+            {t("tryAgain")}
           </button>
         </div>
       </div>
