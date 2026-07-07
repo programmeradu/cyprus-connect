@@ -774,10 +774,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="text-sm font-bold">Preview</h3>
+                  <h3 className="text-sm font-bold">{t("preview.title")}</h3>
                   {selectedMedia.model && (
                     <p className="text-[8px] text-muted-foreground mt-0.5">
-                      Generated with {selectedMedia.model === "imagen-4.0-generate-001" ? "Imagen 4" : selectedMedia.model === "veo-3.1-generate-preview" ? "Veo 3.1" : "Gemini 2.5 Flash"}
+                      {t("preview.generatedWith", { model: selectedMedia.model === "imagen-4.0-generate-001" ? t("models.imagen4") : selectedMedia.model === "veo-3.1-generate-preview" ? t("models.veo") : t("models.geminiFlash") })}
                     </p>
                   )}
                 </div>
@@ -789,7 +789,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                         ? "bg-primary/10 text-primary"
                         : "bg-muted hover:bg-primary/10 hover:text-primary"
                     }`}
-                    title={selectedMedia.saved ? "Saved to library" : "Save to library"}
+                    title={selectedMedia.saved ? t("preview.savedToLibrary") : t("preview.saveToLibrary")}
                   >
                     <Star className={`w-3.5 h-3.5 ${selectedMedia.saved ? "fill-current" : ""}`} />
                   </button>
@@ -799,7 +799,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                     className="h-7 text-[10px] px-2"
                   >
                     <Download className="w-3 h-3 mr-1" />
-                    Download
+                    {t("preview.download")}
                   </PremiumButton>
                 </div>
               </div>
