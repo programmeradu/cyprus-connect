@@ -756,33 +756,33 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Operating Jurisdictions
+            {t("settings.jurisdictionsTitle")}
           </h3>
           <p className="text-[10px] text-muted-foreground mb-3 font-light">
-            Select the jurisdictions where your company operates to track relevant regulations
+            {t("settings.jurisdictionsDescription")}
           </p>
           <div className="space-y-2">
-            {["European Union", "United States", "United Kingdom", "Global"].map((jurisdiction) => (
-              <label key={jurisdiction} className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+            {jurisdictionOptions.map(({ value, label }) => (
+              <label key={value} className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.jurisdictions.includes(jurisdiction)}
+                  checked={localSettings.jurisdictions.includes(value)}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setLocalSettings({
                         ...localSettings,
-                        jurisdictions: [...localSettings.jurisdictions, jurisdiction]
+                        jurisdictions: [...localSettings.jurisdictions, value]
                       });
                     } else {
                       setLocalSettings({
                         ...localSettings,
-                        jurisdictions: localSettings.jurisdictions.filter(j => j !== jurisdiction)
+                        jurisdictions: localSettings.jurisdictions.filter(j => j !== value)
                       });
                     }
                   }}
                   className="w-3.5 h-3.5 rounded border-border text-primary focus:ring-1 focus:ring-primary"
                 />
-                <span className="text-xs">{jurisdiction}</span>
+                <span className="text-xs">{label}</span>
               </label>
             ))}
           </div>
