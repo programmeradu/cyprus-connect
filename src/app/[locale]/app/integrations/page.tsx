@@ -619,7 +619,7 @@ function IntegrationsContent() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter US ZIP code (e.g., 94105)"
+                  placeholder={t("energy.zipPlaceholder")}
                   className="px-3 py-2 rounded-lg border border-input bg-background/50 text-[12px] h-9 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               )}
