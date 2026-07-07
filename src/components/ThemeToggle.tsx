@@ -1,0 +1,106 @@
+"use client"
+
+import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
+
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+
+  useEffect(() => {
+    // Check localStorage and system preference on mount
+    const stored = localStorage.getItem("theme") as "light" | "dark" | null
+    const systemPreference = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+    const initialTheme = stored || systemPreference
+    
+    setTheme(initialTheme)
+    document.documentElement.classList.toggle("dark", initialTheme === "dark")
+  }, [])
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light"
+    setTheme(newTheme)
+    localStorage.setItem("theme", newTheme)
+    document.documentElement.classList.toggle("dark", newTheme === "dark")
+  }
+
+  return (
+    <motion.button
+      onClick={toggleTheme}
+      className="relative w-9 h-9 rounded-full glass flex items-center justify-center group"
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      aria-label="Toggle theme"
+    >
+      {/* Animated background glow */}
+      <motion.div
+        className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100"
+        animate={{
+          boxShadow: theme === "dark" 
+            ? "0 0 20px rgba(100, 255, 180, 0.3)" 
+            : "0 0 20px rgba(255, 200, 80, 0.3)"
+        }}
+        transition={{ duration: 0.3 }}
+      />
+      
+      {/* Sun Icon */}
+      <motion.svg
+        className="absolute w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        initial={false}
+        animate={{
+          scale: theme === "light" ? 1 : 0,
+          rotate: theme === "light" ? 0 : 180,
+          opacity: theme === "light" ? 1 : 0,
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        <circle cx="12" cy="12" r="4" fill="oklch(0.55 0.15 155)" />
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+          const rad = (angle * Math.PI) / 180
+          const x1 = 12 + 7 * Math.cos(rad)
+          const y1 = 12 + 7 * Math.sin(rad)
+          const x2 = 12 + 10 * Math.cos(rad)
+          const y2 = 12 + 10 * Math.sin(rad)
+          return (
+            <line
+              key={angle}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="oklch(0.55 0.15 155)"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          )
+        })}
+      </motion.svg>
+      
+      {/* Moon Icon */}
+      <motion.svg
+        className="absolute w-5 h-5"
+        viewBox="0 0 24 24"
+        fill="none"
+        initial={false}
+        animate={{
+          scale: theme === "dark" ? 1 : 0,
+          rotate: theme === "dark" ? 0 : -180,
+          opacity: theme === "dark" ? 1 : 0,
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        <path
+          d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+          fill="oklch(0.65 0.16 160)"
+          stroke="oklch(0.65 0.16 160)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="16" cy="8" r="1.5" fill="oklch(0.12 0.01 150)" opacity="0.3" />
+        <circle cx="18" cy="12" r="1" fill="oklch(0.12 0.01 150)" opacity="0.2" />
+      </motion.svg>
+    </motion.button>
+  )
+}
