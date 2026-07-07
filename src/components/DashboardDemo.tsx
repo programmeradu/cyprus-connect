@@ -1543,7 +1543,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     >
                       {/* Modal Header */}
                       <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/10 to-primary/5">
-                        <h3 className="text-lg font-bold gradient-text">Sustainability Report Preview</h3>
+                        <h3 className="text-lg font-bold gradient-text">{t("report.modalTitle")}</h3>
                         <div className="flex gap-2">
                           <button
                             onClick={downloadPDF}
@@ -1552,7 +1552,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            Download PDF
+                            {t("report.downloadPdf")}
                           </button>
                           <button
                             onClick={() => setShowPreview(false)}
