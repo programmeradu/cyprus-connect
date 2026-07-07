@@ -543,7 +543,7 @@ function IntegrationsContent() {
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <Globe className="w-3 h-3" />
-                  Global Zone
+                  {t("energy.globalZone")}
                 </div>
               </button>
               <button
