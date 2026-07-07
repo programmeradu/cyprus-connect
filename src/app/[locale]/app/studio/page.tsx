@@ -711,7 +711,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
           {/* Quick Ideas */}
           <div className="mb-3">
-            <label className="block text-[9px] font-medium mb-1">Quick Ideas</label>
+            <label className="block text-[9px] font-medium mb-1">{t("creator.quickIdeas")}</label>
             <div className="flex flex-wrap gap-1">
               {generateContextSuggestions().map((suggestion, index) => (
                 <button
