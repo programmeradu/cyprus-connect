@@ -163,9 +163,9 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold mb-1">Upload Utility Bills</h2>
+            <h2 className="text-xl font-bold mb-1">{t("title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Upload CSV files from utility bills for automatic data extraction
+              {t("subtitle")}
             </p>
           </div>
           <button
@@ -195,10 +195,10 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               
               <div>
                 <p className="text-base font-medium mb-1">
-                  Drop your CSV file here
+                  {t("dropHere")}
                 </p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  or click to browse
+                  {t("orBrowse")}
                 </p>
               </div>
 
@@ -212,12 +212,12 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               <label htmlFor="csv-upload">
                 <PremiumButton size="sm" className="text-xs" type="button">
                   <FileText className="w-3 h-3 mr-2" />
-                  Choose File
+                  {t("chooseFile")}
                 </PremiumButton>
               </label>
 
               <div className="text-xs text-muted-foreground mt-2">
-                <p className="mb-1">CSV format expected columns:</p>
+                <p className="mb-1">{t("expectedColumns")}</p>
                 <code className="bg-muted px-2 py-1 rounded text-[10px]">
                   electricity, gas, water, waste, transport
                 </code>
