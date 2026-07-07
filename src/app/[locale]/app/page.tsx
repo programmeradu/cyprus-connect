@@ -5,6 +5,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Loader2, TrendingDown, TrendingUp, Zap, Droplet, Recycle, Leaf, Battery, ChevronDown } from "lucide-react";
 import { PremiumButton } from "@/components/ui/PremiumButton";
@@ -83,6 +84,7 @@ interface LeaderboardData {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations("dashboard.home");
   const { data: session, isPending } = useSession();
   const { user: contextUser, isLoading: isUserLoading } = useUser();
   const router = useRouter();
@@ -270,7 +272,7 @@ export default function DashboardPage() {
     const name = p.name?.toLowerCase() || '';
     return name.includes('pro') || name.includes('enterprise') || name.includes('subscription');
   });
-  const planName = subscription?.name || "Free Plan";
+  const planName = subscription?.name || t("freePlan");
 
   if (isPending || isUserLoading || isLoading) {
     return (
@@ -305,9 +307,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight mb-1">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-1">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Real-time sustainability metrics • {formatDate(new Date(), { timezone: userTimezone, includeTime: true })}
+            {t("subtitleRealtime")} • {formatDate(new Date(), { timezone: userTimezone, includeTime: true })}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -320,13 +322,13 @@ export default function DashboardPage() {
           )}
           <Link href="/app/analytics">
             <PremiumButton variant="outline" size="sm" className="text-xs">
-              Reports
+              {t("reports")}
               <ChevronDown className="w-3 h-3 ml-1" />
             </PremiumButton>
           </Link>
           <Link href="/app/settings">
             <PremiumButton variant="outline" size="sm" className="text-xs">
-              Settings
+              {t("settings")}
             </PremiumButton>
           </Link>
         </div>
@@ -342,7 +344,7 @@ export default function DashboardPage() {
         >
           <div className="flex items-start justify-between mb-3">
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-2">Total Carbon Footprint</p>
+              <p className="text-xs font-medium text-muted-foreground mb-2">{t("totalCarbonFootprint")}</p>
               <p className="text-2xl font-bold">
                 {carbonFootprint > 0 ? carbonFootprint.toFixed(1) : '0'} <span className="text-sm font-normal text-muted-foreground">tCO₂e</span>
               </p>
@@ -350,7 +352,7 @@ export default function DashboardPage() {
           </div>
           <div className={`flex items-center gap-1 text-[10px] ${carbonTrend < 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'} mb-3`}>
             {carbonTrend < 0 ? <TrendingDown className="w-3 h-3" /> : <TrendingUp className="w-3 h-3" />}
-            <span className="font-medium">{Math.abs(carbonTrend).toFixed(1)}% Since Last Period</span>
+            <span className="font-medium">{t("sinceLastPeriod", { value: Math.abs(carbonTrend).toFixed(1) })}</span>
           </div>
           {/* Mini line chart */}
           <svg viewBox="0 0 200 40" className="w-full h-8 opacity-60">
@@ -373,7 +375,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
         >
-          <p className="text-xs font-medium text-muted-foreground mb-2">Resource Usage Efficiency</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{t("resourceEfficiency")}</p>
           <p className="text-2xl font-bold mb-3">
             {resourceEfficiency > 0 ? resourceEfficiency.toFixed(0) : '0'}<span className="text-sm font-normal text-muted-foreground">%</span>
           </p>
@@ -410,7 +412,7 @@ export default function DashboardPage() {
             </div>
             <div className={`flex items-center gap-1 text-[10px] ${efficiencyTrend > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {efficiencyTrend > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              <span className="font-medium">{Math.abs(efficiencyTrend).toFixed(1)}% Change</span>
+              <span className="font-medium">{t("change", { value: Math.abs(efficiencyTrend).toFixed(1) })}</span>
             </div>
           </div>
         </motion.div>
@@ -422,7 +424,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-xs font-medium text-muted-foreground mb-2">Renewable Energy Share</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{t("renewableShare")}</p>
           <p className="text-2xl font-bold mb-3">{renewableShare.toFixed(0)}%</p>
           
           <div className="flex items-center justify-center mb-3">
@@ -437,7 +439,7 @@ export default function DashboardPage() {
           
           <div className={`flex items-center justify-center gap-1 text-[10px] ${renewableTrend > 0 ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
             {renewableTrend > 0 && <TrendingUp className="w-3 h-3" />}
-            <span className="font-medium">{renewableTrend > 0 ? `+${renewableTrend.toFixed(1)}%` : 'Goal: 100% by 2030'}</span>
+            <span className="font-medium">{renewableTrend > 0 ? `+${renewableTrend.toFixed(1)}%` : t("renewableGoal")}</span>
           </div>
         </motion.div>
 
@@ -448,7 +450,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
         >
-          <p className="text-xs font-medium text-muted-foreground mb-2">Waste Diversion Rate</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{t("wasteDiversion")}</p>
           <p className="text-2xl font-bold mb-3">{wasteDiversion.toFixed(0)}%</p>
           
           <div className="flex items-center justify-center mb-3">
@@ -456,9 +458,9 @@ export default function DashboardPage() {
           </div>
           
           <p className="text-[10px] text-muted-foreground text-center">
-            {comparisonData?.user_metrics.waste_diversion 
-              ? `Industry Avg: ${comparisonData.user_metrics.waste_diversion.percentile.toFixed(0)}th percentile`
-              : 'Track industry performance'}
+            {comparisonData?.user_metrics.waste_diversion
+              ? t("industryAvgPercentile", { percentile: comparisonData.user_metrics.waste_diversion.percentile.toFixed(0) })
+              : t("trackIndustry")}
           </p>
         </motion.div>
       </div>
@@ -472,7 +474,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h3 className="text-base font-bold mb-4">Renewable Energy Progress</h3>
+          <h3 className="text-base font-bold mb-4">{t("renewableProgress")}</h3>
           
           <div className="h-64">
             {chartData.length > 0 ? (
@@ -539,7 +541,7 @@ export default function DashboardPage() {
               </svg>
             ) : (
               <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                No historical data available yet
+                {t("noHistorical")}
               </div>
             )}
           </div>
@@ -547,7 +549,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center gap-6 mt-4 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-6 h-0.5 bg-primary" />
-              <span className="text-muted-foreground">Renewable Energy Adoption (%)</span>
+              <span className="text-muted-foreground">{t("renewableAdoption")}</span>
             </div>
           </div>
         </motion.div>
@@ -559,7 +561,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
         >
-          <h3 className="text-base font-bold mb-6">Peer Comparison</h3>
+          <h3 className="text-base font-bold mb-6">{t("peerComparison")}</h3>
           
           {/* Circular grade */}
           <div className="flex items-center justify-center mb-6">
@@ -599,11 +601,11 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <span className="text-muted-foreground">Your Company</span>
+                <span className="text-muted-foreground">{t("yourCompany")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-chart-3" />
-                <span className="text-muted-foreground">Top Performer</span>
+                <span className="text-muted-foreground">{t("topPerformer")}</span>
               </div>
             </div>
             
@@ -613,15 +615,15 @@ export default function DashboardPage() {
                   {comparisonData.overall_grade}
                 </p>
                 <p className="text-[10px] font-semibold text-primary">
-                  {comparisonData.overall_percentile.toFixed(0)}th Percentile
+                  {t("percentile", { value: comparisonData.overall_percentile.toFixed(0) })}
                 </p>
               </div>
             )}
             
             <div className="pt-3 border-t border-border space-y-1">
-              <p className="text-[10px] text-muted-foreground">Rank: #{leaderboardData?.rank ?? '-'} of {leaderboardData?.total_users ?? '-'} SMEs</p>
+              <p className="text-[10px] text-muted-foreground">{t("rankLine", { rank: leaderboardData?.rank ?? "-", total: leaderboardData?.total_users ?? "-" })}</p>
               {contextUser?.companyIndustry && (
-                <p className="text-[10px] text-muted-foreground capitalize">Industry: {contextUser.companyIndustry}</p>
+                <p className="text-[10px] text-muted-foreground capitalize">{t("industryLine", { industry: contextUser.companyIndustry })}</p>
               )}
             </div>
           </div>
@@ -669,8 +671,8 @@ export default function DashboardPage() {
         >
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-lg font-bold">Advanced Analytics & Insights</h2>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Real-time data & compliance tools</p>
+              <h2 className="text-lg font-bold">{t("advancedAnalytics")}</h2>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{t("advancedAnalyticsSub")}</p>
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
@@ -698,7 +700,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <h3 className="text-base font-bold mb-4">Recent Initiatives</h3>
+          <h3 className="text-base font-bold mb-4">{t("recentInitiatives")}</h3>
           
           <div className="space-y-4">
             {completedActions.length > 0 ? (
@@ -718,22 +720,22 @@ export default function DashboardPage() {
                     <p className="text-xs text-muted-foreground">
                       {action.created_at 
                         ? formatRelativeTime(action.created_at, userTimezone)
-                        : "Recently completed"}
+                        : t("recentlyCompleted")}
                     </p>
                   </div>
                 </div>
               ))
             ) : (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">No completed initiatives yet</p>
-                <p className="text-xs text-muted-foreground mt-1">Start taking green actions to see them here</p>
+                <p className="text-sm text-muted-foreground">{t("noInitiatives")}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("startInitiatives")}</p>
               </div>
             )}
           </div>
           
           <Link href="/app/actions">
             <PremiumButton variant="outline" size="sm" className="w-full mt-4 text-xs">
-              View All Initiatives
+              {t("viewAllInitiatives")}
             </PremiumButton>
           </Link>
         </motion.div>
@@ -745,7 +747,7 @@ export default function DashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
         >
-          <h3 className="text-base font-bold mb-4">Personalized Suggestions</h3>
+          <h3 className="text-base font-bold mb-4">{t("personalizedSuggestions")}</h3>
           
           {suggestions.length > 0 ? (
             <ol className="space-y-2 mb-6 list-decimal list-inside text-sm">
@@ -757,20 +759,20 @@ export default function DashboardPage() {
                     suggestion.priority === 'high' ? 'bg-orange-500/10 text-orange-600' :
                     'bg-blue-500/10 text-blue-600'
                   }`}>
-                    {suggestion.priority}
+                    {(["critical","high","medium","low"].includes(suggestion.priority) ? t(`priority.${suggestion.priority}` as any) : suggestion.priority)}
                   </span>
                 </li>
               ))}
             </ol>
           ) : (
             <div className="text-center py-8 mb-6">
-              <p className="text-sm text-muted-foreground">Track more data to get personalized suggestions</p>
+              <p className="text-sm text-muted-foreground">{t("noSuggestions")}</p>
             </div>
           )}
           
           <Link href="/app/actions">
             <PremiumButton size="sm" className="w-full text-xs">
-              Explore Recommendations
+              {t("exploreRecommendations")}
             </PremiumButton>
           </Link>
         </motion.div>
