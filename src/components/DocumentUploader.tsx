@@ -6,6 +6,7 @@ import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2, File, Trash2, I
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { toast } from "sonner";
 import { BoltIcon, FireIcon, WaterIcon, RecycleIcon, CarbonIcon } from "@/components/icons/CustomIcons";
+import { useTranslations, useLocale } from "next-intl";
 
 interface DocumentUploaderProps {
   onDataExtracted: (data: {
@@ -52,6 +53,8 @@ const ACCEPTED_FILE_TYPES = {
 };
 
 export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderProps) {
+  const t = useTranslations("documentUploader");
+  const locale = useLocale();
   const [isDragging, setIsDragging] = useState(false);
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -84,7 +87,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
     const validFiles = files.filter(file => {
       const isValid = Object.keys(ACCEPTED_FILE_TYPES).includes(file.type);
       if (!isValid) {
-        toast.error(`${file.name}: Unsupported file type`);
+        toast.error(t("toasts.unsupported", { name: file.name }));
       }
       return isValid;
     });
@@ -134,7 +137,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
       });
 
       if (!response.ok) {
-        throw new Error("Document processing failed");
+        throw new Error(t("toasts.processingFailed"));
       }
 
       const result = await response.json();
@@ -151,7 +154,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         )
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Processing failed";
+      const message = error instanceof Error ? error.message : t("toasts.processingGenericFailed");
       setDocuments(prev =>
         prev.map(d =>
           d.id === doc.id
@@ -163,7 +166,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
             : d
         )
       );
-      toast.error(`Failed to process ${doc.file.name}`);
+      toast.error(t("toasts.failedToProcess", { name: doc.file.name }));
     }
   };
 
@@ -200,10 +203,10 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
   const handleApplyData = () => {
     if (aggregatedData && Object.keys(aggregatedData).length > 0) {
       onDataExtracted(aggregatedData);
-      toast.success("Data applied to calculator!");
+      toast.success(t("toasts.applied"));
       onClose?.();
     } else {
-      toast.error("No data to apply");
+      toast.error(t("toasts.noData"));
     }
   };
 
@@ -236,9 +239,9 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold mb-1">Upload Documents</h2>
+            <h2 className="text-xl font-bold mb-1">{t("title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Upload bills, reports, CSV, Excel files for intelligent data extraction
+              {t("subtitle")}
             </p>
           </div>
           <button
@@ -267,10 +270,10 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
             
             <div>
               <p className="text-base font-medium mb-1">
-                Drop your documents here
+                {t("dropHere")}
               </p>
               <p className="text-sm text-muted-foreground mb-4">
-                or click to browse files
+                {t("orBrowse")}
               </p>
             </div>
 
@@ -285,14 +288,14 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
             <label htmlFor="document-upload">
               <PremiumButton size="sm" className="text-xs" type="button">
                 <FileText className="w-3 h-3 mr-2" />
-                Choose Files
+                {t("chooseFiles")}
               </PremiumButton>
             </label>
 
             <div className="text-xs text-muted-foreground mt-2">
-              <p className="mb-1">Supported formats:</p>
+              <p className="mb-1">{t("supportedFormats")}</p>
               <p className="text-[10px] text-muted-foreground/70">
-                PDF, PNG, JPG, WebP, CSV, Excel (.xls, .xlsx)
+                {t("supportedFormatsList")}
               </p>
             </div>
           </div>
@@ -301,7 +304,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         {/* Documents List */}
         {documents.length > 0 && (
           <div className="space-y-3 mb-6">
-            <h3 className="text-sm font-semibold">Uploaded Documents ({documents.length})</h3>
+            <h3 className="text-sm font-semibold">{t("uploadedDocuments", { count: documents.length })}</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {documents.map((doc) => (
                 <motion.div
@@ -349,36 +352,21 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
                   
                   {doc.extractedData && (
                     <div className="mt-2 pt-2 border-t border-border/50 text-xs space-y-1">
-                      {doc.extractedData.electricity && (
-                        <div className="flex items-center gap-2">
-                          <BoltIcon className="w-3 h-3 text-primary" />
-                          <span>Electricity: {doc.extractedData.electricity.toLocaleString()} kWh</span>
-                        </div>
-                      )}
-                      {doc.extractedData.gas && (
-                        <div className="flex items-center gap-2">
-                          <FireIcon className="w-3 h-3 text-primary" />
-                          <span>Gas: {doc.extractedData.gas.toLocaleString()} m³</span>
-                        </div>
-                      )}
-                      {doc.extractedData.water && (
-                        <div className="flex items-center gap-2">
-                          <WaterIcon className="w-3 h-3 text-primary" />
-                          <span>Water: {doc.extractedData.water.toLocaleString()} L</span>
-                        </div>
-                      )}
-                      {doc.extractedData.waste && (
-                        <div className="flex items-center gap-2">
-                          <RecycleIcon className="w-3 h-3 text-primary" />
-                          <span>Waste: {doc.extractedData.waste.toLocaleString()} kg</span>
-                        </div>
-                      )}
-                      {doc.extractedData.transport && (
-                        <div className="flex items-center gap-2">
-                          <CarbonIcon className="w-3 h-3 text-primary" />
-                          <span>Transport: {doc.extractedData.transport.toLocaleString()} km</span>
-                        </div>
-                      )}
+                      {(["electricity","gas","water","waste","transport"] as const).map((key) => {
+                        const v = doc.extractedData?.[key];
+                        if (!v) return null;
+                        const Icon = key === "electricity" ? BoltIcon
+                          : key === "gas" ? FireIcon
+                          : key === "water" ? WaterIcon
+                          : key === "waste" ? RecycleIcon
+                          : CarbonIcon;
+                        return (
+                          <div key={key} className="flex items-center gap-2">
+                            <Icon className="w-3 h-3 text-primary" />
+                            <span>{t(`labels.${key}`)}: {v.toLocaleString(locale)} {t(`units.${key}`)}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </motion.div>
@@ -396,29 +384,27 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
           >
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="w-5 h-5 text-primary" />
-              <h3 className="text-sm font-semibold">Total Extracted Data</h3>
+              <h3 className="text-sm font-semibold">{t("totalExtracted")}</h3>
             </div>
             
             <div className="bg-background/50 rounded-lg p-4 space-y-3">
-              {Object.entries(aggregatedData).map(([key, value]) => (
-                <div key={key} className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground capitalize flex items-center gap-2">
-                    {key === "electricity" && <><BoltIcon className="w-3.5 h-3.5" /> Electricity</>}
-                    {key === "gas" && <><FireIcon className="w-3.5 h-3.5" /> Natural Gas</>}
-                    {key === "water" && <><WaterIcon className="w-3.5 h-3.5" /> Water</>}
-                    {key === "waste" && <><RecycleIcon className="w-3.5 h-3.5" /> Waste</>}
-                    {key === "transport" && <><CarbonIcon className="w-3.5 h-3.5" /> Transportation</>}
-                  </span>
-                  <span className="text-sm font-medium">
-                    {value.toLocaleString()}{" "}
-                    {key === "electricity" && "kWh"}
-                    {key === "gas" && "m³"}
-                    {key === "water" && "L"}
-                    {key === "waste" && "kg"}
-                    {key === "transport" && "km"}
-                  </span>
-                </div>
-              ))}
+              {(Object.entries(aggregatedData) as [keyof ParsedData, number][]).map(([key, value]) => {
+                const Icon = key === "electricity" ? BoltIcon
+                  : key === "gas" ? FireIcon
+                  : key === "water" ? WaterIcon
+                  : key === "waste" ? RecycleIcon
+                  : CarbonIcon;
+                return (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Icon className="w-3.5 h-3.5" /> {t(`categories.${key}`)}
+                    </span>
+                    <span className="text-sm font-medium">
+                      {value.toLocaleString(locale)} {t(`units.${key}`)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -435,7 +421,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
               className="flex-1 text-xs"
               disabled={isProcessing}
             >
-              Clear All
+              {t("clearAll")}
             </PremiumButton>
             <PremiumButton
               onClick={handleApplyData}
@@ -445,12 +431,12 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
               {isProcessing ? (
                 <>
                   <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                  Processing...
+                  {t("processing")}
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-3 h-3 mr-2" />
-                  Apply to Calculator
+                  {t("applyToCalculator")}
                 </>
               )}
             </PremiumButton>
@@ -460,10 +446,10 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         {/* Help Section */}
         <div className="mt-6 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground mb-2">
-            <strong>Smart Analysis:</strong> Our AI can extract data from various document formats, even custom layouts
+            <strong>{t("smartAnalysis")}</strong> {t("smartAnalysisDesc")}
           </p>
           <p className="text-xs text-muted-foreground">
-            Upload monthly bills for: Electricity • Gas • Water • Waste • Transportation
+            {t("billsFor")}
           </p>
         </div>
       </motion.div>

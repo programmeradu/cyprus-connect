@@ -1257,5 +1257,51 @@
       "applied": "Τα δεδομένα εφαρμόστηκαν στον υπολογιστή!",
       "exampleDownloaded": "Το παράδειγμα CSV λήφθηκε!"
     }
+  },
+  "documentUploader": {
+    "title": "Ανέβασμα Εγγράφων",
+    "subtitle": "Ανεβάστε λογαριασμούς, αναφορές, CSV, Excel για έξυπνη εξαγωγή δεδομένων",
+    "dropHere": "Αφήστε τα έγγραφά σας εδώ",
+    "orBrowse": "ή κάντε κλικ για αναζήτηση αρχείων",
+    "chooseFiles": "Επιλογή Αρχείων",
+    "supportedFormats": "Υποστηριζόμενες μορφές:",
+    "supportedFormatsList": "PDF, PNG, JPG, WebP, CSV, Excel (.xls, .xlsx)",
+    "uploadedDocuments": "Ανεβασμένα Έγγραφα ({count})",
+    "totalExtracted": "Σύνολο Εξαγόμενων Δεδομένων",
+    "clearAll": "Καθαρισμός Όλων",
+    "processing": "Επεξεργασία...",
+    "applyToCalculator": "Εφαρμογή στον Υπολογιστή",
+    "smartAnalysis": "Έξυπνη Ανάλυση:",
+    "smartAnalysisDesc": "Το AI μας μπορεί να εξάγει δεδομένα από διάφορες μορφές εγγράφων, ακόμη και προσαρμοσμένες διατάξεις",
+    "billsFor": "Ανεβάστε μηνιαίους λογαριασμούς για: Ηλεκτρισμό • Αέριο • Νερό • Απορρίμματα • Μεταφορές",
+    "categories": {
+      "electricity": "Ηλεκτρισμός",
+      "gas": "Φυσικό Αέριο",
+      "water": "Νερό",
+      "waste": "Απορρίμματα",
+      "transport": "Μεταφορές"
+    },
+    "labels": {
+      "electricity": "Ηλεκτρισμός",
+      "gas": "Αέριο",
+      "water": "Νερό",
+      "waste": "Απορρίμματα",
+      "transport": "Μεταφορές"
+    },
+    "units": {
+      "electricity": "kWh",
+      "gas": "m³",
+      "water": "L",
+      "waste": "kg",
+      "transport": "km"
+    },
+    "toasts": {
+      "unsupported": "{name}: Μη υποστηριζόμενος τύπος αρχείου",
+      "processingFailed": "Η επεξεργασία εγγράφου απέτυχε",
+      "processingGenericFailed": "Η επεξεργασία απέτυχε",
+      "failedToProcess": "Αποτυχία επεξεργασίας {name}",
+      "applied": "Τα δεδομένα εφαρμόστηκαν στον υπολογιστή!",
+      "noData": "Δεν υπάρχουν δεδομένα προς εφαρμογή"
+    }
   }
 }

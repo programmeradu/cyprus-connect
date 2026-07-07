@@ -1257,5 +1257,51 @@
       "applied": "Data applied to calculator!",
       "exampleDownloaded": "Example CSV downloaded!"
     }
+  },
+  "documentUploader": {
+    "title": "Upload Documents",
+    "subtitle": "Upload bills, reports, CSV, Excel files for intelligent data extraction",
+    "dropHere": "Drop your documents here",
+    "orBrowse": "or click to browse files",
+    "chooseFiles": "Choose Files",
+    "supportedFormats": "Supported formats:",
+    "supportedFormatsList": "PDF, PNG, JPG, WebP, CSV, Excel (.xls, .xlsx)",
+    "uploadedDocuments": "Uploaded Documents ({count})",
+    "totalExtracted": "Total Extracted Data",
+    "clearAll": "Clear All",
+    "processing": "Processing...",
+    "applyToCalculator": "Apply to Calculator",
+    "smartAnalysis": "Smart Analysis:",
+    "smartAnalysisDesc": "Our AI can extract data from various document formats, even custom layouts",
+    "billsFor": "Upload monthly bills for: Electricity • Gas • Water • Waste • Transportation",
+    "categories": {
+      "electricity": "Electricity",
+      "gas": "Natural Gas",
+      "water": "Water",
+      "waste": "Waste",
+      "transport": "Transportation"
+    },
+    "labels": {
+      "electricity": "Electricity",
+      "gas": "Gas",
+      "water": "Water",
+      "waste": "Waste",
+      "transport": "Transport"
+    },
+    "units": {
+      "electricity": "kWh",
+      "gas": "m³",
+      "water": "L",
+      "waste": "kg",
+      "transport": "km"
+    },
+    "toasts": {
+      "unsupported": "{name}: Unsupported file type",
+      "processingFailed": "Document processing failed",
+      "processingGenericFailed": "Processing failed",
+      "failedToProcess": "Failed to process {name}",
+      "applied": "Data applied to calculator!",
+      "noData": "No data to apply"
+    }
   }
 }
