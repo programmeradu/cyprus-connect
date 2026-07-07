@@ -678,7 +678,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               }`}
             >
               <ImageIcon className="w-4 h-4 mb-1 text-primary" />
-              <p className="text-[10px] font-medium">Image</p>
+              <p className="text-[10px] font-medium">{t("creator.image")}</p>
             </button>
             <button
               onClick={() => setMediaType("video")}
@@ -689,7 +689,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               }`}
             >
               <Video className="w-4 h-4 mb-1 text-primary" />
-              <p className="text-[10px] font-medium">Video</p>
+              <p className="text-[10px] font-medium">{t("creator.video")}</p>
             </button>
           </div>
 
