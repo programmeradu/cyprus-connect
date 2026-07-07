@@ -384,29 +384,27 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
           >
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="w-5 h-5 text-primary" />
-              <h3 className="text-sm font-semibold">Total Extracted Data</h3>
+              <h3 className="text-sm font-semibold">{t("totalExtracted")}</h3>
             </div>
             
             <div className="bg-background/50 rounded-lg p-4 space-y-3">
-              {Object.entries(aggregatedData).map(([key, value]) => (
-                <div key={key} className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground capitalize flex items-center gap-2">
-                    {key === "electricity" && <><BoltIcon className="w-3.5 h-3.5" /> Electricity</>}
-                    {key === "gas" && <><FireIcon className="w-3.5 h-3.5" /> Natural Gas</>}
-                    {key === "water" && <><WaterIcon className="w-3.5 h-3.5" /> Water</>}
-                    {key === "waste" && <><RecycleIcon className="w-3.5 h-3.5" /> Waste</>}
-                    {key === "transport" && <><CarbonIcon className="w-3.5 h-3.5" /> Transportation</>}
-                  </span>
-                  <span className="text-sm font-medium">
-                    {value.toLocaleString()}{" "}
-                    {key === "electricity" && "kWh"}
-                    {key === "gas" && "m³"}
-                    {key === "water" && "L"}
-                    {key === "waste" && "kg"}
-                    {key === "transport" && "km"}
-                  </span>
-                </div>
-              ))}
+              {(Object.entries(aggregatedData) as [keyof ParsedData, number][]).map(([key, value]) => {
+                const Icon = key === "electricity" ? BoltIcon
+                  : key === "gas" ? FireIcon
+                  : key === "water" ? WaterIcon
+                  : key === "waste" ? RecycleIcon
+                  : CarbonIcon;
+                return (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Icon className="w-3.5 h-3.5" /> {t(`categories.${key}`)}
+                    </span>
+                    <span className="text-sm font-medium">
+                      {value.toLocaleString(locale)} {t(`units.${key}`)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -423,7 +421,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
               className="flex-1 text-xs"
               disabled={isProcessing}
             >
-              Clear All
+              {t("clearAll")}
             </PremiumButton>
             <PremiumButton
               onClick={handleApplyData}
@@ -433,12 +431,12 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
               {isProcessing ? (
                 <>
                   <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                  Processing...
+                  {t("processing")}
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-3 h-3 mr-2" />
-                  Apply to Calculator
+                  {t("applyToCalculator")}
                 </>
               )}
             </PremiumButton>
@@ -448,10 +446,10 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         {/* Help Section */}
         <div className="mt-6 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground mb-2">
-            <strong>Smart Analysis:</strong> Our AI can extract data from various document formats, even custom layouts
+            <strong>{t("smartAnalysis")}</strong> {t("smartAnalysisDesc")}
           </p>
           <p className="text-xs text-muted-foreground">
-            Upload monthly bills for: Electricity • Gas • Water • Waste • Transportation
+            {t("billsFor")}
           </p>
         </div>
       </motion.div>
