@@ -1169,6 +1169,35 @@
           "SSO & προηγμένη ασφάλεια"
         ]
       }
+    },
+    "dashboard": {
+      "signInRequired": "Συνδεθείτε για να δείτε τις πληροφορίες χρέωσης",
+      "signInToManage": "Συνδεθείτε για να διαχειριστείτε τη χρέωση",
+      "currentPlan": "Τρέχον Πρόγραμμα",
+      "priceSuffix": "${price}/{interval}",
+      "via": "μέσω",
+      "manage": "Διαχείριση",
+      "loading": "Φόρτωση...",
+      "cancelsOn": "Ακυρώνεται στις {date}",
+      "renewsOn": "Ανανεώνεται στις {date}",
+      "purchaseSummary": "Σύνοψη Αγορών",
+      "creditsPurchased": "Πιστώσεις που Αγοράστηκαν",
+      "totalSpent": "Συνολικό Ποσό",
+      "lastPurchase": "Τελευταία Αγορά",
+      "notAvailable": "Μ/Δ",
+      "paymentHistory": "Ιστορικό Πληρωμών",
+      "noPaymentHistory": "Δεν υπάρχει ακόμη ιστορικό πληρωμών",
+      "portalFailed": "Αποτυχία ανοίγματος πύλης χρέωσης",
+      "intervals": {
+        "month": "μήνα",
+        "year": "έτος"
+      },
+      "status": {
+        "succeeded": "επιτυχής",
+        "failed": "απέτυχε",
+        "pending": "εκκρεμεί",
+        "refunded": "επιστράφηκε"
+      }
     }
   },
   "themeToggle": {
