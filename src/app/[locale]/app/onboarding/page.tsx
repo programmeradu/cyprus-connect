@@ -299,17 +299,11 @@ export default function OnboardingPage() {
                 {/* Right Side - Content */}
                 <div className="flex-1 text-left">
                   <h2 className="text-xl md:text-2xl font-semibold mb-6">
-                    Unlock Instant Impact & Smarter Growth
+                    {t("step1.heading")}
                   </h2>
 
                   <div className="space-y-3 mb-8">
-                    {[
-                      "Effortless Data Integration",
-                      "Real-time Carbon Footprint Tracking",
-                      "AI-Driven Reduction Recommendations",
-                      "Compliance & Reporting Simplified",
-                      "Cost Savings Through Efficiency"
-                    ].map((feature, i) => (
+                    {(t.raw("step1.features") as string[]).map((feature, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, x: -20 }}
@@ -326,16 +320,15 @@ export default function OnboardingPage() {
                   </div>
 
                   <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
-                    Our AI-Powered Dashboard transforms complex data into actionable insights, 
-                    helping your business thrive while protecting our planet.
+                    {t("step1.description")}
                   </p>
 
                   <div className="flex items-center gap-4">
                     <PremiumButton onClick={() => setStep(2)} size="sm">
-                      Get Started
+                      {t("step1.getStarted")}
                     </PremiumButton>
                     <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                      Learn More
+                      {t("step1.learnMore")}
                     </button>
                   </div>
                 </div>
