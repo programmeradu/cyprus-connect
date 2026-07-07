@@ -524,10 +524,10 @@ function IntegrationsContent() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold mb-0.5">Energy Pricing</h3>
+                <h3 className="text-base font-semibold mb-0.5">{t("energy.title")}</h3>
                 <Globe className="w-3.5 h-3.5 text-primary" />
               </div>
-              <p className="text-[11px] text-muted-foreground">Global carbon intensity & regional utility rates</p>
+              <p className="text-[11px] text-muted-foreground">{t("energy.subtitle")}</p>
             </div>
           </div>
 
