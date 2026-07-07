@@ -864,10 +864,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                 <div className="p-3 bg-muted/30 rounded-lg">
                   <h4 className="text-[10px] font-semibold mb-2 flex items-center gap-1.5">
                     <Wand2 className="w-3 h-3 text-primary" />
-                    Natural Language Editing
+                    {t("editing.title")}
                   </h4>
                   <p className="text-[8px] text-muted-foreground mb-2">
-                    Powered by Gemini 2.5 Flash Image - describe your edits naturally
+                    {t("editing.subtitle")}
                   </p>
                   <div className="flex gap-2">
                     <input
@@ -875,7 +875,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       value={editPrompt}
                       onChange={(e) => setEditPrompt(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleNaturalLanguageEdit()}
-                      placeholder="e.g., 'add a sustainability badge', 'change background to forest', 'make text larger'"
+                      placeholder={t("editing.placeholder")}
                       className="flex-1 px-2 py-1.5 bg-background border border-border rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/50"
                       disabled={isEditingImage}
                     />
