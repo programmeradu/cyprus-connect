@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect, Suspense } from "react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { CurrencySwitcher } from "@/components/ui/CurrencySwitcher";
@@ -46,6 +47,8 @@ const AlertIcon = ({ className }: { className?: string }) => (
 );
 
 function SettingsContent() {
+  const t = useTranslations("dashboard.settings");
+  const tc = useTranslations("common");
   const { user, isLoading: isUserLoading, refetchUser } = useUser();
   const { data: session, isPending: isSessionLoading } = useSession();
   const { refreshCurrency } = useCurrency();
@@ -138,7 +141,7 @@ function SettingsContent() {
 
   const handleSave = async () => {
     if (!user?.id) {
-      toast.error("User not found");
+      toast.error(t("toast.userNotFound"));
       return;
     }
 
@@ -163,7 +166,7 @@ function SettingsContent() {
 
       if (!userResponse.ok) {
         const error = await userResponse.json();
-        toast.error(error.error || "Failed to save changes");
+        toast.error(error.error || t("toast.saveFail"));
         return;
       }
 
@@ -181,16 +184,16 @@ function SettingsContent() {
 
       if (!preferencesResponse.ok) {
         const error = await preferencesResponse.json();
-        toast.error(error.error || "Failed to save preferences");
+        toast.error(error.error || t("toast.saveFail"));
         return;
       }
 
       await refetchUser();
       await refreshCurrency();
-      toast.success("Settings saved successfully! ✅");
+      toast.success(t("toast.saveOk"));
     } catch (error) {
       console.error("Save error:", error);
-      toast.error("Failed to save changes");
+      toast.error(t("toast.saveFail"));
     } finally {
       setIsSaving(false);
     }
@@ -226,9 +229,9 @@ function SettingsContent() {
           ...prev,
           [key]: !newValue,
         }));
-        toast.error("Failed to update notification preferences");
+        toast.error(t("toast.prefsFail"));
       } else {
-        toast.success("Notification preferences updated");
+        toast.success(t("toast.prefsOk"));
       }
     } catch (error) {
       // Revert on error
@@ -237,7 +240,7 @@ function SettingsContent() {
         [key]: !newValue,
       }));
       console.error("Failed to update notification preferences:", error);
-      toast.error("Failed to update notification preferences");
+      toast.error(t("toast.prefsFail"));
     }
   };
 
@@ -245,8 +248,8 @@ function SettingsContent() {
     return (
       <>
         <AppHeader
-          title="Settings"
-          subtitle="Manage your account and preferences"
+          title={t("title")}
+          subtitle={t("subtitle")}
         />
         <div className="flex items-center justify-center py-12">
           <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
@@ -258,8 +261,8 @@ function SettingsContent() {
   return (
     <>
       <AppHeader
-        title="Settings"
-        subtitle="Manage your account and preferences"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {/* Tab Navigation */}
@@ -272,7 +275,7 @@ function SettingsContent() {
               : 'text-muted-foreground hover:text-foreground hover:bg-muted'
           }`}
         >
-          Profile
+          {t("tabProfile")}
         </button>
         <button
           onClick={() => setActiveTab('billing')}
@@ -283,7 +286,7 @@ function SettingsContent() {
               : 'text-muted-foreground hover:text-foreground hover:bg-muted'
           }`}
         >
-          Billing & Plans
+          {t("tabBilling")}
         </button>
         <button
           onClick={() => setActiveTab('notifications')}
@@ -293,7 +296,7 @@ function SettingsContent() {
               : 'text-muted-foreground hover:text-foreground hover:bg-muted'
           }`}
         >
-          Notifications
+          {t("tabNotifications")}
         </button>
       </div>
 
@@ -310,12 +313,12 @@ function SettingsContent() {
               <div className="p-1.5 rounded-lg border border-border/50 bg-muted/30">
                 <ProfileIcon className="w-4 h-4 text-foreground/60" />
               </div>
-              <h2 className="text-base font-bold">Profile Information</h2>
+              <h2 className="text-base font-bold">{t("profileInformation")}</h2>
             </div>
             
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5">Your Name</label>
+                <label className="block text-xs font-medium mb-1.5">{t("yourName")}</label>
                 <input
                   type="text"
                   value={name}
@@ -324,7 +327,7 @@ function SettingsContent() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5">Email</label>
+                <label className="block text-xs font-medium mb-1.5">{t("email")}</label>
                 <input
                   type="email"
                   value={email}
@@ -332,49 +335,49 @@ function SettingsContent() {
                   className="w-full px-3 py-1.5 bg-muted/50 border border-border rounded-lg text-xs cursor-not-allowed opacity-60"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  Email cannot be changed
+                  {t("emailLocked")}
                 </p>
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5">Company Name</label>
+                <label className="block text-xs font-medium mb-1.5">{t("companyName")}</label>
                 <input
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Your Company"
+                  placeholder={t("companyNamePh")}
                   className="w-full px-3 py-1.5 bg-background border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium mb-1.5">Industry</label>
+                  <label className="block text-xs font-medium mb-1.5">{t("industry")}</label>
                   <select 
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     className="w-full px-3 py-1.5 bg-background border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
                   >
-                    <option value="">Select industry</option>
-                    <option value="technology">Technology</option>
-                    <option value="manufacturing">Manufacturing</option>
-                    <option value="retail">Retail</option>
-                    <option value="hospitality">Hospitality</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="finance">Finance</option>
+                    <option value="">{t("selectIndustry")}</option>
+                    <option value="technology">{t("industries.technology")}</option>
+                    <option value="manufacturing">{t("industries.manufacturing")}</option>
+                    <option value="retail">{t("industries.retail")}</option>
+                    <option value="hospitality">{t("industries.hospitality")}</option>
+                    <option value="healthcare">{t("industries.healthcare")}</option>
+                    <option value="finance">{t("industries.finance")}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1.5">Company Size</label>
+                  <label className="block text-xs font-medium mb-1.5">{t("companySize")}</label>
                   <select 
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
                     className="w-full px-3 py-1.5 bg-background border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
                   >
-                    <option value="">Select team size</option>
-                    <option value="1-10">1-10 employees</option>
-                    <option value="11-50">11-50 employees</option>
-                    <option value="51-200">51-200 employees</option>
-                    <option value="201-500">201-500 employees</option>
-                    <option value="500+">500+ employees</option>
+                    <option value="">{t("selectTeamSize")}</option>
+                    <option value="1-10">{t("teamSizes.1-10")}</option>
+                    <option value="11-50">{t("teamSizes.11-50")}</option>
+                    <option value="51-200">{t("teamSizes.51-200")}</option>
+                    <option value="201-500">{t("teamSizes.201-500")}</option>
+                    <option value="500+">{t("teamSizes.500+")}</option>
                   </select>
                 </div>
               </div>
@@ -392,18 +395,18 @@ function SettingsContent() {
               <div className="p-1.5 rounded-lg border border-border/50 bg-muted/30">
                 <RegionalIcon className="w-4 h-4 text-foreground/60" />
               </div>
-              <h2 className="text-base font-bold">Regional Preferences</h2>
+              <h2 className="text-base font-bold">{t("regional")}</h2>
             </div>
             
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5">Country/Location</label>
+                <label className="block text-xs font-medium mb-1.5">{t("country")}</label>
                 <select 
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
                   className="w-full px-3 py-1.5 bg-background border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
                 >
-                  <option value="">Select your country</option>
+                  <option value="">{t("selectCountry")}</option>
                   <optgroup label="Africa">
                     <option value="DZ">Algeria</option>
                     <option value="AO">Angola</option>
@@ -490,14 +493,14 @@ function SettingsContent() {
                   </optgroup>
                 </select>
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  Used for energy pricing, compliance requirements, and regional data
+                  {t("countryHelp")}
                 </p>
               </div>
 
               <div>
                 <CurrencySwitcher variant="full" />
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  All prices and costs will be displayed in this currency. Changes take effect immediately across all pages.
+                  {t("currencyHelp")}
                 </p>
               </div>
             </div>
@@ -508,7 +511,7 @@ function SettingsContent() {
               onClick={handleSave}
               disabled={isSaving}
             >
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? tc("saving") : tc("save")}
             </PremiumButton>
           </motion.div>
 
@@ -523,13 +526,13 @@ function SettingsContent() {
               <div className="p-1.5 rounded-lg border border-destructive/30 bg-destructive/10">
                 <AlertIcon className="w-4 h-4 text-destructive" />
               </div>
-              <h2 className="text-base font-bold text-destructive">Danger Zone</h2>
+              <h2 className="text-base font-bold text-destructive">{t("dangerZone")}</h2>
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Once you delete your account, there is no going back. Please be certain.
+              {t("dangerBody")}
             </p>
             <PremiumButton variant="outline" size="sm" className="text-[10px] h-7 border-destructive text-destructive hover:bg-destructive hover:text-white">
-              Delete Account
+              {t("deleteAccount")}
             </PremiumButton>
           </motion.div>
         </>
@@ -551,10 +554,10 @@ function SettingsContent() {
           >
             <div className="mb-4">
               <h2 className="text-xl font-bold mb-1">
-                Upgrade Your <span className="gradient-text">Plan</span>
+                {t("upgradeTitleA")} <span className="gradient-text">{t("upgradeTitleB")}</span>
               </h2>
               <p className="text-xs text-muted-foreground">
-                Unlock more features and scale your sustainability impact
+                {t("upgradeSubtitle")}
               </p>
             </div>
             <AutumnPricingTable />
@@ -573,7 +576,7 @@ function SettingsContent() {
             <div className="p-1.5 rounded-lg border border-border/50 bg-muted/30">
               <NotificationIcon className="w-4 h-4 text-foreground/60" />
             </div>
-            <h2 className="text-base font-bold">Notifications</h2>
+            <h2 className="text-base font-bold">{t("notifications")}</h2>
           </div>
           
           {prefsLoading ? (
@@ -583,13 +586,13 @@ function SettingsContent() {
           ) : (
             <div className="space-y-2">
               {[
-                { key: "emissionAlerts" as const, label: "Emission entry notifications", description: "Get notified when emissions data is recorded" },
-                { key: "goalAlerts" as const, label: "Goal achievement alerts", description: "Celebrate when you reach sustainability milestones" },
-                { key: "leaderboardAlerts" as const, label: "Leaderboard position changes", description: "Track your ranking on the leaderboard" },
-                { key: "actionAlerts" as const, label: "Green action completions", description: "Get alerts when you complete green actions" },
-                { key: "insightAlerts" as const, label: "AI insights available", description: "Be notified when new AI insights are ready" },
-                { key: "complianceAlerts" as const, label: "Compliance requirement alerts", description: "Stay informed about compliance deadlines" },
-                { key: "systemAlerts" as const, label: "System alerts", description: "Important system updates and announcements" }
+                { key: "emissionAlerts" as const, label: t("notif.emissionAlertsLabel"), description: t("notif.emissionAlertsDesc") },
+                { key: "goalAlerts" as const, label: t("notif.goalAlertsLabel"), description: t("notif.goalAlertsDesc") },
+                { key: "leaderboardAlerts" as const, label: t("notif.leaderboardAlertsLabel"), description: t("notif.leaderboardAlertsDesc") },
+                { key: "actionAlerts" as const, label: t("notif.actionAlertsLabel"), description: t("notif.actionAlertsDesc") },
+                { key: "insightAlerts" as const, label: t("notif.insightAlertsLabel"), description: t("notif.insightAlertsDesc") },
+                { key: "complianceAlerts" as const, label: t("notif.complianceAlertsLabel"), description: t("notif.complianceAlertsDesc") },
+                { key: "systemAlerts" as const, label: t("notif.systemAlertsLabel"), description: t("notif.systemAlertsDesc") }
               ].map((item, i) => (
                 <div key={i} className="flex items-start justify-between p-2.5 rounded-lg bg-muted/30">
                   <div className="flex-1 pr-3">
@@ -620,18 +623,20 @@ function SettingsContent() {
 
 export default function SettingsPage() {
   return (
-    <Suspense fallback={
-      <>
-        <AppHeader
-          title="Settings"
-          subtitle="Manage your account and preferences"
-        />
-        <div className="flex items-center justify-center py-12">
-          <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-        </div>
-      </>
-    }>
+    <Suspense fallback={<SettingsFallback />}>
       <SettingsContent />
     </Suspense>
+  );
+}
+
+function SettingsFallback() {
+  const t = useTranslations("dashboard.settings");
+  return (
+    <>
+      <AppHeader title={t("title")} subtitle={t("subtitle")} />
+      <div className="flex items-center justify-center py-12">
+        <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+      </div>
+    </>
   );
 }
