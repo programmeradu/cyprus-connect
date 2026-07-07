@@ -92,10 +92,11 @@ export function AccountingIntegrationDialog({
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">Connect Accounting Software</h2>
+                  <h2 className="text-xl font-bold">{t("title")}</h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Automatically import your expense and accounting data
+                    {t("description")}
                   </p>
+
                 </div>
                 <button
                   onClick={onClose}
