@@ -119,6 +119,7 @@ interface Settings {
 type TabType = "overview" | "regulations" | "documents" | "audit" | "settings";
 
 export default function CompliancePage() {
+  const t = useTranslations("dashboard.compliance");
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
