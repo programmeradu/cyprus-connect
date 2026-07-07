@@ -615,8 +615,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
   return (
     <>
       <AppHeader
-        title="Media Studio"
-        subtitle="AI-powered sustainability content creation with Imagen 4 & Gemini 2.5 Flash"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {/* Icon Buttons - Right Aligned */}
