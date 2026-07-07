@@ -1228,11 +1228,11 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       <path d="M12 3c-2.5 2.5-2.5 6.5 0 9s6.5 2.5 9 0" />
                       <path d="M3 12c2.5 2.5 6.5 2.5 9 0s2.5-6.5 0-9" />
                     </svg>
-                    AI Carbon Footprint Analyzer
+                    {t("carbon.title")}
                   </h3>
                   <div className="flex items-center gap-2 mb-3">
                     <p className="text-xs text-muted-foreground flex-1">
-                      Get instant AI-powered analysis of your emissions and actionable reduction strategies
+                      {t("carbon.description")}
                     </p>
                     {location.city !== "Detecting..." && (
                       <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 border border-primary/20">
@@ -1246,30 +1246,30 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                   <div className="space-y-3 mb-4">
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Monthly Electricity (kWh)</label>
+                      <label className="text-xs font-medium mb-1 block">{t("carbon.electricityLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 5000"
+                        placeholder={t("carbon.electricityPlaceholder")}
                         value={carbonInput.electricity}
                         onChange={(e) => setCarbonInput({ ...carbonInput, electricity: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Monthly Transport (km)</label>
+                      <label className="text-xs font-medium mb-1 block">{t("carbon.transportLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 2000"
+                        placeholder={t("carbon.transportPlaceholder")}
                         value={carbonInput.transport}
                         onChange={(e) => setCarbonInput({ ...carbonInput, transport: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Monthly Waste (kg)</label>
+                      <label className="text-xs font-medium mb-1 block">{t("carbon.wasteLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 500"
+                        placeholder={t("carbon.wastePlaceholder")}
                         value={carbonInput.waste}
                         onChange={(e) => setCarbonInput({ ...carbonInput, waste: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
@@ -1282,7 +1282,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     disabled={carbonAnalyzing}
                     className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 disabled:opacity-50 transition-all"
                   >
-                    {carbonAnalyzing ? "Analyzing..." : "Analyze Carbon Footprint"}
+                    {carbonAnalyzing ? t("carbon.analyzing") : t("carbon.analyze")}
                   </button>
 
                   {carbonResult && (
@@ -1298,7 +1298,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             <path d="M12 3c-2.5 2.5-2.5 6.5 0 9s6.5 2.5 9 0" />
                             <path d="M3 12c2.5 2.5 6.5 2.5 9 0s2.5-6.5 0-9" />
                           </svg>
-                          AI Carbon Footprint Analysis
+                          {t("carbon.resultTitle")}
                         </h4>
                       </div>
                       <div className="p-4">
@@ -1317,10 +1317,10 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <rect x="3" y="4" width="18" height="16" rx="2" />
                           <path d="M7 8h6M7 12h10M7 16h8" strokeLinecap="round" />
                         </svg>
-                        Sustainability News
+                        {t("news.title")}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Latest environmental updates
+                        {t("news.subtitle")}
                       </p>
                     </div>
                     <button
@@ -1334,7 +1334,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                   <div className="space-y-3 max-h-[500px] overflow-y-auto">
                     {newsLoading ? (
-                      <div className="text-center py-8 text-sm text-muted-foreground">Loading news...</div>
+                      <div className="text-center py-8 text-sm text-muted-foreground">{t("news.loading")}</div>
                     ) : news.length > 0 ? (
                       news.slice(0, 5).map((item, i) => (
                         <motion.a
@@ -1372,7 +1372,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               {item.description}
                             </p>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-primary font-medium">Read more</span>
+                              <span className="text-xs text-primary font-medium">{t("news.readMore")}</span>
                               <svg className="w-3 h-3 text-primary group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                               </svg>
@@ -1381,7 +1381,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         </motion.a>
                       ))
                     ) : (
-                      <div className="text-center py-8 text-sm text-muted-foreground">No news available</div>
+                      <div className="text-center py-8 text-sm text-muted-foreground">{t("news.empty")}</div>
                     )}
                   </div>
                 </PremiumCard>
