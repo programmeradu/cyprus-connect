@@ -586,7 +586,7 @@ export default function InsightsPage() {
                         stroke="#10b981" 
                         strokeWidth={2}
                         fill="url(#carbonGradient)"
-                        name="Carbon Intensity"
+                        name={t("energySection.carbonIntensityLegend")}
                       />
                       <Line 
                         type="monotone" 
@@ -595,7 +595,7 @@ export default function InsightsPage() {
                         strokeWidth={1.5}
                         strokeDasharray="5 5"
                         dot={false}
-                        name="Target"
+                        name={t("energySection.targetLegend")}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
