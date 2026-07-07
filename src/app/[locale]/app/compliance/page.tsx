@@ -793,7 +793,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Automation Preferences
+            {t("settings.automationTitle")}
           </h3>
           <div className="space-y-3">
             <label className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
