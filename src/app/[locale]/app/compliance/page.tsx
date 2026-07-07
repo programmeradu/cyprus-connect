@@ -719,7 +719,7 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground mb-1 font-light">{log.details}</p>
-                  <span className="text-[9px] text-muted-foreground/70 font-light">by {log.createdBy}</span>
+                  <span className="text-[9px] text-muted-foreground/70 font-light">{t("audit.by", { user: log.createdBy })}</span>
                 </div>
               </div>
             ))
