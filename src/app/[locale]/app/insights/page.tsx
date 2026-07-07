@@ -498,37 +498,37 @@ export default function InsightsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <MetricCardCompact
           icon={<Zap className="w-4 h-4" />}
-          title="Carbon Intensity"
+          title={t("metrics.carbonIntensity")}
           value={energyData?.carbonIntensity?.current?.toFixed(0) || "N/A"}
           unit="gCO2/kWh"
-          trendText={`${energyData?.carbonIntensity?.fossilFuelPercentage?.toFixed(0) || 0}% Fossil`}
+          trendText={t("metrics.fossilPercent", { pct: energyData?.carbonIntensity?.fossilFuelPercentage?.toFixed(0) || 0 })}
           trendColor="#ef4444"
         />
         <MetricCardCompact
           icon={<DollarSign className="w-4 h-4" />}
-          title="Potential Savings"
+          title={t("metrics.potentialSavings")}
           value={energyData?.costSavings?.costSavingsUSD || 0}
           unit=""
-          trendText={`${energyData?.costSavings?.percentageReduction?.toFixed(1) || 0}% reduction`}
+          trendText={t("metrics.reduction", { pct: energyData?.costSavings?.percentageReduction?.toFixed(1) || 0 })}
           trendColor="#10b981"
           isCurrency
         />
         <MetricCardCompact
           icon={<TrendingUp className="w-4 h-4" />}
-          title="Industry Rank"
+          title={t("metrics.industryRank")}
           value={benchmarkData?.peerComparison?.percentile || "N/A"}
           unit="%"
-          trendText={benchmarkData?.peerComparison?.interpretation || "Calculating..."}
+          trendText={benchmarkData?.peerComparison?.interpretation || t("metrics.calculating")}
           trendColor={
             benchmarkData?.peerComparison?.percentile < 50 ? "#10b981" : "#ef4444"
           }
         />
         <MetricCardCompact
           icon={<FileCheck className="w-4 h-4" />}
-          title="Compliance Score"
+          title={t("metrics.complianceScore")}
           value={complianceData?.score?.toFixed(0) || "0"}
           unit="%"
-          trendText={`${complianceData?.urgentCount ?? 0} urgent / ${complianceData?.regulations?.length ?? 0} regs`}
+          trendText={t("metrics.regsSummary", { urgent: complianceData?.urgentCount ?? 0, total: complianceData?.regulations?.length ?? 0 })}
           trendColor="#10b981"
         />
       </div>
@@ -537,7 +537,7 @@ export default function InsightsPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Zap className="w-5 h-5 text-primary" />
-          Energy Pricing & Carbon Forecast
+          {t("energySection.title")}
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Carbon Intensity Forecast Chart */}
