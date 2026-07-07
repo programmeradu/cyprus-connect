@@ -703,7 +703,7 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
         <div className="space-y-2">
           {logs.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-sm text-muted-foreground">No activity logged yet</p>
+              <p className="text-sm text-muted-foreground">{t("audit.noActivity")}</p>
             </div>
           ) : (
             logs.map((log, index) => (
