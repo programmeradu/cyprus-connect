@@ -1579,14 +1579,14 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     <svg viewBox="0 0 24 24" className="w-5 h-5 text-emerald-600" fill="currentColor">
                                       <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                     </svg>
-                                    <span className="text-emerald-700 font-bold text-sm tracking-wide">SUSTAINABILITY REPORT</span>
+                                    <span className="text-emerald-700 font-bold text-sm tracking-wide">{t("report.badge")}</span>
                                   </div>
                                   <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">{reportInput.company}</h1>
-                                  <p className="text-gray-600 text-base">{reportInput.industry} Industry</p>
+                                  <p className="text-gray-600 text-base">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") }).split("•")[0].trim()}</p>
                                 </div>
                                 <div className="text-right bg-gradient-to-br from-emerald-50 to-green-50 px-6 py-4 rounded-xl border-2 border-emerald-200">
-                                  <div className="text-xs text-gray-600 mb-1 uppercase tracking-wide">Reporting Period</div>
-                                  <div className="text-2xl font-bold text-emerald-700">{reportInput.period || "Q4 2025"}</div>
+                                  <div className="text-xs text-gray-600 mb-1 uppercase tracking-wide">{t("report.reportingPeriod")}</div>
+                                  <div className="text-2xl font-bold text-emerald-700">{reportInput.period || t("report.defaultPeriod")}</div>
                                 </div>
                               </div>
 
