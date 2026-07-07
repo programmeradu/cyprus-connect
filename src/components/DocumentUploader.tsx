@@ -137,7 +137,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
       });
 
       if (!response.ok) {
-        throw new Error("Document processing failed");
+        throw new Error(t("toasts.processingFailed"));
       }
 
       const result = await response.json();
@@ -154,7 +154,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         )
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Processing failed";
+      const message = error instanceof Error ? error.message : t("toasts.processingGenericFailed");
       setDocuments(prev =>
         prev.map(d =>
           d.id === doc.id
@@ -166,7 +166,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
             : d
         )
       );
-      toast.error(`Failed to process ${doc.file.name}`);
+      toast.error(t("toasts.failedToProcess", { name: doc.file.name }));
     }
   };
 
