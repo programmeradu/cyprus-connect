@@ -804,14 +804,14 @@ function IntegrationsContent() {
               {/* Performance Overview */}
               <div className={`p-4 rounded-xl border ${getInterpretationBg(benchmarkComparison.interpretation)}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Performance Rating</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("benchmarks.performanceRating")}</p>
                   <p className={`text-sm font-bold ${getInterpretationColor(benchmarkComparison.interpretation)}`}>
-                    {benchmarkComparison.interpretation.replace('_', ' ')}
+                    {t(`benchmarks.ratings.${benchmarkComparison.interpretation}` as any)}
                   </p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-3 mt-3">
                   <div>
-                    <p className="text-[10px] text-muted-foreground mb-1">vs Regional Average ({benchmarkComparison.location_context.country})</p>
+                    <p className="text-[10px] text-muted-foreground mb-1">{t("benchmarks.vsRegional", { country: benchmarkComparison.location_context.country })}</p>
                     <p className={`text-lg font-bold ${
                       benchmarkComparison.vs_average_percent < 0 ? 'text-green-600' : 'text-orange-600'
                     }`}>
@@ -820,7 +820,7 @@ function IntegrationsContent() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground mb-1">vs Global Average</p>
+                    <p className="text-[10px] text-muted-foreground mb-1">{t("benchmarks.vsGlobal")}</p>
                     <p className={`text-lg font-bold ${
                       benchmarkComparison.vs_global_percent < 0 ? 'text-green-600' : 'text-orange-600'
                     }`}>
