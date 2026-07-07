@@ -678,9 +678,9 @@ function IntegrationsContent() {
               {energyData.carbonIntensity && !energyData.carbonIntensity.error && (
                 <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Carbon Intensity</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("energy.carbonIntensity")}</p>
                     <p className="text-[10px] text-primary font-medium">
-                      {energyData.carbonIntensity.renewablePercentage?.toFixed(1)}% renewable
+                      {t("energy.renewable", { pct: energyData.carbonIntensity.renewablePercentage?.toFixed(1) })}
                     </p>
                   </div>
                   <p className="text-xl font-bold text-primary">
