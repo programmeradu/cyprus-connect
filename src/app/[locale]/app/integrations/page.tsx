@@ -390,12 +390,12 @@ function IntegrationsContent() {
             {qbConnected && qbStatus && (
               <div className="mb-4 p-3 rounded-xl bg-accent/30 border border-border/30 space-y-2">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-muted-foreground">Environment</span>
+                  <span className="text-muted-foreground">{t("quickbooks.environment")}</span>
                   <span className="font-medium capitalize">{qbStatus.environment}</span>
                 </div>
                 {qbStatus.lastSyncedAt && (
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-muted-foreground">Last Sync</span>
+                    <span className="text-muted-foreground">{t("quickbooks.lastSync")}</span>
                     <span className="font-medium">
                       {new Date(qbStatus.lastSyncedAt).toLocaleDateString()}
                     </span>
@@ -403,7 +403,7 @@ function IntegrationsContent() {
                 )}
                 {qbStatus.isExpired && (
                   <div className="mt-2 p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                    <p className="text-[10px] text-orange-600">Token expired. Please reconnect.</p>
+                    <p className="text-[10px] text-orange-600">{t("quickbooks.tokenExpired")}</p>
                   </div>
                 )}
               </div>
