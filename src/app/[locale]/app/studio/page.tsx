@@ -895,8 +895,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                   <div className="flex items-start gap-1 mt-2 p-1.5 bg-primary/5 rounded">
                     <Sparkles className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
                     <p className="text-[8px] leading-tight text-muted-foreground">
-                      Examples: "remove background", "add green leaves", "make it brighter", "change sky to sunset", 
-                      "add company logo on shirt"
+                      {t("editing.examples")}
                     </p>
                   </div>
                 </div>
