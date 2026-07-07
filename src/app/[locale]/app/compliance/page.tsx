@@ -798,8 +798,8 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
           <div className="space-y-3">
             <label className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
               <div>
-                <div className="text-xs font-medium mb-0.5">Auto-submit reports</div>
-                <div className="text-[10px] text-muted-foreground font-light">Automatically submit ready reports</div>
+                <div className="text-xs font-medium mb-0.5">{t("settings.autoSubmitTitle")}</div>
+                <div className="text-[10px] text-muted-foreground font-light">{t("settings.autoSubmitDesc")}</div>
               </div>
               <input
                 type="checkbox"
