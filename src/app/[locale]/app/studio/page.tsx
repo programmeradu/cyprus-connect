@@ -942,10 +942,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                   </div>
                   <div>
                     <h3 className="text-sm font-bold">
-                      {viewMode === "recent" ? "Recent Generations" : "Saved Library"}
+                      {viewMode === "recent" ? t("recentGenerations") : t("savedLibrary")}
                     </h3>
                     <p className="text-[9px] text-muted-foreground">
-                      {filteredMedia.length} {filteredMedia.length === 1 ? "item" : "items"}
+                      {t("itemCount", { count: filteredMedia.length })}
                     </p>
                   </div>
                 </div>
