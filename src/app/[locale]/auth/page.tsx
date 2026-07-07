@@ -29,14 +29,12 @@ export default function AuthPage() {
 
     try {
       if (mode === "register") {
-        // Validate password confirmation
         if (formData.password !== formData.confirmPassword) {
-          toast.error("Passwords do not match");
+          toast.error(t("toast.passwordMismatch"));
           setIsLoading(false);
           return;
         }
 
-        // Register user
         const { error } = await authClient.signUp.email({
           email: formData.email,
           name: formData.name,
@@ -45,16 +43,15 @@ export default function AuthPage() {
 
         if (error?.code) {
           const errorMessages: Record<string, string> = {
-            USER_ALREADY_EXISTS: "Email already registered. Please sign in instead.",
+            USER_ALREADY_EXISTS: t("toast.userExists"),
           };
-          toast.error(errorMessages[error.code] || "Registration failed. Please try again.");
+          toast.error(errorMessages[error.code] || t("toast.registerFailed"));
           setIsLoading(false);
           return;
         }
 
-        toast.success("Account created! Redirecting to dashboard...");
-        
-        // Auto-login after registration
+        toast.success(t("toast.accountCreated"));
+
         const { error: loginError } = await authClient.signIn.email({
           email: formData.email,
           password: formData.password,
@@ -65,7 +62,6 @@ export default function AuthPage() {
           router.push("/app");
         }
       } else {
-        // Login user
         const { error } = await authClient.signIn.email({
           email: formData.email,
           password: formData.password,
@@ -74,17 +70,17 @@ export default function AuthPage() {
         });
 
         if (error?.code) {
-          toast.error("Invalid email or password. Please make sure you have already registered an account and try again.");
+          toast.error(t("toast.loginInvalid"));
           setIsLoading(false);
           return;
         }
 
-        toast.success("Welcome back!");
+        toast.success(t("toast.welcomeBack"));
         router.push("/app");
       }
     } catch (error) {
       console.error("Auth error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(t("toast.unexpected"));
       setIsLoading(false);
     }
   };
@@ -92,21 +88,19 @@ export default function AuthPage() {
   const handleGoogleAuth = async () => {
     try {
       setIsLoading(true);
-      // Use better-auth's social sign-in
-      const { data, error } = await authClient.signIn.social({
+      const { error } = await authClient.signIn.social({
         provider: "google",
         callbackURL: "/app",
       });
-      
+
       if (error) {
         console.error("Google OAuth error:", error);
-        toast.error("Failed to initiate Google sign-in. Please try again.");
+        toast.error(t("toast.googleFailed"));
         setIsLoading(false);
       }
-      // The redirect happens automatically by better-auth
     } catch (error) {
       console.error("Google OAuth error:", error);
-      toast.error("Failed to initiate Google sign-in. Please try again.");
+      toast.error(t("toast.googleFailed"));
       setIsLoading(false);
     }
   };
