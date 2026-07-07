@@ -341,25 +341,25 @@ export const BillingDashboard = () => {
           transition={{ delay: 0.1 }}
         >
           <PremiumCard className="p-4">
-            <h3 className="text-sm font-medium mb-3">Purchase Summary</h3>
+            <h3 className="text-sm font-medium mb-3">{t("purchaseSummary")}</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
                 <div className="text-xl font-bold gradient-text">
-                  {billingData.purchases.credits.toLocaleString()}
+                  {billingData.purchases.credits.toLocaleString(locale)}
                 </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">Credits Purchased</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{t("creditsPurchased")}</div>
               </div>
               <div className="text-center">
                 <div className="text-xl font-bold gradient-text">
                   ${(billingData.purchases.totalSpent / 100).toFixed(2)}
                 </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">Total Spent</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{t("totalSpent")}</div>
               </div>
               <div className="text-center">
                 <div className="text-xs font-medium text-muted-foreground">
-                  {billingData.purchases.lastPurchase ? formatDate(billingData.purchases.lastPurchase) : 'N/A'}
+                  {billingData.purchases.lastPurchase ? formatDate(billingData.purchases.lastPurchase) : t("notAvailable")}
                 </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">Last Purchase</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{t("lastPurchase")}</div>
               </div>
             </div>
           </PremiumCard>
@@ -373,12 +373,12 @@ export const BillingDashboard = () => {
         transition={{ delay: 0.15 }}
       >
         <PremiumCard className="p-4">
-          <h3 className="text-sm font-medium mb-3">Payment History</h3>
+          <h3 className="text-sm font-medium mb-3">{t("paymentHistory")}</h3>
           
           {paymentHistory.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground">
               <div className="text-2xl mb-1">📜</div>
-              <div className="text-xs">No payment history yet</div>
+              <div className="text-xs">{t("noPaymentHistory")}</div>
             </div>
           ) : (
             <div className="space-y-1.5">
@@ -417,7 +417,13 @@ export const BillingDashboard = () => {
                       payment.status === 'failed' ? 'text-destructive' :
                       'text-muted-foreground'
                     }`}>
-                      {payment.status}
+                      {(() => {
+                        const s = payment.status as 'succeeded' | 'failed' | 'pending' | 'refunded';
+                        if (s === 'succeeded' || s === 'failed' || s === 'pending' || s === 'refunded') {
+                          return t(`status.${s}`);
+                        }
+                        return payment.status;
+                      })()}
                     </div>
                   </div>
                 </div>
