@@ -41,7 +41,7 @@ const ComplianceIcon = ({ className }: { className?: string }) => (
 type NavItem = {
   href: "/app" | "/app/calculator" | "/app/actions" | "/app/marketplace" | "/app/compliance" | "/app/learn" | "/app/studio" | "/app/leaderboard" | "/app/analytics" | "/app/insights" | "/app/integrations" | "/app/settings";
   key: string;
-  icon: (props: { className?: string }) => React.ReactElement;
+  icon: React.ComponentType<{ className?: string }>;
   badge?: boolean;
 };
 
