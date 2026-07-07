@@ -638,7 +638,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                     doc.status === 'ready' ? 'bg-green-500/10 text-green-600' :
                     'bg-muted text-muted-foreground'
                   }`}>
-                    {doc.status.toUpperCase()}
+                    {statusLabel(doc.status)}
                   </div>
                 </div>
 
