@@ -356,7 +356,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
   const generateMedia = async () => {
     if (!prompt.trim()) {
-      toast.error("Please enter a prompt");
+      toast.error(t("toasts.enterPrompt"));
       return;
     }
 
@@ -365,7 +365,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       const sustainabilityPrompt = await buildSustainabilityPrompt(prompt);
       const token = localStorage.getItem("bearer_token");
       
-      toast.info(`Generating ${mediaType}... This may take a moment.`);
+      toast.info(t("toasts.generatingInfo", { type: t(`mediaType.${mediaType}`) }));
 
       if (mediaType === "image") {
         const response = await fetch("/api/generate-image", {
