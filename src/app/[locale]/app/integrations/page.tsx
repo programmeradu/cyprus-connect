@@ -265,7 +265,7 @@ function IntegrationsContent() {
       setEnergyData(data);
     } catch (error) {
       console.error("Error fetching energy data:", error);
-      toast.error("Failed to fetch energy data");
+      toast.error(t("toasts.energyFail"));
     } finally {
       setLoadingEnergy(false);
     }
