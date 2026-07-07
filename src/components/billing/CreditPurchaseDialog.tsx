@@ -54,7 +54,8 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
       }
     } catch (error: any) {
       console.error('Credit purchase error:', error);
-      toast.error(error.message || 'Failed to purchase credits');
+      toast.error(error.message || t("failed"));
+
     } finally {
       setLoading(null);
     }
