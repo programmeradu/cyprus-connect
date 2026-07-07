@@ -191,13 +191,14 @@ export const CreditBalance = ({
               clipRule="evenodd"
             />
           </svg>
-          <span className="font-medium">Low credit balance</span>
+          <span className="font-medium">{t("lowBalance")}</span>
         </div>
       )}
 
       <div className="mt-3 text-xs text-muted-foreground">
-        Credits are used for AI features like recommendations, insights, and report generation
+        {t("creditsHint")}
       </div>
+
     </PremiumCard>
   );
 };
