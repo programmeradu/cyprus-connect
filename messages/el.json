@@ -117,7 +117,14 @@
     "refresh": "Ανανέωση",
     "tryAgain": "Δοκιμάστε ξανά",
     "backToDashboard": "← Επιστροφή στον Πίνακα",
-    "toastLoadFailed": "Αποτυχία φόρτωσης δεδομένων"
+    "toastLoadFailed": "Αποτυχία φόρτωσης δεδομένων",
+    "save": "Αποθήκευση Αλλαγών",
+    "saving": "Αποθήκευση…",
+    "cancel": "Ακύρωση",
+    "delete": "Διαγραφή",
+    "clearAll": "Καθαρισμός όλων",
+    "search": "Αναζήτηση",
+    "filters": "Φίλτρα"
   },
   "dashboard": {
     "leaderboard": {
