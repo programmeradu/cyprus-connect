@@ -5,6 +5,8 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import Link from "next/link";
 import { TrendingUp } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+
 
 // Custom premium sparkles icon
 const SparklesIcon = ({ className }: { className?: string }) => (
