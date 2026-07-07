@@ -95,7 +95,7 @@ export default function AnalyticsPage() {
       fetchAIInsights(analyticsResult.data);
     } catch (error: any) {
       console.error("Failed to fetch analytics data:", error);
-      setError(error.message || "Failed to load analytics data");
+      setError(error.message || t("loadFailed"));
       toast.error(t("toastFailed"));
     } finally {
       setLoading(false);
