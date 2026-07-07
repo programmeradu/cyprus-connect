@@ -20,6 +20,7 @@ interface AppHeaderProps {
 }
 
 export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
+  const t = useTranslations("shared.header");
   const { data: session, refetch } = useSession();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -45,14 +46,15 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
   const handleSignOut = async () => {
     const { error } = await authClient.signOut();
     if (error?.code) {
-      toast.error("Failed to sign out");
+      toast.error(t("signOutError"));
     } else {
       localStorage.removeItem("bearer_token");
       refetch();
-      toast.success("Signed out successfully");
+      toast.success(t("signOutSuccess"));
       router.push("/");
     }
   };
+
 
   return (
     <motion.header
