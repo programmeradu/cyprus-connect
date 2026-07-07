@@ -899,24 +899,24 @@ export default function InsightsPage() {
                 {complianceData.urgentCount > 0 && (
                   <div className="text-center px-4 py-2 rounded-lg bg-destructive/10 text-destructive">
                     <p className="text-xl font-bold">{complianceData.urgentCount}</p>
-                    <p className="text-xs">Urgent</p>
+                    <p className="text-xs">{t("compliance.urgent")}</p>
                   </div>
                 )}
                 {complianceData.upcomingCount > 0 && (
                   <div className="text-center px-4 py-2 rounded-lg bg-yellow-500/10 text-yellow-600">
                     <p className="text-xl font-bold">{complianceData.upcomingCount}</p>
-                    <p className="text-xs">Due Soon</p>
+                    <p className="text-xs">{t("compliance.dueSoon")}</p>
                   </div>
                 )}
                 <div className="text-center px-4 py-2 rounded-lg bg-green-500/10 text-green-600">
                   <p className="text-xl font-bold">{complianceData.documents.length}</p>
-                  <p className="text-xs">Reports</p>
+                  <p className="text-xs">{t("compliance.reports")}</p>
                 </div>
               </div>
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">Loading compliance data...</p>
+              <p className="text-sm text-muted-foreground">{t("compliance.loading")}</p>
             </div>
           )}
         </div>
