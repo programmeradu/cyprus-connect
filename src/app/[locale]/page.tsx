@@ -90,7 +90,8 @@ export default function Home() {
             VerdeIQ
           </motion.h1>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            <LanguageSwitcher />
             <ThemeToggle />
             {!isPending && (
               <>
@@ -98,34 +99,34 @@ export default function Home() {
                   <>
                     <SubscriptionBadge />
                     <Link href="/pricing">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Pricing
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("pricing")}
                       </PremiumButton>
                     </Link>
                     <Link href="/app">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Dashboard
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("dashboard")}
                       </PremiumButton>
                     </Link>
-                    <PremiumButton 
-                      variant="outline" 
-                      size="sm" 
-                      className="font-medium text-xs px-3 py-1"
+                    <PremiumButton
+                      variant="outline"
+                      size="sm"
+                      className="font-medium text-xs px-3 py-1 whitespace-nowrap"
                       onClick={handleSignOut}
                     >
-                      Sign Out
+                      {tNav("signOut")}
                     </PremiumButton>
                   </>
                 ) : (
                   <>
                     <Link href="/pricing">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Pricing
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("pricing")}
                       </PremiumButton>
                     </Link>
                     <Link href="/auth">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Sign In
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("signIn")}
                       </PremiumButton>
                     </Link>
                   </>
