@@ -64,6 +64,7 @@ interface StudioStats {
 }
 
 export default function MediaStudioPage() {
+  const t = useTranslations("dashboard.studio");
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const { user } = useUser();
