@@ -1169,6 +1169,35 @@
           "SSO & advanced security"
         ]
       }
+    },
+    "dashboard": {
+      "signInRequired": "Please sign in to view billing information",
+      "signInToManage": "Please sign in to manage billing",
+      "currentPlan": "Current Plan",
+      "priceSuffix": "${price}/{interval}",
+      "via": "via",
+      "manage": "Manage",
+      "loading": "Loading...",
+      "cancelsOn": "Cancels on {date}",
+      "renewsOn": "Renews on {date}",
+      "purchaseSummary": "Purchase Summary",
+      "creditsPurchased": "Credits Purchased",
+      "totalSpent": "Total Spent",
+      "lastPurchase": "Last Purchase",
+      "notAvailable": "N/A",
+      "paymentHistory": "Payment History",
+      "noPaymentHistory": "No payment history yet",
+      "portalFailed": "Failed to open billing portal",
+      "intervals": {
+        "month": "month",
+        "year": "year"
+      },
+      "status": {
+        "succeeded": "succeeded",
+        "failed": "failed",
+        "pending": "pending",
+        "refunded": "refunded"
+      }
     }
   },
   "themeToggle": {
