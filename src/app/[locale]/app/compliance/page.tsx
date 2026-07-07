@@ -274,11 +274,11 @@ export default function CompliancePage() {
   }
 
   const tabs: { id: TabType; label: string; icon: React.ComponentType }[] = [
-    { id: "overview", label: "Overview", icon: ShieldCheckIcon },
-    { id: "regulations", label: "Regulations", icon: GlobeIcon },
-    { id: "documents", label: "Documents", icon: DocumentIcon },
-    { id: "audit", label: "Audit Trail", icon: HistoryIcon },
-    { id: "settings", label: "Settings", icon: SettingsIcon }
+    { id: "overview", label: t("tabs.overview"), icon: ShieldCheckIcon },
+    { id: "regulations", label: t("tabs.regulations"), icon: GlobeIcon },
+    { id: "documents", label: t("tabs.documents"), icon: DocumentIcon },
+    { id: "audit", label: t("tabs.audit"), icon: HistoryIcon },
+    { id: "settings", label: t("tabs.settings"), icon: SettingsIcon }
   ];
 
   return (
@@ -292,17 +292,17 @@ export default function CompliancePage() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-              AI Regulatory <span className="gradient-text">Autopilot</span>
+              {t("title")} <span className="gradient-text">{t("titleAccent")}</span>
             </h1>
             <p className="text-xs text-muted-foreground font-light">
-              Automated compliance monitoring, reporting, and deadline management
+              {t("subtitle")}
             </p>
           </div>
           
           {/* Compliance Score Badge */}
           <div className="flex items-center gap-2">
             <PremiumCard className="px-3 py-2 bg-gradient-to-br from-card to-card/50">
-              <div className="text-[9px] text-muted-foreground mb-0.5 font-light">Compliance Health</div>
+              <div className="text-[9px] text-muted-foreground mb-0.5 font-light">{t("healthLabel")}</div>
               <div className="flex items-center gap-1.5">
                 <div className={`text-xl font-bold ${complianceScore >= 80 ? 'text-primary' : complianceScore >= 60 ? 'text-yellow-500' : 'text-destructive'}`}>
                   {complianceScore}%
