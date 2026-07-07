@@ -25,20 +25,21 @@ export const UpgradePrompt = ({
 
   const planDetails = {
     pro: {
-      name: "Pro",
+      name: tPlans("professional"),
       price: "$49/mo",
       icon: Zap,
       color: "text-primary",
       bgColor: "bg-primary/10",
     },
     enterprise: {
-      name: "Enterprise",
+      name: tPlans("enterprise"),
       price: "$199/mo",
       icon: Crown,
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-500/10",
     },
   };
+
 
   const plan = planDetails[requiredPlan];
   const Icon = plan.icon;
