@@ -250,11 +250,11 @@ export default function MediaStudioPage() {
           setSelectedMedia(null);
         }
         await loadStudioStats();
-        toast.success("Generation deleted successfully");
+        toast.success(t("toasts.deleted"));
       }
     } catch (error) {
       console.error("Failed to delete generation:", error);
-      toast.error("Failed to delete generation");
+      toast.error(t("toasts.deleteFailed"));
     }
   };
 
