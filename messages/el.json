@@ -1507,5 +1507,24 @@
     "confidence": "{pct}% αξιοπιστία",
     "na": "—",
     "unknownError": "Άγνωστο σφάλμα"
+  },
+  "energyCalc": {
+    "title": "Υπολογιστής Ενεργειακού Κόστους",
+    "subtitle": "Τιμές & δεδομένα άνθρακα σε πραγματικό χρόνο",
+    "spotPrice": "Τιμή Spot",
+    "carbonIntensity": "Ένταση Άνθρακα",
+    "proFeature": "Λειτουργία Professional",
+    "proBlurb": "Ξεκλείδωσε τιμές ενέργειας, δεδομένα άνθρακα και υπολογισμό ROI σε πραγματικό χρόνο",
+    "upgradeCta": "Αναβάθμιση σε Professional",
+    "fallbackNote": "Εκτιμήσεις περιοχής • Χωρίς δεδομένα realtime για {region}",
+    "spotPriceZone": "Τιμή Spot ({zone})",
+    "annualConsumption": "Ετήσια Κατανάλωση (kWh)",
+    "efficiencyGain": "Κέρδος Απόδοσης (%)",
+    "annualSavings": "Ετήσια Εξοικονόμηση",
+    "co2Cut": "Μείωση CO₂",
+    "roi": "ROI",
+    "refresh": "Ανανέωση Τιμών",
+    "tPerYr": "τ/έτος",
+    "mo": "μήν"
   }
 }
