@@ -529,7 +529,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
                   reg.status === 'action_required' ? 'bg-destructive/10 text-destructive' :
                   'bg-muted text-muted-foreground'
                 }`}>
-                  {reg.status.replace('_', ' ').toUpperCase()}
+                  {statusLabel(reg.status)}
                 </div>
               </div>
 
@@ -537,17 +537,17 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
 
               <div className="mb-3 p-2.5 rounded-lg bg-muted/30">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] text-muted-foreground font-light">Next Deadline</span>
+                  <span className="text-[10px] text-muted-foreground font-light">{t("regulations.nextDeadline")}</span>
                   <ClockIcon />
                 </div>
                 <div className="text-sm font-bold">{new Date(reg.nextDeadline).toLocaleDateString()}</div>
                 <div className={`text-[9px] mt-0.5 ${daysUntil <= 30 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                  {daysUntil > 0 ? `${daysUntil} days remaining` : 'Overdue'}
+                  {daysUntil > 0 ? t("regulations.daysRemaining", { days: daysUntil }) : t("regulations.overdue")}
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <div className="text-[10px] font-semibold text-muted-foreground mb-1">Key Requirements:</div>
+                <div className="text-[10px] font-semibold text-muted-foreground mb-1">{t("regulations.keyRequirements")}</div>
                 {reg.requirements.map((req, idx) => (
                   <div key={idx} className="flex items-start gap-1.5 text-[10px]">
                     <div className="w-1 h-1 rounded-full bg-primary mt-1 flex-shrink-0" />
@@ -558,7 +558,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
 
               <div className="mt-3 pt-3 border-t border-border/50">
                 <PremiumButton size="sm" variant="outline" className="w-full text-xs h-7">
-                  View Details
+                  {t("regulations.viewDetails")}
                 </PremiumButton>
               </div>
             </PremiumCard>
