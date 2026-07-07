@@ -61,6 +61,7 @@ const navItems: NavItem[] = [
 ];
 
 export const Sidebar = () => {
+  const t = useTranslations("sidebar");
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
