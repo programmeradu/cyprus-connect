@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -10,6 +11,7 @@ import { useCustomer } from "autumn-js/react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Wifi, WifiOff, Lock } from "lucide-react";
 import { getEnergyZoneData } from "@/lib/energy-zones";
+
 
 interface CarbonIntensityData {
   carbonIntensity: number;
