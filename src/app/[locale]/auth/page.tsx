@@ -2,15 +2,17 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export default function AuthPage() {
   const router = useRouter();
+  const t = useTranslations("auth");
   const [mode, setMode] = useState<"login" | "register">("login");
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -27,14 +29,12 @@ export default function AuthPage() {
 
     try {
       if (mode === "register") {
-        // Validate password confirmation
         if (formData.password !== formData.confirmPassword) {
-          toast.error("Passwords do not match");
+          toast.error(t("toast.passwordMismatch"));
           setIsLoading(false);
           return;
         }
 
-        // Register user
         const { error } = await authClient.signUp.email({
           email: formData.email,
           name: formData.name,
@@ -43,16 +43,15 @@ export default function AuthPage() {
 
         if (error?.code) {
           const errorMessages: Record<string, string> = {
-            USER_ALREADY_EXISTS: "Email already registered. Please sign in instead.",
+            USER_ALREADY_EXISTS: t("toast.userExists"),
           };
-          toast.error(errorMessages[error.code] || "Registration failed. Please try again.");
+          toast.error(errorMessages[error.code] || t("toast.registerFailed"));
           setIsLoading(false);
           return;
         }
 
-        toast.success("Account created! Redirecting to dashboard...");
-        
-        // Auto-login after registration
+        toast.success(t("toast.accountCreated"));
+
         const { error: loginError } = await authClient.signIn.email({
           email: formData.email,
           password: formData.password,
@@ -63,7 +62,6 @@ export default function AuthPage() {
           router.push("/app");
         }
       } else {
-        // Login user
         const { error } = await authClient.signIn.email({
           email: formData.email,
           password: formData.password,
@@ -72,17 +70,17 @@ export default function AuthPage() {
         });
 
         if (error?.code) {
-          toast.error("Invalid email or password. Please make sure you have already registered an account and try again.");
+          toast.error(t("toast.loginInvalid"));
           setIsLoading(false);
           return;
         }
 
-        toast.success("Welcome back!");
+        toast.success(t("toast.welcomeBack"));
         router.push("/app");
       }
     } catch (error) {
       console.error("Auth error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
+      toast.error(t("toast.unexpected"));
       setIsLoading(false);
     }
   };
@@ -90,21 +88,19 @@ export default function AuthPage() {
   const handleGoogleAuth = async () => {
     try {
       setIsLoading(true);
-      // Use better-auth's social sign-in
-      const { data, error } = await authClient.signIn.social({
+      const { error } = await authClient.signIn.social({
         provider: "google",
         callbackURL: "/app",
       });
-      
+
       if (error) {
         console.error("Google OAuth error:", error);
-        toast.error("Failed to initiate Google sign-in. Please try again.");
+        toast.error(t("toast.googleFailed"));
         setIsLoading(false);
       }
-      // The redirect happens automatically by better-auth
     } catch (error) {
       console.error("Google OAuth error:", error);
-      toast.error("Failed to initiate Google sign-in. Please try again.");
+      toast.error(t("toast.googleFailed"));
       setIsLoading(false);
     }
   };
@@ -173,7 +169,8 @@ export default function AuthPage() {
             </motion.h1>
           </Link>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>
@@ -221,16 +218,14 @@ export default function AuthPage() {
                     />
                   </motion.svg>
                   <span className="text-xs font-medium tracking-wider uppercase text-primary">
-                    Welcome to VerdeIQ
+                    {t("welcome")}
                   </span>
                 </div>
                 <h2 className="text-xl font-bold mb-1.5">
-                  {mode === "login" ? "Sign in to your account" : "Create your account"}
+                  {mode === "login" ? t("signInTitle") : t("createTitle")}
                 </h2>
                 <p className="text-xs text-muted-foreground font-light">
-                  {mode === "login" 
-                    ? "Continue your sustainability journey" 
-                    : "Start leading on sustainability today"}
+                  {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
                 </p>
               </motion.div>
 
@@ -249,7 +244,7 @@ export default function AuthPage() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Sign In
+                  {t("tabSignIn")}
                 </button>
                 <button
                   onClick={() => setMode("register")}
@@ -259,7 +254,7 @@ export default function AuthPage() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Sign Up
+                  {t("tabSignUp")}
                 </button>
               </motion.div>
 
@@ -293,7 +288,7 @@ export default function AuthPage() {
                     />
                   </svg>
                   <span className="group-hover:translate-x-0.5 transition-transform">
-                    Continue with Google
+                    {t("google")}
                   </span>
                 </button>
               </motion.div>
@@ -306,7 +301,7 @@ export default function AuthPage() {
                 transition={{ delay: 0.6 }}
               >
                 <div className="flex-1 h-px bg-border/50" />
-                <span className="text-xs text-muted-foreground font-light">or continue with email</span>
+                <span className="text-xs text-muted-foreground font-light">{t("orEmail")}</span>
                 <div className="flex-1 h-px bg-border/50" />
               </motion.div>
 
@@ -329,14 +324,14 @@ export default function AuthPage() {
                       exit={{ opacity: 0, height: 0 }}
                     >
                       <label className="block text-xs font-medium mb-1.5 text-foreground/80">
-                        Full Name
+                        {t("name")}
                       </label>
                       <input
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full px-3 py-2 bg-background/50 border border-border/50 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all-smooth"
-                        placeholder="Enter your full name"
+                        placeholder={t("namePh")}
                         required
                         disabled={isLoading}
                       />
@@ -346,14 +341,14 @@ export default function AuthPage() {
                   {/* Email Field */}
                   <div>
                     <label className="block text-xs font-medium mb-1.5 text-foreground/80">
-                      Email Address
+                      {t("email")}
                     </label>
                     <input
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-3 py-2 bg-background/50 border border-border/50 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all-smooth"
-                      placeholder="you@example.com"
+                      placeholder={t("emailPh")}
                       required
                       disabled={isLoading}
                     />
@@ -362,14 +357,14 @@ export default function AuthPage() {
                   {/* Password Field */}
                   <div>
                     <label className="block text-xs font-medium mb-1.5 text-foreground/80">
-                      Password
+                      {t("password")}
                     </label>
                     <input
                       type="password"
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       className="w-full px-3 py-2 bg-background/50 border border-border/50 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all-smooth"
-                      placeholder="••••••••"
+                      placeholder={t("passwordPh")}
                       required
                       disabled={isLoading}
                       autoComplete="off"
@@ -384,14 +379,14 @@ export default function AuthPage() {
                       exit={{ opacity: 0, height: 0 }}
                     >
                       <label className="block text-xs font-medium mb-1.5 text-foreground/80">
-                        Confirm Password
+                        {t("confirmPassword")}
                       </label>
                       <input
                         type="password"
                         value={formData.confirmPassword}
                         onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                         className="w-full px-3 py-2 bg-background/50 border border-border/50 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all-smooth"
-                        placeholder="••••••••"
+                        placeholder={t("passwordPh")}
                         required
                         disabled={isLoading}
                         autoComplete="off"
@@ -411,7 +406,7 @@ export default function AuthPage() {
                           disabled={isLoading}
                         />
                         <span className="text-muted-foreground group-hover:text-foreground transition-colors font-light">
-                          Remember me
+                          {t("rememberMe")}
                         </span>
                       </label>
                     </div>
@@ -424,7 +419,7 @@ export default function AuthPage() {
                     className="w-full text-xs px-3 py-2 mt-4"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Processing..." : mode === "login" ? "Sign In" : "Create Account"}
+                    {isLoading ? t("processing") : mode === "login" ? t("signIn") : t("createAccount")}
                     {!isLoading && (
                       <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -444,24 +439,24 @@ export default function AuthPage() {
                 <p className="text-muted-foreground font-light">
                   {mode === "login" ? (
                     <>
-                      Don't have an account?{" "}
+                      {t("noAccount")}{" "}
                       <button
                         onClick={() => setMode("register")}
                         className="text-primary hover:text-primary/80 font-medium transition-colors"
                         disabled={isLoading}
                       >
-                        Sign up
+                        {t("switchSignUp")}
                       </button>
                     </>
                   ) : (
                     <>
-                      Already have an account?{" "}
+                      {t("haveAccount")}{" "}
                       <button
                         onClick={() => setMode("login")}
                         className="text-primary hover:text-primary/80 font-medium transition-colors"
                         disabled={isLoading}
                       >
-                        Sign in
+                        {t("switchSignIn")}
                       </button>
                     </>
                   )}

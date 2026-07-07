@@ -6,23 +6,28 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { DashboardDemo } from "@/components/DashboardDemo";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
-import Link from "next/link";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Link } from "@/i18n/navigation";
 import { useSession, authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
   const { data: session, isPending, refetch } = useSession();
   const router = useRouter();
+  const tNav = useTranslations("nav");
+  const tHero = useTranslations("hero");
+
 
   const handleSignOut = async () => {
     const { error } = await authClient.signOut();
     if (error?.code) {
-      toast.error("Failed to sign out");
+      toast.error(tNav("signOutError"));
     } else {
       localStorage.removeItem("bearer_token");
       refetch();
-      toast.success("Signed out successfully");
+      toast.success(tNav("signOutSuccess"));
       router.push("/");
     }
   };
@@ -85,7 +90,8 @@ export default function Home() {
             VerdeIQ
           </motion.h1>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            <LanguageSwitcher />
             <ThemeToggle />
             {!isPending && (
               <>
@@ -93,34 +99,34 @@ export default function Home() {
                   <>
                     <SubscriptionBadge />
                     <Link href="/pricing">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Pricing
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("pricing")}
                       </PremiumButton>
                     </Link>
                     <Link href="/app">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Dashboard
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("dashboard")}
                       </PremiumButton>
                     </Link>
-                    <PremiumButton 
-                      variant="outline" 
-                      size="sm" 
-                      className="font-medium text-xs px-3 py-1"
+                    <PremiumButton
+                      variant="outline"
+                      size="sm"
+                      className="font-medium text-xs px-3 py-1 whitespace-nowrap"
                       onClick={handleSignOut}
                     >
-                      Sign Out
+                      {tNav("signOut")}
                     </PremiumButton>
                   </>
                 ) : (
                   <>
                     <Link href="/pricing">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Pricing
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("pricing")}
                       </PremiumButton>
                     </Link>
                     <Link href="/auth">
-                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1">
-                        Sign In
+                      <PremiumButton variant="outline" size="sm" className="font-medium text-xs px-3 py-1 whitespace-nowrap">
+                        {tNav("signIn")}
                       </PremiumButton>
                     </Link>
                   </>
@@ -168,7 +174,7 @@ export default function Home() {
                 
                 {/* Text with custom styling */}
                 <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                  AI-Powered Sustainability Platform
+                  {tHero("badge")}
                 </span>
                 
                 {/* Animated underline */}
@@ -195,33 +201,32 @@ export default function Home() {
               </motion.div>
               
               <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight tracking-tight">
-                <span className="gradient-text">Empowering SMEs</span>
+                <span className="gradient-text">{tHero("titleLine1")}</span>
                 <br />
-                <span className="text-foreground/90">to Lead on</span>
+                <span className="text-foreground/90">{tHero("titleLine2")}</span>
                 <br />
-                <span className="gradient-text">Sustainability</span>
+                <span className="gradient-text">{tHero("titleLine3")}</span>
               </h1>
-              
-              <p className="text-sm md:text-base text-foreground/70 dark:text-foreground/60 mb-6 max-w-2xl mx-auto leading-relaxed font-light !whitespace-pre-line">Experience AI-powered tools built for SMEs: Carbon footprint analysis, automated report generation, real-time sustainability news, climate data, and expert AI advisory
 
-
+              <p className="text-sm md:text-base text-foreground/70 dark:text-foreground/60 mb-6 max-w-2xl mx-auto leading-relaxed font-light">
+                {tHero("subtitle")}
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                 <Link href="/auth">
                   <PremiumButton size="sm" className="text-xs px-4 py-2">
-                    Get Started with VerdeIQ
-                    <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <span className="whitespace-nowrap">{tHero("ctaPrimary")}</span>
+                    <svg className="w-3 h-3 ml-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </PremiumButton>
                 </Link>
                 <PremiumButton variant="outline" size="sm" className="text-xs px-4 py-2">
-                  <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3 h-3 mr-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Watch Demo
+                  <span className="whitespace-nowrap">{tHero("ctaSecondary")}</span>
                 </PremiumButton>
               </div>
             </motion.div>
