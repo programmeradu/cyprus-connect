@@ -887,16 +887,16 @@ function IntegrationsContent() {
 
               {/* Location Context */}
               <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
-                <p className="text-[11px] font-medium mb-2">Location Context - {benchmarkComparison.location_context.country}</p>
+                <p className="text-[11px] font-medium mb-2">{t("benchmarks.locationContext", { country: benchmarkComparison.location_context.country })}</p>
                 <div className="space-y-1.5 text-[11px]">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Country Emissions:</span>
+                    <span className="text-muted-foreground">{t("benchmarks.totalCountryEmissions")}</span>
                     <span className="font-medium">
                       {(benchmarkComparison.location_context.country_total_emissions / 1000000).toFixed(2)} Mt CO₂e
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Your Contribution:</span>
+                    <span className="text-muted-foreground">{t("benchmarks.yourContribution")}</span>
                     <span className="font-medium">
                       {benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%
                     </span>
