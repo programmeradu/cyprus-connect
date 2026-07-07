@@ -110,5 +110,87 @@
     "integrations": "Ενσωματώσεις",
     "settings": "Ρυθμίσεις",
     "appearance": "Εμφάνιση"
+  },
+  "common": {
+    "loading": "Φόρτωση…",
+    "refreshing": "Ανανέωση…",
+    "refresh": "Ανανέωση",
+    "tryAgain": "Δοκιμάστε ξανά",
+    "backToDashboard": "← Επιστροφή στον Πίνακα",
+    "toastLoadFailed": "Αποτυχία φόρτωσης δεδομένων"
+  },
+  "dashboard": {
+    "leaderboard": {
+      "title": "Κατάταξη",
+      "subtitle": "Ανταγωνιστείτε με ΜμΕ παγκοσμίως στη βιωσιμότητα",
+      "you": "Εσείς",
+      "rankLine": "Θέση #{rank} • {credits} πόντοι • {actions} δράσεις",
+      "topPercent": "Κορυφαίο {percent}%",
+      "globally": "παγκοσμίως",
+      "recentActions": "Πρόσφατες Δράσεις",
+      "globalRankings": "Παγκόσμια Κατάταξη",
+      "empty": "Δεν υπάρχουν ακόμη χρήστες στην κατάταξη. Ολοκληρώστε δράσεις για να είστε ο πρώτος!",
+      "creditsActions": "{credits} πόντοι • {actions} δράσεις ολοκληρωμένες"
+    },
+    "analytics": {
+      "title": "Αναλυτικά",
+      "subtitle": "Λεπτομερείς πληροφορίες για τους δείκτες βιωσιμότητας",
+      "loading": "Φόρτωση αναλυτικών…",
+      "unableTitle": "Αδυναμία φόρτωσης αναλυτικών",
+      "unableFallback": "Δεν υπάρχουν διαθέσιμα δεδομένα",
+      "toastFailed": "Αποτυχία φόρτωσης αναλυτικών",
+      "totalEmissions": "Συνολικές Εκπομπές",
+      "energy": "Ενέργεια",
+      "water": "Νερό",
+      "waste": "Απόβλητα",
+      "yoy": "{value}% έναντι πέρσι",
+      "tonsPerYear": "τόνοι CO2e/έτος",
+      "tonsPerMonth": "τόνοι CO2e/μήνα",
+      "tons": "{value} τόνοι",
+      "byCategory": "Εκπομπές ανά Κατηγορία",
+      "electricity": "Ηλεκτρισμός",
+      "naturalGas": "Φυσικό Αέριο",
+      "transportation": "Μεταφορές",
+      "other": "Άλλα",
+      "noBreakdown": "Δεν υπάρχουν διαθέσιμα δεδομένα ανάλυσης",
+      "monthlyTrend": "Μηνιαία Τάση",
+      "benchmarking": "Σύγκριση Κλάδου",
+      "yourPerformance": "Η Απόδοσή σας",
+      "industryAverage": "Μ.Ο. Κλάδου",
+      "betterBy": "Είστε καλύτεροι κατά",
+      "belowAverage": "κάτω από τον μέσο όρο",
+      "aboveAverage": "πάνω από τον μέσο όρο",
+      "profilePrompt": "Ολοκληρώστε το προφίλ σας για συγκρίσεις κλάδου",
+      "aiTitle": "Πληροφορίες με τεχνητή νοημοσύνη",
+      "topRecommendations": "Κορυφαίες Συστάσεις",
+      "keyHighlights": "Βασικά Σημεία"
+    },
+    "marketplace": {
+      "titleA": "Αγορά",
+      "titleB": "Αντιστάθμισης Άνθρακα",
+      "subtitle": "Στηρίξτε πιστοποιημένα έργα που μειώνουν και απομακρύνουν CO2 από την ατμόσφαιρα",
+      "yourImpact": "Ο Αντίκτυπός σας",
+      "empty": "Δεν βρέθηκαν έργα",
+      "toastLoadFailed": "Αποτυχία φόρτωσης έργων",
+      "featured": "Προβεβλημένο",
+      "perTon": "/τόνο",
+      "viewDetails": "Λεπτομέρειες",
+      "categories": {
+        "all": "Όλα τα Έργα",
+        "forestry": "Δασοκομία",
+        "renewable_energy": "Ανανεώσιμες Πηγές",
+        "carbon_capture": "Δέσμευση Άνθρακα",
+        "ocean_conservation": "Προστασία Ωκεανών"
+      }
+    },
+    "billing": {
+      "title": "Χρέωση & Συνδρομές",
+      "subtitle": "Διαχειριστείτε συνδρομή, πληρωμές και στοιχεία χρέωσης",
+      "tabOverview": "Επισκόπηση",
+      "tabPlans": "Πλάνα & Τιμές",
+      "chooseYour": "Επιλέξτε το",
+      "plan": "Πλάνο σας",
+      "planSubtitle": "Ξεκλειδώστε ισχυρές λειτουργίες βιωσιμότητας και κλιμακώστε τον αντίκτυπό σας"
+    }
   }
 }

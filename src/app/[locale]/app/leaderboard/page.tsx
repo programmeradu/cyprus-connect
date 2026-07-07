@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Badge } from "@/components/app/Badge";
 import { TrophyIcon, LeafIcon, BoltIcon, FireIcon, WaterIcon } from "@/components/icons/CustomIcons";
 import { useUser } from "@/lib/user-context";
 
 export default function LeaderboardPage() {
+  const t = useTranslations("dashboard.leaderboard");
   const { user } = useUser();
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,8 +68,8 @@ export default function LeaderboardPage() {
     return (
       <>
         <AppHeader
-          title="Leaderboard"
-          subtitle="Compete with SMEs worldwide on sustainability"
+          title={t("title")}
+          subtitle={t("subtitle")}
         />
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -82,8 +84,8 @@ export default function LeaderboardPage() {
   return (
     <>
       <AppHeader
-        title="Leaderboard"
-        subtitle="Compete with SMEs worldwide on sustainability"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {/* Your Rank Card */}
@@ -101,25 +103,25 @@ export default function LeaderboardPage() {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-base font-bold">{currentUser.companyName || currentUser.name}</h3>
-                  <Badge variant="primary" size="sm">You</Badge>
+                  <Badge variant="primary" size="sm">{t("you")}</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Rank #{currentUser.rank} • {currentUser.totalCredits} credits • {currentUser.actionsCompleted} actions
+                  {t("rankLine", { rank: currentUser.rank, credits: currentUser.totalCredits, actions: currentUser.actionsCompleted })}
                 </p>
               </div>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-1 text-primary mb-1">
-                <span className="text-sm font-bold">Top {Math.round((currentUser.rank / leaderboard.length) * 100)}%</span>
+                <span className="text-sm font-bold">{t("topPercent", { percent: Math.round((currentUser.rank / leaderboard.length) * 100) })}</span>
               </div>
-              <p className="text-[10px] text-muted-foreground">globally</p>
+              <p className="text-[10px] text-muted-foreground">{t("globally")}</p>
             </div>
           </div>
           
           {/* Recent Actions */}
           {currentUser.recentActions && currentUser.recentActions.length > 0 && (
             <div className="pt-4 border-t border-border/50">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-2">Recent Actions</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-2">{t("recentActions")}</p>
               <div className="flex gap-2 flex-wrap">
                 {currentUser.recentActions.map((action: any, idx: number) => (
                   <div
@@ -173,12 +175,12 @@ export default function LeaderboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <h2 className="text-lg font-bold mb-4">Global Rankings</h2>
+        <h2 className="text-lg font-bold mb-4">{t("globalRankings")}</h2>
         <div className="space-y-3">
           {leaderboard.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-sm text-muted-foreground">
-                No users on the leaderboard yet. Complete actions to be the first!
+                {t("empty")}
               </p>
             </div>
           ) : (
@@ -204,10 +206,10 @@ export default function LeaderboardPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-sm font-medium truncate">{entry.companyName || entry.name}</p>
-                        {isCurrentUser && <Badge variant="primary" size="sm">You</Badge>}
+                        {isCurrentUser && <Badge variant="primary" size="sm">{t("you")}</Badge>}
                       </div>
                       <p className="text-[10px] text-muted-foreground">
-                        {entry.totalCredits} credits • {entry.actionsCompleted} actions completed
+                        {t("creditsActions", { credits: entry.totalCredits, actions: entry.actionsCompleted })}
                       </p>
                     </div>
                   </div>

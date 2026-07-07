@@ -110,5 +110,87 @@
     "integrations": "Integrations",
     "settings": "Settings",
     "appearance": "Appearance"
+  },
+  "common": {
+    "loading": "Loading…",
+    "refreshing": "Refreshing…",
+    "refresh": "Refresh",
+    "tryAgain": "Try Again",
+    "backToDashboard": "← Back to Dashboard",
+    "toastLoadFailed": "Failed to load data"
+  },
+  "dashboard": {
+    "leaderboard": {
+      "title": "Leaderboard",
+      "subtitle": "Compete with SMEs worldwide on sustainability",
+      "you": "You",
+      "rankLine": "Rank #{rank} • {credits} credits • {actions} actions",
+      "topPercent": "Top {percent}%",
+      "globally": "globally",
+      "recentActions": "Recent Actions",
+      "globalRankings": "Global Rankings",
+      "empty": "No users on the leaderboard yet. Complete actions to be the first!",
+      "creditsActions": "{credits} credits • {actions} actions completed"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Detailed insights into your sustainability metrics",
+      "loading": "Loading analytics…",
+      "unableTitle": "Unable to Load Analytics",
+      "unableFallback": "No analytics data available",
+      "toastFailed": "Failed to load analytics data",
+      "totalEmissions": "Total Emissions",
+      "energy": "Energy",
+      "water": "Water",
+      "waste": "Waste",
+      "yoy": "{value}% YoY",
+      "tonsPerYear": "tons CO2e/year",
+      "tonsPerMonth": "tons CO2e/month",
+      "tons": "{value} tons",
+      "byCategory": "Emissions by Category",
+      "electricity": "Electricity",
+      "naturalGas": "Natural Gas",
+      "transportation": "Transportation",
+      "other": "Other",
+      "noBreakdown": "No breakdown data available",
+      "monthlyTrend": "Monthly Trend",
+      "benchmarking": "Industry Benchmarking",
+      "yourPerformance": "Your Performance",
+      "industryAverage": "Industry Average",
+      "betterBy": "You're Better By",
+      "belowAverage": "below average",
+      "aboveAverage": "above average",
+      "profilePrompt": "Complete your profile to see industry comparisons",
+      "aiTitle": "AI-Powered Insights",
+      "topRecommendations": "Top Recommendations",
+      "keyHighlights": "Key Highlights"
+    },
+    "marketplace": {
+      "titleA": "Carbon Offset",
+      "titleB": "Marketplace",
+      "subtitle": "Support verified projects that reduce and remove CO2 from the atmosphere",
+      "yourImpact": "Your Impact",
+      "empty": "No projects found",
+      "toastLoadFailed": "Failed to load projects",
+      "featured": "Featured",
+      "perTon": "/ton",
+      "viewDetails": "View Details",
+      "categories": {
+        "all": "All Projects",
+        "forestry": "Forestry",
+        "renewable_energy": "Renewable Energy",
+        "carbon_capture": "Carbon Capture",
+        "ocean_conservation": "Ocean Conservation"
+      }
+    },
+    "billing": {
+      "title": "Billing & Subscriptions",
+      "subtitle": "Manage your subscription, payments, and billing information",
+      "tabOverview": "Overview",
+      "tabPlans": "Plans & Pricing",
+      "chooseYour": "Choose Your",
+      "plan": "Plan",
+      "planSubtitle": "Unlock powerful sustainability features and scale your impact"
+    }
   }
 }
