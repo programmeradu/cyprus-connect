@@ -588,13 +588,10 @@ export default function OnboardingPage() {
                 {/* Right - Content */}
                 <div className="flex-1 text-left">
                   <h3 className="text-xl font-bold mb-4">
-                    Earn Green Credits & Climb the Leaderboard!
+                    {t("step3.heading")}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                    Our unique Green Credit system rewards your sustainable actions. The more you reduce your 
-                    carbon footprint, recycle, and conserve resources, the more credits you earn. Compete with other 
-                    local businesses on the leaderboard to see your impact grow and inspire others. It's fun, rewarding, 
-                    and great for your brand!
+                    {t("step3.description")}
                   </p>
 
                   {/* Preview Cards */}
