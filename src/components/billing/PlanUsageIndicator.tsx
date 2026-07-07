@@ -65,7 +65,7 @@ export const PlanUsageIndicator = () => {
   return (
     <PremiumCard className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm">Your Plan</h3>
+        <h3 className="font-semibold text-sm">{t("yourPlan")}</h3>
         <motion.div
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium",
