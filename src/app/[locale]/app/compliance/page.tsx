@@ -601,7 +601,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                     onClick={() => onGenerate(framework)}
                     disabled={generating}
                   >
-                    {generating ? "Generating..." : `Generate ${framework}`}
+                    {generating ? t("documents.generating") : t("documents.generatePrefix", { framework })}
                   </PremiumButton>
                 ))}
               </div>
