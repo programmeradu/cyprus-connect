@@ -80,7 +80,7 @@ export default function OnboardingPage() {
 
   const handleQbConnect = async () => {
     if (!session?.user?.id) {
-      toast.error('Please complete your profile first');
+      toast.error(t('toasts.completeProfile'));
       return;
     }
     
@@ -99,18 +99,18 @@ export default function OnboardingPage() {
       
       const data = await response.json();
       
-      toast.success('Redirecting to QuickBooks... 📊');
+      toast.success(t('toasts.qbRedirect'));
       window.location.href = data.authUrl;
     } catch (error) {
       console.error('QB connect error:', error);
-      toast.error('Failed to connect to QuickBooks');
+      toast.error(t('toasts.qbFail'));
       setQbConnecting(false);
     }
   };
 
   const handleComplete = async () => {
     if (!session?.user?.id) {
-      toast.error("Session not found. Please log in again.");
+      toast.error(t("toasts.noSession"));
       router.push("/auth");
       return;
     }
@@ -148,7 +148,7 @@ export default function OnboardingPage() {
 
         if (!response.ok) {
           const error = await response.json();
-          toast.error(error.error || "Failed to update profile");
+          toast.error(error.error || t("toasts.updateFail"));
           setIsSubmitting(false);
           return;
         }
@@ -173,7 +173,7 @@ export default function OnboardingPage() {
 
         if (!response.ok) {
           const error = await response.json();
-          toast.error(error.error || "Failed to create account");
+          toast.error(error.error || t("toasts.createFail"));
           setIsSubmitting(false);
           return;
         }
@@ -209,12 +209,12 @@ export default function OnboardingPage() {
       
       localStorage.setItem("onboarding_completed", "true");
       
-      toast.success("Welcome to VerdeIQ! 🌿");
+      toast.success(t("toasts.welcome"));
       
       router.push("/app");
     } catch (error) {
       console.error("Onboarding error:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("toasts.genericError"));
       setIsSubmitting(false);
     }
   };
