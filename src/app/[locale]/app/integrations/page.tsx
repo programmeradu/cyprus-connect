@@ -370,19 +370,19 @@ function IntegrationsContent() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold mb-0.5">QuickBooks</h3>
-                  <p className="text-[11px] text-muted-foreground">Accounting integration</p>
+                  <h3 className="text-base font-semibold mb-0.5">{t("quickbooks.name")}</h3>
+                  <p className="text-[11px] text-muted-foreground">{t("quickbooks.desc")}</p>
                 </div>
               </div>
               {qbConnected ? (
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10">
                   <CheckCircle2 className="w-3 h-3 text-green-600" />
-                  <span className="text-[10px] font-medium text-green-600">Connected</span>
+                  <span className="text-[10px] font-medium text-green-600">{t("quickbooks.connected")}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted">
                   <XCircle className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-[10px] font-medium text-muted-foreground">Inactive</span>
+                  <span className="text-[10px] font-medium text-muted-foreground">{t("quickbooks.inactive")}</span>
                 </div>
               )}
             </div>
