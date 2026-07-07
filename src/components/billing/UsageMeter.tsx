@@ -42,9 +42,12 @@ export const UsageMeter = ({
   showUpgrade = true,
   unlimited = false,
 }: UsageMeterProps) => {
+  const t = useTranslations("billing.usageMeter");
+  const locale = useLocale();
   const percentage = unlimited ? 0 : Math.min((used / limit) * 100, 100);
   const isNearLimit = percentage >= 80;
   const isAtLimit = percentage >= 100;
+
 
   return (
     <PremiumCard className="p-4">
