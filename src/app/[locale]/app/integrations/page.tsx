@@ -300,10 +300,10 @@ function IntegrationsContent() {
       
       const data = await response.json();
       setBenchmarkComparison(data.comparison);
-      toast.success('Benchmark analysis complete');
+      toast.success(t("toasts.benchmarkComplete"));
     } catch (error) {
       console.error("Error fetching benchmark data:", error);
-      toast.error("Failed to fetch benchmark data");
+      toast.error(t("toasts.benchmarkFail"));
     } finally {
       setLoadingBenchmark(false);
     }
