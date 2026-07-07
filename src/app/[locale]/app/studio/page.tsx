@@ -407,8 +407,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           setSelectedMedia(newMedia);
           await loadStudioStats();
           
-          const modelName = result.model === "imagen-4.0-generate-001" ? "Imagen 4" : "Gemini 2.5 Flash";
-          toast.success(`Image generated with ${modelName}!`, {
+          const modelName = result.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlash");
+          toast.success(t("toasts.imageGenerated", { model: modelName }), {
             description: result.modelReason
           });
         }
