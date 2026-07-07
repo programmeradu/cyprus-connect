@@ -254,14 +254,14 @@ export default function CompliancePage() {
 
       if (response.ok) {
         setSettings(newSettings);
-        toast.success("Settings saved successfully");
+        toast.success(t("toasts.settingsSaved"));
         await fetchComplianceData(); // Refresh to get updated audit log
       } else {
-        toast.error("Failed to save settings");
+        toast.error(t("toasts.settingsFailed"));
       }
     } catch (error) {
       console.error("Error saving settings:", error);
-      toast.error("Failed to save settings");
+      toast.error(t("toasts.settingsFailed"));
     }
   };
 
