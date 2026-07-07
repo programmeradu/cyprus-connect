@@ -1298,7 +1298,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             <path d="M12 3c-2.5 2.5-2.5 6.5 0 9s6.5 2.5 9 0" />
                             <path d="M3 12c2.5 2.5 6.5 2.5 9 0s2.5-6.5 0-9" />
                           </svg>
-                          AI Carbon Footprint Analysis
+                          {t("carbon.resultTitle")}
                         </h4>
                       </div>
                       <div className="p-4">
