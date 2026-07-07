@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CSVUploaderProps {
   onDataExtracted: (data: {
