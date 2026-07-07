@@ -861,25 +861,25 @@ function IntegrationsContent() {
               {/* Intensity Metrics */}
               <div className="grid md:grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">Per Employee</p>
+                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">{t("benchmarks.perEmployeeMetric")}</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-base font-bold text-foreground">
                       {benchmarkComparison.emissions_per_employee.toFixed(2)}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      vs {benchmarkComparison.industry_emissions_per_employee.toFixed(2)} tCO₂e industry avg
+                      {t("benchmarks.vsIndustryAvg", { value: benchmarkComparison.industry_emissions_per_employee.toFixed(2) })}
                     </p>
                   </div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">Per $1M Revenue</p>
+                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">{t("benchmarks.perRevenue")}</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-base font-bold text-foreground">
                       {benchmarkComparison.emissions_per_revenue.toFixed(2)}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      vs {benchmarkComparison.industry_emissions_per_revenue.toFixed(2)} tCO₂e industry avg
+                      {t("benchmarks.vsIndustryAvg", { value: benchmarkComparison.industry_emissions_per_revenue.toFixed(2) })}
                     </p>
                   </div>
                 </div>
