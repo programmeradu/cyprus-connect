@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { CheckIcon } from "@/components/icons/CustomIcons";
+
 
 interface ActionCardProps {
   title: string;
