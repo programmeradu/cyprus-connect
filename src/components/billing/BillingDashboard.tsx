@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth-client";
 import { CreditPurchaseDialog } from "./CreditPurchaseDialog";
 import { CreditBalance } from "./UsageMeter";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface PaymentHistoryItem {
   id: number;
