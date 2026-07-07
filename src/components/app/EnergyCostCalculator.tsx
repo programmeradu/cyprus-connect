@@ -50,11 +50,13 @@ interface CostSavings {
 }
 
 export function EnergyCostCalculator() {
+  const t = useTranslations("energyCalc");
   const { convertAmount, formatAmount, selectedCurrency, refreshTrigger } = useCurrency();
   const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
   const [carbonData, setCarbonData] = useState<CarbonIntensityData | null>(null);
+
   const [spotPriceResponse, setSpotPriceResponse] = useState<SpotPriceResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [consumption, setConsumption] = useState<number>(50000);
