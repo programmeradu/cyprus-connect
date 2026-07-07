@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 export function ExportReportButton({ userId }: { userId?: string }) {
+  const t = useTranslations('shared.exportReport');
   const [isExporting, setIsExporting] = useState(false);
 
   async function handleExport() {
@@ -12,16 +14,16 @@ export function ExportReportButton({ userId }: { userId?: string }) {
 
     try {
       const userIdToUse = userId || localStorage.getItem('user_id');
-      
+
       if (!userIdToUse) {
-        toast.error('User not found. Please log in.');
+        toast.error(t('noUser'));
         setIsExporting(false);
         return;
       }
 
       const response = await fetch('/api/reports/export-pdf', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('bearer_token')}`
         },
@@ -30,7 +32,7 @@ export function ExportReportButton({ userId }: { userId?: string }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate report');
+        throw new Error(errorData.error || t('failed'));
       }
 
       const blob = await response.blob();
@@ -43,10 +45,10 @@ export function ExportReportButton({ userId }: { userId?: string }) {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      toast.success('Report exported successfully! 📄');
+      toast.success(t('success'));
     } catch (error) {
       console.error('Export error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to export report');
+      toast.error(error instanceof Error ? error.message : t('failed'));
     } finally {
       setIsExporting(false);
     }
@@ -61,12 +63,12 @@ export function ExportReportButton({ userId }: { userId?: string }) {
       {isExporting ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin" />
-          Generating...
+          {t('loading')}
         </>
       ) : (
         <>
           <Download className="w-4 h-4" />
-          Export Report
+          {t('idle')}
         </>
       )}
     </button>
