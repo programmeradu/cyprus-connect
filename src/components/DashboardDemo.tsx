@@ -1228,11 +1228,11 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       <path d="M12 3c-2.5 2.5-2.5 6.5 0 9s6.5 2.5 9 0" />
                       <path d="M3 12c2.5 2.5 6.5 2.5 9 0s2.5-6.5 0-9" />
                     </svg>
-                    AI Carbon Footprint Analyzer
+                    {t("carbon.title")}
                   </h3>
                   <div className="flex items-center gap-2 mb-3">
                     <p className="text-xs text-muted-foreground flex-1">
-                      Get instant AI-powered analysis of your emissions and actionable reduction strategies
+                      {t("carbon.description")}
                     </p>
                     {location.city !== "Detecting..." && (
                       <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 border border-primary/20">
@@ -1246,30 +1246,30 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                   <div className="space-y-3 mb-4">
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Monthly Electricity (kWh)</label>
+                      <label className="text-xs font-medium mb-1 block">{t("carbon.electricityLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 5000"
+                        placeholder={t("carbon.electricityPlaceholder")}
                         value={carbonInput.electricity}
                         onChange={(e) => setCarbonInput({ ...carbonInput, electricity: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Monthly Transport (km)</label>
+                      <label className="text-xs font-medium mb-1 block">{t("carbon.transportLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 2000"
+                        placeholder={t("carbon.transportPlaceholder")}
                         value={carbonInput.transport}
                         onChange={(e) => setCarbonInput({ ...carbonInput, transport: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Monthly Waste (kg)</label>
+                      <label className="text-xs font-medium mb-1 block">{t("carbon.wasteLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 500"
+                        placeholder={t("carbon.wastePlaceholder")}
                         value={carbonInput.waste}
                         onChange={(e) => setCarbonInput({ ...carbonInput, waste: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
@@ -1282,7 +1282,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     disabled={carbonAnalyzing}
                     className="w-full px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 disabled:opacity-50 transition-all"
                   >
-                    {carbonAnalyzing ? "Analyzing..." : "Analyze Carbon Footprint"}
+                    {carbonAnalyzing ? t("carbon.analyzing") : t("carbon.analyze")}
                   </button>
 
                   {carbonResult && (
