@@ -635,7 +635,7 @@ export const DashboardDemo = () => {
   const tabs = [
     { 
       id: "carbon" as TabType, 
-      label: "Carbon & News", 
+      label: t("tabs.carbon"), 
       icon: (
         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="9" />
@@ -646,7 +646,7 @@ export const DashboardDemo = () => {
     },
     { 
       id: "report" as TabType, 
-      label: "Report Generator", 
+      label: t("tabs.report"), 
       icon: (
         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -657,7 +657,7 @@ export const DashboardDemo = () => {
     },
     { 
       id: "weather" as TabType, 
-      label: "Climate & AI", 
+      label: t("tabs.weather"), 
       icon: (
         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="12" cy="12" r="4" />
@@ -667,7 +667,7 @@ export const DashboardDemo = () => {
     },
     { 
       id: "media" as TabType, 
-      label: "Media Studio", 
+      label: t("tabs.media"), 
       icon: (
         <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="3" width="18" height="18" rx="2" />
