@@ -155,17 +155,18 @@ export const CreditBalance = ({
     <PremiumCard className="p-4">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h3 className="text-sm font-medium mb-1">AI Credits</h3>
+          <h3 className="text-sm font-medium mb-1">{t("aiCredits")}</h3>
           <div className="flex items-baseline gap-2">
             <span className={`text-2xl font-bold ${isLow ? "text-destructive" : ""}`}>
-              {balance.toLocaleString()}
+              {balance.toLocaleString(locale)}
             </span>
             {monthlyAllocation && (
               <span className="text-xs text-muted-foreground">
-                +{monthlyAllocation.toLocaleString()}/month
+                {t("perMonth", { n: monthlyAllocation.toLocaleString(locale) })}
               </span>
             )}
           </div>
+
         </div>
 
               {onPurchaseClick && (
