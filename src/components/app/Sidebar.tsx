@@ -39,19 +39,19 @@ const ComplianceIcon = ({ className }: { className?: string }) => (
 );
 
 const navItems = [
-  { href: "/app", label: "Dashboard", icon: DashboardIcon },
-  { href: "/app/calculator", label: "Calculator", icon: CalculatorIcon },
-  { href: "/app/actions", label: "Green Actions", icon: BulbIcon },
-  { href: "/app/marketplace", label: "Carbon Offsets", icon: MarketplaceIcon },
-  { href: "/app/compliance", label: "Compliance", icon: ComplianceIcon, badge: true },
-  { href: "/app/learn", label: "Learning Center", icon: GraduationCap },
-  { href: "/app/studio", label: "Media Studio", icon: Wand2 },
-  { href: "/app/leaderboard", label: "Leaderboard", icon: TrophyIcon },
-  { href: "/app/analytics", label: "Analytics", icon: ChartIcon },
-  { href: "/app/insights", label: "Insights", icon: Lightbulb },
-  { href: "/app/integrations", label: "Integrations", icon: Plug },
-  { href: "/app/settings", label: "Settings", icon: SettingsIcon }
-];
+  { href: "/app", key: "dashboard", icon: DashboardIcon },
+  { href: "/app/calculator", key: "calculator", icon: CalculatorIcon },
+  { href: "/app/actions", key: "actions", icon: BulbIcon },
+  { href: "/app/marketplace", key: "marketplace", icon: MarketplaceIcon },
+  { href: "/app/compliance", key: "compliance", icon: ComplianceIcon, badge: true },
+  { href: "/app/learn", key: "learn", icon: GraduationCap },
+  { href: "/app/studio", key: "studio", icon: Wand2 },
+  { href: "/app/leaderboard", key: "leaderboard", icon: TrophyIcon },
+  { href: "/app/analytics", key: "analytics", icon: ChartIcon },
+  { href: "/app/insights", key: "insights", icon: Lightbulb },
+  { href: "/app/integrations", key: "integrations", icon: Plug },
+  { href: "/app/settings", key: "settings", icon: SettingsIcon }
+] as const;
 
 export const Sidebar = () => {
   const pathname = usePathname();
