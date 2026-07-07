@@ -819,7 +819,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       <div className="absolute inset-0 flex items-center justify-center bg-muted/50 z-10">
                         <div className="text-center">
                           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-                          <p className="text-xs text-muted-foreground">Loading video...</p>
+                          <p className="text-xs text-muted-foreground">{t("preview.loadingVideo")}</p>
                         </div>
                       </div>
                     )}
