@@ -159,9 +159,10 @@ export default function LeaderboardPage() {
                 }`}>
                   <TrophyIcon className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-xs font-bold mb-1 truncate">{entry.companyName || entry.name}</p>
-                <p className="text-[10px] text-muted-foreground mb-1">{entry.totalCredits} credits</p>
-                <p className="text-[10px] text-primary font-medium">{entry.actionsCompleted} actions</p>
+                <p className="text-xs font-bold mb-1 break-words">{entry.companyName || entry.name}</p>
+                <p className="text-[10px] text-muted-foreground mb-1">{t("podiumCredits", { credits: entry.totalCredits })}</p>
+                <p className="text-[10px] text-primary font-medium">{t("podiumActions", { actions: entry.actionsCompleted })}</p>
+
               </motion.div>
             );
           })}
