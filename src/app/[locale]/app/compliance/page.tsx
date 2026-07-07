@@ -7,6 +7,7 @@ import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 // Custom thin SVG icons
 const ShieldCheckIcon = () => (
@@ -118,6 +119,7 @@ interface Settings {
 type TabType = "overview" | "regulations" | "documents" | "audit" | "settings";
 
 export default function CompliancePage() {
+  const t = useTranslations("dashboard.compliance");
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
@@ -160,7 +162,7 @@ export default function CompliancePage() {
       await fetchComplianceData();
     } catch (error) {
       console.error("Error initializing compliance:", error);
-      toast.error("Failed to initialize compliance system");
+      toast.error(t("toasts.initFailed"));
     } finally {
       setLoading(false);
     }
@@ -201,7 +203,7 @@ export default function CompliancePage() {
       }
     } catch (error) {
       console.error("Error fetching compliance data:", error);
-      toast.error("Failed to fetch compliance data");
+      toast.error(t("toasts.fetchFailed"));
     }
   };
 
@@ -210,7 +212,7 @@ export default function CompliancePage() {
       setGenerating(true);
       const token = localStorage.getItem("bearer_token");
       
-      toast.info(`Generating ${framework} report with AI...`);
+      toast.info(t("toasts.generating", { framework }));
       
       const response = await fetch("/api/compliance/documents/generate", {
         method: "POST",
@@ -223,15 +225,15 @@ export default function CompliancePage() {
 
       if (response.ok) {
         const data = await response.json();
-        toast.success(`${framework} report generated successfully!`);
+        toast.success(t("toasts.generatedSuccess", { framework }));
         await fetchComplianceData(); // Refresh data
       } else {
         const error = await response.json();
-        toast.error(error.error || "Failed to generate report");
+        toast.error(error.error || t("toasts.generateFailed"));
       }
     } catch (error) {
       console.error("Error generating report:", error);
-      toast.error("Failed to generate report");
+      toast.error(t("toasts.generateFailed"));
     } finally {
       setGenerating(false);
     }
@@ -252,14 +254,14 @@ export default function CompliancePage() {
 
       if (response.ok) {
         setSettings(newSettings);
-        toast.success("Settings saved successfully");
+        toast.success(t("toasts.settingsSaved"));
         await fetchComplianceData(); // Refresh to get updated audit log
       } else {
-        toast.error("Failed to save settings");
+        toast.error(t("toasts.settingsFailed"));
       }
     } catch (error) {
       console.error("Error saving settings:", error);
-      toast.error("Failed to save settings");
+      toast.error(t("toasts.settingsFailed"));
     }
   };
 
@@ -272,11 +274,11 @@ export default function CompliancePage() {
   }
 
   const tabs: { id: TabType; label: string; icon: React.ComponentType }[] = [
-    { id: "overview", label: "Overview", icon: ShieldCheckIcon },
-    { id: "regulations", label: "Regulations", icon: GlobeIcon },
-    { id: "documents", label: "Documents", icon: DocumentIcon },
-    { id: "audit", label: "Audit Trail", icon: HistoryIcon },
-    { id: "settings", label: "Settings", icon: SettingsIcon }
+    { id: "overview", label: t("tabs.overview"), icon: ShieldCheckIcon },
+    { id: "regulations", label: t("tabs.regulations"), icon: GlobeIcon },
+    { id: "documents", label: t("tabs.documents"), icon: DocumentIcon },
+    { id: "audit", label: t("tabs.audit"), icon: HistoryIcon },
+    { id: "settings", label: t("tabs.settings"), icon: SettingsIcon }
   ];
 
   return (
@@ -290,17 +292,17 @@ export default function CompliancePage() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-              AI Regulatory <span className="gradient-text">Autopilot</span>
+              {t("title")} <span className="gradient-text">{t("titleAccent")}</span>
             </h1>
             <p className="text-xs text-muted-foreground font-light">
-              Automated compliance monitoring, reporting, and deadline management
+              {t("subtitle")}
             </p>
           </div>
           
           {/* Compliance Score Badge */}
           <div className="flex items-center gap-2">
             <PremiumCard className="px-3 py-2 bg-gradient-to-br from-card to-card/50">
-              <div className="text-[9px] text-muted-foreground mb-0.5 font-light">Compliance Health</div>
+              <div className="text-[9px] text-muted-foreground mb-0.5 font-light">{t("healthLabel")}</div>
               <div className="flex items-center gap-1.5">
                 <div className={`text-xl font-bold ${complianceScore >= 80 ? 'text-primary' : complianceScore >= 60 ? 'text-yellow-500' : 'text-destructive'}`}>
                   {complianceScore}%
@@ -349,6 +351,7 @@ export default function CompliancePage() {
 
 // Overview Tab Component
 function OverviewTab({ complianceScore, regulations, documents }: { complianceScore: number; regulations: Regulation[]; documents: Document[] }) {
+  const t = useTranslations("dashboard.compliance");
   const urgentItems = regulations.filter(r => r.status === "action_required").length;
   const upcomingDeadlines = regulations.filter(r => {
     const daysUntil = Math.floor((new Date(r.nextDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -358,11 +361,11 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
   // Calculate compliance breakdown from actual regulations
   const complianceBreakdown = regulations.map(reg => {
     const statusMap: Record<string, { status: string; value: number }> = {
-      'compliant': { status: 'Compliant', value: 95 },
-      'action_required': { status: 'Action Required', value: 60 },
-      'upcoming': { status: 'Preparation', value: 75 }
+      'compliant': { status: t("status.compliantLabel"), value: 95 },
+      'action_required': { status: t("status.actionRequiredLabel"), value: 60 },
+      'upcoming': { status: t("status.preparation"), value: 75 }
     };
-    const mapped = statusMap[reg.status] || { status: 'In Progress', value: 70 };
+    const mapped = statusMap[reg.status] || { status: t("status.inProgress"), value: 70 };
     return {
       label: reg.name,
       value: mapped.value,
@@ -377,7 +380,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
     .slice(0, 3)
     .map(reg => ({
       date: new Date(reg.nextDeadline).toISOString().split('T')[0],
-      title: `${reg.name} - Next deadline ${new Date(reg.nextDeadline).toLocaleDateString()}`,
+      title: `${reg.name} - ${t("overview.nextDeadlinePrefix")} ${new Date(reg.nextDeadline).toLocaleDateString()}`,
       type: reg.status === 'action_required' ? 'important' : reg.status === 'compliant' ? 'info' : 'update'
     }));
 
@@ -390,10 +393,10 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <AlertIcon />
             </div>
-            <span className="text-[9px] text-muted-foreground font-light">Action Required</span>
+            <span className="text-[9px] text-muted-foreground font-light">{t("overview.actionRequired")}</span>
           </div>
           <div className="text-2xl font-bold mb-1">{urgentItems}</div>
-          <div className="text-[10px] text-muted-foreground font-light">Regulations need attention</div>
+          <div className="text-[10px] text-muted-foreground font-light">{t("overview.regulationsNeedAttention")}</div>
         </PremiumCard>
       </motion.div>
 
@@ -403,10 +406,10 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <ClockIcon />
             </div>
-            <span className="text-[9px] text-muted-foreground font-light">Next 30 Days</span>
+            <span className="text-[9px] text-muted-foreground font-light">{t("overview.next30Days")}</span>
           </div>
           <div className="text-2xl font-bold mb-1">{upcomingDeadlines}</div>
-          <div className="text-[10px] text-muted-foreground font-light">Upcoming deadlines</div>
+          <div className="text-[10px] text-muted-foreground font-light">{t("overview.upcomingDeadlines")}</div>
         </PremiumCard>
       </motion.div>
 
@@ -416,10 +419,10 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <DocumentIcon />
             </div>
-            <span className="text-[9px] text-muted-foreground font-light">Generated</span>
+            <span className="text-[9px] text-muted-foreground font-light">{t("overview.generated")}</span>
           </div>
           <div className="text-2xl font-bold mb-1">{documents.length}</div>
-          <div className="text-[10px] text-muted-foreground font-light">Compliance documents</div>
+          <div className="text-[10px] text-muted-foreground font-light">{t("overview.complianceDocuments")}</div>
         </PremiumCard>
       </motion.div>
 
@@ -428,7 +431,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Compliance Health Breakdown
+            {t("overview.healthBreakdown")}
           </h3>
           <div className="space-y-3">
             {complianceBreakdown.length > 0 ? (
@@ -455,7 +458,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
               ))
             ) : (
               <div className="text-center py-4 text-xs text-muted-foreground">
-                No compliance data available yet
+                {t("overview.noComplianceData")}
               </div>
             )}
           </div>
@@ -467,7 +470,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Recent Regulatory Updates
+            {t("overview.recentUpdates")}
           </h3>
           <div className="space-y-2">
             {recentUpdates.length > 0 ? (
@@ -482,7 +485,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
               ))
             ) : (
               <div className="text-center py-4 text-xs text-muted-foreground">
-                No recent updates available
+                {t("overview.noRecentUpdates")}
               </div>
             )}
           </div>
@@ -494,6 +497,12 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
 
 // Regulations Tab Component
 function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
+  const t = useTranslations("dashboard.compliance");
+  const statusLabel = (s: string) =>
+    s === 'compliant' ? t("status.compliant") :
+    s === 'action_required' ? t("status.actionRequired") :
+    s === 'upcoming' ? t("status.upcoming") :
+    s.replace('_', ' ').toUpperCase();
   return (
     <div className="grid md:grid-cols-2 gap-4">
       {regulations.map((reg, index) => {
@@ -520,7 +529,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
                   reg.status === 'action_required' ? 'bg-destructive/10 text-destructive' :
                   'bg-muted text-muted-foreground'
                 }`}>
-                  {reg.status.replace('_', ' ').toUpperCase()}
+                  {statusLabel(reg.status)}
                 </div>
               </div>
 
@@ -528,17 +537,17 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
 
               <div className="mb-3 p-2.5 rounded-lg bg-muted/30">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] text-muted-foreground font-light">Next Deadline</span>
+                  <span className="text-[10px] text-muted-foreground font-light">{t("regulations.nextDeadline")}</span>
                   <ClockIcon />
                 </div>
                 <div className="text-sm font-bold">{new Date(reg.nextDeadline).toLocaleDateString()}</div>
                 <div className={`text-[9px] mt-0.5 ${daysUntil <= 30 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                  {daysUntil > 0 ? `${daysUntil} days remaining` : 'Overdue'}
+                  {daysUntil > 0 ? t("regulations.daysRemaining", { days: daysUntil }) : t("regulations.overdue")}
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <div className="text-[10px] font-semibold text-muted-foreground mb-1">Key Requirements:</div>
+                <div className="text-[10px] font-semibold text-muted-foreground mb-1">{t("regulations.keyRequirements")}</div>
                 {reg.requirements.map((req, idx) => (
                   <div key={idx} className="flex items-start gap-1.5 text-[10px]">
                     <div className="w-1 h-1 rounded-full bg-primary mt-1 flex-shrink-0" />
@@ -549,7 +558,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
 
               <div className="mt-3 pt-3 border-t border-border/50">
                 <PremiumButton size="sm" variant="outline" className="w-full text-xs h-7">
-                  View Details
+                  {t("regulations.viewDetails")}
                 </PremiumButton>
               </div>
             </PremiumCard>
@@ -562,6 +571,12 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
 
 // Documents Tab Component - updated
 function DocumentsTab({ documents, onGenerate, generating }: { documents: Document[]; onGenerate: (framework: string) => void; generating: boolean }) {
+  const t = useTranslations("dashboard.compliance");
+  const statusLabel = (s: string) =>
+    s === 'submitted' ? t("status.submitted") :
+    s === 'ready' ? t("status.ready") :
+    s === 'draft' ? t("status.draft") :
+    s.toUpperCase();
   return (
     <div className="space-y-4">
       {/* Generate New Document */}
@@ -572,9 +587,9 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
               <SparkleIcon />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xs font-semibold mb-1">AI-Powered Report Generation</h3>
+              <h3 className="text-xs font-semibold mb-1">{t("documents.aiTitle")}</h3>
               <p className="text-[10px] text-muted-foreground font-light mb-3">
-                Automatically generate compliance reports based on your emissions data and regulatory requirements
+                {t("documents.aiDescription")}
               </p>
               <div className="flex flex-wrap gap-2">
                 {["CSRD", "CDP", "GHG Protocol", "SEC"].map((framework) => (
@@ -586,7 +601,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                     onClick={() => onGenerate(framework)}
                     disabled={generating}
                   >
-                    {generating ? "Generating..." : `Generate ${framework}`}
+                    {generating ? t("documents.generating") : t("documents.generatePrefix", { framework })}
                   </PremiumButton>
                 ))}
               </div>
@@ -601,8 +616,8 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
           <div className="col-span-full">
             <PremiumCard className="p-8 text-center">
               <DocumentIcon />
-              <p className="text-sm text-muted-foreground mt-2">No documents generated yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Click the generate buttons above to create your first compliance report</p>
+              <p className="text-sm text-muted-foreground mt-2">{t("documents.noDocuments")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("documents.noDocumentsHint")}</p>
             </PremiumCard>
           </div>
         ) : (
@@ -623,7 +638,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                     doc.status === 'ready' ? 'bg-green-500/10 text-green-600' :
                     'bg-muted text-muted-foreground'
                   }`}>
-                    {doc.status.toUpperCase()}
+                    {statusLabel(doc.status)}
                   </div>
                 </div>
 
@@ -631,15 +646,15 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                 
                 <div className="space-y-1.5 mb-3 text-[10px]">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-light">Framework</span>
+                    <span className="text-muted-foreground font-light">{t("documents.framework")}</span>
                     <span className="font-medium">{doc.framework}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-light">Generated</span>
+                    <span className="text-muted-foreground font-light">{t("documents.generatedLabel")}</span>
                     <span className="font-medium">{new Date(doc.generatedAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground font-light">Due Date</span>
+                    <span className="text-muted-foreground font-light">{t("documents.dueDate")}</span>
                     <span className="font-medium">{new Date(doc.dueDate).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -658,12 +673,12 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                         a.download = `${doc.title}.md`;
                         a.click();
                         URL.revokeObjectURL(url);
-                        toast.success("Document downloaded");
+                        toast.success(t("toasts.downloaded"));
                       }
                     }}
                   >
                     <DownloadIcon />
-                    Download
+                    {t("documents.download")}
                   </PremiumButton>
                 </div>
               </PremiumCard>
@@ -677,17 +692,18 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
 
 // Audit Tab Component - updated
 function AuditTab({ logs }: { logs: AuditLog[] }) {
+  const t = useTranslations("dashboard.compliance");
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <PremiumCard className="p-4">
         <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
           <span className="w-1 h-1 rounded-full bg-primary" />
-          Activity Log
+          {t("audit.activityLog")}
         </h3>
         <div className="space-y-2">
           {logs.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-sm text-muted-foreground">No activity logged yet</p>
+              <p className="text-sm text-muted-foreground">{t("audit.noActivity")}</p>
             </div>
           ) : (
             logs.map((log, index) => (
@@ -703,7 +719,7 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
                     </span>
                   </div>
                   <p className="text-[10px] text-muted-foreground mb-1 font-light">{log.details}</p>
-                  <span className="text-[9px] text-muted-foreground/70 font-light">by {log.createdBy}</span>
+                  <span className="text-[9px] text-muted-foreground/70 font-light">{t("audit.by", { user: log.createdBy })}</span>
                 </div>
               </div>
             ))
@@ -716,6 +732,7 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
 
 // Settings Tab Component - updated
 function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settings: Settings) => void }) {
+  const t = useTranslations("dashboard.compliance");
   const [localSettings, setLocalSettings] = useState(settings);
 
   useEffect(() => {
@@ -726,39 +743,46 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
     onSave(localSettings);
   };
 
+  const jurisdictionOptions: { value: string; label: string }[] = [
+    { value: "European Union", label: t("settings.jurisdictionOptions.eu") },
+    { value: "United States", label: t("settings.jurisdictionOptions.us") },
+    { value: "United Kingdom", label: t("settings.jurisdictionOptions.uk") },
+    { value: "Global", label: t("settings.jurisdictionOptions.global") },
+  ];
+
   return (
     <div className="space-y-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Operating Jurisdictions
+            {t("settings.jurisdictionsTitle")}
           </h3>
           <p className="text-[10px] text-muted-foreground mb-3 font-light">
-            Select the jurisdictions where your company operates to track relevant regulations
+            {t("settings.jurisdictionsDescription")}
           </p>
           <div className="space-y-2">
-            {["European Union", "United States", "United Kingdom", "Global"].map((jurisdiction) => (
-              <label key={jurisdiction} className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+            {jurisdictionOptions.map(({ value, label }) => (
+              <label key={value} className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={localSettings.jurisdictions.includes(jurisdiction)}
+                  checked={localSettings.jurisdictions.includes(value)}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setLocalSettings({
                         ...localSettings,
-                        jurisdictions: [...localSettings.jurisdictions, jurisdiction]
+                        jurisdictions: [...localSettings.jurisdictions, value]
                       });
                     } else {
                       setLocalSettings({
                         ...localSettings,
-                        jurisdictions: localSettings.jurisdictions.filter(j => j !== jurisdiction)
+                        jurisdictions: localSettings.jurisdictions.filter(j => j !== value)
                       });
                     }
                   }}
                   className="w-3.5 h-3.5 rounded border-border text-primary focus:ring-1 focus:ring-primary"
                 />
-                <span className="text-xs">{jurisdiction}</span>
+                <span className="text-xs">{label}</span>
               </label>
             ))}
           </div>
@@ -769,13 +793,13 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Automation Preferences
+            {t("settings.automationTitle")}
           </h3>
           <div className="space-y-3">
             <label className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
               <div>
-                <div className="text-xs font-medium mb-0.5">Auto-submit reports</div>
-                <div className="text-[10px] text-muted-foreground font-light">Automatically submit ready reports</div>
+                <div className="text-xs font-medium mb-0.5">{t("settings.autoSubmitTitle")}</div>
+                <div className="text-[10px] text-muted-foreground font-light">{t("settings.autoSubmitDesc")}</div>
               </div>
               <input
                 type="checkbox"
@@ -789,8 +813,8 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
 
             <label className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
               <div>
-                <div className="text-xs font-medium mb-0.5">Email notifications</div>
-                <div className="text-[10px] text-muted-foreground font-light">Receive deadline reminders via email</div>
+                <div className="text-xs font-medium mb-0.5">{t("settings.emailNotificationsTitle")}</div>
+                <div className="text-[10px] text-muted-foreground font-light">{t("settings.emailNotificationsDesc")}</div>
               </div>
               <input
                 type="checkbox"
@@ -805,7 +829,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
           
           <div className="mt-4 pt-4 border-t border-border/50">
             <PremiumButton size="sm" onClick={handleSave} className="w-full text-xs h-7">
-              Save Settings
+              {t("settings.save")}
             </PremiumButton>
           </div>
         </PremiumCard>
@@ -818,12 +842,12 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
               <SparkleIcon />
             </div>
             <div className="flex-1">
-              <h3 className="text-xs font-semibold mb-1">AI Configuration</h3>
+              <h3 className="text-xs font-semibold mb-1">{t("settings.aiConfigTitle")}</h3>
               <p className="text-[10px] text-muted-foreground font-light mb-3">
-                The AI Autopilot monitors 195 countries' regulations in real-time and generates reports automatically
+                {t("settings.aiConfigDesc")}
               </p>
               <PremiumButton size="sm" variant="outline" className="text-xs h-7">
-                Configure AI Settings
+                {t("settings.aiConfigButton")}
               </PremiumButton>
             </div>
           </div>
