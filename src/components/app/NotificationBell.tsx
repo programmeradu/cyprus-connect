@@ -284,9 +284,9 @@ export const NotificationBell = () => {
             {/* Header */}
             <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold">Notifications</h3>
+                <h3 className="text-sm font-semibold">{t("title")}</h3>
                 <p className="text-xs text-muted-foreground">
-                  {unreadCount} unread
+                  {t("unread", { count: unreadCount })}
                 </p>
               </div>
               {unreadCount > 0 && (
@@ -295,8 +295,9 @@ export const NotificationBell = () => {
                   className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1"
                 >
                   <Check className="w-3 h-3" />
-                  Mark all read
+                  {t("markAllRead")}
                 </button>
+
               )}
             </div>
 
