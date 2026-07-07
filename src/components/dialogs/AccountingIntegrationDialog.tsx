@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+
 
 interface AccountingIntegrationDialogProps {
   isOpen: boolean;
@@ -16,6 +18,7 @@ export function AccountingIntegrationDialog({
   isOpen,
   onClose,
 }: AccountingIntegrationDialogProps) {
+  const t = useTranslations("shared.accountingDialog");
   const [isConnecting, setIsConnecting] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<IntegrationType>(null);
 
@@ -27,19 +30,19 @@ export function AccountingIntegrationDialog({
       // In a real implementation, this would open OAuth flow
       // For now, we'll simulate the connection
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      toast.success(`${type === "quickbooks" ? "QuickBooks" : "Xero"} connection initiated!`);
-      toast.info("Please complete the authorization in the popup window.");
-      
+
+      toast.success(t("toasts.initiated", { name: type === "quickbooks" ? "QuickBooks" : "Xero" }));
+      toast.info(t("toasts.authPopup"));
+
       // Simulate opening OAuth window
       // In production: window.location.href = `/api/auth/${type}?action=authorize`;
-      
+
       setIsConnecting(false);
       setSelectedIntegration(null);
       onClose();
     } catch (error) {
       console.error("Connection error:", error);
-      toast.error("Failed to initiate connection. Please try again.");
+      toast.error(t("toasts.failed"));
       setIsConnecting(false);
       setSelectedIntegration(null);
     }
@@ -48,31 +51,22 @@ export function AccountingIntegrationDialog({
   const integrations = [
     {
       id: "quickbooks" as const,
-      name: "QuickBooks Online",
-      description: "Connect your QuickBooks account for automated expense tracking",
+      name: t("quickbooks.name"),
+      description: t("quickbooks.description"),
       logo: "💼",
-      features: [
-        "Auto-sync invoices and bills",
-        "Track business expenses",
-        "Generate financial reports",
-        "Real-time data updates",
-      ],
+      features: t.raw("quickbooks.features") as string[],
       comingSoon: true,
     },
     {
       id: "xero" as const,
-      name: "Xero",
-      description: "Integrate with Xero for seamless accounting data import",
+      name: t("xero.name"),
+      description: t("xero.description"),
       logo: "📊",
-      features: [
-        "Import bank transactions",
-        "Sync expense categories",
-        "Access financial statements",
-        "Automated reconciliation",
-      ],
+      features: t.raw("xero.features") as string[],
       comingSoon: true,
     },
   ];
+
 
   return (
     <AnimatePresence>
@@ -98,10 +92,11 @@ export function AccountingIntegrationDialog({
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h2 className="text-xl font-bold">Connect Accounting Software</h2>
+                  <h2 className="text-xl font-bold">{t("title")}</h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Automatically import your expense and accounting data
+                    {t("description")}
                   </p>
+
                 </div>
                 <button
                   onClick={onClose}
@@ -123,7 +118,7 @@ export function AccountingIntegrationDialog({
                     {integration.comingSoon && (
                       <div className="absolute top-3 right-3">
                         <span className="px-2 py-1 text-[9px] font-semibold rounded-full bg-primary/10 text-primary">
-                          COMING SOON
+                          {t("comingSoon")}
                         </span>
                       </div>
                     )}
@@ -158,16 +153,17 @@ export function AccountingIntegrationDialog({
                       {isConnecting && selectedIntegration === integration.id ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Connecting...
+                          {t("connecting")}
                         </>
                       ) : integration.comingSoon ? (
-                        "Coming Soon"
+                        t("comingSoonBtn")
                       ) : (
                         <>
-                          Connect {integration.name}
+                          {t("connect", { name: integration.name })}
                           <ExternalLink className="w-3.5 h-3.5" />
                         </>
                       )}
+
                     </button>
                   </div>
                 ))}
@@ -193,13 +189,12 @@ export function AccountingIntegrationDialog({
                   </div>
                   <div>
                     <p className="text-xs font-medium text-foreground mb-1">
-                      Secure OAuth 2.0 Authentication
+                      {t("secureTitle")}
                     </p>
                     <p className="text-[10px] text-muted-foreground leading-relaxed">
-                      We use industry-standard OAuth 2.0 to securely connect to your accounting
-                      software. Your credentials are never stored on our servers. You can revoke
-                      access at any time from your accounting software settings.
+                      {t("secureBody")}
                     </p>
+
                   </div>
                 </div>
               </div>

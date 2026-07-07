@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Upload, FileText, File, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+
 
 interface FileUploadDialogProps {
   isOpen: boolean;
@@ -32,9 +34,11 @@ export function FileUploadDialog({
   acceptedFileTypes = [".csv", ".pdf", ".xlsx"],
   maxSizeMB = 10,
 }: FileUploadDialogProps) {
+  const t = useTranslations("shared.fileUpload");
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const handleFileSelect = (selectedFiles: FileList | null) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
@@ -46,15 +50,16 @@ export function FileUploadDialog({
       // Validate file type
       const fileExt = `.${file.name.split(".").pop()?.toLowerCase()}`;
       if (!acceptedFileTypes.includes(fileExt)) {
-        toast.error(`Invalid file type: ${file.name}. Accepted: ${acceptedFileTypes.join(", ")}`);
+        toast.error(t("toasts.invalidType", { name: file.name, types: acceptedFileTypes.join(", ") }));
         return;
       }
 
       // Validate file size
       if (file.size > maxSize) {
-        toast.error(`File too large: ${file.name}. Max size: ${maxSizeMB}MB`);
+        toast.error(t("toasts.tooLarge", { name: file.name, size: maxSizeMB }));
         return;
       }
+
 
       newFiles.push({
         file,
@@ -81,8 +86,9 @@ export function FileUploadDialog({
     try {
       const userId = localStorage.getItem("user_id");
       if (!userId) {
-        throw new Error("User not authenticated");
+        throw new Error(t("toasts.notAuth"));
       }
+
 
       // Simulate progress
       const progressInterval = setInterval(() => {
@@ -117,8 +123,9 @@ export function FileUploadDialog({
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Upload failed");
+        throw new Error(error.error || t("toasts.uploadFailed"));
       }
+
 
       const result = await response.json();
 
@@ -142,7 +149,7 @@ export function FileUploadDialog({
         )
       );
 
-      toast.success(`${uploadedFile.file.name} uploaded successfully!`);
+      toast.success(t("toasts.success", { name: uploadedFile.file.name }));
     } catch (error) {
       console.error("Upload error:", error);
       setFiles((prev) =>
@@ -152,14 +159,15 @@ export function FileUploadDialog({
                 ...f,
                 status: "failed",
                 progress: 0,
-                error: error instanceof Error ? error.message : "Upload failed",
+                error: error instanceof Error ? error.message : t("toasts.uploadFailed"),
               }
             : f
         )
       );
-      toast.error(`Failed to upload ${uploadedFile.file.name}`);
+      toast.error(t("toasts.failed", { name: uploadedFile.file.name }));
     }
   };
+
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -206,17 +214,18 @@ export function FileUploadDialog({
   const getStatusText = (file: UploadedFile) => {
     switch (file.status) {
       case "uploading":
-        return `Uploading... ${file.progress}%`;
+        return t("status.uploading", { progress: file.progress });
       case "processing":
-        return "Processing...";
+        return t("status.processing");
       case "completed":
-        return "Completed";
+        return t("status.completed");
       case "failed":
-        return file.error || "Failed";
+        return file.error || t("status.failed");
       default:
-        return "Pending";
+        return t("status.pending");
     }
   };
+
 
   const hasActiveUploads = files.some(
     (f) => f.status === "uploading" || f.status === "processing"
@@ -278,17 +287,18 @@ export function FileUploadDialog({
                   </div>
                   <div>
                     <p className="text-sm font-medium mb-1">
-                      Drop files here or{" "}
+                      {t("dropOrBrowse")}{" "}
                       <button
                         onClick={() => fileInputRef.current?.click()}
                         className="text-primary hover:underline"
                       >
-                        browse
+                        {t("browse")}
                       </button>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Accepted: {acceptedFileTypes.join(", ")} • Max {maxSizeMB}MB
+                      {t("accepted", { types: acceptedFileTypes.join(", "), size: maxSizeMB })}
                     </p>
+
                   </div>
                 </div>
               </div>
@@ -338,15 +348,16 @@ export function FileUploadDialog({
               {/* Footer */}
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
                 <p className="text-xs text-muted-foreground">
-                  {files.length} file{files.length !== 1 ? "s" : ""} selected
+                  {files.length === 1 ? t("filesSelected", { count: files.length }) : t("filesSelectedPlural", { count: files.length })}
                 </p>
                 <button
                   onClick={onClose}
                   disabled={hasActiveUploads}
                   className="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {hasActiveUploads ? "Uploading..." : "Done"}
+                  {hasActiveUploads ? t("uploading") : t("done")}
                 </button>
+
               </div>
 
               {/* Hidden file input */}

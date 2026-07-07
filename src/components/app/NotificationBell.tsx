@@ -7,6 +7,8 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Bell, Check, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+
 import {
   EmissionEntryIcon,
   GoalAchievementIcon,
@@ -31,6 +33,7 @@ interface Notification {
 }
 
 export const NotificationBell = () => {
+  const t = useTranslations("shared.notifications");
   const { data: session } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -38,6 +41,7 @@ export const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -164,13 +168,14 @@ export const NotificationBell = () => {
       if (response.ok) {
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
         setUnreadCount(0);
-        toast.success("All notifications marked as read");
+        toast.success(t("toasts.allRead"));
       }
     } catch (error) {
       console.error("Failed to mark all as read:", error);
-      toast.error("Failed to mark notifications as read");
+      toast.error(t("toasts.allReadError"));
     }
   };
+
 
   const handleDeleteNotification = async (
     e: React.MouseEvent,
@@ -194,13 +199,14 @@ export const NotificationBell = () => {
           setUnreadCount((prev) => Math.max(0, prev - 1));
         }
         
-        toast.success("Notification deleted");
+        toast.success(t("toasts.deleted"));
       }
     } catch (error) {
       console.error("Failed to delete notification:", error);
-      toast.error("Failed to delete notification");
+      toast.error(t("toasts.deleteError"));
     }
   };
+
 
   const getNotificationIcon = (type: string) => {
     const iconClassName = "w-5 h-5";
@@ -233,12 +239,13 @@ export const NotificationBell = () => {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return t("time.justNow");
+    if (diffMins < 60) return t("time.minutes", { n: diffMins });
+    if (diffHours < 24) return t("time.hours", { n: diffHours });
+    if (diffDays < 7) return t("time.days", { n: diffDays });
     return date.toLocaleDateString();
   };
+
 
   const handleBellClick = () => {
     setIsOpen(!isOpen);
@@ -277,9 +284,9 @@ export const NotificationBell = () => {
             {/* Header */}
             <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold">Notifications</h3>
+                <h3 className="text-sm font-semibold">{t("title")}</h3>
                 <p className="text-xs text-muted-foreground">
-                  {unreadCount} unread
+                  {t("unread", { count: unreadCount })}
                 </p>
               </div>
               {unreadCount > 0 && (
@@ -288,8 +295,9 @@ export const NotificationBell = () => {
                   className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1"
                 >
                   <Check className="w-3 h-3" />
-                  Mark all read
+                  {t("markAllRead")}
                 </button>
+
               )}
             </div>
 
@@ -303,8 +311,9 @@ export const NotificationBell = () => {
                 <div className="flex flex-col items-center justify-center py-12 px-4">
                   <Bell className="w-12 h-12 text-muted-foreground/30 mb-3" />
                   <p className="text-sm text-muted-foreground text-center">
-                    No notifications yet
+                    {t("empty")}
                   </p>
+
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">
@@ -365,7 +374,7 @@ export const NotificationBell = () => {
                   }}
                   className="text-xs text-primary hover:text-primary/80 font-medium"
                 >
-                  Notification Settings
+                  {t("settings")}
                 </button>
               </div>
             )}
