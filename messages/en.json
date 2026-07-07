@@ -471,6 +471,97 @@
         "doneWithRecs": "Carbon footprint calculated! {count} personalized recommendations added to your actions.",
         "doneNoRecs": "Carbon footprint calculated successfully!"
       }
+    },
+    "compliance": {
+      "title": "AI Regulatory",
+      "titleAccent": "Autopilot",
+      "subtitle": "Automated compliance monitoring, reporting, and deadline management",
+      "healthLabel": "Compliance Health",
+      "tabs": {
+        "overview": "Overview",
+        "regulations": "Regulations",
+        "documents": "Documents",
+        "audit": "Audit Trail",
+        "settings": "Settings"
+      },
+      "status": {
+        "compliant": "COMPLIANT",
+        "actionRequired": "ACTION REQUIRED",
+        "upcoming": "UPCOMING",
+        "compliantLabel": "Compliant",
+        "actionRequiredLabel": "Action Required",
+        "preparation": "Preparation",
+        "inProgress": "In Progress",
+        "draft": "DRAFT",
+        "ready": "READY",
+        "submitted": "SUBMITTED"
+      },
+      "overview": {
+        "actionRequired": "Action Required",
+        "regulationsNeedAttention": "Regulations need attention",
+        "next30Days": "Next 30 Days",
+        "upcomingDeadlines": "Upcoming deadlines",
+        "generated": "Generated",
+        "complianceDocuments": "Compliance documents",
+        "healthBreakdown": "Compliance Health Breakdown",
+        "noComplianceData": "No compliance data available yet",
+        "recentUpdates": "Recent Regulatory Updates",
+        "nextDeadlinePrefix": "Next deadline",
+        "noRecentUpdates": "No recent updates available"
+      },
+      "regulations": {
+        "nextDeadline": "Next Deadline",
+        "daysRemaining": "{days} days remaining",
+        "overdue": "Overdue",
+        "keyRequirements": "Key Requirements:",
+        "viewDetails": "View Details"
+      },
+      "documents": {
+        "aiTitle": "AI-Powered Report Generation",
+        "aiDescription": "Automatically generate compliance reports based on your emissions data and regulatory requirements",
+        "generatePrefix": "Generate {framework}",
+        "generating": "Generating...",
+        "noDocuments": "No documents generated yet",
+        "noDocumentsHint": "Click the generate buttons above to create your first compliance report",
+        "framework": "Framework",
+        "generatedLabel": "Generated",
+        "dueDate": "Due Date",
+        "download": "Download"
+      },
+      "audit": {
+        "activityLog": "Activity Log",
+        "noActivity": "No activity logged yet",
+        "by": "by {user}"
+      },
+      "settings": {
+        "jurisdictionsTitle": "Operating Jurisdictions",
+        "jurisdictionsDescription": "Select the jurisdictions where your company operates to track relevant regulations",
+        "jurisdictionOptions": {
+          "eu": "European Union",
+          "us": "United States",
+          "uk": "United Kingdom",
+          "global": "Global"
+        },
+        "automationTitle": "Automation Preferences",
+        "autoSubmitTitle": "Auto-submit reports",
+        "autoSubmitDesc": "Automatically submit ready reports",
+        "emailNotificationsTitle": "Email notifications",
+        "emailNotificationsDesc": "Receive deadline reminders via email",
+        "save": "Save Settings",
+        "aiConfigTitle": "AI Configuration",
+        "aiConfigDesc": "The AI Autopilot monitors 195 countries' regulations in real-time and generates reports automatically",
+        "aiConfigButton": "Configure AI Settings"
+      },
+      "toasts": {
+        "initFailed": "Failed to initialize compliance system",
+        "fetchFailed": "Failed to fetch compliance data",
+        "generating": "Generating {framework} report with AI...",
+        "generatedSuccess": "{framework} report generated successfully!",
+        "generateFailed": "Failed to generate report",
+        "settingsSaved": "Settings saved successfully",
+        "settingsFailed": "Failed to save settings",
+        "downloaded": "Document downloaded"
+      }
     }
   }
 }
