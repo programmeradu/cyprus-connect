@@ -752,12 +752,12 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             {isGenerating ? (
               <>
                 <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                Generating...
+                {t("creator.generating")}
               </>
             ) : (
               <>
                 <Wand2 className="w-3 h-3 mr-1" />
-                Generate {mediaType === "image" ? "Image" : "Video"}
+                {mediaType === "image" ? t("creator.generateImage") : t("creator.generateVideo")}
               </>
             )}
           </PremiumButton>
