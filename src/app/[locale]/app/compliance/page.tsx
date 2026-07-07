@@ -162,7 +162,7 @@ export default function CompliancePage() {
       await fetchComplianceData();
     } catch (error) {
       console.error("Error initializing compliance:", error);
-      toast.error("Failed to initialize compliance system");
+      toast.error(t("toasts.initFailed"));
     } finally {
       setLoading(false);
     }
