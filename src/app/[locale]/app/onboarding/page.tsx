@@ -554,7 +554,7 @@ export default function OnboardingPage() {
                   <div className="w-20 h-1.5 rounded-full bg-muted/30" />
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                  Step 3 of 4: Gamify Your Green Journey
+                  {t("step3.title")}
                 </h2>
               </div>
 
