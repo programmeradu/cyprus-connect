@@ -1065,5 +1065,58 @@
         ]
       }
     }
+  },
+  "billing": {
+    "upgradePrompt": {
+      "planFeature": "Λειτουργία {name}",
+      "upgradeToUnlock": "Αναβαθμίστε για να ξεκλειδώσετε:",
+      "upgradeCta": "Αναβάθμιση σε {name} - {price}",
+      "backToDashboard": "Επιστροφή στον Πίνακα",
+      "currentPlan": "Τρέχον πλάνο:",
+      "proFeatures": [
+        "Απεριόριστες ενέργειες ανά μήνα",
+        "1.000 AI credits/μήνα",
+        "Προηγμένα analytics & insights",
+        "Έως 5 μέλη ομάδας",
+        "Υποστήριξη email με προτεραιότητα"
+      ],
+      "enterpriseFeatures": [
+        "10.000 AI credits/μήνα",
+        "Απεριόριστα μέλη ομάδας",
+        "Αναφορές white-label",
+        "Αποκλειστικός account manager",
+        "Προσαρμοσμένη εκπαίδευση AI"
+      ]
+    },
+    "planUsage": {
+      "yourPlan": "Το Πλάνο σας",
+      "unlimited": "Απεριόριστο",
+      "enabled": "✓ Ενεργό",
+      "resets": "Επαναφορά {date}",
+      "upgradePlan": "Αναβάθμιση Πλάνου",
+      "managePlan": "Διαχείριση Πλάνου"
+    },
+    "planNames": {
+      "free": "Δωρεάν",
+      "professional": "Επαγγελματικό",
+      "enterprise": "Enterprise"
+    },
+    "usageMeter": {
+      "unlimited": "Απεριόριστο",
+      "upgrade": "Αναβάθμιση",
+      "limitReached": "Έφτασε το όριο",
+      "remaining": "{pct}% διαθέσιμο",
+      "used": "{pct}% σε χρήση",
+      "left": "{n} {unit} απομένουν",
+      "noLimits": "Χωρίς όρια σε αυτό το πλάνο",
+      "aiCredits": "AI Credits",
+      "perMonth": "+{n}/μήνα",
+      "buyMore": "Αγορά",
+      "lowBalance": "Χαμηλό υπόλοιπο credits",
+      "creditsHint": "Τα credits χρησιμοποιούνται για λειτουργίες AI όπως προτάσεις, insights και δημιουργία αναφορών"
+    }
+  },
+  "themeToggle": {
+    "label": "Εναλλαγή θέματος"
   }
 }
