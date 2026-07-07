@@ -33,6 +33,7 @@ interface Notification {
 }
 
 export const NotificationBell = () => {
+  const t = useTranslations("shared.notifications");
   const { data: session } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -40,6 +41,7 @@ export const NotificationBell = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
 
   // Close dropdown when clicking outside
   useEffect(() => {
