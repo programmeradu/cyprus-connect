@@ -311,8 +311,9 @@ export const NotificationBell = () => {
                 <div className="flex flex-col items-center justify-center py-12 px-4">
                   <Bell className="w-12 h-12 text-muted-foreground/30 mb-3" />
                   <p className="text-sm text-muted-foreground text-center">
-                    No notifications yet
+                    {t("empty")}
                   </p>
+
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">
