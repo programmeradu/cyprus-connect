@@ -52,6 +52,7 @@ interface UserData {
 }
 
 function IntegrationsContent() {
+  const t = useTranslations("dashboard.integrations");
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
