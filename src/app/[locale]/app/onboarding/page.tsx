@@ -276,11 +276,11 @@ export default function OnboardingPage() {
                     <LeafIcon className="w-5 h-5 text-primary" />
                   </div>
                   <h1 className="text-2xl md:text-3xl font-bold text-center">
-                    Welcome to Your Sustainability Journey
+                    {t("step1.title")}
                   </h1>
                 </div>
                 <div className="text-[10px] text-center text-muted-foreground">
-                  STEP 1/4
+                  {t("step1.step")}
                 </div>
               </div>
 
