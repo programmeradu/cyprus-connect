@@ -7,6 +7,7 @@ import { PremiumButton } from "@/components/ui/PremiumButton";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { CREDIT_PACKAGES } from "@/lib/stripe/config";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CreditPurchaseDialogProps {
   open: boolean;
@@ -14,7 +15,10 @@ interface CreditPurchaseDialogProps {
 }
 
 export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialogProps) => {
+  const t = useTranslations("creditPurchase");
+  const locale = useLocale();
   const [loading, setLoading] = useState<string | null>(null);
+
 
   const handlePurchase = async (packageId: string) => {
     try {
@@ -35,8 +39,9 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create checkout session');
+        throw new Error(error.error || t("checkoutFailed"));
       }
+
 
       const { url } = await response.json();
       
@@ -49,7 +54,8 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
       }
     } catch (error: any) {
       console.error('Credit purchase error:', error);
-      toast.error(error.message || 'Failed to purchase credits');
+      toast.error(error.message || t("failed"));
+
     } finally {
       setLoading(null);
     }
@@ -79,11 +85,12 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold">Purchase AI Credits</DialogTitle>
+          <DialogTitle className="text-base font-bold">{t("title")}</DialogTitle>
           <DialogDescription className="text-xs">
-            Choose a credit package to power your AI-driven sustainability insights
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
+
 
         <div className="grid md:grid-cols-3 gap-3 mt-3">
           {packages.map((pkg, index) => {
@@ -103,17 +110,18 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
                 {isPopular && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
                     <div className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                      Popular
+                      {t("popular")}
                     </div>
                   </div>
                 )}
                 {isBestValue && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
                     <div className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-medium">
-                      Best Value
+                      {t("bestValue")}
                     </div>
                   </div>
                 )}
+
 
                 <PremiumCard className={`h-full p-3 ${isPopular || isBestValue ? 'ring-1 ring-primary/30' : ''}`}>
                   {/* Icon */}
@@ -125,8 +133,8 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
                   {/* Credits */}
                   <div className="mb-1.5 text-center">
-                    <div className="text-lg font-bold">{pkg.credits.toLocaleString()}</div>
-                    <div className="text-[10px] text-muted-foreground">Credits</div>
+                    <div className="text-lg font-bold">{pkg.credits.toLocaleString(locale)}</div>
+                    <div className="text-[10px] text-muted-foreground">{t("credits")}</div>
                   </div>
 
                   {/* Price */}
@@ -134,7 +142,7 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
                     <div className="text-base font-bold">${pkg.price}</div>
                     {discount && (
                       <div className="text-[10px] text-primary font-medium">
-                        Save {discount}%
+                        {t("save", { pct: discount })}
                       </div>
                     )}
                   </div>
@@ -146,12 +154,12 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
                     onClick={() => handlePurchase(pkg.key)}
                     disabled={loading === pkg.key}
                   >
-                    {loading === pkg.key ? 'Processing...' : 'Purchase'}
+                    {loading === pkg.key ? t("processing") : t("purchase")}
                   </PremiumButton>
 
                   {/* Price per credit */}
                   <div className="mt-1.5 text-center text-[9px] text-muted-foreground">
-                    ${(pkg.price / pkg.credits).toFixed(3)} per credit
+                    {t("perCredit", { price: (pkg.price / pkg.credits).toFixed(3) })}
                   </div>
                 </PremiumCard>
               </motion.div>
@@ -160,8 +168,9 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
         </div>
 
         <div className="mt-2 text-center text-[10px] text-muted-foreground">
-          Credits never expire • Secure payment via Stripe
+          {t("footer")}
         </div>
+
       </DialogContent>
     </Dialog>
   );

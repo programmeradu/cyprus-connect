@@ -1118,5 +1118,19 @@
   },
   "themeToggle": {
     "label": "Εναλλαγή θέματος"
+  },
+  "creditPurchase": {
+    "title": "Αγορά AI Credits",
+    "description": "Επιλέξτε πακέτο credits για να ενισχύσετε τις AI αναλύσεις βιωσιμότητας",
+    "popular": "Δημοφιλές",
+    "bestValue": "Καλύτερη Αξία",
+    "credits": "Credits",
+    "save": "Εξοικονόμηση {pct}%",
+    "purchase": "Αγορά",
+    "processing": "Επεξεργασία...",
+    "perCredit": "${price} ανά credit",
+    "footer": "Τα credits δεν λήγουν • Ασφαλής πληρωμή μέσω Stripe",
+    "failed": "Αποτυχία αγοράς credits",
+    "checkoutFailed": "Αποτυχία δημιουργίας συνεδρίας πληρωμής"
   }
 }

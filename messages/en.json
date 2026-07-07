@@ -1118,5 +1118,19 @@
   },
   "themeToggle": {
     "label": "Toggle theme"
+  },
+  "creditPurchase": {
+    "title": "Purchase AI Credits",
+    "description": "Choose a credit package to power your AI-driven sustainability insights",
+    "popular": "Popular",
+    "bestValue": "Best Value",
+    "credits": "Credits",
+    "save": "Save {pct}%",
+    "purchase": "Purchase",
+    "processing": "Processing...",
+    "perCredit": "${price} per credit",
+    "footer": "Credits never expire • Secure payment via Stripe",
+    "failed": "Failed to purchase credits",
+    "checkoutFailed": "Failed to create checkout session"
   }
 }
