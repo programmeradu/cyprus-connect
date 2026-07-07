@@ -168,13 +168,14 @@ export const NotificationBell = () => {
       if (response.ok) {
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
         setUnreadCount(0);
-        toast.success("All notifications marked as read");
+        toast.success(t("toasts.allRead"));
       }
     } catch (error) {
       console.error("Failed to mark all as read:", error);
-      toast.error("Failed to mark notifications as read");
+      toast.error(t("toasts.allReadError"));
     }
   };
+
 
   const handleDeleteNotification = async (
     e: React.MouseEvent,
