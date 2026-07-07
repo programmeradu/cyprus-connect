@@ -85,11 +85,12 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold">Purchase AI Credits</DialogTitle>
+          <DialogTitle className="text-base font-bold">{t("title")}</DialogTitle>
           <DialogDescription className="text-xs">
-            Choose a credit package to power your AI-driven sustainability insights
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
+
 
         <div className="grid md:grid-cols-3 gap-3 mt-3">
           {packages.map((pkg, index) => {
