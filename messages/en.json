@@ -393,7 +393,84 @@
         "alreadyEnrolled": "You're already enrolled in this course",
         "enrollFail": "Failed to enroll in course"
       }
+    },
+    "calculator": {
+      "title": "Carbon Footprint Calculator",
+      "subtitle": "AI-powered document analysis or manual data entry for accurate carbon footprint calculations",
+      "subtitleShort": "Calculate your business's monthly carbon emissions",
+      "ai": {
+        "heading": "AI-Powered Intelligent Document Analysis",
+        "description": "Upload utility bills, transportation reports, or spreadsheets for instant data extraction",
+        "uploadTitle": "Upload Documents for Analysis",
+        "uploadDescription": "Our advanced AI automatically extracts consumption data from any document format, even custom layouts and handwritten notes",
+        "uploadCta": "Select Documents to Upload",
+        "types": {
+          "pdf": "PDF Bills",
+          "excel": "Excel/CSV",
+          "images": "Images",
+          "gas": "Gas Bills",
+          "water": "Water Bills",
+          "transport": "Transport Reports"
+        },
+        "features": {
+          "smartTitle": "Smart Recognition",
+          "smartDesc": "Powered by Gemini 2.5 Flash for instant data extraction from any format",
+          "multiTitle": "Multi-Document",
+          "multiDesc": "Upload multiple documents at once for comprehensive analysis",
+          "autoTitle": "Auto-Fill",
+          "autoDesc": "Extracted data automatically populates the calculation form"
+        }
+      },
+      "manual": {
+        "title": "Manual Entry",
+        "monthly": "Monthly",
+        "electricity": "Electricity (kWh)",
+        "gas": "Natural Gas (m³)",
+        "water": "Water (L)",
+        "waste": "Waste (kg)",
+        "transport": "Transportation (km)",
+        "climatiq": "Climatiq API",
+        "calculating": "Calculating...",
+        "calculate": "Calculate Emissions",
+        "hint": "Enter values for at least one category to calculate"
+      },
+      "results": {
+        "title": "Calculation Results",
+        "subtitle": "Your monthly carbon footprint analysis",
+        "completed": "Completed",
+        "totalTitle": "Total Monthly Emissions",
+        "totalUnit": "tonnes CO2e",
+        "breakdownTitle": "Emissions Breakdown",
+        "detailTitle": "Detailed Breakdown",
+        "aiRecs": "AI-Generated Recommendations",
+        "addedToActions": "Added to Actions",
+        "new": "NEW",
+        "impactSuffix": "Impact",
+        "creditsSuffix": "credits",
+        "viewAllActions": "View All Actions & Complete Recommendations",
+        "noRecs": "No new recommendations at this time",
+        "noRecsSub": "Your emissions profile looks good! Check the Actions page for more ways to improve.",
+        "calcAgain": "Calculate Again",
+        "goDashboard": "Go to Dashboard"
+      },
+      "categories": {
+        "electricity": "Electricity",
+        "gas": "Natural Gas",
+        "water": "Water",
+        "waste": "Waste",
+        "transport": "Transportation"
+      },
+      "toasts": {
+        "loginRequired": "Please log in to continue",
+        "enterValue": "Please enter at least one value",
+        "calcOk": "Emissions calculated with Climatiq API!",
+        "calcFallback": "Using estimated calculations (API unavailable)",
+        "saveFail": "Failed to calculate emissions. Please try again.",
+        "extracted": "Data extracted from documents!",
+        "generatingRecs": "Generating personalized recommendations...",
+        "doneWithRecs": "Carbon footprint calculated! {count} personalized recommendations added to your actions.",
+        "doneNoRecs": "Carbon footprint calculated successfully!"
+      }
     }
   }
 }
-

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { Badge } from "@/components/app/Badge";
 import { CarbonIcon, BoltIcon, FireIcon, WaterIcon, RecycleIcon, SparklesIcon, AIDocumentIcon } from "@/components/icons/CustomIcons";
@@ -16,6 +17,7 @@ import NextImage from "next/image";
 
 export default function CalculatorPage() {
   const router = useRouter();
+  const t = useTranslations("dashboard.calculator");
   const { data: session, isPending: isSessionLoading } = useSession();
   const { calculateBatch } = useEmissionCalculator();
   
@@ -233,13 +235,13 @@ Return ONLY valid JSON (no markdown, no explanations):
 
   const calculateEmissions = async () => {
     if (!session?.user?.id) {
-      toast.error("Please log in to continue");
+      toast.error(t("toasts.loginRequired"));
       router.push("/auth");
       return;
     }
 
     if (!isFormValid()) {
-      toast.error("Please enter at least one value");
+      toast.error(t("toasts.enterValue"));
       return;
     }
 
@@ -268,10 +270,10 @@ Return ONLY valid JSON (no markdown, no explanations):
             emissions: item.co2e_tonnes,
           }));
 
-          toast.success("Emissions calculated with Climatiq API!");
+          toast.success(t("toasts.calcOk"));
         } catch (error) {
           console.error("Climatiq API error, falling back to estimates:", error);
-          toast.error("Using estimated calculations (API unavailable)");
+          toast.error(t("toasts.calcFallback"));
           totalEmissions = calculateMockEmissions();
           emissionsBreakdown = getMockBreakdown();
         }
@@ -314,7 +316,7 @@ Return ONLY valid JSON (no markdown, no explanations):
         currentYear
       );
 
-      toast.info("Generating personalized recommendations...");
+      toast.info(t("toasts.generatingRecs"));
       const aiRecommendations = await generateAIRecommendations(
         totalEmissions,
         emissionsBreakdown,
@@ -328,15 +330,15 @@ Return ONLY valid JSON (no markdown, no explanations):
       });
 
       if (aiRecommendations.length > 0) {
-        toast.success(`Carbon footprint calculated! ${aiRecommendations.length} personalized recommendations added to your actions.`);
+        toast.success(t("toasts.doneWithRecs", { count: aiRecommendations.length }));
       } else {
-        toast.success("Carbon footprint calculated successfully!");
+        toast.success(t("toasts.doneNoRecs"));
       }
       
       localStorage.removeItem("calculator_draft");
     } catch (error) {
       console.error("Calculation error:", error);
-      toast.error("Failed to calculate emissions. Please try again.");
+      toast.error(t("toasts.saveFail"));
     } finally {
       setIsCalculating(false);
     }
@@ -474,31 +476,31 @@ Return ONLY valid JSON (no markdown, no explanations):
   const getMockBreakdown = () => {
     return [
       {
-        category: "Electricity",
+        category: t("categories.electricity"),
         value: parseFloat(formData.electricity) || 0,
         unit: "kWh",
         emissions: (parseFloat(formData.electricity) || 0) * 0.0005,
       },
       {
-        category: "Natural Gas",
+        category: t("categories.gas"),
         value: parseFloat(formData.gas) || 0,
         unit: "m³",
         emissions: (parseFloat(formData.gas) || 0) * 0.0053,
       },
       {
-        category: "Water",
+        category: t("categories.water"),
         value: parseFloat(formData.water) || 0,
         unit: "liters",
         emissions: (parseFloat(formData.water) || 0) * 0.0003,
       },
       {
-        category: "Waste",
+        category: t("categories.waste"),
         value: parseFloat(formData.waste) || 0,
         unit: "kg",
         emissions: (parseFloat(formData.waste) || 0) * 0.00047,
       },
       {
-        category: "Transportation",
+        category: t("categories.transport"),
         value: parseFloat(formData.transport) || 0,
         unit: "km",
         emissions: (parseFloat(formData.transport) || 0) * 0.00024,
@@ -521,7 +523,7 @@ Return ONLY valid JSON (no markdown, no explanations):
       transport: data.transport?.toString() || "",
     });
     setShowDocumentUploader(false);
-    toast.success("Data extracted from documents!");
+    toast.success(t("toasts.extracted"));
   };
 
   const handleReset = () => {
@@ -541,8 +543,8 @@ Return ONLY valid JSON (no markdown, no explanations):
     return (
       <>
         <AppHeader
-          title="Carbon Footprint Calculator"
-          subtitle="Calculate your business's monthly carbon emissions"
+          title={t("title")}
+          subtitle={t("subtitleShort")}
         />
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -559,8 +561,8 @@ Return ONLY valid JSON (no markdown, no explanations):
   return (
     <>
       <AppHeader
-        title="Carbon Footprint Calculator"
-        subtitle="AI-powered document analysis or manual data entry for accurate carbon footprint calculations"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {!results ? (
@@ -573,10 +575,10 @@ Return ONLY valid JSON (no markdown, no explanations):
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center text-primary">
                     <AIDocumentIcon className="w-full h-full" />
                   </div>
-                  <h2 className="text-xl font-bold">AI-Powered Intelligent Document Analysis</h2>
+                  <h2 className="text-xl font-bold">{t("ai.heading")}</h2>
                 </div>
                 <p className="text-sm text-muted-foreground ml-[52px]">
-                  Upload utility bills, transportation reports, or spreadsheets for instant data extraction
+                  {t("ai.description")}
                 </p>
               </div>
             </div>
@@ -593,42 +595,41 @@ Return ONLY valid JSON (no markdown, no explanations):
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Upload Documents for Analysis</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t("ai.uploadTitle")}</h3>
                     <p className="text-sm text-muted-foreground mb-3 max-w-lg mx-auto">
-                      Our advanced AI automatically extracts consumption data from any document format, 
-                      even custom layouts and handwritten notes
+                      {t("ai.uploadDescription")}
                     </p>
                   </div>
 
                   <PremiumButton size="lg" className="group-hover:scale-105 transition-transform">
                     <FileStack className="w-4 h-4 mr-2" />
-                    Select Documents to Upload
+                    {t("ai.uploadCta")}
                   </PremiumButton>
 
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-2xl mt-4">
                     <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
                       <FileText className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">PDF Bills</p>
+                      <p className="text-xs font-medium">{t("ai.types.pdf")}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
                       <FileSpreadsheet className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">Excel/CSV</p>
+                      <p className="text-xs font-medium">{t("ai.types.excel")}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
                       <ImageIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">Images</p>
+                      <p className="text-xs font-medium">{t("ai.types.images")}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
                       <FireIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">Gas Bills</p>
+                      <p className="text-xs font-medium">{t("ai.types.gas")}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
                       <WaterIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">Water Bills</p>
+                      <p className="text-xs font-medium">{t("ai.types.water")}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
                       <CarbonIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">Transport Reports</p>
+                      <p className="text-xs font-medium">{t("ai.types.transport")}</p>
                     </div>
                   </div>
                 </div>
@@ -639,30 +640,30 @@ Return ONLY valid JSON (no markdown, no explanations):
                 <div className="p-4 rounded-lg bg-muted/30 border border-border">
                   <div className="flex items-center gap-3 mb-2">
                     <Zap className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-sm">Smart Recognition</h4>
+                    <h4 className="font-semibold text-sm">{t("ai.features.smartTitle")}</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Powered by Gemini 2.5 Flash for instant data extraction from any format
+                    {t("ai.features.smartDesc")}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-muted/30 border border-border">
                   <div className="flex items-center gap-3 mb-2">
                     <TrendingUp className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-sm">Multi-Document</h4>
+                    <h4 className="font-semibold text-sm">{t("ai.features.multiTitle")}</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Upload multiple documents at once for comprehensive analysis
+                    {t("ai.features.multiDesc")}
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg bg-muted/30 border border-border">
                   <div className="flex items-center gap-3 mb-2">
                     <SparklesIcon className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-sm">Auto-Fill</h4>
+                    <h4 className="font-semibold text-sm">{t("ai.features.autoTitle")}</h4>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Extracted data automatically populates the calculation form
+                    {t("ai.features.autoDesc")}
                   </p>
                 </div>
               </div>
@@ -672,15 +673,15 @@ Return ONLY valid JSON (no markdown, no explanations):
           {/* RIGHT COLUMN - Manual Form Entry (30%) */}
           <div className="glass-strong rounded-xl p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold">Manual Entry</h2>
-              <Badge variant="primary" size="sm">Monthly</Badge>
+              <h2 className="text-lg font-bold">{t("manual.title")}</h2>
+              <Badge variant="primary" size="sm">{t("manual.monthly")}</Badge>
             </div>
 
             <div className="space-y-5 mb-6">
               <div>
                 <label className="block text-xs font-medium mb-2 flex items-center gap-2">
                   <BoltIcon className="w-3.5 h-3.5 text-primary" />
-                  Electricity (kWh)
+                  {t("manual.electricity")}
                 </label>
                 <input
                   type="number"
@@ -694,7 +695,7 @@ Return ONLY valid JSON (no markdown, no explanations):
               <div>
                 <label className="block text-xs font-medium mb-2 flex items-center gap-2">
                   <FireIcon className="w-3.5 h-3.5 text-primary" />
-                  Natural Gas (m³)
+                  {t("manual.gas")}
                 </label>
                 <input
                   type="number"
@@ -708,7 +709,7 @@ Return ONLY valid JSON (no markdown, no explanations):
               <div>
                 <label className="block text-xs font-medium mb-2 flex items-center gap-2">
                   <WaterIcon className="w-3.5 h-3.5 text-primary" />
-                  Water (L)
+                  {t("manual.water")}
                 </label>
                 <input
                   type="number"
@@ -722,7 +723,7 @@ Return ONLY valid JSON (no markdown, no explanations):
               <div>
                 <label className="block text-xs font-medium mb-2 flex items-center gap-2">
                   <RecycleIcon className="w-3.5 h-3.5 text-primary" />
-                  Waste (kg)
+                  {t("manual.waste")}
                 </label>
                 <input
                   type="number"
@@ -736,7 +737,7 @@ Return ONLY valid JSON (no markdown, no explanations):
               <div>
                 <label className="block text-xs font-medium mb-2 flex items-center gap-2">
                   <CarbonIcon className="w-3.5 h-3.5 text-primary" />
-                  Transportation (km)
+                  {t("manual.transport")}
                 </label>
                 <input
                   type="number"
@@ -752,7 +753,7 @@ Return ONLY valid JSON (no markdown, no explanations):
             <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg mb-6">
               <div className="flex items-center gap-2">
                 <SparklesIcon className="w-3.5 h-3.5 text-primary" />
-                <span className="text-xs font-medium">Climatiq API</span>
+                <span className="text-xs font-medium">{t("manual.climatiq")}</span>
               </div>
               <button
                 type="button"
@@ -777,18 +778,18 @@ Return ONLY valid JSON (no markdown, no explanations):
               {isCalculating ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Calculating...
+                  {t("manual.calculating")}
                 </>
               ) : (
                 <>
-                  Calculate Emissions
+                  {t("manual.calculate")}
                   <SparklesIcon className="w-4 h-4 ml-2" />
                 </>
               )}
             </PremiumButton>
 
             <p className="text-[10px] text-muted-foreground text-center mt-4">
-              Enter values for at least one category to calculate
+              {t("manual.hint")}
             </p>
           </div>
         </div>
@@ -801,10 +802,10 @@ Return ONLY valid JSON (no markdown, no explanations):
         >
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl font-bold mb-2">Calculation Results</h2>
-              <p className="text-sm text-muted-foreground">Your monthly carbon footprint analysis</p>
+              <h2 className="text-2xl font-bold mb-2">{t("results.title")}</h2>
+              <p className="text-sm text-muted-foreground">{t("results.subtitle")}</p>
             </div>
-            <Badge variant="primary" size="sm">Completed</Badge>
+            <Badge variant="primary" size="sm">{t("results.completed")}</Badge>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -812,17 +813,17 @@ Return ONLY valid JSON (no markdown, no explanations):
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-xl border border-primary/20">
               <h3 className="font-medium mb-3 text-sm flex items-center gap-2">
                 <CarbonIcon className="w-4 h-4 text-primary" />
-                Total Monthly Emissions
+                {t("results.totalTitle")}
               </h3>
               <div className="text-4xl font-bold text-primary mb-1">
                 {results.totalEmissions.toFixed(2)}
               </div>
-              <p className="text-sm text-muted-foreground">tonnes CO2e</p>
+              <p className="text-sm text-muted-foreground">{t("results.totalUnit")}</p>
             </div>
 
             {/* Breakdown Summary */}
             <div className="bg-muted/30 p-6 rounded-xl border border-border">
-              <h3 className="font-medium mb-4 text-sm">Emissions Breakdown</h3>
+              <h3 className="font-medium mb-4 text-sm">{t("results.breakdownTitle")}</h3>
               <div className="space-y-3">
                 {results.breakdown.filter(item => item.emissions > 0).slice(0, 3).map((item, index) => (
                   <div key={index} className="flex items-center justify-between">
@@ -836,7 +837,7 @@ Return ONLY valid JSON (no markdown, no explanations):
 
           {/* Full Breakdown */}
           <div className="bg-muted/30 p-6 rounded-xl mb-8">
-            <h3 className="font-medium mb-4">Detailed Breakdown</h3>
+            <h3 className="font-medium mb-4">{t("results.detailTitle")}</h3>
             <div className="grid sm:grid-cols-2 gap-3">
               {results.breakdown.map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
@@ -855,11 +856,11 @@ Return ONLY valid JSON (no markdown, no explanations):
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium flex items-center gap-2">
                 <SparklesIcon className="w-4 h-4 text-primary" />
-                AI-Generated Recommendations
+                {t("results.aiRecs")}
               </h3>
               {results.recommendations.length > 0 && (
                 <Badge className="bg-primary/20 text-primary border-primary/30">
-                  Added to Actions
+                  {t("results.addedToActions")}
                 </Badge>
               )}
             </div>
@@ -873,7 +874,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                         <p className="text-sm font-medium">{rec.title}</p>
                         {rec.isNew && (
                           <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] px-1.5 py-0 flex-shrink-0">
-                            NEW
+                            {t("results.new")}
                           </Badge>
                         )}
                       </div>
@@ -883,10 +884,10 @@ Return ONLY valid JSON (no markdown, no explanations):
                           {rec.category}
                         </Badge>
                         <Badge variant="outline" size="sm" className="capitalize">
-                          {rec.impact} Impact
+                          {rec.impact} {t("results.impactSuffix")}
                         </Badge>
                         <Badge variant="primary" size="sm">
-                          +{rec.points} credits
+                          +{rec.points} {t("results.creditsSuffix")}
                         </Badge>
                       </div>
                     </div>
@@ -899,16 +900,16 @@ Return ONLY valid JSON (no markdown, no explanations):
                   onClick={() => router.push("/app/actions")}
                 >
                   <SparklesIcon className="w-3 h-3 mr-2" />
-                  View All Actions & Complete Recommendations
+                  {t("results.viewAllActions")}
                 </PremiumButton>
               </>
             ) : (
               <div className="text-center py-6">
                 <p className="text-sm text-muted-foreground mb-2">
-                  No new recommendations at this time
+                  {t("results.noRecs")}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Your emissions profile looks good! Check the Actions page for more ways to improve.
+                  {t("results.noRecsSub")}
                 </p>
               </div>
             )}
@@ -921,13 +922,13 @@ Return ONLY valid JSON (no markdown, no explanations):
               className="flex-1"
               onClick={handleReset}
             >
-              Calculate Again
+              {t("results.calcAgain")}
             </PremiumButton>
             <PremiumButton 
               className="flex-1"
               onClick={() => router.push("/app")}
             >
-              Go to Dashboard
+              {t("results.goDashboard")}
             </PremiumButton>
           </div>
         </motion.div>
