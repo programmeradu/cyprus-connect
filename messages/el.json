@@ -176,7 +176,8 @@
       "profilePrompt": "Ολοκληρώστε το προφίλ σας για συγκρίσεις κλάδου",
       "aiTitle": "Πληροφορίες με τεχνητή νοημοσύνη",
       "topRecommendations": "Κορυφαίες Συστάσεις",
-      "keyHighlights": "Βασικά Σημεία"
+      "keyHighlights": "Βασικά Σημεία",
+      "loadFailed": "Αποτυχία φόρτωσης δεδομένων"
     },
     "marketplace": {
       "titleA": "Αγορά",
