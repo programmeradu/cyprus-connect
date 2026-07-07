@@ -287,17 +287,18 @@ export function FileUploadDialog({
                   </div>
                   <div>
                     <p className="text-sm font-medium mb-1">
-                      Drop files here or{" "}
+                      {t("dropOrBrowse")}{" "}
                       <button
                         onClick={() => fileInputRef.current?.click()}
                         className="text-primary hover:underline"
                       >
-                        browse
+                        {t("browse")}
                       </button>
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Accepted: {acceptedFileTypes.join(", ")} • Max {maxSizeMB}MB
+                      {t("accepted", { types: acceptedFileTypes.join(", "), size: maxSizeMB })}
                     </p>
+
                   </div>
                 </div>
               </div>
