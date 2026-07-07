@@ -106,8 +106,9 @@ export default function AuthPage() {
   };
 
   const handleDemoAccess = () => {
-    toast.info("Demo mode coming soon!");
+    toast.info(t("demoToast"));
   };
+
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -473,15 +474,16 @@ export default function AuthPage() {
             transition={{ delay: 0.9 }}
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-card/30 backdrop-blur-sm border border-border/30 rounded-full text-xs">
-              <span className="text-muted-foreground font-light">Want to explore first?</span>
+              <span className="text-muted-foreground font-light">{t("demoQuestion")}</span>
               <button
                 onClick={handleDemoAccess}
                 className="text-primary hover:text-primary/80 font-medium transition-colors"
                 disabled={isLoading}
               >
-                Try Demo
+                {t("demoTry")}
               </button>
             </div>
+
           </motion.div>
         </motion.div>
       </div>
