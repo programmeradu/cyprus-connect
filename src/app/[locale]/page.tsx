@@ -6,14 +6,19 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { DashboardDemo } from "@/components/DashboardDemo";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
-import Link from "next/link";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Link } from "@/i18n/navigation";
 import { useSession, authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
   const { data: session, isPending, refetch } = useSession();
   const router = useRouter();
+  const tNav = useTranslations("nav");
+  const tHero = useTranslations("hero");
+
 
   const handleSignOut = async () => {
     const { error } = await authClient.signOut();
