@@ -139,9 +139,10 @@ export const PlanUsageIndicator = () => {
 
               {hasLimit && feature.next_reset_at && (
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  Resets {new Date(feature.next_reset_at).toLocaleDateString()}
+                  {t("resets", { date: new Date(feature.next_reset_at).toLocaleDateString(locale) })}
                 </p>
               )}
+
             </motion.div>
           );
         })}
