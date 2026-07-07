@@ -479,17 +479,17 @@ function IntegrationsContent() {
                 <Activity className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="text-base font-semibold mb-0.5">Live API Services</h3>
-                <p className="text-[11px] text-muted-foreground">Real-time data sources</p>
+                <h3 className="text-base font-semibold mb-0.5">{t("apiStatus.title")}</h3>
+                <p className="text-[11px] text-muted-foreground">{t("apiStatus.subtitle")}</p>
               </div>
             </div>
 
             <div className="space-y-2">
               {[
-                { name: "OpenEI", desc: "US utility rates & pricing", status: "active" },
-                { name: "WikiRate", desc: "Corporate ESG benchmarks", status: "active" },
-                { name: "Climate TRACE", desc: "Global emissions tracking", status: "active" },
-                { name: "Electricity Maps", desc: "Real-time carbon intensity", status: "active" }
+                { name: "OpenEI", desc: t("apiStatus.openEIDesc"), status: "active" },
+                { name: "WikiRate", desc: t("apiStatus.wikiRateDesc"), status: "active" },
+                { name: "Climate TRACE", desc: t("apiStatus.climateTraceDesc"), status: "active" },
+                { name: "Electricity Maps", desc: t("apiStatus.electricityMapsDesc"), status: "active" }
               ].map((api, i) => (
                 <div
                   key={i}
@@ -502,7 +502,7 @@ function IntegrationsContent() {
                       <p className="text-[10px] text-muted-foreground">{api.desc}</p>
                     </div>
                   </div>
-                  <span className="text-[9px] text-green-600 font-medium uppercase tracking-wide">Live</span>
+                  <span className="text-[9px] text-green-600 font-medium uppercase tracking-wide">{t("apiStatus.live")}</span>
                 </div>
               ))}
             </div>
