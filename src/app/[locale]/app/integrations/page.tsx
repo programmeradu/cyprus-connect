@@ -213,7 +213,7 @@ function IntegrationsContent() {
       window.location.href = data.authUrl;
     } catch (error) {
       console.error('QB connect error:', error);
-      toast.error('Failed to connect to QuickBooks');
+      toast.error(t("toasts.qbConnectFail"));
       setQbLoading(false);
     }
   };
