@@ -269,7 +269,7 @@ export default function MarketplaceAdminPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-sm font-semibold line-clamp-1">{project.name}</h3>
+                    <h3 className="text-sm font-semibold break-words">{project.name}</h3>
                     {project.isFeatured && (
                       <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[9px] font-semibold">
                         <StarIcon filled={true} />

@@ -809,13 +809,13 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
       {/* Content */}
       <div className="p-4">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-bold text-sm line-clamp-2 flex-1">{course.title}</h3>
+          <h3 className="font-bold text-sm break-words flex-1">{course.title}</h3>
           {course.progress === 100 && (
             <CustomCheckIcon className="w-5 h-5 text-primary flex-shrink-0" />
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+        <p className="text-xs text-muted-foreground break-words mb-3">
           {course.description}
         </p>
 

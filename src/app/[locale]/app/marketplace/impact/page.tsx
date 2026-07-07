@@ -320,7 +320,7 @@ export default function ImpactPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <h3 className="text-xs font-semibold line-clamp-1">{purchase.projectName}</h3>
+                            <h3 className="text-xs font-semibold break-words">{purchase.projectName}</h3>
                             <span className="text-xs font-bold text-primary whitespace-nowrap">
                               ${purchase.pricePaid.toLocaleString()}
                             </span>

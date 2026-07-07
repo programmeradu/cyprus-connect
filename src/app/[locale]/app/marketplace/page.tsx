@@ -303,7 +303,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
         {/* Content Section */}
         <div className="p-4">
           {/* Project Name */}
-          <h3 className="text-sm font-semibold mb-1.5 line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="text-sm font-semibold mb-1.5 break-words group-hover:text-primary transition-colors">
             {project.name}
           </h3>
 
@@ -314,7 +314,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
           </div>
 
           {/* Description */}
-          <p className="text-xs text-muted-foreground leading-relaxed mb-4 line-clamp-2 font-light">
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4 break-words font-light">
             {project.description}
           </p>
 

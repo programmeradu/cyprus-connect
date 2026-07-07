@@ -518,7 +518,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
             <PremiumCard className="p-4 hover:shadow-lg transition-all">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold mb-1 line-clamp-2">{reg.name}</h3>
+                  <h3 className="text-sm font-semibold mb-1 break-words">{reg.name}</h3>
                   <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mb-2">
                     <GlobeIcon />
                     <span>{reg.jurisdiction}</span>
@@ -642,7 +642,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                   </div>
                 </div>
 
-                <h3 className="text-xs font-semibold mb-2 line-clamp-2">{doc.title}</h3>
+                <h3 className="text-xs font-semibold mb-2 break-words">{doc.title}</h3>
                 
                 <div className="space-y-1.5 mb-3 text-[10px]">
                   <div className="flex items-center justify-between">
