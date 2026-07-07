@@ -7,6 +7,7 @@ import { PremiumButton } from "@/components/ui/PremiumButton";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { CREDIT_PACKAGES } from "@/lib/stripe/config";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CreditPurchaseDialogProps {
   open: boolean;
@@ -14,7 +15,10 @@ interface CreditPurchaseDialogProps {
 }
 
 export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialogProps) => {
+  const t = useTranslations("creditPurchase");
+  const locale = useLocale();
   const [loading, setLoading] = useState<string | null>(null);
+
 
   const handlePurchase = async (packageId: string) => {
     try {
