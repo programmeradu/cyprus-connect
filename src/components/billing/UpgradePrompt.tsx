@@ -5,6 +5,7 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import Link from "next/link";
 import { Lock, Zap, Crown } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface UpgradePromptProps {
   feature: string;
@@ -19,6 +20,9 @@ export const UpgradePrompt = ({
   requiredPlan,
   currentPlan = "free",
 }: UpgradePromptProps) => {
+  const t = useTranslations("billing.upgradePrompt");
+  const tPlans = useTranslations("billing.planNames");
+
   const planDetails = {
     pro: {
       name: "Pro",
