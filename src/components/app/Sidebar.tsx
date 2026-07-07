@@ -38,7 +38,14 @@ const ComplianceIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const navItems = [
+type NavItem = {
+  href: "/app" | "/app/calculator" | "/app/actions" | "/app/marketplace" | "/app/compliance" | "/app/learn" | "/app/studio" | "/app/leaderboard" | "/app/analytics" | "/app/insights" | "/app/integrations" | "/app/settings";
+  key: string;
+  icon: (props: { className?: string }) => JSX.Element;
+  badge?: boolean;
+};
+
+const navItems: NavItem[] = [
   { href: "/app", key: "dashboard", icon: DashboardIcon },
   { href: "/app/calculator", key: "calculator", icon: CalculatorIcon },
   { href: "/app/actions", key: "actions", icon: BulbIcon },
@@ -51,7 +58,7 @@ const navItems = [
   { href: "/app/insights", key: "insights", icon: Lightbulb },
   { href: "/app/integrations", key: "integrations", icon: Plug },
   { href: "/app/settings", key: "settings", icon: SettingsIcon }
-] as const;
+];
 
 export const Sidebar = () => {
   const pathname = usePathname();
