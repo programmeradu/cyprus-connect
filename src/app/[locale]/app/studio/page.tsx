@@ -1056,7 +1056,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                         )}
                         
                         <div className="p-2 bg-background/95">
-                          <p className="text-[9px] font-medium line-clamp-2 mb-1">
+                          <p className="text-[9px] font-medium break-words mb-1">
                             {media.prompt}
                           </p>
                           {media.model && (

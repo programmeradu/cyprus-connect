@@ -470,7 +470,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         className="p-2.5 rounded-lg bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer group"
                       >
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <div className="text-[11px] font-semibold line-clamp-1 flex-1 group-hover:text-primary transition-colors">
+                          <div className="text-[11px] font-semibold break-words flex-1 group-hover:text-primary transition-colors">
                             {rec.name}
                           </div>
                           <div className="text-[10px] text-primary font-bold flex-shrink-0">
@@ -481,7 +481,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           {rec.category.replace("_", " ")}
                         </div>
                         {rec.matchReasons[0] && (
-                          <div className="text-[9px] text-muted-foreground/80 mt-1 line-clamp-1 font-light">
+                          <div className="text-[9px] text-muted-foreground/80 mt-1 break-words font-light">
                             {rec.matchReasons[0]}
                           </div>
                         )}
