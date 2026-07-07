@@ -32,7 +32,7 @@ export function ThemeToggle() {
       className="relative w-9 h-9 rounded-full glass flex items-center justify-center group"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label="Toggle theme"
+      aria-label={t("label")}
     >
       {/* Animated background glow */}
       <motion.div
