@@ -246,7 +246,7 @@ export default function OnboardingPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
         <div className="glass-strong rounded-3xl p-8 text-center">
           <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Loading your profile...</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );
