@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
@@ -79,20 +80,22 @@ interface Project {
   bannerImage?: string;
 }
 
-const categories = [
-  { id: "all", name: "All Projects", icon: null },
-  { id: "forestry", name: "Forestry", icon: ForestryIcon },
-  { id: "renewable_energy", name: "Renewable Energy", icon: RenewableEnergyIcon },
-  { id: "carbon_capture", name: "Carbon Capture", icon: CarbonCaptureIcon },
-  { id: "ocean_conservation", name: "Ocean Conservation", icon: OceanConservationIcon },
-];
+const categoryIds = ["all", "forestry", "renewable_energy", "carbon_capture", "ocean_conservation"] as const;
+const categoryIcons: Record<string, React.FC | null> = {
+  all: null,
+  forestry: ForestryIcon,
+  renewable_energy: RenewableEnergyIcon,
+  carbon_capture: CarbonCaptureIcon,
+  ocean_conservation: OceanConservationIcon,
+};
 
 export default function MarketplacePage() {
+  const t = useTranslations("dashboard.marketplace");
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -138,7 +141,7 @@ export default function MarketplacePage() {
       setProjects(data.projects);
     } catch (error) {
       console.error("Error fetching projects:", error);
-      toast.error("Failed to load projects");
+      toast.error(t("toastLoadFailed"));
     } finally {
       setLoading(false);
     }
@@ -162,17 +165,17 @@ export default function MarketplacePage() {
       >
         <div>
           <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-            Carbon Offset <span className="gradient-text">Marketplace</span>
+            {t("titleA")} <span className="gradient-text">{t("titleB")}</span>
           </h1>
           <p className="text-xs text-muted-foreground font-light">
-            Support verified projects that reduce and remove CO2 from the atmosphere
+            {t("subtitle")}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/app/marketplace/impact">
             <PremiumButton variant="outline" size="sm" className="text-xs gap-1.5">
               <ChartIcon />
-              <span>Your Impact</span>
+              <span>{t("yourImpact")}</span>
             </PremiumButton>
           </Link>
         </div>
@@ -186,14 +189,14 @@ export default function MarketplacePage() {
         className="mb-6"
       >
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
-          {categories.map((category) => {
-            const Icon = category.icon;
-            const isSelected = selectedCategory === category.id;
-            
+          {categoryIds.map((catId) => {
+            const Icon = categoryIcons[catId];
+            const isSelected = selectedCategory === catId;
+
             return (
               <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                key={catId}
+                onClick={() => setSelectedCategory(catId)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                   isSelected
                     ? "bg-primary text-primary-foreground shadow-sm"
@@ -201,7 +204,7 @@ export default function MarketplacePage() {
                 }`}
               >
                 {Icon && <Icon />}
-                <span>{category.name}</span>
+                <span>{t(`categories.${catId}` as any)}</span>
               </button>
             );
           })}
@@ -221,7 +224,7 @@ export default function MarketplacePage() {
         </div>
       ) : projects.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-sm text-muted-foreground">No projects found</p>
+          <p className="text-sm text-muted-foreground">{t("empty")}</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -240,6 +243,7 @@ export default function MarketplacePage() {
 }
 
 function ProjectCard({ project, index, onSelect }: { project: Project; index: number; onSelect: () => void }) {
+  const t = useTranslations("dashboard.marketplace");
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case "forestry": return ForestryIcon;
@@ -291,7 +295,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
           {project.isFeatured && (
             <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary text-primary-foreground z-10">
               <VerifiedIcon />
-              <span className="text-[9px] font-semibold">Featured</span>
+              <span className="text-[9px] font-semibold">{t("featured")}</span>
             </div>
           )}
         </div>
@@ -333,7 +337,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
             <div>
               <div className="text-sm font-bold text-foreground">
                 ${project.pricePerTon}
-                <span className="text-[10px] text-muted-foreground font-normal">/ton</span>
+                <span className="text-[10px] text-muted-foreground font-normal">{t("perTon")}</span>
               </div>
               <div className="text-[10px] text-muted-foreground">
                 {project.certification}
@@ -347,7 +351,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
                 onSelect();
               }}
             >
-              View Details
+              {t("viewDetails")}
             </PremiumButton>
           </div>
         </div>
