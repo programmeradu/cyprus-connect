@@ -544,7 +544,7 @@ export default function InsightsPage() {
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
               <Leaf className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-semibold">24-Hour Carbon Intensity Forecast</h3>
+              <h3 className="text-sm font-semibold">{t("energySection.forecastTitle")}</h3>
             </div>
             
             {forecastChartData.length > 0 ? (
