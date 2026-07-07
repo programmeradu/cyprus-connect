@@ -6,6 +6,7 @@ import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2, File, Trash2, I
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { toast } from "sonner";
 import { BoltIcon, FireIcon, WaterIcon, RecycleIcon, CarbonIcon } from "@/components/icons/CustomIcons";
+import { useTranslations, useLocale } from "next-intl";
 
 interface DocumentUploaderProps {
   onDataExtracted: (data: {
