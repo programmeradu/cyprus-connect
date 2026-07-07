@@ -177,8 +177,13 @@ export const Sidebar = () => {
       <div className="p-4 border-t border-border/50 space-y-3">
         {/* Theme Toggle */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Appearance</span>
+          <span className="text-xs text-muted-foreground">{t("appearance")}</span>
           <ThemeToggle />
+        </div>
+
+        {/* Language Switcher */}
+        <div className="flex justify-center">
+          <LanguageSwitcher />
         </div>
         
         {/* User Info */}
