@@ -219,11 +219,11 @@ export default function MediaStudioPage() {
           setSelectedMedia({ ...selectedMedia, saved: newSavedState });
         }
         await loadStudioStats();
-        toast.success(newSavedState ? "Saved to library!" : "Removed from library");
+        toast.success(newSavedState ? t("toasts.savedLibraryOn") : t("toasts.savedLibraryOff"));
       }
     } catch (error) {
       console.error("Failed to toggle save:", error);
-      toast.error("Failed to update library");
+      toast.error(t("toasts.libraryUpdateFailed"));
     }
   };
 
