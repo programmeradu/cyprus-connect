@@ -1403,69 +1403,69 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       <path d="M8 10h8M8 14h5" strokeLinecap="round" />
                       <circle cx="16" cy="8" r="2" fill="currentColor" />
                     </svg>
-                    AI Sustainability Report Generator
+                    {t("report.title")}
                   </h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    Generate professional sustainability reports instantly with AI
+                    {t("report.description")}
                   </p>
 
                   {/* 2-Column Grid for 6 fields */}
                   <div className="grid md:grid-cols-2 gap-3 mb-4">
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Company Name *</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.companyLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., GreenTech Solutions"
+                        placeholder={t("report.companyPlaceholder")}
                         value={reportInput.company}
                         onChange={(e) => setReportInput({ ...reportInput, company: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Industry *</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.industryLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., Manufacturing, Retail, Tech"
+                        placeholder={t("report.industryPlaceholder")}
                         value={reportInput.industry}
                         onChange={(e) => setReportInput({ ...reportInput, industry: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Reporting Period</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.periodLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., Q1 2024"
+                        placeholder={t("report.periodPlaceholder")}
                         value={reportInput.period}
                         onChange={(e) => setReportInput({ ...reportInput, period: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Location</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.locationLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., London, UK"
+                        placeholder={t("report.locationPlaceholder")}
                         value={reportInput.location}
                         onChange={(e) => setReportInput({ ...reportInput, location: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Number of Employees</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.employeesLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 150"
+                        placeholder={t("report.employeesPlaceholder")}
                         value={reportInput.employees}
                         onChange={(e) => setReportInput({ ...reportInput, employees: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Target Net-Zero Year</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.targetYearLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 2040"
+                        placeholder={t("report.targetYearPlaceholder")}
                         value={reportInput.targetYear}
                         onChange={(e) => setReportInput({ ...reportInput, targetYear: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
@@ -1479,17 +1479,18 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       disabled={reportGenerating}
                       className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 disabled:opacity-50 transition-all"
                     >
-                      {reportGenerating ? "Generating..." : "Generate Report"}
+                      {reportGenerating ? t("report.generating") : t("report.generate")}
                     </button>
                     {reportResult && (
                       <button
                         onClick={() => setShowPreview(true)}
                         className="px-4 py-2 rounded-lg bg-accent text-accent-foreground font-medium text-sm hover:opacity-90 transition-all"
                       >
-                        Preview & Download
+                        {t("report.previewDownload")}
                       </button>
                     )}
                   </div>
+
 
                   {reportResult && !showPreview && (
                     <motion.div
@@ -1503,18 +1504,18 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <path d="M8 10h8M8 14h5" strokeLinecap="round" />
                           <circle cx="16" cy="8" r="2" fill="currentColor" />
                         </svg>
-                        Generated Report Preview
+                        {t("report.previewTitle")}
                       </h4>
                       <div className="bg-white rounded-lg p-6 text-gray-900">
                         {/* Company Info Header */}
                         <div className="mb-6 pb-4 border-b-2 border-emerald-200">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="px-3 py-1 bg-emerald-100 rounded-full">
-                              <span className="text-emerald-700 font-bold text-xs tracking-wide">SUSTAINABILITY REPORT</span>
+                              <span className="text-emerald-700 font-bold text-xs tracking-wide">{t("report.badge")}</span>
                             </div>
                           </div>
                           <h2 className="text-2xl font-black text-gray-900 mb-1">{reportInput.company}</h2>
-                          <p className="text-gray-600 text-sm">{reportInput.industry} Industry • {reportInput.period || "Q4 2025"}</p>
+                          <p className="text-gray-600 text-sm">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") })}</p>
                         </div>
                         
                         {/* Formatted Report Content */}
@@ -1542,7 +1543,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     >
                       {/* Modal Header */}
                       <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/10 to-primary/5">
-                        <h3 className="text-lg font-bold gradient-text">Sustainability Report Preview</h3>
+                        <h3 className="text-lg font-bold gradient-text">{t("report.modalTitle")}</h3>
                         <div className="flex gap-2">
                           <button
                             onClick={downloadPDF}
@@ -1551,7 +1552,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            Download PDF
+                            {t("report.downloadPdf")}
                           </button>
                           <button
                             onClick={() => setShowPreview(false)}
@@ -1578,14 +1579,14 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     <svg viewBox="0 0 24 24" className="w-5 h-5 text-emerald-600" fill="currentColor">
                                       <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                     </svg>
-                                    <span className="text-emerald-700 font-bold text-sm tracking-wide">SUSTAINABILITY REPORT</span>
+                                    <span className="text-emerald-700 font-bold text-sm tracking-wide">{t("report.badge")}</span>
                                   </div>
                                   <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">{reportInput.company}</h1>
-                                  <p className="text-gray-600 text-base">{reportInput.industry} Industry</p>
+                                  <p className="text-gray-600 text-base">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") }).split("•")[0].trim()}</p>
                                 </div>
                                 <div className="text-right bg-gradient-to-br from-emerald-50 to-green-50 px-6 py-4 rounded-xl border-2 border-emerald-200">
-                                  <div className="text-xs text-gray-600 mb-1 uppercase tracking-wide">Reporting Period</div>
-                                  <div className="text-2xl font-bold text-emerald-700">{reportInput.period || "Q4 2025"}</div>
+                                  <div className="text-xs text-gray-600 mb-1 uppercase tracking-wide">{t("report.reportingPeriod")}</div>
+                                  <div className="text-2xl font-bold text-emerald-700">{reportInput.period || t("report.defaultPeriod")}</div>
                                 </div>
                               </div>
 
