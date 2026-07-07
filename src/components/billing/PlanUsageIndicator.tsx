@@ -7,10 +7,15 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { Sparkles, TrendingUp, Zap } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 export const PlanUsageIndicator = () => {
+  const t = useTranslations("billing.planUsage");
+  const tPlans = useTranslations("billing.planNames");
+  const locale = useLocale();
   const { data: session } = useSession();
   const { customer, isLoading } = useCustomer();
+
 
   if (!session?.user) {
     return null;
