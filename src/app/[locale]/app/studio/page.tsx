@@ -453,14 +453,14 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           setGeneratedMedia(prev => [newMedia, ...prev]);
           setSelectedMedia(newMedia);
           await loadStudioStats();
-          toast.success("Video generated with Veo 3.1!", {
-            description: "8-second 720p video with audio"
+          toast.success(t("toasts.videoGenerated"), {
+            description: t("toasts.videoDesc")
           });
         }
       }
     } catch (error: any) {
       console.error("Media generation error:", error);
-      toast.error(error.message || "Failed to generate media");
+      toast.error(error.message || t("toasts.generationFailed"));
     } finally {
       setIsGenerating(false);
     }
