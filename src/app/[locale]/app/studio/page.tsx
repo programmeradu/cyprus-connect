@@ -1082,32 +1082,32 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <BarChart3 className="w-3 h-3 text-primary" />
-                <span className="font-medium">Studio Stats:</span>
+                <span className="font-medium">{t("stats.label")}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Total: </span>
+                <span className="text-muted-foreground">{t("stats.total")} </span>
                 <span className="font-bold">{studioStats.totalGenerations}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Images: </span>
+                <span className="text-muted-foreground">{t("stats.images")} </span>
                 <span className="font-bold">{studioStats.imagesCount}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Videos: </span>
+                <span className="text-muted-foreground">{t("stats.videos")} </span>
                 <span className="font-bold">{studioStats.videosCount}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Saved: </span>
+                <span className="text-muted-foreground">{t("stats.saved")} </span>
                 <span className="font-bold">{studioStats.savedCount}</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div>
-                <span className="text-muted-foreground">Imagen 4: </span>
+                <span className="text-muted-foreground">{t("stats.imagen4")} </span>
                 <span className="font-bold">{studioStats.modelsUsed.imagen4}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Gemini Flash: </span>
+                <span className="text-muted-foreground">{t("stats.geminiFlash")} </span>
                 <span className="font-bold">{studioStats.modelsUsed.geminiFlash}</span>
               </div>
             </div>
