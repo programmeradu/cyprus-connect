@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 
 export function ThemeToggle() {
+  const t = useTranslations("themeToggle")
   const [theme, setTheme] = useState<"light" | "dark">("light")
+
 
   useEffect(() => {
     // Check localStorage and system preference on mount
