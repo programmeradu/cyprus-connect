@@ -832,7 +832,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                             onClick={() => openExternalUrl(selectedMedia.url)}
                             className="text-xs text-primary hover:underline"
                           >
-                            Try opening in new tab
+                            {t("preview.openNewTab")}
                           </button>
                         </div>
                       </div>
