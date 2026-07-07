@@ -468,7 +468,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
   const handleNaturalLanguageEdit = async () => {
     if (!editPrompt.trim() || !selectedMedia || selectedMedia.type !== "image") {
-      toast.error("Please enter an edit request");
+      toast.error(t("toasts.enterEdit"));
       return;
     }
 
