@@ -1114,6 +1114,61 @@
       "buyMore": "Buy More",
       "lowBalance": "Low credit balance",
       "creditsHint": "Credits are used for AI features like recommendations, insights, and report generation"
+    },
+    "pricingTable": {
+      "mostPopular": "Most Popular",
+      "processing": "Processing...",
+      "currentPlan": "Current Plan",
+      "getStarted": "Get Started",
+      "upgradeTo": "Upgrade to {plan}",
+      "perInterval": "/{interval}",
+      "intervals": {
+        "month": "month",
+        "year": "year"
+      },
+      "alreadyFree": "You are already on the free plan",
+      "alreadyOnPlan": "You are already on this plan",
+      "checkoutFailed": "Failed to create checkout session",
+      "subscriptionFailed": "Failed to start subscription",
+      "planNames": {
+        "free": "Free",
+        "pro": "Pro",
+        "enterprise": "Enterprise"
+      },
+      "features": {
+        "free": [
+          "Basic carbon calculator",
+          "Up to 10 actions per month",
+          "Monthly sustainability reports",
+          "Email support",
+          "100 AI credits/month"
+        ],
+        "pro": [
+          "Everything in Free",
+          "Unlimited actions",
+          "Advanced carbon analytics",
+          "Weekly sustainability insights",
+          "Priority email support",
+          "1,000 AI credits/month",
+          "Up to 5 team members",
+          "3 integrations (QuickBooks, Xero, etc.)",
+          "Custom branded reports",
+          "API access"
+        ],
+        "enterprise": [
+          "Everything in Pro",
+          "Unlimited team members",
+          "Unlimited integrations",
+          "White-label reports",
+          "Dedicated account manager",
+          "Custom AI model training",
+          "SLA guarantee (99.9% uptime)",
+          "10,000 AI credits/month",
+          "Advanced compliance tools",
+          "API rate limit: 100k/day",
+          "SSO & advanced security"
+        ]
+      }
     }
   },
   "themeToggle": {
