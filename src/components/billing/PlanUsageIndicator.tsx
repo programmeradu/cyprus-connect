@@ -107,17 +107,18 @@ export const PlanUsageIndicator = () => {
                 </span>
                 <span className="font-mono text-xs font-semibold">
                   {isUnlimited ? (
-                    <span className="text-primary">Unlimited</span>
+                    <span className="text-primary">{t("unlimited")}</span>
                   ) : hasLimit ? (
                     <span className={cn(
                       percentage > 90 ? "text-destructive" :
                       percentage > 75 ? "text-orange-500" : "text-foreground"
                     )}>
-                      {usage.toLocaleString()}/{limit.toLocaleString()}
+                      {usage.toLocaleString(locale)}/{limit.toLocaleString(locale)}
                     </span>
                   ) : (
-                    <span className="text-primary">✓ Enabled</span>
+                    <span className="text-primary">{t("enabled")}</span>
                   )}
+
                 </span>
               </div>
 
