@@ -191,14 +191,14 @@ export const BillingDashboard = () => {
     return (
       <div className="space-y-4">
         <PremiumCard className="p-4 text-center">
-          <p className="text-muted-foreground text-sm">Please sign in to view billing information</p>
+          <p className="text-muted-foreground text-sm">{t("signInRequired")}</p>
         </PremiumCard>
       </div>
     );
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -206,7 +206,7 @@ export const BillingDashboard = () => {
   };
 
   const formatAmount = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency.toUpperCase(),
     }).format(amount / 100);
