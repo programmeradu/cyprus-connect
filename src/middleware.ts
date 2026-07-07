@@ -52,7 +52,7 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  console.log("MW: pass to intl, path=", pathname);
+  // Delegate to next-intl for locale routing / redirects
   return intlMiddleware(request);
 }
 
