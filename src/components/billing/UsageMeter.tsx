@@ -56,26 +56,27 @@ export const UsageMeter = ({
           <h3 className="text-sm font-medium mb-1">{title}</h3>
           <div className="flex items-baseline gap-1">
             {unlimited ? (
-              <span className="text-lg font-bold text-primary">Unlimited</span>
+              <span className="text-lg font-bold text-primary">{t("unlimited")}</span>
             ) : (
               <>
-                <span className="text-lg font-bold">{used.toLocaleString()}</span>
+                <span className="text-lg font-bold">{used.toLocaleString(locale)}</span>
                 <span className="text-xs text-muted-foreground">
-                  / {limit.toLocaleString()} {unit}
+                  / {limit.toLocaleString(locale)} {unit}
                 </span>
               </>
             )}
           </div>
         </div>
-        
+
         {!unlimited && isNearLimit && showUpgrade && (
           <Link href="/pricing">
             <PremiumButton variant="outline" size="sm" className="text-xs h-7 px-2">
               <TrendingUp className="w-3 h-3 mr-1" />
-              Upgrade
+              {t("upgrade")}
             </PremiumButton>
           </Link>
         )}
+
       </div>
 
       {!unlimited && (
