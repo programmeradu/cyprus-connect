@@ -431,7 +431,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
         <PremiumCard className="p-4">
           <h3 className="text-xs font-semibold mb-3 flex items-center gap-1.5">
             <span className="w-1 h-1 rounded-full bg-primary" />
-            Compliance Health Breakdown
+            {t("overview.healthBreakdown")}
           </h3>
           <div className="space-y-3">
             {complianceBreakdown.length > 0 ? (
