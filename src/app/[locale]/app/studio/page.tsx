@@ -904,9 +904,9 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           ) : (
             <div className="glass-strong rounded-xl p-12 text-center">
               <ImageIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-30" />
-              <p className="text-sm text-muted-foreground">No media selected</p>
+              <p className="text-sm text-muted-foreground">{t("preview.empty")}</p>
               <p className="text-[10px] text-muted-foreground mt-1">
-                Generate or select media to preview and edit
+                {t("preview.emptyHint")}
               </p>
             </div>
           )}
