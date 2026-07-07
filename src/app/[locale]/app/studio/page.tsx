@@ -727,18 +727,17 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
           {/* Prompt Input */}
           <div className="mb-3">
-            <label className="block text-[9px] font-medium mb-1">Your Prompt</label>
+            <label className="block text-[9px] font-medium mb-1">{t("creator.promptLabel")}</label>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe what you want to create..."
+              placeholder={t("creator.promptPlaceholder")}
               className="w-full px-2 py-1.5 bg-background border border-border rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/50 min-h-[80px] resize-none"
             />
             <div className="flex items-start gap-1 mt-1.5 p-1.5 bg-primary/5 rounded-lg">
               <Zap className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
               <p className="text-[8px] leading-tight text-muted-foreground">
-                <strong>Intelligent Selection:</strong> Gemini 2.5 Flash for text/infographics/illustrations. 
-                Imagen 4 for realistic and creative images.
+                <strong>{t("creator.intelligentSelection")}</strong> {t("creator.intelligentDesc")}
               </p>
             </div>
           </div>
