@@ -440,9 +440,9 @@ export default function OnboardingPage() {
                     <Cloud className="w-5 h-5 text-primary" />
                     <BoltIcon className="w-3 h-3 text-primary -ml-1.5 -mt-1.5" />
                   </div>
-                  <h3 className="text-xs font-bold mb-2 text-center">Utility Bills</h3>
+                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.utility.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    Upload utility bills (PDF/Image) for automatic data extraction
+                    {t("step2.utility.desc")}
                   </p>
                   <PremiumButton 
                     variant="primary" 
@@ -450,7 +450,7 @@ export default function OnboardingPage() {
                     className="w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('utility')}
                   >
-                    Upload Utility Bill
+                    {t("step2.utility.cta")}
                   </PremiumButton>
                 </div>
 
@@ -459,9 +459,9 @@ export default function OnboardingPage() {
                   <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center mb-3 mx-auto">
                     <Settings className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <h3 className="text-xs font-bold mb-2 text-center">Expense & Accounting Software</h3>
+                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.accounting.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    Connect QuickBooks or Xero for automated data import
+                    {t("step2.accounting.desc")}
                   </p>
                   <PremiumButton 
                     variant="outline" 
@@ -473,11 +473,11 @@ export default function OnboardingPage() {
                     {qbConnecting ? (
                       <>
                         <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                        Connecting...
+                        {t("step2.accounting.connecting")}
                       </>
                     ) : (
                       <>
-                        Connect Accounting
+                        {t("step2.accounting.cta")}
                         <ExternalLink className="w-3 h-3 ml-1" />
                       </>
                     )}
@@ -489,9 +489,9 @@ export default function OnboardingPage() {
                   <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center mb-3 mx-auto">
                     <FolderUp className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <h3 className="text-xs font-bold mb-2 text-center">Manual Upload</h3>
+                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.manual.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    Upload any documents for OCR processing
+                    {t("step2.manual.desc")}
                   </p>
                   <PremiumButton 
                     variant="outline" 
@@ -499,7 +499,7 @@ export default function OnboardingPage() {
                     className="w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('manual')}
                   >
-                    Upload Files
+                    {t("step2.manual.cta")}
                   </PremiumButton>
                 </div>
               </div>
@@ -513,7 +513,7 @@ export default function OnboardingPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-medium text-foreground">
-                    Your data is encrypted and secure. We comply with all privacy regulations
+                    {t("step2.security")}
                   </p>
                 </div>
               </div>
@@ -524,14 +524,14 @@ export default function OnboardingPage() {
                   onClick={() => setStep(1)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Back
+                  {t("step2.back")}
                 </button>
                 <PremiumButton
                   onClick={() => setStep(3)}
                   disabled={!canProceed()}
                   size="sm"
                 >
-                  Next Step
+                  {t("step2.next")}
                 </PremiumButton>
               </div>
             </motion.div>
