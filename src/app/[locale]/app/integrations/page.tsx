@@ -235,13 +235,13 @@ function IntegrationsContent() {
       if (response.ok) {
         setQbConnected(false);
         setQbStatus(null);
-        toast.success('QuickBooks disconnected');
+        toast.success(t("toasts.qbDisconnected"));
       } else {
         throw new Error('Failed to disconnect');
       }
     } catch (error) {
       console.error('QB disconnect error:', error);
-      toast.error('Failed to disconnect QuickBooks');
+      toast.error(t("toasts.qbDisconnectFail"));
     } finally {
       setQbLoading(false);
     }
