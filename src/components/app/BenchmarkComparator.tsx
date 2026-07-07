@@ -43,20 +43,15 @@ interface BenchmarkComparison {
   };
 }
 
-const SECTORS = [
-  { value: 'retail', label: 'Retail' },
-  { value: 'manufacturing', label: 'Manufacturing' },
-  { value: 'hospitality', label: 'Hospitality' },
-  { value: 'technology', label: 'Technology & IT' },
-  { value: 'logistics', label: 'Logistics & Transport' },
-  { value: 'food-service', label: 'Food Service' },
-];
+const SECTOR_KEYS = ['retail','manufacturing','hospitality','technology','logistics','food-service'] as const;
 
 export function BenchmarkComparator() {
+  const t = useTranslations("benchmark");
   const { data: session } = useSession();
   const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
+
   
   const [companyData, setCompanyData] = useState<CompanyData>({
     sector: 'retail',
