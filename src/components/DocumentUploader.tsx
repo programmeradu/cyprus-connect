@@ -352,36 +352,21 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
                   
                   {doc.extractedData && (
                     <div className="mt-2 pt-2 border-t border-border/50 text-xs space-y-1">
-                      {doc.extractedData.electricity && (
-                        <div className="flex items-center gap-2">
-                          <BoltIcon className="w-3 h-3 text-primary" />
-                          <span>Electricity: {doc.extractedData.electricity.toLocaleString()} kWh</span>
-                        </div>
-                      )}
-                      {doc.extractedData.gas && (
-                        <div className="flex items-center gap-2">
-                          <FireIcon className="w-3 h-3 text-primary" />
-                          <span>Gas: {doc.extractedData.gas.toLocaleString()} m³</span>
-                        </div>
-                      )}
-                      {doc.extractedData.water && (
-                        <div className="flex items-center gap-2">
-                          <WaterIcon className="w-3 h-3 text-primary" />
-                          <span>Water: {doc.extractedData.water.toLocaleString()} L</span>
-                        </div>
-                      )}
-                      {doc.extractedData.waste && (
-                        <div className="flex items-center gap-2">
-                          <RecycleIcon className="w-3 h-3 text-primary" />
-                          <span>Waste: {doc.extractedData.waste.toLocaleString()} kg</span>
-                        </div>
-                      )}
-                      {doc.extractedData.transport && (
-                        <div className="flex items-center gap-2">
-                          <CarbonIcon className="w-3 h-3 text-primary" />
-                          <span>Transport: {doc.extractedData.transport.toLocaleString()} km</span>
-                        </div>
-                      )}
+                      {(["electricity","gas","water","waste","transport"] as const).map((key) => {
+                        const v = doc.extractedData?.[key];
+                        if (!v) return null;
+                        const Icon = key === "electricity" ? BoltIcon
+                          : key === "gas" ? FireIcon
+                          : key === "water" ? WaterIcon
+                          : key === "waste" ? RecycleIcon
+                          : CarbonIcon;
+                        return (
+                          <div key={key} className="flex items-center gap-2">
+                            <Icon className="w-3 h-3 text-primary" />
+                            <span>{t(`labels.${key}`)}: {v.toLocaleString(locale)} {t(`units.${key}`)}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </motion.div>
