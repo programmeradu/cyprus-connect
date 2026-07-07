@@ -141,7 +141,9 @@
       "recentActions": "Πρόσφατες Δράσεις",
       "globalRankings": "Παγκόσμια Κατάταξη",
       "empty": "Δεν υπάρχουν ακόμη χρήστες στην κατάταξη. Ολοκληρώστε δράσεις για να είστε ο πρώτος!",
-      "creditsActions": "{credits} πόντοι • {actions} δράσεις ολοκληρωμένες"
+      "creditsActions": "{credits} πόντοι • {actions} δράσεις ολοκληρωμένες",
+      "podiumCredits": "{credits} πόντοι",
+      "podiumActions": "{actions} ενέργειες"
     },
     "analytics": {
       "title": "Αναλυτικά",

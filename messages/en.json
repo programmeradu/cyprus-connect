@@ -141,7 +141,9 @@
       "recentActions": "Recent Actions",
       "globalRankings": "Global Rankings",
       "empty": "No users on the leaderboard yet. Complete actions to be the first!",
-      "creditsActions": "{credits} credits • {actions} actions completed"
+      "creditsActions": "{credits} credits • {actions} actions completed",
+      "podiumCredits": "{credits} credits",
+      "podiumActions": "{actions} actions"
     },
     "analytics": {
       "title": "Analytics",
