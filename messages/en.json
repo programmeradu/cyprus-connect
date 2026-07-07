@@ -1526,5 +1526,48 @@
     "refresh": "Refresh Prices",
     "tPerYr": "t/yr",
     "mo": "mo"
+  },
+  "benchmark": {
+    "title": "Industry Benchmarks",
+    "subtitle": "Location-aware comparison",
+    "proFeature": "Professional Feature",
+    "proBlurb": "Compare your emissions against industry peers with regional and global insights",
+    "upgradeCta": "Upgrade to Professional",
+    "sector": "Sector",
+    "emissions": "Emissions (tCO₂e)",
+    "employees": "Employees",
+    "revenue": "Revenue ($)",
+    "fillAll": "Please fill in all fields",
+    "unknownError": "Unknown error",
+    "analyzing": "Analyzing...",
+    "compare": "Compare",
+    "performance": "Performance",
+    "percentileLocal": "{country}: {n}th percentile",
+    "percentileGlobal": "Global: {n}th",
+    "countryImpact": "Country Impact: {country}",
+    "gtTotal": "{value} Gt CO₂e total",
+    "regionalAvg": "Regional Avg",
+    "globalAvg": "Global Avg",
+    "below": "{pct}% below",
+    "above": "{pct}% above",
+    "perEmployee": "Per Employee",
+    "perRevenue": "Per $1M Revenue",
+    "vsAvg": "vs {value} avg",
+    "tailored": "Tailored Insights",
+    "sectors": {
+      "retail": "Retail",
+      "manufacturing": "Manufacturing",
+      "hospitality": "Hospitality",
+      "technology": "Technology & IT",
+      "logistics": "Logistics & Transport",
+      "food-service": "Food Service"
+    },
+    "interp": {
+      "EXCELLENT": "Excellent",
+      "GOOD": "Good",
+      "AVERAGE": "Average",
+      "ABOVE_AVERAGE": "Above Average",
+      "NEEDS_IMPROVEMENT": "Needs Improvement"
+    }
   }
 }

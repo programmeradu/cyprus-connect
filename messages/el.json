@@ -1526,5 +1526,48 @@
     "refresh": "Ανανέωση Τιμών",
     "tPerYr": "τ/έτος",
     "mo": "μήν"
+  },
+  "benchmark": {
+    "title": "Δείκτες Κλάδου",
+    "subtitle": "Σύγκριση με βάση την τοποθεσία",
+    "proFeature": "Λειτουργία Professional",
+    "proBlurb": "Συγκρίνετε τις εκπομπές σας με τον κλάδο, τοπικά και παγκόσμια",
+    "upgradeCta": "Αναβάθμιση σε Professional",
+    "sector": "Κλάδος",
+    "emissions": "Εκπομπές (tCO₂e)",
+    "employees": "Εργαζόμενοι",
+    "revenue": "Έσοδα ($)",
+    "fillAll": "Συμπλήρωσε όλα τα πεδία",
+    "unknownError": "Άγνωστο σφάλμα",
+    "analyzing": "Ανάλυση...",
+    "compare": "Σύγκριση",
+    "performance": "Επίδοση",
+    "percentileLocal": "{country}: {n}η θέση",
+    "percentileGlobal": "Παγκόσμια: {n}η",
+    "countryImpact": "Χώρα: {country}",
+    "gtTotal": "{value} Gt CO₂e σύνολο",
+    "regionalAvg": "Μ.Ο. Περιοχής",
+    "globalAvg": "Μ.Ο. Παγκόσμια",
+    "below": "{pct}% κάτω",
+    "above": "{pct}% πάνω",
+    "perEmployee": "Ανά Εργαζόμενο",
+    "perRevenue": "Ανά $1M Εσόδων",
+    "vsAvg": "έναντι {value} μ.ο.",
+    "tailored": "Εξατομικευμένες Οδηγίες",
+    "sectors": {
+      "retail": "Λιανική",
+      "manufacturing": "Μεταποίηση",
+      "hospitality": "Φιλοξενία",
+      "technology": "Τεχνολογία & IT",
+      "logistics": "Logistics & Μεταφορές",
+      "food-service": "Εστίαση"
+    },
+    "interp": {
+      "EXCELLENT": "Άριστη",
+      "GOOD": "Καλή",
+      "AVERAGE": "Μέτρια",
+      "ABOVE_AVERAGE": "Άνω Μέσου",
+      "NEEDS_IMPROVEMENT": "Χρειάζεται Βελτίωση"
+    }
   }
 }
