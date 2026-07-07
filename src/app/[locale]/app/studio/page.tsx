@@ -136,7 +136,7 @@ export default function MediaStudioPage() {
       }
     } catch (error) {
       console.error("Failed to load generation history:", error);
-      toast.error("Failed to load generation history");
+      toast.error(t("toasts.historyLoadFailed"));
     } finally {
       setIsLoadingHistory(false);
     }
