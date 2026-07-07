@@ -656,8 +656,8 @@ export default function InsightsPage() {
                         fontSize: '12px'
                       }}
                     />
-                    <Bar dataKey="you" fill="#10b981" radius={[4, 4, 0, 0]} barSize={16} name="Your Company" />
-                    <Bar dataKey="industry" fill="#f97316" radius={[4, 4, 0, 0]} barSize={16} name="Industry Average" />
+                    <Bar dataKey="you" fill="#10b981" radius={[4, 4, 0, 0]} barSize={16} name={t("energySection.yourCompany")} />
+                    <Bar dataKey="industry" fill="#f97316" radius={[4, 4, 0, 0]} barSize={16} name={t("energySection.industryAverage")} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
