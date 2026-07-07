@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
@@ -9,6 +10,7 @@ import { useUser } from "@/lib/user-context";
 import { useCustomer } from "autumn-js/react";
 import { useRouter } from "next/navigation";
 import { Globe, MapPin, TrendingUp, TrendingDown, Loader2, Lock } from "lucide-react";
+
 
 interface CompanyData {
   sector: string;
