@@ -552,10 +552,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       document.body.removeChild(link);
       URL.revokeObjectURL(objectUrl);
       
-      toast.success("Download started!");
+      toast.success(t("toasts.downloadStarted"));
     } catch (error) {
       console.error("Download failed:", error);
-      toast.error("Failed to download. Opening in new tab instead...");
+      toast.error(t("toasts.downloadFailed"));
       // Fallback: open in new tab
       openExternalUrl(media.url);
     }
