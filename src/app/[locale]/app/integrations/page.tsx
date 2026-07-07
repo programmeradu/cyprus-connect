@@ -342,10 +342,10 @@ function IntegrationsContent() {
           className="mb-8"
         >
           <h1 className="text-2xl md:text-3xl font-bold mb-1.5">
-            <span className="gradient-text">Integrations</span>
+            <span className="gradient-text">{t("title")}</span>
           </h1>
           <p className="text-[13px] text-muted-foreground">
-            Connect your business tools and access real-time sustainability data
+            {t("subtitle")}
           </p>
         </motion.div>
 
