@@ -1317,10 +1317,10 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <rect x="3" y="4" width="18" height="16" rx="2" />
                           <path d="M7 8h6M7 12h10M7 16h8" strokeLinecap="round" />
                         </svg>
-                        Sustainability News
+                        {t("news.title")}
                       </h3>
                       <p className="text-xs text-muted-foreground">
-                        Latest environmental updates
+                        {t("news.subtitle")}
                       </p>
                     </div>
                     <button
@@ -1334,7 +1334,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                   <div className="space-y-3 max-h-[500px] overflow-y-auto">
                     {newsLoading ? (
-                      <div className="text-center py-8 text-sm text-muted-foreground">Loading news...</div>
+                      <div className="text-center py-8 text-sm text-muted-foreground">{t("news.loading")}</div>
                     ) : news.length > 0 ? (
                       news.slice(0, 5).map((item, i) => (
                         <motion.a
@@ -1372,7 +1372,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               {item.description}
                             </p>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-primary font-medium">Read more</span>
+                              <span className="text-xs text-primary font-medium">{t("news.readMore")}</span>
                               <svg className="w-3 h-3 text-primary group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                               </svg>
@@ -1381,7 +1381,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         </motion.a>
                       ))
                     ) : (
-                      <div className="text-center py-8 text-sm text-muted-foreground">No news available</div>
+                      <div className="text-center py-8 text-sm text-muted-foreground">{t("news.empty")}</div>
                     )}
                   </div>
                 </PremiumCard>
