@@ -72,11 +72,18 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       const geoResponse = await fetch("/api/geolocation");
       if (geoResponse.ok) {
         const data = await geoResponse.json();
-        if (data.currency) {
-          setUserCurrency(data.currency);
-          setSelectedCurrency(data.currency);
-          
-          // Save detected currency to user preferences
+        // EU/EEA + UK: force EUR (or the country's local currency where relevant).
+        // For Cyprus specifically the currency IS EUR, but we also override for
+        // countries whose ipapi response might return a non-EUR currency in error.
+        const EU_EUR = new Set([
+          "AT","BE","CY","EE","FI","FR","DE","GR","IE","IT","LV","LT","LU",
+          "MT","NL","PT","SK","SI","ES",
+        ]);
+        const detected = EU_EUR.has(data.countryCode) ? "EUR" : data.currency;
+        if (detected) {
+          setUserCurrency(detected);
+          setSelectedCurrency(detected);
+
           if (session?.user?.id) {
             const token = localStorage.getItem("bearer_token");
             await fetch(`/api/users/${session.user.id}/preferences`, {
@@ -86,7 +93,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
                 'Authorization': `Bearer ${token || ""}`
               },
               body: JSON.stringify({
-                preferredCurrency: data.currency,
+                preferredCurrency: detected,
                 countryCode: data.countryCode,
                 timezone: data.timezone,
               })
