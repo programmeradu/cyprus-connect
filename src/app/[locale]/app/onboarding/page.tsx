@@ -15,8 +15,10 @@ import { PremiumButton } from "@/components/ui/PremiumButton";
 import { Check, Cloud, Settings, FolderUp, Trophy, BarChart3, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
+import { useTranslations } from "next-intl";
 
 export default function OnboardingPage() {
+  const t = useTranslations("onboarding");
   const router = useRouter();
   const { refetchUser, updatePreferences } = useUser();
   const { data: session, isPending: isSessionLoading } = useSession();
@@ -78,7 +80,7 @@ export default function OnboardingPage() {
 
   const handleQbConnect = async () => {
     if (!session?.user?.id) {
-      toast.error('Please complete your profile first');
+      toast.error(t('toasts.completeProfile'));
       return;
     }
     
@@ -97,18 +99,18 @@ export default function OnboardingPage() {
       
       const data = await response.json();
       
-      toast.success('Redirecting to QuickBooks... 📊');
+      toast.success(t('toasts.qbRedirect'));
       window.location.href = data.authUrl;
     } catch (error) {
       console.error('QB connect error:', error);
-      toast.error('Failed to connect to QuickBooks');
+      toast.error(t('toasts.qbFail'));
       setQbConnecting(false);
     }
   };
 
   const handleComplete = async () => {
     if (!session?.user?.id) {
-      toast.error("Session not found. Please log in again.");
+      toast.error(t("toasts.noSession"));
       router.push("/auth");
       return;
     }
@@ -146,7 +148,7 @@ export default function OnboardingPage() {
 
         if (!response.ok) {
           const error = await response.json();
-          toast.error(error.error || "Failed to update profile");
+          toast.error(error.error || t("toasts.updateFail"));
           setIsSubmitting(false);
           return;
         }
@@ -171,7 +173,7 @@ export default function OnboardingPage() {
 
         if (!response.ok) {
           const error = await response.json();
-          toast.error(error.error || "Failed to create account");
+          toast.error(error.error || t("toasts.createFail"));
           setIsSubmitting(false);
           return;
         }
@@ -207,12 +209,12 @@ export default function OnboardingPage() {
       
       localStorage.setItem("onboarding_completed", "true");
       
-      toast.success("Welcome to VerdeIQ! 🌿");
+      toast.success(t("toasts.welcome"));
       
       router.push("/app");
     } catch (error) {
       console.error("Onboarding error:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("toasts.genericError"));
       setIsSubmitting(false);
     }
   };
@@ -234,7 +236,7 @@ export default function OnboardingPage() {
   };
 
   const handleUploadComplete = (data: UtilityBillData) => {
-    toast.success(`${data.usageType} bill data extracted successfully!`);
+    toast.success(t("toasts.extracted", { type: data.usageType ?? "" }));
     setShowUploadDialog(false);
   };
 
@@ -244,7 +246,7 @@ export default function OnboardingPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
         <div className="glass-strong rounded-3xl p-8 text-center">
           <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Loading your profile...</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );
@@ -274,11 +276,11 @@ export default function OnboardingPage() {
                     <LeafIcon className="w-5 h-5 text-primary" />
                   </div>
                   <h1 className="text-2xl md:text-3xl font-bold text-center">
-                    Welcome to Your Sustainability Journey
+                    {t("step1.title")}
                   </h1>
                 </div>
                 <div className="text-[10px] text-center text-muted-foreground">
-                  STEP 1/4
+                  {t("step1.step")}
                 </div>
               </div>
 
@@ -288,7 +290,7 @@ export default function OnboardingPage() {
                   <div className="relative w-full max-w-md aspect-square rounded-2xl overflow-hidden">
                     <img 
                       src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/452e6a6c-dfb5-4b2f-890f-4242ef400721/generated_images/premium-isometric-illustration-of-a-sust-f36bea66-20251116234646.jpg"
-                      alt="Sustainable city with green buildings and nature"
+                      alt={t("step1.imageAlt")}
                       className="w-full h-full object-cover"
                     />
                   </div>
@@ -297,17 +299,11 @@ export default function OnboardingPage() {
                 {/* Right Side - Content */}
                 <div className="flex-1 text-left">
                   <h2 className="text-xl md:text-2xl font-semibold mb-6">
-                    Unlock Instant Impact & Smarter Growth
+                    {t("step1.heading")}
                   </h2>
 
                   <div className="space-y-3 mb-8">
-                    {[
-                      "Effortless Data Integration",
-                      "Real-time Carbon Footprint Tracking",
-                      "AI-Driven Reduction Recommendations",
-                      "Compliance & Reporting Simplified",
-                      "Cost Savings Through Efficiency"
-                    ].map((feature, i) => (
+                    {(t.raw("step1.features") as string[]).map((feature, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, x: -20 }}
@@ -324,16 +320,15 @@ export default function OnboardingPage() {
                   </div>
 
                   <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
-                    Our AI-Powered Dashboard transforms complex data into actionable insights, 
-                    helping your business thrive while protecting our planet.
+                    {t("step1.description")}
                   </p>
 
                   <div className="flex items-center gap-4">
                     <PremiumButton onClick={() => setStep(2)} size="sm">
-                      Get Started
+                      {t("step1.getStarted")}
                     </PremiumButton>
                     <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                      Learn More
+                      {t("step1.learnMore")}
                     </button>
                   </div>
                 </div>
@@ -362,76 +357,76 @@ export default function OnboardingPage() {
               </div>
 
               <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                Step 2: Connect Your Data Sources
+                {t("step2.title")}
               </h2>
               <p className="text-sm text-muted-foreground mb-8">
-                Seamless Integration for Smarter Insights
+                {t("step2.subtitle")}
               </p>
 
               {/* Company Details Form */}
               <div className="mb-8 p-6 rounded-xl bg-muted/20 border border-border/50">
-                <h3 className="text-sm font-semibold mb-4">First, tell us about your company</h3>
+                <h3 className="text-sm font-semibold mb-4">{t("step2.companyHeader")}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium mb-2">Your Name *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.yourName")}</label>
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="John Doe"
+                      placeholder={t("step2.yourNamePlaceholder")}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">Email *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.email")}</label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="john@company.com"
+                      placeholder={t("step2.emailPlaceholder")}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">Company Name *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.companyName")}</label>
                     <input
                       type="text"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="Acme Corp"
+                      placeholder={t("step2.companyNamePlaceholder")}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">Industry *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.industry")}</label>
                     <select
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
-                      <option value="">Select industry</option>
-                      <option value="technology">Technology</option>
-                      <option value="retail">Retail</option>
-                      <option value="manufacturing">Manufacturing</option>
-                      <option value="hospitality">Hospitality</option>
-                      <option value="healthcare">Healthcare</option>
-                      <option value="finance">Finance</option>
+                      <option value="">{t("step2.selectIndustry")}</option>
+                      <option value="technology">{t("step2.industries.technology")}</option>
+                      <option value="retail">{t("step2.industries.retail")}</option>
+                      <option value="manufacturing">{t("step2.industries.manufacturing")}</option>
+                      <option value="hospitality">{t("step2.industries.hospitality")}</option>
+                      <option value="healthcare">{t("step2.industries.healthcare")}</option>
+                      <option value="finance">{t("step2.industries.finance")}</option>
                     </select>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-medium mb-2">Team Size *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.teamSize")}</label>
                     <select
                       value={teamSize}
                       onChange={(e) => setTeamSize(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
-                      <option value="">Select team size</option>
-                      <option value="1-10">1-10 employees</option>
-                      <option value="11-50">11-50 employees</option>
-                      <option value="51-200">51-200 employees</option>
-                      <option value="201-500">201-500 employees</option>
-                      <option value="500+">500+ employees</option>
+                      <option value="">{t("step2.selectTeamSize")}</option>
+                      <option value="1-10">{t("step2.teamSizes.1-10")}</option>
+                      <option value="11-50">{t("step2.teamSizes.11-50")}</option>
+                      <option value="51-200">{t("step2.teamSizes.51-200")}</option>
+                      <option value="201-500">{t("step2.teamSizes.201-500")}</option>
+                      <option value="500+">{t("step2.teamSizes.500+")}</option>
                     </select>
                   </div>
                 </div>
@@ -445,9 +440,9 @@ export default function OnboardingPage() {
                     <Cloud className="w-5 h-5 text-primary" />
                     <BoltIcon className="w-3 h-3 text-primary -ml-1.5 -mt-1.5" />
                   </div>
-                  <h3 className="text-xs font-bold mb-2 text-center">Utility Bills</h3>
+                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.utility.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    Upload utility bills (PDF/Image) for automatic data extraction
+                    {t("step2.utility.desc")}
                   </p>
                   <PremiumButton 
                     variant="primary" 
@@ -455,7 +450,7 @@ export default function OnboardingPage() {
                     className="w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('utility')}
                   >
-                    Upload Utility Bill
+                    {t("step2.utility.cta")}
                   </PremiumButton>
                 </div>
 
@@ -464,9 +459,9 @@ export default function OnboardingPage() {
                   <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center mb-3 mx-auto">
                     <Settings className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <h3 className="text-xs font-bold mb-2 text-center">Expense & Accounting Software</h3>
+                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.accounting.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    Connect QuickBooks or Xero for automated data import
+                    {t("step2.accounting.desc")}
                   </p>
                   <PremiumButton 
                     variant="outline" 
@@ -478,11 +473,11 @@ export default function OnboardingPage() {
                     {qbConnecting ? (
                       <>
                         <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                        Connecting...
+                        {t("step2.accounting.connecting")}
                       </>
                     ) : (
                       <>
-                        Connect Accounting
+                        {t("step2.accounting.cta")}
                         <ExternalLink className="w-3 h-3 ml-1" />
                       </>
                     )}
@@ -494,9 +489,9 @@ export default function OnboardingPage() {
                   <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center mb-3 mx-auto">
                     <FolderUp className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <h3 className="text-xs font-bold mb-2 text-center">Manual Upload</h3>
+                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.manual.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    Upload any documents for OCR processing
+                    {t("step2.manual.desc")}
                   </p>
                   <PremiumButton 
                     variant="outline" 
@@ -504,7 +499,7 @@ export default function OnboardingPage() {
                     className="w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('manual')}
                   >
-                    Upload Files
+                    {t("step2.manual.cta")}
                   </PremiumButton>
                 </div>
               </div>
@@ -518,7 +513,7 @@ export default function OnboardingPage() {
                 </div>
                 <div>
                   <p className="text-[10px] font-medium text-foreground">
-                    Your data is encrypted and secure. We comply with all privacy regulations
+                    {t("step2.security")}
                   </p>
                 </div>
               </div>
@@ -529,14 +524,14 @@ export default function OnboardingPage() {
                   onClick={() => setStep(1)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Back
+                  {t("step2.back")}
                 </button>
                 <PremiumButton
                   onClick={() => setStep(3)}
                   disabled={!canProceed()}
                   size="sm"
                 >
-                  Next Step
+                  {t("step2.next")}
                 </PremiumButton>
               </div>
             </motion.div>
@@ -559,7 +554,7 @@ export default function OnboardingPage() {
                   <div className="w-20 h-1.5 rounded-full bg-muted/30" />
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">
-                  Step 3 of 4: Gamify Your Green Journey
+                  {t("step3.title")}
                 </h2>
               </div>
 
@@ -593,13 +588,10 @@ export default function OnboardingPage() {
                 {/* Right - Content */}
                 <div className="flex-1 text-left">
                   <h3 className="text-xl font-bold mb-4">
-                    Earn Green Credits & Climb the Leaderboard!
+                    {t("step3.heading")}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                    Our unique Green Credit system rewards your sustainable actions. The more you reduce your 
-                    carbon footprint, recycle, and conserve resources, the more credits you earn. Compete with other 
-                    local businesses on the leaderboard to see your impact grow and inspire others. It's fun, rewarding, 
-                    and great for your brand!
+                    {t("step3.description")}
                   </p>
 
                   {/* Preview Cards */}
@@ -610,13 +602,13 @@ export default function OnboardingPage() {
                         <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
                           <LeafIcon className="w-3 h-3 text-primary" />
                         </div>
-                        <h4 className="text-[10px] font-bold">Green Credits</h4>
+                        <h4 className="text-[10px] font-bold">{t("step3.greenCredits")}</h4>
                       </div>
                       <p className="text-xl font-bold mb-0.5">
                         1,250
                         <span className="text-xs font-normal text-green-500 ml-1.5">+50</span>
                       </p>
-                      <p className="text-[9px] text-muted-foreground">Credits earned this month</p>
+                      <p className="text-[9px] text-muted-foreground">{t("step3.creditsEarned")}</p>
                     </div>
 
                     {/* Leaderboard */}
@@ -632,8 +624,8 @@ export default function OnboardingPage() {
                           <div className="w-1 h-3 bg-muted rounded" />
                         </div>
                       </div>
-                      <p className="text-[10px] font-medium mb-0.5">Leaderboard</p>
-                      <p className="text-[9px] text-muted-foreground">Your Rank: #7 out of 45 SMEs</p>
+                      <p className="text-[10px] font-medium mb-0.5">{t("step3.leaderboard")}</p>
+                      <p className="text-[9px] text-muted-foreground">{t("step3.yourRank")}</p>
                     </div>
                   </div>
                 </div>
@@ -641,20 +633,20 @@ export default function OnboardingPage() {
 
               <div className="flex flex-col items-center gap-3">
                 <PremiumButton onClick={() => setStep(4)} size="sm" className="w-full md:w-auto px-6">
-                  Explore Initial Recommendations
+                  {t("step3.explore")}
                 </PremiumButton>
                 <div className="flex items-center gap-6">
                   <button
                     onClick={() => setStep(2)}
                     className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Back
+                    {t("step3.back")}
                   </button>
                   <button
                     onClick={() => setStep(4)}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
                   >
-                    Skip for now
+                    {t("step3.skip")}
                   </button>
                 </div>
               </div>
@@ -678,50 +670,38 @@ export default function OnboardingPage() {
                   <div className="w-16 h-1.5 rounded-full bg-primary" />
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                  Step 4 of 4: Your Dashboard Awaits
+                  {t("step4.title")}
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-                  You're all set! Here's a quick overview of what you'll find on your dashboard
+                  {t("step4.subtitle")}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {[
-                  {
-                    icon: <BarChart3 className="w-4 h-4" />,
-                    title: "Carbon Footprint Tracking",
-                    desc: "View your real-time emissions data with detailed breakdowns by category"
-                  },
-                  {
-                    icon: <BoltIcon className="w-4 h-4" />,
-                    title: "AI Recommendations",
-                    desc: "Get personalized suggestions to reduce your environmental impact"
-                  },
-                  {
-                    icon: <Trophy className="w-4 h-4" />,
-                    title: "Leaderboard & Credits",
-                    desc: "Track your progress and compete with other businesses in your area"
-                  },
-                  {
-                    icon: <FireIcon className="w-4 h-4" />,
-                    title: "Detailed Reports",
-                    desc: "Generate compliance reports and export data for stakeholders"
-                  }
-                ].map((feature, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * i }}
-                    className="p-4 rounded-lg bg-background border border-border"
-                  >
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-3">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
-                    <p className="text-[10px] text-muted-foreground leading-relaxed">{feature.desc}</p>
-                  </motion.div>
-                ))}
+                {(() => {
+                  const items = t.raw("step4.features") as Array<{ title: string; desc: string }>;
+                  const icons = [
+                    <BarChart3 key="0" className="w-4 h-4" />,
+                    <BoltIcon key="1" className="w-4 h-4" />,
+                    <Trophy key="2" className="w-4 h-4" />,
+                    <FireIcon key="3" className="w-4 h-4" />,
+                  ];
+                  return items.map((feature, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * i }}
+                      className="p-4 rounded-lg bg-background border border-border"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-3">
+                        {icons[i]}
+                      </div>
+                      <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">{feature.desc}</p>
+                    </motion.div>
+                  ));
+                })()}
               </div>
 
               <div className="flex flex-col items-center gap-3">
@@ -731,13 +711,13 @@ export default function OnboardingPage() {
                   size="sm"
                   className="w-full md:w-auto px-8"
                 >
-                  {isSubmitting ? "Setting up..." : "Go to Dashboard"}
+                  {isSubmitting ? t("step4.settingUp") : t("step4.cta")}
                 </PremiumButton>
                 <button
                   onClick={() => setStep(3)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Back
+                  {t("step4.back")}
                 </button>
               </div>
             </motion.div>
@@ -762,7 +742,7 @@ export default function OnboardingPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">
-                  {uploadType === 'utility' ? 'Upload Utility Bill' : 'Upload Document'}
+                  {uploadType === 'utility' ? t("upload.utilityTitle") : t("upload.documentTitle")}
                 </h3>
                 <button
                   onClick={() => setShowUploadDialog(false)}
@@ -772,7 +752,7 @@ export default function OnboardingPage() {
                 </button>
               </div>
               <p className="text-sm text-muted-foreground mb-6">
-                Upload your {uploadType === 'utility' ? 'utility bill' : 'document'} and we'll automatically extract the data using OCR technology.
+                {uploadType === 'utility' ? t("upload.descUtility") : t("upload.descDocument")}
               </p>
               <DocumentUpload onUploadComplete={handleUploadComplete} />
             </motion.div>
