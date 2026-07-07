@@ -887,9 +887,9 @@ export default function InsightsPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">Compliance Health</p>
+                  <p className="text-sm font-semibold">{t("compliance.health")}</p>
                   <p className="text-xs text-muted-foreground">
-                    {complianceData.regulations.length} regulations tracked
+                    {t("compliance.regsTracked", { count: complianceData.regulations.length })}
                   </p>
                 </div>
               </div>
