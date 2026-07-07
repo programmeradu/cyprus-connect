@@ -100,7 +100,7 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
               >
                 {/* User Info */}
                 <div className="px-4 py-3 border-b border-border/50">
-                  <p className="text-sm font-medium truncate">{session?.user?.name || "User"}</p>
+                  <p className="text-sm font-medium truncate">{session?.user?.name || t("defaultUser")}</p>
                   <p className="text-xs text-muted-foreground truncate">{session?.user?.email}</p>
                 </div>
 
@@ -114,7 +114,7 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
                     className="w-full px-4 py-2 text-left text-sm flex items-center gap-3 hover:bg-accent/50 transition-colors"
                   >
                     <Settings className="w-4 h-4 text-muted-foreground" />
-                    <span>Settings</span>
+                    <span>{t("settings")}</span>
                   </button>
 
                   <button
@@ -125,9 +125,10 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
                     className="w-full px-4 py-2 text-left text-sm flex items-center gap-3 hover:bg-destructive/10 text-destructive transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
+                    <span>{t("signOut")}</span>
                   </button>
                 </div>
+
               </motion.div>
             )}
           </div>
