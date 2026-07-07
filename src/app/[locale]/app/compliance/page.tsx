@@ -673,12 +673,12 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
                         a.download = `${doc.title}.md`;
                         a.click();
                         URL.revokeObjectURL(url);
-                        toast.success("Document downloaded");
+                        toast.success(t("toasts.downloaded"));
                       }
                     }}
                   >
                     <DownloadIcon />
-                    Download
+                    {t("documents.download")}
                   </PremiumButton>
                 </div>
               </PremiumCard>
