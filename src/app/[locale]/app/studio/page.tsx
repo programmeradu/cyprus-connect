@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import NextImage from "next/image";
+import { useTranslations } from "next-intl";
 
 // Custom SVG Icons
 const RecentIcon = () => (
@@ -63,6 +64,7 @@ interface StudioStats {
 }
 
 export default function MediaStudioPage() {
+  const t = useTranslations("dashboard.studio");
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const { user } = useUser();
@@ -134,7 +136,7 @@ export default function MediaStudioPage() {
       }
     } catch (error) {
       console.error("Failed to load generation history:", error);
-      toast.error("Failed to load generation history");
+      toast.error(t("toasts.historyLoadFailed"));
     } finally {
       setIsLoadingHistory(false);
     }
@@ -217,11 +219,11 @@ export default function MediaStudioPage() {
           setSelectedMedia({ ...selectedMedia, saved: newSavedState });
         }
         await loadStudioStats();
-        toast.success(newSavedState ? "Saved to library!" : "Removed from library");
+        toast.success(newSavedState ? t("toasts.savedLibraryOn") : t("toasts.savedLibraryOff"));
       }
     } catch (error) {
       console.error("Failed to toggle save:", error);
-      toast.error("Failed to update library");
+      toast.error(t("toasts.libraryUpdateFailed"));
     }
   };
 
@@ -231,7 +233,7 @@ export default function MediaStudioPage() {
       if (selectedMedia?.id === media.id) {
         setSelectedMedia(null);
       }
-      toast.success("Generation removed");
+      toast.success(t("toasts.removed"));
       return;
     }
 
@@ -248,11 +250,11 @@ export default function MediaStudioPage() {
           setSelectedMedia(null);
         }
         await loadStudioStats();
-        toast.success("Generation deleted successfully");
+        toast.success(t("toasts.deleted"));
       }
     } catch (error) {
       console.error("Failed to delete generation:", error);
-      toast.error("Failed to delete generation");
+      toast.error(t("toasts.deleteFailed"));
     }
   };
 
@@ -354,7 +356,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
   const generateMedia = async () => {
     if (!prompt.trim()) {
-      toast.error("Please enter a prompt");
+      toast.error(t("toasts.enterPrompt"));
       return;
     }
 
@@ -363,7 +365,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       const sustainabilityPrompt = await buildSustainabilityPrompt(prompt);
       const token = localStorage.getItem("bearer_token");
       
-      toast.info(`Generating ${mediaType}... This may take a moment.`);
+      toast.info(t("toasts.generatingInfo", { type: t(`mediaType.${mediaType}`) }));
 
       if (mediaType === "image") {
         const response = await fetch("/api/generate-image", {
@@ -405,8 +407,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           setSelectedMedia(newMedia);
           await loadStudioStats();
           
-          const modelName = result.model === "imagen-4.0-generate-001" ? "Imagen 4" : "Gemini 2.5 Flash";
-          toast.success(`Image generated with ${modelName}!`, {
+          const modelName = result.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlash");
+          toast.success(t("toasts.imageGenerated", { model: modelName }), {
             description: result.modelReason
           });
         }
@@ -451,14 +453,14 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           setGeneratedMedia(prev => [newMedia, ...prev]);
           setSelectedMedia(newMedia);
           await loadStudioStats();
-          toast.success("Video generated with Veo 3.1!", {
-            description: "8-second 720p video with audio"
+          toast.success(t("toasts.videoGenerated"), {
+            description: t("toasts.videoDesc")
           });
         }
       }
     } catch (error: any) {
       console.error("Media generation error:", error);
-      toast.error(error.message || "Failed to generate media");
+      toast.error(error.message || t("toasts.generationFailed"));
     } finally {
       setIsGenerating(false);
     }
@@ -466,7 +468,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
   const handleNaturalLanguageEdit = async () => {
     if (!editPrompt.trim() || !selectedMedia || selectedMedia.type !== "image") {
-      toast.error("Please enter an edit request");
+      toast.error(t("toasts.enterEdit"));
       return;
     }
 
@@ -508,14 +510,14 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
         setSelectedMedia(editedMedia);
         await loadStudioStats();
         
-        toast.success("Image edited successfully!", {
-          description: "Powered by Gemini 2.5 Flash Image"
+        toast.success(t("toasts.imageEdited"), {
+          description: t("toasts.imageEditedDesc")
         });
         setEditPrompt("");
       }
     } catch (error: any) {
       console.error("Image editing error:", error);
-      toast.error(error.message || "Failed to edit image");
+      toast.error(error.message || t("toasts.imageEditFailed"));
     } finally {
       setIsEditingImage(false);
     }
@@ -550,10 +552,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       document.body.removeChild(link);
       URL.revokeObjectURL(objectUrl);
       
-      toast.success("Download started!");
+      toast.success(t("toasts.downloadStarted"));
     } catch (error) {
       console.error("Download failed:", error);
-      toast.error("Failed to download. Opening in new tab instead...");
+      toast.error(t("toasts.downloadFailed"));
       // Fallback: open in new tab
       openExternalUrl(media.url);
     }
@@ -573,8 +575,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
     
     setVideoError(
       isInvalidProtocol 
-        ? "Video URL format not supported in browser. Please try opening in a new tab."
-        : "Failed to load video. The video may still be processing or the URL may be expired."
+        ? t("toasts.videoErrorInvalid")
+        : t("toasts.videoErrorGeneric")
     );
   };
 
@@ -586,31 +588,12 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
     }
   }, [selectedMedia?.id]);
 
-  const generateContextSuggestions = () => {
-    const suggestions = {
-      company_data: [
-        "Create a social media post about our company's sustainability commitment",
-        "Design an infographic showing our environmental initiatives"
-      ],
-      progress: [
-        "Visualize our carbon reduction progress this quarter",
-        "Create a celebration post for reaching renewable energy milestone"
-      ],
-      insights: [
-        "Generate an infographic about our latest emissions data",
-        "Create a visual guide on where we can improve"
-      ],
-      recommendations: [
-        "Create motivational content about our upcoming green initiatives",
-        "Design a roadmap visual for our sustainability actions"
-      ],
-      custom: [
-        "Create a green business awareness poster",
-        "Design a sustainability tips infographic"
-      ]
-    };
-
-    return suggestions[contextType] || suggestions.custom;
+  const generateContextSuggestions = (): string[] => {
+    try {
+      const raw = t.raw(`suggestions.${contextType}`);
+      if (Array.isArray(raw)) return raw as string[];
+    } catch {}
+    return t.raw("suggestions.custom") as string[];
   };
 
   const filteredMedia = viewMode === "library" 
@@ -632,8 +615,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
   return (
     <>
       <AppHeader
-        title="Media Studio"
-        subtitle="AI-powered sustainability content creation with Imagen 4 & Gemini 2.5 Flash"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {/* Icon Buttons - Right Aligned */}
@@ -644,11 +627,11 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             setIsSidebarOpen(true);
           }}
           className="w-10 h-10 rounded-lg bg-muted hover:bg-muted/80 transition-all flex items-center justify-center group relative"
-          title="Recent Generations"
+          title={t("recentGenerations")}
         >
           <RecentIcon />
           <span className="absolute -bottom-6 right-0 text-[9px] text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-            Recent
+            {t("recent")}
           </span>
         </button>
         <button
@@ -657,7 +640,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             setIsSidebarOpen(true);
           }}
           className="w-10 h-10 rounded-lg bg-muted hover:bg-muted/80 transition-all flex items-center justify-center group relative"
-          title="Saved Library"
+          title={t("savedLibrary")}
         >
           <LibraryIcon />
           {studioStats && studioStats.savedCount > 0 && (
@@ -666,7 +649,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             </span>
           )}
           <span className="absolute -bottom-6 right-0 text-[9px] text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-            Library
+            {t("library")}
           </span>
         </button>
       </div>
@@ -679,8 +662,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               <Wand2 className="w-3.5 h-3.5 text-primary" />
             </div>
             <div>
-              <h2 className="text-sm font-bold">Content Creator</h2>
-              <p className="text-[9px] text-muted-foreground">AI selects best model automatically</p>
+              <h2 className="text-sm font-bold">{t("creator.title")}</h2>
+              <p className="text-[9px] text-muted-foreground">{t("creator.subtitle")}</p>
             </div>
           </div>
 
@@ -695,7 +678,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               }`}
             >
               <ImageIcon className="w-4 h-4 mb-1 text-primary" />
-              <p className="text-[10px] font-medium">Image</p>
+              <p className="text-[10px] font-medium">{t("creator.image")}</p>
             </button>
             <button
               onClick={() => setMediaType("video")}
@@ -706,29 +689,29 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               }`}
             >
               <Video className="w-4 h-4 mb-1 text-primary" />
-              <p className="text-[10px] font-medium">Video</p>
+              <p className="text-[10px] font-medium">{t("creator.video")}</p>
             </button>
           </div>
 
           {/* Context Type */}
           <div className="mb-3">
-            <label className="block text-[9px] font-medium mb-1">Content Context</label>
+            <label className="block text-[9px] font-medium mb-1">{t("creator.contextLabel")}</label>
             <select
               value={contextType}
               onChange={(e) => setContextType(e.target.value as ContextType)}
               className="w-full px-2 py-1.5 bg-background border border-border rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/50"
             >
-              <option value="custom">Custom Prompt</option>
-              <option value="company_data">Company Overview</option>
-              <option value="progress">Progress & Achievements</option>
-              <option value="insights">Data & Insights</option>
-              <option value="recommendations">Action Recommendations</option>
+              <option value="custom">{t("contextTypes.custom")}</option>
+              <option value="company_data">{t("contextTypes.company_data")}</option>
+              <option value="progress">{t("contextTypes.progress")}</option>
+              <option value="insights">{t("contextTypes.insights")}</option>
+              <option value="recommendations">{t("contextTypes.recommendations")}</option>
             </select>
           </div>
 
           {/* Quick Ideas */}
           <div className="mb-3">
-            <label className="block text-[9px] font-medium mb-1">Quick Ideas</label>
+            <label className="block text-[9px] font-medium mb-1">{t("creator.quickIdeas")}</label>
             <div className="flex flex-wrap gap-1">
               {generateContextSuggestions().map((suggestion, index) => (
                 <button
@@ -744,18 +727,17 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
           {/* Prompt Input */}
           <div className="mb-3">
-            <label className="block text-[9px] font-medium mb-1">Your Prompt</label>
+            <label className="block text-[9px] font-medium mb-1">{t("creator.promptLabel")}</label>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe what you want to create..."
+              placeholder={t("creator.promptPlaceholder")}
               className="w-full px-2 py-1.5 bg-background border border-border rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/50 min-h-[80px] resize-none"
             />
             <div className="flex items-start gap-1 mt-1.5 p-1.5 bg-primary/5 rounded-lg">
               <Zap className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
               <p className="text-[8px] leading-tight text-muted-foreground">
-                <strong>Intelligent Selection:</strong> Gemini 2.5 Flash for text/infographics/illustrations. 
-                Imagen 4 for realistic and creative images.
+                <strong>{t("creator.intelligentSelection")}</strong> {t("creator.intelligentDesc")}
               </p>
             </div>
           </div>
@@ -770,12 +752,12 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             {isGenerating ? (
               <>
                 <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                Generating...
+                {t("creator.generating")}
               </>
             ) : (
               <>
                 <Wand2 className="w-3 h-3 mr-1" />
-                Generate {mediaType === "image" ? "Image" : "Video"}
+                {mediaType === "image" ? t("creator.generateImage") : t("creator.generateVideo")}
               </>
             )}
           </PremiumButton>
@@ -792,10 +774,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="text-sm font-bold">Preview</h3>
+                  <h3 className="text-sm font-bold">{t("preview.title")}</h3>
                   {selectedMedia.model && (
                     <p className="text-[8px] text-muted-foreground mt-0.5">
-                      Generated with {selectedMedia.model === "imagen-4.0-generate-001" ? "Imagen 4" : selectedMedia.model === "veo-3.1-generate-preview" ? "Veo 3.1" : "Gemini 2.5 Flash"}
+                      {t("preview.generatedWith", { model: selectedMedia.model === "imagen-4.0-generate-001" ? t("models.imagen4") : selectedMedia.model === "veo-3.1-generate-preview" ? t("models.veo") : t("models.geminiFlash") })}
                     </p>
                   )}
                 </div>
@@ -807,7 +789,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                         ? "bg-primary/10 text-primary"
                         : "bg-muted hover:bg-primary/10 hover:text-primary"
                     }`}
-                    title={selectedMedia.saved ? "Saved to library" : "Save to library"}
+                    title={selectedMedia.saved ? t("preview.savedToLibrary") : t("preview.saveToLibrary")}
                   >
                     <Star className={`w-3.5 h-3.5 ${selectedMedia.saved ? "fill-current" : ""}`} />
                   </button>
@@ -817,7 +799,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                     className="h-7 text-[10px] px-2"
                   >
                     <Download className="w-3 h-3 mr-1" />
-                    Download
+                    {t("preview.download")}
                   </PremiumButton>
                 </div>
               </div>
@@ -837,7 +819,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       <div className="absolute inset-0 flex items-center justify-center bg-muted/50 z-10">
                         <div className="text-center">
                           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-                          <p className="text-xs text-muted-foreground">Loading video...</p>
+                          <p className="text-xs text-muted-foreground">{t("preview.loadingVideo")}</p>
                         </div>
                       </div>
                     )}
@@ -850,7 +832,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                             onClick={() => openExternalUrl(selectedMedia.url)}
                             className="text-xs text-primary hover:underline"
                           >
-                            Try opening in new tab
+                            {t("preview.openNewTab")}
                           </button>
                         </div>
                       </div>
@@ -867,14 +849,14 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       onLoadStart={() => setIsVideoLoading(true)}
                     >
                       <source src={selectedMedia.url} type="video/mp4" />
-                      Your browser does not support the video tag.
+                      {t("preview.videoUnsupported")}
                     </video>
                   </div>
                 )}
               </div>
 
               <p className="text-[9px] text-muted-foreground mb-3">
-                <strong>Prompt:</strong> {selectedMedia.prompt}
+                <strong>{t("preview.prompt")}</strong> {selectedMedia.prompt}
               </p>
 
               {/* Natural Language Editing */}
@@ -882,10 +864,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                 <div className="p-3 bg-muted/30 rounded-lg">
                   <h4 className="text-[10px] font-semibold mb-2 flex items-center gap-1.5">
                     <Wand2 className="w-3 h-3 text-primary" />
-                    Natural Language Editing
+                    {t("editing.title")}
                   </h4>
                   <p className="text-[8px] text-muted-foreground mb-2">
-                    Powered by Gemini 2.5 Flash Image - describe your edits naturally
+                    {t("editing.subtitle")}
                   </p>
                   <div className="flex gap-2">
                     <input
@@ -893,7 +875,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       value={editPrompt}
                       onChange={(e) => setEditPrompt(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleNaturalLanguageEdit()}
-                      placeholder="e.g., 'add a sustainability badge', 'change background to forest', 'make text larger'"
+                      placeholder={t("editing.placeholder")}
                       className="flex-1 px-2 py-1.5 bg-background border border-border rounded-lg text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/50"
                       disabled={isEditingImage}
                     />
@@ -913,8 +895,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                   <div className="flex items-start gap-1 mt-2 p-1.5 bg-primary/5 rounded">
                     <Sparkles className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
                     <p className="text-[8px] leading-tight text-muted-foreground">
-                      Examples: "remove background", "add green leaves", "make it brighter", "change sky to sunset", 
-                      "add company logo on shirt"
+                      {t("editing.examples")}
                     </p>
                   </div>
                 </div>
@@ -923,9 +904,9 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           ) : (
             <div className="glass-strong rounded-xl p-12 text-center">
               <ImageIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-30" />
-              <p className="text-sm text-muted-foreground">No media selected</p>
+              <p className="text-sm text-muted-foreground">{t("preview.empty")}</p>
               <p className="text-[10px] text-muted-foreground mt-1">
-                Generate or select media to preview and edit
+                {t("preview.emptyHint")}
               </p>
             </div>
           )}
@@ -961,10 +942,10 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                   </div>
                   <div>
                     <h3 className="text-sm font-bold">
-                      {viewMode === "recent" ? "Recent Generations" : "Saved Library"}
+                      {viewMode === "recent" ? t("recentGenerations") : t("savedLibrary")}
                     </h3>
                     <p className="text-[9px] text-muted-foreground">
-                      {filteredMedia.length} {filteredMedia.length === 1 ? "item" : "items"}
+                      {t("itemCount", { count: filteredMedia.length })}
                     </p>
                   </div>
                 </div>
@@ -988,7 +969,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                     }`}
                   >
                     <RecentIcon />
-                    Recent
+                    {t("recent")}
                   </button>
                   <button
                     onClick={() => setViewMode("library")}
@@ -999,7 +980,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                     }`}
                   >
                     <LibraryIcon />
-                    Library
+                    {t("library")}
                     {studioStats && viewMode === "library" && ` (${studioStats.savedCount})`}
                   </button>
                 </div>
@@ -1019,13 +1000,13 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                       </div>
                       <p className="text-xs font-medium mb-1">
                         {viewMode === "library" 
-                          ? "No saved content yet" 
-                          : "No generations yet"}
+                          ? t("sidebar.noSaved")
+                          : t("sidebar.noGenerations")}
                       </p>
                       <p className="text-[10px]">
                         {viewMode === "library" 
-                          ? "Click the star icon to save!" 
-                          : "Start creating!"}
+                          ? t("sidebar.saveHint")
+                          : t("sidebar.createHint")}
                       </p>
                     </div>
                   ) : (
@@ -1080,7 +1061,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                           </p>
                           {media.model && (
                             <p className="text-[8px] text-primary">
-                              {media.model === "imagen-4.0-generate-001" ? "Imagen 4" : "Gemini Flash"}
+                              {media.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlashShort")}
                             </p>
                           )}
                         </div>
@@ -1101,32 +1082,32 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <BarChart3 className="w-3 h-3 text-primary" />
-                <span className="font-medium">Studio Stats:</span>
+                <span className="font-medium">{t("stats.label")}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Total: </span>
+                <span className="text-muted-foreground">{t("stats.total")} </span>
                 <span className="font-bold">{studioStats.totalGenerations}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Images: </span>
+                <span className="text-muted-foreground">{t("stats.images")} </span>
                 <span className="font-bold">{studioStats.imagesCount}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Videos: </span>
+                <span className="text-muted-foreground">{t("stats.videos")} </span>
                 <span className="font-bold">{studioStats.videosCount}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Saved: </span>
+                <span className="text-muted-foreground">{t("stats.saved")} </span>
                 <span className="font-bold">{studioStats.savedCount}</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div>
-                <span className="text-muted-foreground">Imagen 4: </span>
+                <span className="text-muted-foreground">{t("stats.imagen4")} </span>
                 <span className="font-bold">{studioStats.modelsUsed.imagen4}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Gemini Flash: </span>
+                <span className="text-muted-foreground">{t("stats.geminiFlash")} </span>
                 <span className="font-bold">{studioStats.modelsUsed.geminiFlash}</span>
               </div>
             </div>

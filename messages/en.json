@@ -728,6 +728,126 @@
           "default": "QuickBooks connection failed"
         }
       }
+    },
+    "studio": {
+      "title": "Media Studio",
+      "subtitle": "AI-powered sustainability content creation with Imagen 4 & Gemini 2.5 Flash",
+      "recent": "Recent",
+      "library": "Library",
+      "recentGenerations": "Recent Generations",
+      "savedLibrary": "Saved Library",
+      "itemCount": "{count, plural, one {# item} other {# items}}",
+      "creator": {
+        "title": "Content Creator",
+        "subtitle": "AI selects best model automatically",
+        "image": "Image",
+        "video": "Video",
+        "contextLabel": "Content Context",
+        "quickIdeas": "Quick Ideas",
+        "promptLabel": "Your Prompt",
+        "promptPlaceholder": "Describe what you want to create...",
+        "intelligentSelection": "Intelligent Selection:",
+        "intelligentDesc": "Gemini 2.5 Flash for text/infographics/illustrations. Imagen 4 for realistic and creative images.",
+        "generateImage": "Generate Image",
+        "generateVideo": "Generate Video",
+        "generating": "Generating..."
+      },
+      "contextTypes": {
+        "custom": "Custom Prompt",
+        "company_data": "Company Overview",
+        "progress": "Progress & Achievements",
+        "insights": "Data & Insights",
+        "recommendations": "Action Recommendations"
+      },
+      "suggestions": {
+        "company_data": [
+          "Create a social media post about our company's sustainability commitment",
+          "Design an infographic showing our environmental initiatives"
+        ],
+        "progress": [
+          "Visualize our carbon reduction progress this quarter",
+          "Create a celebration post for reaching renewable energy milestone"
+        ],
+        "insights": [
+          "Generate an infographic about our latest emissions data",
+          "Create a visual guide on where we can improve"
+        ],
+        "recommendations": [
+          "Create motivational content about our upcoming green initiatives",
+          "Design a roadmap visual for our sustainability actions"
+        ],
+        "custom": [
+          "Create a green business awareness poster",
+          "Design a sustainability tips infographic"
+        ]
+      },
+      "preview": {
+        "title": "Preview",
+        "generatedWith": "Generated with {model}",
+        "saveToLibrary": "Save to library",
+        "savedToLibrary": "Saved to library",
+        "download": "Download",
+        "prompt": "Prompt:",
+        "empty": "No media selected",
+        "emptyHint": "Generate or select media to preview and edit",
+        "loadingVideo": "Loading video...",
+        "openNewTab": "Try opening in new tab",
+        "videoUnsupported": "Your browser does not support the video tag."
+      },
+      "editing": {
+        "title": "Natural Language Editing",
+        "subtitle": "Powered by Gemini 2.5 Flash Image - describe your edits naturally",
+        "placeholder": "e.g., 'add a sustainability badge', 'change background to forest', 'make text larger'",
+        "examples": "Examples: \"remove background\", \"add green leaves\", \"make it brighter\", \"change sky to sunset\", \"add company logo on shirt\""
+      },
+      "sidebar": {
+        "noSaved": "No saved content yet",
+        "noGenerations": "No generations yet",
+        "saveHint": "Click the star icon to save!",
+        "createHint": "Start creating!"
+      },
+      "stats": {
+        "label": "Studio Stats:",
+        "total": "Total:",
+        "images": "Images:",
+        "videos": "Videos:",
+        "saved": "Saved:",
+        "imagen4": "Imagen 4:",
+        "geminiFlash": "Gemini Flash:"
+      },
+      "models": {
+        "imagen4": "Imagen 4",
+        "geminiFlash": "Gemini 2.5 Flash",
+        "geminiFlashShort": "Gemini Flash",
+        "veo": "Veo 3.1"
+      },
+      "toasts": {
+        "enterPrompt": "Please enter a prompt",
+        "enterEdit": "Please enter an edit request",
+        "generatingInfo": "Generating {type}... This may take a moment.",
+        "imageGenerated": "Image generated with {model}!",
+        "videoGenerated": "Video generated with Veo 3.1!",
+        "videoDesc": "8-second 720p video with audio",
+        "generationFailed": "Failed to generate media",
+        "imageEditFailed": "Failed to edit image",
+        "imageEdited": "Image edited successfully!",
+        "imageEditedDesc": "Powered by Gemini 2.5 Flash Image",
+        "downloadStarted": "Download started!",
+        "downloadFailed": "Failed to download. Opening in new tab instead...",
+        "savedLibraryOn": "Saved to library!",
+        "savedLibraryOff": "Removed from library",
+        "libraryUpdateFailed": "Failed to update library",
+        "removed": "Generation removed",
+        "deleted": "Generation deleted successfully",
+        "deleteFailed": "Failed to delete generation",
+        "historyLoadFailed": "Failed to load generation history",
+        "videoErrorInvalid": "Video URL format not supported in browser. Please try opening in a new tab.",
+        "videoErrorGeneric": "Failed to load video. The video may still be processing or the URL may be expired."
+      },
+      "mediaType": {
+        "image": "image",
+        "video": "video"
+      }
     }
   }
 }
