@@ -118,7 +118,7 @@ export function AccountingIntegrationDialog({
                     {integration.comingSoon && (
                       <div className="absolute top-3 right-3">
                         <span className="px-2 py-1 text-[9px] font-semibold rounded-full bg-primary/10 text-primary">
-                          COMING SOON
+                          {t("comingSoon")}
                         </span>
                       </div>
                     )}
