@@ -199,7 +199,7 @@ export function BenchmarkComparator() {
               <Lock className="w-4 h-4 text-muted-foreground" />
             </div>
             <p className="text-[10px] text-muted-foreground">
-              Location-aware comparison
+              {t("subtitle")}
             </p>
           </div>
 
@@ -257,7 +257,7 @@ export function BenchmarkComparator() {
           )}
         </div>
         <p className="text-[10px] text-muted-foreground">
-          Location-aware comparison
+          {t("subtitle")}
         </p>
       </div>
 
