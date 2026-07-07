@@ -18,6 +18,7 @@ import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
 
 export default function OnboardingPage() {
+  const t = useTranslations("onboarding");
   const router = useRouter();
   const { refetchUser, updatePreferences } = useUser();
   const { data: session, isPending: isSessionLoading } = useSession();
