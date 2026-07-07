@@ -206,7 +206,7 @@ export default function LeaderboardPage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-sm font-medium truncate">{entry.companyName || entry.name}</p>
+                        <p className="text-sm font-medium min-w-0 break-words">{entry.companyName || entry.name}</p>
                         {isCurrentUser && <Badge variant="primary" size="sm">{t("you")}</Badge>}
                       </div>
                       <p className="text-[10px] text-muted-foreground">
