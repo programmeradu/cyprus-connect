@@ -626,7 +626,7 @@ export default function InsightsPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-semibold">Performance <span className="text-muted-foreground">vs</span> Industry</h3>
+                <h3 className="text-sm font-semibold">{t("energySection.performanceTitle")} <span className="text-muted-foreground">{t("energySection.vs")}</span> {t("energySection.industry")}</h3>
               </div>
             </div>
             
