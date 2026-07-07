@@ -123,8 +123,9 @@ export function FileUploadDialog({
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Upload failed");
+        throw new Error(error.error || t("toasts.uploadFailed"));
       }
+
 
       const result = await response.json();
 
