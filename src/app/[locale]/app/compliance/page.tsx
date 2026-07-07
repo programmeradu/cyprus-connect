@@ -616,8 +616,8 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
           <div className="col-span-full">
             <PremiumCard className="p-8 text-center">
               <DocumentIcon />
-              <p className="text-sm text-muted-foreground mt-2">No documents generated yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Click the generate buttons above to create your first compliance report</p>
+              <p className="text-sm text-muted-foreground mt-2">{t("documents.noDocuments")}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("documents.noDocumentsHint")}</p>
             </PremiumCard>
           </div>
         ) : (
