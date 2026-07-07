@@ -267,7 +267,7 @@ export default function InsightsPage() {
 
     } catch (error: any) {
       console.error("Failed to fetch insights data:", error);
-      setError(error.message || "Failed to load insights data");
+      setError(error.message || t("loadFailed"));
     } finally {
       setLoading(false);
       setRefreshing(false);
