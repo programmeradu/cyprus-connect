@@ -169,7 +169,8 @@ export default function AuthPage() {
             </motion.h1>
           </Link>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
         </div>
@@ -217,16 +218,14 @@ export default function AuthPage() {
                     />
                   </motion.svg>
                   <span className="text-xs font-medium tracking-wider uppercase text-primary">
-                    Welcome to VerdeIQ
+                    {t("welcome")}
                   </span>
                 </div>
                 <h2 className="text-xl font-bold mb-1.5">
-                  {mode === "login" ? "Sign in to your account" : "Create your account"}
+                  {mode === "login" ? t("signInTitle") : t("createTitle")}
                 </h2>
                 <p className="text-xs text-muted-foreground font-light">
-                  {mode === "login" 
-                    ? "Continue your sustainability journey" 
-                    : "Start leading on sustainability today"}
+                  {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
                 </p>
               </motion.div>
 
@@ -245,7 +244,7 @@ export default function AuthPage() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Sign In
+                  {t("tabSignIn")}
                 </button>
                 <button
                   onClick={() => setMode("register")}
@@ -255,7 +254,7 @@ export default function AuthPage() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  Sign Up
+                  {t("tabSignUp")}
                 </button>
               </motion.div>
 
