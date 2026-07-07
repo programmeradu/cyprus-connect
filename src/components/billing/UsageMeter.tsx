@@ -177,7 +177,7 @@ export const CreditBalance = ({
             onClick={onPurchaseClick}
           >
             <SparklesIcon className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="whitespace-nowrap">Buy More</span>
+            <span className="whitespace-nowrap">{t("buyMore")}</span>
           </PremiumButton>
         )}
       </div>
