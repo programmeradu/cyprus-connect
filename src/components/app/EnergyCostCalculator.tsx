@@ -257,22 +257,22 @@ export function EnergyCostCalculator() {
   return (
     <PremiumCard className="p-4">
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-1">
-          <h3 className="text-sm font-bold">Energy Cost Calculator</h3>
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <h3 className="text-sm font-bold break-words min-w-0">{t("title")}</h3>
           {isUsingFallback ? (
-            <WifiOff className="w-3.5 h-3.5 text-orange-500" />
+            <WifiOff className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
           ) : (
-            <Wifi className="w-3.5 h-3.5 text-green-500" />
+            <Wifi className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
           )}
         </div>
-        <p className="text-[10px] text-muted-foreground">
+        <p className="text-[10px] text-muted-foreground break-words">
           {dataRegion} • {user?.countryCode || userZone}
         </p>
         {isUsingFallback && (
           <div className="flex items-start gap-1.5 mt-2 p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
             <AlertCircle className="w-3 h-3 text-orange-600 flex-shrink-0 mt-0.5" />
-            <p className="text-[9px] text-orange-600 leading-tight">
-              Using regional estimates • Real-time data not available for {dataRegion}
+            <p className="text-[9px] text-orange-600 leading-tight break-words">
+              {t("fallbackNote", { region: dataRegion })}
             </p>
           </div>
         )}
@@ -286,10 +286,10 @@ export function EnergyCostCalculator() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-[9px] text-muted-foreground mb-1">
-            Spot Price ({userBiddingZone}) {spotPriceResponse?.fallback && '~'}
+          <p className="text-[9px] text-muted-foreground mb-1 break-words">
+            {t("spotPriceZone", { zone: userBiddingZone })} {spotPriceResponse?.fallback && '~'}
           </p>
-          <p className="text-base font-bold">
+          <p className="text-base font-bold break-words">
             {formatAmount(convertAmount(spotPriceResponse?.data?.[0]?.price || 0, 'EUR'))}{' '}
             <span className="text-[10px] font-normal">/MWh</span>
           </p>
@@ -301,15 +301,16 @@ export function EnergyCostCalculator() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-[9px] text-muted-foreground mb-1">
-            Carbon Intensity {carbonData?.fallback && '~'}
+          <p className="text-[9px] text-muted-foreground mb-1 break-words">
+            {t("carbonIntensity")} {carbonData?.fallback && '~'}
           </p>
-          <p className="text-base font-bold">
+          <p className="text-base font-bold break-words">
             {carbonData?.carbonIntensity || 0}{' '}
             <span className="text-[10px] font-normal">gCO₂/kWh</span>
           </p>
         </motion.div>
       </div>
+
 
       {/* Input Controls */}
       <div className="space-y-3 mb-4">
