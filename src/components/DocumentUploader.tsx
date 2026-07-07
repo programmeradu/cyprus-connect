@@ -239,9 +239,9 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold mb-1">Upload Documents</h2>
+            <h2 className="text-xl font-bold mb-1">{t("title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Upload bills, reports, CSV, Excel files for intelligent data extraction
+              {t("subtitle")}
             </p>
           </div>
           <button
@@ -270,10 +270,10 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
             
             <div>
               <p className="text-base font-medium mb-1">
-                Drop your documents here
+                {t("dropHere")}
               </p>
               <p className="text-sm text-muted-foreground mb-4">
-                or click to browse files
+                {t("orBrowse")}
               </p>
             </div>
 
@@ -288,14 +288,14 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
             <label htmlFor="document-upload">
               <PremiumButton size="sm" className="text-xs" type="button">
                 <FileText className="w-3 h-3 mr-2" />
-                Choose Files
+                {t("chooseFiles")}
               </PremiumButton>
             </label>
 
             <div className="text-xs text-muted-foreground mt-2">
-              <p className="mb-1">Supported formats:</p>
+              <p className="mb-1">{t("supportedFormats")}</p>
               <p className="text-[10px] text-muted-foreground/70">
-                PDF, PNG, JPG, WebP, CSV, Excel (.xls, .xlsx)
+                {t("supportedFormatsList")}
               </p>
             </div>
           </div>
