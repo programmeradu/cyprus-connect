@@ -497,6 +497,12 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
 
 // Regulations Tab Component
 function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
+  const t = useTranslations("dashboard.compliance");
+  const statusLabel = (s: string) =>
+    s === 'compliant' ? t("status.compliant") :
+    s === 'action_required' ? t("status.actionRequired") :
+    s === 'upcoming' ? t("status.upcoming") :
+    s.replace('_', ' ').toUpperCase();
   return (
     <div className="grid md:grid-cols-2 gap-4">
       {regulations.map((reg, index) => {
