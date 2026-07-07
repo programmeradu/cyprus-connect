@@ -225,7 +225,7 @@ export default function LeaderboardPage() {
                             className="flex items-center gap-1 px-2 py-0.5 bg-background/50 rounded text-[10px]"
                           >
                             {getCategoryIcon(action.category)}
-                            <span className="text-foreground/70 truncate max-w-[120px]">{action.title}</span>
+                            <span className="text-foreground/70 min-w-0 break-words">{action.title}</span>
                           </div>
                         ))}
                       </div>
