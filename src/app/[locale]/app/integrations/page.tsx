@@ -632,10 +632,10 @@ function IntegrationsContent() {
                 {loadingEnergy ? (
                   <>
                     <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                    Loading...
+                    {t("energy.loading")}
                   </>
                 ) : (
-                  "Fetch Data"
+                  t("energy.fetchData")
                 )}
               </PremiumButton>
             </div>
@@ -643,7 +643,7 @@ function IntegrationsContent() {
             {locationType === "zone" && (
               <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/10">
                 <p className="text-[10px] text-muted-foreground">
-                  <span className="text-primary font-medium">Global Coverage:</span> Real-time carbon intensity data for 150+ countries and regions worldwide
+                  <span className="text-primary font-medium">{t("energy.globalCoverage")}</span> {t("energy.globalCoverageDesc")}
                 </p>
               </div>
             )}
