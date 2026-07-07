@@ -190,7 +190,7 @@ function IntegrationsContent() {
 
   const handleQbConnect = async () => {
     if (!session?.user?.id) {
-      toast.error('Please sign in to connect QuickBooks');
+      toast.error(t("toasts.qbSignIn"));
       return;
     }
     
