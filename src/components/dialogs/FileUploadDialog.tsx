@@ -214,17 +214,18 @@ export function FileUploadDialog({
   const getStatusText = (file: UploadedFile) => {
     switch (file.status) {
       case "uploading":
-        return `Uploading... ${file.progress}%`;
+        return t("status.uploading", { progress: file.progress });
       case "processing":
-        return "Processing...";
+        return t("status.processing");
       case "completed":
-        return "Completed";
+        return t("status.completed");
       case "failed":
-        return file.error || "Failed";
+        return file.error || t("status.failed");
       default:
-        return "Pending";
+        return t("status.pending");
     }
   };
+
 
   const hasActiveUploads = files.some(
     (f) => f.status === "uploading" || f.status === "processing"
