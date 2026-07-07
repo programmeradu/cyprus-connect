@@ -236,7 +236,7 @@ export default function OnboardingPage() {
   };
 
   const handleUploadComplete = (data: UtilityBillData) => {
-    toast.success(`${data.usageType} bill data extracted successfully!`);
+    toast.success(t("toasts.extracted", { type: data.usageType }));
     setShowUploadDialog(false);
   };
 
