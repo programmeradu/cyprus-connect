@@ -742,7 +742,7 @@ export default function OnboardingPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold">
-                  {uploadType === 'utility' ? 'Upload Utility Bill' : 'Upload Document'}
+                  {uploadType === 'utility' ? t("upload.utilityTitle") : t("upload.documentTitle")}
                 </h3>
                 <button
                   onClick={() => setShowUploadDialog(false)}
@@ -752,7 +752,7 @@ export default function OnboardingPage() {
                 </button>
               </div>
               <p className="text-sm text-muted-foreground mb-6">
-                Upload your {uploadType === 'utility' ? 'utility bill' : 'document'} and we'll automatically extract the data using OCR technology.
+                {uploadType === 'utility' ? t("upload.descUtility") : t("upload.descDocument")}
               </p>
               <DocumentUpload onUploadComplete={handleUploadComplete} />
             </motion.div>
