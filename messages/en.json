@@ -642,7 +642,8 @@
         "dueSoon": "Due Soon",
         "reports": "Reports",
         "loading": "Loading compliance data..."
-      }
+      },
+      "loadFailed": "Failed to load insights data"
     },
     "integrations": {
       "title": "Integrations",
