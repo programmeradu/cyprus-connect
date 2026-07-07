@@ -658,19 +658,19 @@ function IntegrationsContent() {
               {energyData.utilityRates && !energyData.utilityRates.error && (
                 <div className="grid md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Rate</p>
+                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("energy.rate")}</p>
                     <p className="text-xl font-bold text-primary mb-0.5">
                       ${energyData.utilityRates.averageRatePerKwh?.toFixed(4)}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">per kWh • {energyData.utilityRates.utility}</p>
+                    <p className="text-[10px] text-muted-foreground">{t("energy.perKwh")} • {energyData.utilityRates.utility}</p>
                   </div>
 
                   <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Monthly Cost</p>
+                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("energy.monthlyCost")}</p>
                     <p className="text-xl font-bold text-primary mb-0.5">
                       ${energyData.utilityRates.monthlyCost?.totalCost?.toFixed(2)}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">for 5,000 kWh usage</p>
+                    <p className="text-[10px] text-muted-foreground">{t("energy.forUsage")}</p>
                   </div>
                 </div>
               )}
