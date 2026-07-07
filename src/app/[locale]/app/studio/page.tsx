@@ -588,31 +588,12 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
     }
   }, [selectedMedia?.id]);
 
-  const generateContextSuggestions = () => {
-    const suggestions = {
-      company_data: [
-        "Create a social media post about our company's sustainability commitment",
-        "Design an infographic showing our environmental initiatives"
-      ],
-      progress: [
-        "Visualize our carbon reduction progress this quarter",
-        "Create a celebration post for reaching renewable energy milestone"
-      ],
-      insights: [
-        "Generate an infographic about our latest emissions data",
-        "Create a visual guide on where we can improve"
-      ],
-      recommendations: [
-        "Create motivational content about our upcoming green initiatives",
-        "Design a roadmap visual for our sustainability actions"
-      ],
-      custom: [
-        "Create a green business awareness poster",
-        "Design a sustainability tips infographic"
-      ]
-    };
-
-    return suggestions[contextType] || suggestions.custom;
+  const generateContextSuggestions = (): string[] => {
+    try {
+      const raw = t.raw(`suggestions.${contextType}`);
+      if (Array.isArray(raw)) return raw as string[];
+    } catch {}
+    return t.raw("suggestions.custom") as string[];
   };
 
   const filteredMedia = viewMode === "library" 
