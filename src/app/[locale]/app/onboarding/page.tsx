@@ -357,76 +357,76 @@ export default function OnboardingPage() {
               </div>
 
               <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                Step 2: Connect Your Data Sources
+                {t("step2.title")}
               </h2>
               <p className="text-sm text-muted-foreground mb-8">
-                Seamless Integration for Smarter Insights
+                {t("step2.subtitle")}
               </p>
 
               {/* Company Details Form */}
               <div className="mb-8 p-6 rounded-xl bg-muted/20 border border-border/50">
-                <h3 className="text-sm font-semibold mb-4">First, tell us about your company</h3>
+                <h3 className="text-sm font-semibold mb-4">{t("step2.companyHeader")}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium mb-2">Your Name *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.yourName")}</label>
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="John Doe"
+                      placeholder={t("step2.yourNamePlaceholder")}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">Email *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.email")}</label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="john@company.com"
+                      placeholder={t("step2.emailPlaceholder")}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">Company Name *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.companyName")}</label>
                     <input
                       type="text"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="Acme Corp"
+                      placeholder={t("step2.companyNamePlaceholder")}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">Industry *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.industry")}</label>
                     <select
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
-                      <option value="">Select industry</option>
-                      <option value="technology">Technology</option>
-                      <option value="retail">Retail</option>
-                      <option value="manufacturing">Manufacturing</option>
-                      <option value="hospitality">Hospitality</option>
-                      <option value="healthcare">Healthcare</option>
-                      <option value="finance">Finance</option>
+                      <option value="">{t("step2.selectIndustry")}</option>
+                      <option value="technology">{t("step2.industries.technology")}</option>
+                      <option value="retail">{t("step2.industries.retail")}</option>
+                      <option value="manufacturing">{t("step2.industries.manufacturing")}</option>
+                      <option value="hospitality">{t("step2.industries.hospitality")}</option>
+                      <option value="healthcare">{t("step2.industries.healthcare")}</option>
+                      <option value="finance">{t("step2.industries.finance")}</option>
                     </select>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-medium mb-2">Team Size *</label>
+                    <label className="block text-xs font-medium mb-2">{t("step2.teamSize")}</label>
                     <select
                       value={teamSize}
                       onChange={(e) => setTeamSize(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
-                      <option value="">Select team size</option>
-                      <option value="1-10">1-10 employees</option>
-                      <option value="11-50">11-50 employees</option>
-                      <option value="51-200">51-200 employees</option>
-                      <option value="201-500">201-500 employees</option>
-                      <option value="500+">500+ employees</option>
+                      <option value="">{t("step2.selectTeamSize")}</option>
+                      <option value="1-10">{t("step2.teamSizes.1-10")}</option>
+                      <option value="11-50">{t("step2.teamSizes.11-50")}</option>
+                      <option value="51-200">{t("step2.teamSizes.51-200")}</option>
+                      <option value="201-500">{t("step2.teamSizes.201-500")}</option>
+                      <option value="500+">{t("step2.teamSizes.500+")}</option>
                     </select>
                   </div>
                 </div>
