@@ -670,50 +670,38 @@ export default function OnboardingPage() {
                   <div className="w-16 h-1.5 rounded-full bg-primary" />
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                  Step 4 of 4: Your Dashboard Awaits
+                  {t("step4.title")}
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-                  You're all set! Here's a quick overview of what you'll find on your dashboard
+                  {t("step4.subtitle")}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {[
-                  {
-                    icon: <BarChart3 className="w-4 h-4" />,
-                    title: "Carbon Footprint Tracking",
-                    desc: "View your real-time emissions data with detailed breakdowns by category"
-                  },
-                  {
-                    icon: <BoltIcon className="w-4 h-4" />,
-                    title: "AI Recommendations",
-                    desc: "Get personalized suggestions to reduce your environmental impact"
-                  },
-                  {
-                    icon: <Trophy className="w-4 h-4" />,
-                    title: "Leaderboard & Credits",
-                    desc: "Track your progress and compete with other businesses in your area"
-                  },
-                  {
-                    icon: <FireIcon className="w-4 h-4" />,
-                    title: "Detailed Reports",
-                    desc: "Generate compliance reports and export data for stakeholders"
-                  }
-                ].map((feature, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * i }}
-                    className="p-4 rounded-lg bg-background border border-border"
-                  >
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-3">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
-                    <p className="text-[10px] text-muted-foreground leading-relaxed">{feature.desc}</p>
-                  </motion.div>
-                ))}
+                {(() => {
+                  const items = t.raw("step4.features") as Array<{ title: string; desc: string }>;
+                  const icons = [
+                    <BarChart3 key="0" className="w-4 h-4" />,
+                    <BoltIcon key="1" className="w-4 h-4" />,
+                    <Trophy key="2" className="w-4 h-4" />,
+                    <FireIcon key="3" className="w-4 h-4" />,
+                  ];
+                  return items.map((feature, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * i }}
+                      className="p-4 rounded-lg bg-background border border-border"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-3">
+                        {icons[i]}
+                      </div>
+                      <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">{feature.desc}</p>
+                    </motion.div>
+                  ));
+                })()}
               </div>
 
               <div className="flex flex-col items-center gap-3">
@@ -723,13 +711,13 @@ export default function OnboardingPage() {
                   size="sm"
                   className="w-full md:w-auto px-8"
                 >
-                  {isSubmitting ? "Setting up..." : "Go to Dashboard"}
+                  {isSubmitting ? t("step4.settingUp") : t("step4.cta")}
                 </PremiumButton>
                 <button
                   onClick={() => setStep(3)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Back
+                  {t("step4.back")}
                 </button>
               </div>
             </motion.div>
