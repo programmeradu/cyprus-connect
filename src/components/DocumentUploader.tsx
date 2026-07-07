@@ -203,10 +203,10 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
   const handleApplyData = () => {
     if (aggregatedData && Object.keys(aggregatedData).length > 0) {
       onDataExtracted(aggregatedData);
-      toast.success("Data applied to calculator!");
+      toast.success(t("toasts.applied"));
       onClose?.();
     } else {
-      toast.error("No data to apply");
+      toast.error(t("toasts.noData"));
     }
   };
 
