@@ -146,7 +146,10 @@ export const CreditBalance = ({
   monthlyAllocation,
   onPurchaseClick,
 }: CreditBalanceProps) => {
+  const t = useTranslations("billing.usageMeter");
+  const locale = useLocale();
   const isLow = balance < 10;
+
 
   return (
     <PremiumCard className="p-4">
