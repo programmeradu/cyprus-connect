@@ -7,6 +7,7 @@ import { Loader2, ExternalLink, CheckCircle2, XCircle, TrendingUp, Activity, Map
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface EnergyPricingData {
   zone: string;
