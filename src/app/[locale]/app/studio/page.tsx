@@ -1061,7 +1061,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                           </p>
                           {media.model && (
                             <p className="text-[8px] text-primary">
-                              {media.model === "imagen-4.0-generate-001" ? "Imagen 4" : "Gemini Flash"}
+                              {media.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlashShort")}
                             </p>
                           )}
                         </div>
