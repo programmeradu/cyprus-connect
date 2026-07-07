@@ -189,12 +189,12 @@ export function EnergyCostCalculator() {
         
         <div className="relative z-10">
           <div className="mb-4">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-bold">Energy Cost Calculator</h3>
-              <Lock className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <h3 className="text-sm font-bold break-words min-w-0">{t("title")}</h3>
+              <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </div>
-            <p className="text-[10px] text-muted-foreground">
-              Real-time pricing & carbon data
+            <p className="text-[10px] text-muted-foreground break-words">
+              {t("subtitle")}
             </p>
           </div>
 
@@ -202,11 +202,11 @@ export function EnergyCostCalculator() {
           <div className="opacity-40 space-y-3 mb-6">
             <div className="grid grid-cols-2 gap-2">
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
-                <p className="text-[9px] text-muted-foreground mb-1">Spot Price</p>
+                <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("spotPrice")}</p>
                 <p className="text-base font-bold">€••• <span className="text-[10px] font-normal">/MWh</span></p>
               </div>
               <div className="p-2.5 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20">
-                <p className="text-[9px] text-muted-foreground mb-1">Carbon Intensity</p>
+                <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("carbonIntensity")}</p>
                 <p className="text-base font-bold">••• <span className="text-[10px] font-normal">gCO₂/kWh</span></p>
               </div>
             </div>
@@ -217,25 +217,26 @@ export function EnergyCostCalculator() {
           {/* Upgrade prompt */}
           <div className="text-center space-y-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">
-                Professional Feature
+              <p className="text-xs font-semibold text-primary mb-1 break-words">
+                {t("proFeature")}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Unlock real-time energy prices, carbon intensity data, and ROI calculations
+              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
+                {t("proBlurb")}
               </p>
             </div>
-            
+
             <PremiumButton
               onClick={() => router.push('/pricing')}
               className="w-full"
               size="sm"
             >
-              <Lock className="w-3 h-3 mr-1.5" />
-              <span className="text-[10px]">Upgrade to Professional</span>
+              <Lock className="w-3 h-3 mr-1.5 flex-shrink-0" />
+              <span className="text-[10px] break-words">{t("upgradeCta")}</span>
             </PremiumButton>
           </div>
         </div>
       </PremiumCard>
+
     );
   }
 
