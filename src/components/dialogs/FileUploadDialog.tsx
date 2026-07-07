@@ -50,15 +50,16 @@ export function FileUploadDialog({
       // Validate file type
       const fileExt = `.${file.name.split(".").pop()?.toLowerCase()}`;
       if (!acceptedFileTypes.includes(fileExt)) {
-        toast.error(`Invalid file type: ${file.name}. Accepted: ${acceptedFileTypes.join(", ")}`);
+        toast.error(t("toasts.invalidType", { name: file.name, types: acceptedFileTypes.join(", ") }));
         return;
       }
 
       // Validate file size
       if (file.size > maxSize) {
-        toast.error(`File too large: ${file.name}. Max size: ${maxSizeMB}MB`);
+        toast.error(t("toasts.tooLarge", { name: file.name, size: maxSizeMB }));
         return;
       }
+
 
       newFiles.push({
         file,
