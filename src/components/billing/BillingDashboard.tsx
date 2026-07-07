@@ -253,18 +253,26 @@ export const BillingDashboard = () => {
         <PremiumCard className="p-4">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Current Plan</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("currentPlan")}</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold gradient-text">{currentSubscription.planName}</span>
+                <span className="text-xl font-bold gradient-text">
+                  {(() => {
+                    const pid = currentSubscription.planId;
+                    if (pid === 'free' || pid === 'pro' || pid === 'enterprise') {
+                      return tPlanNames(pid);
+                    }
+                    return currentSubscription.planName;
+                  })()}
+                </span>
                 {currentSubscription.price > 0 && (
                   <span className="text-muted-foreground text-xs">
-                    ${currentSubscription.price}/{currentSubscription.interval || 'month'}
+                    ${currentSubscription.price}/{t(`intervals.${(currentSubscription.interval as 'month' | 'year') || 'month'}`)}
                   </span>
                 )}
               </div>
               {currentSubscription.gateway !== 'none' && (
                 <div className="mt-1 flex items-center gap-1.5">
-                  <span className="text-[10px] text-muted-foreground">via</span>
+                  <span className="text-[10px] text-muted-foreground">{t("via")}</span>
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted">
                     {currentSubscription.gateway === 'stripe' ? '🔵 Stripe' : 
                      currentSubscription.gateway === 'paystack' ? '🟢 Paystack' :
@@ -281,7 +289,7 @@ export const BillingDashboard = () => {
                 onClick={handleManageBilling}
                 disabled={managingBilling}
               >
-                {managingBilling ? 'Loading...' : 'Manage'}
+                {managingBilling ? t("loading") : t("manage")}
               </PremiumButton>
             )}
           </div>
@@ -292,12 +300,10 @@ export const BillingDashboard = () => {
               <div className="text-xs text-muted-foreground">
                 {currentSubscription.cancelAtPeriodEnd ? (
                   <span className="text-destructive font-medium">
-                    Cancels on {formatDate(currentSubscription.currentPeriodEnd)}
+                    {t("cancelsOn", { date: formatDate(currentSubscription.currentPeriodEnd) })}
                   </span>
                 ) : (
-                  <>
-                    Renews on {formatDate(currentSubscription.currentPeriodEnd)}
-                  </>
+                  <>{t("renewsOn", { date: formatDate(currentSubscription.currentPeriodEnd) })}</>
                 )}
               </div>
             </div>
