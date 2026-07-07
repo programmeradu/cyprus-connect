@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { CheckIcon } from "@/components/icons/CustomIcons";
+
 
 interface ActionCardProps {
   title: string;
@@ -27,11 +29,14 @@ export const ActionCard = ({
   points,
   className = ""
 }: ActionCardProps) => {
+  const t = useTranslations("dashboard.actions.card");
   const impactLevelColors = {
     low: "bg-primary/20 text-primary border-primary/30",
     medium: "bg-amber-500/20 text-amber-600 dark:text-amber-500 border-amber-500/30",
     high: "bg-red-500/20 text-red-600 dark:text-red-500 border-red-500/30"
   };
+  const impactLabels = { low: t("impactLow"), medium: t("impactMedium"), high: t("impactHigh") };
+
 
   return (
     <motion.div
@@ -70,9 +75,10 @@ export const ActionCard = ({
         {/* Impact Level Badge */}
         <div className="mb-3">
           <span className={`inline-flex items-center text-[9px] uppercase px-2 py-0.5 rounded-md font-bold tracking-wider border ${impactLevelColors[difficulty]}`}>
-            {difficulty} Impact
+            {impactLabels[difficulty]}
           </span>
         </div>
+
 
         {/* Spacer to push button to bottom */}
         <div className="flex-1" />
@@ -88,16 +94,17 @@ export const ActionCard = ({
                 : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30"
             }`}
           >
-            <span className="flex items-center justify-center gap-1.5">
+            <span className="flex items-center justify-center gap-1.5 min-w-0 break-words">
               {completed ? (
                 <>
-                  <CheckIcon className="w-3 h-3" />
-                  Completed
+                  <CheckIcon className="w-3 h-3 flex-shrink-0" />
+                  <span className="break-words">{t("completed")}</span>
                 </>
               ) : (
-                "Mark Complete"
+                <span className="break-words">{t("markComplete")}</span>
               )}
             </span>
+
           </button>
         )}
       </div>
