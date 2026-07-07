@@ -421,10 +421,10 @@ function IntegrationsContent() {
                   {qbLoading ? (
                     <>
                       <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                      Disconnecting...
+                      {t("quickbooks.disconnecting")}
                     </>
                   ) : (
-                    "Disconnect"
+                    t("quickbooks.disconnect")
                   )}
                 </PremiumButton>
               ) : (
@@ -437,11 +437,11 @@ function IntegrationsContent() {
                   {qbLoading ? (
                     <>
                       <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                      Connecting...
+                      {t("quickbooks.connecting")}
                     </>
                   ) : (
                     <>
-                      Connect
+                      {t("quickbooks.connect")}
                       <ExternalLink className="w-3 h-3 ml-1.5" />
                     </>
                   )}
@@ -453,15 +453,15 @@ function IntegrationsContent() {
               <ul className="space-y-1.5 text-[11px] text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 text-xs">•</span>
-                  <span>Import expense data automatically</span>
+                  <span>{t("quickbooks.feature1")}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 text-xs">•</span>
-                  <span>Track travel and utility expenses</span>
+                  <span>{t("quickbooks.feature2")}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 text-xs">•</span>
-                  <span>Generate sustainability reports</span>
+                  <span>{t("quickbooks.feature3")}</span>
                 </li>
               </ul>
             </div>
