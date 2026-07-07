@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import {
   DashboardIcon,
@@ -16,6 +16,7 @@ import {
   LeafIcon
 } from "@/components/icons/CustomIcons";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Lightbulb, Plug, Wand2, GraduationCap } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { useUser } from "@/lib/user-context";
