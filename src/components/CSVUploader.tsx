@@ -27,6 +27,8 @@ interface ParsedData {
 }
 
 export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
+  const t = useTranslations("csvUploader");
+  const locale = useLocale();
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
