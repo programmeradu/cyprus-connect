@@ -54,9 +54,9 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
       setFile(droppedFile);
       processFile(droppedFile);
     } else {
-      toast.error("Please upload a CSV file");
+      toast.error(t("toasts.invalidType"));
     }
-  }, []);
+  }, [t]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
