@@ -749,7 +749,7 @@ export default function InsightsPage() {
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <Zap className="w-4 h-4 text-primary" />
-                  Energy Optimization
+                  {t("ai.energyOptimization")}
                 </h3>
                 <div className="space-y-2">
                   {aiRecommendations.energyOptimizationTips.map((tip, index) => (
