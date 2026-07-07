@@ -316,7 +316,7 @@ export function EnergyCostCalculator() {
       <div className="space-y-3 mb-4">
         <div>
           <label className="block text-[10px] font-medium mb-1.5">
-            Annual Consumption (kWh)
+            {t("annualConsumption")}
           </label>
           <input
             type="range"
@@ -336,7 +336,7 @@ export function EnergyCostCalculator() {
 
         <div>
           <label className="block text-[10px] font-medium mb-1.5">
-            Efficiency Gain (%)
+            {t("efficiencyGain")}
           </label>
           <input
             type="range"
@@ -363,7 +363,7 @@ export function EnergyCostCalculator() {
           className="space-y-2"
         >
           <div className="p-3 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20">
-            <p className="text-[9px] text-muted-foreground mb-0.5">Annual Savings</p>
+            <p className="text-[9px] text-muted-foreground mb-0.5">{t("annualSavings")}</p>
             <p className="text-xl font-bold text-green-600">
               {formatAmount(savings.annualSavings)}
             </p>
@@ -374,12 +374,12 @@ export function EnergyCostCalculator() {
 
           <div className="grid grid-cols-2 gap-2">
             <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-0.5">CO₂ Cut</p>
-              <p className="text-sm font-bold">{savings.co2Reduction.toFixed(1)} <span className="text-[9px] font-normal">t/yr</span></p>
+              <p className="text-[9px] text-muted-foreground mb-0.5">{t("co2Cut")}</p>
+              <p className="text-sm font-bold">{savings.co2Reduction.toFixed(1)} <span className="text-[9px] font-normal">{t("tPerYr")}</span></p>
             </div>
             <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-0.5">ROI</p>
-              <p className="text-sm font-bold">{savings.roiMonths.toFixed(1)} <span className="text-[9px] font-normal">mo</span></p>
+              <p className="text-[9px] text-muted-foreground mb-0.5">{t("roi")}</p>
+              <p className="text-sm font-bold">{savings.roiMonths.toFixed(1)} <span className="text-[9px] font-normal">{t("mo")}</span></p>
             </div>
           </div>
         </motion.div>
@@ -390,7 +390,7 @@ export function EnergyCostCalculator() {
         className="w-full mt-3"
         size="sm"
       >
-        <span className="text-[10px]">Refresh Prices</span>
+        <span className="text-[10px]">{t("refresh")}</span>
       </PremiumButton>
     </PremiumCard>
   );
