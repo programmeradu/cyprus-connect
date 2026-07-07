@@ -176,7 +176,8 @@
       "profilePrompt": "Complete your profile to see industry comparisons",
       "aiTitle": "AI-Powered Insights",
       "topRecommendations": "Top Recommendations",
-      "keyHighlights": "Key Highlights"
+      "keyHighlights": "Key Highlights",
+      "loadFailed": "Failed to load analytics data"
     },
     "marketplace": {
       "titleA": "Carbon Offset",
