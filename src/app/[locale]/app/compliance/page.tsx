@@ -393,10 +393,10 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <AlertIcon />
             </div>
-            <span className="text-[9px] text-muted-foreground font-light">Action Required</span>
+            <span className="text-[9px] text-muted-foreground font-light">{t("overview.actionRequired")}</span>
           </div>
           <div className="text-2xl font-bold mb-1">{urgentItems}</div>
-          <div className="text-[10px] text-muted-foreground font-light">Regulations need attention</div>
+          <div className="text-[10px] text-muted-foreground font-light">{t("overview.regulationsNeedAttention")}</div>
         </PremiumCard>
       </motion.div>
 
@@ -406,10 +406,10 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <ClockIcon />
             </div>
-            <span className="text-[9px] text-muted-foreground font-light">Next 30 Days</span>
+            <span className="text-[9px] text-muted-foreground font-light">{t("overview.next30Days")}</span>
           </div>
           <div className="text-2xl font-bold mb-1">{upcomingDeadlines}</div>
-          <div className="text-[10px] text-muted-foreground font-light">Upcoming deadlines</div>
+          <div className="text-[10px] text-muted-foreground font-light">{t("overview.upcomingDeadlines")}</div>
         </PremiumCard>
       </motion.div>
 
@@ -419,10 +419,10 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <DocumentIcon />
             </div>
-            <span className="text-[9px] text-muted-foreground font-light">Generated</span>
+            <span className="text-[9px] text-muted-foreground font-light">{t("overview.generated")}</span>
           </div>
           <div className="text-2xl font-bold mb-1">{documents.length}</div>
-          <div className="text-[10px] text-muted-foreground font-light">Compliance documents</div>
+          <div className="text-[10px] text-muted-foreground font-light">{t("overview.complianceDocuments")}</div>
         </PremiumCard>
       </motion.div>
 
