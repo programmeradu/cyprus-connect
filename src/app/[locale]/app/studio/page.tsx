@@ -627,11 +627,11 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
             setIsSidebarOpen(true);
           }}
           className="w-10 h-10 rounded-lg bg-muted hover:bg-muted/80 transition-all flex items-center justify-center group relative"
-          title="Recent Generations"
+          title={t("recentGenerations")}
         >
           <RecentIcon />
           <span className="absolute -bottom-6 right-0 text-[9px] text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-            Recent
+            {t("recent")}
           </span>
         </button>
         <button
