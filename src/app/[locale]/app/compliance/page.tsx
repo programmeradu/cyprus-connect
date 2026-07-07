@@ -829,7 +829,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
           
           <div className="mt-4 pt-4 border-t border-border/50">
             <PremiumButton size="sm" onClick={handleSave} className="w-full text-xs h-7">
-              Save Settings
+              {t("settings.save")}
             </PremiumButton>
           </div>
         </PremiumCard>
