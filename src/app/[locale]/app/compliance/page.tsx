@@ -212,7 +212,7 @@ export default function CompliancePage() {
       setGenerating(true);
       const token = localStorage.getItem("bearer_token");
       
-      toast.info(`Generating ${framework} report with AI...`);
+      toast.info(t("toasts.generating", { framework }));
       
       const response = await fetch("/api/compliance/documents/generate", {
         method: "POST",
@@ -225,15 +225,15 @@ export default function CompliancePage() {
 
       if (response.ok) {
         const data = await response.json();
-        toast.success(`${framework} report generated successfully!`);
+        toast.success(t("toasts.generatedSuccess", { framework }));
         await fetchComplianceData(); // Refresh data
       } else {
         const error = await response.json();
-        toast.error(error.error || "Failed to generate report");
+        toast.error(error.error || t("toasts.generateFailed"));
       }
     } catch (error) {
       console.error("Error generating report:", error);
-      toast.error("Failed to generate report");
+      toast.error(t("toasts.generateFailed"));
     } finally {
       setGenerating(false);
     }
