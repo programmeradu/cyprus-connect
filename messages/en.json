@@ -1216,5 +1216,46 @@
     "footer": "Credits never expire • Secure payment via Stripe",
     "failed": "Failed to purchase credits",
     "checkoutFailed": "Failed to create checkout session"
+  },
+  "csvUploader": {
+    "title": "Upload Utility Bills",
+    "subtitle": "Upload CSV files from utility bills for automatic data extraction",
+    "dropHere": "Drop your CSV file here",
+    "orBrowse": "or click to browse",
+    "chooseFile": "Choose File",
+    "expectedColumns": "CSV format expected columns:",
+    "processing": "Processing your file...",
+    "uploadFailed": "Upload Failed",
+    "tryAgain": "Try Again",
+    "processedSuccess": "File Processed Successfully",
+    "categoriesDetected": "{count} categories detected",
+    "extractedData": "Extracted Data",
+    "categories": {
+      "electricity": "Electricity",
+      "gas": "Natural Gas",
+      "water": "Water",
+      "waste": "Waste",
+      "transport": "Transportation"
+    },
+    "units": {
+      "electricity": "kWh",
+      "gas": "m³",
+      "water": "L",
+      "waste": "kg",
+      "transport": "km"
+    },
+    "uploadDifferent": "Upload Different File",
+    "applyToCalculator": "Apply to Calculator",
+    "needHelp": "Need help formatting your CSV?",
+    "downloadExample": "Download Example CSV Template →",
+    "toasts": {
+      "invalidType": "Please upload a CSV file",
+      "empty": "CSV file is empty or invalid",
+      "noValidData": "No valid data found. Please check column names (electricity, gas, water, waste, transport)",
+      "parseFailed": "Failed to parse CSV",
+      "parseSuccess": "CSV parsed successfully!",
+      "applied": "Data applied to calculator!",
+      "exampleDownloaded": "Example CSV downloaded!"
+    }
   }
 }

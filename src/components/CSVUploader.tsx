@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 interface CSVUploaderProps {
   onDataExtracted: (data: {
@@ -26,6 +27,8 @@ interface ParsedData {
 }
 
 export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
+  const t = useTranslations("csvUploader");
+  const locale = useLocale();
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -51,9 +54,9 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
       setFile(droppedFile);
       processFile(droppedFile);
     } else {
-      toast.error("Please upload a CSV file");
+      toast.error(t("toasts.invalidType"));
     }
-  }, []);
+  }, [t]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -72,7 +75,7 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
       const lines = text.split("\n").filter(line => line.trim());
       
       if (lines.length < 2) {
-        throw new Error("CSV file is empty or invalid");
+        throw new Error(t("toasts.empty"));
       }
 
       const headers = lines[0].toLowerCase().split(",").map(h => h.trim());
@@ -114,13 +117,13 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
       if (transportTotal > 0) data.transport = transportTotal;
 
       if (Object.keys(data).length === 0) {
-        throw new Error("No valid data found. Please check column names (electricity, gas, water, waste, transport)");
+        throw new Error(t("toasts.noValidData"));
       }
 
       setParsedData(data);
-      toast.success("CSV parsed successfully!");
+      toast.success(t("toasts.parseSuccess"));
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to parse CSV";
+      const message = err instanceof Error ? err.message : t("toasts.parseFailed");
       setError(message);
       toast.error(message);
     } finally {
@@ -160,9 +163,9 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-xl font-bold mb-1">Upload Utility Bills</h2>
+            <h2 className="text-xl font-bold mb-1">{t("title")}</h2>
             <p className="text-sm text-muted-foreground">
-              Upload CSV files from utility bills for automatic data extraction
+              {t("subtitle")}
             </p>
           </div>
           <button
@@ -192,10 +195,10 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               
               <div>
                 <p className="text-base font-medium mb-1">
-                  Drop your CSV file here
+                  {t("dropHere")}
                 </p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  or click to browse
+                  {t("orBrowse")}
                 </p>
               </div>
 
@@ -209,12 +212,12 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               <label htmlFor="csv-upload">
                 <PremiumButton size="sm" className="text-xs" type="button">
                   <FileText className="w-3 h-3 mr-2" />
-                  Choose File
+                  {t("chooseFile")}
                 </PremiumButton>
               </label>
 
               <div className="text-xs text-muted-foreground mt-2">
-                <p className="mb-1">CSV format expected columns:</p>
+                <p className="mb-1">{t("expectedColumns")}</p>
                 <code className="bg-muted px-2 py-1 rounded text-[10px]">
                   electricity, gas, water, waste, transport
                 </code>
@@ -228,7 +231,7 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <Loader2 className="w-12 h-12 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">
-              Processing your file...
+              {t("processing")}
             </p>
           </div>
         )}
@@ -240,7 +243,7 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-destructive mb-1">
-                  Upload Failed
+                  {t("uploadFailed")}
                 </p>
                 <p className="text-xs text-destructive/80">{error}</p>
               </div>
@@ -251,7 +254,7 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               className="mt-3 text-xs"
               onClick={handleReset}
             >
-              Try Again
+              {t("tryAgain")}
             </PremiumButton>
           </div>
         )}
@@ -269,57 +272,27 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
                   <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-medium text-primary mb-1">
-                      File Processed Successfully
+                      {t("processedSuccess")}
                     </p>
                     <p className="text-xs text-primary/80">
-                      {file?.name} • {Object.keys(parsedData).length} categories detected
+                      {file?.name} • {t("categoriesDetected", { count: Object.keys(parsedData).length })}
                     </p>
                   </div>
                 </div>
 
                 {/* Extracted Data */}
                 <div className="bg-background/50 rounded-lg p-4 space-y-3">
-                  <h3 className="text-sm font-semibold mb-2">Extracted Data</h3>
-                  {parsedData.electricity !== undefined && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Electricity</span>
-                      <span className="text-sm font-medium">
-                        {parsedData.electricity.toLocaleString()} kWh
-                      </span>
-                    </div>
-                  )}
-                  {parsedData.gas !== undefined && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Natural Gas</span>
-                      <span className="text-sm font-medium">
-                        {parsedData.gas.toLocaleString()} m³
-                      </span>
-                    </div>
-                  )}
-                  {parsedData.water !== undefined && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Water</span>
-                      <span className="text-sm font-medium">
-                        {parsedData.water.toLocaleString()} L
-                      </span>
-                    </div>
-                  )}
-                  {parsedData.waste !== undefined && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Waste</span>
-                      <span className="text-sm font-medium">
-                        {parsedData.waste.toLocaleString()} kg
-                      </span>
-                    </div>
-                  )}
-                  {parsedData.transport !== undefined && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Transportation</span>
-                      <span className="text-sm font-medium">
-                        {parsedData.transport.toLocaleString()} km
-                      </span>
-                    </div>
-                  )}
+                  <h3 className="text-sm font-semibold mb-2">{t("extractedData")}</h3>
+                  {(["electricity","gas","water","waste","transport"] as const).map((key) => (
+                    parsedData[key] !== undefined && (
+                      <div key={key} className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{t(`categories.${key}`)}</span>
+                        <span className="text-sm font-medium">
+                          {parsedData[key]!.toLocaleString(locale)} {t(`units.${key}`)}
+                        </span>
+                      </div>
+                    )
+                  ))}
                 </div>
               </div>
 
@@ -330,14 +303,14 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
                   onClick={handleReset}
                   className="flex-1 text-xs"
                 >
-                  Upload Different File
+                  {t("uploadDifferent")}
                 </PremiumButton>
                 <PremiumButton
                   onClick={handleApplyData}
                   className="flex-1 text-xs"
                 >
                   <CheckCircle className="w-3 h-3 mr-2" />
-                  Apply to Calculator
+                  {t("applyToCalculator")}
                 </PremiumButton>
               </div>
             </motion.div>
@@ -347,7 +320,7 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
         {/* Example CSV Link */}
         <div className="mt-6 pt-6 border-t border-border">
           <p className="text-xs text-muted-foreground mb-2">
-            Need help formatting your CSV?
+            {t("needHelp")}
           </p>
           <button
             onClick={() => {
@@ -360,11 +333,11 @@ export function CSVUploader({ onDataExtracted, onClose }: CSVUploaderProps) {
               a.href = url;
               a.download = "utility_bills_example.csv";
               a.click();
-              toast.success("Example CSV downloaded!");
+              toast.success(t("toasts.exampleDownloaded"));
             }}
             className="text-xs text-primary hover:underline"
           >
-            Download Example CSV Template →
+            {t("downloadExample")}
           </button>
         </div>
       </motion.div>

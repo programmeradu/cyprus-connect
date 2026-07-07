@@ -1216,5 +1216,46 @@
     "footer": "Τα credits δεν λήγουν • Ασφαλής πληρωμή μέσω Stripe",
     "failed": "Αποτυχία αγοράς credits",
     "checkoutFailed": "Αποτυχία δημιουργίας συνεδρίας πληρωμής"
+  },
+  "csvUploader": {
+    "title": "Ανέβασμα Λογαριασμών Κοινής Ωφέλειας",
+    "subtitle": "Ανεβάστε αρχεία CSV από λογαριασμούς για αυτόματη εξαγωγή δεδομένων",
+    "dropHere": "Αφήστε το αρχείο CSV εδώ",
+    "orBrowse": "ή κάντε κλικ για αναζήτηση",
+    "chooseFile": "Επιλογή Αρχείου",
+    "expectedColumns": "Αναμενόμενες στήλες CSV:",
+    "processing": "Επεξεργασία του αρχείου σας...",
+    "uploadFailed": "Αποτυχία Ανεβάσματος",
+    "tryAgain": "Δοκιμάστε Ξανά",
+    "processedSuccess": "Το Αρχείο Επεξεργάστηκε Επιτυχώς",
+    "categoriesDetected": "{count} κατηγορίες εντοπίστηκαν",
+    "extractedData": "Εξαγόμενα Δεδομένα",
+    "categories": {
+      "electricity": "Ηλεκτρισμός",
+      "gas": "Φυσικό Αέριο",
+      "water": "Νερό",
+      "waste": "Απορρίμματα",
+      "transport": "Μεταφορές"
+    },
+    "units": {
+      "electricity": "kWh",
+      "gas": "m³",
+      "water": "L",
+      "waste": "kg",
+      "transport": "km"
+    },
+    "uploadDifferent": "Ανέβασμα Άλλου Αρχείου",
+    "applyToCalculator": "Εφαρμογή στον Υπολογιστή",
+    "needHelp": "Χρειάζεστε βοήθεια με τη μορφοποίηση του CSV;",
+    "downloadExample": "Λήψη Προτύπου CSV →",
+    "toasts": {
+      "invalidType": "Ανεβάστε ένα αρχείο CSV",
+      "empty": "Το αρχείο CSV είναι κενό ή μη έγκυρο",
+      "noValidData": "Δεν βρέθηκαν έγκυρα δεδομένα. Ελέγξτε τα ονόματα στηλών (electricity, gas, water, waste, transport)",
+      "parseFailed": "Αποτυχία ανάλυσης CSV",
+      "parseSuccess": "Επιτυχής ανάλυση CSV!",
+      "applied": "Τα δεδομένα εφαρμόστηκαν στον υπολογιστή!",
+      "exampleDownloaded": "Το παράδειγμα CSV λήφθηκε!"
+    }
   }
 }
