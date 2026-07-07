@@ -351,6 +351,7 @@ export default function CompliancePage() {
 
 // Overview Tab Component
 function OverviewTab({ complianceScore, regulations, documents }: { complianceScore: number; regulations: Regulation[]; documents: Document[] }) {
+  const t = useTranslations("dashboard.compliance");
   const urgentItems = regulations.filter(r => r.status === "action_required").length;
   const upcomingDeadlines = regulations.filter(r => {
     const daysUntil = Math.floor((new Date(r.nextDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
@@ -360,11 +361,11 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
   // Calculate compliance breakdown from actual regulations
   const complianceBreakdown = regulations.map(reg => {
     const statusMap: Record<string, { status: string; value: number }> = {
-      'compliant': { status: 'Compliant', value: 95 },
-      'action_required': { status: 'Action Required', value: 60 },
-      'upcoming': { status: 'Preparation', value: 75 }
+      'compliant': { status: t("status.compliantLabel"), value: 95 },
+      'action_required': { status: t("status.actionRequiredLabel"), value: 60 },
+      'upcoming': { status: t("status.preparation"), value: 75 }
     };
-    const mapped = statusMap[reg.status] || { status: 'In Progress', value: 70 };
+    const mapped = statusMap[reg.status] || { status: t("status.inProgress"), value: 70 };
     return {
       label: reg.name,
       value: mapped.value,
@@ -379,7 +380,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
     .slice(0, 3)
     .map(reg => ({
       date: new Date(reg.nextDeadline).toISOString().split('T')[0],
-      title: `${reg.name} - Next deadline ${new Date(reg.nextDeadline).toLocaleDateString()}`,
+      title: `${reg.name} - ${t("overview.nextDeadlinePrefix")} ${new Date(reg.nextDeadline).toLocaleDateString()}`,
       type: reg.status === 'action_required' ? 'important' : reg.status === 'compliant' ? 'info' : 'update'
     }));
 
