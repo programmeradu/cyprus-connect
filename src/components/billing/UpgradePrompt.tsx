@@ -92,7 +92,7 @@ export const UpgradePrompt = ({
         >
           <Icon className={`w-4 h-4 ${plan.color}`} />
           <span className={`text-sm font-semibold ${plan.color}`}>
-            {plan.name} Feature
+            {t("planFeature", { name: plan.name })}
           </span>
         </motion.div>
 
@@ -104,25 +104,11 @@ export const UpgradePrompt = ({
           transition={{ delay: 0.5 }}
         >
           <div className="text-xs text-muted-foreground mb-2">
-            Upgrade to unlock:
+            {t("upgradeToUnlock")}
           </div>
-          {requiredPlan === "pro" ? (
-            <>
-              <FeatureItem>Unlimited actions per month</FeatureItem>
-              <FeatureItem>1,000 AI credits/month</FeatureItem>
-              <FeatureItem>Advanced analytics & insights</FeatureItem>
-              <FeatureItem>Up to 5 team members</FeatureItem>
-              <FeatureItem>Priority email support</FeatureItem>
-            </>
-          ) : (
-            <>
-              <FeatureItem>10,000 AI credits/month</FeatureItem>
-              <FeatureItem>Unlimited team members</FeatureItem>
-              <FeatureItem>White-label reports</FeatureItem>
-              <FeatureItem>Dedicated account manager</FeatureItem>
-              <FeatureItem>Custom AI model training</FeatureItem>
-            </>
-          )}
+          {(t.raw(requiredPlan === "pro" ? "proFeatures" : "enterpriseFeatures") as string[]).map((f) => (
+            <FeatureItem key={f}>{f}</FeatureItem>
+          ))}
         </motion.div>
 
         {/* CTA Buttons */}
@@ -134,12 +120,12 @@ export const UpgradePrompt = ({
         >
           <Link href="/pricing">
             <PremiumButton className="w-full" size="sm">
-              Upgrade to {plan.name} - {plan.price}
+              {t("upgradeCta", { name: plan.name, price: plan.price })}
             </PremiumButton>
           </Link>
           <Link href="/app">
             <PremiumButton variant="outline" className="w-full" size="sm">
-              Back to Dashboard
+              {t("backToDashboard")}
             </PremiumButton>
           </Link>
         </motion.div>
@@ -147,9 +133,10 @@ export const UpgradePrompt = ({
         {/* Current Plan */}
         {currentPlan && (
           <p className="text-xs text-muted-foreground mt-4">
-            Current plan: <span className="font-medium capitalize">{currentPlan}</span>
+            {t("currentPlan")} <span className="font-medium capitalize">{currentPlan}</span>
           </p>
         )}
+
       </PremiumCard>
     </motion.div>
   );
