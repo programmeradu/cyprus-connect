@@ -203,7 +203,7 @@ export default function CompliancePage() {
       }
     } catch (error) {
       console.error("Error fetching compliance data:", error);
-      toast.error("Failed to fetch compliance data");
+      toast.error(t("toasts.fetchFailed"));
     }
   };
 
