@@ -604,12 +604,12 @@ export default function InsightsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <CircularProgress 
                     percentage={energyData?.carbonIntensity?.renewablePercentage || 0} 
-                    label="Renewable Energy"
+                    label={t("energySection.renewableEnergy")}
                     size={80}
                   />
                   <CircularProgress 
                     percentage={100 - (energyData?.carbonIntensity?.fossilFuelPercentage || 100)} 
-                    label="Fossil-Free"
+                    label={t("energySection.fossilFree")}
                     size={80}
                   />
                 </div>
