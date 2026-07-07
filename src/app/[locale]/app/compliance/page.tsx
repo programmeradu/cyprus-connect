@@ -732,6 +732,7 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
 
 // Settings Tab Component - updated
 function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settings: Settings) => void }) {
+  const t = useTranslations("dashboard.compliance");
   const [localSettings, setLocalSettings] = useState(settings);
 
   useEffect(() => {
@@ -741,6 +742,13 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
   const handleSave = () => {
     onSave(localSettings);
   };
+
+  const jurisdictionOptions: { value: string; label: string }[] = [
+    { value: "European Union", label: t("settings.jurisdictionOptions.eu") },
+    { value: "United States", label: t("settings.jurisdictionOptions.us") },
+    { value: "United Kingdom", label: t("settings.jurisdictionOptions.uk") },
+    { value: "Global", label: t("settings.jurisdictionOptions.global") },
+  ];
 
   return (
     <div className="space-y-4">
