@@ -129,7 +129,7 @@ export default function LeaderboardPage() {
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 rounded-lg text-xs"
                   >
                     {getCategoryIcon(action.category)}
-                    <span className="text-foreground/80 truncate max-w-[150px]">{action.title}</span>
+                    <span className="text-foreground/80 min-w-0 break-words">{action.title}</span>
                     <span className="text-primary font-medium">+{action.points}</span>
                   </div>
                 ))}
