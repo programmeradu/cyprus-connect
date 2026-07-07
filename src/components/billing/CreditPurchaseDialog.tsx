@@ -133,8 +133,8 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
                   {/* Credits */}
                   <div className="mb-1.5 text-center">
-                    <div className="text-lg font-bold">{pkg.credits.toLocaleString()}</div>
-                    <div className="text-[10px] text-muted-foreground">Credits</div>
+                    <div className="text-lg font-bold">{pkg.credits.toLocaleString(locale)}</div>
+                    <div className="text-[10px] text-muted-foreground">{t("credits")}</div>
                   </div>
 
                   {/* Price */}
@@ -142,7 +142,7 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
                     <div className="text-base font-bold">${pkg.price}</div>
                     {discount && (
                       <div className="text-[10px] text-primary font-medium">
-                        Save {discount}%
+                        {t("save", { pct: discount })}
                       </div>
                     )}
                   </div>
@@ -154,12 +154,12 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
                     onClick={() => handlePurchase(pkg.key)}
                     disabled={loading === pkg.key}
                   >
-                    {loading === pkg.key ? 'Processing...' : 'Purchase'}
+                    {loading === pkg.key ? t("processing") : t("purchase")}
                   </PremiumButton>
 
                   {/* Price per credit */}
                   <div className="mt-1.5 text-center text-[9px] text-muted-foreground">
-                    ${(pkg.price / pkg.credits).toFixed(3)} per credit
+                    {t("perCredit", { price: (pkg.price / pkg.credits).toFixed(3) })}
                   </div>
                 </PremiumCard>
               </motion.div>
@@ -168,8 +168,9 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
         </div>
 
         <div className="mt-2 text-center text-[10px] text-muted-foreground">
-          Credits never expire • Secure payment via Stripe
+          {t("footer")}
         </div>
+
       </DialogContent>
     </Dialog>
   );
