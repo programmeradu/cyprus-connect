@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { ActionCard } from "@/components/app/ActionCard";
 import { Badge } from "@/components/app/Badge";
@@ -89,6 +90,7 @@ const MiniTrendChart = ({ data, color = "primary" }: { data: number[], color?: s
 };
 
 export default function ActionsPage() {
+  const t = useTranslations("dashboard.actions");
   const { user, refetchUser } = useUser();
   const [filter, setFilter] = useState("all");
   const [dbActions, setDbActions] = useState<any[]>([]);
@@ -131,7 +133,7 @@ export default function ActionsPage() {
       }
     } catch (error) {
       console.error("Failed to load actions:", error);
-      toast.error("Failed to load actions");
+      toast.error(t("toast.loadFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +170,7 @@ export default function ActionsPage() {
 
   const generateAIActions = async () => {
     if (!user) {
-      toast.error("Please complete onboarding first");
+      toast.error(t("toast.onboardFirst"));
       return;
     }
 
@@ -177,7 +179,7 @@ export default function ActionsPage() {
     try {
       // Check if user has substantial data to analyze
       if (!userEmissions) {
-        toast.info("Complete your emissions profile first to get personalized recommendations");
+        toast.info(t("toast.needProfile"));
         setIsGenerating(false);
         return;
       }
@@ -187,7 +189,7 @@ export default function ActionsPage() {
       
       // If user has completed most actions, don't generate more
       if (completionRate > 80) {
-        toast.success("🎉 Great job! You've completed most available actions. Keep up the excellent work!");
+        toast.success(t("toast.excellent"));
         setIsGenerating(false);
         return;
       }
@@ -279,13 +281,13 @@ OR
         }
       } catch (parseError) {
         console.error('Failed to parse AI response:', parseError);
-        toast.error('Failed to parse AI recommendations');
+        toast.error(t("toast.parseFailed"));
         return;
       }
 
       // If AI returned empty array, show appropriate message
       if (generatedActions.length === 0) {
-        toast.success("✨ Your sustainability performance is excellent! No additional recommendations needed at this time.");
+        toast.success(t("toast.topShape"));
         setIsGenerating(false);
         return;
       }
@@ -299,7 +301,7 @@ OR
       });
 
       if (uniqueActions.length === 0) {
-        toast.info("All suggested recommendations already exist in your action list!");
+        toast.info(t("toast.allExist"));
         setIsGenerating(false);
         return;
       }
@@ -333,16 +335,16 @@ OR
       }
 
       if (savedActions.length > 0) {
-        toast.success(`✨ Generated and saved ${savedActions.length} personalized recommendations!`);
+        toast.success(t("toast.savedN", { count: savedActions.length }));
         // Reload actions to show the new AI-generated ones
         await loadActions();
       } else {
-        toast.error('Failed to save AI recommendations');
+        toast.error(t("toast.saveFailed"));
       }
       
     } catch (error) {
       console.error("Failed to generate AI actions:", error);
-      toast.error("Failed to generate recommendations. Please try again.");
+      toast.error(t("toast.generateFailed"));
     } finally {
       setIsGenerating(false);
     }
@@ -374,12 +376,12 @@ OR
 
   const handleCompleteAction = async (actionId: number, points: number) => {
     if (!user) {
-      toast.error("Please complete onboarding first");
+      toast.error(t("toast.onboardFirst"));
       return;
     }
 
     if (completedActionIds.includes(actionId)) {
-      toast.info("Action already completed!");
+      toast.info(t("toast.already"));
       return;
     }
 
@@ -395,7 +397,7 @@ OR
 
       if (!response.ok) {
         const error = await response.json();
-        toast.error(error.error || "Failed to complete action");
+        toast.error(error.error || t("toast.completeFailed"));
         return;
       }
 
@@ -405,10 +407,10 @@ OR
       
       await refetchUser();
       
-      toast.success(`🎉 +${points} credits earned!`);
+      toast.success(t("toast.creditsEarned", { points }));
     } catch (error) {
       console.error("Failed to complete action:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("toast.generic"));
     }
   };
 
@@ -416,8 +418,8 @@ OR
     return (
       <>
         <AppHeader
-          title="Green Actions"
-          subtitle="All recommended actions to improve your sustainability"
+          title={t("title")}
+          subtitle={t("subtitleLoad")}
         />
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -433,8 +435,8 @@ OR
   return (
     <>
       <AppHeader
-        title="Green Actions"
-        subtitle="AI-powered recommendations based on your data"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {/* Stats Cards with Trend Charts */}
@@ -445,7 +447,7 @@ OR
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">Completed Actions</p>
+          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">{t("completed")}</p>
           <p className="text-3xl font-bold mb-1">{completedCount}</p>
           <MiniTrendChart data={completedTrend} />
         </motion.div>
@@ -455,7 +457,7 @@ OR
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">Available</p>
+          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">{t("available")}</p>
           <p className="text-3xl font-bold mb-1">{availableCount}</p>
           <MiniTrendChart data={availableTrend} />
         </motion.div>
@@ -465,7 +467,7 @@ OR
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">Credits Earned</p>
+          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">{t("creditsEarned")}</p>
           <p className="text-3xl font-bold mb-1">{user?.totalCredits || 0}</p>
           <MiniTrendChart data={creditsTrend} />
         </motion.div>
@@ -480,7 +482,7 @@ OR
         >
           <AIGenerateIcon className="w-3.5 h-3.5 text-primary flex-shrink-0" />
           <span className="text-xs font-medium whitespace-nowrap">
-            {isGenerating ? "Generating..." : "AI Generate"}
+            {isGenerating ? t("generating") : t("aiGenerate")}
           </span>
           {aiActionsCount > 0 && (
             <Badge className="ml-1 bg-primary/20 text-primary border-primary/30 text-[10px] px-1.5 py-0">
@@ -500,7 +502,7 @@ OR
                   : "bg-muted/30 text-muted-foreground border border-transparent hover:bg-muted/50 hover:border-border"
               }`}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {t(`filters.${category}` as any)}
             </button>
           ))}
         </div>
@@ -516,9 +518,9 @@ OR
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <AIGenerateIcon className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-bold">AI-Powered Recommendations</h2>
+              <h2 className="text-lg font-bold">{t("aiSection")}</h2>
               <Badge className="bg-primary/20 text-primary border-primary/30">
-                Personalized for You
+                {t("aiBadge")}
               </Badge>
             </div>
           </div>
@@ -563,12 +565,12 @@ OR
       ) : regularActions.length === 0 && aiActions.length === 0 ? (
         <div className="text-center py-16">
           <LeafIcon className="w-16 h-16 text-muted-foreground/20 mx-auto mb-6" />
-          <p className="text-sm text-muted-foreground">No actions found for this category</p>
+          <p className="text-sm text-muted-foreground">{t("empty")}</p>
         </div>
       ) : regularActions.length > 0 ? (
         <>
           {aiActions.length > 0 && (
-            <h2 className="text-lg font-bold mb-4">Standard Actions</h2>
+            <h2 className="text-lg font-bold mb-4">{t("standardSection")}</h2>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {regularActions.map((action) => (
