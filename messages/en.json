@@ -45,7 +45,8 @@
     "ctaSubtitle": "Join hundreds of SMEs reducing their carbon footprint with AI-powered insights",
     "ctaButton": "Get Started Free",
     "gatewayStripe": "Card (Stripe)",
-    "gatewayPaystack": "Local (Paystack)"
+    "gatewayPaystack": "Local (Paystack)",
+    "rights": "All rights reserved."
   },
   "auth": {
     "welcome": "Welcome to VerdeIQ",
@@ -81,7 +82,10 @@
       "unexpected": "An unexpected error occurred. Please try again.",
       "googleFailed": "Failed to initiate Google sign-in. Please try again.",
       "accountCreated": "Account created! Redirecting to dashboard…"
-    }
+    },
+    "demoQuestion": "Want to explore first?",
+    "demoTry": "Try demo",
+    "demoToast": "Demo mode coming soon!"
   },
   "footer": {
     "rights": "All rights reserved.",
