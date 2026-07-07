@@ -559,7 +559,7 @@ function IntegrationsContent() {
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <MapPin className="w-3 h-3" />
-                  US ZIP Code
+                  {t("energy.usZip")}
                 </div>
               </button>
             </div>
