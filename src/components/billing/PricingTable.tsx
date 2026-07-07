@@ -8,6 +8,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -18,15 +19,16 @@ interface PricingTableProps {
 export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
+  const t = useTranslations("billing.pricingTable");
 
   const handleSubscribe = async (planId: string) => {
     if (planId === 'free') {
-      toast.info('You are already on the free plan');
+      toast.info(t("alreadyFree"));
       return;
     }
 
     if (planId === currentPlanId) {
-      toast.info('You are already on this plan');
+      toast.info(t("alreadyOnPlan"));
       return;
     }
 
@@ -48,7 +50,7 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create checkout session');
+        throw new Error(error.error || t("checkoutFailed"));
       }
 
       const { url } = await response.json();
@@ -62,7 +64,7 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
       }
     } catch (error: any) {
       console.error('Subscription error:', error);
-      toast.error(error.message || 'Failed to start subscription');
+      toast.error(error.message || t("subscriptionFailed"));
     } finally {
       setLoading(null);
     }
@@ -80,6 +82,11 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
         const Icon = plan.icon;
         const isCurrentPlan = plan.id === currentPlanId;
         const isPopular = 'popular' in plan && Boolean((plan as any).popular);
+        const planName = t(`planNames.${plan.id as 'free' | 'pro' | 'enterprise'}`);
+        const features = t.raw(`features.${plan.id as 'free' | 'pro' | 'enterprise'}`) as string[];
+        const intervalLabel = plan.interval
+          ? t(`intervals.${plan.interval as 'month' | 'year'}`)
+          : null;
 
         return (
           <motion.div
@@ -92,7 +99,7 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
             {isPopular && (
               <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10">
                 <div className="bg-primary text-primary-foreground px-3 py-0.5 rounded-full text-[10px] font-semibold shadow-md">
-                  Most Popular
+                  {t("mostPopular")}
                 </div>
               </div>
             )}
@@ -106,14 +113,14 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
               </div>
 
               {/* Plan Name */}
-              <h3 className="text-base font-bold mb-1.5">{plan.name}</h3>
+              <h3 className="text-base font-bold mb-1.5">{planName}</h3>
 
               {/* Price */}
               <div className="mb-3">
                 <div className="flex items-baseline gap-1">
                   <span className="text-2xl font-bold">${plan.price}</span>
-                  {plan.interval && (
-                    <span className="text-muted-foreground text-xs">/{plan.interval}</span>
+                  {intervalLabel && (
+                    <span className="text-muted-foreground text-xs">/{intervalLabel}</span>
                   )}
                 </div>
               </div>
@@ -125,20 +132,18 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
                 onClick={() => handleSubscribe(plan.id)}
                 disabled={isCurrentPlan || loading === plan.id}
               >
-                {loading === plan.id ? (
-                  'Processing...'
-                ) : isCurrentPlan ? (
-                  'Current Plan'
-                ) : plan.id === 'free' ? (
-                  'Get Started'
-                ) : (
-                  `Upgrade to ${plan.name}`
-                )}
+                {loading === plan.id
+                  ? t("processing")
+                  : isCurrentPlan
+                    ? t("currentPlan")
+                    : plan.id === 'free'
+                      ? t("getStarted")
+                      : t("upgradeTo", { plan: planName })}
               </PremiumButton>
 
               {/* Features */}
               <div className="space-y-1.5">
-                {plan.features.map((feature, idx) => (
+                {features.map((feature, idx) => (
                   <div key={idx} className="flex items-start gap-2">
                     <CheckIcon />
                     <span className="text-xs text-muted-foreground leading-relaxed">
