@@ -704,7 +704,7 @@ function IntegrationsContent() {
                       />
                     ))}
                   </div>
-                  <p className="text-[9px] text-muted-foreground mt-2">Lower bars = cleaner energy</p>
+                  <p className="text-[9px] text-muted-foreground mt-2">{t("energy.forecastHint")}</p>
                 </div>
               )}
             </motion.div>
