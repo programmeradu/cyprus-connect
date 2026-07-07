@@ -34,9 +34,11 @@ export function FileUploadDialog({
   acceptedFileTypes = [".csv", ".pdf", ".xlsx"],
   maxSizeMB = 10,
 }: FileUploadDialogProps) {
+  const t = useTranslations("shared.fileUpload");
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const handleFileSelect = (selectedFiles: FileList | null) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
