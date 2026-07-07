@@ -1,54 +1,63 @@
 import { NextRequest, NextResponse } from "next/server";
 import { betterFetch } from "@better-fetch/fetch";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 
-// Protected routes that require authentication
-const protectedRoutes = [
-  '/app/actions',
-  '/app/analytics',
-  '/app/calculator',
-  '/app/insights',
-  '/app/integrations',
-  '/app/leaderboard',
-  '/app/onboarding',
-  '/app/settings',
-  '/app/studio',
-  '/app',
+const intlMiddleware = createIntlMiddleware(routing);
+
+// Protected route suffixes (after locale prefix)
+const protectedSuffixes = [
+  "/app",
+  "/app/actions",
+  "/app/analytics",
+  "/app/calculator",
+  "/app/insights",
+  "/app/integrations",
+  "/app/leaderboard",
+  "/app/onboarding",
+  "/app/settings",
+  "/app/studio",
 ];
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Check if the current route is protected
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname === route || pathname.startsWith(route + '/')
+
+  // Skip API routes entirely
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
+  // Strip locale prefix to check protection
+  const localeMatch = pathname.match(/^\/(en|el)(\/.*)?$/);
+  const pathWithoutLocale = localeMatch ? localeMatch[2] || "/" : pathname;
+
+  const isProtected = protectedSuffixes.some(
+    (route) => pathWithoutLocale === route || pathWithoutLocale.startsWith(route + "/")
   );
 
-  if (isProtectedRoute) {
-    // Check session using better-auth
+  if (isProtected) {
     const session = await betterFetch<{ user: { id: string } } | null>(
       "/api/auth/get-session",
       {
         baseURL: request.nextUrl.origin,
-        headers: {
-          cookie: request.headers.get("cookie") || "",
-        },
+        headers: { cookie: request.headers.get("cookie") || "" },
       }
     );
 
-    // If no session, redirect to auth page
     if (!session.data?.user) {
-      const url = new URL("/auth", request.url);
+      const locale = localeMatch?.[1] || routing.defaultLocale;
+      const url = new URL(`/${locale}/auth`, request.url);
       url.searchParams.set("redirect", pathname);
       return NextResponse.redirect(url);
     }
   }
 
-  return NextResponse.next();
+  // Delegate to next-intl for locale routing / redirects
+  return intlMiddleware(request);
 }
 
 export const config = {
-    matcher: [
-      // Skip Next.js internals and all static files
-      '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    ],
+  matcher: [
+    "/((?!api|_next|_vercel|.*\\..*).*)",
+  ],
 };
