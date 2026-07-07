@@ -235,13 +235,13 @@ Return ONLY valid JSON (no markdown, no explanations):
 
   const calculateEmissions = async () => {
     if (!session?.user?.id) {
-      toast.error("Please log in to continue");
+      toast.error(t("toasts.loginRequired"));
       router.push("/auth");
       return;
     }
 
     if (!isFormValid()) {
-      toast.error("Please enter at least one value");
+      toast.error(t("toasts.enterValue"));
       return;
     }
 
@@ -270,10 +270,10 @@ Return ONLY valid JSON (no markdown, no explanations):
             emissions: item.co2e_tonnes,
           }));
 
-          toast.success("Emissions calculated with Climatiq API!");
+          toast.success(t("toasts.calcOk"));
         } catch (error) {
           console.error("Climatiq API error, falling back to estimates:", error);
-          toast.error("Using estimated calculations (API unavailable)");
+          toast.error(t("toasts.calcFallback"));
           totalEmissions = calculateMockEmissions();
           emissionsBreakdown = getMockBreakdown();
         }
@@ -316,7 +316,7 @@ Return ONLY valid JSON (no markdown, no explanations):
         currentYear
       );
 
-      toast.info("Generating personalized recommendations...");
+      toast.info(t("toasts.generatingRecs"));
       const aiRecommendations = await generateAIRecommendations(
         totalEmissions,
         emissionsBreakdown,
@@ -330,15 +330,15 @@ Return ONLY valid JSON (no markdown, no explanations):
       });
 
       if (aiRecommendations.length > 0) {
-        toast.success(`Carbon footprint calculated! ${aiRecommendations.length} personalized recommendations added to your actions.`);
+        toast.success(t("toasts.doneWithRecs", { count: aiRecommendations.length }));
       } else {
-        toast.success("Carbon footprint calculated successfully!");
+        toast.success(t("toasts.doneNoRecs"));
       }
       
       localStorage.removeItem("calculator_draft");
     } catch (error) {
       console.error("Calculation error:", error);
-      toast.error("Failed to calculate emissions. Please try again.");
+      toast.error(t("toasts.saveFail"));
     } finally {
       setIsCalculating(false);
     }
@@ -476,31 +476,31 @@ Return ONLY valid JSON (no markdown, no explanations):
   const getMockBreakdown = () => {
     return [
       {
-        category: "Electricity",
+        category: t("categories.electricity"),
         value: parseFloat(formData.electricity) || 0,
         unit: "kWh",
         emissions: (parseFloat(formData.electricity) || 0) * 0.0005,
       },
       {
-        category: "Natural Gas",
+        category: t("categories.gas"),
         value: parseFloat(formData.gas) || 0,
         unit: "m³",
         emissions: (parseFloat(formData.gas) || 0) * 0.0053,
       },
       {
-        category: "Water",
+        category: t("categories.water"),
         value: parseFloat(formData.water) || 0,
         unit: "liters",
         emissions: (parseFloat(formData.water) || 0) * 0.0003,
       },
       {
-        category: "Waste",
+        category: t("categories.waste"),
         value: parseFloat(formData.waste) || 0,
         unit: "kg",
         emissions: (parseFloat(formData.waste) || 0) * 0.00047,
       },
       {
-        category: "Transportation",
+        category: t("categories.transport"),
         value: parseFloat(formData.transport) || 0,
         unit: "km",
         emissions: (parseFloat(formData.transport) || 0) * 0.00024,
@@ -523,7 +523,7 @@ Return ONLY valid JSON (no markdown, no explanations):
       transport: data.transport?.toString() || "",
     });
     setShowDocumentUploader(false);
-    toast.success("Data extracted from documents!");
+    toast.success(t("toasts.extracted"));
   };
 
   const handleReset = () => {
@@ -543,8 +543,8 @@ Return ONLY valid JSON (no markdown, no explanations):
     return (
       <>
         <AppHeader
-          title="Carbon Footprint Calculator"
-          subtitle="Calculate your business's monthly carbon emissions"
+          title={t("title")}
+          subtitle={t("subtitleShort")}
         />
         <div className="flex items-center justify-center min-h-[400px]">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -561,8 +561,8 @@ Return ONLY valid JSON (no markdown, no explanations):
   return (
     <>
       <AppHeader
-        title="Carbon Footprint Calculator"
-        subtitle="AI-powered document analysis or manual data entry for accurate carbon footprint calculations"
+        title={t("title")}
+        subtitle={t("subtitle")}
       />
 
       {!results ? (
