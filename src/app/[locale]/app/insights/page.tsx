@@ -616,7 +616,7 @@ export default function InsightsPage() {
               </>
             ) : (
               <div className="h-48 flex items-center justify-center text-muted-foreground text-sm">
-                No forecast data available for your region
+                {t("energySection.noForecast")}
               </div>
             )}
           </div>
