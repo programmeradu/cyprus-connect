@@ -189,13 +189,12 @@ export function AccountingIntegrationDialog({
                   </div>
                   <div>
                     <p className="text-xs font-medium text-foreground mb-1">
-                      Secure OAuth 2.0 Authentication
+                      {t("secureTitle")}
                     </p>
                     <p className="text-[10px] text-muted-foreground leading-relaxed">
-                      We use industry-standard OAuth 2.0 to securely connect to your accounting
-                      software. Your credentials are never stored on our servers. You can revoke
-                      access at any time from your accounting software settings.
+                      {t("secureBody")}
                     </p>
+
                   </div>
                 </div>
               </div>
