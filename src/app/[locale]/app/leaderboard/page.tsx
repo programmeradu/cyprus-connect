@@ -129,7 +129,7 @@ export default function LeaderboardPage() {
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 rounded-lg text-xs"
                   >
                     {getCategoryIcon(action.category)}
-                    <span className="text-foreground/80 truncate max-w-[150px]">{action.title}</span>
+                    <span className="text-foreground/80 min-w-0 break-words">{action.title}</span>
                     <span className="text-primary font-medium">+{action.points}</span>
                   </div>
                 ))}
@@ -159,9 +159,10 @@ export default function LeaderboardPage() {
                 }`}>
                   <TrophyIcon className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-xs font-bold mb-1 truncate">{entry.companyName || entry.name}</p>
-                <p className="text-[10px] text-muted-foreground mb-1">{entry.totalCredits} credits</p>
-                <p className="text-[10px] text-primary font-medium">{entry.actionsCompleted} actions</p>
+                <p className="text-xs font-bold mb-1 break-words">{entry.companyName || entry.name}</p>
+                <p className="text-[10px] text-muted-foreground mb-1">{t("podiumCredits", { credits: entry.totalCredits })}</p>
+                <p className="text-[10px] text-primary font-medium">{t("podiumActions", { actions: entry.actionsCompleted })}</p>
+
               </motion.div>
             );
           })}
@@ -205,7 +206,7 @@ export default function LeaderboardPage() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-sm font-medium truncate">{entry.companyName || entry.name}</p>
+                        <p className="text-sm font-medium min-w-0 break-words">{entry.companyName || entry.name}</p>
                         {isCurrentUser && <Badge variant="primary" size="sm">{t("you")}</Badge>}
                       </div>
                       <p className="text-[10px] text-muted-foreground">
@@ -224,7 +225,7 @@ export default function LeaderboardPage() {
                             className="flex items-center gap-1 px-2 py-0.5 bg-background/50 rounded text-[10px]"
                           >
                             {getCategoryIcon(action.category)}
-                            <span className="text-foreground/70 truncate max-w-[120px]">{action.title}</span>
+                            <span className="text-foreground/70 min-w-0 break-words">{action.title}</span>
                           </div>
                         ))}
                       </div>
