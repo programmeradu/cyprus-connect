@@ -30,8 +30,9 @@ export const SubscriptionBadge = () => {
   });
   
   const currentPlan = subscription || customer?.products?.at(-1);
-  const planName = currentPlan?.name || "Free";
   const planId = currentPlan?.id || "free";
+  const planName = currentPlan?.name || tPlans("free");
+
 
   const getBadgeColor = () => {
     switch (planId) {
