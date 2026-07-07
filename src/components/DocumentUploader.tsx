@@ -304,7 +304,7 @@ export function DocumentUploader({ onDataExtracted, onClose }: DocumentUploaderP
         {/* Documents List */}
         {documents.length > 0 && (
           <div className="space-y-3 mb-6">
-            <h3 className="text-sm font-semibold">Uploaded Documents ({documents.length})</h3>
+            <h3 className="text-sm font-semibold">{t("uploadedDocuments", { count: documents.length })}</h3>
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {documents.map((doc) => (
                 <motion.div
