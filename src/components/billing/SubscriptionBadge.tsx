@@ -4,10 +4,13 @@ import { useCustomer } from "autumn-js/react";
 import { useSession } from "@/lib/auth-client";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export const SubscriptionBadge = () => {
+  const tPlans = useTranslations("billing.planNames");
   const { data: session, isPending: isSessionPending } = useSession();
   const { customer, isLoading } = useCustomer();
+
 
   // Don't render if user is not authenticated
   if (isSessionPending || !session?.user) {
