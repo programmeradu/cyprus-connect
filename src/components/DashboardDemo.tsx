@@ -7,6 +7,7 @@ import { PremiumCard } from "./ui/PremiumCard"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 
 type TabType = "carbon" | "report" | "weather" | "media"
 
