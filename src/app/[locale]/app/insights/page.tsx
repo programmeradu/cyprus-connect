@@ -726,10 +726,10 @@ export default function InsightsPage() {
               {/* Central processor core */}
               <circle cx="12" cy="13" r="2" fill="url(#aiIconGradient)" opacity="0.9" />
             </svg>
-            AI-Powered Recommendations
+            {t("ai.title")}
             {userLocation && (
               <span className="text-xs text-muted-foreground font-normal">
-                (Personalized for {userLocation.country})
+                {t("ai.personalizedFor", { country: userLocation.country })}
               </span>
             )}
           </h2>
