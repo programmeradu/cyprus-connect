@@ -1065,5 +1065,58 @@
         ]
       }
     }
+  },
+  "billing": {
+    "upgradePrompt": {
+      "planFeature": "{name} Feature",
+      "upgradeToUnlock": "Upgrade to unlock:",
+      "upgradeCta": "Upgrade to {name} - {price}",
+      "backToDashboard": "Back to Dashboard",
+      "currentPlan": "Current plan:",
+      "proFeatures": [
+        "Unlimited actions per month",
+        "1,000 AI credits/month",
+        "Advanced analytics & insights",
+        "Up to 5 team members",
+        "Priority email support"
+      ],
+      "enterpriseFeatures": [
+        "10,000 AI credits/month",
+        "Unlimited team members",
+        "White-label reports",
+        "Dedicated account manager",
+        "Custom AI model training"
+      ]
+    },
+    "planUsage": {
+      "yourPlan": "Your Plan",
+      "unlimited": "Unlimited",
+      "enabled": "✓ Enabled",
+      "resets": "Resets {date}",
+      "upgradePlan": "Upgrade Plan",
+      "managePlan": "Manage Plan"
+    },
+    "planNames": {
+      "free": "Free",
+      "professional": "Professional",
+      "enterprise": "Enterprise"
+    },
+    "usageMeter": {
+      "unlimited": "Unlimited",
+      "upgrade": "Upgrade",
+      "limitReached": "Limit reached",
+      "remaining": "{pct}% remaining",
+      "used": "{pct}% used",
+      "left": "{n} {unit} left",
+      "noLimits": "No limits on this plan",
+      "aiCredits": "AI Credits",
+      "perMonth": "+{n}/month",
+      "buyMore": "Buy More",
+      "lowBalance": "Low credit balance",
+      "creditsHint": "Credits are used for AI features like recommendations, insights, and report generation"
+    }
+  },
+  "themeToggle": {
+    "label": "Toggle theme"
   }
 }

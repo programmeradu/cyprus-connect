@@ -5,6 +5,8 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import Link from "next/link";
 import { TrendingUp } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+
 
 // Custom premium sparkles icon
 const SparklesIcon = ({ className }: { className?: string }) => (
@@ -40,9 +42,12 @@ export const UsageMeter = ({
   showUpgrade = true,
   unlimited = false,
 }: UsageMeterProps) => {
+  const t = useTranslations("billing.usageMeter");
+  const locale = useLocale();
   const percentage = unlimited ? 0 : Math.min((used / limit) * 100, 100);
   const isNearLimit = percentage >= 80;
   const isAtLimit = percentage >= 100;
+
 
   return (
     <PremiumCard className="p-4">
@@ -51,26 +56,27 @@ export const UsageMeter = ({
           <h3 className="text-sm font-medium mb-1">{title}</h3>
           <div className="flex items-baseline gap-1">
             {unlimited ? (
-              <span className="text-lg font-bold text-primary">Unlimited</span>
+              <span className="text-lg font-bold text-primary">{t("unlimited")}</span>
             ) : (
               <>
-                <span className="text-lg font-bold">{used.toLocaleString()}</span>
+                <span className="text-lg font-bold">{used.toLocaleString(locale)}</span>
                 <span className="text-xs text-muted-foreground">
-                  / {limit.toLocaleString()} {unit}
+                  / {limit.toLocaleString(locale)} {unit}
                 </span>
               </>
             )}
           </div>
         </div>
-        
+
         {!unlimited && isNearLimit && showUpgrade && (
           <Link href="/pricing">
             <PremiumButton variant="outline" size="sm" className="text-xs h-7 px-2">
               <TrendingUp className="w-3 h-3 mr-1" />
-              Upgrade
+              {t("upgrade")}
             </PremiumButton>
           </Link>
         )}
+
       </div>
 
       {!unlimited && (
@@ -103,15 +109,15 @@ export const UsageMeter = ({
               }
             >
               {isAtLimit
-                ? "Limit reached"
+                ? t("limitReached")
                 : isNearLimit
-                ? `${(100 - percentage).toFixed(0)}% remaining`
-                : `${percentage.toFixed(0)}% used`}
+                ? t("remaining", { pct: (100 - percentage).toFixed(0) })
+                : t("used", { pct: percentage.toFixed(0) })}
             </span>
-            
+
             {!isAtLimit && (
               <span className="text-muted-foreground">
-                {(limit - used).toLocaleString()} {unit} left
+                {t("left", { n: (limit - used).toLocaleString(locale), unit })}
               </span>
             )}
           </div>
@@ -121,9 +127,10 @@ export const UsageMeter = ({
       {unlimited && (
         <div className="flex items-center gap-1 text-xs text-primary">
           <SparklesIcon className="w-3 h-3" />
-          <span className="font-medium">No limits on this plan</span>
+          <span className="font-medium">{t("noLimits")}</span>
         </div>
       )}
+
     </PremiumCard>
   );
 };
@@ -139,23 +146,27 @@ export const CreditBalance = ({
   monthlyAllocation,
   onPurchaseClick,
 }: CreditBalanceProps) => {
+  const t = useTranslations("billing.usageMeter");
+  const locale = useLocale();
   const isLow = balance < 10;
+
 
   return (
     <PremiumCard className="p-4">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h3 className="text-sm font-medium mb-1">AI Credits</h3>
+          <h3 className="text-sm font-medium mb-1">{t("aiCredits")}</h3>
           <div className="flex items-baseline gap-2">
             <span className={`text-2xl font-bold ${isLow ? "text-destructive" : ""}`}>
-              {balance.toLocaleString()}
+              {balance.toLocaleString(locale)}
             </span>
             {monthlyAllocation && (
               <span className="text-xs text-muted-foreground">
-                +{monthlyAllocation.toLocaleString()}/month
+                {t("perMonth", { n: monthlyAllocation.toLocaleString(locale) })}
               </span>
             )}
           </div>
+
         </div>
 
               {onPurchaseClick && (
@@ -166,7 +177,7 @@ export const CreditBalance = ({
             onClick={onPurchaseClick}
           >
             <SparklesIcon className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="whitespace-nowrap">Buy More</span>
+            <span className="whitespace-nowrap">{t("buyMore")}</span>
           </PremiumButton>
         )}
       </div>
@@ -180,13 +191,14 @@ export const CreditBalance = ({
               clipRule="evenodd"
             />
           </svg>
-          <span className="font-medium">Low credit balance</span>
+          <span className="font-medium">{t("lowBalance")}</span>
         </div>
       )}
 
       <div className="mt-3 text-xs text-muted-foreground">
-        Credits are used for AI features like recommendations, insights, and report generation
+        {t("creditsHint")}
       </div>
+
     </PremiumCard>
   );
 };

@@ -7,10 +7,15 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { Sparkles, TrendingUp, Zap } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 
 export const PlanUsageIndicator = () => {
+  const t = useTranslations("billing.planUsage");
+  const tPlans = useTranslations("billing.planNames");
+  const locale = useLocale();
   const { data: session } = useSession();
   const { customer, isLoading } = useCustomer();
+
 
   if (!session?.user) {
     return null;
@@ -29,9 +34,10 @@ export const PlanUsageIndicator = () => {
   }
 
   const currentPlan = customer?.products?.at(-1);
-  const planName = currentPlan?.name || "Free";
   const planId = currentPlan?.id || "free";
+  const planName = currentPlan?.name || tPlans("free");
   const features = customer?.features || {};
+
 
   // Get icon based on plan
   const getPlanIcon = () => {
@@ -59,7 +65,7 @@ export const PlanUsageIndicator = () => {
   return (
     <PremiumCard className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm">Your Plan</h3>
+        <h3 className="font-semibold text-sm">{t("yourPlan")}</h3>
         <motion.div
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium",
@@ -101,17 +107,18 @@ export const PlanUsageIndicator = () => {
                 </span>
                 <span className="font-mono text-xs font-semibold">
                   {isUnlimited ? (
-                    <span className="text-primary">Unlimited</span>
+                    <span className="text-primary">{t("unlimited")}</span>
                   ) : hasLimit ? (
                     <span className={cn(
                       percentage > 90 ? "text-destructive" :
                       percentage > 75 ? "text-orange-500" : "text-foreground"
                     )}>
-                      {usage.toLocaleString()}/{limit.toLocaleString()}
+                      {usage.toLocaleString(locale)}/{limit.toLocaleString(locale)}
                     </span>
                   ) : (
-                    <span className="text-primary">✓ Enabled</span>
+                    <span className="text-primary">{t("enabled")}</span>
                   )}
+
                 </span>
               </div>
 
@@ -132,9 +139,10 @@ export const PlanUsageIndicator = () => {
 
               {hasLimit && feature.next_reset_at && (
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  Resets {new Date(feature.next_reset_at).toLocaleDateString()}
+                  {t("resets", { date: new Date(feature.next_reset_at).toLocaleDateString(locale) })}
                 </p>
               )}
+
             </motion.div>
           );
         })}
@@ -146,7 +154,7 @@ export const PlanUsageIndicator = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          {planId === 'free' ? 'Upgrade Plan' : 'Manage Plan'} →
+          {planId === 'free' ? t("upgradePlan") : t("managePlan")} →
         </motion.button>
       </Link>
     </PremiumCard>
