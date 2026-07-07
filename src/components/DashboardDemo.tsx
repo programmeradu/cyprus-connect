@@ -1403,69 +1403,69 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       <path d="M8 10h8M8 14h5" strokeLinecap="round" />
                       <circle cx="16" cy="8" r="2" fill="currentColor" />
                     </svg>
-                    AI Sustainability Report Generator
+                    {t("report.title")}
                   </h3>
                   <p className="text-xs text-muted-foreground mb-4">
-                    Generate professional sustainability reports instantly with AI
+                    {t("report.description")}
                   </p>
 
                   {/* 2-Column Grid for 6 fields */}
                   <div className="grid md:grid-cols-2 gap-3 mb-4">
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Company Name *</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.companyLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., GreenTech Solutions"
+                        placeholder={t("report.companyPlaceholder")}
                         value={reportInput.company}
                         onChange={(e) => setReportInput({ ...reportInput, company: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Industry *</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.industryLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., Manufacturing, Retail, Tech"
+                        placeholder={t("report.industryPlaceholder")}
                         value={reportInput.industry}
                         onChange={(e) => setReportInput({ ...reportInput, industry: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Reporting Period</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.periodLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., Q1 2024"
+                        placeholder={t("report.periodPlaceholder")}
                         value={reportInput.period}
                         onChange={(e) => setReportInput({ ...reportInput, period: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Location</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.locationLabel")}</label>
                       <input
                         type="text"
-                        placeholder="e.g., London, UK"
+                        placeholder={t("report.locationPlaceholder")}
                         value={reportInput.location}
                         onChange={(e) => setReportInput({ ...reportInput, location: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Number of Employees</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.employeesLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 150"
+                        placeholder={t("report.employeesPlaceholder")}
                         value={reportInput.employees}
                         onChange={(e) => setReportInput({ ...reportInput, employees: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium mb-1 block">Target Net-Zero Year</label>
+                      <label className="text-xs font-medium mb-1 block">{t("report.targetYearLabel")}</label>
                       <input
                         type="number"
-                        placeholder="e.g., 2040"
+                        placeholder={t("report.targetYearPlaceholder")}
                         value={reportInput.targetYear}
                         onChange={(e) => setReportInput({ ...reportInput, targetYear: e.target.value })}
                         className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
@@ -1479,17 +1479,18 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       disabled={reportGenerating}
                       className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 disabled:opacity-50 transition-all"
                     >
-                      {reportGenerating ? "Generating..." : "Generate Report"}
+                      {reportGenerating ? t("report.generating") : t("report.generate")}
                     </button>
                     {reportResult && (
                       <button
                         onClick={() => setShowPreview(true)}
                         className="px-4 py-2 rounded-lg bg-accent text-accent-foreground font-medium text-sm hover:opacity-90 transition-all"
                       >
-                        Preview & Download
+                        {t("report.previewDownload")}
                       </button>
                     )}
                   </div>
+
 
                   {reportResult && !showPreview && (
                     <motion.div
