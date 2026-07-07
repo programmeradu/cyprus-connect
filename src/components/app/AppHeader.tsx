@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState, useRef, useEffect } from "react";
 import { LogOut, Settings, User } from "lucide-react";
+import { useTranslations } from "next-intl";
+
 
 interface AppHeaderProps {
   title: string;
