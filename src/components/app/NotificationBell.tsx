@@ -7,6 +7,8 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Bell, Check, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
+
 import {
   EmissionEntryIcon,
   GoalAchievementIcon,
