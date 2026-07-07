@@ -109,15 +109,15 @@ export const UsageMeter = ({
               }
             >
               {isAtLimit
-                ? "Limit reached"
+                ? t("limitReached")
                 : isNearLimit
-                ? `${(100 - percentage).toFixed(0)}% remaining`
-                : `${percentage.toFixed(0)}% used`}
+                ? t("remaining", { pct: (100 - percentage).toFixed(0) })
+                : t("used", { pct: percentage.toFixed(0) })}
             </span>
-            
+
             {!isAtLimit && (
               <span className="text-muted-foreground">
-                {(limit - used).toLocaleString()} {unit} left
+                {t("left", { n: (limit - used).toLocaleString(locale), unit })}
               </span>
             )}
           </div>
@@ -127,9 +127,10 @@ export const UsageMeter = ({
       {unlimited && (
         <div className="flex items-center gap-1 text-xs text-primary">
           <SparklesIcon className="w-3 h-3" />
-          <span className="font-medium">No limits on this plan</span>
+          <span className="font-medium">{t("noLimits")}</span>
         </div>
       )}
+
     </PremiumCard>
   );
 };
