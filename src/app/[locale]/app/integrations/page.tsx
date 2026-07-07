@@ -787,10 +787,10 @@ function IntegrationsContent() {
               {loadingBenchmark ? (
                 <>
                   <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                  Analyzing...
+                  {t("benchmarks.analyzing")}
                 </>
               ) : (
-                "Analyze My Performance"
+                t("benchmarks.analyze")
               )}
             </PremiumButton>
           </div>
