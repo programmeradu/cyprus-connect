@@ -95,5 +95,20 @@
     "label": "Γλώσσα",
     "en": "English",
     "el": "Ελληνικά"
+  },
+  "sidebar": {
+    "dashboard": "Πίνακας ελέγχου",
+    "calculator": "Υπολογιστής",
+    "actions": "Πράσινες Δράσεις",
+    "marketplace": "Αντισταθμίσεις Άνθρακα",
+    "compliance": "Συμμόρφωση",
+    "learn": "Κέντρο Μάθησης",
+    "studio": "Στούντιο Μέσων",
+    "leaderboard": "Κατάταξη",
+    "analytics": "Αναλυτικά",
+    "insights": "Πληροφορίες",
+    "integrations": "Ενσωματώσεις",
+    "settings": "Ρυθμίσεις",
+    "appearance": "Εμφάνιση"
   }
 }

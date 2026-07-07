@@ -95,5 +95,20 @@
     "label": "Language",
     "en": "English",
     "el": "Ελληνικά"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "calculator": "Calculator",
+    "actions": "Green Actions",
+    "marketplace": "Carbon Offsets",
+    "compliance": "Compliance",
+    "learn": "Learning Center",
+    "studio": "Media Studio",
+    "leaderboard": "Leaderboard",
+    "analytics": "Analytics",
+    "insights": "Insights",
+    "integrations": "Integrations",
+    "settings": "Settings",
+    "appearance": "Appearance"
   }
 }

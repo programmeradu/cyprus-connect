@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
 import {
   DashboardIcon,
@@ -16,6 +16,7 @@ import {
   LeafIcon
 } from "@/components/icons/CustomIcons";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Lightbulb, Plug, Wand2, GraduationCap } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { useUser } from "@/lib/user-context";
@@ -37,22 +38,30 @@ const ComplianceIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const navItems = [
-  { href: "/app", label: "Dashboard", icon: DashboardIcon },
-  { href: "/app/calculator", label: "Calculator", icon: CalculatorIcon },
-  { href: "/app/actions", label: "Green Actions", icon: BulbIcon },
-  { href: "/app/marketplace", label: "Carbon Offsets", icon: MarketplaceIcon },
-  { href: "/app/compliance", label: "Compliance", icon: ComplianceIcon, badge: true },
-  { href: "/app/learn", label: "Learning Center", icon: GraduationCap },
-  { href: "/app/studio", label: "Media Studio", icon: Wand2 },
-  { href: "/app/leaderboard", label: "Leaderboard", icon: TrophyIcon },
-  { href: "/app/analytics", label: "Analytics", icon: ChartIcon },
-  { href: "/app/insights", label: "Insights", icon: Lightbulb },
-  { href: "/app/integrations", label: "Integrations", icon: Plug },
-  { href: "/app/settings", label: "Settings", icon: SettingsIcon }
+type NavItem = {
+  href: "/app" | "/app/calculator" | "/app/actions" | "/app/marketplace" | "/app/compliance" | "/app/learn" | "/app/studio" | "/app/leaderboard" | "/app/analytics" | "/app/insights" | "/app/integrations" | "/app/settings";
+  key: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: boolean;
+};
+
+const navItems: NavItem[] = [
+  { href: "/app", key: "dashboard", icon: DashboardIcon },
+  { href: "/app/calculator", key: "calculator", icon: CalculatorIcon },
+  { href: "/app/actions", key: "actions", icon: BulbIcon },
+  { href: "/app/marketplace", key: "marketplace", icon: MarketplaceIcon },
+  { href: "/app/compliance", key: "compliance", icon: ComplianceIcon, badge: true },
+  { href: "/app/learn", key: "learn", icon: GraduationCap },
+  { href: "/app/studio", key: "studio", icon: Wand2 },
+  { href: "/app/leaderboard", key: "leaderboard", icon: TrophyIcon },
+  { href: "/app/analytics", key: "analytics", icon: ChartIcon },
+  { href: "/app/insights", key: "insights", icon: Lightbulb },
+  { href: "/app/integrations", key: "integrations", icon: Plug },
+  { href: "/app/settings", key: "settings", icon: SettingsIcon }
 ];
 
 export const Sidebar = () => {
+  const t = useTranslations("sidebar");
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
@@ -134,7 +143,7 @@ export const Sidebar = () => {
                 whileTap={{ scale: 0.98 }}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                <span className="flex-1">{item.label}</span>
+                <span className="flex-1">{t(item.key)}</span>
                 
                 {/* Compliance Badge */}
                 {showBadge && (
@@ -168,8 +177,13 @@ export const Sidebar = () => {
       <div className="p-4 border-t border-border/50 space-y-3">
         {/* Theme Toggle */}
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Appearance</span>
+          <span className="text-xs text-muted-foreground">{t("appearance")}</span>
           <ThemeToggle />
+        </div>
+
+        {/* Language Switcher */}
+        <div className="flex justify-center">
+          <LanguageSwitcher />
         </div>
         
         {/* User Info */}
