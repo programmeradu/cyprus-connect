@@ -92,6 +92,7 @@ interface AIRecommendations {
 }
 
 export default function InsightsPage() {
+  const t = useTranslations("dashboard.insights");
   const [energyData, setEnergyData] = useState<EnergyPricingData | null>(null);
   const [benchmarkData, setBenchmarkData] = useState<BenchmarkData | null>(null);
   const [complianceData, setComplianceData] = useState<ComplianceData | null>(null);
