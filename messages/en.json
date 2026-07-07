@@ -849,5 +849,127 @@
         "video": "video"
       }
     }
+  },
+  "onboarding": {
+    "loading": "Loading your profile...",
+    "toasts": {
+      "completeProfile": "Please complete your profile first",
+      "qbRedirect": "Redirecting to QuickBooks... 📊",
+      "qbFail": "Failed to connect to QuickBooks",
+      "noSession": "Session not found. Please log in again.",
+      "updateFail": "Failed to update profile",
+      "createFail": "Failed to create account",
+      "welcome": "Welcome to VerdeIQ! 🌿",
+      "genericError": "Something went wrong. Please try again.",
+      "extracted": "{type} bill data extracted successfully!"
+    },
+    "step1": {
+      "title": "Welcome to Your Sustainability Journey",
+      "step": "STEP 1/4",
+      "heading": "Unlock Instant Impact & Smarter Growth",
+      "features": [
+        "Effortless Data Integration",
+        "Real-time Carbon Footprint Tracking",
+        "AI-Driven Reduction Recommendations",
+        "Compliance & Reporting Simplified",
+        "Cost Savings Through Efficiency"
+      ],
+      "description": "Our AI-Powered Dashboard transforms complex data into actionable insights, helping your business thrive while protecting our planet.",
+      "getStarted": "Get Started",
+      "learnMore": "Learn More",
+      "imageAlt": "Sustainable city with green buildings and nature"
+    },
+    "step2": {
+      "title": "Step 2: Connect Your Data Sources",
+      "subtitle": "Seamless Integration for Smarter Insights",
+      "companyHeader": "First, tell us about your company",
+      "yourName": "Your Name *",
+      "yourNamePlaceholder": "John Doe",
+      "email": "Email *",
+      "emailPlaceholder": "john@company.com",
+      "companyName": "Company Name *",
+      "companyNamePlaceholder": "Acme Corp",
+      "industry": "Industry *",
+      "selectIndustry": "Select industry",
+      "industries": {
+        "technology": "Technology",
+        "retail": "Retail",
+        "manufacturing": "Manufacturing",
+        "hospitality": "Hospitality",
+        "healthcare": "Healthcare",
+        "finance": "Finance"
+      },
+      "teamSize": "Team Size *",
+      "selectTeamSize": "Select team size",
+      "teamSizes": {
+        "1-10": "1-10 employees",
+        "11-50": "11-50 employees",
+        "51-200": "51-200 employees",
+        "201-500": "201-500 employees",
+        "500+": "500+ employees"
+      },
+      "utility": {
+        "title": "Utility Bills",
+        "desc": "Upload utility bills (PDF/Image) for automatic data extraction",
+        "cta": "Upload Utility Bill"
+      },
+      "accounting": {
+        "title": "Expense & Accounting Software",
+        "desc": "Connect QuickBooks or Xero for automated data import",
+        "cta": "Connect Accounting",
+        "connecting": "Connecting..."
+      },
+      "manual": {
+        "title": "Manual Upload",
+        "desc": "Upload any documents for OCR processing",
+        "cta": "Upload Files"
+      },
+      "security": "Your data is encrypted and secure. We comply with all privacy regulations",
+      "back": "Back",
+      "next": "Next Step"
+    },
+    "step3": {
+      "title": "Step 3 of 4: Gamify Your Green Journey",
+      "heading": "Earn Green Credits & Climb the Leaderboard!",
+      "description": "Our unique Green Credit system rewards your sustainable actions. The more you reduce your carbon footprint, recycle, and conserve resources, the more credits you earn. Compete with other local businesses on the leaderboard to see your impact grow and inspire others. It's fun, rewarding, and great for your brand!",
+      "greenCredits": "Green Credits",
+      "creditsEarned": "Credits earned this month",
+      "leaderboard": "Leaderboard",
+      "yourRank": "Your Rank: #7 out of 45 SMEs",
+      "explore": "Explore Initial Recommendations",
+      "back": "Back",
+      "skip": "Skip for now"
+    },
+    "step4": {
+      "title": "Step 4 of 4: Your Dashboard Awaits",
+      "subtitle": "You're all set! Here's a quick overview of what you'll find on your dashboard",
+      "features": [
+        {
+          "title": "Carbon Footprint Tracking",
+          "desc": "View your real-time emissions data with detailed breakdowns by category"
+        },
+        {
+          "title": "AI Recommendations",
+          "desc": "Get personalized suggestions to reduce your environmental impact"
+        },
+        {
+          "title": "Leaderboard & Credits",
+          "desc": "Track your progress and compete with other businesses in your area"
+        },
+        {
+          "title": "Detailed Reports",
+          "desc": "Generate compliance reports and export data for stakeholders"
+        }
+      ],
+      "cta": "Go to Dashboard",
+      "settingUp": "Setting up...",
+      "back": "Back"
+    },
+    "upload": {
+      "utilityTitle": "Upload Utility Bill",
+      "documentTitle": "Upload Document",
+      "descUtility": "Upload your utility bill and we'll automatically extract the data using OCR technology.",
+      "descDocument": "Upload your document and we'll automatically extract the data using OCR technology."
+    }
   }
 }
