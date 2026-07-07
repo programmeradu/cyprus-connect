@@ -734,35 +734,35 @@ function IntegrationsContent() {
           {loadingUserData ? (
             <div className="flex items-center justify-center p-6">
               <Loader2 className="w-5 h-5 animate-spin text-primary" />
-              <span className="ml-2 text-[12px] text-muted-foreground">Loading company data...</span>
+              <span className="ml-2 text-[12px] text-muted-foreground">{t("benchmarks.loadingCompany")}</span>
             </div>
           ) : userData ? (
             <div className="mb-4 p-3 rounded-xl bg-accent/30 border border-border/30 space-y-2">
               <div className="grid md:grid-cols-3 gap-3 text-[11px]">
                 <div>
-                  <span className="text-muted-foreground">Company:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.company")}</span>
                   <p className="font-medium">{userData.companyName}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Industry:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.industry")}</span>
                   <p className="font-medium capitalize">{userData.companyIndustry}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Location:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.location")}</span>
                   <p className="font-medium">{userLocation}</p>
                 </div>
               </div>
               <div className="grid md:grid-cols-3 gap-3 text-[11px]">
                 <div>
-                  <span className="text-muted-foreground">Team Size:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.teamSize")}</span>
                   <p className="font-medium">{userData.teamSize}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Emissions:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.emissions")}</span>
                   <p className="font-medium">{userData.totalEmissions.toFixed(2)} tCO₂e</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Per Employee:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.perEmployee")}</span>
                   <p className="font-medium">
                     {(userData.totalEmissions / userData.employees).toFixed(2)} tCO₂e
                   </p>
@@ -772,7 +772,7 @@ function IntegrationsContent() {
           ) : (
             <div className="mb-4 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
               <p className="text-[11px] text-orange-600">
-                Complete your company profile to view personalized benchmarks
+                {t("benchmarks.incompleteProfile")}
               </p>
             </div>
           )}
