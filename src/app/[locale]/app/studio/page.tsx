@@ -662,8 +662,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               <Wand2 className="w-3.5 h-3.5 text-primary" />
             </div>
             <div>
-              <h2 className="text-sm font-bold">Content Creator</h2>
-              <p className="text-[9px] text-muted-foreground">AI selects best model automatically</p>
+              <h2 className="text-sm font-bold">{t("creator.title")}</h2>
+              <p className="text-[9px] text-muted-foreground">{t("creator.subtitle")}</p>
             </div>
           </div>
 
