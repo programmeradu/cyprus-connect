@@ -348,15 +348,16 @@ export function FileUploadDialog({
               {/* Footer */}
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
                 <p className="text-xs text-muted-foreground">
-                  {files.length} file{files.length !== 1 ? "s" : ""} selected
+                  {files.length === 1 ? t("filesSelected", { count: files.length }) : t("filesSelectedPlural", { count: files.length })}
                 </p>
                 <button
                   onClick={onClose}
                   disabled={hasActiveUploads}
                   className="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {hasActiveUploads ? "Uploading..." : "Done"}
+                  {hasActiveUploads ? t("uploading") : t("done")}
                 </button>
+
               </div>
 
               {/* Hidden file input */}
