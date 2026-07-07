@@ -21,6 +21,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   LineChart,
   Line,
@@ -91,6 +92,7 @@ interface AIRecommendations {
 }
 
 export default function InsightsPage() {
+  const t = useTranslations("dashboard.insights");
   const [energyData, setEnergyData] = useState<EnergyPricingData | null>(null);
   const [benchmarkData, setBenchmarkData] = useState<BenchmarkData | null>(null);
   const [complianceData, setComplianceData] = useState<ComplianceData | null>(null);
@@ -408,7 +410,7 @@ export default function InsightsPage() {
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           />
-          <p className="text-sm text-muted-foreground">Loading insights...</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );
@@ -419,13 +421,13 @@ export default function InsightsPage() {
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="text-center max-w-md">
           <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-semibold mb-2">Unable to Load Insights</h2>
+          <h2 className="text-xl font-semibold mb-2">{t("unableToLoad")}</h2>
           <p className="text-sm text-muted-foreground mb-4">{error}</p>
           <button
             onClick={handleRefresh}
             className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all"
           >
-            Try Again
+            {t("tryAgain")}
           </button>
         </div>
       </div>
@@ -469,10 +471,10 @@ export default function InsightsPage() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold gradient-text mb-1">
-            Sustainability Insights
+            {t("title")}
           </h1>
           <p className="text-sm text-muted-foreground flex items-center gap-2">
-            <span>Real-time data & AI-powered recommendations</span>
+            <span>{t("subtitle")}</span>
             {userLocation && (
               <>
                 <span className="text-muted-foreground/50">•</span>
@@ -488,7 +490,7 @@ export default function InsightsPage() {
           className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50 flex items-center gap-2"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh
+          {t("refresh")}
         </button>
       </div>
 
@@ -496,37 +498,37 @@ export default function InsightsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <MetricCardCompact
           icon={<Zap className="w-4 h-4" />}
-          title="Carbon Intensity"
+          title={t("metrics.carbonIntensity")}
           value={energyData?.carbonIntensity?.current?.toFixed(0) || "N/A"}
           unit="gCO2/kWh"
-          trendText={`${energyData?.carbonIntensity?.fossilFuelPercentage?.toFixed(0) || 0}% Fossil`}
+          trendText={t("metrics.fossilPercent", { pct: energyData?.carbonIntensity?.fossilFuelPercentage?.toFixed(0) || 0 })}
           trendColor="#ef4444"
         />
         <MetricCardCompact
           icon={<DollarSign className="w-4 h-4" />}
-          title="Potential Savings"
+          title={t("metrics.potentialSavings")}
           value={energyData?.costSavings?.costSavingsUSD || 0}
           unit=""
-          trendText={`${energyData?.costSavings?.percentageReduction?.toFixed(1) || 0}% reduction`}
+          trendText={t("metrics.reduction", { pct: energyData?.costSavings?.percentageReduction?.toFixed(1) || 0 })}
           trendColor="#10b981"
           isCurrency
         />
         <MetricCardCompact
           icon={<TrendingUp className="w-4 h-4" />}
-          title="Industry Rank"
+          title={t("metrics.industryRank")}
           value={benchmarkData?.peerComparison?.percentile || "N/A"}
           unit="%"
-          trendText={benchmarkData?.peerComparison?.interpretation || "Calculating..."}
+          trendText={benchmarkData?.peerComparison?.interpretation || t("metrics.calculating")}
           trendColor={
             benchmarkData?.peerComparison?.percentile < 50 ? "#10b981" : "#ef4444"
           }
         />
         <MetricCardCompact
           icon={<FileCheck className="w-4 h-4" />}
-          title="Compliance Score"
+          title={t("metrics.complianceScore")}
           value={complianceData?.score?.toFixed(0) || "0"}
           unit="%"
-          trendText={`${complianceData?.urgentCount ?? 0} urgent / ${complianceData?.regulations?.length ?? 0} regs`}
+          trendText={t("metrics.regsSummary", { urgent: complianceData?.urgentCount ?? 0, total: complianceData?.regulations?.length ?? 0 })}
           trendColor="#10b981"
         />
       </div>
@@ -535,14 +537,14 @@ export default function InsightsPage() {
       <section className="space-y-3">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Zap className="w-5 h-5 text-primary" />
-          Energy Pricing & Carbon Forecast
+          {t("energySection.title")}
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Carbon Intensity Forecast Chart */}
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
               <Leaf className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-semibold">24-Hour Carbon Intensity Forecast</h3>
+              <h3 className="text-sm font-semibold">{t("energySection.forecastTitle")}</h3>
             </div>
             
             {forecastChartData.length > 0 ? (
@@ -584,7 +586,7 @@ export default function InsightsPage() {
                         stroke="#10b981" 
                         strokeWidth={2}
                         fill="url(#carbonGradient)"
-                        name="Carbon Intensity"
+                        name={t("energySection.carbonIntensityLegend")}
                       />
                       <Line 
                         type="monotone" 
@@ -593,7 +595,7 @@ export default function InsightsPage() {
                         strokeWidth={1.5}
                         strokeDasharray="5 5"
                         dot={false}
-                        name="Target"
+                        name={t("energySection.targetLegend")}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -602,19 +604,19 @@ export default function InsightsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <CircularProgress 
                     percentage={energyData?.carbonIntensity?.renewablePercentage || 0} 
-                    label="Renewable Energy"
+                    label={t("energySection.renewableEnergy")}
                     size={80}
                   />
                   <CircularProgress 
                     percentage={100 - (energyData?.carbonIntensity?.fossilFuelPercentage || 100)} 
-                    label="Fossil-Free"
+                    label={t("energySection.fossilFree")}
                     size={80}
                   />
                 </div>
               </>
             ) : (
               <div className="h-48 flex items-center justify-center text-muted-foreground text-sm">
-                No forecast data available for your region
+                {t("energySection.noForecast")}
               </div>
             )}
           </div>
@@ -624,7 +626,7 @@ export default function InsightsPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-primary" />
-                <h3 className="text-sm font-semibold">Performance <span className="text-muted-foreground">vs</span> Industry</h3>
+                <h3 className="text-sm font-semibold">{t("energySection.performanceTitle")} <span className="text-muted-foreground">{t("energySection.vs")}</span> {t("energySection.industry")}</h3>
               </div>
             </div>
             
@@ -654,14 +656,14 @@ export default function InsightsPage() {
                         fontSize: '12px'
                       }}
                     />
-                    <Bar dataKey="you" fill="#10b981" radius={[4, 4, 0, 0]} barSize={16} name="Your Company" />
-                    <Bar dataKey="industry" fill="#f97316" radius={[4, 4, 0, 0]} barSize={16} name="Industry Average" />
+                    <Bar dataKey="you" fill="#10b981" radius={[4, 4, 0, 0]} barSize={16} name={t("energySection.yourCompany")} />
+                    <Bar dataKey="industry" fill="#f97316" radius={[4, 4, 0, 0]} barSize={16} name={t("energySection.industryAverage")} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             ) : (
               <div className="h-64 flex items-center justify-center text-muted-foreground text-sm">
-                Complete your profile to see industry comparisons
+                {t("energySection.noPerformance")}
               </div>
             )}
           </div>
@@ -671,19 +673,19 @@ export default function InsightsPage() {
         {energyData?.costSavings && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <InsightCard
-              label="Potential Monthly Savings"
+              label={t("energySection.monthlySavings")}
               value={<CurrencyDisplay amount={energyData.costSavings.costSavingsUSD || 0} fromCurrency="USD" />}
-              subtext={`By shifting to optimal energy times`}
+              subtext={t("energySection.monthlySavingsSub")}
             />
             <InsightCard
-              label="Carbon Reduction Potential"
+              label={t("energySection.carbonReduction")}
               value={`${energyData.costSavings.carbonSavingsKg?.toFixed(1) || 0} kg`}
-              subtext="CO2 equivalent per month"
+              subtext={t("energySection.carbonReductionSub")}
             />
             <InsightCard
-              label="Current Grid Status"
+              label={t("energySection.gridStatus")}
               value={`${energyData.carbonIntensity?.renewablePercentage?.toFixed(1) || 0}%`}
-              subtext="Renewable energy in your grid"
+              subtext={t("energySection.gridStatusSub")}
             />
           </div>
         )}
@@ -724,10 +726,10 @@ export default function InsightsPage() {
               {/* Central processor core */}
               <circle cx="12" cy="13" r="2" fill="url(#aiIconGradient)" opacity="0.9" />
             </svg>
-            AI-Powered Recommendations
+            {t("ai.title")}
             {userLocation && (
               <span className="text-xs text-muted-foreground font-normal">
-                (Personalized for {userLocation.country})
+                {t("ai.personalizedFor", { country: userLocation.country })}
               </span>
             )}
           </h2>
@@ -747,7 +749,7 @@ export default function InsightsPage() {
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <Zap className="w-4 h-4 text-primary" />
-                  Energy Optimization
+                  {t("ai.energyOptimization")}
                 </h3>
                 <div className="space-y-2">
                   {aiRecommendations.energyOptimizationTips.map((tip, index) => (
@@ -770,7 +772,7 @@ export default function InsightsPage() {
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <FileCheck className="w-4 h-4 text-primary" />
-                  Compliance Guidance
+                  {t("ai.complianceGuidance")}
                 </h3>
                 <div className="space-y-2">
                   {aiRecommendations.complianceRecommendations.map((rec, index) => (
@@ -793,7 +795,7 @@ export default function InsightsPage() {
               <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
                 <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-primary" />
-                  Industry Insights
+                  {t("ai.industryInsights")}
                 </h3>
                 <div className="space-y-2">
                   {aiRecommendations.industryInsights.map((insight, index) => (
@@ -819,13 +821,13 @@ export default function InsightsPage() {
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
-              <p className="text-sm text-muted-foreground">Generating personalized AI recommendations...</p>
+              <p className="text-sm text-muted-foreground">{t("ai.generating")}</p>
             </div>
           </div>
         ) : (
           <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-5">
             <p className="text-sm text-muted-foreground text-center">
-              Unable to generate AI recommendations. Please refresh to try again.
+              {t("ai.unable")}
             </p>
           </div>
         )}
@@ -836,16 +838,16 @@ export default function InsightsPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <FileCheck className="w-5 h-5 text-primary" />
-            Regulatory Compliance
+            {t("compliance.title")}
             {userLocation && (
               <span className="text-xs text-muted-foreground font-normal">
-                ({mapCountryToRegion(userLocation.countryCode)} Region)
+                {t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) })}
               </span>
             )}
           </h2>
           <Link href="/app/compliance">
             <button className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all">
-              View Full Dashboard →
+              {t("compliance.viewDashboard")}
             </button>
           </Link>
         </div>
@@ -885,9 +887,9 @@ export default function InsightsPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">Compliance Health</p>
+                  <p className="text-sm font-semibold">{t("compliance.health")}</p>
                   <p className="text-xs text-muted-foreground">
-                    {complianceData.regulations.length} regulations tracked
+                    {t("compliance.regsTracked", { count: complianceData.regulations.length })}
                   </p>
                 </div>
               </div>
@@ -897,24 +899,24 @@ export default function InsightsPage() {
                 {complianceData.urgentCount > 0 && (
                   <div className="text-center px-4 py-2 rounded-lg bg-destructive/10 text-destructive">
                     <p className="text-xl font-bold">{complianceData.urgentCount}</p>
-                    <p className="text-xs">Urgent</p>
+                    <p className="text-xs">{t("compliance.urgent")}</p>
                   </div>
                 )}
                 {complianceData.upcomingCount > 0 && (
                   <div className="text-center px-4 py-2 rounded-lg bg-yellow-500/10 text-yellow-600">
                     <p className="text-xl font-bold">{complianceData.upcomingCount}</p>
-                    <p className="text-xs">Due Soon</p>
+                    <p className="text-xs">{t("compliance.dueSoon")}</p>
                   </div>
                 )}
                 <div className="text-center px-4 py-2 rounded-lg bg-green-500/10 text-green-600">
                   <p className="text-xl font-bold">{complianceData.documents.length}</p>
-                  <p className="text-xs">Reports</p>
+                  <p className="text-xs">{t("compliance.reports")}</p>
                 </div>
               </div>
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground">Loading compliance data...</p>
+              <p className="text-sm text-muted-foreground">{t("compliance.loading")}</p>
             </div>
           )}
         </div>

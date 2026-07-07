@@ -7,6 +7,7 @@ import { Loader2, ExternalLink, CheckCircle2, XCircle, TrendingUp, Activity, Map
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface EnergyPricingData {
   zone: string;
@@ -51,6 +52,7 @@ interface UserData {
 }
 
 function IntegrationsContent() {
+  const t = useTranslations("dashboard.integrations");
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -122,7 +124,7 @@ function IntegrationsContent() {
       });
     } catch (error) {
       console.error('Failed to fetch user data:', error);
-      toast.error('Failed to load company data');
+      toast.error(t("toasts.companyLoadFail"));
     } finally {
       setLoadingUserData(false);
     }
@@ -146,21 +148,21 @@ function IntegrationsContent() {
     const qbError = searchParams.get('qb_error');
     
     if (qbSuccess === 'true') {
-      toast.success('QuickBooks connected successfully!');
+      toast.success(t("toasts.qbConnected"));
       checkQbConnection();
       router.replace('/app/integrations');
     }
     
     if (qbError) {
-      const errorMessages: Record<string, string> = {
-        'missing_parameters': 'Authorization failed: Missing parameters',
-        'invalid_state': 'Authorization failed: Invalid state',
-        'missing_user': 'Authorization failed: User session expired',
-        'token_exchange_failed': 'Failed to exchange authorization code',
-        'storage_failed': 'Failed to store credentials',
-        'callback_failed': 'Authorization callback failed'
+      const messageMap: Record<string, string> = {
+        missing_parameters: t("toasts.qbErrors.missing_parameters"),
+        invalid_state: t("toasts.qbErrors.invalid_state"),
+        missing_user: t("toasts.qbErrors.missing_user"),
+        token_exchange_failed: t("toasts.qbErrors.token_exchange_failed"),
+        storage_failed: t("toasts.qbErrors.storage_failed"),
+        callback_failed: t("toasts.qbErrors.callback_failed"),
       };
-      toast.error(errorMessages[qbError] || 'QuickBooks connection failed');
+      toast.error(messageMap[qbError] || t("toasts.qbErrors.default"));
       router.replace('/app/integrations');
     }
   }, [searchParams]);
@@ -188,7 +190,7 @@ function IntegrationsContent() {
 
   const handleQbConnect = async () => {
     if (!session?.user?.id) {
-      toast.error('Please sign in to connect QuickBooks');
+      toast.error(t("toasts.qbSignIn"));
       return;
     }
     
@@ -211,7 +213,7 @@ function IntegrationsContent() {
       window.location.href = data.authUrl;
     } catch (error) {
       console.error('QB connect error:', error);
-      toast.error('Failed to connect to QuickBooks');
+      toast.error(t("toasts.qbConnectFail"));
       setQbLoading(false);
     }
   };
@@ -233,13 +235,13 @@ function IntegrationsContent() {
       if (response.ok) {
         setQbConnected(false);
         setQbStatus(null);
-        toast.success('QuickBooks disconnected');
+        toast.success(t("toasts.qbDisconnected"));
       } else {
         throw new Error('Failed to disconnect');
       }
     } catch (error) {
       console.error('QB disconnect error:', error);
-      toast.error('Failed to disconnect QuickBooks');
+      toast.error(t("toasts.qbDisconnectFail"));
     } finally {
       setQbLoading(false);
     }
@@ -263,7 +265,7 @@ function IntegrationsContent() {
       setEnergyData(data);
     } catch (error) {
       console.error("Error fetching energy data:", error);
-      toast.error("Failed to fetch energy data");
+      toast.error(t("toasts.energyFail"));
     } finally {
       setLoadingEnergy(false);
     }
@@ -271,7 +273,7 @@ function IntegrationsContent() {
 
   const fetchBenchmarkComparison = async () => {
     if (!userData) {
-      toast.error("Loading company data...");
+      toast.error(t("toasts.loadingCompany"));
       return;
     }
     
@@ -298,10 +300,10 @@ function IntegrationsContent() {
       
       const data = await response.json();
       setBenchmarkComparison(data.comparison);
-      toast.success('Benchmark analysis complete');
+      toast.success(t("toasts.benchmarkComplete"));
     } catch (error) {
       console.error("Error fetching benchmark data:", error);
-      toast.error("Failed to fetch benchmark data");
+      toast.error(t("toasts.benchmarkFail"));
     } finally {
       setLoadingBenchmark(false);
     }
@@ -340,10 +342,10 @@ function IntegrationsContent() {
           className="mb-8"
         >
           <h1 className="text-2xl md:text-3xl font-bold mb-1.5">
-            <span className="gradient-text">Integrations</span>
+            <span className="gradient-text">{t("title")}</span>
           </h1>
           <p className="text-[13px] text-muted-foreground">
-            Connect your business tools and access real-time sustainability data
+            {t("subtitle")}
           </p>
         </motion.div>
 
@@ -368,19 +370,19 @@ function IntegrationsContent() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold mb-0.5">QuickBooks</h3>
-                  <p className="text-[11px] text-muted-foreground">Accounting integration</p>
+                  <h3 className="text-base font-semibold mb-0.5">{t("quickbooks.name")}</h3>
+                  <p className="text-[11px] text-muted-foreground">{t("quickbooks.desc")}</p>
                 </div>
               </div>
               {qbConnected ? (
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10">
                   <CheckCircle2 className="w-3 h-3 text-green-600" />
-                  <span className="text-[10px] font-medium text-green-600">Connected</span>
+                  <span className="text-[10px] font-medium text-green-600">{t("quickbooks.connected")}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted">
                   <XCircle className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-[10px] font-medium text-muted-foreground">Inactive</span>
+                  <span className="text-[10px] font-medium text-muted-foreground">{t("quickbooks.inactive")}</span>
                 </div>
               )}
             </div>
@@ -388,12 +390,12 @@ function IntegrationsContent() {
             {qbConnected && qbStatus && (
               <div className="mb-4 p-3 rounded-xl bg-accent/30 border border-border/30 space-y-2">
                 <div className="flex justify-between text-[11px]">
-                  <span className="text-muted-foreground">Environment</span>
+                  <span className="text-muted-foreground">{t("quickbooks.environment")}</span>
                   <span className="font-medium capitalize">{qbStatus.environment}</span>
                 </div>
                 {qbStatus.lastSyncedAt && (
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-muted-foreground">Last Sync</span>
+                    <span className="text-muted-foreground">{t("quickbooks.lastSync")}</span>
                     <span className="font-medium">
                       {new Date(qbStatus.lastSyncedAt).toLocaleDateString()}
                     </span>
@@ -401,7 +403,7 @@ function IntegrationsContent() {
                 )}
                 {qbStatus.isExpired && (
                   <div className="mt-2 p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                    <p className="text-[10px] text-orange-600">Token expired. Please reconnect.</p>
+                    <p className="text-[10px] text-orange-600">{t("quickbooks.tokenExpired")}</p>
                   </div>
                 )}
               </div>
@@ -419,10 +421,10 @@ function IntegrationsContent() {
                   {qbLoading ? (
                     <>
                       <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                      Disconnecting...
+                      {t("quickbooks.disconnecting")}
                     </>
                   ) : (
-                    "Disconnect"
+                    t("quickbooks.disconnect")
                   )}
                 </PremiumButton>
               ) : (
@@ -435,11 +437,11 @@ function IntegrationsContent() {
                   {qbLoading ? (
                     <>
                       <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                      Connecting...
+                      {t("quickbooks.connecting")}
                     </>
                   ) : (
                     <>
-                      Connect
+                      {t("quickbooks.connect")}
                       <ExternalLink className="w-3 h-3 ml-1.5" />
                     </>
                   )}
@@ -451,15 +453,15 @@ function IntegrationsContent() {
               <ul className="space-y-1.5 text-[11px] text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 text-xs">•</span>
-                  <span>Import expense data automatically</span>
+                  <span>{t("quickbooks.feature1")}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 text-xs">•</span>
-                  <span>Track travel and utility expenses</span>
+                  <span>{t("quickbooks.feature2")}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5 text-xs">•</span>
-                  <span>Generate sustainability reports</span>
+                  <span>{t("quickbooks.feature3")}</span>
                 </li>
               </ul>
             </div>
@@ -477,17 +479,17 @@ function IntegrationsContent() {
                 <Activity className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="text-base font-semibold mb-0.5">Live API Services</h3>
-                <p className="text-[11px] text-muted-foreground">Real-time data sources</p>
+                <h3 className="text-base font-semibold mb-0.5">{t("apiStatus.title")}</h3>
+                <p className="text-[11px] text-muted-foreground">{t("apiStatus.subtitle")}</p>
               </div>
             </div>
 
             <div className="space-y-2">
               {[
-                { name: "OpenEI", desc: "US utility rates & pricing", status: "active" },
-                { name: "WikiRate", desc: "Corporate ESG benchmarks", status: "active" },
-                { name: "Climate TRACE", desc: "Global emissions tracking", status: "active" },
-                { name: "Electricity Maps", desc: "Real-time carbon intensity", status: "active" }
+                { name: "OpenEI", desc: t("apiStatus.openEIDesc"), status: "active" },
+                { name: "WikiRate", desc: t("apiStatus.wikiRateDesc"), status: "active" },
+                { name: "Climate TRACE", desc: t("apiStatus.climateTraceDesc"), status: "active" },
+                { name: "Electricity Maps", desc: t("apiStatus.electricityMapsDesc"), status: "active" }
               ].map((api, i) => (
                 <div
                   key={i}
@@ -500,7 +502,7 @@ function IntegrationsContent() {
                       <p className="text-[10px] text-muted-foreground">{api.desc}</p>
                     </div>
                   </div>
-                  <span className="text-[9px] text-green-600 font-medium uppercase tracking-wide">Live</span>
+                  <span className="text-[9px] text-green-600 font-medium uppercase tracking-wide">{t("apiStatus.live")}</span>
                 </div>
               ))}
             </div>
@@ -522,10 +524,10 @@ function IntegrationsContent() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold mb-0.5">Energy Pricing</h3>
+                <h3 className="text-base font-semibold mb-0.5">{t("energy.title")}</h3>
                 <Globe className="w-3.5 h-3.5 text-primary" />
               </div>
-              <p className="text-[11px] text-muted-foreground">Global carbon intensity & regional utility rates</p>
+              <p className="text-[11px] text-muted-foreground">{t("energy.subtitle")}</p>
             </div>
           </div>
 
@@ -541,7 +543,7 @@ function IntegrationsContent() {
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <Globe className="w-3 h-3" />
-                  Global Zone
+                  {t("energy.globalZone")}
                 </div>
               </button>
               <button
@@ -557,7 +559,7 @@ function IntegrationsContent() {
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <MapPin className="w-3 h-3" />
-                  US ZIP Code
+                  {t("energy.usZip")}
                 </div>
               </button>
             </div>
@@ -617,7 +619,7 @@ function IntegrationsContent() {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter US ZIP code (e.g., 94105)"
+                  placeholder={t("energy.zipPlaceholder")}
                   className="px-3 py-2 rounded-lg border border-input bg-background/50 text-[12px] h-9 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               )}
@@ -630,10 +632,10 @@ function IntegrationsContent() {
                 {loadingEnergy ? (
                   <>
                     <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                    Loading...
+                    {t("energy.loading")}
                   </>
                 ) : (
-                  "Fetch Data"
+                  t("energy.fetchData")
                 )}
               </PremiumButton>
             </div>
@@ -641,7 +643,7 @@ function IntegrationsContent() {
             {locationType === "zone" && (
               <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/10">
                 <p className="text-[10px] text-muted-foreground">
-                  <span className="text-primary font-medium">Global Coverage:</span> Real-time carbon intensity data for 150+ countries and regions worldwide
+                  <span className="text-primary font-medium">{t("energy.globalCoverage")}</span> {t("energy.globalCoverageDesc")}
                 </p>
               </div>
             )}
@@ -656,19 +658,19 @@ function IntegrationsContent() {
               {energyData.utilityRates && !energyData.utilityRates.error && (
                 <div className="grid md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Rate</p>
+                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("energy.rate")}</p>
                     <p className="text-xl font-bold text-primary mb-0.5">
                       ${energyData.utilityRates.averageRatePerKwh?.toFixed(4)}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">per kWh • {energyData.utilityRates.utility}</p>
+                    <p className="text-[10px] text-muted-foreground">{t("energy.perKwh")} • {energyData.utilityRates.utility}</p>
                   </div>
 
                   <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Monthly Cost</p>
+                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("energy.monthlyCost")}</p>
                     <p className="text-xl font-bold text-primary mb-0.5">
                       ${energyData.utilityRates.monthlyCost?.totalCost?.toFixed(2)}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">for 5,000 kWh usage</p>
+                    <p className="text-[10px] text-muted-foreground">{t("energy.forUsage")}</p>
                   </div>
                 </div>
               )}
@@ -676,9 +678,9 @@ function IntegrationsContent() {
               {energyData.carbonIntensity && !energyData.carbonIntensity.error && (
                 <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Carbon Intensity</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("energy.carbonIntensity")}</p>
                     <p className="text-[10px] text-primary font-medium">
-                      {energyData.carbonIntensity.renewablePercentage?.toFixed(1)}% renewable
+                      {t("energy.renewable", { pct: energyData.carbonIntensity.renewablePercentage?.toFixed(1) })}
                     </p>
                   </div>
                   <p className="text-xl font-bold text-primary">
@@ -689,7 +691,7 @@ function IntegrationsContent() {
 
               {energyData.forecast && energyData.forecast.length > 0 && (
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[11px] font-medium mb-3">24-Hour Forecast</p>
+                  <p className="text-[11px] font-medium mb-3">{t("energy.forecast24h")}</p>
                   <div className="flex items-end gap-0.5 h-20">
                     {energyData.forecast.slice(0, 24).map((f: any, i: number) => (
                       <div
@@ -702,7 +704,7 @@ function IntegrationsContent() {
                       />
                     ))}
                   </div>
-                  <p className="text-[9px] text-muted-foreground mt-2">Lower bars = cleaner energy</p>
+                  <p className="text-[9px] text-muted-foreground mt-2">{t("energy.forecastHint")}</p>
                 </div>
               )}
             </motion.div>
@@ -721,9 +723,9 @@ function IntegrationsContent() {
               <TrendingUp className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-semibold mb-0.5">Industry Benchmarks</h3>
+              <h3 className="text-base font-semibold mb-0.5">{t("benchmarks.title")}</h3>
               <p className="text-[11px] text-muted-foreground">
-                Location-aware benchmarks with personalized insights
+                {t("benchmarks.subtitle")}
               </p>
             </div>
           </div>
@@ -732,35 +734,35 @@ function IntegrationsContent() {
           {loadingUserData ? (
             <div className="flex items-center justify-center p-6">
               <Loader2 className="w-5 h-5 animate-spin text-primary" />
-              <span className="ml-2 text-[12px] text-muted-foreground">Loading company data...</span>
+              <span className="ml-2 text-[12px] text-muted-foreground">{t("benchmarks.loadingCompany")}</span>
             </div>
           ) : userData ? (
             <div className="mb-4 p-3 rounded-xl bg-accent/30 border border-border/30 space-y-2">
               <div className="grid md:grid-cols-3 gap-3 text-[11px]">
                 <div>
-                  <span className="text-muted-foreground">Company:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.company")}</span>
                   <p className="font-medium">{userData.companyName}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Industry:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.industry")}</span>
                   <p className="font-medium capitalize">{userData.companyIndustry}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Location:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.location")}</span>
                   <p className="font-medium">{userLocation}</p>
                 </div>
               </div>
               <div className="grid md:grid-cols-3 gap-3 text-[11px]">
                 <div>
-                  <span className="text-muted-foreground">Team Size:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.teamSize")}</span>
                   <p className="font-medium">{userData.teamSize}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Emissions:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.emissions")}</span>
                   <p className="font-medium">{userData.totalEmissions.toFixed(2)} tCO₂e</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Per Employee:</span>
+                  <span className="text-muted-foreground">{t("benchmarks.perEmployee")}</span>
                   <p className="font-medium">
                     {(userData.totalEmissions / userData.employees).toFixed(2)} tCO₂e
                   </p>
@@ -770,7 +772,7 @@ function IntegrationsContent() {
           ) : (
             <div className="mb-4 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20">
               <p className="text-[11px] text-orange-600">
-                Complete your company profile to view personalized benchmarks
+                {t("benchmarks.incompleteProfile")}
               </p>
             </div>
           )}
@@ -785,10 +787,10 @@ function IntegrationsContent() {
               {loadingBenchmark ? (
                 <>
                   <Loader2 className="w-3 h-3 animate-spin mr-1.5" />
-                  Analyzing...
+                  {t("benchmarks.analyzing")}
                 </>
               ) : (
-                "Analyze My Performance"
+                t("benchmarks.analyze")
               )}
             </PremiumButton>
           </div>
@@ -802,14 +804,14 @@ function IntegrationsContent() {
               {/* Performance Overview */}
               <div className={`p-4 rounded-xl border ${getInterpretationBg(benchmarkComparison.interpretation)}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Performance Rating</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("benchmarks.performanceRating")}</p>
                   <p className={`text-sm font-bold ${getInterpretationColor(benchmarkComparison.interpretation)}`}>
-                    {benchmarkComparison.interpretation.replace('_', ' ')}
+                    {t(`benchmarks.ratings.${benchmarkComparison.interpretation}` as any)}
                   </p>
                 </div>
                 <div className="grid md:grid-cols-2 gap-3 mt-3">
                   <div>
-                    <p className="text-[10px] text-muted-foreground mb-1">vs Regional Average ({benchmarkComparison.location_context.country})</p>
+                    <p className="text-[10px] text-muted-foreground mb-1">{t("benchmarks.vsRegional", { country: benchmarkComparison.location_context.country })}</p>
                     <p className={`text-lg font-bold ${
                       benchmarkComparison.vs_average_percent < 0 ? 'text-green-600' : 'text-orange-600'
                     }`}>
@@ -818,7 +820,7 @@ function IntegrationsContent() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground mb-1">vs Global Average</p>
+                    <p className="text-[10px] text-muted-foreground mb-1">{t("benchmarks.vsGlobal")}</p>
                     <p className={`text-lg font-bold ${
                       benchmarkComparison.vs_global_percent < 0 ? 'text-green-600' : 'text-orange-600'
                     }`}>
@@ -832,52 +834,52 @@ function IntegrationsContent() {
               {/* Detailed Metrics */}
               <div className="grid md:grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Regional Percentile</p>
+                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.regionalPercentile")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.percentile_rank}th
                   </p>
-                  <p className="text-[10px] text-muted-foreground">in {benchmarkComparison.location_context.country}</p>
+                  <p className="text-[10px] text-muted-foreground">{t("benchmarks.inCountry", { country: benchmarkComparison.location_context.country })}</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Global Percentile</p>
+                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.globalPercentile")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.global_percentile_rank}th
                   </p>
-                  <p className="text-[10px] text-muted-foreground">worldwide</p>
+                  <p className="text-[10px] text-muted-foreground">{t("benchmarks.worldwide")}</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Country Context</p>
+                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.countryContext")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%
                   </p>
-                  <p className="text-[10px] text-muted-foreground">of {benchmarkComparison.location_context.country} total</p>
+                  <p className="text-[10px] text-muted-foreground">{t("benchmarks.ofCountryTotal", { country: benchmarkComparison.location_context.country })}</p>
                 </div>
               </div>
 
               {/* Intensity Metrics */}
               <div className="grid md:grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">Per Employee</p>
+                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">{t("benchmarks.perEmployeeMetric")}</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-base font-bold text-foreground">
                       {benchmarkComparison.emissions_per_employee.toFixed(2)}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      vs {benchmarkComparison.industry_emissions_per_employee.toFixed(2)} tCO₂e industry avg
+                      {t("benchmarks.vsIndustryAvg", { value: benchmarkComparison.industry_emissions_per_employee.toFixed(2) })}
                     </p>
                   </div>
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">Per $1M Revenue</p>
+                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">{t("benchmarks.perRevenue")}</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-base font-bold text-foreground">
                       {benchmarkComparison.emissions_per_revenue.toFixed(2)}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
-                      vs {benchmarkComparison.industry_emissions_per_revenue.toFixed(2)} tCO₂e industry avg
+                      {t("benchmarks.vsIndustryAvg", { value: benchmarkComparison.industry_emissions_per_revenue.toFixed(2) })}
                     </p>
                   </div>
                 </div>
@@ -885,16 +887,16 @@ function IntegrationsContent() {
 
               {/* Location Context */}
               <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
-                <p className="text-[11px] font-medium mb-2">Location Context - {benchmarkComparison.location_context.country}</p>
+                <p className="text-[11px] font-medium mb-2">{t("benchmarks.locationContext", { country: benchmarkComparison.location_context.country })}</p>
                 <div className="space-y-1.5 text-[11px]">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Country Emissions:</span>
+                    <span className="text-muted-foreground">{t("benchmarks.totalCountryEmissions")}</span>
                     <span className="font-medium">
                       {(benchmarkComparison.location_context.country_total_emissions / 1000000).toFixed(2)} Mt CO₂e
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Your Contribution:</span>
+                    <span className="text-muted-foreground">{t("benchmarks.yourContribution")}</span>
                     <span className="font-medium">
                       {benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%
                     </span>
@@ -905,7 +907,7 @@ function IntegrationsContent() {
               {/* Personalized Recommendations */}
               {benchmarkComparison.recommendations && benchmarkComparison.recommendations.length > 0 && (
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[11px] font-medium mb-3">Personalized Insights & Recommendations</p>
+                  <p className="text-[11px] font-medium mb-3">{t("benchmarks.recommendationsTitle")}</p>
                   <ul className="space-y-2">
                     {benchmarkComparison.recommendations.map((rec: string, i: number) => (
                       <li key={i} className="text-[11px] text-foreground flex items-start gap-2">
