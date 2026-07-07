@@ -842,12 +842,12 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
               <SparkleIcon />
             </div>
             <div className="flex-1">
-              <h3 className="text-xs font-semibold mb-1">AI Configuration</h3>
+              <h3 className="text-xs font-semibold mb-1">{t("settings.aiConfigTitle")}</h3>
               <p className="text-[10px] text-muted-foreground font-light mb-3">
-                The AI Autopilot monitors 195 countries' regulations in real-time and generates reports automatically
+                {t("settings.aiConfigDesc")}
               </p>
               <PremiumButton size="sm" variant="outline" className="text-xs h-7">
-                Configure AI Settings
+                {t("settings.aiConfigButton")}
               </PremiumButton>
             </div>
           </div>
