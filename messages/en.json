@@ -356,6 +356,14 @@
         "saveFail": "Failed to save changes",
         "prefsFail": "Failed to update notification preferences",
         "prefsOk": "Notification preferences updated"
+      },
+      "regions": {
+        "africa": "Africa",
+        "asia": "Asia",
+        "europe": "Europe",
+        "northAmerica": "North America",
+        "oceania": "Oceania",
+        "southAmerica": "South America"
       }
     },
     "learn": {
