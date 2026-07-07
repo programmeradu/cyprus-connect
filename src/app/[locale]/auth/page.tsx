@@ -106,8 +106,9 @@ export default function AuthPage() {
   };
 
   const handleDemoAccess = () => {
-    toast.info("Demo mode coming soon!");
+    toast.info(t("demoToast"));
   };
+
 
   return (
     <div className="relative min-h-screen overflow-hidden">
