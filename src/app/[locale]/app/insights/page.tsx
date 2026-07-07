@@ -673,19 +673,19 @@ export default function InsightsPage() {
         {energyData?.costSavings && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <InsightCard
-              label="Potential Monthly Savings"
+              label={t("energySection.monthlySavings")}
               value={<CurrencyDisplay amount={energyData.costSavings.costSavingsUSD || 0} fromCurrency="USD" />}
-              subtext={`By shifting to optimal energy times`}
+              subtext={t("energySection.monthlySavingsSub")}
             />
             <InsightCard
-              label="Carbon Reduction Potential"
+              label={t("energySection.carbonReduction")}
               value={`${energyData.costSavings.carbonSavingsKg?.toFixed(1) || 0} kg`}
-              subtext="CO2 equivalent per month"
+              subtext={t("energySection.carbonReductionSub")}
             />
             <InsightCard
-              label="Current Grid Status"
+              label={t("energySection.gridStatus")}
               value={`${energyData.carbonIntensity?.renewablePercentage?.toFixed(1) || 0}%`}
-              subtext="Renewable energy in your grid"
+              subtext={t("energySection.gridStatusSub")}
             />
           </div>
         )}
