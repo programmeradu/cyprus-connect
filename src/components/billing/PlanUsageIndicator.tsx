@@ -34,9 +34,10 @@ export const PlanUsageIndicator = () => {
   }
 
   const currentPlan = customer?.products?.at(-1);
-  const planName = currentPlan?.name || "Free";
   const planId = currentPlan?.id || "free";
+  const planName = currentPlan?.name || tPlans("free");
   const features = customer?.features || {};
+
 
   // Get icon based on plan
   const getPlanIcon = () => {
