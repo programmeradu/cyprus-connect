@@ -86,8 +86,9 @@ export function FileUploadDialog({
     try {
       const userId = localStorage.getItem("user_id");
       if (!userId) {
-        throw new Error("User not authenticated");
+        throw new Error(t("toasts.notAuth"));
       }
+
 
       // Simulate progress
       const progressInterval = setInterval(() => {
