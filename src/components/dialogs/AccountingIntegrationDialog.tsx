@@ -18,6 +18,7 @@ export function AccountingIntegrationDialog({
   isOpen,
   onClose,
 }: AccountingIntegrationDialogProps) {
+  const t = useTranslations("shared.accountingDialog");
   const [isConnecting, setIsConnecting] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState<IntegrationType>(null);
 
@@ -29,19 +30,19 @@ export function AccountingIntegrationDialog({
       // In a real implementation, this would open OAuth flow
       // For now, we'll simulate the connection
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      toast.success(`${type === "quickbooks" ? "QuickBooks" : "Xero"} connection initiated!`);
-      toast.info("Please complete the authorization in the popup window.");
-      
+
+      toast.success(t("toasts.initiated", { name: type === "quickbooks" ? "QuickBooks" : "Xero" }));
+      toast.info(t("toasts.authPopup"));
+
       // Simulate opening OAuth window
       // In production: window.location.href = `/api/auth/${type}?action=authorize`;
-      
+
       setIsConnecting(false);
       setSelectedIntegration(null);
       onClose();
     } catch (error) {
       console.error("Connection error:", error);
-      toast.error("Failed to initiate connection. Please try again.");
+      toast.error(t("toasts.failed"));
       setIsConnecting(false);
       setSelectedIntegration(null);
     }
@@ -50,31 +51,22 @@ export function AccountingIntegrationDialog({
   const integrations = [
     {
       id: "quickbooks" as const,
-      name: "QuickBooks Online",
-      description: "Connect your QuickBooks account for automated expense tracking",
+      name: t("quickbooks.name"),
+      description: t("quickbooks.description"),
       logo: "💼",
-      features: [
-        "Auto-sync invoices and bills",
-        "Track business expenses",
-        "Generate financial reports",
-        "Real-time data updates",
-      ],
+      features: t.raw("quickbooks.features") as string[],
       comingSoon: true,
     },
     {
       id: "xero" as const,
-      name: "Xero",
-      description: "Integrate with Xero for seamless accounting data import",
+      name: t("xero.name"),
+      description: t("xero.description"),
       logo: "📊",
-      features: [
-        "Import bank transactions",
-        "Sync expense categories",
-        "Access financial statements",
-        "Automated reconciliation",
-      ],
+      features: t.raw("xero.features") as string[],
       comingSoon: true,
     },
   ];
+
 
   return (
     <AnimatePresence>
