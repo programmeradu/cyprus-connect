@@ -1504,18 +1504,18 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           <path d="M8 10h8M8 14h5" strokeLinecap="round" />
                           <circle cx="16" cy="8" r="2" fill="currentColor" />
                         </svg>
-                        Generated Report Preview
+                        {t("report.previewTitle")}
                       </h4>
                       <div className="bg-white rounded-lg p-6 text-gray-900">
                         {/* Company Info Header */}
                         <div className="mb-6 pb-4 border-b-2 border-emerald-200">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="px-3 py-1 bg-emerald-100 rounded-full">
-                              <span className="text-emerald-700 font-bold text-xs tracking-wide">SUSTAINABILITY REPORT</span>
+                              <span className="text-emerald-700 font-bold text-xs tracking-wide">{t("report.badge")}</span>
                             </div>
                           </div>
                           <h2 className="text-2xl font-black text-gray-900 mb-1">{reportInput.company}</h2>
-                          <p className="text-gray-600 text-sm">{reportInput.industry} Industry • {reportInput.period || "Q4 2025"}</p>
+                          <p className="text-gray-600 text-sm">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") })}</p>
                         </div>
                         
                         {/* Formatted Report Content */}
