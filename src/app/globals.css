@@ -360,6 +360,52 @@
   }
 }
 
+/* ============================================================
+   i18n overflow policy — no truncation, fluid & locale-aware
+   ============================================================ */
+
+@theme inline {
+  --text-fluid-xs:   clamp(0.72rem, 0.66rem + 0.25vw, 0.8rem);
+  --text-fluid-sm:   clamp(0.82rem, 0.76rem + 0.3vw, 0.9rem);
+  --text-fluid-base: clamp(0.9rem,  0.84rem + 0.35vw, 1rem);
+  --text-fluid-lg:   clamp(1.05rem, 0.95rem + 0.5vw, 1.25rem);
+  --text-fluid-xl:   clamp(1.2rem,  1rem + 1vw, 1.6rem);
+  --text-fluid-2xl:  clamp(1.4rem,  1.1rem + 1.4vw, 2rem);
+  --text-fluid-hero: clamp(1.75rem, 1rem + 3vw, 3.25rem);
+}
+
+@utility text-fluid-xs   { font-size: var(--text-fluid-xs);   line-height: 1.35; }
+@utility text-fluid-sm   { font-size: var(--text-fluid-sm);   line-height: 1.4; }
+@utility text-fluid-base { font-size: var(--text-fluid-base); line-height: 1.5; }
+@utility text-fluid-lg   { font-size: var(--text-fluid-lg);   line-height: 1.4; }
+@utility text-fluid-xl   { font-size: var(--text-fluid-xl);   line-height: 1.25; }
+@utility text-fluid-2xl  { font-size: var(--text-fluid-2xl);  line-height: 1.2; }
+@utility text-fluid-hero { font-size: var(--text-fluid-hero); line-height: 1.05; letter-spacing: -0.02em; }
+
+/* Greek runs 20–30% longer than English. Tighten metrics and let
+   long words shrink or wrap instead of overflowing. */
+:root:lang(el) { --lang-tighten: -0.005em; }
+html:lang(el) body,
+:lang(el) button,
+:lang(el) a,
+:lang(el) label,
+:lang(el) h1, :lang(el) h2, :lang(el) h3, :lang(el) h4 {
+  letter-spacing: var(--lang-tighten, 0);
+}
+:lang(el) nav a,
+:lang(el) [data-nav-item],
+:lang(el) [data-sidebar="menu-button"] { font-size: 0.94em; }
+:lang(el) button,
+:lang(el) [role="tab"],
+:lang(el) [data-slot="badge"] { font-size: 0.95em; }
+
+/* Safety net: allow long Greek compounds to wrap instead of clip. */
+h1, h2, h3, h4, h5, h6, p, span, a, button, label, li {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
+
 /* Hide Next.js error overlay portal */
 nextjs-portal {
   display: none !important;
