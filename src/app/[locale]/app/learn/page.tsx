@@ -178,6 +178,7 @@ interface Course {
 
 export default function LearnPage() {
   const t = useTranslations("dashboard.learn");
+  const tc = useTranslations("common");
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
