@@ -624,8 +624,8 @@ export default function OnboardingPage() {
                           <div className="w-1 h-3 bg-muted rounded" />
                         </div>
                       </div>
-                      <p className="text-[10px] font-medium mb-0.5">Leaderboard</p>
-                      <p className="text-[9px] text-muted-foreground">Your Rank: #7 out of 45 SMEs</p>
+                      <p className="text-[10px] font-medium mb-0.5">{t("step3.leaderboard")}</p>
+                      <p className="text-[9px] text-muted-foreground">{t("step3.yourRank")}</p>
                     </div>
                   </div>
                 </div>
@@ -633,20 +633,20 @@ export default function OnboardingPage() {
 
               <div className="flex flex-col items-center gap-3">
                 <PremiumButton onClick={() => setStep(4)} size="sm" className="w-full md:w-auto px-6">
-                  Explore Initial Recommendations
+                  {t("step3.explore")}
                 </PremiumButton>
                 <div className="flex items-center gap-6">
                   <button
                     onClick={() => setStep(2)}
                     className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Back
+                    {t("step3.back")}
                   </button>
                   <button
                     onClick={() => setStep(4)}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
                   >
-                    Skip for now
+                    {t("step3.skip")}
                   </button>
                 </div>
               </div>
