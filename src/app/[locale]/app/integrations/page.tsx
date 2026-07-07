@@ -273,7 +273,7 @@ function IntegrationsContent() {
 
   const fetchBenchmarkComparison = async () => {
     if (!userData) {
-      toast.error("Loading company data...");
+      toast.error(t("toasts.loadingCompany"));
       return;
     }
     
