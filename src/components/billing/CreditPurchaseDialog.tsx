@@ -39,8 +39,9 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create checkout session');
+        throw new Error(error.error || t("checkoutFailed"));
       }
+
 
       const { url } = await response.json();
       
