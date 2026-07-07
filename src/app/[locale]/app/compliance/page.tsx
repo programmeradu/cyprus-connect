@@ -813,8 +813,8 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
 
             <label className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
               <div>
-                <div className="text-xs font-medium mb-0.5">Email notifications</div>
-                <div className="text-[10px] text-muted-foreground font-light">Receive deadline reminders via email</div>
+                <div className="text-xs font-medium mb-0.5">{t("settings.emailNotificationsTitle")}</div>
+                <div className="text-[10px] text-muted-foreground font-light">{t("settings.emailNotificationsDesc")}</div>
               </div>
               <input
                 type="checkbox"
