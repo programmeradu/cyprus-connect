@@ -691,7 +691,7 @@ function IntegrationsContent() {
 
               {energyData.forecast && energyData.forecast.length > 0 && (
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[11px] font-medium mb-3">24-Hour Forecast</p>
+                  <p className="text-[11px] font-medium mb-3">{t("energy.forecast24h")}</p>
                   <div className="flex items-end gap-0.5 h-20">
                     {energyData.forecast.slice(0, 24).map((f: any, i: number) => (
                       <div
