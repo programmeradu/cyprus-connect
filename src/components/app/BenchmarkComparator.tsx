@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
@@ -9,6 +10,7 @@ import { useUser } from "@/lib/user-context";
 import { useCustomer } from "autumn-js/react";
 import { useRouter } from "next/navigation";
 import { Globe, MapPin, TrendingUp, TrendingDown, Loader2, Lock } from "lucide-react";
+
 
 interface CompanyData {
   sector: string;
@@ -41,20 +43,15 @@ interface BenchmarkComparison {
   };
 }
 
-const SECTORS = [
-  { value: 'retail', label: 'Retail' },
-  { value: 'manufacturing', label: 'Manufacturing' },
-  { value: 'hospitality', label: 'Hospitality' },
-  { value: 'technology', label: 'Technology & IT' },
-  { value: 'logistics', label: 'Logistics & Transport' },
-  { value: 'food-service', label: 'Food Service' },
-];
+const SECTOR_KEYS = ['retail','manufacturing','hospitality','technology','logistics','food-service'] as const;
 
 export function BenchmarkComparator() {
+  const t = useTranslations("benchmark");
   const { data: session } = useSession();
   const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
+
   
   const [companyData, setCompanyData] = useState<CompanyData>({
     sector: 'retail',
@@ -127,7 +124,7 @@ export function BenchmarkComparator() {
 
   const handleCompare = async () => {
     if (!companyData.annual_emissions || !companyData.employees || !companyData.annual_revenue) {
-      setError('Please fill in all fields');
+      setError(t('fillAll'));
       return;
     }
 
@@ -154,7 +151,7 @@ export function BenchmarkComparator() {
       const data = await response.json();
       setComparison(data.comparison);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setLoading(false);
     }
@@ -198,11 +195,11 @@ export function BenchmarkComparator() {
         <div className="relative z-10">
           <div className="mb-4">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-bold">Industry Benchmarks</h3>
+              <h3 className="text-sm font-bold">{t("title")}</h3>
               <Lock className="w-4 h-4 text-muted-foreground" />
             </div>
             <p className="text-[10px] text-muted-foreground">
-              Location-aware comparison
+              {t("subtitle")}
             </p>
           </div>
 
@@ -222,12 +219,13 @@ export function BenchmarkComparator() {
           {/* Upgrade prompt */}
           <div className="text-center space-y-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">
-                Professional Feature
+              <p className="text-xs font-semibold text-primary mb-1 break-words">
+                {t("proFeature")}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Compare your emissions against industry peers with regional and global insights
+              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
+                {t("proBlurb")}
               </p>
+
             </div>
             
             <PremiumButton
@@ -236,7 +234,7 @@ export function BenchmarkComparator() {
               size="sm"
             >
               <Lock className="w-3 h-3 mr-1.5" />
-              <span className="text-[10px]">Upgrade to Professional</span>
+              <span className="text-[10px]">{t("upgradeCta")}</span>
             </PremiumButton>
           </div>
         </div>
@@ -248,7 +246,7 @@ export function BenchmarkComparator() {
     <PremiumCard className="p-4">
       <div className="mb-4">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="text-sm font-bold">Industry Benchmarks</h3>
+          <h3 className="text-sm font-bold">{t("title")}</h3>
           {loadingLocation ? (
             <Loader2 className="w-3 h-3 animate-spin text-muted-foreground" />
           ) : (
@@ -259,22 +257,22 @@ export function BenchmarkComparator() {
           )}
         </div>
         <p className="text-[10px] text-muted-foreground">
-          Location-aware comparison
+          {t("subtitle")}
         </p>
       </div>
 
       {/* Input Form */}
       <div className="space-y-2.5 mb-4">
         <div>
-          <label className="block text-[10px] font-medium mb-1.5">Sector</label>
+          <label className="block text-[10px] font-medium mb-1.5">{t("sector")}</label>
           <select
             value={companyData.sector}
             onChange={(e) => setCompanyData({ ...companyData, sector: e.target.value })}
             className="w-full p-2 text-[11px] rounded-lg border border-border bg-background text-foreground"
           >
-            {SECTORS.map((sector) => (
-              <option key={sector.value} value={sector.value}>
-                {sector.label}
+            {SECTOR_KEYS.map((k) => (
+              <option key={k} value={k}>
+                {t(`sectors.${k}` as any)}
               </option>
             ))}
           </select>
@@ -282,7 +280,7 @@ export function BenchmarkComparator() {
 
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <label className="block text-[9px] font-medium mb-1.5">Emissions (tCO₂e)</label>
+            <label className="block text-[9px] font-medium mb-1.5">{t("emissions")}</label>
             <input
               type="number"
               value={companyData.annual_emissions || ''}
@@ -293,7 +291,7 @@ export function BenchmarkComparator() {
           </div>
 
           <div>
-            <label className="block text-[9px] font-medium mb-1.5">Employees</label>
+            <label className="block text-[9px] font-medium mb-1.5">{t("employees")}</label>
             <input
               type="number"
               value={companyData.employees || ''}
@@ -304,7 +302,7 @@ export function BenchmarkComparator() {
           </div>
 
           <div>
-            <label className="block text-[9px] font-medium mb-1.5">Revenue ($)</label>
+            <label className="block text-[9px] font-medium mb-1.5">{t("revenue")}</label>
             <input
               type="number"
               value={companyData.annual_revenue || ''}
@@ -327,7 +325,7 @@ export function BenchmarkComparator() {
           className="w-full"
           size="sm"
         >
-          <span className="text-[10px]">{loading ? 'Analyzing...' : 'Compare'}</span>
+          <span className="text-[10px]">{loading ? t('analyzing') : t('compare')}</span>
         </PremiumButton>
       </div>
 
@@ -341,17 +339,17 @@ export function BenchmarkComparator() {
           {/* Performance Badge */}
           <div className={`p-2.5 rounded-lg border ${getInterpretationColor(comparison.interpretation)}`}>
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[9px] font-semibold">Performance</span>
-              <span className="text-sm font-bold">{comparison.interpretation.replace('_', ' ')}</span>
+              <span className="text-[9px] font-semibold">{t("performance")}</span>
+              <span className="text-sm font-bold">{t(`interp.${comparison.interpretation}` as any)}</span>
             </div>
             <div className="flex items-center justify-between text-[9px]">
               <div className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                <span>{userCountry}: {comparison.percentile_rank}th percentile</span>
+                <span className="break-words">{t('percentileLocal', { country: userCountry, n: comparison.percentile_rank })}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Globe className="w-3 h-3" />
-                <span>Global: {comparison.global_percentile_rank}th</span>
+                <span className="break-words">{t('percentileGlobal', { n: comparison.global_percentile_rank })}</span>
               </div>
             </div>
           </div>
@@ -360,10 +358,10 @@ export function BenchmarkComparator() {
           {comparison.location_context && (
             <div className="p-2 rounded-lg bg-accent/30 border border-border/50">
               <p className="text-[9px] text-muted-foreground mb-1">
-                Country Impact: {userCountry}
+                {t('countryImpact', { country: userCountry })}
               </p>
               <p className="text-[10px] font-medium">
-                {(comparison.location_context.country_total_emissions / 1000000000).toFixed(2)} Gt CO₂e total
+                {t('gtTotal', { value: (comparison.location_context.country_total_emissions / 1000000000).toFixed(2) })}
               </p>
             </div>
           )}
@@ -373,7 +371,7 @@ export function BenchmarkComparator() {
             <div className="p-2.5 rounded-lg bg-card border border-border">
               <div className="flex items-center gap-1 mb-0.5">
                 <MapPin className="w-3 h-3 text-primary" />
-                <p className="text-[9px] text-muted-foreground">Regional Avg</p>
+                <p className="text-[9px] text-muted-foreground">{t("regionalAvg")}</p>
               </div>
               <p className="text-sm font-bold">
                 {comparison.regional_average.toFixed(1)} <span className="text-[9px] font-normal">tCO₂e</span>
@@ -382,12 +380,12 @@ export function BenchmarkComparator() {
                 {comparison.vs_average_percent < 0 ? (
                   <>
                     <TrendingDown className="w-3 h-3 text-green-600" />
-                    <span className="text-green-600">{Math.abs(comparison.vs_average_percent).toFixed(1)}% below</span>
+                    <span className="text-green-600">{t('below', { pct: Math.abs(comparison.vs_average_percent).toFixed(1) })}</span>
                   </>
                 ) : (
                   <>
                     <TrendingUp className="w-3 h-3 text-red-600" />
-                    <span className="text-red-600">{comparison.vs_average_percent.toFixed(1)}% above</span>
+                    <span className="text-red-600">{t('above', { pct: comparison.vs_average_percent.toFixed(1) })}</span>
                   </>
                 )}
               </div>
@@ -396,7 +394,7 @@ export function BenchmarkComparator() {
             <div className="p-2.5 rounded-lg bg-card border border-border">
               <div className="flex items-center gap-1 mb-0.5">
                 <Globe className="w-3 h-3 text-primary" />
-                <p className="text-[9px] text-muted-foreground">Global Avg</p>
+                <p className="text-[9px] text-muted-foreground">{t("globalAvg")}</p>
               </div>
               <p className="text-sm font-bold">
                 {comparison.global_average.toFixed(1)} <span className="text-[9px] font-normal">tCO₂e</span>
@@ -405,12 +403,12 @@ export function BenchmarkComparator() {
                 {comparison.vs_global_percent < 0 ? (
                   <>
                     <TrendingDown className="w-3 h-3 text-green-600" />
-                    <span className="text-green-600">{Math.abs(comparison.vs_global_percent).toFixed(1)}% below</span>
+                    <span className="text-green-600">{t('below', { pct: Math.abs(comparison.vs_global_percent).toFixed(1) })}</span>
                   </>
                 ) : (
                   <>
                     <TrendingUp className="w-3 h-3 text-red-600" />
-                    <span className="text-red-600">{comparison.vs_global_percent.toFixed(1)}% above</span>
+                    <span className="text-red-600">{t('above', { pct: comparison.vs_global_percent.toFixed(1) })}</span>
                   </>
                 )}
               </div>
@@ -420,26 +418,26 @@ export function BenchmarkComparator() {
           {/* Intensity Metrics */}
           <div className="grid grid-cols-2 gap-2">
             <div className="p-2 rounded-lg bg-accent/20 border border-border/30">
-              <p className="text-[9px] text-muted-foreground mb-0.5">Per Employee</p>
+              <p className="text-[9px] text-muted-foreground mb-0.5">{t("perEmployee")}</p>
               <p className="text-xs font-bold">
                 {comparison.emissions_per_employee.toFixed(2)} tCO₂e
               </p>
-              <p className="text-[8px] text-muted-foreground">vs {comparison.industry_emissions_per_employee.toFixed(2)} avg</p>
+              <p className="text-[8px] text-muted-foreground">{t('vsAvg', { value: comparison.industry_emissions_per_employee.toFixed(2) })}</p>
             </div>
 
             <div className="p-2 rounded-lg bg-accent/20 border border-border/30">
-              <p className="text-[9px] text-muted-foreground mb-0.5">Per $1M Revenue</p>
+              <p className="text-[9px] text-muted-foreground mb-0.5">{t("perRevenue")}</p>
               <p className="text-xs font-bold">
                 {comparison.emissions_per_revenue.toFixed(4)} tCO₂e
               </p>
-              <p className="text-[8px] text-muted-foreground">vs {comparison.industry_emissions_per_revenue.toFixed(4)} avg</p>
+              <p className="text-[8px] text-muted-foreground">{t('vsAvg', { value: comparison.industry_emissions_per_revenue.toFixed(4) })}</p>
             </div>
           </div>
 
           {/* Personalized Recommendations */}
           {comparison.recommendations && comparison.recommendations.length > 0 && (
             <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-[9px] font-semibold mb-2 text-primary">Tailored Insights</p>
+              <p className="text-[9px] font-semibold mb-2 text-primary">{t("tailored")}</p>
               <ul className="space-y-1.5">
                 {comparison.recommendations.slice(0, 3).map((rec, idx) => (
                   <li key={idx} className="text-[9px] text-foreground flex items-start gap-1.5">
