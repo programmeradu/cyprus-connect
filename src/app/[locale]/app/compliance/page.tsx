@@ -571,6 +571,12 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
 
 // Documents Tab Component - updated
 function DocumentsTab({ documents, onGenerate, generating }: { documents: Document[]; onGenerate: (framework: string) => void; generating: boolean }) {
+  const t = useTranslations("dashboard.compliance");
+  const statusLabel = (s: string) =>
+    s === 'submitted' ? t("status.submitted") :
+    s === 'ready' ? t("status.ready") :
+    s === 'draft' ? t("status.draft") :
+    s.toUpperCase();
   return (
     <div className="space-y-4">
       {/* Generate New Document */}
