@@ -51,6 +51,9 @@ export const BillingDashboard = () => {
   const [managingBilling, setManagingBilling] = useState(false);
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [loadingCredits, setLoadingCredits] = useState(true);
+  const t = useTranslations("billing.dashboard");
+  const tPlanNames = useTranslations("billing.pricingTable.planNames");
+  const locale = useLocale();
 
   // Fetch credit balance
   useEffect(() => {
