@@ -485,7 +485,7 @@ function OverviewTab({ complianceScore, regulations, documents }: { complianceSc
               ))
             ) : (
               <div className="text-center py-4 text-xs text-muted-foreground">
-                No recent updates available
+                {t("overview.noRecentUpdates")}
               </div>
             )}
           </div>
