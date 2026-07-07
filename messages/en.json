@@ -1303,5 +1303,13 @@
       "applied": "Data applied to calculator!",
       "noData": "No data to apply"
     }
+  },
+  "dashboardDemo": {
+    "tabs": {
+      "carbon": "Carbon & News",
+      "report": "Report Generator",
+      "weather": "Climate & AI",
+      "media": "Media Studio"
+    }
   }
 }
