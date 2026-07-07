@@ -15,7 +15,6 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const switchTo = (next: "en" | "el") => {
     if (next === locale) return;
     startTransition(() => {
-      // @ts-expect-error – dynamic pathname
       router.replace(pathname, { locale: next });
     });
   };
