@@ -838,16 +838,16 @@ export default function InsightsPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <FileCheck className="w-5 h-5 text-primary" />
-            Regulatory Compliance
+            {t("compliance.title")}
             {userLocation && (
               <span className="text-xs text-muted-foreground font-normal">
-                ({mapCountryToRegion(userLocation.countryCode)} Region)
+                {t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) })}
               </span>
             )}
           </h2>
           <Link href="/app/compliance">
             <button className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all">
-              View Full Dashboard →
+              {t("compliance.viewDashboard")}
             </button>
           </Link>
         </div>
