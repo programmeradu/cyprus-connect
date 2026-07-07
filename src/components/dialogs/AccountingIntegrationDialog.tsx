@@ -153,16 +153,17 @@ export function AccountingIntegrationDialog({
                       {isConnecting && selectedIntegration === integration.id ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Connecting...
+                          {t("connecting")}
                         </>
                       ) : integration.comingSoon ? (
-                        "Coming Soon"
+                        t("comingSoonBtn")
                       ) : (
                         <>
-                          Connect {integration.name}
+                          {t("connect", { name: integration.name })}
                           <ExternalLink className="w-3.5 h-3.5" />
                         </>
                       )}
+
                     </button>
                   </div>
                 ))}
