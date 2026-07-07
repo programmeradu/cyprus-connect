@@ -834,27 +834,27 @@ function IntegrationsContent() {
               {/* Detailed Metrics */}
               <div className="grid md:grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Regional Percentile</p>
+                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.regionalPercentile")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.percentile_rank}th
                   </p>
-                  <p className="text-[10px] text-muted-foreground">in {benchmarkComparison.location_context.country}</p>
+                  <p className="text-[10px] text-muted-foreground">{t("benchmarks.inCountry", { country: benchmarkComparison.location_context.country })}</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Global Percentile</p>
+                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.globalPercentile")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.global_percentile_rank}th
                   </p>
-                  <p className="text-[10px] text-muted-foreground">worldwide</p>
+                  <p className="text-[10px] text-muted-foreground">{t("benchmarks.worldwide")}</p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">Country Context</p>
+                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.countryContext")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%
                   </p>
-                  <p className="text-[10px] text-muted-foreground">of {benchmarkComparison.location_context.country} total</p>
+                  <p className="text-[10px] text-muted-foreground">{t("benchmarks.ofCountryTotal", { country: benchmarkComparison.location_context.country })}</p>
                 </div>
               </div>
 
