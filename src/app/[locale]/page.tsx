@@ -2050,7 +2050,7 @@ export default function Home() {
               
               {/* Text with custom styling */}
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Customer Stories
+                {tL("badgeStories")}
               </span>
               
               {/* Animated underline */}
