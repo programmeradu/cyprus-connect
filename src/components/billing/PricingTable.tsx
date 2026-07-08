@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { SUBSCRIPTION_PLANS } from "@/lib/stripe/config";
+import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatCurrency } from "@/hooks/useCurrencyFormatter";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -19,7 +20,11 @@ interface PricingTableProps {
 export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
+  const locale = useLocale();
+  const isEur = locale === 'el';
+  const currency = isEur ? 'EUR' : 'USD';
   const t = useTranslations("billing.pricingTable");
+
 
   const handleSubscribe = async (planId: string) => {
     if (planId === 'free') {
