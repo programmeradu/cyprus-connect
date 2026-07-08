@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { CREDIT_PACKAGES } from "@/lib/stripe/config";
+import { CREDIT_PACKAGES, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
+import { formatCurrency } from "@/hooks/useCurrencyFormatter";
+
 
 interface CreditPurchaseDialogProps {
   open: boolean;
