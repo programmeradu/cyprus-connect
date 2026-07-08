@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { user } from '@/db/schema';
 
 const stripe = new Stripe(process.env.STRIPE_TEST_KEY || '', { 
-  apiVersion: '2025-12-15.clover',
+  apiVersion: '2025-12-15.clover' as any,
 });
 
 interface CustomerData {
