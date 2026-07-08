@@ -11,7 +11,7 @@ import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_TEST_KEY || "", {
-  apiVersion: "2025-11-17.clover",
+  apiVersion: "2025-12-15.clover",
 });
 
 // Helper to get random date in October or November 2024
