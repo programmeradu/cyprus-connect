@@ -1,62 +1,103 @@
-## Goal
+# Payments consolidation & gap fix
 
-Replace the direct-SDK BYOK Stripe flow with Lovable's built-in payments (gateway-proxied Stripe), keeping existing UI (`PricingTable`, `BillingDashboard`, `CreditPurchaseDialog`) working, and add the business logic you chose.
+## Current state (findings)
 
-## Files to add
+**Business logic**
+- Two subscription sources: Autumn SDK (checked first in `GET /api/stripe/subscription`) + `subscriptions` table populated by the new Lovable Payments webhook. State can diverge.
+- Third gateway (Paystack) still wired: `/api/paystack/*` routes, `PaystackButton`, `PaymentGatewaySelector`.
+- `useSubscription` hits `/api/stripe/subscription` (which calls Autumn) — no realtime, no env awareness.
+- No Free-plan handling on signup — new users have no `subscriptions` row, and the checkout route rejects `planId='free'` because `priceId` is null.
 
-1. **`src/lib/stripe-gateway.server.ts`** — server-only gateway client
-   - `createStripeClient(env)` — wraps Stripe SDK with a custom fetch that rewrites `api.stripe.com` → `https://connector-gateway.lovable.dev/stripe` and injects `X-Connection-Api-Key` (`STRIPE_SANDBOX_API_KEY` / `STRIPE_LIVE_API_KEY`) + `Lovable-API-Key`.
-   - `verifyWebhook(req, env)` — HMAC-SHA256 verifier using `PAYMENTS_SANDBOX_WEBHOOK_SECRET` / `PAYMENTS_LIVE_WEBHOOK_SECRET`.
-   - `resolveOrCreateCustomer({ email, userId })` — searches by `metadata.userId` then email, stamps userId on the Customer.
-   - `getStripeErrorMessage(err)`.
+**Technical**
+- No products/prices exist in Lovable Payments yet — `resolvePriceIdFromLookupKey('pro_monthly_usd')` will 404 on the first real checkout.
+- Everything hardcoded to `'sandbox'`; no auto env split.
+- Tax handled via manual `automatic_tax` + `tax_id_collection` — not the managed compliance flow.
+- Checkout route uses `success_url`/`cancel_url` redirect, not embedded checkout.
+- Legacy Stripe webhook (`/api/stripe/webhook`) still present as 410 stub — fine.
 
-2. **`src/lib/stripe-env.ts`** — client-safe env detection
-   - Reads `NEXT_PUBLIC_PAYMENTS_CLIENT_TOKEN` (or falls back to `pk_test_` prefix detection).
-   - Exports `getStripeEnvironment(): 'sandbox' | 'live'`.
+## Plan
 
-3. **`src/app/api/public/payments/webhook/route.ts`** — new webhook endpoint at the path the built-in provider registered (`/api/public/payments/webhook?env=sandbox|live`). Handles:
-   - `customer.subscription.created/updated` → upsert `subscriptions` row (user_id, plan_id from `lookup_key`, status, period, `cancel_at_period_end`).
-   - On new active subscription: **grant plan's monthly AI credits** (call Autumn or write to credits table), **send welcome email** (existing `sendEmail` util), **fire analytics event** `plan_started`.
-   - `customer.subscription.deleted` → **immediate revoke**: set status `canceled`, `current_period_end = now()`, downgrade to Free.
-   - `customer.subscription.updated` with plan change: log analytics `plan_changed`; credit balance is refreshed via new period (Stripe handles proration automatically).
-   - `checkout.session.completed` with `mode: payment` + credits metadata → grant one-time credits.
+### 1. Create products & prices in Lovable Payments (sandbox → auto-syncs to live)
+Batch-create 5 products with USD + EUR prices, each tagged with the SaaS tax code `txcd_10103001`:
+- `pro` → `pro_monthly_usd` ($49), `pro_monthly_eur` (€45)
+- `enterprise` → `enterprise_monthly_usd` ($199), `enterprise_monthly_eur` (€185)
+- `credits_100`, `credits_500`, `credits_1000` → one-time USD + EUR each
 
-## Files to modify
+Free plan is NOT created in Stripe (per your answer — entitlement only).
 
-4. **`src/lib/stripe/config.ts`** — replace env-var `priceId` fields with the new stable slugs created above (`pro_monthly_usd`, `pro_monthly_eur`, `enterprise_monthly_usd`, `enterprise_monthly_eur`, `credits_100_usd/eur`, `credits_500_usd/eur`, `credits_1000_usd/eur`). Add a `resolvePriceId(planId, variant)` helper.
+### 2. Env auto-switch
+- Add `getStripeEnvironment()` deriving `sandbox`/`live` from `VITE_PAYMENTS_CLIENT_TOKEN` prefix.
+- Server side: `resolveStripeEnv(request)` reads `X-Stripe-Env` header sent by client, falls back to `sandbox`.
+- Add `environment` column to `subscriptions`, `payment_history`, `credit_purchases` tables (migration). Filter every read by env.
 
-5. **`src/app/api/stripe/checkout/route.ts`** — swap `new Stripe(process.env.STRIPE_SECRET_KEY)` for `createStripeClient(env)`; resolve human-readable priceId via `stripe.prices.list({ lookup_keys: [...] })`; use `resolveOrCreateCustomer` (writes `userId` to Customer metadata — required for reliable webhook routing); keep `automatic_tax` + `tax_id_collection` for EU VAT; add `proration_behavior: 'always_invoice'` on subscription updates from the portal. Pass `subscription_data.metadata.userId`.
+### 3. Free-plan auto-assignment on signup
+- Better-Auth `after` hook on user creation: insert `subscriptions` row `{planId:'free', status:'active', environment}` and grant 100 free AI credits.
+- Downgrade path (webhook `customer.subscription.deleted` — already immediate) sets `planId='free'` — already correct.
+- Frontend: "Downgrade to Free" button calls `DELETE /api/stripe/subscription` (already exists).
 
-6. **`src/app/api/stripe/webhook/route.ts`** — **delete** (superseded by `/api/public/payments/webhook`). Keep the file as a 410 Gone stub in case Stripe still holds the old URL from the BYOK account.
+### 4. Full compliance handling on checkout
+Rewrite `/api/stripe/checkout` and `/api/stripe/subscription` (POST):
+- Add `managed_payments: { enabled: true }` on session creation.
+- Remove incompatible params: `automatic_tax`, `tax_id_collection`, `billing_address_collection`, `customer_update`, `payment_method_types`.
+- Keep `resolveOrCreateCustomer` for `metadata.userId` (needed for webhooks/portal).
+- Add `PaymentTestModeBanner` component; render at billing page top.
 
-7. **`src/app/api/stripe/billing-portal/route.ts`** — swap to gateway client, add `flow_data` for cancel = immediate (`cancellation_reason.enabled: true`, `subscription_cancel.mode: 'immediately'`) and `subscription_update.proration_behavior: 'always_invoice'`.
+### 5. Remove Autumn + Paystack (single source of truth)
+- Delete: `autumn.config.ts`, `src/lib/autumn/`, `src/lib/autumn-provider.tsx`, `src/app/api/autumn/`, `src/components/autumn/`, `AUTUMN_SECRET_KEY` usage.
+- Delete: `src/lib/paystack/`, `src/app/api/paystack/`, `src/components/billing/PaystackButton.tsx`, `PaymentGatewaySelector.tsx`, paystack types.
+- Rewrite `GET /api/stripe/subscription` to read only from DB (no Autumn fallback).
+- Refactor `useSubscription` to query Supabase directly (env-filtered) + subscribe to realtime changes so Stripe webhook writes reflect instantly in the UI.
+- Update `PricingTable`, `CreditPurchaseDialog`, `BillingDashboard` — drop gateway toggle.
 
-8. **`src/hooks/useSubscription.ts`** — no schema change; just make sure it reads plan from the updated `SUBSCRIPTION_PLANS`.
+### 6. Portal & upgrades (already exist — verify + patch)
+- `POST /api/stripe/subscription` already uses `proration_behavior: 'always_invoice'` — keep.
+- `/api/stripe/billing-portal` — swap to `createStripeClient(env)`, open in new tab from client.
+- Realtime: `useSubscription` subscribes to `subscriptions` table filtered by `user_id`, refetches on any change.
 
-9. **`src/components/billing/PricingTable.tsx`** and **`CreditPurchaseDialog.tsx`** — pass the new price IDs; no UI change.
+### 7. Analytics + emails (already wired in webhook)
+Keep the existing `plan_started` / `plan_changed` / `plan_canceled` / `credits_purchased` events and `sendWelcomeEmail`. Add a `plan_started` event on the signup free-tier insert too.
 
-10. **Delete unused env vars** (docs update only): `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_*_PRICE_ID*`. Keep `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` swapped for `NEXT_PUBLIC_PAYMENTS_CLIENT_TOKEN` (auto-set by Lovable in `.env.development`).
+## Files touched
+- **Create**: DB migration (env columns + free-tier default), `src/lib/stripe/env.ts`, `src/components/billing/PaymentTestModeBanner.tsx`, auth hook update
+- **Rewrite**: `src/app/api/stripe/checkout/route.ts`, `src/app/api/stripe/subscription/route.ts`, `src/app/api/stripe/billing-portal/route.ts`, `src/hooks/useSubscription.ts`, `src/components/billing/PricingTable.tsx`, `src/components/billing/BillingDashboard.tsx`, `src/components/billing/CreditPurchaseDialog.tsx`
+- **Delete**: `autumn.config.ts`, `src/lib/autumn*`, `src/app/api/autumn/`, `src/components/autumn/`, `src/lib/paystack/`, `src/app/api/paystack/`, `src/components/billing/PaystackButton.tsx`, `src/components/billing/PaymentGatewaySelector.tsx`
 
-## Business logic mapping (your answers)
+## Test plan (preview)
 
-| Event | Action |
+### Setup
+1. Sign in as a **new** user via `/en/auth` — confirm a `subscriptions` row appears with `plan_id='free'`, `environment='sandbox'`.
+2. Confirm the orange test-mode banner shows at the top of `/en/app/billing`.
+
+### Subscribe (Pro)
+1. Billing page → "Upgrade to Pro" (USD).
+2. Embedded Stripe form loads. Card: `4242 4242 4242 4242`, exp `12/34`, CVC `123`, ZIP `10001`.
+3. Return page → billing dashboard refreshes automatically (realtime): plan shows Pro, `plan_started` in server logs, welcome email logged, 1000 AI credits granted.
+
+### Upgrade (Pro → Enterprise)
+1. Click "Upgrade to Enterprise". Immediate switch; a prorated invoice appears in Stripe dashboard.
+2. Billing card updates without page reload; `plan_changed` in logs; AI credits topped up to 10000.
+
+### Downgrade (Enterprise → Free)
+1. Click "Cancel plan". Confirms → `DELETE /api/stripe/subscription` → immediate revoke.
+2. Row flips to `plan_id='free'`, `status='canceled'`; `plan_canceled` in logs. Enterprise-gated pages become locked immediately.
+
+### Credit pack
+1. "Buy 500 credits" → embedded checkout → `4242…`.
+2. Return: balance +500, `credits_purchased` in logs, row in `credit_purchases`. Re-submitting same session doesn't double-grant (idempotent by session id).
+
+### VAT (EU)
+1. Switch currency to EUR, use card `4000 0025 0000 0000 0053` (Cyprus BIN) or set billing country CY → 19% VAT calculated by Stripe automatically. Statement descriptor shows `LINK.COM* …`.
+
+### Failure paths
+- Decline: `4000 0000 0000 0002` → checkout shows error, no DB write.
+- 3DS: `4000 0025 0000 3155` → challenge shown inline.
+
+### Test-card cheat sheet
+| Purpose | Number |
 |---|---|
-| Subscription active | Upsert row · grant `plan.limits.aiCredits` · send welcome email · analytics `plan_started` |
-| Subscription canceled | Immediate revoke: status=canceled, period_end=now, downgrade to Free · analytics `plan_canceled` |
-| Plan upgrade/downgrade | Stripe portal with `proration_behavior: 'always_invoice'` → immediate switch + prorated invoice · webhook updates row · analytics `plan_changed` |
-| Credit pack purchase | Grant credits on `checkout.session.completed` (idempotent by `session.id`) · analytics `credits_purchased` |
+| Success | 4242 4242 4242 4242 |
+| Decline | 4000 0000 0000 0002 |
+| 3DS required | 4000 0025 0000 3155 |
+| Insufficient funds | 4000 0000 0000 9995 |
 
-## Out of scope (this pass)
-
-- Migrating existing BYOK subscribers (none in test).
-- Removing the Paystack flow (kept as alt provider).
-- Autumn credits sync — will call existing `/api/credits/award` internally from the webhook instead of duplicating logic.
-
-## Verification
-
-- Curl the webhook path with a signed payload to confirm signature verification.
-- Open PricingTable in preview → checkout with test card `4242 4242 4242 4242` → confirm row in `subscriptions` + credits granted + email logged.
-- Cancel via portal → confirm immediate revoke.
-- Upgrade Pro → Enterprise via portal → confirm prorated invoice + new limits.
-
-Confirm and I'll implement.
+Any future expiry, any 3-digit CVC, any ZIP.
