@@ -7,7 +7,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
-import { PricingTable as AutumnPricingTable } from "@/components/billing/PricingTable";
+import { PricingTable } from "@/components/billing/PricingTable";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
 import { useCurrency } from "@/contexts/CurrencyContext";
@@ -468,7 +468,7 @@ function SettingsContent() {
                 {t("upgradeSubtitle")}
               </p>
             </div>
-            <AutumnPricingTable />
+            <PricingTable />
           </motion.div>
         </motion.div>
       )}
