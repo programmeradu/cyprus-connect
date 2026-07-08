@@ -84,12 +84,21 @@ function determine(listed: boolean, employees: number, turnover: number, balance
   return { regime: "none", firstReport: "—", covering: "—" };
 }
 
+import { usePersistedState } from "@/hooks/usePersistedState";
+
 export default function CsrdVsmeChecker({ locale }: Props) {
   const l = t[locale];
-  const [listed, setListed] = useState(false);
-  const [employees, setEmployees] = useState(75);
-  const [turnover, setTurnover] = useState(12);
-  const [balance, setBalance] = useState(6);
+  const [state, setState] = usePersistedState("verdeiq.calc.csrd", {
+    listed: false,
+    employees: 75,
+    turnover: 12,
+    balance: 6,
+  });
+  const { listed, employees, turnover, balance } = state;
+  const setListed = (v: boolean) => setState((s) => ({ ...s, listed: v }));
+  const setEmployees = (v: number) => setState((s) => ({ ...s, employees: v }));
+  const setTurnover = (v: number) => setState((s) => ({ ...s, turnover: v }));
+  const setBalance = (v: number) => setState((s) => ({ ...s, balance: v }));
 
   const result = useMemo(() => determine(listed, employees, turnover, balance), [listed, employees, turnover, balance]);
   const regimeInfo = l.regimes[result.regime];
