@@ -6,7 +6,7 @@ import { useCurrencyFormatter } from "@/hooks/useCurrencyFormatter";
 interface CurrencyDisplayProps {
   amount: number;
   fromCurrency?: string;
-  /** Override locale; defaults to the active next-intl locale (el → el-GR, en → en-US). */
+  /** Override locale; defaults to the active next-intl locale (el → el-GR, en → en-GB). */
   locale?: string;
   className?: string;
   showOriginal?: boolean;

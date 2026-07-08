@@ -64,7 +64,7 @@ export function generateSustainabilityReport(data: ReportData): jsPDF {
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...grayColor);
   doc.text(`Report Generated: ${data.reportDate}`, 20, 72);
-  doc.text(`Period: ${new Date(data.periodYear, data.periodMonth - 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })}`, 20, 78);
+  doc.text(`Period: ${new Date(data.periodYear, data.periodMonth - 1).toLocaleString('en-GB', { month: 'long', year: 'numeric' })}`, 20, 78);
 
   // Summary Cards Section
   let yPosition = 90;

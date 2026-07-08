@@ -716,7 +716,7 @@
         "ofCountryTotal": "of {country} total",
         "perEmployeeMetric": "Per Employee",
         "vsIndustryAvg": "vs {value} tCO₂e industry avg",
-        "perRevenue": "Per $1M Revenue",
+        "perRevenue": "Per €1M Revenue",
         "locationContext": "Location Context - {country}",
         "totalCountryEmissions": "Total Country Emissions:",
         "yourContribution": "Your Contribution:",

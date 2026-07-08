@@ -263,7 +263,7 @@ export const BillingDashboard = () => {
                 </span>
                 {currentSubscription.price > 0 && (
                   <span className="text-muted-foreground text-xs">
-                    ${currentSubscription.price}/{t(`intervals.${(currentSubscription.interval as 'month' | 'year') || 'month'}`)}
+                    €{currentSubscription.price}/{t(`intervals.${(currentSubscription.interval as 'month' | 'year') || 'month'}`)}
                   </span>
                 )}
               </div>
