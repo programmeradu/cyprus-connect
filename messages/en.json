@@ -1569,5 +1569,64 @@
       "ABOVE_AVERAGE": "Above Average",
       "NEEDS_IMPROVEMENT": "Needs Improvement"
     }
+  },
+  "complianceChecker": {
+    "title": "Compliance Check",
+    "subtitle": "CSRD & ESRS requirements",
+    "proFeature": "Professional Feature",
+    "proBlurb": "Automated CSRD, ESRS, and VSME compliance tracking for your organization",
+    "upgradeCta": "Upgrade to Professional",
+    "country": "Country",
+    "industry": "Industry",
+    "select": "Select",
+    "employees": "Employees",
+    "revenue": "Revenue ($)",
+    "assets": "Assets ($)",
+    "fillAll": "Please fill in all fields",
+    "failed": "Failed to check compliance",
+    "unknownError": "Unknown error",
+    "checking": "Checking...",
+    "checkStatus": "Check Status",
+    "complianceStatus": "Compliance Status",
+    "csrdScope": "CSRD Scope",
+    "vsme": "VSME",
+    "reporting": "Reporting",
+    "inScope": "In Scope",
+    "exempt": "Exempt",
+    "eligible": "Eligible",
+    "notEligible": "Not Eligible",
+    "mandatory": "Mandatory",
+    "optional": "Optional",
+    "reportingDeadline": "Reporting Deadline",
+    "dataPoints": "Data Points",
+    "applicableFrameworks": "Applicable Frameworks",
+    "level": {
+      "EXEMPT": "Exempt",
+      "VOLUNTARY": "Voluntary",
+      "MANDATORY_MEDIUM": "Required - Medium",
+      "MANDATORY_LARGE": "Required - Large"
+    },
+    "industries": {
+      "Energy & Utilities": "Energy & Utilities",
+      "Manufacturing": "Manufacturing",
+      "Retail": "Retail",
+      "Hospitality": "Hospitality",
+      "Technology & IT": "Technology & IT",
+      "Logistics & Transport": "Logistics & Transport",
+      "Food Service": "Food Service",
+      "Financial Services": "Financial Services",
+      "Healthcare": "Healthcare",
+      "Construction": "Construction",
+      "Agriculture": "Agriculture",
+      "Other": "Other"
+    },
+    "continents": {
+      "Africa": "Africa",
+      "Asia": "Asia",
+      "Europe": "Europe",
+      "North America": "North America",
+      "South America": "South America",
+      "Oceania": "Oceania"
+    }
   }
 }

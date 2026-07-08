@@ -1569,5 +1569,64 @@
       "ABOVE_AVERAGE": "Άνω Μέσου",
       "NEEDS_IMPROVEMENT": "Χρειάζεται Βελτίωση"
     }
+  },
+  "complianceChecker": {
+    "title": "Έλεγχος Συμμόρφωσης",
+    "subtitle": "Απαιτήσεις CSRD & ESRS",
+    "proFeature": "Δυνατότητα Professional",
+    "proBlurb": "Αυτοματοποιημένη παρακολούθηση συμμόρφωσης CSRD, ESRS και VSME για τον οργανισμό σας",
+    "upgradeCta": "Αναβάθμιση σε Professional",
+    "country": "Χώρα",
+    "industry": "Κλάδος",
+    "select": "Επιλέξτε",
+    "employees": "Εργαζόμενοι",
+    "revenue": "Έσοδα ($)",
+    "assets": "Ενεργητικό ($)",
+    "fillAll": "Συμπληρώστε όλα τα πεδία",
+    "failed": "Αποτυχία ελέγχου συμμόρφωσης",
+    "unknownError": "Άγνωστο σφάλμα",
+    "checking": "Έλεγχος...",
+    "checkStatus": "Έλεγχος Κατάστασης",
+    "complianceStatus": "Κατάσταση Συμμόρφωσης",
+    "csrdScope": "Εύρος CSRD",
+    "vsme": "VSME",
+    "reporting": "Αναφορά",
+    "inScope": "Εντός Εύρους",
+    "exempt": "Εξαιρείται",
+    "eligible": "Επιλέξιμο",
+    "notEligible": "Μη Επιλέξιμο",
+    "mandatory": "Υποχρεωτική",
+    "optional": "Προαιρετική",
+    "reportingDeadline": "Προθεσμία Αναφοράς",
+    "dataPoints": "Σημεία Δεδομένων",
+    "applicableFrameworks": "Ισχύοντα Πλαίσια",
+    "level": {
+      "EXEMPT": "Εξαιρείται",
+      "VOLUNTARY": "Εθελοντικά",
+      "MANDATORY_MEDIUM": "Απαιτείται - Μεσαία",
+      "MANDATORY_LARGE": "Απαιτείται - Μεγάλη"
+    },
+    "industries": {
+      "Energy & Utilities": "Ενέργεια & Κοινή Ωφέλεια",
+      "Manufacturing": "Μεταποίηση",
+      "Retail": "Λιανική",
+      "Hospitality": "Φιλοξενία",
+      "Technology & IT": "Τεχνολογία & IT",
+      "Logistics & Transport": "Εφοδιαστική & Μεταφορές",
+      "Food Service": "Εστίαση",
+      "Financial Services": "Χρηματοοικονομικές Υπηρεσίες",
+      "Healthcare": "Υγεία",
+      "Construction": "Κατασκευές",
+      "Agriculture": "Γεωργία",
+      "Other": "Άλλο"
+    },
+    "continents": {
+      "Africa": "Αφρική",
+      "Asia": "Ασία",
+      "Europe": "Ευρώπη",
+      "North America": "Βόρεια Αμερική",
+      "South America": "Νότια Αμερική",
+      "Oceania": "Ωκεανία"
+    }
   }
 }
