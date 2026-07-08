@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSessionState } from "@/hooks/usePersistedState";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 
 type PillarCard = {
   slug: string;
@@ -43,9 +44,9 @@ const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
   az: { en: "A–Z", el: "Α–Ω" },
 };
 
-const SERIF: React.CSSProperties = {
-  fontFamily: "var(--editorial-serif, ui-serif, Georgia, 'Times New Roman', serif)",
-  fontFeatureSettings: '"ss01", "ss02"',
+const SANS: React.CSSProperties = {
+  fontFamily: "var(--editorial-sans)",
+  fontFeatureSettings: '"ss01", "ss02", "cv11"',
 };
 
 export default function LearnHubClient({
