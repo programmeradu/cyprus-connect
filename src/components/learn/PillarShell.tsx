@@ -340,7 +340,9 @@ export default function PillarShell({
                   </details>
                 ))}
               </div>
+              {afterFaq}
             </section>
+
 
             {/* CTA */}
             <section className="mt-20 overflow-hidden rounded-3xl border bg-gradient-to-br from-primary via-primary to-primary/80 p-8 text-primary-foreground shadow-lg sm:p-12">
