@@ -684,11 +684,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Real-Time Monitoring
+                  {tL("benefitMonitorTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Track your carbon footprint, energy consumption, and waste metrics 
-                  with live dashboards and instant alerts.
+                  {tL("benefitMonitorDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
