@@ -59,31 +59,40 @@ export default function RelatedSuggestions({ currentSlug, locale, context, keywo
   return (
     <aside
       aria-label={heading}
-      className="not-prose my-8 rounded-2xl border border-dashed bg-gradient-to-br from-primary/5 to-transparent p-5"
+      className="not-prose my-10 border-t border-foreground/15 pt-6"
     >
-      <p className="mb-3 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-        <Sparkles className="h-3 w-3" />
+      <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
         {heading}
       </p>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {scored.map(({ p }) => {
+      <div className="grid gap-0 divide-y divide-foreground/10 border-b border-foreground/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        {scored.map(({ p }, i) => {
           const c = p[locale];
           return (
             <Link
               key={p.slug}
               href={`/${locale}/learn/${p.slug}`}
-              className="group flex items-center gap-3 rounded-xl border bg-card p-3 transition hover:border-primary/50 hover:shadow-sm"
+              className={`group flex items-start gap-4 py-4 transition hover:bg-foreground/[0.02] ${i === 0 ? "sm:pr-6" : "sm:pl-6"}`}
             >
-              <div className="relative h-12 w-16 flex-none overflow-hidden rounded-lg bg-muted">
-                <Image src={p.heroImage} alt="" fill sizes="64px" className="object-cover" />
+              <span className="mt-1 tabular-nums text-[11px] font-semibold text-foreground/40">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className="relative h-14 w-20 flex-none overflow-hidden bg-muted">
+                <Image src={p.heroImage} alt="" fill sizes="80px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-primary">{c.heroEyebrow}</p>
-                <p className="mt-0.5 line-clamp-2 text-sm font-medium leading-snug group-hover:text-primary">
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/50">
+                  {c.heroEyebrow}
+                </p>
+                <p className="mt-1.5 line-clamp-2 text-[14.5px] font-semibold leading-[1.35] tracking-[-0.01em] text-foreground group-hover:underline group-hover:underline-offset-4">
                   {c.title}
                 </p>
               </div>
-              <ArrowUpRight className="h-3.5 w-3.5 flex-none text-muted-foreground transition group-hover:text-primary" />
+              <span
+                aria-hidden
+                className="mt-1 shrink-0 text-[18px] leading-none text-foreground/40 transition group-hover:translate-x-0.5 group-hover:text-foreground"
+              >
+                →
+              </span>
             </Link>
           );
         })}
