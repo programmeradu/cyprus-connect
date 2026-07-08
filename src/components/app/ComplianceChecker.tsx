@@ -207,13 +207,7 @@ export function ComplianceChecker() {
   };
 
   const getComplianceLevelBadge = (level: string) => {
-    const labels = {
-      EXEMPT: 'Exempt',
-      VOLUNTARY: 'Voluntary',
-      MANDATORY_MEDIUM: 'Required - Medium',
-      MANDATORY_LARGE: 'Required - Large',
-    };
-    return labels[level as keyof typeof labels] || level;
+    return t(`level.${level}` as any);
   };
 
   // Show loading state
