@@ -1072,10 +1072,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Industry Benchmarking
+                  {tL("powerBenchmarkTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Compare your emissions against industry peers. Competitive insights that drive action and show where you stand in your sector.
+                  {tL("powerBenchmarkDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
