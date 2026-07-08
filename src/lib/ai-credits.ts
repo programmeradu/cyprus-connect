@@ -80,9 +80,10 @@ export async function checkAndDeductAiCredits(
     .values({
       userId,
       amount: -amount,
-      reason: `ai:${reason}`,
+      source: 'ai',
+      description: `ai:${reason}`,
       createdAt: new Date().toISOString(),
-    } as any)
+    })
     .catch(() => {
       /* audit log is optional */
     });
