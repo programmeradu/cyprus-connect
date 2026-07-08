@@ -11,6 +11,7 @@ import { PricingTable } from "@/components/billing/PricingTable";
 
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 
 export default function PricingPage() {
   const { data: session } = useSession();
@@ -148,6 +149,9 @@ export default function PricingPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Learn / Knowledge Hub — internal linking to top pillar pages */}
+      <LearnLinksSection />
 
       {/* Footer */}
       <footer className="border-t border-border/30 py-6 px-4">
