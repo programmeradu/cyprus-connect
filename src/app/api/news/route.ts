@@ -224,7 +224,7 @@ export async function GET(request: Request) {
         const decoder = new TextDecoder();
         let html = '';
         let bytes = 0;
-        while (bytes < 200_000) {
+        while (bytes < 900_000) {
           const { done, value } = await reader.read();
           if (done) break;
           bytes += value.length;
