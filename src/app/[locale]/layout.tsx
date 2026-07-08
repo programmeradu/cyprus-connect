@@ -7,7 +7,8 @@ import { SiteFooter } from "@/components/legal/SiteFooter";
 import { CookieBanner } from "@/components/legal/CookieBanner";
 import { ConsentedAnalytics } from "@/components/legal/ConsentedAnalytics";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -49,13 +50,13 @@ export async function generateMetadata({
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       alternateLocale: safeLocale === "el" ? ["en_US"] : ["el_CY"],
       type: "website",
-      images: [{ url: "/og-image.png", width: 1200, height: 630, alt: title }],
+      images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["/og-image.png"],
+      images: [OG_IMAGE],
     },
   };
 }
@@ -75,9 +76,58 @@ export default async function LocaleLayout({
 
   setRequestLocale(locale);
   const messages = await getMessages();
+  const t = await getTranslations({ locale, namespace: "seo.home" });
+  const inLanguage = locale === "el" ? "el-CY" : "en";
+
+  const organizationLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "VerdeIQ",
+    url: `${SITE_URL}/${locale}`,
+    logo: `${SITE_URL}/icon.png`,
+    description: t("description"),
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "CY",
+    },
+    areaServed: ["CY", "EU"],
+    sameAs: [] as string[],
+  };
+
+  const websiteLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "VerdeIQ",
+    url: `${SITE_URL}/${locale}`,
+    inLanguage,
+    publisher: { "@type": "Organization", name: "VerdeIQ" },
+  };
+
+  const serviceLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "VerdeIQ Sustainability Platform",
+    provider: { "@type": "Organization", name: "VerdeIQ" },
+    areaServed: ["CY", "EU"],
+    serviceType: "AI-powered ESG, carbon accounting and CSRD/VSME reporting for SMEs",
+    description: t("description"),
+    url: `${SITE_URL}/${locale}`,
+  };
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }}
+      />
       {children}
       <SiteFooter />
       <CookieBanner />
@@ -85,3 +135,4 @@ export default async function LocaleLayout({
     </NextIntlClientProvider>
   );
 }
+
