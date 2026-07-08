@@ -247,7 +247,7 @@ export default function Home() {
 
                 
                 <div className="relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6">
-                  <DashboardDemo />
+                  <DashboardDemo landingMode />
                 </div>
               </div>
             </motion.div>
@@ -292,7 +292,7 @@ export default function Home() {
               
               {/* Text with custom styling */}
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Platform Features
+                {tL("badgePlatform")}
               </span>
               
               {/* Animated underline */}
@@ -424,11 +424,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  AI-Powered Analytics
+                  {tL("benefitAiTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Leverage advanced machine learning to uncover sustainability opportunities 
-                  and optimize your environmental impact in real-time.
+                  {tL("benefitAiDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -538,11 +537,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Automated Reporting
+                  {tL("benefitReportTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Generate compliance-ready sustainability reports automatically. 
-                  Meet regulatory requirements effortlessly with standardized formats.
+                  {tL("benefitReportDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -686,11 +684,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Real-Time Monitoring
+                  {tL("benefitMonitorTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Track your carbon footprint, energy consumption, and waste metrics 
-                  with live dashboards and instant alerts.
+                  {tL("benefitMonitorDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -727,7 +724,7 @@ export default function Home() {
                   transition={{ duration: 2, repeat: Infinity }} />
               </motion.svg>
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Advanced Insights
+                {tL("badgeAdvanced")}
               </span>
               <motion.div
                 className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
@@ -871,10 +868,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Energy Cost Savings
+                  {tL("powerEnergyTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Calculate real savings from efficiency improvements with real-time energy prices and carbon intensity data. See ROI in months, not years.
+                  {tL("powerEnergyDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -1075,10 +1072,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Industry Benchmarking
+                  {tL("powerBenchmarkTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Compare your emissions against industry peers. Competitive insights that drive action and show where you stand in your sector.
+                  {tL("powerBenchmarkDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -1303,10 +1300,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Compliance Checker
+                  {tL("powerComplianceTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Reduce legal and compliance anxiety. Automated CSRD, ESRS, and VSME requirement tracking keeps you ahead of regulatory changes.
+                  {tL("powerComplianceDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -1395,10 +1392,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Smart Integrations
+                  {tL("powerIntegrationsTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Seamlessly connect QuickBooks, Xero, and more. Use AI-powered OCR to automatically parse utility bills and invoices for instant tracking.
+                  {tL("powerIntegrationsDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
@@ -1435,7 +1432,7 @@ export default function Home() {
                   transition={{ duration: 2, repeat: Infinity }} />
               </motion.svg>
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Full Ecosystem
+                {tL("badgeEcosystem")}
               </span>
               <motion.div
                 className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
@@ -1684,7 +1681,7 @@ export default function Home() {
               className="flex flex-col items-center gap-8"
             >
               <span className="text-[10px] font-bold tracking-[0.2em] text-foreground/60 dark:text-muted-foreground uppercase">
-                Seamlessly Integrated With
+                {tL("integratedWith")}
               </span>
               
               <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-80 dark:opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
@@ -1809,7 +1806,7 @@ export default function Home() {
               
               {/* Text with custom styling */}
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Simple Process
+                {tL("badgeSimple")}
               </span>
               
               {/* Animated underline */}
@@ -1860,8 +1857,8 @@ export default function Home() {
             {[
             {
               number: 1,
-              title: "Connect Your Data",
-              description: "Connect QuickBooks, Xero, or upload utility bills via AI-powered OCR. We integrate with your current infrastructure in minutes.",
+              title: tL("stepConnectTitle"),
+              description: tL("stepConnectDesc"),
               icon:
               <svg viewBox="0 0 100 100" className="w-12 h-12">
                     <motion.path
@@ -1888,8 +1885,8 @@ export default function Home() {
             },
             {
               number: 2,
-              title: "AI Analyzes & Learns",
-              description: "Our AI engine processes your data, identifies patterns, and provides actionable sustainability insights.",
+              title: tL("stepAnalyzeTitle"),
+              description: tL("stepAnalyzeDesc"),
               icon:
               <svg viewBox="0 0 100 100" className="w-12 h-12">
                     <motion.circle
@@ -1916,8 +1913,8 @@ export default function Home() {
             },
             {
               number: 3,
-              title: "Take Action & Report",
-              description: "Implement recommendations, track progress, and generate professional reports for stakeholders.",
+              title: tL("stepActionTitle"),
+              description: tL("stepActionDesc"),
               icon:
               <svg viewBox="0 0 100 100" className="w-12 h-12">
                     <motion.path
@@ -2053,7 +2050,7 @@ export default function Home() {
               
               {/* Text with custom styling */}
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Customer Stories
+                {tL("badgeStories")}
               </span>
               
               {/* Animated underline */}
@@ -2123,8 +2120,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}>
 
-                "VerdeIQ transformed how we approach sustainability. The AI insights 
-                helped us <span className="gradient-text">reduce our carbon footprint by 40%</span> in just six months."
+                "{tL("testimonialQuoteA")}{" "}
+                <span className="gradient-text">{tL("testimonialImpact")}</span> {tL("testimonialQuoteB")}"
               </motion.p>
               
               <motion.div
@@ -2134,8 +2131,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.7 }}>
 
-                <p className="font-bold text-sm">Sarah Chen</p>
-                <p className="text-foreground/60 dark:text-muted-foreground text-xs font-light">CEO, EcoTech Solutions</p>
+                <p className="font-bold text-sm">{tL("testimonialAuthor")}</p>
+                <p className="text-foreground/60 dark:text-muted-foreground text-xs font-light">{tL("testimonialRole")}</p>
               </motion.div>
             </div>
           </motion.div>
@@ -2175,15 +2172,15 @@ export default function Home() {
             
             <div className="relative z-10">
               <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
-                Ready to Lead on <span className="gradient-text">Sustainability?</span>
+                {tL("ctaTitleA")} <span className="gradient-text">{tL("ctaTitleB")}</span>
               </h2>
               <p className="text-sm text-foreground/70 dark:text-muted-foreground mb-6 font-light max-w-xl mx-auto">
-                Join the future of sustainable business today
+                {tL("ctaSubtitle")}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/auth">
                   <PremiumButton size="sm" className="text-xs px-5 py-2">
-                    Start Your Free Trial
+                    {tL("ctaStart")}
                     <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -2191,7 +2188,7 @@ export default function Home() {
                 </Link>
                 <Link href="/pricing">
                   <PremiumButton variant="outline" size="sm" className="text-xs px-5 py-2">
-                    View Pricing Plans
+                    {tL("ctaPricing")}
                   </PremiumButton>
                 </Link>
               </div>

@@ -569,7 +569,11 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
   return null
 }
 
-export const DashboardDemo = () => {
+interface DashboardDemoProps {
+  landingMode?: boolean;
+}
+
+export const DashboardDemo = ({ landingMode = false }: DashboardDemoProps) => {
   const t = useTranslations("dashboardDemo")
   // Random tab selection on mount
   useEffect(() => {
@@ -581,20 +585,28 @@ export const DashboardDemo = () => {
   const [activeTab, setActiveTab] = useState<TabType>("carbon")
   const [loading, setLoading] = useState(false)
   
-  // Carbon Analyzer State
-  const [carbonInput, setCarbonInput] = useState({ electricity: "", transport: "", waste: "" })
+  // Carbon Analyzer State — Cyprus-locked defaults on landing
+  const [carbonInput, setCarbonInput] = useState(
+    landingMode
+      ? { electricity: "12000", transport: "8500", waste: "450" }
+      : { electricity: "", transport: "", waste: "" }
+  )
   const [carbonResult, setCarbonResult] = useState("")
   const [carbonAnalyzing, setCarbonAnalyzing] = useState(false)
   
-  // Report Generator State - UPDATED with more fields
-  const [reportInput, setReportInput] = useState({ 
-    company: "", 
-    industry: "", 
-    period: "",
-    location: "",
-    employees: "",
-    targetYear: ""
-  })
+  // Report Generator State - UPDATED with more fields (Cyprus defaults on landing)
+  const [reportInput, setReportInput] = useState(
+    landingMode
+      ? {
+          company: "Aegean SME Ltd",
+          industry: "Hospitality",
+          period: "2025 Annual",
+          location: "Nicosia, Cyprus",
+          employees: "45",
+          targetYear: "2030",
+        }
+      : { company: "", industry: "", period: "", location: "", employees: "", targetYear: "" }
+  )
   const [reportResult, setReportResult] = useState("")
   const [reportGenerating, setReportGenerating] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
@@ -603,10 +615,14 @@ export const DashboardDemo = () => {
   const [news, setNews] = useState<NewsItem[]>([])
   const [newsLoading, setNewsLoading] = useState(false)
   
-  // Weather State
+  // Weather State — Cyprus (Nicosia) default on landing so no geolocation prompt
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [weatherLoading, setWeatherLoading] = useState(false)
-  const [location, setLocation] = useState({ city: "Detecting...", lat: "", lon: "" })
+  const [location, setLocation] = useState(
+    landingMode
+      ? { city: "Nicosia", lat: "35.1856", lon: "33.3823" }
+      : { city: "Detecting...", lat: "", lon: "" }
+  )
   const [expandedWidget, setExpandedWidget] = useState<ExpandedWidget>(null)
   const [locationError, setLocationError] = useState(false)
   
@@ -707,6 +723,12 @@ export const DashboardDemo = () => {
   }, [weather, activeTab])
 
   const getUserLocation = () => {
+    // On the landing page we lock everything to Cyprus (Nicosia) so no
+    // geolocation prompt appears and the demo shows Cyprus-relevant data.
+    if (landingMode) {
+      setLocation({ city: "Nicosia", lat: "35.1856", lon: "33.3823" })
+      return
+    }
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -746,7 +768,8 @@ export const DashboardDemo = () => {
   const fetchNews = async () => {
     setNewsLoading(true)
     try {
-      const response = await fetch('/api/news')
+      const url = landingMode ? '/api/news?country=cy' : '/api/news'
+      const response = await fetch(url)
       const data = await response.json()
       setNews(data.items || [])
     } catch (error) {

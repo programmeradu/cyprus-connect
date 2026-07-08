@@ -32,19 +32,27 @@ function decodeHTMLEntities(text: string): string {
   return text;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Using Grist environmental news RSS feed
-    const response = await fetch('https://grist.org/feed/', {
+    const { searchParams } = new URL(request.url);
+    const country = (searchParams.get('country') || '').toLowerCase();
+
+    // Cyprus-specific news via Google News RSS (sustainability + Cyprus)
+    // Fallback to Grist for global news
+    const feedUrl = country === 'cy'
+      ? 'https://news.google.com/rss/search?q=(Cyprus+OR+%CE%9A%CF%8D%CF%80%CF%81%CE%BF%CF%82)+(sustainability+OR+climate+OR+energy+OR+renewable+OR+solar+OR+emissions+OR+ESG)&hl=en-CY&gl=CY&ceid=CY:en'
+      : 'https://grist.org/feed/';
+
+    const response = await fetch(feedUrl, {
       headers: {
         'User-Agent': 'VerdeIQ/1.0'
       }
     });
-    
+
     if (!response.ok) {
       throw new Error('News feed request failed');
     }
-    
+
     const xmlText = await response.text();
     
     // More robust XML parsing for RSS
