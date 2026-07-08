@@ -5,7 +5,8 @@
  * Rough only — CBAM certificate price ≈ weekly EU ETS average.
  */
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { usePersistedState } from "@/hooks/usePersistedState";
 import { Info } from "lucide-react";
 
 type Props = { locale: "en" | "el" };
@@ -49,10 +50,15 @@ const t = {
 
 export default function CbamEstimator({ locale }: Props) {
   const l = t[locale];
-  const [product, setProduct] = useState<ProductKey>("steel");
-  const [tonnes, setTonnes] = useState(500);
-  const [ets, setEts] = useState(85);
-  const [phaseOut, setPhaseOut] = useState(50);
+  const [state, setState] = usePersistedState<{ product: ProductKey; tonnes: number; ets: number; phaseOut: number }>(
+    "verdeiq.calc.cbam",
+    { product: "steel", tonnes: 500, ets: 85, phaseOut: 50 }
+  );
+  const { product, tonnes, ets, phaseOut } = state;
+  const setProduct = (v: ProductKey) => setState((s) => ({ ...s, product: v }));
+  const setTonnes = (v: number) => setState((s) => ({ ...s, tonnes: v }));
+  const setEts = (v: number) => setState((s) => ({ ...s, ets: v }));
+  const setPhaseOut = (v: number) => setState((s) => ({ ...s, phaseOut: v }));
 
   const { emissions, cost } = useMemo(() => {
     const intensity = PRODUCTS[product].intensity;

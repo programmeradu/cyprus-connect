@@ -5,7 +5,8 @@
  * Not a certified tool — indicative estimates using rounded 2024 UK/EU DEFRA-style factors.
  */
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { usePersistedState } from "@/hooks/usePersistedState";
 import { Info, Flame, Zap, Truck } from "lucide-react";
 
 type Props = { locale: "en" | "el" };

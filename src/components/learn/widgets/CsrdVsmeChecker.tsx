@@ -6,7 +6,7 @@
  * Determines which regime (CSRD wave 1-4 or VSME voluntary) applies + first reporting year.
  */
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CheckCircle2, AlertCircle, Info } from "lucide-react";
 
 type Props = { locale: "en" | "el" };
