@@ -38,13 +38,13 @@ export function PaystackButton({
 
   const handlePayment = async () => {
     if (!session?.user) {
-      toast.error("Please sign in to continue");
+      toast.error(t("signInRequired"));
       router.push("/auth");
       return;
     }
 
     if (!PAYSTACK_PUBLIC_KEY) {
-      toast.error("Paystack is not configured");
+      toast.error(t("notConfigured"));
       return;
     }
 
@@ -60,7 +60,7 @@ export function PaystackButton({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to initialize payment");
+        throw new Error(data.error || t("initFailed"));
       }
 
       initializePaystackPayment({
@@ -70,7 +70,7 @@ export function PaystackButton({
         ref: data.reference,
         currency,
         onSuccess: async (transaction) => {
-          toast.loading("Verifying payment...");
+          toast.loading(t("verifying"));
           
           try {
             const verifyRes = await fetch(`/api/paystack/verify?reference=${transaction.reference}`);
@@ -78,25 +78,25 @@ export function PaystackButton({
 
             if (verifyData.success) {
               toast.dismiss();
-              toast.success("Payment successful!");
+              toast.success(t("success"));
               router.refresh();
               router.push("/app/settings?tab=billing&success=true");
             } else {
               toast.dismiss();
-              toast.error(verifyData.message || "Payment verification failed");
+              toast.error(verifyData.message || t("verifyFailed"));
             }
           } catch {
             toast.dismiss();
-            toast.error("Failed to verify payment");
+            toast.error(t("verifyError"));
           }
         },
         onCancel: () => {
-          toast.info("Payment cancelled");
+          toast.info(t("cancelled"));
         },
       });
     } catch (error) {
       console.error("Paystack error:", error);
-      toast.error(error instanceof Error ? error.message : "Payment failed");
+      toast.error(error instanceof Error ? error.message : t("failed"));
     } finally {
       setLoading(false);
     }
