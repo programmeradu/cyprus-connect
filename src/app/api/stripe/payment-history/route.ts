@@ -31,10 +31,8 @@ export async function GET(req: NextRequest) {
           : payment.metadata)
         : {};
       
-      const gateway = metadata.gateway || 
+      const gateway = metadata.gateway ||
                      (payment.stripePaymentId?.startsWith('pi_') ? 'stripe' :
-                      payment.stripePaymentId?.startsWith('paystack_') ? 'paystack' :
-                      
                       'stripe');
 
       return {
