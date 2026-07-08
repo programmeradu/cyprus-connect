@@ -1913,8 +1913,8 @@ export default function Home() {
             },
             {
               number: 3,
-              title: "Take Action & Report",
-              description: "Implement recommendations, track progress, and generate professional reports for stakeholders.",
+              title: tL("stepActionTitle"),
+              description: tL("stepActionDesc"),
               icon:
               <svg viewBox="0 0 100 100" className="w-12 h-12">
                     <motion.path
