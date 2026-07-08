@@ -84,6 +84,30 @@ export default function LearnHubClient({
     return sorted;
   }, [pillars, q, cat, sort, interactiveOnly, locale]);
 
+  const featured = useMemo(
+    () => [...pillars].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3),
+    [pillars]
+  );
+  const grouped = useMemo(() => {
+    const map = new Map<string, PillarCard[]>();
+    for (const p of filtered) {
+      const arr = map.get(p.category) ?? [];
+      arr.push(p);
+      map.set(p.category, arr);
+    }
+    return map;
+  }, [filtered]);
+
+  const showFeatured = q === "" && cat === "all" && !interactiveOnly && sort === "recommended";
+  const hasActiveFilters = q !== "" || cat !== "all" || interactiveOnly || sort !== "recommended";
+  const clearAll = () => {
+    setQ("");
+    setCat("all");
+    setInteractiveOnly(false);
+    setSort("recommended");
+  };
+
+
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-14 sm:px-6 sm:pt-20">
@@ -106,7 +130,7 @@ export default function LearnHubClient({
       </header>
 
       {/* Featured trio */}
-      {q === "" && cat === "all" && (
+      {showFeatured && (
         <section className="mb-16">
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">
             {featuredLabel}
