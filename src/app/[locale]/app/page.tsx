@@ -14,7 +14,7 @@ import { EnergyCostCalculator } from "@/components/app/EnergyCostCalculator";
 import { BenchmarkComparator } from "@/components/app/BenchmarkComparator";
 import { ComplianceChecker } from "@/components/app/ComplianceChecker";
 import { formatDate, formatRelativeTime } from "@/lib/timezone-formatter";
-import { useCustomer } from "autumn-js/react";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Sparkles, Crown, Zap as ZapIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -88,7 +88,7 @@ export default function DashboardPage() {
   const { data: session, isPending } = useSession();
   const { user: contextUser, isLoading: isUserLoading } = useUser();
   const router = useRouter();
-  const { customer, isLoading: isCustomerLoading } = useCustomer();
+  const { plan, isLoading: isCustomerLoading } = useSubscription();
   const [hasCheckedOnboarding, setHasCheckedOnboarding] = useState(false);
   const [metrics, setMetrics] = useState<DashboardMetric[]>([]);
   const [historicalData, setHistoricalData] = useState<HistoricalData[]>([]);
@@ -267,12 +267,8 @@ export default function DashboardPage() {
     return metric?.trendPercentage ?? 0;
   };
 
-  // Get plan info for badge - prioritize subscriptions over credits
-  const subscription = customer?.products?.find(p => {
-    const name = p.name?.toLowerCase() || '';
-    return name.includes('pro') || name.includes('enterprise') || name.includes('subscription');
-  });
-  const planName = subscription?.name || t("freePlan");
+  // Get plan info for badge
+  const planName = plan?.id && plan.id !== 'free' ? plan.name : t("freePlan");
 
   if (isPending || isUserLoading || isLoading) {
     return (
