@@ -179,7 +179,7 @@ export function ComplianceChecker() {
 
   const handleCheck = async () => {
     if (!smeData.employees || !smeData.annualRevenue || !smeData.totalAssets || !smeData.country || !smeData.industry) {
-      setError('Please fill in all fields');
+      setError(t('fillAll'));
       return;
     }
 
