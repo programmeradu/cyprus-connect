@@ -27,10 +27,10 @@ export default function PricingPage() {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-2">
-          <Link href="/">
-            <h1 className="text-sm font-bold gradient-text tracking-tight cursor-pointer">
+          <Link href="/" aria-label="VerdeIQ home">
+            <span className="text-sm font-bold gradient-text tracking-tight cursor-pointer">
               VerdeIQ
-            </h1>
+            </span>
           </Link>
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
             <LanguageSwitcher />
