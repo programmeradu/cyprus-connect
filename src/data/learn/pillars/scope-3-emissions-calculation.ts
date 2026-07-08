@@ -5,7 +5,7 @@ export const scope3EmissionsCalculation = makePillar({
   category: "carbon",
   primaryKeyword: "scope 3 emissions calculation",
   monthlyVolume: 0,
-  readingMinutes: 11,
+  readingMinutes: 13,
   relatedSlugs: ["scope-1-2-3-emissions","ghg-protocol-guide","carbon-accounting-for-smes","csrd-reporting-guide"],
   en: {
   "title": "How to Calculate Scope 3 Emissions: A Practical Category-by-Category Guide",
@@ -43,6 +43,22 @@ export const scope3EmissionsCalculation = makePillar({
       "body": [
         "Year 1: spend-based across all material categories. Year 2: physical activity data for top three categories, spend-based for the rest. Year 3: supplier-specific for Tier-1 suppliers in the top three categories, hybrid otherwise."
       ]
+    },
+    {
+      "heading": "Supplier data collection: the real bottleneck",
+      "body": [
+        "Every Scope 3 upgrade eventually hits the same wall — getting primary emissions data from suppliers. The tactics that actually work: (1) put an ESG data clause into new procurement contracts so it becomes a supplier obligation, not a favor; (2) send a single standardized questionnaire (VSME format is ideal) rather than a bespoke one — suppliers will already have it prepared; (3) segment suppliers by spend and start with the top 20% who typically drive 80% of category emissions.",
+        "Response rates jump from 15–25% (cold outreach) to 60–80% when the request comes from procurement rather than sustainability, and when the supplier can respond with data they've already published."
+      ]
+    },
+    {
+      "heading": "Common calculation mistakes to avoid",
+      "body": [
+        "Using EEIO factors from the wrong region: US EEIO factors on European spend systematically understate emissions by 10–20%. Use EXIOBASE or the country-specific factor set your auditor expects.",
+        "Double-counting between Category 1 (purchased goods) and Category 4 (upstream transportation) when supplier prices are CIF vs. FOB. Document the boundary in your inventory methodology.",
+        "Ignoring Category 3 (fuel- and energy-related activities not in Scope 1/2) — the well-to-tank emissions of your electricity and fuel, which typically add 15–25% on top of Scope 1+2.",
+        "Reporting Scope 3 without a corresponding boundary map. Auditors will not accept a total figure without a breakdown of which categories were included, excluded, and why."
+      ]
     }
   ],
   "keyTakeaways": [
@@ -63,6 +79,14 @@ export const scope3EmissionsCalculation = makePillar({
     {
       "q": "When do I need supplier-specific data?",
       "a": "When a supplier's emissions materially affect your total, or when SBTi validation or a large customer specifically requires it."
+    },
+    {
+      "q": "What's a realistic supplier response rate to a Scope 3 data request?",
+      "a": "15–25% for cold outreach from sustainability teams. 60–80% when the request comes through procurement, is tied to a contract clause, and uses a standard format (VSME) instead of a bespoke questionnaire."
+    },
+    {
+      "q": "Do I have to recalculate prior years when I upgrade methodology?",
+      "a": "Only if the change is material (>5% shift in total) or if a target has been set against the prior baseline. Document the methodology change and, where material, restate the baseline year — this is standard GHG Protocol practice."
     }
   ],
   "ctaHeading": "From spend-based to supplier-specific, in one platform",
