@@ -171,7 +171,38 @@ export async function GET(request: Request) {
     // Resolve missing images from each article's og:image / twitter:image.
     // Google News RSS links redirect to the publisher; follow redirects then
     // parse meta tags. Run in parallel with a per-article timeout.
-    async function resolveOgImage(articleUrl: string): Promise<string> {
+    async function verifyImageUrl(url: string): Promise<boolean> {
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 3000);
+        let res = await fetch(url, {
+          method: 'HEAD',
+          redirect: 'follow',
+          signal: ctrl.signal,
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VerdeIQ/1.0)' },
+        });
+        // Some CDNs reject HEAD — fall back to a tiny ranged GET
+        if (!res.ok || res.status === 405) {
+          res = await fetch(url, {
+            method: 'GET',
+            redirect: 'follow',
+            signal: ctrl.signal,
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; VerdeIQ/1.0)',
+              'Range': 'bytes=0-1023',
+            },
+          });
+        }
+        clearTimeout(timer);
+        if (!res.ok) return false;
+        const ct = res.headers.get('content-type') || '';
+        return ct.toLowerCase().startsWith('image/');
+      } catch {
+        return false;
+      }
+    }
+
+    async function resolveOgImage(articleUrl: string, title: string): Promise<string> {
       try {
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), 4000);
@@ -184,8 +215,10 @@ export async function GET(request: Request) {
           },
         });
         clearTimeout(timer);
-        if (!res.ok) return '';
-        // Read only first 200KB — og tags live in <head>
+        if (!res.ok) {
+          console.log(`[news-image] ${res.status} fetch failed for "${title.slice(0, 60)}"`);
+          return '';
+        }
         const reader = res.body?.getReader();
         if (!reader) return '';
         const decoder = new TextDecoder();
@@ -199,23 +232,27 @@ export async function GET(request: Request) {
           if (html.includes('</head>')) break;
         }
         reader.cancel().catch(() => {});
-        const patterns = [
-          /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
-          /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
-          /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
-          /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
-          /<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i,
+        const patterns: Array<[string, RegExp]> = [
+          ['og:image', /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i],
+          ['og:image', /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i],
+          ['twitter:image', /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i],
+          ['twitter:image', /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i],
+          ['image_src', /<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i],
         ];
-        for (const p of patterns) {
+        for (const [field, p] of patterns) {
           const m = html.match(p);
           if (m?.[1]) {
             let url = decodeHTMLEntities(m[1].trim());
             if (url.startsWith('//')) url = 'https:' + url;
-            if (url.startsWith('http')) return url;
+            if (!url.startsWith('http')) continue;
+            const ok = await verifyImageUrl(url);
+            console.log(`[news-image] "${title.slice(0, 60)}" ← ${field} → ${ok ? 'OK' : 'INVALID'} ${url}`);
+            if (ok) return url;
           }
         }
-      } catch {
-        // timeout or network error — silent
+        console.log(`[news-image] no valid meta image for "${title.slice(0, 60)}"`);
+      } catch (e: any) {
+        console.log(`[news-image] error for "${title.slice(0, 60)}": ${e?.message || e}`);
       }
       return '';
     }
@@ -223,7 +260,7 @@ export async function GET(request: Request) {
     await Promise.all(
       items.map(async (it) => {
         if (!it.imageUrl) {
-          it.imageUrl = await resolveOgImage(it.link);
+          it.imageUrl = await resolveOgImage(it.link, it.title);
         }
       })
     );
