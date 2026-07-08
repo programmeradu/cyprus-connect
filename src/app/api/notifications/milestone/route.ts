@@ -4,7 +4,7 @@ import { sendMilestoneEmail } from '@/lib/email/notifications';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userEmail, userName, milestoneName, creditsEarned, totalCredits } = body;
+    const { userEmail, userName, milestoneName, creditsEarned, totalCredits, locale } = body;
 
     if (!userEmail || !userName || !milestoneName) {
       return NextResponse.json(
@@ -19,7 +19,9 @@ export async function POST(request: NextRequest) {
       milestoneName,
       creditsEarned: creditsEarned || 0,
       totalCredits: totalCredits || 0,
+      locale,
     });
+
 
     if (!success) {
       return NextResponse.json(
