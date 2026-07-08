@@ -180,8 +180,9 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
                   {/* Price per credit */}
                   <div className="mt-1.5 text-center text-[9px] text-muted-foreground">
-                    {t("perCredit", { price: (pkg.price / pkg.credits).toFixed(3) })}
+                    {t("perCredit", { price: perCreditLabel })}
                   </div>
+
                 </PremiumCard>
               </motion.div>
             );
