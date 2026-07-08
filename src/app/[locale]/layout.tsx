@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { SiteFooter } from "@/components/legal/SiteFooter";
 import { CookieBanner } from "@/components/legal/CookieBanner";
+import { ConsentedAnalytics } from "@/components/legal/ConsentedAnalytics";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
@@ -80,6 +81,7 @@ export default async function LocaleLayout({
       {children}
       <SiteFooter />
       <CookieBanner />
+      <ConsentedAnalytics />
     </NextIntlClientProvider>
   );
 }
