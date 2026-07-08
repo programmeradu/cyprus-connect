@@ -141,31 +141,37 @@ export async function GET(request: Request) {
         imageUrl = decodeHTMLEntities(imageUrl);
       }
       
-      // Clean and decode title - remove HTML tags first, then decode entities
-      title = title
-        .replace(/<[^>]*>/g, '')
-        .trim();
-      title = decodeHTMLEntities(title);
-      
-      // Clean and decode description - remove HTML tags, truncate, then decode entities
-      description = description
-        .replace(/<[^>]*>/g, '')
-        .trim()
-        .substring(0, 150);
-      
-      if (description.length === 150) {
-        description += '...';
+      // IMPORTANT: decode entities FIRST (Google News encodes tags as &lt;a&gt;...),
+      // then strip HTML tags, then whitespace-collapse and truncate.
+      const clean = (s: string, max?: number) => {
+        let out = decodeHTMLEntities(s);
+        // Repeat to catch double-encoded entities like &amp;lt;
+        out = decodeHTMLEntities(out);
+        out = out.replace(/<[^>]*>/g, ' ');
+        out = out.replace(/\s+/g, ' ').trim();
+        if (max && out.length > max) out = out.substring(0, max).trimEnd() + '…';
+        return out;
+      };
+
+      title = clean(title);
+      description = clean(description, 160);
+
+      // Fallback image: keyword-based Unsplash source (deterministic per title)
+      if (!imageUrl) {
+        const keywords = country === 'cy'
+          ? ['cyprus,sustainability', 'mediterranean,solar', 'renewable,energy', 'green,cyprus', 'climate,europe']
+          : ['sustainability', 'renewable-energy', 'climate', 'nature', 'green-tech'];
+        const pick = keywords[count % keywords.length];
+        imageUrl = `https://source.unsplash.com/400x300/?${pick}&sig=${count}`;
       }
-      
-      description = decodeHTMLEntities(description);
-      
+
       if (title && link) {
         items.push({
-          title: title.trim(),
-          link: link,
-          pubDate: pubDate,
+          title,
+          link,
+          pubDate,
           description: description || 'Read more about this sustainability story.',
-          imageUrl: imageUrl || ''
+          imageUrl,
         });
         count++;
       }
