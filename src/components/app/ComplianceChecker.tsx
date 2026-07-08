@@ -281,25 +281,25 @@ export function ComplianceChecker() {
   return (
     <PremiumCard className="p-4">
       <div className="mb-4">
-        <h3 className="text-sm font-bold mb-1">Compliance Check</h3>
-        <p className="text-[10px] text-muted-foreground">
-          CSRD & ESRS requirements
+        <h3 className="text-sm font-bold mb-1 break-words">{t('title')}</h3>
+        <p className="text-[10px] text-muted-foreground break-words">
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Input Form */}
       <div className="space-y-2.5 mb-4">
         <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label className="block text-[10px] font-medium mb-1.5">Country</label>
+          <div className="min-w-0">
+            <label className="block text-[10px] font-medium mb-1.5 break-words">{t('country')}</label>
             <select
               value={smeData.country}
               onChange={(e) => setSmeData({ ...smeData, country: e.target.value })}
               className="w-full p-2 text-[11px] rounded-lg border border-border bg-background text-foreground"
             >
-              <option value="">Select</option>
+              <option value="">{t('select')}</option>
               {Object.entries(WORLD_COUNTRIES).map(([continent, countries]) => (
-                <optgroup key={continent} label={continent}>
+                <optgroup key={continent} label={t(`continents.${continent}` as any)}>
                   {countries.map((country) => (
                     <option key={country.code} value={country.code}>
                       {country.name}
@@ -310,17 +310,17 @@ export function ComplianceChecker() {
             </select>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-medium mb-1.5">Industry</label>
+          <div className="min-w-0">
+            <label className="block text-[10px] font-medium mb-1.5 break-words">{t('industry')}</label>
             <select
               value={smeData.industry}
               onChange={(e) => setSmeData({ ...smeData, industry: e.target.value })}
               className="w-full p-2 text-[11px] rounded-lg border border-border bg-background text-foreground"
             >
-              <option value="">Select</option>
+              <option value="">{t('select')}</option>
               {INDUSTRIES.map((industry) => (
                 <option key={industry} value={industry}>
-                  {industry}
+                  {t(`industries.${industry}` as any)}
                 </option>
               ))}
             </select>
@@ -328,8 +328,8 @@ export function ComplianceChecker() {
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div>
-            <label className="block text-[9px] font-medium mb-1.5">Employees</label>
+          <div className="min-w-0">
+            <label className="block text-[9px] font-medium mb-1.5 break-words">{t('employees')}</label>
             <input
               type="number"
               value={smeData.employees || ''}
@@ -339,8 +339,8 @@ export function ComplianceChecker() {
             />
           </div>
 
-          <div>
-            <label className="block text-[9px] font-medium mb-1.5">Revenue ($)</label>
+          <div className="min-w-0">
+            <label className="block text-[9px] font-medium mb-1.5 break-words">{t('revenue')}</label>
             <input
               type="number"
               value={smeData.annualRevenue || ''}
@@ -350,8 +350,8 @@ export function ComplianceChecker() {
             />
           </div>
 
-          <div>
-            <label className="block text-[9px] font-medium mb-1.5">Assets ($)</label>
+          <div className="min-w-0">
+            <label className="block text-[9px] font-medium mb-1.5 break-words">{t('assets')}</label>
             <input
               type="number"
               value={smeData.totalAssets || ''}
@@ -363,7 +363,7 @@ export function ComplianceChecker() {
         </div>
 
         {error && (
-          <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-[10px]">
+          <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-[10px] break-words">
             {error}
           </div>
         )}
@@ -374,7 +374,7 @@ export function ComplianceChecker() {
           className="w-full"
           size="sm"
         >
-          <span className="text-[10px]">{loading ? 'Checking...' : 'Check Status'}</span>
+          <span className="text-[10px] break-words">{loading ? t('checking') : t('checkStatus')}</span>
         </PremiumButton>
       </div>
 
