@@ -395,8 +395,7 @@ export const BillingDashboard = () => {
                           <>
                             <span>•</span>
                             <span className="font-medium">
-                              {payment.gateway === 'stripe' ? 'Stripe' : 
-                               payment.gateway === 'paystack' ? 'Paystack' :
+                              {payment.gateway === 'stripe' ? 'Stripe' :
                                payment.gateway}
                             </span>
                           </>
