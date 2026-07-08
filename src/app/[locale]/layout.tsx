@@ -78,6 +78,8 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
+      <SiteFooter />
+      <CookieBanner />
     </NextIntlClientProvider>
   );
 }
