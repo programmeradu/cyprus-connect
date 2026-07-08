@@ -1,203 +1,113 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserSubscription } from '@/lib/stripe/utils';
+import { getUserSubscription, ensureFreeSubscription } from '@/lib/stripe/utils';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { createStripeClient, resolvePriceIdFromLookupKey, getStripeErrorMessage } from '@/lib/stripe/server';
+import { resolveStripeEnvFromRequest } from '@/lib/stripe/env';
 import { SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
-import { Autumn as autumn } from 'autumn-js';
+import { db } from '@/db';
+import { subscriptions } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
-
-const autumnSDK = new autumn({
-  secretKey: process.env.AUTUMN_SECRET_KEY!,
-});
-
-// GET - Get current subscription
+// GET - Get current subscription (single source of truth: our DB, populated by webhook).
 export async function GET(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-
     if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check Autumn for active subscription FIRST
-    try {
-      const autumnCustomerResult = await autumnSDK.customers.get(session.user.id);
-      const autumnCustomer: any = (autumnCustomerResult as any)?.data ?? autumnCustomerResult;
-      const products = autumnCustomer?.products;
-      
-      // Look for active Autumn subscription
-      const autumnSub = Array.isArray(products) ? products.find((p: any) => 
-        p.status === 'active' && (
-          p.name?.toLowerCase().includes('professional') ||
-          p.name?.toLowerCase().includes('enterprise')
-        )
-      ) : null;
+    // Guarantee every user has at least a Free-tier row.
+    const subscription = await ensureFreeSubscription(session.user.id);
+    const plan = SUBSCRIPTION_PLANS[subscription.planId as keyof typeof SUBSCRIPTION_PLANS]
+      || SUBSCRIPTION_PLANS.free;
 
-      if (autumnSub) {
-        const planId = autumnSub.name?.toLowerCase().includes('enterprise') ? 'enterprise' : 'pro';
-        const plan = SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS];
-        
-        return NextResponse.json({
-          subscription: {
-            id: 0,
-            userId: session.user.id,
-            stripeCustomerId: session.user.id,
-            stripeSubscriptionId: `autumn_${autumnSub.id}`,
-            planId,
-            status: 'active',
-            currentPeriodStart: new Date(autumnSub.current_period_start).toISOString(),
-            currentPeriodEnd: new Date(autumnSub.current_period_end).toISOString(),
-            cancelAtPeriodEnd: false,
-            trialEnd: null,
-            createdAt: new Date(autumnSub.started_at).toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-          plan,
-        });
-      }
-    } catch (autumnError) {
-      console.error('Failed to check Autumn subscription:', autumnError);
-    }
-
-    // Fall back to database subscription
-    const subscription = await getUserSubscription(session.user.id);
-
-    if (!subscription) {
-      return NextResponse.json({
-        subscription: null,
-        plan: SUBSCRIPTION_PLANS.free,
-      });
-    }
-
-    const plan = SUBSCRIPTION_PLANS[subscription.planId as keyof typeof SUBSCRIPTION_PLANS];
-
-    return NextResponse.json({
-      subscription,
-      plan,
-    });
+    return NextResponse.json({ subscription, plan });
   } catch (error: any) {
     console.error('Get subscription error:', error);
     return NextResponse.json(
       { error: 'Failed to get subscription', details: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-// POST - Update subscription (upgrade/downgrade)
+// POST - Upgrade / downgrade with immediate switch + prorated invoice.
 export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const body = await req.json();
-    const { newPlanId } = body;
-
+    const { newPlanId } = await req.json();
     const subscription = await getUserSubscription(session.user.id);
-
     if (!subscription?.stripeSubscriptionId) {
-      return NextResponse.json(
-        { error: 'No active subscription found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'No active subscription found' }, { status: 404 });
     }
 
     const newPlan = SUBSCRIPTION_PLANS[newPlanId as keyof typeof SUBSCRIPTION_PLANS];
-    
     if (!newPlan || !newPlan.priceId) {
-      return NextResponse.json(
-        { error: 'Invalid plan selected' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid plan selected' }, { status: 400 });
     }
 
-    const stripe = createStripeClient('sandbox');
-
-    // Resolve the plan's stable lookup_key → real Stripe price ID
+    const env = resolveStripeEnvFromRequest(req);
+    const stripe = createStripeClient(env);
     const priceId = await resolvePriceIdFromLookupKey(stripe, newPlan.priceId);
 
-    // Get current Stripe subscription
-    const stripeSubscription = await stripe.subscriptions.retrieve(
-      subscription.stripeSubscriptionId
-    );
-
-    // Immediate switch with prorated invoice (user chose immediate upgrade/downgrade)
-    const updatedSubscription = await stripe.subscriptions.update(
-      subscription.stripeSubscriptionId,
-      {
-        items: [
-          {
-            id: stripeSubscription.items.data[0].id,
-            price: priceId,
-          },
-        ],
-        proration_behavior: 'always_invoice',
-      }
-    );
-
-    return NextResponse.json({
-      subscription: updatedSubscription,
-      message: 'Subscription updated successfully',
+    const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripeSubscriptionId);
+    const updated = await stripe.subscriptions.update(subscription.stripeSubscriptionId, {
+      items: [{ id: stripeSubscription.items.data[0].id, price: priceId }],
+      proration_behavior: 'always_invoice',
+      metadata: { ...stripeSubscription.metadata, planId: newPlan.id, userId: session.user.id },
     });
+
+    return NextResponse.json({ subscription: updated, message: 'Subscription updated successfully' });
   } catch (error: any) {
     console.error('Update subscription error:', error);
     return NextResponse.json(
       { error: 'Failed to update subscription', details: getStripeErrorMessage(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
-
-// DELETE - Cancel subscription
+// DELETE - Immediate cancel (matches business rule: revoke on cancel).
 export async function DELETE(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const subscription = await getUserSubscription(session.user.id);
-
     if (!subscription?.stripeSubscriptionId) {
-      return NextResponse.json(
-        { error: 'No active subscription found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'No active subscription found' }, { status: 404 });
     }
 
-    const stripe = createStripeClient('sandbox');
-
-    // Immediate cancellation (per user's business logic choice).
-    // Webhook customer.subscription.deleted downgrades the row to Free.
-    const canceledSubscription = await stripe.subscriptions.cancel(
-      subscription.stripeSubscriptionId,
-      { invoice_now: true, prorate: true }
-    );
-
-    return NextResponse.json({
-      subscription: canceledSubscription,
-      message: 'Subscription canceled immediately',
+    const env = resolveStripeEnvFromRequest(req);
+    const stripe = createStripeClient(env);
+    // Immediate cancellation with a final prorated invoice for unused time.
+    const canceled = await stripe.subscriptions.cancel(subscription.stripeSubscriptionId, {
+      invoice_now: true,
+      prorate: true,
     });
+
+    // Optimistically flip local row to Free; the webhook will confirm.
+    await db
+      .update(subscriptions)
+      .set({
+        planId: 'free',
+        status: 'canceled',
+        stripeSubscriptionId: null,
+        currentPeriodEnd: new Date().toISOString(),
+        cancelAtPeriodEnd: false,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(eq(subscriptions.userId, session.user.id));
+
+    return NextResponse.json({ subscription: canceled, message: 'Subscription canceled' });
   } catch (error: any) {
     console.error('Cancel subscription error:', error);
     return NextResponse.json(
       { error: 'Failed to cancel subscription', details: getStripeErrorMessage(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

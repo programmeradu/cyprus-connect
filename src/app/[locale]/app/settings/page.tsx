@@ -7,7 +7,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
-import AutumnPricingTable from "@/components/autumn/pricing-table";
+import { PricingTable as AutumnPricingTable } from "@/components/billing/PricingTable";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
 import { useCurrency } from "@/contexts/CurrencyContext";

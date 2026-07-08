@@ -6,6 +6,8 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import { PricingTable } from "@/components/billing/PricingTable";
+import { PaymentTestModeBanner } from "@/components/billing/PaymentTestModeBanner";
+
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -43,7 +45,9 @@ export default function BillingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <PaymentTestModeBanner />
       {/* Header */}
+
       <div className="border-b border-border/50 bg-card/30 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">

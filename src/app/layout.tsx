@@ -6,7 +6,7 @@ import ErrorReporter from "@/components/ErrorReporter";
 import Script from "next/script";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { Toaster } from "@/components/ui/sonner";
-import CustomAutumnProvider from "@/lib/autumn-provider";
+
 import { routing } from "@/i18n/routing";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -100,9 +100,8 @@ export default async function RootLayout({
             data-debug="false"
             data-custom-data='{"appName": "VerdeIQ", "version": "1.0.0", "feature": "sustainability-platform"}'
           />
-          <CustomAutumnProvider>
-            {children}
-          </CustomAutumnProvider>
+          {children}
+
           <VisualEditsMessenger />
           <Toaster />
         </CurrencyProvider>
