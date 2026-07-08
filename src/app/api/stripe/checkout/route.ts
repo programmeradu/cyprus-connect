@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/server';
+import { createStripeClient, resolvePriceIdFromLookupKey, getStripeErrorMessage } from '@/lib/stripe/server';
 import {
   SUBSCRIPTION_PLANS,
   CREDIT_PACKAGES,
@@ -12,29 +12,21 @@ import { headers } from 'next/headers';
 export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
     const { type, planId, packageId, successUrl, cancelUrl, currency, locale } = body;
 
+    const stripe = createStripeClient('sandbox');
     const customerId = await getOrCreateStripeCustomer(session.user.id, session.user.email);
     const variant = resolveStripeVariant(currency);
     const isEur = variant === 'eur';
 
-    // Shared EU/Cyprus tax settings: Stripe Tax computes VAT (19% for CY)
-    // from the collected billing address; tax_id_collection lets EU B2B
-    // customers enter their VAT number for a reverse-charge invoice.
     const taxSettings = {
       automatic_tax: { enabled: true as const },
       tax_id_collection: { enabled: true as const },
       billing_address_collection: 'required' as const,
-      customer_update: {
-        address: 'auto' as const,
-        name: 'auto' as const,
-      },
+      customer_update: { address: 'auto' as const, name: 'auto' as const },
       locale: (locale === 'el' ? 'el' : 'en') as 'el' | 'en',
     };
 
@@ -42,14 +34,14 @@ export async function POST(req: NextRequest) {
 
     if (type === 'subscription') {
       const plan = SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS];
-      const priceId = isEur ? plan?.priceIdEur : plan?.priceId;
-
-      if (!plan || !priceId) {
+      const lookupKey = isEur ? plan?.priceIdEur : plan?.priceId;
+      if (!plan || !lookupKey) {
         return NextResponse.json(
           { error: `Invalid plan or missing ${variant.toUpperCase()} price` },
-          { status: 400 }
+          { status: 400 },
         );
       }
+      const priceId = await resolvePriceIdFromLookupKey(stripe, lookupKey);
 
       checkoutSession = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -65,24 +57,20 @@ export async function POST(req: NextRequest) {
           currency: variant,
         },
         subscription_data: {
-          metadata: {
-            userId: session.user.id,
-            planId: plan.id,
-            currency: variant,
-          },
+          metadata: { userId: session.user.id, planId: plan.id, currency: variant },
         },
         ...taxSettings,
       });
     } else if (type === 'credits') {
       const package_ = CREDIT_PACKAGES[packageId as keyof typeof CREDIT_PACKAGES];
-      const priceId = isEur ? package_?.priceIdEur : package_?.priceId;
-
-      if (!package_ || !priceId) {
+      const lookupKey = isEur ? package_?.priceIdEur : package_?.priceId;
+      if (!package_ || !lookupKey) {
         return NextResponse.json(
           { error: `Invalid package or missing ${variant.toUpperCase()} price` },
-          { status: 400 }
+          { status: 400 },
         );
       }
+      const priceId = await resolvePriceIdFromLookupKey(stripe, lookupKey);
 
       checkoutSession = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -92,14 +80,20 @@ export async function POST(req: NextRequest) {
         success_url: successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
         cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
         payment_intent_data: {
+          description: `${package_.credits} AI Credits`,
           metadata: {
             userId: session.user.id,
             type: 'credits',
             packageId: package_.id,
             credits: package_.credits.toString(),
             currency: variant,
-            description: `${package_.credits} AI Credits`,
           },
+        },
+        metadata: {
+          userId: session.user.id,
+          type: 'credits',
+          packageId: package_.id,
+          credits: package_.credits.toString(),
         },
         ...taxSettings,
       });
@@ -107,15 +101,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid checkout type' }, { status: 400 });
     }
 
-    return NextResponse.json({
-      sessionId: checkoutSession.id,
-      url: checkoutSession.url,
-    });
+    return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
   } catch (error: any) {
     console.error('Checkout error:', error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session', details: error.message },
-      { status: 500 }
+      { error: 'Failed to create checkout session', details: getStripeErrorMessage(error) },
+      { status: 500 },
     );
   }
 }
