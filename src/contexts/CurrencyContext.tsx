@@ -210,7 +210,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       }
       
       try {
-        return new Intl.NumberFormat("en-US", {
+        return new Intl.NumberFormat(intlLocale, {
           style: "currency",
           currency: curr,
           minimumFractionDigits: 0,
@@ -221,8 +221,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         return `${curr} ${amount.toFixed(2)}`;
       }
     },
-    [selectedCurrency]
+    [selectedCurrency, intlLocale]
   );
+
 
   const contextValue = useMemo(
     () => ({
