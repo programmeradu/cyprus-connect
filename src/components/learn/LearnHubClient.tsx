@@ -119,7 +119,10 @@ export default function LearnHubClient({
   const guidePlural = locale === "el" ? "οδηγοί" : "guides";
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-20">
+    <div style={SANS}>
+      <MarketingHeader />
+      <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-16">
+
       {/* Header — editorial, no pill, no icon */}
       <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary sm:text-xs">
