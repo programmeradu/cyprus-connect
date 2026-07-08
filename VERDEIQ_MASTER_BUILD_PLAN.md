@@ -283,13 +283,22 @@ Every build turn from now on follows this template:
 
 ---
 
-## 5 · Removals & tech debt (from Layer 18 of the integrations dossier — do in Phase 8)
+## 5 · Removals & tech debt
 
-- Remove hard-coded USD anywhere in marketing copy (EUR only).
-- Remove any `/en-US`, `/gb` locale artifacts if present — Cyprus is `en` + `el` only.
-- Consolidate the two subscription sources (Autumn + Lovable Payments) as already planned in `.lovable/plan.md`.
-- Purge Paystack, Autumn, and any legacy Stripe direct-API code once Payments migration lands.
-- Delete unused seed files and dev-only routes from the sitemap.
+**✅ Completed 2026-07-08 (pre-Phase-1 cleanup):**
+- ✅ Marketing copy USD → EUR (`src/content/trust.ts`, insights, settings, landing).
+- ✅ Locale formatters standardized from `en-US` → `en-GB` (Cyprus EUR + DD/MM). Only `en` + `el` locales remain.
+- ✅ Autumn removed: `autumn-js` uninstalled; `useCustomer` swapped for `useSubscription` across `BenchmarkComparator`, `EnergyCostCalculator`, `ComplianceChecker`; migration `drizzle/0017_drop_autumn_columns.sql` drops legacy sync columns.
+- ✅ Paystack purged (12 files) — Stripe/Payments is single source of truth.
+- ✅ AI credit checks/deductions centralized in `src/lib/ai-credits.ts` (used by 7 AI routes: gemini/analyze, generate-image, generate-video, learn/generate-course, reports/export, reports/export-pdf, compliance/documents/generate).
+- ✅ Media Studio → **Report Visuals** (UI labels + i18n `en`/`el` updated; route still `/app/studio` pending redirect in Phase 4).
+- ✅ Seed cleanup: 16 dev/demo seed files deleted (`run-all-seeds.ts`, backdate-*, fresh-realistic-customers, seed-9-users, reset-and-seed-*, media_generations, payment-data, etc.). Kept production seeds: `actions`, `courses`, `emissions_history`, `industry_comparisons`, `marketplace-projects`, `assessments`, `leaderboard`, `sustainability_metrics`.
+
+**Still open (deferred to Phase 4 & Phase 8):**
+- [ ] Rebuild `Report Visuals` generation pipeline to consume real ESG data (S1/S2/S3, YoY, CBAM) instead of generic prompts — Phase 4 alongside VSME PDF exports.
+- [ ] Move `/app/studio` route → `/app/reports/visuals` with 301 redirect once feature is data-driven.
+- [ ] Confirm `sitemap.ts` never emits dev-only or auth-gated routes (currently OK — only 6 marketing paths).
+- [ ] Delete any remaining legacy Stripe direct-API code once Lovable Payments migration in `.lovable/plan.md` lands.
 
 ---
 
