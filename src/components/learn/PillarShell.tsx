@@ -22,6 +22,7 @@ type PillarShellProps = {
   introduction: React.ReactNode;
   sectionsContent: React.ReactNode; // pre-rendered <section id> blocks with optional widget slots
   faq: { q: string; a: string }[];
+  afterFaq?: React.ReactNode;
   cta: { heading: string; body: string };
   related: {
     slug: string;
