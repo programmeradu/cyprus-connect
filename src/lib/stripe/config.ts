@@ -1,13 +1,23 @@
 // Client-safe Stripe configuration (no secrets)
 // This file can be imported by both client and server code
 
-// Subscription Plans Configuration
+// Cyprus VAT (standard rate, 2026). Applied automatically by Stripe Tax
+// when the customer's billing country is CY. The constant is exported for
+// UI-side "incl. 19% VAT" hints only — never for computing charges.
+export const CYPRUS_VAT_RATE = 0.19;
+
+// Subscription Plans Configuration.
+// Prices are gross EUR for the EU (Cyprus-based merchant) and gross USD
+// for the rest of the world. Stripe Tax computes VAT from the billing
+// address at checkout; the shown prices are tax-inclusive for EU customers.
 export const SUBSCRIPTION_PLANS = {
   free: {
     id: 'free',
     name: 'Free',
     price: 0,
+    priceEur: 0,
     priceId: null,
+    priceIdEur: null,
     interval: null,
     features: [
       'Basic carbon calculator',
@@ -32,7 +42,9 @@ export const SUBSCRIPTION_PLANS = {
     id: 'pro',
     name: 'Pro',
     price: 49,
+    priceEur: 45,
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || '',
+    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_EUR || '',
     interval: 'month',
     features: [
       'Everything in Free',
@@ -47,7 +59,7 @@ export const SUBSCRIPTION_PLANS = {
       'API access',
     ],
     limits: {
-      actionsPerMonth: -1, // unlimited
+      actionsPerMonth: -1,
       teamMembers: 5,
       integrations: 3,
       apiCalls: 10000,
@@ -62,7 +74,9 @@ export const SUBSCRIPTION_PLANS = {
     id: 'enterprise',
     name: 'Enterprise',
     price: 199,
+    priceEur: 185,
     priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID || '',
+    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID_EUR || '',
     interval: 'month',
     features: [
       'Everything in Pro',
@@ -79,7 +93,7 @@ export const SUBSCRIPTION_PLANS = {
     ],
     limits: {
       actionsPerMonth: -1,
-      teamMembers: -1, // unlimited
+      teamMembers: -1,
       integrations: -1,
       apiCalls: 100000,
       aiCredits: 10000,
@@ -97,23 +111,38 @@ export const CREDIT_PACKAGES = {
     id: 'credits_100',
     credits: 100,
     price: 9.99,
+    priceEur: 8.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_CREDITS_100_PRICE_ID || '',
+    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_CREDITS_100_PRICE_ID_EUR || '',
   },
   medium: {
     id: 'credits_500',
     credits: 500,
     price: 39.99,
+    priceEur: 35.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_CREDITS_500_PRICE_ID || '',
-    discount: 20, // 20% off
+    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_CREDITS_500_PRICE_ID_EUR || '',
+    discount: 20,
   },
   large: {
     id: 'credits_1000',
     credits: 1000,
     price: 69.99,
+    priceEur: 62.99,
     priceId: process.env.NEXT_PUBLIC_STRIPE_CREDITS_1000_PRICE_ID || '',
-    discount: 30, // 30% off
+    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_CREDITS_1000_PRICE_ID_EUR || '',
+    discount: 30,
   },
 } as const;
 
 export type SubscriptionPlanId = keyof typeof SUBSCRIPTION_PLANS;
 export type CreditPackageId = keyof typeof CREDIT_PACKAGES;
+
+/**
+ * Resolve which Stripe currency variant to charge based on the requested
+ * currency. EUR prices are used for EU/Cyprus checkouts (Stripe Tax then
+ * layers 19% VAT for CY customers); USD is the default elsewhere.
+ */
+export function resolveStripeVariant(currency?: string): 'eur' | 'usd' {
+  return (currency || '').toUpperCase() === 'EUR' ? 'eur' : 'usd';
+}
