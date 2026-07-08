@@ -89,10 +89,6 @@ export function CookieBanner() {
 }
 
 export function reopenCookieBanner() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    /* ignore */
-  }
+  clearConsentState();
   window.dispatchEvent(new Event("verdeiq:open-cookie-banner"));
 }
