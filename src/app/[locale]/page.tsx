@@ -868,10 +868,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Energy Cost Savings
+                  {tL("powerEnergyTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Calculate real savings from efficiency improvements with real-time energy prices and carbon intensity data. See ROI in months, not years.
+                  {tL("powerEnergyDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
