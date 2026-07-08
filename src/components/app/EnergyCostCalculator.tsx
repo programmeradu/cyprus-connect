@@ -7,7 +7,7 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useUser } from "@/lib/user-context";
-import { useCustomer } from "autumn-js/react";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Wifi, WifiOff, Lock } from "lucide-react";
 import { getEnergyZoneData } from "@/lib/energy-zones";
@@ -53,7 +53,7 @@ export function EnergyCostCalculator() {
   const t = useTranslations("energyCalc");
   const { convertAmount, formatAmount, selectedCurrency, refreshTrigger } = useCurrency();
   const { user } = useUser();
-  const { customer, isLoading: isCustomerLoading } = useCustomer();
+  const { plan, isLoading: isCustomerLoading } = useSubscription();
   const router = useRouter();
   const [carbonData, setCarbonData] = useState<CarbonIntensityData | null>(null);
 
@@ -66,9 +66,7 @@ export function EnergyCostCalculator() {
   const [userBiddingZone, setUserBiddingZone] = useState<string>('');
 
   // Check if user has access to real-time climate data
-  const hasRealtimeDataAccess = customer?.products?.some(
-    (product) => product.id === 'professional' || product.id === 'enterprise'
-  ) || false;
+  const hasRealtimeDataAccess = plan.id === 'pro' || plan.id === 'enterprise';
 
   // VerdeIQ is Cyprus-only: use the Cyprus grid profile regardless of IP/user country.
   useEffect(() => {

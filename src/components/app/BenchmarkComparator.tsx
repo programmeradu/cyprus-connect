@@ -7,7 +7,7 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
 import { useUser } from "@/lib/user-context";
-import { useCustomer } from "autumn-js/react";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
 import { Globe, MapPin, TrendingUp, TrendingDown, Loader2, Lock } from "lucide-react";
 
@@ -49,7 +49,7 @@ export function BenchmarkComparator() {
   const t = useTranslations("benchmark");
   const { data: session } = useSession();
   const { user } = useUser();
-  const { customer, isLoading: isCustomerLoading } = useCustomer();
+  const { plan, isLoading: isCustomerLoading } = useSubscription();
   const router = useRouter();
 
   
@@ -67,9 +67,7 @@ export function BenchmarkComparator() {
   const loadingLocation = false;
 
   // Check if user has access to industry benchmarking
-  const hasBenchmarkingAccess = customer?.products?.some(
-    (product) => product.id === 'professional' || product.id === 'enterprise'
-  ) || false;
+  const hasBenchmarkingAccess = plan.id === 'pro' || plan.id === 'enterprise';
 
   // Pre-fill with user data if available
   useEffect(() => {
