@@ -341,8 +341,10 @@ export default function LearnHubClient({
           })
       )}
     </main>
+    </div>
   );
 }
+
 
 function CatButton({
   active,
