@@ -70,34 +70,12 @@ export function EnergyCostCalculator() {
     (product) => product.id === 'professional' || product.id === 'enterprise'
   ) || false;
 
-  // Detect user's energy zone from database preferences or country code
+  // VerdeIQ is Cyprus-only: use the Cyprus grid profile regardless of IP/user country.
   useEffect(() => {
-    // Priority: user.energyZone > user.countryCode mapped > fallback to geolocation
-    const detectZone = async () => {
-      let countryCode = user?.countryCode;
-
-      // Fallback to geolocation API if no country code in database
-      if (!countryCode) {
-        try {
-          const response = await fetch('/api/geolocation');
-          if (response.ok) {
-            const data = await response.json();
-            countryCode = data.countryCode;
-          }
-        } catch (error) {
-          console.error('Failed to detect location:', error);
-        }
-      }
-
-      // Use the comprehensive energy zones library
-      const zoneData = getEnergyZoneData(countryCode || 'DE');
-      
-      setUserZone(zoneData.zone);
-      setUserBiddingZone(zoneData.biddingZone || zoneData.zone);
-    };
-
-    detectZone();
-  }, [user?.countryCode, user?.energyZone]);
+    const zoneData = getEnergyZoneData('CY');
+    setUserZone(zoneData.zone);
+    setUserBiddingZone(zoneData.biddingZone || zoneData.zone);
+  }, []);
 
   // Fetch data when zone changes OR when currency changes
   useEffect(() => {

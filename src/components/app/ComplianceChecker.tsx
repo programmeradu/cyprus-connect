@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { useUser } from "@/lib/user-context";
 import { useCustomer } from "autumn-js/react";
 import { useRouter } from "next/navigation";
 import { Lock, Loader2 } from "lucide-react";
@@ -129,10 +128,10 @@ const INDUSTRIES = [
 ];
 
 export function ComplianceChecker() {
-  const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
   const t = useTranslations("complianceChecker");
+  const locale = useLocale();
   
   
   // Check if user has access to compliance tracking (Professional+ feature)
@@ -144,38 +143,17 @@ export function ComplianceChecker() {
     employees: 0,
     annualRevenue: 0,
     totalAssets: 0,
-    country: '',
+    country: 'CY',
     industry: '',
   });
   const [compliance, setCompliance] = useState<ComplianceStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Auto-detect and set user location on mount
+  // Cyprus-only product scope.
   useEffect(() => {
-    const detectLocation = async () => {
-      // Priority 1: Use user's countryCode from database
-      if (user?.countryCode) {
-        setSmeData(prev => ({ ...prev, country: user.countryCode || '' }));
-        return;
-      }
-
-      // Priority 2: Try geolocation API
-      try {
-        const response = await fetch('/api/geolocation');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.countryCode) {
-            setSmeData(prev => ({ ...prev, country: data.countryCode }));
-          }
-        }
-      } catch (err) {
-        console.error('Failed to detect location:', err);
-      }
-    };
-
-    detectLocation();
-  }, [user?.countryCode]);
+    setSmeData(prev => ({ ...prev, country: 'CY' }));
+  }, []);
 
   const handleCheck = async () => {
     if (!smeData.employees || !smeData.annualRevenue || !smeData.totalAssets || !smeData.country || !smeData.industry) {
@@ -190,7 +168,7 @@ export function ComplianceChecker() {
       const response = await fetch('/api/compliance/check-requirements', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(smeData),
+        body: JSON.stringify({ ...smeData, country: 'CY', locale }),
       });
 
       if (!response.ok) {
@@ -292,22 +270,11 @@ export function ComplianceChecker() {
         <div className="grid grid-cols-2 gap-2">
           <div className="min-w-0">
             <label className="block text-[10px] font-medium mb-1.5 break-words">{t('country')}</label>
-            <select
-              value={smeData.country}
-              onChange={(e) => setSmeData({ ...smeData, country: e.target.value })}
-              className="w-full p-2 text-[11px] rounded-lg border border-border bg-background text-foreground"
-            >
-              <option value="">{t('select')}</option>
-              {Object.entries(WORLD_COUNTRIES).map(([continent, countries]) => (
-                <optgroup key={continent} label={t(`continents.${continent}` as any)}>
-                  {countries.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.name}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
+            <input
+              value={t('cyprusOnly')}
+              readOnly
+              className="w-full p-2 text-[11px] rounded-lg border border-border bg-muted/40 text-foreground"
+            />
           </div>
 
           <div className="min-w-0">

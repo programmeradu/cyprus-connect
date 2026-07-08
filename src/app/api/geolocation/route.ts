@@ -6,12 +6,13 @@ export async function GET() {
     const location = await getUserLocationFromIP();
     
     if (!location) {
-      // Default to USD if geolocation fails
+      // VerdeIQ is Cyprus-only: always fall back to EUR / Cyprus.
       return NextResponse.json(
         { 
-          currency: "USD", 
-          countryCode: "US",
-          country: "United States",
+          currency: "EUR", 
+          countryCode: "CY",
+          country: "Cyprus",
+          timezone: "Asia/Nicosia",
         },
         { 
           status: 200,
@@ -31,9 +32,10 @@ export async function GET() {
     console.error("Geolocation API error:", error);
     return NextResponse.json(
       { 
-        currency: "USD", 
-        countryCode: "US",
-        country: "United States",
+        currency: "EUR", 
+        countryCode: "CY",
+        country: "Cyprus",
+        timezone: "Asia/Nicosia",
       },
       { status: 200 }
     );
