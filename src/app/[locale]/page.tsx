@@ -2120,8 +2120,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}>
 
-                "VerdeIQ transformed how we approach sustainability. The AI insights 
-                helped us <span className="gradient-text">reduce our carbon footprint by 40%</span> in just six months."
+                "{tL("testimonialQuoteA")}{" "}
+                <span className="gradient-text">{tL("testimonialImpact")}</span> {tL("testimonialQuoteB")}"
               </motion.p>
               
               <motion.div
