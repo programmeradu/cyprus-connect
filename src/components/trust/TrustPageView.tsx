@@ -89,23 +89,6 @@ export function TrustPageView({ locale, page }: { locale: Locale; page: TrustPag
         </nav>
       </main>
 
-      <footer className="border-t border-border/60 mt-8">
-        <div className="max-w-5xl mx-auto px-4 py-6 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} Verde IQ · Strovolos, Cyprus</span>
-          <div className="flex gap-3">
-            {routing.locales.map((l) => (
-              <Link
-                key={l}
-                href={`/${l}/${page}`}
-                className={l === locale ? "text-foreground font-medium" : "hover:text-foreground"}
-                hrefLang={l === "el" ? "el-CY" : l}
-              >
-                {l.toUpperCase()}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
