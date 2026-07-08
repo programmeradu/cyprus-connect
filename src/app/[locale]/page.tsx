@@ -2180,7 +2180,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/auth">
                   <PremiumButton size="sm" className="text-xs px-5 py-2">
-                    Start Your Free Trial
+                    {tL("ctaStart")}
                     <svg className="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
