@@ -126,8 +126,8 @@ export default function LearnHubClient({
           VerdeIQ Learn
         </p>
         <h1
-          className="mt-5 text-[44px] font-normal leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
-          style={SERIF}
+          className="mt-5 text-[44px] font-semibold leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
+          style={SANS}
         >
           {heading}
         </h1>
@@ -179,10 +179,10 @@ export default function LearnHubClient({
                     )}
                   </p>
                   <h2
-                    className={`mt-2.5 font-normal leading-[1.1] tracking-[-0.015em] text-foreground group-hover:text-primary ${
+                    className={`mt-2.5 font-semibold leading-[1.1] tracking-[-0.015em] text-foreground group-hover:text-primary ${
                       i === 0 ? "text-[28px] sm:text-[36px] md:text-[42px]" : "text-[22px] sm:text-[24px]"
                     }`}
-                    style={SERIF}
+                    style={SANS}
                   >
                     {p.title}
                   </h2>
@@ -277,8 +277,8 @@ export default function LearnHubClient({
                 <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
                   <div>
                     <h2
-                      className="text-[26px] font-normal leading-tight tracking-[-0.02em] sm:text-[32px]"
-                      style={SERIF}
+                      className="text-[26px] font-semibold leading-tight tracking-[-0.02em] sm:text-[32px]"
+                      style={SANS}
                     >
                       {c.label}
                     </h2>
@@ -314,8 +314,8 @@ export default function LearnHubClient({
                             )}
                           </p>
                           <h3
-                            className="mt-2 text-[20px] font-normal leading-[1.2] tracking-[-0.015em] text-foreground group-hover:text-primary sm:text-[22px]"
-                            style={SERIF}
+                            className="mt-2 text-[20px] font-semibold leading-[1.2] tracking-[-0.015em] text-foreground group-hover:text-primary sm:text-[22px]"
+                            style={SANS}
                           >
                             {p.title}
                           </h3>
