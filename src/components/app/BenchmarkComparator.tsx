@@ -62,43 +62,9 @@ export function BenchmarkComparator() {
   const [comparison, setComparison] = useState<BenchmarkComparison | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userCountry, setUserCountry] = useState<string>('');
-  const [loadingLocation, setLoadingLocation] = useState(true);
-
-  // Check if user has access to industry benchmarking
-  const hasBenchmarkingAccess = customer?.products?.some(
-    (product) => product.id === 'professional' || product.id === 'enterprise'
-  ) || false;
-
-  // Use user's country from database, fallback to geolocation API
-  useEffect(() => {
-    const detectLocation = async () => {
-      // First, try to use user's stored countryCode from database
-      if (user?.countryCode) {
-        setUserCountry(user.countryCode);
-        setLoadingLocation(false);
-        return;
-      }
-
-      // Fallback to geolocation API if not in database
-      try {
-        const response = await fetch('/api/geolocation');
-        if (response.ok) {
-          const data = await response.json();
-          setUserCountry(data.countryCode || 'US');
-        } else {
-          setUserCountry('US');
-        }
-      } catch (error) {
-        console.error('Failed to detect location:', error);
-        setUserCountry('US');
-      } finally {
-        setLoadingLocation(false);
-      }
-    };
-
-    detectLocation();
-  }, [user?.countryCode]);
+  // VerdeIQ is Cyprus-locked: benchmarks are always against Cypriot peers.
+  const userCountry = 'CY';
+  const loadingLocation = false;
 
   // Pre-fill with user data if available
   useEffect(() => {
@@ -342,15 +308,9 @@ export function BenchmarkComparator() {
               <span className="text-[9px] font-semibold">{t("performance")}</span>
               <span className="text-sm font-bold">{t(`interp.${comparison.interpretation}` as any)}</span>
             </div>
-            <div className="flex items-center justify-between text-[9px]">
-              <div className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                <span className="break-words">{t('percentileLocal', { country: userCountry, n: comparison.percentile_rank })}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Globe className="w-3 h-3" />
-                <span className="break-words">{t('percentileGlobal', { n: comparison.global_percentile_rank })}</span>
-              </div>
+            <div className="flex items-center gap-1 text-[9px]">
+              <MapPin className="w-3 h-3" />
+              <span className="break-words">{t('percentileLocal', { country: userCountry, n: comparison.percentile_rank })}</span>
             </div>
           </div>
 
