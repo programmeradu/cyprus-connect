@@ -6,6 +6,8 @@ import PillarShell from "@/components/learn/PillarShell";
 import CsrdVsmeChecker from "@/components/learn/widgets/CsrdVsmeChecker";
 import ScopeCalculator from "@/components/learn/widgets/ScopeCalculator";
 import CbamEstimator from "@/components/learn/widgets/CbamEstimator";
+import GlossaryText from "@/components/learn/GlossaryText";
+import RelatedSuggestions from "@/components/learn/RelatedSuggestions";
 import type { Metadata } from "next";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
