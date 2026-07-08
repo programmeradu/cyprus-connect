@@ -153,14 +153,7 @@ export default function PricingPage() {
       {/* Learn / Knowledge Hub — internal linking to top pillar pages */}
       <LearnLinksSection />
 
-      {/* Footer */}
-      <footer className="border-t border-border/30 py-6 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-xs text-muted-foreground font-light">
-            © {new Date().getFullYear()} VerdeIQ. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      {/* Footer rendered globally by layout via <SiteFooter /> */}
     </div>
   );
 }
