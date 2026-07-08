@@ -154,13 +154,19 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
                   {/* Price */}
                   <div className="mb-2.5 text-center">
-                    <div className="text-base font-bold">${pkg.price}</div>
+                    <div className="text-base font-bold">{priceLabel}</div>
+                    {isEur && (
+                      <div className="text-[10px] text-muted-foreground">
+                        {t("vatIncluded", { pct: Math.round(CYPRUS_VAT_RATE * 100) })}
+                      </div>
+                    )}
                     {discount && (
                       <div className="text-[10px] text-primary font-medium">
                         {t("save", { pct: discount })}
                       </div>
                     )}
                   </div>
+
 
                   {/* Purchase Button */}
                   <PremiumButton
