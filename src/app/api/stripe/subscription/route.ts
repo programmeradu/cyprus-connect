@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserSubscription } from '@/lib/stripe/utils';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
-import { stripe } from '@/lib/stripe/server';
+import { createStripeClient, resolvePriceIdFromLookupKey, getStripeErrorMessage } from '@/lib/stripe/server';
 import { SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
 import { Autumn as autumn } from 'autumn-js';
+
 
 const autumnSDK = new autumn({
   secretKey: process.env.AUTUMN_SECRET_KEY!,
@@ -120,22 +121,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const stripe = createStripeClient('sandbox');
+
+    // Resolve the plan's stable lookup_key → real Stripe price ID
+    const priceId = await resolvePriceIdFromLookupKey(stripe, newPlan.priceId);
+
     // Get current Stripe subscription
     const stripeSubscription = await stripe.subscriptions.retrieve(
       subscription.stripeSubscriptionId
     );
 
-    // Update subscription with new price
+    // Immediate switch with prorated invoice (user chose immediate upgrade/downgrade)
     const updatedSubscription = await stripe.subscriptions.update(
       subscription.stripeSubscriptionId,
       {
         items: [
           {
             id: stripeSubscription.items.data[0].id,
-            price: newPlan.priceId,
+            price: priceId,
           },
         ],
-        proration_behavior: 'create_prorations',
+        proration_behavior: 'always_invoice',
       }
     );
 
@@ -146,11 +152,12 @@ export async function POST(req: NextRequest) {
   } catch (error: any) {
     console.error('Update subscription error:', error);
     return NextResponse.json(
-      { error: 'Failed to update subscription', details: error.message },
+      { error: 'Failed to update subscription', details: getStripeErrorMessage(error) },
       { status: 500 }
     );
   }
 }
+
 
 // DELETE - Cancel subscription
 export async function DELETE(req: NextRequest) {
@@ -173,22 +180,23 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    // Cancel at period end (don't immediately cancel)
-    const updatedSubscription = await stripe.subscriptions.update(
+    const stripe = createStripeClient('sandbox');
+
+    // Immediate cancellation (per user's business logic choice).
+    // Webhook customer.subscription.deleted downgrades the row to Free.
+    const canceledSubscription = await stripe.subscriptions.cancel(
       subscription.stripeSubscriptionId,
-      {
-        cancel_at_period_end: true,
-      }
+      { invoice_now: true, prorate: true }
     );
 
     return NextResponse.json({
-      subscription: updatedSubscription,
-      message: 'Subscription will be canceled at the end of the billing period',
+      subscription: canceledSubscription,
+      message: 'Subscription canceled immediately',
     });
   } catch (error: any) {
     console.error('Cancel subscription error:', error);
     return NextResponse.json(
-      { error: 'Failed to cancel subscription', details: error.message },
+      { error: 'Failed to cancel subscription', details: getStripeErrorMessage(error) },
       { status: 500 }
     );
   }

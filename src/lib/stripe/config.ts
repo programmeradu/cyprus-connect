@@ -43,8 +43,9 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Pro',
     price: 49,
     priceEur: 45,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || '',
-    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID_EUR || '',
+    // Stable lookup_keys created in Lovable Payments (test + live parity)
+    priceId: 'pro_monthly_usd',
+    priceIdEur: 'pro_monthly_eur',
     interval: 'month',
     features: [
       'Everything in Free',
@@ -75,8 +76,8 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Enterprise',
     price: 199,
     priceEur: 185,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID || '',
-    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_ENTERPRISE_PRICE_ID_EUR || '',
+    priceId: 'enterprise_monthly_usd',
+    priceIdEur: 'enterprise_monthly_eur',
     interval: 'month',
     features: [
       'Everything in Pro',
@@ -112,16 +113,16 @@ export const CREDIT_PACKAGES = {
     credits: 100,
     price: 9.99,
     priceEur: 8.99,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_CREDITS_100_PRICE_ID || '',
-    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_CREDITS_100_PRICE_ID_EUR || '',
+    priceId: 'credits_100_usd',
+    priceIdEur: 'credits_100_eur',
   },
   medium: {
     id: 'credits_500',
     credits: 500,
     price: 39.99,
     priceEur: 35.99,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_CREDITS_500_PRICE_ID || '',
-    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_CREDITS_500_PRICE_ID_EUR || '',
+    priceId: 'credits_500_usd',
+    priceIdEur: 'credits_500_eur',
     discount: 20,
   },
   large: {
@@ -129,10 +130,11 @@ export const CREDIT_PACKAGES = {
     credits: 1000,
     price: 69.99,
     priceEur: 62.99,
-    priceId: process.env.NEXT_PUBLIC_STRIPE_CREDITS_1000_PRICE_ID || '',
-    priceIdEur: process.env.NEXT_PUBLIC_STRIPE_CREDITS_1000_PRICE_ID_EUR || '',
+    priceId: 'credits_1000_usd',
+    priceIdEur: 'credits_1000_eur',
     discount: 30,
   },
+
 } as const;
 
 export type SubscriptionPlanId = keyof typeof SUBSCRIPTION_PLANS;
