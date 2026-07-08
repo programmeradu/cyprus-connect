@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { initializePaystackPayment, PAYSTACK_PUBLIC_KEY } from "@/lib/paystack/client";
 import { toast } from "sonner";
@@ -33,16 +34,17 @@ export function PaystackButton({
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useTranslations("paystackButton");
 
   const handlePayment = async () => {
     if (!session?.user) {
-      toast.error("Please sign in to continue");
+      toast.error(t("signInRequired"));
       router.push("/auth");
       return;
     }
 
     if (!PAYSTACK_PUBLIC_KEY) {
-      toast.error("Paystack is not configured");
+      toast.error(t("notConfigured"));
       return;
     }
 
@@ -58,7 +60,7 @@ export function PaystackButton({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to initialize payment");
+        throw new Error(data.error || t("initFailed"));
       }
 
       initializePaystackPayment({
@@ -68,7 +70,7 @@ export function PaystackButton({
         ref: data.reference,
         currency,
         onSuccess: async (transaction) => {
-          toast.loading("Verifying payment...");
+          toast.loading(t("verifying"));
           
           try {
             const verifyRes = await fetch(`/api/paystack/verify?reference=${transaction.reference}`);
@@ -76,25 +78,25 @@ export function PaystackButton({
 
             if (verifyData.success) {
               toast.dismiss();
-              toast.success("Payment successful!");
+              toast.success(t("success"));
               router.refresh();
               router.push("/app/settings?tab=billing&success=true");
             } else {
               toast.dismiss();
-              toast.error(verifyData.message || "Payment verification failed");
+              toast.error(verifyData.message || t("verifyFailed"));
             }
           } catch {
             toast.dismiss();
-            toast.error("Failed to verify payment");
+            toast.error(t("verifyError"));
           }
         },
         onCancel: () => {
-          toast.info("Payment cancelled");
+          toast.info(t("cancelled"));
         },
       });
     } catch (error) {
       console.error("Paystack error:", error);
-      toast.error(error instanceof Error ? error.message : "Payment failed");
+      toast.error(error instanceof Error ? error.message : t("failed"));
     } finally {
       setLoading(false);
     }
@@ -114,7 +116,7 @@ export function PaystackButton({
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Processing...
+          {t("processing")}
         </span>
       ) : (
         children

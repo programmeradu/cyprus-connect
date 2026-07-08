@@ -1628,5 +1628,17 @@
       "South America": "South America",
       "Oceania": "Oceania"
     }
+  },
+  "paystackButton": {
+    "signInRequired": "Please sign in to continue",
+    "notConfigured": "Paystack is not configured",
+    "initFailed": "Failed to initialize payment",
+    "verifying": "Verifying payment...",
+    "success": "Payment successful!",
+    "verifyFailed": "Payment verification failed",
+    "verifyError": "Failed to verify payment",
+    "cancelled": "Payment cancelled",
+    "failed": "Payment failed",
+    "processing": "Processing..."
   }
 }
