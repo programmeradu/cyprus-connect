@@ -28,32 +28,10 @@ export async function POST(request: NextRequest) {
 
     const token = authHeader.split(' ')[1];
 
-    // Check sustainability reports allowance before processing
-    const checkResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/check`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        feature_id: 'sustainability_reports',
-        required_balance: 1
-      })
-    });
-
-    if (!checkResponse.ok) {
-      return NextResponse.json(
-        { error: "Report generation limit reached. Please upgrade your plan for unlimited reports." },
-        { status: 403 }
-      );
-    }
-
-    const { allowed } = await checkResponse.json();
-    if (!allowed) {
-      return NextResponse.json(
-        { error: "Report generation limit reached. Please upgrade your plan for unlimited reports." },
-        { status: 403 }
-      );
+    // Check + deduct AI credits (sustainability report costs 1 credit)
+    const creditGate = await checkAndDeductAiCredits(request, 1, 'report-pdf');
+    if (!creditGate.ok) {
+      return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
 
     // Validate user exists
