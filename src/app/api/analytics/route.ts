@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
 
     // Format monthly trend data
     const monthlyTrend = historicalData.reverse().map(record => ({
-      month: new Date(record.year, record.month - 1).toLocaleString('en-US', { month: 'long' }),
+      month: new Date(record.year, record.month - 1).toLocaleString('en-GB', { month: 'long' }),
       value: record.totalCo2e,
       change: 0 // Will be calculated based on previous month
     }));

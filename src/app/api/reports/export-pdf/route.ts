@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
     // Prepare report data
     const reportData: ReportData = {
       companyName: userInfo.companyName || userInfo.name || 'Your Company',
-      reportDate: new Date().toLocaleDateString('en-US', {
+      reportDate: new Date().toLocaleDateString('en-GB', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',

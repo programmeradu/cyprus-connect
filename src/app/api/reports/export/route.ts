@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
 
     const reportData: ReportData = {
       companyName: userData.companyName || userData.name,
-      reportDate: new Date().toLocaleDateString('en-US', {
+      reportDate: new Date().toLocaleDateString('en-GB', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
