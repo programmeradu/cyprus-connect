@@ -309,27 +309,34 @@ export default function PillarShell({
 
           {/* Article */}
           <article className="min-w-0">
-            {/* Key takeaways */}
+            {/* Key takeaways — editorial pull column */}
             <aside
               aria-label={takeawaysLabel}
-              className="mb-14 rounded-[4px] border border-foreground/10 bg-muted/40 p-6 sm:p-8"
+              className="mb-16 border-y border-foreground/15 py-8 sm:py-10"
             >
-              <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-primary">
-                {takeawaysLabel}
-              </p>
-              <ol className="space-y-3.5">
-                {keyTakeaways.map((k, i) => (
-                  <li
-                    key={i}
-                    className="grid grid-cols-[28px_minmax(0,1fr)] gap-3 text-[15.5px] leading-[1.55] text-foreground/85 sm:text-[16px]"
-                  >
-                    <span className="pt-0.5 tabular-nums text-[12px] font-semibold text-primary/80">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span>{k}</span>
-                  </li>
-                ))}
-              </ol>
+              <div className="grid gap-6 sm:grid-cols-[minmax(0,180px)_minmax(0,1fr)] sm:gap-10">
+                <div>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                    {takeawaysLabel}
+                  </p>
+                  <p className="mt-2 tabular-nums text-[11px] text-foreground/40">
+                    {String(keyTakeaways.length).padStart(2, "0")} {locale === "el" ? "σημεία" : "points"}
+                  </p>
+                </div>
+                <ol className="space-y-5 sm:border-l sm:border-foreground/10 sm:pl-10">
+                  {keyTakeaways.map((k, i) => (
+                    <li
+                      key={i}
+                      className="grid grid-cols-[36px_minmax(0,1fr)] items-baseline gap-4 text-[16px] leading-[1.55] tracking-[-0.005em] text-foreground/90 sm:text-[17px]"
+                    >
+                      <span className="tabular-nums text-[13px] font-semibold text-foreground/35">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span>{k}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </aside>
 
             {/* Article prose — professional editorial formatting */}

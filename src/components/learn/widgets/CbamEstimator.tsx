@@ -7,7 +7,7 @@
 
 import { useMemo } from "react";
 import { usePersistedState } from "@/hooks/usePersistedState";
-import { Info } from "lucide-react";
+
 
 type Props = { locale: "en" | "el" };
 
@@ -75,33 +75,40 @@ export default function CbamEstimator({ locale }: Props) {
   });
 
   return (
-    <div className="not-prose my-12 overflow-hidden rounded-3xl border bg-card shadow-sm">
-      <div className="border-b bg-gradient-to-br from-primary/10 to-transparent p-6 sm:p-8">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
-          {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
+    <div className="not-prose my-14 border-y border-foreground/15">
+      <div className="border-b border-foreground/10 py-8 sm:py-10">
+        <div className="flex items-baseline justify-between gap-6">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
+          </p>
+          <p className="tabular-nums text-[11px] text-foreground/40">03 / 03</p>
+        </div>
+        <h3 className="mt-3 max-w-3xl text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[32px]">
+          {l.title}
+        </h3>
+        <p className="mt-3 max-w-2xl text-[14.5px] leading-[1.6] text-foreground/65 sm:text-[15.5px]">
+          {l.subtitle}
         </p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{l.title}</h3>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">{l.subtitle}</p>
       </div>
 
-      <div className="grid gap-8 p-6 sm:p-8 md:grid-cols-2">
-        <div className="space-y-5">
+      <div className="grid gap-10 py-8 sm:py-10 md:grid-cols-2 md:gap-14">
+        <div className="space-y-6">
           <div>
-            <label className="mb-2 block text-sm font-medium">{l.product}</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(Object.keys(PRODUCTS) as ProductKey[]).map((k) => (
+            <label className="mb-3 block text-[13px] font-medium tracking-[-0.005em] text-foreground/80">{l.product}</label>
+            <div className="grid grid-cols-2 gap-0 border border-foreground/15">
+              {(Object.keys(PRODUCTS) as ProductKey[]).map((k, i) => (
                 <button
                   key={k}
                   type="button"
                   onClick={() => setProduct(k)}
-                  className={`rounded-xl border px-3 py-2.5 text-left text-sm transition ${
+                  className={`border-foreground/10 px-4 py-3 text-left transition ${i % 2 === 1 ? "border-l" : ""} ${i >= 2 ? "border-t" : ""} ${
                     product === k
-                      ? "border-primary bg-primary/5 text-foreground"
-                      : "hover:border-primary/40"
+                      ? "bg-foreground text-background"
+                      : "hover:bg-foreground/[0.03]"
                   }`}
                 >
-                  <div className="font-medium leading-tight">{PRODUCTS[k][locale]}</div>
-                  <div className="mt-1 text-xs tabular-nums text-muted-foreground">
+                  <div className="text-[13px] font-medium leading-tight">{PRODUCTS[k][locale]}</div>
+                  <div className={`mt-1 tabular-nums text-[11px] ${product === k ? "text-background/60" : "text-foreground/45"}`}>
                     {PRODUCTS[k].intensity} tCO₂e/t
                   </div>
                 </button>
@@ -115,9 +122,9 @@ export default function CbamEstimator({ locale }: Props) {
             { label: l.freeAlloc, value: phaseOut, set: setPhaseOut, min: 0, max: 100, step: 5, fmt: (v: number) => `${v}%` },
           ].map((f) => (
             <div key={f.label}>
-              <div className="mb-2 flex items-center justify-between">
-                <label className="text-sm font-medium">{f.label}</label>
-                <span className="text-sm tabular-nums text-muted-foreground">{f.fmt(f.value)}</span>
+              <div className="mb-2 flex items-baseline justify-between">
+                <label className="text-[13px] font-medium tracking-[-0.005em] text-foreground/80">{f.label}</label>
+                <span className="tabular-nums text-[13px] text-foreground/55">{f.fmt(f.value)}</span>
               </div>
               <input
                 type="range"
@@ -126,30 +133,29 @@ export default function CbamEstimator({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
+                className="h-[3px] w-full cursor-pointer appearance-none rounded-none bg-foreground/10 accent-foreground"
               />
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col justify-center rounded-2xl border bg-background p-6">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <div className="border-l border-foreground/10 pl-8 sm:pl-10">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
             {l.exposure}
           </p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums">
+          <p className="mt-3 text-[32px] font-semibold tabular-nums leading-none tracking-[-0.02em]">
             {nf.format(Math.round(emissions))}
-            <span className="ml-2 text-sm font-normal text-muted-foreground">tCO₂e</span>
           </p>
+          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">tCO₂e</p>
 
-          <div className="my-5 border-t" />
+          <div className="my-8 border-t border-foreground/10" />
 
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">{l.cost}</p>
-          <p className="mt-2 font-serif text-5xl font-semibold tabular-nums tracking-tight text-primary">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">{l.cost}</p>
+          <p className="mt-3 text-[56px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[72px]">
             {cf.format(cost)}
           </p>
 
-          <p className="mt-6 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
-            <Info className="mt-0.5 h-3.5 w-3.5 flex-none" />
+          <p className="mt-8 border-t border-foreground/10 pt-5 text-[11.5px] leading-[1.6] text-foreground/50">
             {l.note}
           </p>
         </div>
