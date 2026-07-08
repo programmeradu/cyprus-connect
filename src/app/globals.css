@@ -416,3 +416,176 @@ h1, h2, h3, h4, h5, h6, p, span, a, button, label, li {
 nextjs-portal {
   display: none !important;
 }
+
+/* ---------- VerdeIQ article typography (Learn / Pillar pages) ---------- */
+.verdeiq-article {
+  font-family: var(--editorial-sans);
+  color: var(--foreground);
+  font-size: 17px;
+  line-height: 1.72;
+  font-feature-settings: "ss01", "ss02", "cv11";
+}
+.verdeiq-article p {
+  margin: 0 0 1.4em;
+  color: color-mix(in oklab, var(--foreground) 85%, transparent);
+  overflow-wrap: break-word;
+}
+.verdeiq-article p:has(+ p) + p,
+.verdeiq-article p + p {
+  margin-top: -0.2em;
+}
+.verdeiq-lead > p:first-child {
+  font-size: 20px;
+  line-height: 1.55;
+  color: color-mix(in oklab, var(--foreground) 92%, transparent);
+  letter-spacing: -0.005em;
+  margin-bottom: 1.5em;
+}
+.verdeiq-article section {
+  margin-top: 3.5em;
+  scroll-margin-top: 6rem;
+}
+.verdeiq-article section:first-child {
+  margin-top: 2.5em;
+}
+.verdeiq-article h2 {
+  font-family: var(--editorial-sans);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  color: var(--foreground);
+  margin: 0 0 1em;
+  padding-top: 0.25em;
+  border-top: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+  padding-top: 1.5em;
+}
+.verdeiq-article h3 {
+  font-family: var(--editorial-sans);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--foreground);
+  margin: 2em 0 0.75em;
+}
+.verdeiq-article h4 {
+  font-family: var(--editorial-sans);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--foreground);
+  margin: 1.75em 0 0.5em;
+}
+.verdeiq-article a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--primary) 35%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color .15s ease;
+}
+.verdeiq-article a:hover {
+  text-decoration-color: var(--primary);
+}
+.verdeiq-article strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.verdeiq-article em {
+  font-style: italic;
+}
+.verdeiq-article ul,
+.verdeiq-article ol {
+  margin: 0.5em 0 1.6em;
+  padding-left: 1.4em;
+  color: color-mix(in oklab, var(--foreground) 85%, transparent);
+}
+.verdeiq-article ul { list-style: none; padding-left: 0; }
+.verdeiq-article ul > li {
+  position: relative;
+  padding-left: 1.4em;
+  margin: 0.55em 0;
+  line-height: 1.65;
+}
+.verdeiq-article ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.15em;
+  top: 0.72em;
+  width: 0.5em;
+  height: 1px;
+  background: color-mix(in oklab, var(--primary) 65%, transparent);
+}
+.verdeiq-article ol {
+  list-style: none;
+  counter-reset: verdeiq-ol;
+  padding-left: 0;
+}
+.verdeiq-article ol > li {
+  counter-increment: verdeiq-ol;
+  position: relative;
+  padding-left: 2.4em;
+  margin: 0.6em 0;
+  line-height: 1.65;
+}
+.verdeiq-article ol > li::before {
+  content: counter(verdeiq-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75em;
+  font-weight: 600;
+  color: color-mix(in oklab, var(--primary) 75%, transparent);
+  letter-spacing: 0.05em;
+}
+.verdeiq-article blockquote {
+  margin: 2em 0;
+  padding: 0.25em 0 0.25em 1.5em;
+  border-left: 2px solid var(--primary);
+  font-size: 20px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--foreground);
+  font-style: normal;
+}
+.verdeiq-article blockquote p { margin: 0.3em 0; }
+.verdeiq-article code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  background: color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+.verdeiq-article hr {
+  border: 0;
+  border-top: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
+  margin: 3em 0;
+}
+.verdeiq-article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2em 0;
+  font-size: 15px;
+}
+.verdeiq-article th,
+.verdeiq-article td {
+  padding: 0.75em 1em;
+  border-bottom: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+  text-align: left;
+  vertical-align: top;
+}
+.verdeiq-article th {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in oklab, var(--foreground) 60%, transparent);
+  border-bottom-width: 2px;
+}
+@media (min-width: 640px) {
+  .verdeiq-article { font-size: 18px; line-height: 1.7; }
+  .verdeiq-lead > p:first-child { font-size: 22px; }
+  .verdeiq-article h2 { font-size: 34px; }
+  .verdeiq-article h3 { font-size: 23px; }
+}
