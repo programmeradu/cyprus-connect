@@ -8,7 +8,7 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 import { PricingTable } from "@/components/autumn/pricing-table";
-import { PaymentGatewaySelector } from "@/components/billing/PaymentGatewaySelector";
+
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "next-intl";
 
