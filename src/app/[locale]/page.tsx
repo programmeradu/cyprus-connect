@@ -724,7 +724,7 @@ export default function Home() {
                   transition={{ duration: 2, repeat: Infinity }} />
               </motion.svg>
               <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
-                Advanced Insights
+                {tL("badgeAdvanced")}
               </span>
               <motion.div
                 className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
