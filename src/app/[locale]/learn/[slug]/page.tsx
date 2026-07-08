@@ -204,6 +204,15 @@ export default async function PillarPage({ params }: { params: Params }) {
         introduction={introduction}
         sectionsContent={sectionsContent}
         faq={c.faq}
+        afterFaq={
+          <RelatedSuggestions
+            currentSlug={slug}
+            locale={safeLocale}
+            context="faq"
+            keyword={pillar.primaryKeyword}
+            label={safeLocale === "el" ? "Σχετικοί οδηγοί" : "Related guides"}
+          />
+        }
         cta={{ heading: c.ctaHeading, body: c.ctaBody }}
         related={related.map((r) => ({
           slug: r.slug,
