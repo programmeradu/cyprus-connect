@@ -1,0 +1,27 @@
+# VerdeIQ
+
+> AI-powered sustainability platform for SMEs in Cyprus and across the EU. Track carbon footprint, generate CSRD/VSME-ready reports, benchmark against industry peers, and stay compliant — in EUR, with GDPR-compliant data handling and full English + Greek (el-CY) support.
+
+VerdeIQ helps small and medium enterprises measure Scope 1/2/3 emissions, model Cyprus-specific energy costs, run compliance checks against EU CSRD/ESRS/VSME frameworks, and produce audit-ready sustainability reports powered by AI. Pricing is transparent in EUR and includes Cyprus VAT (19%).
+
+## Pages
+
+- [Home (English)](/en): Product overview, features, and pricing entry point.
+- [Home (Greek — Κύπρος)](/el): Ίδια αρχική σελίδα στα ελληνικά για την Κύπρο.
+- [Pricing (English)](/en/pricing): Plans in EUR, FAQ, Cyprus VAT notice.
+- [Pricing (Greek)](/el/pricing): Πλάνα σε EUR και συχνές ερωτήσεις.
+
+## Legal & Trust
+
+- [Privacy Policy (EN)](/en/privacy): GDPR-compliant privacy policy.
+- [Privacy Policy (EL)](/el/privacy): Πολιτική απορρήτου (GDPR).
+- [Terms of Service (EN)](/en/terms): Terms of use for the VerdeIQ platform.
+- [Terms of Service (EL)](/el/terms): Όροι χρήσης.
+- [Security (EN)](/en/security): Security posture, hosting, and data handling.
+- [Security (EL)](/el/security): Πολιτική ασφάλειας.
+- [Data Processing Addendum (EN)](/en/dpa): DPA for EU/EEA customers.
+- [Data Processing Addendum (EL)](/el/dpa): Παράρτημα επεξεργασίας δεδομένων.
+
+## Optional
+
+- Authenticated app surfaces (dashboard, onboarding, settings, billing) are excluded — they require a signed-in VerdeIQ account.

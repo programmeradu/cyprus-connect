@@ -2,7 +2,7 @@ import Link from "next/link";
 import { routing, type Locale } from "@/i18n/routing";
 import { getTrustContent, type TrustPageKey } from "@/content/trust";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
 
 const NAV_LABELS: Record<Locale, { privacy: string; terms: string; security: string; dpa: string; back: string; updated: string }> = {
   en: { privacy: "Privacy", terms: "Terms", security: "Security", dpa: "DPA", back: "Back to home", updated: "Last updated" },
