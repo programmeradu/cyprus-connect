@@ -1681,7 +1681,7 @@ export default function Home() {
               className="flex flex-col items-center gap-8"
             >
               <span className="text-[10px] font-bold tracking-[0.2em] text-foreground/60 dark:text-muted-foreground uppercase">
-                Seamlessly Integrated With
+                {tL("integratedWith")}
               </span>
               
               <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-80 dark:opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
