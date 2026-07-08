@@ -33,7 +33,7 @@ type Props = {
   interactiveLabel: string;
   featuredLabel: string;
   emptyLabel: string;
-  guidesCountLabel: (n: number) => string;
+  guidesCountLabelTemplate: string;
 };
 
 const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
@@ -55,7 +55,7 @@ export default function LearnHubClient({
   interactiveLabel,
   featuredLabel,
   emptyLabel,
-  guidesCountLabel,
+  guidesCountLabelTemplate,
 }: Props) {
   const [q, setQ] = useSessionState<string>("verdeiq.learn.q", "");
   const [cat, setCat] = useSessionState<string>("verdeiq.learn.cat", "all");
@@ -126,7 +126,7 @@ export default function LearnHubClient({
           {heading}
         </h1>
         <p className="mt-6 text-lg text-muted-foreground sm:text-xl">{subheading}</p>
-        <p className="mt-4 text-sm text-muted-foreground">{guidesCountLabel(pillars.length)}</p>
+        <p className="mt-4 text-sm text-muted-foreground">{guidesCountLabelTemplate.replace("{count}", String(pillars.length))}</p>
       </header>
 
       {/* Featured trio */}

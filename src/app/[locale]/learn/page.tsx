@@ -148,10 +148,10 @@ export default async function LearnIndex({ params }: { params: Promise<{ locale:
       interactiveLabel={safeLocale === "el" ? "Εργαλείο" : "Tool"}
       featuredLabel={safeLocale === "el" ? "Προτεινόμενα" : "Featured guides"}
       emptyLabel={safeLocale === "el" ? "Δεν βρέθηκαν οδηγοί." : "No guides match your search."}
-      guidesCountLabel={(n) =>
+      guidesCountLabelTemplate={
         safeLocale === "el"
-          ? `${n} οδηγοί · Ενημερώνονται τακτικά · Δωρεάν για ανάγνωση`
-          : `${n} in-depth guides · Kept current · Free to read`
+          ? "{count} οδηγοί · Ενημερώνονται τακτικά · Δωρεάν για ανάγνωση"
+          : "{count} in-depth guides · Kept current · Free to read"
       }
     />
   );
