@@ -13,8 +13,8 @@ import type { ExchangeRates } from "@/lib/exchange-rates";
 import { useSession } from "@/lib/auth-client";
 
 const LOCALE_MAP: Record<string, string> = {
-  en: "en-US",
-  el: "el-GR",
+  en: "en-CY",
+  el: "el-CY",
 };
 
 function useIntlLocale(): string {
@@ -39,8 +39,8 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | null>(null);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  const [selectedCurrency, setSelectedCurrency] = useState<string>("");
-  const [userCurrency, setUserCurrency] = useState<string>("");
+  const [selectedCurrency, setSelectedCurrency] = useState<string>("EUR");
+  const [userCurrency, setUserCurrency] = useState<string>("EUR");
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -62,7 +62,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       
       if (response.ok) {
         const data = await response.json();
-        return data.preferredCurrency;
+        return data.preferredCurrency === "EUR" ? "EUR" : null;
       }
     } catch (error) {
       console.error("Failed to load currency from database:", error);
@@ -74,47 +74,25 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const initializeCurrency = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Priority 1: User's saved preference from database
+      // VerdeIQ is Cyprus-only: EUR is the product currency.
       const savedCurrency = await loadCurrencyFromDatabase();
-      if (savedCurrency) {
-        setSelectedCurrency(savedCurrency);
-        setUserCurrency(savedCurrency);
-        setIsLoading(false);
-        return;
-      }
+      setUserCurrency("EUR");
+      setSelectedCurrency(savedCurrency || "EUR");
 
-      // Priority 2: Detect from IP geolocation
-      const geoResponse = await fetch("/api/geolocation");
-      if (geoResponse.ok) {
-        const data = await geoResponse.json();
-        // EU/EEA + UK: force EUR (or the country's local currency where relevant).
-        // For Cyprus specifically the currency IS EUR, but we also override for
-        // countries whose ipapi response might return a non-EUR currency in error.
-        const EU_EUR = new Set([
-          "AT","BE","CY","EE","FI","FR","DE","GR","IE","IT","LV","LT","LU",
-          "MT","NL","PT","SK","SI","ES",
-        ]);
-        const detected = EU_EUR.has(data.countryCode) ? "EUR" : data.currency;
-        if (detected) {
-          setUserCurrency(detected);
-          setSelectedCurrency(detected);
-
-          if (session?.user?.id) {
-            const token = localStorage.getItem("bearer_token");
-            await fetch(`/api/users/${session.user.id}/preferences`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token || ""}`
-              },
-              body: JSON.stringify({
-                preferredCurrency: detected,
-                countryCode: data.countryCode,
-                timezone: data.timezone,
-              })
-            });
-          }
-        }
+      if (session?.user?.id) {
+        const token = localStorage.getItem("bearer_token");
+        await fetch(`/api/users/${session.user.id}/preferences`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token || ""}`
+          },
+          body: JSON.stringify({
+            preferredCurrency: "EUR",
+            countryCode: "CY",
+            timezone: "Asia/Nicosia",
+          })
+        });
       }
     } catch (error) {
       console.error("Failed to initialize currency:", error);
@@ -154,7 +132,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   }, [selectedCurrency]);
 
   const setCurrency = useCallback(async (currency: string) => {
-    const upperCurrency = currency.toUpperCase();
+    const upperCurrency = "EUR";
     setSelectedCurrency(upperCurrency);
     
     // Persist to user preferences
@@ -166,7 +144,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token || ""}`
         },
-        body: JSON.stringify({ preferredCurrency: upperCurrency })
+        body: JSON.stringify({ preferredCurrency: upperCurrency, countryCode: "CY", timezone: "Asia/Nicosia" })
       });
     }
     
@@ -182,8 +160,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   // Refresh currency from database (called after Settings save)
   const refreshCurrency = useCallback(async () => {
     const savedCurrency = await loadCurrencyFromDatabase();
-    if (savedCurrency && savedCurrency !== selectedCurrency) {
-      setSelectedCurrency(savedCurrency);
+    if ((savedCurrency || "EUR") !== selectedCurrency) {
+      setSelectedCurrency("EUR");
       setRefreshTrigger(prev => prev + 1);
     }
   }, [loadCurrencyFromDatabase, selectedCurrency]);
