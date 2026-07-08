@@ -723,6 +723,12 @@ export const DashboardDemo = ({ landingMode = false }: DashboardDemoProps) => {
   }, [weather, activeTab])
 
   const getUserLocation = () => {
+    // On the landing page we lock everything to Cyprus (Nicosia) so no
+    // geolocation prompt appears and the demo shows Cyprus-relevant data.
+    if (landingMode) {
+      setLocation({ city: "Nicosia", lat: "35.1856", lon: "33.3823" })
+      return
+    }
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -762,7 +768,8 @@ export const DashboardDemo = ({ landingMode = false }: DashboardDemoProps) => {
   const fetchNews = async () => {
     setNewsLoading(true)
     try {
-      const response = await fetch('/api/news')
+      const url = landingMode ? '/api/news?country=cy' : '/api/news'
+      const response = await fetch(url)
       const data = await response.json()
       setNews(data.items || [])
     } catch (error) {
