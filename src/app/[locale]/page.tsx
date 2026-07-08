@@ -1857,8 +1857,8 @@ export default function Home() {
             {[
             {
               number: 1,
-              title: "Connect Your Data",
-              description: "Connect QuickBooks, Xero, or upload utility bills via AI-powered OCR. We integrate with your current infrastructure in minutes.",
+              title: tL("stepConnectTitle"),
+              description: tL("stepConnectDesc"),
               icon:
               <svg viewBox="0 0 100 100" className="w-12 h-12">
                     <motion.path
