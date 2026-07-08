@@ -1392,10 +1392,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Smart Integrations
+                  {tL("powerIntegrationsTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Seamlessly connect QuickBooks, Xero, and more. Use AI-powered OCR to automatically parse utility bills and invoices for instant tracking.
+                  {tL("powerIntegrationsDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
