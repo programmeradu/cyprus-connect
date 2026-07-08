@@ -1,12 +1,31 @@
-import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getAllPillars } from "@/data/learn/pillars";
+import LearnHubClient from "@/components/learn/LearnHubClient";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+
+// Slugs that ship with an interactive widget (mirrors WIDGET_MAP in [slug]/page.tsx)
+const WIDGET_SLUGS = new Set([
+  "csrd-reporting-guide",
+  "csrd-reporting-cyprus",
+  "vsme-reporting-guide",
+  "esrs-standards-explained",
+  "eu-taxonomy-explained",
+  "sustainability-reporting-eu",
+  "double-materiality-assessment",
+  "scope-1-2-3-emissions",
+  "scope-3-emissions-calculation",
+  "ghg-protocol-guide",
+  "carbon-accounting-for-smes",
+  "carbon-footprint-software-smes",
+  "net-zero-roadmap-smes",
+  "science-based-targets-sbti",
+  "cbam-explained",
+  "cbam-cyprus",
+]);
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -19,11 +38,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     : routing.defaultLocale;
 
   const title = safeLocale === "el"
-    ? "Κόμβος Γνώσης VerdeIQ — CSRD, VSME, CBAM & Λογιστική Άνθρακα"
+    ? "Κόμβος Γνώσης VerdeIQ — Οδηγοί CSRD, VSME, CBAM & Λογιστικής Άνθρακα"
     : "VerdeIQ Learn — CSRD, VSME, CBAM & Carbon Accounting Guides";
   const description = safeLocale === "el"
-    ? "Πρακτικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ — γραμμένοι για CFOs και υπεύθυνους βιωσιμότητας στην ΕΕ και την Κύπρο."
-    : "Practical guides on CSRD, VSME, CBAM, ESRS, and SME sustainability — written for CFOs and sustainability leads across the EU and Cyprus.";
+    ? "Πρακτικοί, διαδραστικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ — με ελεύθερα εργαλεία υπολογισμού για CFOs και υπεύθυνους βιωσιμότητας."
+    : "Practical, interactive guides on CSRD, VSME, CBAM, ESRS and SME sustainability — with free built-in calculators for CFOs and sustainability leads.";
 
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/learn`;
@@ -45,15 +64,38 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-const CATEGORY_LABELS: Record<string, { en: string; el: string }> = {
-  csrd: { en: "CSRD & ESRS", el: "CSRD & ESRS" },
-  cbam: { en: "CBAM", el: "CBAM" },
-  carbon: { en: "Carbon Accounting", el: "Λογιστική Άνθρακα" },
-  esg: { en: "ESG Reporting", el: "ESG Αναφορές" },
-  sme: { en: "For SMEs", el: "Για ΜμΕ" },
-  cyprus: { en: "Cyprus Focus", el: "Εστίαση Κύπρου" },
-  standards: { en: "Standards", el: "Πρότυπα" },
+const CATEGORY_META: Record<string, { en: { label: string; desc: string }; el: { label: string; desc: string } }> = {
+  csrd: {
+    en: { label: "CSRD & ESRS", desc: "The core EU sustainability reporting regime — who's in scope, when, and how." },
+    el: { label: "CSRD & ESRS", desc: "Το βασικό καθεστώς αναφοράς βιωσιμότητας της ΕΕ — ποιοι, πότε, πώς." },
+  },
+  cbam: {
+    en: { label: "CBAM", desc: "Carbon border adjustment mechanism — costs, compliance, and Cyprus-specific impact." },
+    el: { label: "CBAM", desc: "Μηχανισμός συνοριακής προσαρμογής άνθρακα — κόστη, συμμόρφωση και επίπτωση στην Κύπρο." },
+  },
+  carbon: {
+    en: { label: "Carbon accounting", desc: "Measure, model and reduce Scope 1, 2 and 3 emissions." },
+    el: { label: "Λογιστική άνθρακα", desc: "Μέτρηση, μοντελοποίηση και μείωση εκπομπών Scope 1, 2 και 3." },
+  },
+  standards: {
+    en: { label: "Standards & frameworks", desc: "GHG Protocol, ESRS, SBTi, EU Taxonomy — the rulebooks behind reporting." },
+    el: { label: "Πρότυπα & πλαίσια", desc: "GHG Protocol, ESRS, SBTi, EU Taxonomy — τα βιβλία κανόνων." },
+  },
+  esg: {
+    en: { label: "ESG reporting", desc: "Software, KPIs and disclosure workflow for finance and sustainability teams." },
+    el: { label: "ESG αναφορές", desc: "Λογισμικό, KPIs και ροή αποκάλυψης για ομάδες οικονομικών και βιωσιμότητας." },
+  },
+  sme: {
+    en: { label: "For SMEs", desc: "Right-sized guidance for small and medium businesses — VSME, roadmaps, KPIs." },
+    el: { label: "Για ΜμΕ", desc: "Καθοδήγηση προσαρμοσμένη για μικρές και μεσαίες επιχειρήσεις." },
+  },
+  cyprus: {
+    en: { label: "Cyprus focus", desc: "Local regulatory context, timelines and case studies for Cypriot companies." },
+    el: { label: "Εστίαση Κύπρου", desc: "Τοπικό ρυθμιστικό πλαίσιο, χρονοδιαγράμματα και μελέτες περίπτωσης." },
+  },
 };
+
+const CATEGORY_ORDER = ["csrd", "cbam", "carbon", "standards", "esg", "sme", "cyprus"] as const;
 
 export default async function LearnIndex({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -61,58 +103,53 @@ export default async function LearnIndex({ params }: { params: Promise<{ locale:
   setRequestLocale(locale);
 
   const safeLocale = locale as "en" | "el";
-  const pillars = getAllPillars();
+  const all = getAllPillars();
 
-  const heading = safeLocale === "el" ? "Κόμβος Γνώσης" : "Learn";
+  const pillarCards = all.map((p) => {
+    const c = p[safeLocale];
+    return {
+      slug: p.slug,
+      category: p.category,
+      heroImage: p.heroImage,
+      readingMinutes: p.readingMinutes,
+      eyebrow: c.heroEyebrow,
+      title: c.title,
+      description: c.metaDescription,
+      hasWidget: WIDGET_SLUGS.has(p.slug),
+    };
+  });
+
+  const categories = CATEGORY_ORDER
+    .filter((k) => pillarCards.some((p) => p.category === k))
+    .map((k) => ({
+      key: k,
+      label: CATEGORY_META[k][safeLocale].label,
+      description: CATEGORY_META[k][safeLocale].desc,
+    }));
+
+  const heading = safeLocale === "el" ? "Κόμβος Γνώσης" : "The Learn hub";
   const subheading = safeLocale === "el"
-    ? "Πρακτικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ."
-    : "Practical guides on CSRD, VSME, CBAM, ESRS, and SME sustainability.";
-
-  // Group by category
-  const grouped = new Map<string, typeof pillars>();
-  for (const p of pillars) {
-    const arr = grouped.get(p.category) ?? [];
-    arr.push(p);
-    grouped.set(p.category, arr);
-  }
+    ? "Πρακτικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ — με διαδραστικά εργαλεία υπολογισμού μέσα σε κάθε άρθρο."
+    : "Practical guides on CSRD, VSME, CBAM, ESRS and SME sustainability — with interactive calculators built into every article.";
+  const searchPlaceholder = safeLocale === "el" ? "Αναζήτηση οδηγών…" : "Search guides…";
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 pb-24 pt-16 sm:pt-24">
-      <header className="mb-16 max-w-3xl">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">VerdeIQ</p>
-        <h1 className="mt-3 text-5xl font-semibold tracking-tight sm:text-6xl">{heading}</h1>
-        <p className="mt-6 text-xl text-muted-foreground">{subheading}</p>
-      </header>
-
-      {Array.from(grouped.entries()).map(([cat, items]) => (
-        <section key={cat} className="mb-16">
-          <h2 className="mb-8 text-2xl font-semibold tracking-tight">
-            {CATEGORY_LABELS[cat]?.[safeLocale] ?? cat}
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((p) => {
-              const c = p[safeLocale];
-              return (
-                <Link
-                  key={p.slug}
-                  href={`/${safeLocale}/learn/${p.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-2xl border transition hover:border-primary/50 hover:shadow-lg"
-                >
-                  <div className="relative aspect-[16/9] w-full bg-muted">
-                    <Image src={p.heroImage} alt={c.title} fill sizes="(min-width: 1024px) 380px, (min-width: 768px) 45vw, 100vw" className="object-cover transition-transform group-hover:scale-105" />
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <p className="text-xs uppercase tracking-widest text-primary">{c.heroEyebrow}</p>
-                    <h3 className="mt-2 text-lg font-semibold leading-snug group-hover:text-primary">{c.title}</h3>
-                    <p className="mt-3 flex-1 text-sm text-muted-foreground line-clamp-3">{c.metaDescription}</p>
-                    <p className="mt-4 text-xs text-muted-foreground">{p.readingMinutes} min read</p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      ))}
-    </main>
+    <LearnHubClient
+      locale={safeLocale}
+      pillars={pillarCards}
+      categories={categories}
+      heading={heading}
+      subheading={subheading}
+      searchPlaceholder={searchPlaceholder}
+      allLabel={safeLocale === "el" ? "Όλα" : "All"}
+      interactiveLabel={safeLocale === "el" ? "Εργαλείο" : "Tool"}
+      featuredLabel={safeLocale === "el" ? "Προτεινόμενα" : "Featured guides"}
+      emptyLabel={safeLocale === "el" ? "Δεν βρέθηκαν οδηγοί." : "No guides match your search."}
+      guidesCountLabel={(n) =>
+        safeLocale === "el"
+          ? `${n} οδηγοί · Ενημερώνονται τακτικά · Δωρεάν για ανάγνωση`
+          : `${n} in-depth guides · Kept current · Free to read`
+      }
+    />
   );
 }
