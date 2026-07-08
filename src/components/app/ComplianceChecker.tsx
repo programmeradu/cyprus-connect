@@ -194,13 +194,13 @@ export function ComplianceChecker() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to check compliance');
+        throw new Error(t('failed'));
       }
 
       const data = await response.json();
       setCompliance(data.compliance);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setLoading(false);
     }
