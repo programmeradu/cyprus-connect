@@ -107,7 +107,7 @@
     "marketplace": "Carbon Offsets",
     "compliance": "Compliance",
     "learn": "Learning Center",
-    "studio": "Media Studio",
+    "studio": "Report Visuals",
     "leaderboard": "Leaderboard",
     "analytics": "Analytics",
     "insights": "Insights",
@@ -753,16 +753,16 @@
       }
     },
     "studio": {
-      "title": "Media Studio",
-      "subtitle": "AI-powered sustainability content creation with Imagen 4 & Gemini 2.5 Flash",
+      "title": "Report Visuals",
+      "subtitle": "Generate charts, infographics and social snippets from your live ESG data — S1/S2/S3 breakdowns, CBAM exposure, YoY trends.",
       "recent": "Recent",
       "library": "Library",
       "recentGenerations": "Recent Generations",
       "savedLibrary": "Saved Library",
       "itemCount": "{count, plural, one {# item} other {# items}}",
       "creator": {
-        "title": "Content Creator",
-        "subtitle": "AI selects best model automatically",
+        "title": "Visual Builder",
+        "subtitle": "Ties directly to your reporting data. Enterprise plan.",
         "image": "Image",
         "video": "Video",
         "contextLabel": "Content Context",
@@ -1444,7 +1444,7 @@
       }
     },
     "media": {
-      "title": "Media Studio",
+      "title": "Report Visuals",
       "subtitle": "AI-Powered Creative Generation",
       "contentType": "Content Type",
       "image": "Image",
