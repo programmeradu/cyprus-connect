@@ -3,18 +3,24 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, BookOpen, Sparkles, Clock } from "lucide-react";
+import { Search, BookOpen, Sparkles, Clock, ArrowDownWideNarrow, X } from "lucide-react";
+import { useSessionState } from "@/hooks/usePersistedState";
 
 type PillarCard = {
   slug: string;
   category: string;
   heroImage: string;
   readingMinutes: number;
+  publishedAt: string;
+  updatedAt: string;
   eyebrow: string;
   title: string;
   description: string;
+  keywords: string; // pre-joined searchable string
   hasWidget: boolean;
 };
+
+type SortKey = "recommended" | "newest" | "shortest" | "longest" | "az";
 
 type Props = {
   locale: "en" | "el";
@@ -30,6 +36,14 @@ type Props = {
   guidesCountLabel: (n: number) => string;
 };
 
+const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
+  recommended: { en: "Recommended", el: "Προτεινόμενα" },
+  newest: { en: "Newest first", el: "Νεότερα πρώτα" },
+  shortest: { en: "Shortest read", el: "Συντομότερα" },
+  longest: { en: "In-depth first", el: "Εκτενέστερα" },
+  az: { en: "A–Z", el: "Α–Ω" },
+};
+
 export default function LearnHubClient({
   locale,
   pillars,
@@ -43,33 +57,33 @@ export default function LearnHubClient({
   emptyLabel,
   guidesCountLabel,
 }: Props) {
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState<string>("all");
+  const [q, setQ] = useSessionState<string>("verdeiq.learn.q", "");
+  const [cat, setCat] = useSessionState<string>("verdeiq.learn.cat", "all");
+  const [sort, setSort] = useSessionState<SortKey>("verdeiq.learn.sort", "recommended");
+  const [interactiveOnly, setInteractiveOnly] = useSessionState<boolean>(
+    "verdeiq.learn.interactiveOnly",
+    false
+  );
 
   const filtered = useMemo(() => {
-    const query = q.trim().toLowerCase();
-    return pillars.filter((p) => {
+    const tokens = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const matched = pillars.filter((p) => {
       if (cat !== "all" && p.category !== cat) return false;
-      if (!query) return true;
-      return (
-        p.title.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query) ||
-        p.eyebrow.toLowerCase().includes(query)
-      );
+      if (interactiveOnly && !p.hasWidget) return false;
+      if (tokens.length === 0) return true;
+      const hay = `${p.title} ${p.description} ${p.eyebrow} ${p.keywords} ${p.slug}`.toLowerCase();
+      // full-text: every token must appear (AND semantics)
+      return tokens.every((tok) => hay.includes(tok));
     });
-  }, [pillars, q, cat]);
 
-  const featured = pillars.slice(0, 3);
+    const sorted = [...matched];
+    if (sort === "newest") sorted.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    else if (sort === "shortest") sorted.sort((a, b) => a.readingMinutes - b.readingMinutes);
+    else if (sort === "longest") sorted.sort((a, b) => b.readingMinutes - a.readingMinutes);
+    else if (sort === "az") sorted.sort((a, b) => a.title.localeCompare(b.title, locale === "el" ? "el-CY" : "en"));
+    return sorted;
+  }, [pillars, q, cat, sort, interactiveOnly, locale]);
 
-  const grouped = useMemo(() => {
-    const map = new Map<string, PillarCard[]>();
-    for (const p of filtered) {
-      const arr = map.get(p.category) ?? [];
-      arr.push(p);
-      map.set(p.category, arr);
-    }
-    return map;
-  }, [filtered]);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-14 sm:px-6 sm:pt-20">
