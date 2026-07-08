@@ -2172,10 +2172,10 @@ export default function Home() {
             
             <div className="relative z-10">
               <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
-                Ready to Lead on <span className="gradient-text">Sustainability?</span>
+                {tL("ctaTitleA")} <span className="gradient-text">{tL("ctaTitleB")}</span>
               </h2>
               <p className="text-sm text-foreground/70 dark:text-muted-foreground mb-6 font-light max-w-xl mx-auto">
-                Join the future of sustainable business today
+                {tL("ctaSubtitle")}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/auth">
