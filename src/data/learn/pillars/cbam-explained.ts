@@ -5,7 +5,7 @@ export const cbamExplained = makePillar({
   category: "cbam",
   primaryKeyword: "CBAM",
   monthlyVolume: 3600,
-  readingMinutes: 11,
+  readingMinutes: 13,
   relatedSlugs: ["csrd-reporting-guide","cbam-cyprus","sustainability-reporting-eu","scope-1-2-3-emissions"],
   en: {
   "title": "CBAM Explained: The EU Carbon Border Adjustment Mechanism in Practice",
@@ -40,6 +40,21 @@ export const cbamExplained = makePillar({
         "Importers register as authorised CBAM declarants, submit an annual CBAM declaration by 31 May of the following year, and surrender certificates equal to embedded emissions × (ETS price − any effective carbon price already paid in the country of origin).",
         "Certificates are sold at the weekly average ETS auction price. Free allocation to EU producers phases out in parallel with CBAM phase-in through 2034."
       ]
+    },
+    {
+      "heading": "Reporting practicalities: the CBAM Registry and quarterly submissions",
+      "body": [
+        "During the transitional phase, importers submit quarterly CBAM reports through the CBAM Transitional Registry. Each report covers embedded emissions of imports for the quarter, split by CN code, country of origin, and installation. The first quarterly report was due 31 January 2024 covering Q4 2023.",
+        "Missing a quarterly report or filing incomplete data triggers penalties of €10–50 per tonne of unreported embedded emissions. Non-EU installations without a CBAM Registry entry can force EU importers back to default values — which will carry a cost penalty from mid-2026."
+      ]
+    },
+    {
+      "heading": "How to prepare your supply chain in 2026",
+      "body": [
+        "Map every affected import: pull 12 months of customs entries, filter by the CBAM CN codes, and identify each non-EU installation supplying you. Most importers discover 3–8 covered products from 5–15 installations.",
+        "Contract with each installation: get them to provide monitored emissions data on a documented methodology (installation-level Scope 1 + relevant Scope 2 + precursor emissions). Bake data delivery into 2026 purchase agreements as a supplier obligation, not an ask.",
+        "Model the 2026 financial impact: multiply expected annual embedded emissions × current ETS price (roughly €70–90/tCO2e in 2026) to size the certificate cost. For a mid-size steel importer, this typically lands in the €50k–500k/year range — enough to affect procurement decisions."
+      ]
     }
   ],
   "keyTakeaways": [
@@ -64,6 +79,14 @@ export const cbamExplained = makePillar({
     {
       "q": "Does CBAM affect exports from the EU?",
       "a": "No, CBAM applies to imports only. There is ongoing debate about export rebates but nothing enacted."
+    },
+    {
+      "q": "How much do CBAM certificates cost per tonne?",
+      "a": "They track the weekly average EU ETS auction price. In 2025–2026 that has ranged €70–90/tCO2e. Budget accordingly against your imported tonnage of covered goods."
+    },
+    {
+      "q": "What happens if my non-EU supplier refuses to share verified emissions data?",
+      "a": "You fall back on default values, which carry a penalty premium from mid-2026 (roughly 20–40% higher than typical actuals). For high-volume imports, this alone justifies switching suppliers or investing in the data collection."
     }
   ],
   "ctaHeading": "Automate CBAM emissions collection from your suppliers",
