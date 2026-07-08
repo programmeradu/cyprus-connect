@@ -271,8 +271,7 @@ export const BillingDashboard = () => {
                 <div className="mt-1 flex items-center gap-1.5">
                   <span className="text-[10px] text-muted-foreground">{t("via")}</span>
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted">
-                    {currentSubscription.gateway === 'stripe' ? '🔵 Stripe' : 
-                     currentSubscription.gateway === 'paystack' ? '🟢 Paystack' :
+                    {currentSubscription.gateway === 'stripe' ? '🔵 Stripe' :
                      currentSubscription.gateway}
                   </span>
                 </div>
