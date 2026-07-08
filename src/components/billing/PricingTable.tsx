@@ -95,6 +95,10 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
         const intervalLabel = plan.interval
           ? t(`intervals.${plan.interval as 'month' | 'year'}`)
           : null;
+        const displayPrice = isEur ? plan.priceEur : plan.price;
+        const priceLabel = formatCurrency(displayPrice, currency, locale);
+
+
 
         return (
           <motion.div
