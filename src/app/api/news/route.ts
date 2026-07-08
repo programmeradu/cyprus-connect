@@ -156,29 +156,6 @@ export async function GET(request: Request) {
       title = clean(title);
       description = clean(description, 160);
 
-      // Fallback image: curated pool of stable Unsplash CDN images
-      // (source.unsplash.com was deprecated in 2024)
-      if (!imageUrl) {
-        const cyPool = [
-          'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=300&fit=crop', // solar panels
-          'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=400&h=300&fit=crop', // wind turbines
-          'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=400&h=300&fit=crop', // forest
-          'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&h=300&fit=crop', // mediterranean coast
-          'https://images.unsplash.com/photo-1473773508845-188df298d2d1?w=400&h=300&fit=crop', // olive grove
-          'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=300&fit=crop', // renewable grid
-          'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=400&h=300&fit=crop', // climate earth
-        ];
-        const globalPool = [
-          'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=400&h=300&fit=crop',
-          'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=400&h=300&fit=crop',
-        ];
-        const pool = country === 'cy' ? cyPool : globalPool;
-        imageUrl = pool[count % pool.length];
-      }
-
       if (title && link) {
         items.push({
           title,
@@ -190,6 +167,73 @@ export async function GET(request: Request) {
         count++;
       }
     }
+
+    // Resolve missing images from each article's og:image / twitter:image.
+    // Google News RSS links redirect to the publisher; follow redirects then
+    // parse meta tags. Run in parallel with a per-article timeout.
+    async function resolveOgImage(articleUrl: string): Promise<string> {
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 4000);
+        const res = await fetch(articleUrl, {
+          redirect: 'follow',
+          signal: ctrl.signal,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; VerdeIQ/1.0; +https://verdeiq.stauniverse.tech)',
+            'Accept': 'text/html,application/xhtml+xml',
+          },
+        });
+        clearTimeout(timer);
+        if (!res.ok) return '';
+        // Read only first 200KB — og tags live in <head>
+        const reader = res.body?.getReader();
+        if (!reader) return '';
+        const decoder = new TextDecoder();
+        let html = '';
+        let bytes = 0;
+        while (bytes < 200_000) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          bytes += value.length;
+          html += decoder.decode(value, { stream: true });
+          if (html.includes('</head>')) break;
+        }
+        reader.cancel().catch(() => {});
+        const patterns = [
+          /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+          /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+          /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+          /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
+          /<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i,
+        ];
+        for (const p of patterns) {
+          const m = html.match(p);
+          if (m?.[1]) {
+            let url = decodeHTMLEntities(m[1].trim());
+            if (url.startsWith('//')) url = 'https:' + url;
+            if (url.startsWith('http')) return url;
+          }
+        }
+      } catch {
+        // timeout or network error — silent
+      }
+      return '';
+    }
+
+    await Promise.all(
+      items.map(async (it) => {
+        if (!it.imageUrl) {
+          it.imageUrl = await resolveOgImage(it.link);
+        }
+      })
+    );
+
+    return NextResponse.json({ items }, {
+      headers: {
+        // Cache 1h on CDN, serve stale for 24h while revalidating in background
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    });
     
     return NextResponse.json({ items }, {
       headers: {
