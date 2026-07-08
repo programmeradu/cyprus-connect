@@ -4,12 +4,12 @@ import { useMemo } from "react";
 import { useLocale } from "next-intl";
 
 const LOCALE_MAP: Record<string, string> = {
-  en: "en-US",
+  en: "en-GB",
   el: "el-GR",
 };
 
 export function resolveIntlLocale(locale: string | undefined): string {
-  if (!locale) return "en-US";
+  if (!locale) return "en-GB";
   return LOCALE_MAP[locale] || locale;
 }
 
@@ -84,7 +84,7 @@ export function useNumberFormatter(options: Intl.NumberFormatOptions = {}) {
 export function formatCurrency(
   amount: number,
   currency: string,
-  locale: string = "en-US"
+  locale: string = "en-GB"
 ): string {
   const intlLocale = resolveIntlLocale(locale);
   try {
@@ -102,7 +102,7 @@ export function formatCurrency(
 
 export function formatNumber(
   value: number,
-  locale: string = "en-US",
+  locale: string = "en-GB",
   options: Intl.NumberFormatOptions = {}
 ): string {
   const intlLocale = resolveIntlLocale(locale);

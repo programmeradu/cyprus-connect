@@ -52,7 +52,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
           ],
           list: [
             "Account data: name, email, hashed password or OAuth identifier, preferred language and currency.",
-            "Billing data: subscription plan, payment status and invoice metadata (card details are handled by Stripe / Paystack — VerdeIQ never sees full card numbers).",
+            "Billing data: subscription plan, payment status and invoice metadata (card details are handled by Stripe — VerdeIQ never sees full card numbers).",
             "Sustainability data you enter: emissions inputs, uploaded documents, energy usage, benchmarks, and generated reports.",
             "Product telemetry: pages viewed, errors, feature usage — used to improve reliability. No advertising trackers.",
           ],
@@ -119,7 +119,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Subscriptions and billing",
           body: [
-            "Paid plans are billed in EUR via Stripe (or Paystack for non-EU customers). Prices for Cyprus customers include 19% VAT calculated by Stripe Tax from your billing address. Subscriptions renew automatically until cancelled from the billing portal.",
+            "Paid plans are billed in EUR via Stripe. Prices for Cyprus customers include 19% VAT calculated by Stripe Tax from your billing address. Subscriptions renew automatically until cancelled from the billing portal.",
             "You may cancel at any time; access continues until the end of the paid period. Refunds are handled per EU consumer law and Cyprus consumer protection rules.",
           ],
         },
@@ -182,7 +182,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Payments",
           body: [
-            "Card data never touches VerdeIQ servers — it is handled by Stripe (PCI-DSS Level 1) or Paystack. Webhooks are HMAC-verified before any state change.",
+            "Card data never touches VerdeIQ servers — it is handled by Stripe (PCI-DSS Level 1). Webhooks are HMAC-verified before any state change.",
           ],
         },
         {
@@ -199,8 +199,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
           list: [
             "Lovable Cloud — hosting, database, authentication, storage (EU where available).",
             "Stripe Payments Europe, Ltd. — card processing and tax calculation for EU/EEA customers.",
-            "Paystack Payments Limited — card processing for non-EU customers.",
-            "Resend — transactional email delivery.",
+                    "Resend — transactional email delivery.",
             "Lovable AI Gateway — AI inference for insights and document parsing.",
           ],
         },
@@ -303,7 +302,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
           body: ["Συλλέγουμε μόνο τα δεδομένα που είναι απαραίτητα για τη λειτουργία της υπηρεσίας:"],
           list: [
             "Δεδομένα λογαριασμού: όνομα, email, κρυπτογραφημένος κωδικός ή αναγνωριστικό OAuth, γλώσσα και νόμισμα προτίμησης.",
-            "Δεδομένα χρέωσης: πλάνο συνδρομής, κατάσταση πληρωμών και μεταδεδομένα τιμολογίων (τα στοιχεία κάρτας τα χειρίζονται αποκλειστικά η Stripe / Paystack — το VerdeIQ δεν βλέπει ποτέ πλήρεις αριθμούς καρτών).",
+            "Δεδομένα χρέωσης: πλάνο συνδρομής, κατάσταση πληρωμών και μεταδεδομένα τιμολογίων (τα στοιχεία κάρτας τα χειρίζονται αποκλειστικά η Stripe — το VerdeIQ δεν βλέπει ποτέ πλήρεις αριθμούς καρτών).",
             "Δεδομένα βιωσιμότητας που καταχωρείτε: υπολογισμοί εκπομπών, φορτωμένα έγγραφα, κατανάλωση ενέργειας, benchmarks και παραγόμενες αναφορές.",
             "Τηλεμετρία προϊόντος: προβολές σελίδων, σφάλματα, χρήση λειτουργιών — για βελτίωση αξιοπιστίας. Χωρίς διαφημιστικά cookies.",
           ],
@@ -370,7 +369,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Συνδρομές και χρέωση",
           body: [
-            "Οι πληρωμένες συνδρομές χρεώνονται σε EUR μέσω Stripe (ή Paystack για πελάτες εκτός ΕΕ). Οι τιμές για πελάτες Κύπρου περιλαμβάνουν ΦΠΑ 19% υπολογισμένο από το Stripe Tax βάσει της διεύθυνσης χρέωσης. Οι συνδρομές ανανεώνονται αυτόματα μέχρι την ακύρωση από το billing portal.",
+            "Οι πληρωμένες συνδρομές χρεώνονται σε EUR μέσω Stripe. Οι τιμές για πελάτες Κύπρου περιλαμβάνουν ΦΠΑ 19% υπολογισμένο από το Stripe Tax βάσει της διεύθυνσης χρέωσης. Οι συνδρομές ανανεώνονται αυτόματα μέχρι την ακύρωση από το billing portal.",
             "Μπορείτε να ακυρώσετε οποτεδήποτε· η πρόσβαση συνεχίζεται μέχρι το τέλος της πληρωμένης περιόδου. Οι επιστροφές διέπονται από το ενωσιακό δίκαιο καταναλωτή και τους κυπριακούς κανόνες προστασίας καταναλωτή.",
           ],
         },
@@ -433,7 +432,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Πληρωμές",
           body: [
-            "Τα στοιχεία κάρτας δεν φθάνουν ποτέ στους διακομιστές του VerdeIQ — χειρίζονται από τη Stripe (PCI-DSS Level 1) ή την Paystack. Τα webhooks επαληθεύονται με HMAC πριν από οποιαδήποτε αλλαγή κατάστασης.",
+            "Τα στοιχεία κάρτας δεν φθάνουν ποτέ στους διακομιστές του VerdeIQ — χειρίζονται από τη Stripe (PCI-DSS Level 1). Τα webhooks επαληθεύονται με HMAC πριν από οποιαδήποτε αλλαγή κατάστασης.",
           ],
         },
         {
@@ -448,8 +447,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
           list: [
             "Lovable Cloud — φιλοξενία, βάση, ταυτοποίηση, αποθήκευση (ΕΕ όπου διαθέσιμο).",
             "Stripe Payments Europe, Ltd. — επεξεργασία καρτών και φόρου για πελάτες ΕΕ/ΕΟΧ.",
-            "Paystack Payments Limited — επεξεργασία καρτών για πελάτες εκτός ΕΕ.",
-            "Resend — παράδοση transactional email.",
+                    "Resend — παράδοση transactional email.",
             "Lovable AI Gateway — AI inference για insights και ανάλυση εγγράφων.",
           ],
         },

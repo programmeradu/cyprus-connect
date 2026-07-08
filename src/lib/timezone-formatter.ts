@@ -43,7 +43,7 @@ export function formatDate(
       formatOptions.timeStyle = timeStyle;
     }
 
-    return new Intl.DateTimeFormat('en-US', formatOptions).format(dateObj);
+    return new Intl.DateTimeFormat('en-GB', formatOptions).format(dateObj);
   } catch (error) {
     console.error('Date formatting error:', error);
     return new Date(date).toLocaleDateString();
@@ -104,7 +104,7 @@ export function formatTime(
       return 'Invalid time';
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat('en-GB', {
       timeZone: timezone,
       timeStyle,
     }).format(dateObj);
@@ -137,7 +137,7 @@ export function formatMonthYear(
       return 'Invalid date';
     }
 
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat('en-GB', {
       timeZone: timezone,
       year: 'numeric',
       month: 'short',

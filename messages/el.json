@@ -107,7 +107,7 @@
     "marketplace": "Αντισταθμίσεις Άνθρακα",
     "compliance": "Συμμόρφωση",
     "learn": "Κέντρο Μάθησης",
-    "studio": "Στούντιο Μέσων",
+    "studio": "Οπτικά Αναφοράς",
     "leaderboard": "Κατάταξη",
     "analytics": "Αναλυτικά",
     "insights": "Πληροφορίες",
@@ -716,7 +716,7 @@
         "ofCountryTotal": "του συνόλου {country}",
         "perEmployeeMetric": "Ανά Υπάλληλο",
         "vsIndustryAvg": "έναντι {value} tCO₂e μ.ο. κλάδου",
-        "perRevenue": "Ανά $1M Εσόδων",
+        "perRevenue": "Ανά €1M Εσόδων",
         "locationContext": "Πλαίσιο Τοποθεσίας - {country}",
         "totalCountryEmissions": "Συνολικές Εκπομπές Χώρας:",
         "yourContribution": "Η Συμβολή σας:",
@@ -1334,7 +1334,7 @@
       "carbon": "Άνθρακας & Ειδήσεις",
       "report": "Δημιουργός Αναφορών",
       "weather": "Κλίμα & AI",
-      "media": "Media Studio"
+      "media": "Report Visuals"
     },
     "carbon": {
       "title": "Αναλυτής Αποτυπώματος Άνθρακα με AI",
@@ -1444,7 +1444,7 @@
       }
     },
     "media": {
-      "title": "Media Studio",
+      "title": "Οπτικά Αναφοράς",
       "subtitle": "Δημιουργία Δημιουργικού Περιεχομένου με AI",
       "contentType": "Τύπος Περιεχομένου",
       "image": "Εικόνα",

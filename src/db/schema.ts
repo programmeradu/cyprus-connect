@@ -65,11 +65,7 @@ export const user = pgTable("user", {
   countryCode: text('country_code'),
   timezone: text('timezone'),
   energyZone: text('energy_zone'),
-  // Autumn subscription sync fields
-  autumnCustomerId: text('autumn_customer_id'),
-  autumnPlan: text('autumn_plan').notNull().default('free'),
   aiCreditsBalance: integer('ai_credits_balance').notNull().default(50),
-  lastAutumnSync: timestamp('last_autumn_sync'),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),

@@ -1684,7 +1684,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <div className="text-right">
                                   <div className="text-xs text-gray-500 mb-1">Report Generated</div>
                                   <div className="text-sm font-semibold text-gray-700">
-                                    {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    {new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                                   </div>
                                 </div>
                               </div>

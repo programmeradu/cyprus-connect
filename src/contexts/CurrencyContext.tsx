@@ -20,7 +20,7 @@ const LOCALE_MAP: Record<string, string> = {
 function useIntlLocale(): string {
   const pathname = usePathname() || "";
   const seg = pathname.split("/")[1];
-  return LOCALE_MAP[seg] || "en-US";
+  return LOCALE_MAP[seg] || "en-GB";
 }
 
 

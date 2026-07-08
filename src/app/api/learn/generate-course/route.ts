@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { courses, courseModules, lessons, notifications, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { generateImage, generateVideo } from "@/lib/generators";
+import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,32 +27,10 @@ export async function POST(request: NextRequest) {
 
     const token = authHeader.split(' ')[1];
 
-    // Check AI credits allowance before processing (need credits for course structure + media)
-    const checkResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/check`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        feature_id: 'ai_credits',
-        required_balance: 5 // Estimate: 1 for structure + ~4 for media
-      })
-    });
-
-    if (!checkResponse.ok) {
-      return NextResponse.json(
-        { error: "Insufficient AI credits. Course generation requires multiple credits for content and media. Please upgrade your plan." },
-        { status: 403 }
-      );
-    }
-
-    const { allowed } = await checkResponse.json();
-    if (!allowed) {
-      return NextResponse.json(
-        { error: "Insufficient AI credits. Course generation requires multiple credits for content and media. Please upgrade your plan." },
-        { status: 403 }
-      );
+    // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
+    const creditGate = await checkAndDeductAiCredits(request, 1, 'course');
+    if (!creditGate.ok) {
+      return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
 
     // Generate course structure using Gemini
@@ -63,18 +42,6 @@ export async function POST(request: NextRequest) {
     );
 
     // Track credit for course structure generation
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/track`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        feature_id: 'ai_credits',
-        value: 1,
-        idempotency_key: `course-structure-${Date.now()}-${Math.random()}`
-      })
-    });
 
     // Generate course thumbnail image
     let thumbnailUrl = null;
@@ -88,18 +55,6 @@ export async function POST(request: NextRequest) {
         console.log(`✓ Thumbnail generated successfully`);
         
         // Track credit for thumbnail generation
-        await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/track`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            feature_id: 'ai_credits',
-            value: 1,
-            idempotency_key: `course-thumbnail-${Date.now()}-${Math.random()}`
-          })
-        });
       }
     } catch (error) {
       console.error("Failed to generate course thumbnail:", error);
@@ -151,18 +106,6 @@ export async function POST(request: NextRequest) {
               console.log(`✓ Video generated for: ${lesson.title}`);
               
               // Track credit for video generation
-              await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/track`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                  feature_id: 'ai_credits',
-                  value: 1,
-                  idempotency_key: `lesson-video-${Date.now()}-${Math.random()}`
-                })
-              });
             }
           } catch (error) {
             console.error(`Failed to generate video for ${lesson.title}:`, error);
@@ -185,18 +128,6 @@ export async function POST(request: NextRequest) {
               console.log(`✓ Image generated for: ${lesson.title}`);
               
               // Track credit for image generation
-              await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/track`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                  feature_id: 'ai_credits',
-                  value: 1,
-                  idempotency_key: `lesson-image-${Date.now()}-${Math.random()}`
-                })
-              });
             }
           } catch (error) {
             console.error(`Failed to generate image for ${lesson.title}:`, error);

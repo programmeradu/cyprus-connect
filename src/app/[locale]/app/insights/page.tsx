@@ -436,7 +436,7 @@ export default function InsightsPage() {
 
   // Transform forecast data for charts
   const forecastChartData = energyData?.forecast?.slice(0, 12).map((f: any) => ({
-    time: new Date(f.datetime).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }),
+    time: new Date(f.datetime).toLocaleDateString('en-GB', { month: 'numeric', day: 'numeric' }),
     carbon: f.carbonIntensity,
     target: energyData?.carbonIntensity?.current * 0.8 || 220,
   })) || [];

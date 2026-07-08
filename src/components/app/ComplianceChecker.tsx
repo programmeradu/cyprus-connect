@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { useCustomer } from "autumn-js/react";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
 import { Lock, Loader2 } from "lucide-react";
 
@@ -128,16 +128,14 @@ const INDUSTRIES = [
 ];
 
 export function ComplianceChecker() {
-  const { customer, isLoading: isCustomerLoading } = useCustomer();
+  const { plan, isLoading: isCustomerLoading } = useSubscription();
   const router = useRouter();
   const t = useTranslations("complianceChecker");
   const locale = useLocale();
   
   
   // Check if user has access to compliance tracking (Professional+ feature)
-  const hasComplianceAccess = customer?.products?.some(
-    (product) => product.id === 'professional' || product.id === 'enterprise'
-  ) || false;
+  const hasComplianceAccess = plan.id === 'pro' || plan.id === 'enterprise';
 
   const [smeData, setSmeData] = useState<SMEData>({
     employees: 0,
