@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { initializePaystackPayment, PAYSTACK_PUBLIC_KEY } from "@/lib/paystack/client";
 import { toast } from "sonner";
