@@ -5,7 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { AppHeader } from "@/components/app/AppHeader";
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { CurrencySwitcher } from "@/components/ui/CurrencySwitcher";
+
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import AutumnPricingTable from "@/components/autumn/pricing-table";
 import { useUser } from "@/lib/user-context";
@@ -399,108 +399,16 @@ function SettingsContent() {
             </div>
             
             <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-medium mb-1.5">{t("country")}</label>
-                <select 
-                  value={countryCode}
-                  onChange={(e) => setCountryCode(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-background border border-border rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
-                >
-                  <option value="">{t("selectCountry")}</option>
-                  <optgroup label={t("regions.africa")}>
-                    <option value="DZ">Algeria</option>
-                    <option value="AO">Angola</option>
-                    <option value="EG">Egypt</option>
-                    <option value="ET">Ethiopia</option>
-                    <option value="GH">Ghana</option>
-                    <option value="KE">Kenya</option>
-                    <option value="MA">Morocco</option>
-                    <option value="MZ">Mozambique</option>
-                    <option value="NG">Nigeria</option>
-                    <option value="ZA">South Africa</option>
-                    <option value="TZ">Tanzania</option>
-                    <option value="TN">Tunisia</option>
-                    <option value="UG">Uganda</option>
-                    <option value="ZM">Zambia</option>
-                    <option value="ZW">Zimbabwe</option>
-                  </optgroup>
-                  <optgroup label={t("regions.asia")}>
-                    <option value="AE">United Arab Emirates</option>
-                    <option value="BD">Bangladesh</option>
-                    <option value="CN">China</option>
-                    <option value="ID">Indonesia</option>
-                    <option value="IL">Israel</option>
-                    <option value="IN">India</option>
-                    <option value="IQ">Iraq</option>
-                    <option value="IR">Iran</option>
-                    <option value="JP">Japan</option>
-                    <option value="KR">South Korea</option>
-                    <option value="KZ">Kazakhstan</option>
-                    <option value="MY">Malaysia</option>
-                    <option value="PH">Philippines</option>
-                    <option value="PK">Pakistan</option>
-                    <option value="SA">Saudi Arabia</option>
-                    <option value="SG">Singapore</option>
-                    <option value="TH">Thailand</option>
-                    <option value="TR">Turkey</option>
-                    <option value="TW">Taiwan</option>
-                    <option value="UZ">Uzbekistan</option>
-                    <option value="VN">Vietnam</option>
-                  </optgroup>
-                  <optgroup label={t("regions.europe")}>
-                    <option value="AT">Austria</option>
-                    <option value="BE">Belgium</option>
-                    <option value="CH">Switzerland</option>
-                    <option value="CZ">Czech Republic</option>
-                    <option value="DE">Germany</option>
-                    <option value="DK">Denmark</option>
-                    <option value="ES">Spain</option>
-                    <option value="FI">Finland</option>
-                    <option value="FR">France</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="GR">Greece</option>
-                    <option value="HU">Hungary</option>
-                    <option value="IE">Ireland</option>
-                    <option value="IT">Italy</option>
-                    <option value="LU">Luxembourg</option>
-                    <option value="NL">Netherlands</option>
-                    <option value="NO">Norway</option>
-                    <option value="PL">Poland</option>
-                    <option value="PT">Portugal</option>
-                    <option value="RO">Romania</option>
-                    <option value="SE">Sweden</option>
-                  </optgroup>
-                  <optgroup label={t("regions.northAmerica")}>
-                    <option value="CA">Canada</option>
-                    <option value="MX">Mexico</option>
-                    <option value="US">United States</option>
-                  </optgroup>
-                  <optgroup label={t("regions.oceania")}>
-                    <option value="AU">Australia</option>
-                    <option value="NZ">New Zealand</option>
-                  </optgroup>
-                  <optgroup label={t("regions.southAmerica")}>
-                    <option value="AR">Argentina</option>
-                    <option value="BO">Bolivia</option>
-                    <option value="BR">Brazil</option>
-                    <option value="CL">Chile</option>
-                    <option value="CO">Colombia</option>
-                    <option value="EC">Ecuador</option>
-                    <option value="PE">Peru</option>
-                    <option value="PY">Paraguay</option>
-                    <option value="UY">Uruguay</option>
-                    <option value="VE">Venezuela</option>
-                  </optgroup>
-                </select>
-                <p className="text-[10px] text-muted-foreground mt-1">
-                  {t("countryHelp")}
-                </p>
-              </div>
-
-              <div>
-                <CurrencySwitcher variant="full" />
-                <p className="text-[10px] text-muted-foreground mt-1">
-                  {t("currencyHelp")}
+              <div className="p-3 rounded-lg border border-border/50 bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs font-medium">🇨🇾 Cyprus (CY)</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Asia/Nicosia · el-CY / en-CY</p>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">EUR €</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">
+                  VerdeIQ is Cyprus-native. Jurisdiction, currency, timezone and emission factors are fixed to Cyprus.
                 </p>
               </div>
             </div>

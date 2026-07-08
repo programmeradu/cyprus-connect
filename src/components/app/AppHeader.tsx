@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { UserIcon } from "@/components/icons/CustomIcons";
 import { Badge } from "./Badge";
-import { CurrencySwitcher } from "@/components/ui/CurrencySwitcher";
+
 import { NotificationBell } from "@/components/app/NotificationBell";
 import { useSession, authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -73,9 +73,6 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
         
         <div className="flex items-center gap-2 ml-auto">
           {actions}
-          
-          {/* Currency Switcher */}
-          <CurrencySwitcher variant="compact" />
           
           {/* Notifications */}
           <NotificationBell />
