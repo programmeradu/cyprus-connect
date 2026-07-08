@@ -132,6 +132,8 @@ export function ComplianceChecker() {
   const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
+  const t = useTranslations("complianceChecker");
+  
   
   // Check if user has access to compliance tracking (Professional+ feature)
   const hasComplianceAccess = customer?.products?.some(
