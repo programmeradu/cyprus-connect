@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, ArrowUpRight } from "lucide-react";
+
 import { getAllPillars, getPillar } from "@/data/learn/pillars";
 
 type Props = {
