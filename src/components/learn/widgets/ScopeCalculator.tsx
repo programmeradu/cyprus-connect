@@ -77,9 +77,9 @@ export default function ScopeCalculator({ locale }: Props) {
   const pct = (v: number) => (total > 0 ? (v / total) * 100 : 0);
 
   const rows = [
-    { label: l.scope1, icon: Flame, color: "bg-orange-500", value: s1, pct: pct(s1) },
-    { label: l.scope2, icon: Zap, color: "bg-yellow-500", value: s2, pct: pct(s2) },
-    { label: l.scope3, icon: Truck, color: "bg-primary", value: s3, pct: pct(s3) },
+    { label: l.scope1, value: s1, pct: pct(s1) },
+    { label: l.scope2, value: s2, pct: pct(s2) },
+    { label: l.scope3, value: s3, pct: pct(s3) },
   ];
 
   const fields = [
@@ -91,22 +91,29 @@ export default function ScopeCalculator({ locale }: Props) {
   ];
 
   return (
-    <div className="not-prose my-12 overflow-hidden rounded-3xl border bg-card shadow-sm">
-      <div className="border-b bg-gradient-to-br from-primary/10 to-transparent p-6 sm:p-8">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
-          {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
+    <div className="not-prose my-14 border-y border-foreground/15">
+      <div className="border-b border-foreground/10 py-8 sm:py-10">
+        <div className="flex items-baseline justify-between gap-6">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
+          </p>
+          <p className="tabular-nums text-[11px] text-foreground/40">01 / 03</p>
+        </div>
+        <h3 className="mt-3 max-w-3xl text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[32px]">
+          {l.title}
+        </h3>
+        <p className="mt-3 max-w-2xl text-[14.5px] leading-[1.6] text-foreground/65 sm:text-[15.5px]">
+          {l.subtitle}
         </p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{l.title}</h3>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">{l.subtitle}</p>
       </div>
 
-      <div className="grid gap-8 p-6 sm:p-8 md:grid-cols-2">
-        <div className="space-y-5">
+      <div className="grid gap-10 py-8 sm:py-10 md:grid-cols-2 md:gap-14">
+        <div className="space-y-6">
           {fields.map((f) => (
             <div key={f.label}>
-              <div className="mb-2 flex items-center justify-between gap-4">
-                <label className="text-sm font-medium">{f.label}</label>
-                <span className="text-sm tabular-nums text-muted-foreground">
+              <div className="mb-2 flex items-baseline justify-between gap-4">
+                <label className="text-[13px] font-medium tracking-[-0.005em] text-foreground/80">{f.label}</label>
+                <span className="tabular-nums text-[13px] text-foreground/55">
                   {f.value.toLocaleString(locale === "el" ? "el-CY" : "en-GB")}
                 </span>
               </div>
@@ -117,39 +124,39 @@ export default function ScopeCalculator({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
+                className="h-[3px] w-full cursor-pointer appearance-none rounded-none bg-foreground/10 accent-foreground"
               />
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col rounded-2xl border bg-background p-6">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <div className="border-l border-foreground/10 pl-8 sm:pl-10">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
             {l.total}
           </p>
-          <p className="mt-2 font-serif text-5xl font-semibold tabular-nums tracking-tight">
+          <p className="mt-3 text-[56px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[72px]">
             {total.toLocaleString(locale === "el" ? "el-CY" : "en-GB", { maximumFractionDigits: 1 })}
-            <span className="ml-2 text-base font-normal text-muted-foreground">{l.unit}</span>
           </p>
+          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">{l.unit}</p>
 
-          <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+          <p className="mt-8 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
             {l.split}
           </p>
-          <div className="mt-3 space-y-3">
-            {rows.map((r) => (
+          <div className="mt-4 space-y-4">
+            {rows.map((r, i) => (
               <div key={r.label}>
-                <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="inline-flex items-center gap-2">
-                    <r.icon className="h-3.5 w-3.5" />
-                    {r.label}
+                <div className="mb-1.5 grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-3 text-[13px]">
+                  <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="tabular-nums text-muted-foreground">
+                  <span className="text-foreground/80">{r.label}</span>
+                  <span className="tabular-nums text-foreground/55">
                     {r.value.toFixed(1)} t · {r.pct.toFixed(0)}%
                   </span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                <div className="ml-[40px] h-[2px] w-[calc(100%-40px)] overflow-hidden bg-foreground/10">
                   <div
-                    className={`h-full ${r.color} transition-[width] duration-300`}
+                    className="h-full bg-foreground/80 transition-[width] duration-300"
                     style={{ width: `${r.pct}%` }}
                   />
                 </div>
@@ -157,8 +164,7 @@ export default function ScopeCalculator({ locale }: Props) {
             ))}
           </div>
 
-          <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
-            <Info className="mt-0.5 h-3.5 w-3.5 flex-none" />
+          <p className="mt-8 border-t border-foreground/10 pt-5 text-[11.5px] leading-[1.6] text-foreground/50">
             {l.note}
           </p>
         </div>
