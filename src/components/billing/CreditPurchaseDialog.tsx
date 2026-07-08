@@ -19,6 +19,8 @@ interface CreditPurchaseDialogProps {
 export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialogProps) => {
   const t = useTranslations("creditPurchase");
   const locale = useLocale();
+  const isEur = locale === 'el';
+  const currency = isEur ? 'EUR' : 'USD';
   const [loading, setLoading] = useState<string | null>(null);
 
 
@@ -36,8 +38,11 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
         body: JSON.stringify({
           type: 'credits',
           packageId,
+          currency,
+          locale,
         }),
       });
+
 
       if (!response.ok) {
         const error = await response.json();
