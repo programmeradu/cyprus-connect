@@ -7,7 +7,7 @@
 
 import { useMemo } from "react";
 import { usePersistedState } from "@/hooks/usePersistedState";
-import { Info, Flame, Zap, Truck } from "lucide-react";
+
 
 type Props = { locale: "en" | "el" };
 
