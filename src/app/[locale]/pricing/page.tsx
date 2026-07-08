@@ -10,42 +10,12 @@ import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 import { PricingTable } from "@/components/autumn/pricing-table";
 import { PaymentGatewaySelector } from "@/components/billing/PaymentGatewaySelector";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-
-// EU/EEA + UK (broad set for payment gateway routing)
-const EU_COUNTRIES = new Set([
-  "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT",
-  "LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE",
-  "IS","LI","NO","GB",
-]);
 
 export default function PricingPage() {
   const { data: session } = useSession();
   const tNav = useTranslations("nav");
   const t = useTranslations("pricing");
-
-  const [countryCode, setCountryCode] = useState<string | null>(null);
-  const [selectedGateway, setSelectedGateway] = useState<"stripe" | "paystack">("stripe");
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/geolocation")
-      .then((r) => r.ok ? r.json() : null)
-      .then((data) => {
-        if (cancelled || !data?.countryCode) return;
-        setCountryCode(data.countryCode);
-        // EU customers → force Stripe (EUR, SCA-compliant). Paystack hidden.
-        if (EU_COUNTRIES.has(data.countryCode)) {
-          setSelectedGateway("stripe");
-        }
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
-
-  const isEU = countryCode ? EU_COUNTRIES.has(countryCode) : false;
-  const isCyprus = countryCode === "CY";
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -99,27 +69,10 @@ export default function PricingPage() {
             <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-4 font-light">
               {t("subtitle")}
             </p>
-            {isEU && (
-              <p className="text-[11px] text-muted-foreground/80 max-w-xl mx-auto font-light">
-                {isCyprus ? t("vatNoticeCY") : t("eurNotice")}
-              </p>
-            )}
+            <p className="text-[11px] text-muted-foreground/80 max-w-xl mx-auto font-light">
+              {t("vatNoticeCY")}
+            </p>
           </motion.div>
-
-          {/* Payment Gateway Selector — hidden entirely for EU customers */}
-          {!isEU && (
-            <motion.div
-              className="mt-8 flex justify-center"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <PaymentGatewaySelector
-                value={selectedGateway}
-                onChange={setSelectedGateway}
-              />
-            </motion.div>
-          )}
         </div>
       </section>
 
