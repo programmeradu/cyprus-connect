@@ -47,6 +47,7 @@ export default function PillarShell({
   introduction,
   sectionsContent,
   faq,
+  afterFaq,
   cta,
   related,
 }: PillarShellProps) {
