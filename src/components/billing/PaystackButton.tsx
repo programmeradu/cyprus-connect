@@ -34,6 +34,7 @@ export function PaystackButton({
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useTranslations("paystackButton");
 
   const handlePayment = async () => {
     if (!session?.user) {
