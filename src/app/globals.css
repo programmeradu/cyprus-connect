@@ -85,11 +85,12 @@
 /* Updated: 2025-11-14T22:33:53.088Z */
 /* Updated: 2025-11-14T20:57:49.464Z */
 /* Updated: 2025-11-14T20:40:38.320Z */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --editorial-serif: "Fraunces", "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
   --editorial-display: "Instrument Serif", "Fraunces", ui-serif, Georgia, serif;
+  --editorial-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
 }
 
 @import "tailwindcss";
