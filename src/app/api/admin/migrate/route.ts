@@ -13,11 +13,21 @@ async function runMigrations() {
   const url = process.env.SUPABASE_DATABASE_URL;
   if (!url) throw new Error("SUPABASE_DATABASE_URL is not set");
 
-  const migrationClient = postgres(url, { max: 1 });
+  const migrationClient = postgres(url, { max: 1, ssl: "require", prepare: false });
   try {
+    // Surface real underlying error
+    try {
+      await migrationClient`SELECT 1`;
+    } catch (e: any) {
+      throw new Error(`Connection test failed: ${e?.message} | code=${e?.code} | detail=${e?.detail}`);
+    }
     const db = drizzle(migrationClient);
     const migrationsFolder = path.join(process.cwd(), "drizzle");
-    await migrate(db, { migrationsFolder });
+    try {
+      await migrate(db, { migrationsFolder });
+    } catch (e: any) {
+      throw new Error(`Migrate failed: ${e?.message} | code=${e?.code} | detail=${e?.detail} | hint=${e?.hint} | where=${e?.where}`);
+    }
     return { ok: true, migrationsFolder };
   } finally {
     await migrationClient.end({ timeout: 5 });
