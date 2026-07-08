@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
-
-const STORAGE_KEY = "verdeiq_cookie_consent_v1";
+import { useLocale } from "next-intl";
+import {
+  CONSENT_STORAGE_KEY,
+  clearConsent as clearConsentState,
+  setConsent,
+} from "@/lib/consent";
 
 type Consent = "accepted" | "necessary";
 
@@ -31,7 +34,7 @@ export function CookieBanner() {
 
   useEffect(() => {
     try {
-      if (!localStorage.getItem(STORAGE_KEY)) setVisible(true);
+      if (!localStorage.getItem(CONSENT_STORAGE_KEY)) setVisible(true);
     } catch {
       /* storage unavailable */
     }
@@ -41,14 +44,7 @@ export function CookieBanner() {
   }, []);
 
   const choose = (c: Consent) => {
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ choice: c, at: new Date().toISOString() }),
-      );
-    } catch {
-      /* ignore */
-    }
+    setConsent(c);
     setVisible(false);
   };
 
