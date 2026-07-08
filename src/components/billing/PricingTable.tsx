@@ -130,12 +130,18 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
               {/* Price */}
               <div className="mb-3">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold">${plan.price}</span>
+                  <span className="text-2xl font-bold">{priceLabel}</span>
                   {intervalLabel && (
                     <span className="text-muted-foreground text-xs">/{intervalLabel}</span>
                   )}
                 </div>
+                {isEur && displayPrice > 0 && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    {t("vatIncluded", { pct: Math.round(CYPRUS_VAT_RATE * 100) })}
+                  </div>
+                )}
               </div>
+
 
               {/* CTA Button */}
               <PremiumButton
