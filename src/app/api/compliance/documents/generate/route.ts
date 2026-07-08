@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
-    const creditGate = await checkAndDeductAiCredits(req, 1, 'compliance-doc'), 1, 'compliance-doc');
+    const creditGate = await checkAndDeductAiCredits(req, 1, 'compliance-doc');
     if (!creditGate.ok) {
       return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }

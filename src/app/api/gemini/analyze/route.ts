@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const token = authHeader.split(' ')[1];
 
     // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
-    const creditGate = await checkAndDeductAiCredits(req, 1, 'gemini'), 1, 'gemini');
+    const creditGate = await checkAndDeductAiCredits(req, 1, 'gemini');
     if (!creditGate.ok) {
       return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
