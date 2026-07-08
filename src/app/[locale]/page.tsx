@@ -2131,8 +2131,8 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.7 }}>
 
-                <p className="font-bold text-sm">Sarah Chen</p>
-                <p className="text-foreground/60 dark:text-muted-foreground text-xs font-light">CEO, EcoTech Solutions</p>
+                <p className="font-bold text-sm">{tL("testimonialAuthor")}</p>
+                <p className="text-foreground/60 dark:text-muted-foreground text-xs font-light">{tL("testimonialRole")}</p>
               </motion.div>
             </div>
           </motion.div>
