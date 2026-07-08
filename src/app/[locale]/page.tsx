@@ -82,14 +82,16 @@ export default function Home() {
         transition={{ duration: 0.6, ease: "easeOut" }}>
 
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <motion.h1
+          <motion.div
+            role="img"
+            aria-label="VerdeIQ"
             className="text-lg font-bold gradient-text tracking-tight"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}>
 
             VerdeIQ
-          </motion.h1>
+          </motion.div>
           
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
             <LanguageSwitcher />
