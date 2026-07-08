@@ -55,7 +55,7 @@ export default function LearnHubClient({
   interactiveLabel,
   featuredLabel,
   emptyLabel,
-  guidesCountLabel,
+  guidesCountLabelTemplate,
 }: Props) {
   const [q, setQ] = useSessionState<string>("verdeiq.learn.q", "");
   const [cat, setCat] = useSessionState<string>("verdeiq.learn.cat", "all");
