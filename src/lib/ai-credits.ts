@@ -108,9 +108,10 @@ export async function refundAiCredits(userId: string, amount: number, reason = '
       .values({
         userId,
         amount,
-        reason: `ai:${reason}`,
+        source: 'ai',
+        description: `ai:${reason}`,
         createdAt: new Date().toISOString(),
-      } as any)
+      })
       .catch(() => {});
   } catch {
     /* refund is best-effort */
