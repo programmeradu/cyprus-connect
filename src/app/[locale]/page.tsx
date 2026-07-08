@@ -12,6 +12,7 @@ import { useSession, authClient } from "@/lib/auth-client";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 
 export default function Home() {
   const { data: session, isPending, refetch } = useSession();
@@ -2198,6 +2199,9 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Learn / Knowledge Hub — internal linking to top pillar pages */}
+      <LearnLinksSection />
 
       {/* Footer */}
       <footer className="relative border-t border-border/30 py-8 px-4 mt-10">
