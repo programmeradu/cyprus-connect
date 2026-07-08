@@ -148,19 +148,38 @@ export default async function PillarPage({ params }: { params: Params }) {
     return null;
   };
 
-  const introduction = c.introduction.map((p, i) => <p key={i}>{p}</p>);
+  const introduction = c.introduction.map((p, i) => (
+    <p key={i}>
+      <GlossaryText text={p} locale={safeLocale} excludeSlug={slug} />
+    </p>
+  ));
 
   const sectionsContent = (
     <>
-      {c.sections.map((s, i) => (
-        <section key={i} id={`section-${i}`} className="scroll-mt-28">
-          <h2>{s.heading}</h2>
-          {s.body.map((p, j) => (
-            <p key={j}>{p}</p>
-          ))}
-          {widgetConfig && widgetConfig.afterSection === i && renderWidget()}
-        </section>
-      ))}
+      {c.sections.map((s, i) => {
+        const showWidgetHere = widgetConfig && widgetConfig.afterSection === i;
+        return (
+          <section key={i} id={`section-${i}`} className="scroll-mt-28">
+            <h2>{s.heading}</h2>
+            {s.body.map((p, j) => (
+              <p key={j}>
+                <GlossaryText text={p} locale={safeLocale} excludeSlug={slug} />
+              </p>
+            ))}
+            {showWidgetHere && (
+              <>
+                {renderWidget()}
+                <RelatedSuggestions
+                  currentSlug={slug}
+                  locale={safeLocale}
+                  context="widget"
+                  keyword={s.heading}
+                />
+              </>
+            )}
+          </section>
+        );
+      })}
     </>
   );
 
