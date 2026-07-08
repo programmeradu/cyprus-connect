@@ -8,8 +8,21 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { ExchangeRates } from "@/lib/exchange-rates";
 import { useSession } from "@/lib/auth-client";
+
+const LOCALE_MAP: Record<string, string> = {
+  en: "en-US",
+  el: "el-GR",
+};
+
+function useIntlLocale(): string {
+  const pathname = usePathname() || "";
+  const seg = pathname.split("/")[1];
+  return LOCALE_MAP[seg] || "en-US";
+}
+
 
 interface CurrencyContextType {
   selectedCurrency: string;
@@ -32,6 +45,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { data: session } = useSession();
+  const intlLocale = useIntlLocale();
+
 
   // Load currency from user preferences
   const loadCurrencyFromDatabase = useCallback(async () => {
@@ -195,7 +210,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       }
       
       try {
-        return new Intl.NumberFormat("en-US", {
+        return new Intl.NumberFormat(intlLocale, {
           style: "currency",
           currency: curr,
           minimumFractionDigits: 0,
@@ -206,8 +221,9 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         return `${curr} ${amount.toFixed(2)}`;
       }
     },
-    [selectedCurrency]
+    [selectedCurrency, intlLocale]
   );
+
 
   const contextValue = useMemo(
     () => ({

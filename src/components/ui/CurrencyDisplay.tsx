@@ -6,6 +6,7 @@ import { useCurrencyFormatter } from "@/hooks/useCurrencyFormatter";
 interface CurrencyDisplayProps {
   amount: number;
   fromCurrency?: string;
+  /** Override locale; defaults to the active next-intl locale (el → el-GR, en → en-US). */
   locale?: string;
   className?: string;
   showOriginal?: boolean;
@@ -14,13 +15,14 @@ interface CurrencyDisplayProps {
 export function CurrencyDisplay({ 
   amount, 
   fromCurrency = "USD",
-  locale = "en-US",
+  locale,
   className = "",
   showOriginal = false
 }: CurrencyDisplayProps) {
   const { selectedCurrency, convertAmount, isLoading } = useCurrency();
-  const formatter = useCurrencyFormatter(selectedCurrency, { locale });
-  const originalFormatter = useCurrencyFormatter(fromCurrency, { locale });
+  const formatter = useCurrencyFormatter(selectedCurrency, locale ? { locale } : {});
+  const originalFormatter = useCurrencyFormatter(fromCurrency, locale ? { locale } : {});
+
 
   if (isLoading) {
     return <span className={className}>Loading...</span>;
