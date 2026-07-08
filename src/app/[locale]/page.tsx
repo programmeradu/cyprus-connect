@@ -1885,8 +1885,8 @@ export default function Home() {
             },
             {
               number: 2,
-              title: "AI Analyzes & Learns",
-              description: "Our AI engine processes your data, identifies patterns, and provides actionable sustainability insights.",
+              title: tL("stepAnalyzeTitle"),
+              description: tL("stepAnalyzeDesc"),
               icon:
               <svg viewBox="0 0 100 100" className="w-12 h-12">
                     <motion.circle
