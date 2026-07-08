@@ -27,6 +27,7 @@ const COPY = {
     product: "Προϊόν",
     home: "Αρχική",
     pricing: "Τιμές",
+    learn: "Μάθετε",
     legal: "Νομικά",
     privacy: "Απόρρητο",
     terms: "Όροι",
