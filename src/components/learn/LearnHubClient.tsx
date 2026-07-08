@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, BookOpen, Sparkles, Clock, ArrowDownWideNarrow, X } from "lucide-react";
 import { useSessionState } from "@/hooks/usePersistedState";
 
 type PillarCard = {
@@ -16,7 +15,7 @@ type PillarCard = {
   eyebrow: string;
   title: string;
   description: string;
-  keywords: string; // pre-joined searchable string
+  keywords: string;
   hasWidget: boolean;
 };
 
@@ -38,10 +37,15 @@ type Props = {
 
 const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
   recommended: { en: "Recommended", el: "Προτεινόμενα" },
-  newest: { en: "Newest first", el: "Νεότερα πρώτα" },
-  shortest: { en: "Shortest read", el: "Συντομότερα" },
-  longest: { en: "In-depth first", el: "Εκτενέστερα" },
+  newest: { en: "Newest", el: "Νεότερα" },
+  shortest: { en: "Shortest", el: "Συντομότερα" },
+  longest: { en: "In-depth", el: "Εκτενέστερα" },
   az: { en: "A–Z", el: "Α–Ω" },
+};
+
+const SERIF: React.CSSProperties = {
+  fontFamily: "var(--editorial-serif, ui-serif, Georgia, 'Times New Roman', serif)",
+  fontFeatureSettings: '"ss01", "ss02"',
 };
 
 export default function LearnHubClient({
@@ -72,7 +76,6 @@ export default function LearnHubClient({
       if (interactiveOnly && !p.hasWidget) return false;
       if (tokens.length === 0) return true;
       const hay = `${p.title} ${p.description} ${p.eyebrow} ${p.keywords} ${p.slug}`.toLowerCase();
-      // full-text: every token must appear (AND semantics)
       return tokens.every((tok) => hay.includes(tok));
     });
 
@@ -80,7 +83,8 @@ export default function LearnHubClient({
     if (sort === "newest") sorted.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     else if (sort === "shortest") sorted.sort((a, b) => a.readingMinutes - b.readingMinutes);
     else if (sort === "longest") sorted.sort((a, b) => b.readingMinutes - a.readingMinutes);
-    else if (sort === "az") sorted.sort((a, b) => a.title.localeCompare(b.title, locale === "el" ? "el-CY" : "en"));
+    else if (sort === "az")
+      sorted.sort((a, b) => a.title.localeCompare(b.title, locale === "el" ? "el-CY" : "en"));
     return sorted;
   }, [pillars, q, cat, sort, interactiveOnly, locale]);
 
@@ -88,6 +92,7 @@ export default function LearnHubClient({
     () => [...pillars].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3),
     [pillars]
   );
+
   const grouped = useMemo(() => {
     const map = new Map<string, PillarCard[]>();
     for (const p of filtered) {
@@ -107,75 +112,85 @@ export default function LearnHubClient({
     setSort("recommended");
   };
 
-
+  const withToolLabel = locale === "el" ? "Με εργαλείο" : "With tool";
+  const clearLabel = locale === "el" ? "Καθαρισμός" : "Clear";
+  const guideSingular = locale === "el" ? "οδηγός" : "guide";
+  const guidePlural = locale === "el" ? "οδηγοί" : "guides";
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-14 sm:px-6 sm:pt-20">
-      {/* Header */}
-      <header className="mx-auto mb-14 max-w-3xl text-center">
-        <p className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-primary">
-          <BookOpen className="h-3.5 w-3.5" />
+    <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-20">
+      {/* Header — editorial, no pill, no icon */}
+      <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">
+        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary sm:text-xs">
           VerdeIQ Learn
         </p>
         <h1
-          className="mt-6 font-serif text-5xl leading-[1.05] tracking-tight sm:text-6xl md:text-7xl"
-          style={{
-            fontFamily: "var(--editorial-serif, ui-serif, Georgia, 'Times New Roman', serif)",
-          }}
+          className="mt-5 text-[44px] font-normal leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
+          style={SERIF}
         >
           {heading}
         </h1>
-        <p className="mt-6 text-lg text-muted-foreground sm:text-xl">{subheading}</p>
-        <p className="mt-4 text-sm text-muted-foreground">{guidesCountLabelTemplate.replace("{count}", String(pillars.length))}</p>
+        <p className="mt-6 max-w-xl text-[17px] leading-[1.55] text-foreground/70 sm:mx-auto sm:text-[19px] sm:leading-[1.5]">
+          {subheading}
+        </p>
+        <p className="mt-5 text-[13px] tabular-nums text-foreground/50">
+          {guidesCountLabelTemplate.replace("{count}", String(pillars.length))}
+        </p>
       </header>
 
-      {/* Featured trio */}
+      {/* Featured — mobile: single-column editorial stack; desktop: hero + two */}
       {showFeatured && (
-        <section className="mb-16">
-          <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">
-            {featuredLabel}
-          </p>
-          <div className="grid gap-6 md:grid-cols-3">
+        <section className="mb-16 sm:mb-20">
+          <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
+            <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-foreground/60">
+              {featuredLabel}
+            </p>
+            <p className="text-[11px] tabular-nums text-foreground/40">
+              {String(featured.length).padStart(2, "0")}
+            </p>
+          </div>
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
             {featured.map((p, i) => (
               <Link
                 key={p.slug}
                 href={`/${locale}/learn/${p.slug}`}
-                className={`group relative flex flex-col overflow-hidden rounded-3xl border bg-card transition hover:border-primary/50 hover:shadow-lg ${
-                  i === 0 ? "md:col-span-2 md:row-span-2" : ""
-                }`}
+                className={`group block ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
               >
-                <div className={`relative w-full bg-muted ${i === 0 ? "aspect-[16/10]" : "aspect-[16/9]"}`}>
+                <div
+                  className={`relative w-full overflow-hidden bg-muted ${
+                    i === 0 ? "aspect-[4/3] md:aspect-[16/10]" : "aspect-[4/3]"
+                  }`}
+                >
                   <Image
                     src={p.heroImage}
                     alt={p.title}
                     fill
                     sizes={i === 0 ? "(min-width: 768px) 66vw, 100vw" : "(min-width: 768px) 33vw, 100vw"}
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                     priority={i === 0}
                   />
                 </div>
-                <div className="flex flex-1 flex-col p-6">
-                  <div className="flex items-center gap-2">
-                    <p className="text-xs uppercase tracking-[0.18em] text-primary">{p.eyebrow}</p>
+                <div className="mt-5">
+                  <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary">
+                    {p.eyebrow}
                     {p.hasWidget && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-widest text-primary">
-                        <Sparkles className="h-2.5 w-2.5" />
-                        {interactiveLabel}
-                      </span>
+                      <span className="ml-2 text-foreground/40">· {interactiveLabel}</span>
                     )}
-                  </div>
+                  </p>
                   <h2
-                    className={`mt-2 font-medium leading-snug group-hover:text-primary ${i === 0 ? "text-2xl sm:text-3xl" : "text-lg"}`}
+                    className={`mt-2.5 font-normal leading-[1.1] tracking-[-0.015em] text-foreground group-hover:text-primary ${
+                      i === 0 ? "text-[28px] sm:text-[36px] md:text-[42px]" : "text-[22px] sm:text-[24px]"
+                    }`}
+                    style={SERIF}
                   >
                     {p.title}
                   </h2>
                   {i === 0 && (
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-3 max-w-xl text-[15px] leading-[1.55] text-foreground/65">
                       {p.description}
                     </p>
                   )}
-                  <p className="mt-auto flex items-center gap-1.5 pt-4 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
+                  <p className="mt-4 text-[12px] tabular-nums text-foreground/45">
                     {p.readingMinutes} min read
                   </p>
                 </div>
@@ -185,26 +200,23 @@ export default function LearnHubClient({
         </section>
       )}
 
-      {/* Search + category chips */}
-      <div className="sticky top-0 z-20 -mx-4 mb-10 border-b bg-background/85 px-4 py-4 backdrop-blur sm:mx-0 sm:rounded-2xl sm:border sm:bg-card/60 sm:px-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="h-11 w-full rounded-full border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-primary"
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="relative inline-flex items-center gap-2">
-              <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
+      {/* Search bar — editorial, no pill buttons */}
+      <div className="sticky top-0 z-20 -mx-5 mb-10 border-y border-foreground/10 bg-background/90 px-5 py-3 backdrop-blur sm:mx-0 sm:border sm:px-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={searchPlaceholder}
+            className="h-10 w-full border-0 border-b border-foreground/15 bg-transparent px-0 text-[15px] outline-none transition placeholder:text-foreground/40 focus:border-primary sm:text-[16px]"
+          />
+          <div className="flex items-center gap-4 text-[13px] sm:shrink-0">
+            <label className="flex items-center gap-2 text-foreground/60">
+              <span className="hidden sm:inline">{locale === "el" ? "Ταξινόμηση" : "Sort"}</span>
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
-                className="h-9 rounded-full border bg-background px-3 pr-8 text-xs font-medium outline-none transition focus:border-primary"
+                className="border-0 border-b border-transparent bg-transparent py-1 pr-4 text-[13px] font-medium text-foreground outline-none transition hover:border-foreground/30 focus:border-primary"
                 aria-label={locale === "el" ? "Ταξινόμηση" : "Sort"}
               >
                 {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
@@ -214,58 +226,45 @@ export default function LearnHubClient({
                 ))}
               </select>
             </label>
-            <button
-              type="button"
-              onClick={() => setInteractiveOnly(!interactiveOnly)}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                interactiveOnly
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "hover:border-primary/50"
-              }`}
-              aria-pressed={interactiveOnly}
-            >
-              <Sparkles className="h-3 w-3" />
-              {locale === "el" ? "Με εργαλείο" : "With tool"}
-            </button>
+            <label className="flex cursor-pointer items-center gap-2 text-foreground/60 hover:text-foreground">
+              <input
+                type="checkbox"
+                checked={interactiveOnly}
+                onChange={(e) => setInteractiveOnly(e.target.checked)}
+                className="h-3.5 w-3.5 accent-primary"
+              />
+              <span>{withToolLabel}</span>
+            </label>
             {hasActiveFilters && (
               <button
                 type="button"
                 onClick={clearAll}
-                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+                className="text-foreground/50 underline underline-offset-4 hover:text-foreground"
               >
-                <X className="h-3 w-3" />
-                {locale === "el" ? "Καθαρισμός" : "Clear"}
+                {clearLabel}
               </button>
             )}
           </div>
+        </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              onClick={() => setCat("all")}
-              className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition ${
-                cat === "all" ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"
-              }`}
-            >
-              {allLabel}
-            </button>
-            {categories.map((c) => (
-              <button
-                key={c.key}
-                onClick={() => setCat(c.key)}
-                className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition ${
-                  cat === c.key ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"
-                }`}
-              >
-                {c.label}
-              </button>
-            ))}
-          </div>
+        {/* Category rail — horizontal scroll on mobile, no pills */}
+        <div className="mt-3 -mx-1 flex gap-1 overflow-x-auto pb-1 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-4 sm:flex-wrap sm:overflow-visible">
+          <CatButton active={cat === "all"} onClick={() => setCat("all")}>
+            {allLabel}
+          </CatButton>
+          {categories.map((c) => (
+            <CatButton key={c.key} active={cat === c.key} onClick={() => setCat(c.key)}>
+              {c.label}
+            </CatButton>
+          ))}
         </div>
       </div>
 
-      {/* Grouped results */}
+      {/* Results */}
       {filtered.length === 0 ? (
-        <p className="rounded-2xl border bg-card/60 p-10 text-center text-muted-foreground">{emptyLabel}</p>
+        <p className="border-y border-foreground/10 py-16 text-center text-[15px] text-foreground/50">
+          {emptyLabel}
+        </p>
       ) : (
         categories
           .filter((c) => cat === "all" || cat === c.key)
@@ -273,53 +272,60 @@ export default function LearnHubClient({
             const items = grouped.get(c.key) ?? [];
             if (items.length === 0) return null;
             return (
-              <section key={c.key} className="mb-16">
-                <div className="mb-6 flex items-end justify-between gap-4 border-b pb-3">
+              <section key={c.key} className="mb-16 sm:mb-20">
+                <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
                   <div>
-                    <h2 className="text-2xl font-semibold tracking-tight">{c.label}</h2>
-                    <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
+                    <h2
+                      className="text-[26px] font-normal leading-tight tracking-[-0.02em] sm:text-[32px]"
+                      style={SERIF}
+                    >
+                      {c.label}
+                    </h2>
+                    <p className="mt-1 text-[13px] text-foreground/55 sm:text-[14px]">
+                      {c.description}
+                    </p>
                   </div>
-                  <span className="text-xs tabular-nums text-muted-foreground">
-                    {items.length} {items.length === 1 ? "guide" : "guides"}
+                  <span className="text-[11px] tabular-nums text-foreground/40">
+                    {String(items.length).padStart(2, "0")} {items.length === 1 ? guideSingular : guidePlural}
                   </span>
                 </div>
-                <ul className="divide-y divide-border rounded-2xl border bg-card/40">
+                <ul className="divide-y divide-foreground/10">
                   {items.map((p) => (
                     <li key={p.slug}>
                       <Link
                         href={`/${locale}/learn/${p.slug}`}
-                        className="group flex items-center gap-5 p-5 transition hover:bg-primary/5"
+                        className="group grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 py-6 transition sm:grid-cols-[128px_minmax(0,1fr)_auto] sm:items-center sm:gap-6"
                       >
-                        <div className="relative hidden h-20 w-32 flex-none overflow-hidden rounded-xl bg-muted sm:block">
+                        <div className="relative hidden aspect-[4/3] w-32 shrink-0 overflow-hidden bg-muted sm:block">
                           <Image
                             src={p.heroImage}
                             alt=""
                             fill
                             sizes="128px"
-                            className="object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                            className="object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                           />
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-[10px] uppercase tracking-[0.18em] text-primary">
-                              {p.eyebrow}
-                            </p>
+                        <div className="min-w-0">
+                          <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary">
+                            {p.eyebrow}
                             {p.hasWidget && (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-medium uppercase tracking-widest text-primary">
-                                <Sparkles className="h-2.5 w-2.5" />
-                                {interactiveLabel}
-                              </span>
+                              <span className="ml-2 text-foreground/40">· {interactiveLabel}</span>
                             )}
-                          </div>
-                          <h3 className="mt-1 text-lg font-medium leading-snug group-hover:text-primary">
+                          </p>
+                          <h3
+                            className="mt-2 text-[20px] font-normal leading-[1.2] tracking-[-0.015em] text-foreground group-hover:text-primary sm:text-[22px]"
+                            style={SERIF}
+                          >
                             {p.title}
                           </h3>
-                          <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">
+                          <p className="mt-2 text-[14px] leading-[1.55] text-foreground/60 sm:text-[15px]">
                             {p.description}
                           </p>
+                          <p className="mt-3 text-[11.5px] tabular-nums text-foreground/45 sm:hidden">
+                            {p.readingMinutes} min read
+                          </p>
                         </div>
-                        <span className="hidden flex-none items-center gap-1 text-xs tabular-nums text-muted-foreground sm:inline-flex">
-                          <Clock className="h-3 w-3" />
+                        <span className="hidden shrink-0 text-[12px] tabular-nums text-foreground/45 sm:inline">
                           {p.readingMinutes}m
                         </span>
                       </Link>
@@ -331,5 +337,29 @@ export default function LearnHubClient({
           })
       )}
     </main>
+  );
+}
+
+function CatButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`shrink-0 whitespace-nowrap px-3 py-1.5 text-[13px] font-medium transition ${
+        active
+          ? "text-primary underline decoration-primary decoration-2 underline-offset-[6px]"
+          : "text-foreground/55 hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
