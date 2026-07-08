@@ -424,11 +424,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  AI-Powered Analytics
+                  {tL("benefitAiTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Leverage advanced machine learning to uncover sustainability opportunities 
-                  and optimize your environmental impact in real-time.
+                  {tL("benefitAiDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
