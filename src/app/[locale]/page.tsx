@@ -1557,7 +1557,7 @@ export default function Home() {
               </PremiumCard>
             </motion.div>
 
-            {/* Ecosystem 3 - Creative Media Studio */}
+            {/* Ecosystem 3 - Report Visuals */}
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
