@@ -105,6 +105,14 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
             const isPopular = 'popular' in pkg && Boolean((pkg as any).popular);
             const isBestValue = 'bestValue' in pkg && Boolean((pkg as any).bestValue);
             const discount = 'discount' in pkg ? (pkg as any).discount : null;
+            const displayPrice = isEur ? pkg.priceEur : pkg.price;
+            const priceLabel = formatCurrency(displayPrice, currency, locale);
+            const perCreditLabel = formatCurrency(
+              displayPrice / pkg.credits,
+              currency,
+              locale,
+            );
+
 
             return (
               <motion.div
