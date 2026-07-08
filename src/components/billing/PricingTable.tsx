@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { SUBSCRIPTION_PLANS } from "@/lib/stripe/config";
+import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatCurrency } from "@/hooks/useCurrencyFormatter";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -19,7 +20,11 @@ interface PricingTableProps {
 export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
+  const locale = useLocale();
+  const isEur = locale === 'el';
+  const currency = isEur ? 'EUR' : 'USD';
   const t = useTranslations("billing.pricingTable");
+
 
   const handleSubscribe = async (planId: string) => {
     if (planId === 'free') {
@@ -45,8 +50,11 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
         body: JSON.stringify({
           type: 'subscription',
           planId,
+          currency,
+          locale,
         }),
       });
+
 
       if (!response.ok) {
         const error = await response.json();
@@ -87,6 +95,10 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
         const intervalLabel = plan.interval
           ? t(`intervals.${plan.interval as 'month' | 'year'}`)
           : null;
+        const displayPrice = isEur ? plan.priceEur : plan.price;
+        const priceLabel = formatCurrency(displayPrice, currency, locale);
+
+
 
         return (
           <motion.div
@@ -118,12 +130,18 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
               {/* Price */}
               <div className="mb-3">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold">${plan.price}</span>
+                  <span className="text-2xl font-bold">{priceLabel}</span>
                   {intervalLabel && (
                     <span className="text-muted-foreground text-xs">/{intervalLabel}</span>
                   )}
                 </div>
+                {isEur && displayPrice > 0 && (
+                  <div className="text-[10px] text-muted-foreground mt-1">
+                    {t("vatIncluded", { pct: Math.round(CYPRUS_VAT_RATE * 100) })}
+                  </div>
+                )}
               </div>
+
 
               {/* CTA Button */}
               <PremiumButton

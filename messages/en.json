@@ -1191,7 +1191,8 @@
           "API rate limit: 100k/day",
           "SSO & advanced security"
         ]
-      }
+      },
+      "vatIncluded": "Incl. {pct}% VAT (Cyprus)"
     },
     "dashboard": {
       "signInRequired": "Please sign in to view billing information",
@@ -1238,7 +1239,8 @@
     "perCredit": "${price} per credit",
     "footer": "Credits never expire • Secure payment via Stripe",
     "failed": "Failed to purchase credits",
-    "checkoutFailed": "Failed to create checkout session"
+    "checkoutFailed": "Failed to create checkout session",
+    "vatIncluded": "Incl. {pct}% VAT (Cyprus)"
   },
   "csvUploader": {
     "title": "Upload Utility Bills",

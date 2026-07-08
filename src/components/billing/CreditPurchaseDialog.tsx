@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { CREDIT_PACKAGES } from "@/lib/stripe/config";
+import { CREDIT_PACKAGES, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
+import { formatCurrency } from "@/hooks/useCurrencyFormatter";
+
 
 interface CreditPurchaseDialogProps {
   open: boolean;
@@ -17,6 +19,8 @@ interface CreditPurchaseDialogProps {
 export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialogProps) => {
   const t = useTranslations("creditPurchase");
   const locale = useLocale();
+  const isEur = locale === 'el';
+  const currency = isEur ? 'EUR' : 'USD';
   const [loading, setLoading] = useState<string | null>(null);
 
 
@@ -34,8 +38,11 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
         body: JSON.stringify({
           type: 'credits',
           packageId,
+          currency,
+          locale,
         }),
       });
+
 
       if (!response.ok) {
         const error = await response.json();
@@ -98,6 +105,14 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
             const isPopular = 'popular' in pkg && Boolean((pkg as any).popular);
             const isBestValue = 'bestValue' in pkg && Boolean((pkg as any).bestValue);
             const discount = 'discount' in pkg ? (pkg as any).discount : null;
+            const displayPrice = isEur ? pkg.priceEur : pkg.price;
+            const priceLabel = formatCurrency(displayPrice, currency, locale);
+            const perCreditLabel = formatCurrency(
+              displayPrice / pkg.credits,
+              currency,
+              locale,
+            );
+
 
             return (
               <motion.div
@@ -139,13 +154,19 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
                   {/* Price */}
                   <div className="mb-2.5 text-center">
-                    <div className="text-base font-bold">${pkg.price}</div>
+                    <div className="text-base font-bold">{priceLabel}</div>
+                    {isEur && (
+                      <div className="text-[10px] text-muted-foreground">
+                        {t("vatIncluded", { pct: Math.round(CYPRUS_VAT_RATE * 100) })}
+                      </div>
+                    )}
                     {discount && (
                       <div className="text-[10px] text-primary font-medium">
                         {t("save", { pct: discount })}
                       </div>
                     )}
                   </div>
+
 
                   {/* Purchase Button */}
                   <PremiumButton
@@ -159,8 +180,9 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
 
                   {/* Price per credit */}
                   <div className="mt-1.5 text-center text-[9px] text-muted-foreground">
-                    {t("perCredit", { price: (pkg.price / pkg.credits).toFixed(3) })}
+                    {t("perCredit", { price: perCreditLabel })}
                   </div>
+
                 </PremiumCard>
               </motion.div>
             );
