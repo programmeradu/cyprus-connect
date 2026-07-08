@@ -387,39 +387,39 @@ export function ComplianceChecker() {
         >
           {/* Compliance Level Badge */}
           <div className="p-3 rounded-lg bg-muted/50 border border-border">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
-                Compliance Status
+            <div className="flex items-center justify-between mb-2 gap-2">
+              <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider min-w-0 break-words">
+                {t('complianceStatus')}
               </span>
-              <span className="text-xs font-bold text-foreground px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
+              <span className="text-xs font-bold text-foreground px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 flex-shrink-0 break-words">
                 {getComplianceLevelBadge(compliance.complianceLevel)}
               </span>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
+            <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
               {compliance.threshold}
             </p>
           </div>
 
           {/* Key Indicators - Unified Design */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide">CSRD Scope</p>
-              <p className="text-[11px] font-semibold text-foreground">
-                {compliance.csrdScope ? 'In Scope' : 'Exempt'}
+            <div className="p-2.5 rounded-lg bg-card border border-border min-w-0">
+              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide break-words">{t('csrdScope')}</p>
+              <p className="text-[11px] font-semibold text-foreground break-words">
+                {compliance.csrdScope ? t('inScope') : t('exempt')}
               </p>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide">VSME</p>
-              <p className="text-[11px] font-semibold text-foreground">
-                {compliance.vsmeEligible ? 'Eligible' : 'Not Eligible'}
+            <div className="p-2.5 rounded-lg bg-card border border-border min-w-0">
+              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide break-words">{t('vsme')}</p>
+              <p className="text-[11px] font-semibold text-foreground break-words">
+                {compliance.vsmeEligible ? t('eligible') : t('notEligible')}
               </p>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide">Reporting</p>
-              <p className="text-[11px] font-semibold text-foreground">
-                {compliance.mandatoryReporting ? 'Mandatory' : 'Optional'}
+            <div className="p-2.5 rounded-lg bg-card border border-border min-w-0">
+              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide break-words">{t('reporting')}</p>
+              <p className="text-[11px] font-semibold text-foreground break-words">
+                {compliance.mandatoryReporting ? t('mandatory') : t('optional')}
               </p>
             </div>
           </div>
@@ -427,20 +427,20 @@ export function ComplianceChecker() {
           {/* Deadline & Data Points */}
           {compliance.reportingDeadline && (
             <div className="p-2.5 rounded-lg bg-card border border-border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide">
-                    Reporting Deadline
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide break-words">
+                    {t('reportingDeadline')}
                   </p>
-                  <p className="text-[11px] font-semibold text-foreground">
+                  <p className="text-[11px] font-semibold text-foreground break-words">
                     {compliance.reportingDeadline}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide">
-                    Data Points
+                <div className="text-right min-w-0">
+                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide break-words">
+                    {t('dataPoints')}
                   </p>
-                  <p className="text-[11px] font-semibold text-foreground">
+                  <p className="text-[11px] font-semibold text-foreground break-words">
                     ~{compliance.estimatedDataPoints}
                   </p>
                 </div>
@@ -450,14 +450,14 @@ export function ComplianceChecker() {
 
           {/* Frameworks */}
           <div className="p-2.5 rounded-lg bg-muted/30 border border-border">
-            <p className="text-[9px] font-medium mb-2 text-muted-foreground uppercase tracking-wide">
-              Applicable Frameworks
+            <p className="text-[9px] font-medium mb-2 text-muted-foreground uppercase tracking-wide break-words">
+              {t('applicableFrameworks')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {compliance.applicableFrameworks.map((framework) => (
                 <span
                   key={framework}
-                  className="px-2 py-1 rounded-md text-[9px] font-medium bg-background text-foreground border border-border"
+                  className="px-2 py-1 rounded-md text-[9px] font-medium bg-background text-foreground border border-border break-words"
                 >
                   {framework}
                 </span>
