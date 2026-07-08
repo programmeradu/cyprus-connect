@@ -66,6 +66,11 @@ export function BenchmarkComparator() {
   const userCountry = 'CY';
   const loadingLocation = false;
 
+  // Check if user has access to industry benchmarking
+  const hasBenchmarkingAccess = customer?.products?.some(
+    (product) => product.id === 'professional' || product.id === 'enterprise'
+  ) || false;
+
   // Pre-fill with user data if available
   useEffect(() => {
     if (user && user.companyIndustry) {
