@@ -4,7 +4,7 @@ import { routing } from "@/i18n/routing";
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
 // Public, indexable routes (relative to /[locale])
-const PUBLIC_PATHS = ["", "/pricing"] as const;
+const PUBLIC_PATHS = ["", "/pricing", "/privacy", "/terms", "/security", "/dpa"] as const;
 
 const hrefLangKey = (locale: string) => (locale === "el" ? "el-CY" : locale);
 
