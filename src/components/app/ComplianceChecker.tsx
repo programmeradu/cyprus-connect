@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useUser } from "@/lib/user-context";
@@ -131,6 +132,8 @@ export function ComplianceChecker() {
   const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
+  const t = useTranslations("complianceChecker");
+  
   
   // Check if user has access to compliance tracking (Professional+ feature)
   const hasComplianceAccess = customer?.products?.some(
@@ -176,7 +179,7 @@ export function ComplianceChecker() {
 
   const handleCheck = async () => {
     if (!smeData.employees || !smeData.annualRevenue || !smeData.totalAssets || !smeData.country || !smeData.industry) {
-      setError('Please fill in all fields');
+      setError(t('fillAll'));
       return;
     }
 
@@ -191,26 +194,20 @@ export function ComplianceChecker() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to check compliance');
+        throw new Error(t('failed'));
       }
 
       const data = await response.json();
       setCompliance(data.compliance);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : t('unknownError'));
     } finally {
       setLoading(false);
     }
   };
 
   const getComplianceLevelBadge = (level: string) => {
-    const labels = {
-      EXEMPT: 'Exempt',
-      VOLUNTARY: 'Voluntary',
-      MANDATORY_MEDIUM: 'Required - Medium',
-      MANDATORY_LARGE: 'Required - Large',
-    };
-    return labels[level as keyof typeof labels] || level;
+    return t(`level.${level}` as any);
   };
 
   // Show loading state
@@ -233,12 +230,12 @@ export function ComplianceChecker() {
         
         <div className="relative z-10">
           <div className="mb-4">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-bold">Compliance Check</h3>
-              <Lock className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center justify-between mb-1 gap-2">
+              <h3 className="text-sm font-bold min-w-0 break-words">{t('title')}</h3>
+              <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </div>
-            <p className="text-[10px] text-muted-foreground">
-              CSRD & ESRS requirements
+            <p className="text-[10px] text-muted-foreground break-words">
+              {t('subtitle')}
             </p>
           </div>
 
@@ -259,11 +256,11 @@ export function ComplianceChecker() {
           {/* Upgrade prompt */}
           <div className="text-center space-y-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">
-                Professional Feature
+              <p className="text-xs font-semibold text-primary mb-1 break-words">
+                {t('proFeature')}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Automated CSRD, ESRS, and VSME compliance tracking for your organization
+              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
+                {t('proBlurb')}
               </p>
             </div>
             
@@ -272,8 +269,8 @@ export function ComplianceChecker() {
               className="w-full"
               size="sm"
             >
-              <Lock className="w-3 h-3 mr-1.5" />
-              <span className="text-[10px]">Upgrade to Professional</span>
+              <Lock className="w-3 h-3 mr-1.5 flex-shrink-0" />
+              <span className="text-[10px] min-w-0 break-words">{t('upgradeCta')}</span>
             </PremiumButton>
           </div>
         </div>
@@ -284,25 +281,25 @@ export function ComplianceChecker() {
   return (
     <PremiumCard className="p-4">
       <div className="mb-4">
-        <h3 className="text-sm font-bold mb-1">Compliance Check</h3>
-        <p className="text-[10px] text-muted-foreground">
-          CSRD & ESRS requirements
+        <h3 className="text-sm font-bold mb-1 break-words">{t('title')}</h3>
+        <p className="text-[10px] text-muted-foreground break-words">
+          {t('subtitle')}
         </p>
       </div>
 
       {/* Input Form */}
       <div className="space-y-2.5 mb-4">
         <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label className="block text-[10px] font-medium mb-1.5">Country</label>
+          <div className="min-w-0">
+            <label className="block text-[10px] font-medium mb-1.5 break-words">{t('country')}</label>
             <select
               value={smeData.country}
               onChange={(e) => setSmeData({ ...smeData, country: e.target.value })}
               className="w-full p-2 text-[11px] rounded-lg border border-border bg-background text-foreground"
             >
-              <option value="">Select</option>
+              <option value="">{t('select')}</option>
               {Object.entries(WORLD_COUNTRIES).map(([continent, countries]) => (
-                <optgroup key={continent} label={continent}>
+                <optgroup key={continent} label={t(`continents.${continent}` as any)}>
                   {countries.map((country) => (
                     <option key={country.code} value={country.code}>
                       {country.name}
@@ -313,17 +310,17 @@ export function ComplianceChecker() {
             </select>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-medium mb-1.5">Industry</label>
+          <div className="min-w-0">
+            <label className="block text-[10px] font-medium mb-1.5 break-words">{t('industry')}</label>
             <select
               value={smeData.industry}
               onChange={(e) => setSmeData({ ...smeData, industry: e.target.value })}
               className="w-full p-2 text-[11px] rounded-lg border border-border bg-background text-foreground"
             >
-              <option value="">Select</option>
+              <option value="">{t('select')}</option>
               {INDUSTRIES.map((industry) => (
                 <option key={industry} value={industry}>
-                  {industry}
+                  {t(`industries.${industry}` as any)}
                 </option>
               ))}
             </select>
@@ -331,8 +328,8 @@ export function ComplianceChecker() {
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div>
-            <label className="block text-[9px] font-medium mb-1.5">Employees</label>
+          <div className="min-w-0">
+            <label className="block text-[9px] font-medium mb-1.5 break-words">{t('employees')}</label>
             <input
               type="number"
               value={smeData.employees || ''}
@@ -342,8 +339,8 @@ export function ComplianceChecker() {
             />
           </div>
 
-          <div>
-            <label className="block text-[9px] font-medium mb-1.5">Revenue ($)</label>
+          <div className="min-w-0">
+            <label className="block text-[9px] font-medium mb-1.5 break-words">{t('revenue')}</label>
             <input
               type="number"
               value={smeData.annualRevenue || ''}
@@ -353,8 +350,8 @@ export function ComplianceChecker() {
             />
           </div>
 
-          <div>
-            <label className="block text-[9px] font-medium mb-1.5">Assets ($)</label>
+          <div className="min-w-0">
+            <label className="block text-[9px] font-medium mb-1.5 break-words">{t('assets')}</label>
             <input
               type="number"
               value={smeData.totalAssets || ''}
@@ -366,7 +363,7 @@ export function ComplianceChecker() {
         </div>
 
         {error && (
-          <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-[10px]">
+          <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-[10px] break-words">
             {error}
           </div>
         )}
@@ -377,7 +374,7 @@ export function ComplianceChecker() {
           className="w-full"
           size="sm"
         >
-          <span className="text-[10px]">{loading ? 'Checking...' : 'Check Status'}</span>
+          <span className="text-[10px] break-words">{loading ? t('checking') : t('checkStatus')}</span>
         </PremiumButton>
       </div>
 
@@ -390,39 +387,39 @@ export function ComplianceChecker() {
         >
           {/* Compliance Level Badge */}
           <div className="p-3 rounded-lg bg-muted/50 border border-border">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider">
-                Compliance Status
+            <div className="flex items-center justify-between mb-2 gap-2">
+              <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-wider min-w-0 break-words">
+                {t('complianceStatus')}
               </span>
-              <span className="text-xs font-bold text-foreground px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20">
+              <span className="text-xs font-bold text-foreground px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 flex-shrink-0 break-words">
                 {getComplianceLevelBadge(compliance.complianceLevel)}
               </span>
             </div>
-            <p className="text-[10px] text-muted-foreground leading-relaxed">
+            <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
               {compliance.threshold}
             </p>
           </div>
 
           {/* Key Indicators - Unified Design */}
           <div className="grid grid-cols-3 gap-2">
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide">CSRD Scope</p>
-              <p className="text-[11px] font-semibold text-foreground">
-                {compliance.csrdScope ? 'In Scope' : 'Exempt'}
+            <div className="p-2.5 rounded-lg bg-card border border-border min-w-0">
+              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide break-words">{t('csrdScope')}</p>
+              <p className="text-[11px] font-semibold text-foreground break-words">
+                {compliance.csrdScope ? t('inScope') : t('exempt')}
               </p>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide">VSME</p>
-              <p className="text-[11px] font-semibold text-foreground">
-                {compliance.vsmeEligible ? 'Eligible' : 'Not Eligible'}
+            <div className="p-2.5 rounded-lg bg-card border border-border min-w-0">
+              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide break-words">{t('vsme')}</p>
+              <p className="text-[11px] font-semibold text-foreground break-words">
+                {compliance.vsmeEligible ? t('eligible') : t('notEligible')}
               </p>
             </div>
 
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide">Reporting</p>
-              <p className="text-[11px] font-semibold text-foreground">
-                {compliance.mandatoryReporting ? 'Mandatory' : 'Optional'}
+            <div className="p-2.5 rounded-lg bg-card border border-border min-w-0">
+              <p className="text-[9px] text-muted-foreground mb-1.5 uppercase tracking-wide break-words">{t('reporting')}</p>
+              <p className="text-[11px] font-semibold text-foreground break-words">
+                {compliance.mandatoryReporting ? t('mandatory') : t('optional')}
               </p>
             </div>
           </div>
@@ -430,20 +427,20 @@ export function ComplianceChecker() {
           {/* Deadline & Data Points */}
           {compliance.reportingDeadline && (
             <div className="p-2.5 rounded-lg bg-card border border-border">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide">
-                    Reporting Deadline
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide break-words">
+                    {t('reportingDeadline')}
                   </p>
-                  <p className="text-[11px] font-semibold text-foreground">
+                  <p className="text-[11px] font-semibold text-foreground break-words">
                     {compliance.reportingDeadline}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide">
-                    Data Points
+                <div className="text-right min-w-0">
+                  <p className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wide break-words">
+                    {t('dataPoints')}
                   </p>
-                  <p className="text-[11px] font-semibold text-foreground">
+                  <p className="text-[11px] font-semibold text-foreground break-words">
                     ~{compliance.estimatedDataPoints}
                   </p>
                 </div>
@@ -453,14 +450,14 @@ export function ComplianceChecker() {
 
           {/* Frameworks */}
           <div className="p-2.5 rounded-lg bg-muted/30 border border-border">
-            <p className="text-[9px] font-medium mb-2 text-muted-foreground uppercase tracking-wide">
-              Applicable Frameworks
+            <p className="text-[9px] font-medium mb-2 text-muted-foreground uppercase tracking-wide break-words">
+              {t('applicableFrameworks')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {compliance.applicableFrameworks.map((framework) => (
                 <span
                   key={framework}
-                  className="px-2 py-1 rounded-md text-[9px] font-medium bg-background text-foreground border border-border"
+                  className="px-2 py-1 rounded-md text-[9px] font-medium bg-background text-foreground border border-border break-words"
                 >
                   {framework}
                 </span>
