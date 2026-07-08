@@ -537,11 +537,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Automated Reporting
+                  {tL("benefitReportTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Generate compliance-ready sustainability reports automatically. 
-                  Meet regulatory requirements effortlessly with standardized formats.
+                  {tL("benefitReportDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
