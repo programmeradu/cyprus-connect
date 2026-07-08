@@ -45,6 +45,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { data: session } = useSession();
+  const intlLocale = useIntlLocale();
+
 
   // Load currency from user preferences
   const loadCurrencyFromDatabase = useCallback(async () => {
