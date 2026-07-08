@@ -247,7 +247,7 @@ export default function Home() {
 
                 
                 <div className="relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6">
-                  <DashboardDemo />
+                  <DashboardDemo landingMode />
                 </div>
               </div>
             </motion.div>
