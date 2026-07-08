@@ -6,6 +6,8 @@ import PillarShell from "@/components/learn/PillarShell";
 import CsrdVsmeChecker from "@/components/learn/widgets/CsrdVsmeChecker";
 import ScopeCalculator from "@/components/learn/widgets/ScopeCalculator";
 import CbamEstimator from "@/components/learn/widgets/CbamEstimator";
+import GlossaryText from "@/components/learn/GlossaryText";
+import RelatedSuggestions from "@/components/learn/RelatedSuggestions";
 import type { Metadata } from "next";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
@@ -146,19 +148,38 @@ export default async function PillarPage({ params }: { params: Params }) {
     return null;
   };
 
-  const introduction = c.introduction.map((p, i) => <p key={i}>{p}</p>);
+  const introduction = c.introduction.map((p, i) => (
+    <p key={i}>
+      <GlossaryText text={p} locale={safeLocale} excludeSlug={slug} />
+    </p>
+  ));
 
   const sectionsContent = (
     <>
-      {c.sections.map((s, i) => (
-        <section key={i} id={`section-${i}`} className="scroll-mt-28">
-          <h2>{s.heading}</h2>
-          {s.body.map((p, j) => (
-            <p key={j}>{p}</p>
-          ))}
-          {widgetConfig && widgetConfig.afterSection === i && renderWidget()}
-        </section>
-      ))}
+      {c.sections.map((s, i) => {
+        const showWidgetHere = widgetConfig && widgetConfig.afterSection === i;
+        return (
+          <section key={i} id={`section-${i}`} className="scroll-mt-28">
+            <h2>{s.heading}</h2>
+            {s.body.map((p, j) => (
+              <p key={j}>
+                <GlossaryText text={p} locale={safeLocale} excludeSlug={slug} />
+              </p>
+            ))}
+            {showWidgetHere && (
+              <>
+                {renderWidget()}
+                <RelatedSuggestions
+                  currentSlug={slug}
+                  locale={safeLocale}
+                  context="widget"
+                  keyword={s.heading}
+                />
+              </>
+            )}
+          </section>
+        );
+      })}
     </>
   );
 
@@ -183,6 +204,15 @@ export default async function PillarPage({ params }: { params: Params }) {
         introduction={introduction}
         sectionsContent={sectionsContent}
         faq={c.faq}
+        afterFaq={
+          <RelatedSuggestions
+            currentSlug={slug}
+            locale={safeLocale}
+            context="faq"
+            keyword={pillar.primaryKeyword}
+            label={safeLocale === "el" ? "Σχετικοί οδηγοί" : "Related guides"}
+          />
+        }
         cta={{ heading: c.ctaHeading, body: c.ctaBody }}
         related={related.map((r) => ({
           slug: r.slug,

@@ -3,18 +3,24 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, BookOpen, Sparkles, Clock } from "lucide-react";
+import { Search, BookOpen, Sparkles, Clock, ArrowDownWideNarrow, X } from "lucide-react";
+import { useSessionState } from "@/hooks/usePersistedState";
 
 type PillarCard = {
   slug: string;
   category: string;
   heroImage: string;
   readingMinutes: number;
+  publishedAt: string;
+  updatedAt: string;
   eyebrow: string;
   title: string;
   description: string;
+  keywords: string; // pre-joined searchable string
   hasWidget: boolean;
 };
+
+type SortKey = "recommended" | "newest" | "shortest" | "longest" | "az";
 
 type Props = {
   locale: "en" | "el";
@@ -30,6 +36,14 @@ type Props = {
   guidesCountLabel: (n: number) => string;
 };
 
+const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
+  recommended: { en: "Recommended", el: "Προτεινόμενα" },
+  newest: { en: "Newest first", el: "Νεότερα πρώτα" },
+  shortest: { en: "Shortest read", el: "Συντομότερα" },
+  longest: { en: "In-depth first", el: "Εκτενέστερα" },
+  az: { en: "A–Z", el: "Α–Ω" },
+};
+
 export default function LearnHubClient({
   locale,
   pillars,
@@ -43,24 +57,37 @@ export default function LearnHubClient({
   emptyLabel,
   guidesCountLabel,
 }: Props) {
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState<string>("all");
+  const [q, setQ] = useSessionState<string>("verdeiq.learn.q", "");
+  const [cat, setCat] = useSessionState<string>("verdeiq.learn.cat", "all");
+  const [sort, setSort] = useSessionState<SortKey>("verdeiq.learn.sort", "recommended");
+  const [interactiveOnly, setInteractiveOnly] = useSessionState<boolean>(
+    "verdeiq.learn.interactiveOnly",
+    false
+  );
 
   const filtered = useMemo(() => {
-    const query = q.trim().toLowerCase();
-    return pillars.filter((p) => {
+    const tokens = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const matched = pillars.filter((p) => {
       if (cat !== "all" && p.category !== cat) return false;
-      if (!query) return true;
-      return (
-        p.title.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query) ||
-        p.eyebrow.toLowerCase().includes(query)
-      );
+      if (interactiveOnly && !p.hasWidget) return false;
+      if (tokens.length === 0) return true;
+      const hay = `${p.title} ${p.description} ${p.eyebrow} ${p.keywords} ${p.slug}`.toLowerCase();
+      // full-text: every token must appear (AND semantics)
+      return tokens.every((tok) => hay.includes(tok));
     });
-  }, [pillars, q, cat]);
 
-  const featured = pillars.slice(0, 3);
+    const sorted = [...matched];
+    if (sort === "newest") sorted.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    else if (sort === "shortest") sorted.sort((a, b) => a.readingMinutes - b.readingMinutes);
+    else if (sort === "longest") sorted.sort((a, b) => b.readingMinutes - a.readingMinutes);
+    else if (sort === "az") sorted.sort((a, b) => a.title.localeCompare(b.title, locale === "el" ? "el-CY" : "en"));
+    return sorted;
+  }, [pillars, q, cat, sort, interactiveOnly, locale]);
 
+  const featured = useMemo(
+    () => [...pillars].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3),
+    [pillars]
+  );
   const grouped = useMemo(() => {
     const map = new Map<string, PillarCard[]>();
     for (const p of filtered) {
@@ -70,6 +97,17 @@ export default function LearnHubClient({
     }
     return map;
   }, [filtered]);
+
+  const showFeatured = q === "" && cat === "all" && !interactiveOnly && sort === "recommended";
+  const hasActiveFilters = q !== "" || cat !== "all" || interactiveOnly || sort !== "recommended";
+  const clearAll = () => {
+    setQ("");
+    setCat("all");
+    setInteractiveOnly(false);
+    setSort("recommended");
+  };
+
+
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-14 sm:px-6 sm:pt-20">
@@ -92,7 +130,7 @@ export default function LearnHubClient({
       </header>
 
       {/* Featured trio */}
-      {q === "" && cat === "all" && (
+      {showFeatured && (
         <section className="mb-16">
           <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-primary">
             {featuredLabel}
@@ -160,6 +198,47 @@ export default function LearnHubClient({
               className="h-11 w-full rounded-full border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-primary"
             />
           </div>
+          <div className="flex items-center gap-2">
+            <label className="relative inline-flex items-center gap-2">
+              <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortKey)}
+                className="h-9 rounded-full border bg-background px-3 pr-8 text-xs font-medium outline-none transition focus:border-primary"
+                aria-label={locale === "el" ? "Ταξινόμηση" : "Sort"}
+              >
+                {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+                  <option key={k} value={k}>
+                    {SORT_LABELS[k][locale]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={() => setInteractiveOnly(!interactiveOnly)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                interactiveOnly
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "hover:border-primary/50"
+              }`}
+              aria-pressed={interactiveOnly}
+            >
+              <Sparkles className="h-3 w-3" />
+              {locale === "el" ? "Με εργαλείο" : "With tool"}
+            </button>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                <X className="h-3 w-3" />
+                {locale === "el" ? "Καθαρισμός" : "Clear"}
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setCat("all")}

@@ -22,6 +22,7 @@ type PillarShellProps = {
   introduction: React.ReactNode;
   sectionsContent: React.ReactNode; // pre-rendered <section id> blocks with optional widget slots
   faq: { q: string; a: string }[];
+  afterFaq?: React.ReactNode;
   cta: { heading: string; body: string };
   related: {
     slug: string;
@@ -46,6 +47,7 @@ export default function PillarShell({
   introduction,
   sectionsContent,
   faq,
+  afterFaq,
   cta,
   related,
 }: PillarShellProps) {
@@ -338,7 +340,9 @@ export default function PillarShell({
                   </details>
                 ))}
               </div>
+              {afterFaq}
             </section>
+
 
             {/* CTA */}
             <section className="mt-20 overflow-hidden rounded-3xl border bg-gradient-to-br from-primary via-primary to-primary/80 p-8 text-primary-foreground shadow-lg sm:p-12">

@@ -5,7 +5,8 @@
  * Not a certified tool — indicative estimates using rounded 2024 UK/EU DEFRA-style factors.
  */
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { usePersistedState } from "@/hooks/usePersistedState";
 import { Info, Flame, Zap, Truck } from "lucide-react";
 
 type Props = { locale: "en" | "el" };
@@ -56,11 +57,15 @@ const t = {
 
 export default function ScopeCalculator({ locale }: Props) {
   const l = t[locale];
-  const [gas, setGas] = useState(80000);
-  const [diesel, setDiesel] = useState(4000);
-  const [elec, setElec] = useState(120000);
-  const [travel, setTravel] = useState(25000);
-  const [supply, setSupply] = useState(400000);
+  const [state, setState] = usePersistedState("verdeiq.calc.scope", {
+    gas: 80000, diesel: 4000, elec: 120000, travel: 25000, supply: 400000,
+  });
+  const { gas, diesel, elec, travel, supply } = state;
+  const setGas = (v: number) => setState((s) => ({ ...s, gas: v }));
+  const setDiesel = (v: number) => setState((s) => ({ ...s, diesel: v }));
+  const setElec = (v: number) => setState((s) => ({ ...s, elec: v }));
+  const setTravel = (v: number) => setState((s) => ({ ...s, travel: v }));
+  const setSupply = (v: number) => setState((s) => ({ ...s, supply: v }));
 
   const { s1, s2, s3, total } = useMemo(() => {
     const s1 = (gas * FACTORS.naturalGas_kWh + diesel * FACTORS.diesel_L) / 1000;
