@@ -112,9 +112,12 @@ export default async function LearnIndex({ params }: { params: Promise<{ locale:
       category: p.category,
       heroImage: p.heroImage,
       readingMinutes: p.readingMinutes,
+      publishedAt: p.publishedAt,
+      updatedAt: p.updatedAt,
       eyebrow: c.heroEyebrow,
       title: c.title,
       description: c.metaDescription,
+      keywords: `${p.primaryKeyword} ${p.category} ${p.slug.replace(/-/g, " ")}`,
       hasWidget: WIDGET_SLUGS.has(p.slug),
     };
   });
