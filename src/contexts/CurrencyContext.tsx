@@ -8,8 +8,21 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import type { ExchangeRates } from "@/lib/exchange-rates";
 import { useSession } from "@/lib/auth-client";
+
+const LOCALE_MAP: Record<string, string> = {
+  en: "en-US",
+  el: "el-GR",
+};
+
+function useIntlLocale(): string {
+  const pathname = usePathname() || "";
+  const seg = pathname.split("/")[1];
+  return LOCALE_MAP[seg] || "en-US";
+}
+
 
 interface CurrencyContextType {
   selectedCurrency: string;
