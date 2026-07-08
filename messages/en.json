@@ -1642,5 +1642,15 @@
     "cancelled": "Payment cancelled",
     "failed": "Payment failed",
     "processing": "Processing..."
+  },
+  "seo": {
+    "home": {
+      "title": "VerdeIQ — AI-Powered Sustainability for SMEs in Cyprus & the EU",
+      "description": "Track, optimize, and report your environmental impact with AI. Built for SMEs in Cyprus and across the EU — GDPR-compliant, EUR pricing, EN & EL."
+    },
+    "pricing": {
+      "title": "Pricing — VerdeIQ Sustainability Plans (EUR, incl. Cyprus VAT)",
+      "description": "Simple, transparent pricing in EUR for SMEs in Cyprus and the EU. Includes 19% Cyprus VAT. Choose Free, Pro, or Enterprise."
+    }
   }
 }
