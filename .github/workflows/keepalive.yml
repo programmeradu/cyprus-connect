@@ -1,0 +1,26 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    # Every 3 days at 09:00 UTC
+    - cron: "0 9 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keep-alive endpoint
+        run: |
+          set -e
+          URL="https://verdeiq.stauniverse.tech/api/keep-alive"
+          echo "Pinging $URL"
+          RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" "$URL")
+          STATUS=$(echo "$RESPONSE" | grep -oE 'HTTP_STATUS:[0-9]+' | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
+          echo "Status: $STATUS"
+          echo "Body: $BODY"
+          if [ "$STATUS" != "200" ]; then
+            echo "Keep-alive ping failed"
+            exit 1
+          fi
