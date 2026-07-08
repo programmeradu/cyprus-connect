@@ -1300,10 +1300,10 @@ export default function Home() {
                   </div>
                 </div>
                 <h3 className="text-lg font-bold mb-2">
-                  Compliance Checker
+                  {tL("powerComplianceTitle")}
                 </h3>
                 <p className="text-foreground/70 dark:text-muted-foreground leading-relaxed text-xs font-light">
-                  Reduce legal and compliance anxiety. Automated CSRD, ESRS, and VSME requirement tracking keeps you ahead of regulatory changes.
+                  {tL("powerComplianceDesc")}
                 </p>
               </PremiumCard>
             </motion.div>
