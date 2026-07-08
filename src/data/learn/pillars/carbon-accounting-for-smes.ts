@@ -5,7 +5,7 @@ export const carbonAccountingForSmes = makePillar({
   category: "sme",
   primaryKeyword: "carbon accounting for SMEs",
   monthlyVolume: 10,
-  readingMinutes: 10,
+  readingMinutes: 12,
   relatedSlugs: ["vsme-reporting-guide","ghg-protocol-guide","scope-1-2-3-emissions","carbon-footprint-software-smes"],
   en: {
   "title": "Carbon Accounting for SMEs: A Practical Starter Guide",
@@ -43,6 +43,20 @@ export const carbonAccountingForSmes = makePillar({
       "body": [
         "For a 30–150 FTE SME with organized records: 3–6 weeks with software, 8–14 weeks with a consultant, 4–8 months with spreadsheets. The second year drops to under two weeks because the collection process is templated."
       ]
+    },
+    {
+      "heading": "Turning the inventory into a management tool",
+      "body": [
+        "The first inventory is a compliance artifact. The second and third become planning tools if you segment the data by site, product line, or cost centre. Common wins visible in year-one data: switching electricity contracts to renewable-backed tariffs typically drops Scope 2 by 30–60% at effectively zero cost; consolidating shipping consolidations cuts Category 4 by 10–20%; a small fleet electrification pilot on delivery vans usually pays back inside 30 months at current EU fuel prices.",
+        "Set an intensity metric alongside the absolute total (tCO2e per €m revenue or per FTE) so growth doesn't mask progress. Banks and large customers benchmark on both."
+      ]
+    },
+    {
+      "heading": "Cyprus and Mediterranean specifics",
+      "body": [
+        "Cyprus SMEs face two localized quirks. First, the grid emission factor is one of the highest in the EU (roughly 550–650 gCO2e/kWh depending on year and residual mix) — Scope 2 dominates most Cyprus inventories much more than a Nordic company would expect. Rooftop PV pays back visibly in the inventory as well as the electricity bill.",
+        "Second, HVAC refrigerant loss is disproportionately material in the Mediterranean climate. F-gas leak-rate assumptions in generic tools understate real losses in high-cooling-load buildings; use service-report data where you have it, and expect Scope 1 refrigerants to be 5–15% of the total, not the 1–2% assumed in default templates."
+      ]
     }
   ],
   "keyTakeaways": [
@@ -67,6 +81,14 @@ export const carbonAccountingForSmes = makePillar({
     {
       "q": "Do I need to publish the report?",
       "a": "No obligation for private SMEs. Many publish anyway because it becomes the answer to every incoming ESG questionnaire."
+    },
+    {
+      "q": "How do I choose an emission factor database?",
+      "a": "For Scope 1 and 2, national inventory data or DEFRA is standard. For Scope 2 electricity, use your country's residual mix factor unless you have contract instruments (guarantees of origin) to support a lower market-based figure. For Scope 3 spend-based, EXIOBASE is the EU standard; auditors accept both DEFRA and EPA equivalents when documented."
+    },
+    {
+      "q": "What's the difference between location-based and market-based Scope 2?",
+      "a": "Location-based uses the grid average of where the electricity is consumed. Market-based reflects contractual instruments (green tariffs, guarantees of origin, PPAs). CSRD and VSME both require you to report both — location-based tells the true grid impact, market-based reflects your procurement choices."
     }
   ],
   "ctaHeading": "Your first carbon inventory in weeks, not months",
