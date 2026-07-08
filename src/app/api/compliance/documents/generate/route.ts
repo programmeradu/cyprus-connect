@@ -3,6 +3,7 @@ import { db } from '@/db';
 import { complianceDocuments, complianceAuditLogs, emissions, user } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -31,32 +32,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Framework is required' }, { status: 400 });
     }
 
-    // Check AI credits allowance before processing
-    const checkResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/check`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        feature_id: 'ai_credits',
-        required_balance: 1
-      })
-    });
-
-    if (!checkResponse.ok) {
-      return NextResponse.json(
-        { error: "Insufficient AI credits. Please upgrade your plan or purchase more credits." },
-        { status: 403 }
-      );
-    }
-
-    const { allowed } = await checkResponse.json();
-    if (!allowed) {
-      return NextResponse.json(
-        { error: "Insufficient AI credits. Please upgrade your plan or purchase more credits." },
-        { status: 403 }
-      );
+    // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
+    const creditGate = await checkAndDeductAiCredits(req, 1, 'compliance-doc'), 1, 'compliance-doc');
+    if (!creditGate.ok) {
+      return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
 
     // Get user data
@@ -95,19 +74,6 @@ Format the report professionally with clear sections.`;
     const result = await model.generateContent(prompt);
     const reportContent = result.response.text();
 
-    // Track AI credit usage after successful generation
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/track`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        feature_id: 'ai_credits',
-        value: 1,
-        idempotency_key: `compliance-report-${Date.now()}-${Math.random()}`
-      })
-    });
 
     // Determine status and due date based on framework
     const frameworkMap: Record<string, { status: string; dueDate: string; regulationId: string }> = {

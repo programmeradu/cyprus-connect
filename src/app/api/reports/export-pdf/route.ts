@@ -3,6 +3,7 @@ import { generateSustainabilityReport, ReportData } from '@/lib/pdf/export-repor
 import { db } from '@/db';
 import { user, historicalEmissions, industryComparisons } from '@/db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
+import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 
 export async function POST(request: NextRequest) {
   try {
@@ -212,18 +213,6 @@ export async function POST(request: NextRequest) {
     const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
 
     // Track sustainability report usage after successful generation
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/autumn/track`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        feature_id: 'sustainability_reports',
-        value: 1,
-        idempotency_key: `pdf-report-${Date.now()}-${Math.random()}`
-      })
-    });
 
     return new NextResponse(pdfBuffer, {
       status: 200,
