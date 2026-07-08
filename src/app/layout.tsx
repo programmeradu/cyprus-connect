@@ -9,10 +9,16 @@ import { Toaster } from "@/components/ui/sonner";
 
 import { routing } from "@/i18n/routing";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
 
+// Root metadata holds only sitewide defaults. Canonical, hreflang alternates,
+// per-page titles, descriptions, and og:* tags live in the [locale] layout and
+// leaf routes so each page gets unique, self-referencing metadata.
 export const metadata: Metadata = {
-  title: "VerdeIQ — AI-Powered Sustainability for SMEs in Cyprus & the EU",
+  title: {
+    default: "VerdeIQ — AI-Powered Sustainability for SMEs in Cyprus & the EU",
+    template: "%s",
+  },
   description:
     "Track, optimize, and report your environmental impact with AI. Built for SMEs in Cyprus and across the EU — GDPR-compliant, EUR pricing, EN & EL.",
   metadataBase: new URL(SITE_URL),
@@ -20,38 +26,6 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
     apple: "/icon.png",
-  },
-  alternates: {
-    canonical: "/",
-    languages: {
-      en: "/en",
-      "el-CY": "/el",
-      "x-default": "/en",
-    },
-  },
-  openGraph: {
-    title: "VerdeIQ — AI-Powered Sustainability for SMEs",
-    description:
-      "Track, optimize, and report your environmental impact with AI-powered insights. Available in English and Greek for Cyprus.",
-    url: SITE_URL,
-    siteName: "VerdeIQ",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "VerdeIQ — AI-Powered Sustainability for SMEs",
-      },
-    ],
-    locale: "en_US",
-    alternateLocale: ["el_CY"],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "VerdeIQ — AI-Powered Sustainability for SMEs",
-    description: "AI-powered sustainability insights for SMEs in Cyprus and the EU.",
-    images: ["/og-image.png"],
   },
 };
 
@@ -70,17 +44,6 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} suppressHydrationWarning>
-      <head>
-        {routing.locales.map((l) => (
-          <link
-            key={l}
-            rel="alternate"
-            hrefLang={l === "el" ? "el-CY" : l}
-            href={`${SITE_URL}/${l}`}
-          />
-        ))}
-        <link rel="alternate" hrefLang="x-default" href={`${SITE_URL}/en`} />
-      </head>
       <body className="antialiased">
         <Script
           id="orchids-browser-logs"
