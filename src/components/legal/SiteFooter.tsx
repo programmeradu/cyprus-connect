@@ -10,6 +10,7 @@ const COPY = {
     product: "Product",
     home: "Home",
     pricing: "Pricing",
+    learn: "Learn",
     legal: "Legal",
     privacy: "Privacy",
     terms: "Terms",
