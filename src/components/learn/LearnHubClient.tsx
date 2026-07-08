@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSessionState } from "@/hooks/usePersistedState";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 
 type PillarCard = {
   slug: string;
@@ -43,9 +44,9 @@ const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
   az: { en: "A–Z", el: "Α–Ω" },
 };
 
-const SERIF: React.CSSProperties = {
-  fontFamily: "var(--editorial-serif, ui-serif, Georgia, 'Times New Roman', serif)",
-  fontFeatureSettings: '"ss01", "ss02"',
+const SANS: React.CSSProperties = {
+  fontFamily: "var(--editorial-sans)",
+  fontFeatureSettings: '"ss01", "ss02", "cv11"',
 };
 
 export default function LearnHubClient({
@@ -118,15 +119,18 @@ export default function LearnHubClient({
   const guidePlural = locale === "el" ? "οδηγοί" : "guides";
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-20">
+    <div style={SANS}>
+      <MarketingHeader />
+      <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-16">
+
       {/* Header — editorial, no pill, no icon */}
       <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">
         <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary sm:text-xs">
           VerdeIQ Learn
         </p>
         <h1
-          className="mt-5 text-[44px] font-normal leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
-          style={SERIF}
+          className="mt-5 text-[44px] font-semibold leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
+          style={SANS}
         >
           {heading}
         </h1>
@@ -178,10 +182,10 @@ export default function LearnHubClient({
                     )}
                   </p>
                   <h2
-                    className={`mt-2.5 font-normal leading-[1.1] tracking-[-0.015em] text-foreground group-hover:text-primary ${
+                    className={`mt-2.5 font-semibold leading-[1.1] tracking-[-0.015em] text-foreground group-hover:text-primary ${
                       i === 0 ? "text-[28px] sm:text-[36px] md:text-[42px]" : "text-[22px] sm:text-[24px]"
                     }`}
-                    style={SERIF}
+                    style={SANS}
                   >
                     {p.title}
                   </h2>
@@ -276,8 +280,8 @@ export default function LearnHubClient({
                 <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
                   <div>
                     <h2
-                      className="text-[26px] font-normal leading-tight tracking-[-0.02em] sm:text-[32px]"
-                      style={SERIF}
+                      className="text-[26px] font-semibold leading-tight tracking-[-0.02em] sm:text-[32px]"
+                      style={SANS}
                     >
                       {c.label}
                     </h2>
@@ -313,8 +317,8 @@ export default function LearnHubClient({
                             )}
                           </p>
                           <h3
-                            className="mt-2 text-[20px] font-normal leading-[1.2] tracking-[-0.015em] text-foreground group-hover:text-primary sm:text-[22px]"
-                            style={SERIF}
+                            className="mt-2 text-[20px] font-semibold leading-[1.2] tracking-[-0.015em] text-foreground group-hover:text-primary sm:text-[22px]"
+                            style={SANS}
                           >
                             {p.title}
                           </h3>
@@ -337,8 +341,10 @@ export default function LearnHubClient({
           })
       )}
     </main>
+    </div>
   );
 }
+
 
 function CatButton({
   active,
