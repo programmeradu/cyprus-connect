@@ -33,7 +33,7 @@ type Props = {
   interactiveLabel: string;
   featuredLabel: string;
   emptyLabel: string;
-  guidesCountLabel: (n: number) => string;
+  guidesCountLabelTemplate: string;
 };
 
 const SORT_LABELS: Record<SortKey, { en: string; el: string }> = {
