@@ -230,12 +230,12 @@ export function ComplianceChecker() {
         
         <div className="relative z-10">
           <div className="mb-4">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-bold">Compliance Check</h3>
-              <Lock className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center justify-between mb-1 gap-2">
+              <h3 className="text-sm font-bold min-w-0 break-words">{t('title')}</h3>
+              <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </div>
-            <p className="text-[10px] text-muted-foreground">
-              CSRD & ESRS requirements
+            <p className="text-[10px] text-muted-foreground break-words">
+              {t('subtitle')}
             </p>
           </div>
 
