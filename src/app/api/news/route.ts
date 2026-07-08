@@ -260,7 +260,7 @@ export async function GET(request: Request) {
     await Promise.all(
       items.map(async (it) => {
         if (!it.imageUrl) {
-          it.imageUrl = await resolveOgImage(it.link);
+          it.imageUrl = await resolveOgImage(it.link, it.title);
         }
       })
     );
