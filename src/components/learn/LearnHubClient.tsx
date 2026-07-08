@@ -126,7 +126,7 @@ export default function LearnHubClient({
           {heading}
         </h1>
         <p className="mt-6 text-lg text-muted-foreground sm:text-xl">{subheading}</p>
-        <p className="mt-4 text-sm text-muted-foreground">{guidesCountLabel(pillars.length)}</p>
+        <p className="mt-4 text-sm text-muted-foreground">{guidesCountLabelTemplate.replace("{count}", String(pillars.length))}</p>
       </header>
 
       {/* Featured trio */}
