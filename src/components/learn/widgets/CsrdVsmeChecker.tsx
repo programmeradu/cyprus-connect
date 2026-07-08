@@ -8,7 +8,7 @@
 
 import { useMemo } from "react";
 import { usePersistedState } from "@/hooks/usePersistedState";
-import { CheckCircle2, AlertCircle, Info } from "lucide-react";
+
 
 type Props = { locale: "en" | "el" };
 
