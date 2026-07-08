@@ -45,7 +45,9 @@ export default function BillingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <PaymentTestModeBanner />
       {/* Header */}
+
       <div className="border-b border-border/50 bg-card/30 backdrop-blur-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
