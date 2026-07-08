@@ -1,6 +1,6 @@
 "use client";
 
-import { useCustomer } from "autumn-js/react";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -8,19 +8,30 @@ import Link from "next/link";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { Sparkles, TrendingUp, Zap } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { useEffect, useState } from "react";
 
 export const PlanUsageIndicator = () => {
   const t = useTranslations("billing.planUsage");
   const tPlans = useTranslations("billing.planNames");
   const locale = useLocale();
   const { data: session } = useSession();
-  const { customer, isLoading } = useCustomer();
+  const { plan, isLoading } = useSubscription();
+  const [aiCreditsUsed, setAiCreditsUsed] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!session?.user) return;
+    const token = localStorage.getItem("bearer_token");
+    fetch(`/api/users/${session.user.id}/credits`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => {
+        if (d?.aiCreditsRemaining != null) setAiCreditsUsed(d.aiCreditsRemaining);
+      })
+      .catch(() => {});
+  }, [session?.user]);
 
-  if (!session?.user) {
-    return null;
-  }
-
+  if (!session?.user) return null;
   if (isLoading) {
     return (
       <PremiumCard className="p-4 animate-pulse">
@@ -33,34 +44,30 @@ export const PlanUsageIndicator = () => {
     );
   }
 
-  const currentPlan = customer?.products?.at(-1);
-  const planId = currentPlan?.id || "free";
-  const planName = currentPlan?.name || tPlans("free");
-  const features = customer?.features || {};
+  const planId = plan?.id || "free";
+  const planName = planId === "free" ? tPlans("free") : plan?.name;
 
+  const planIcon =
+    planId === "enterprise" ? (
+      <Sparkles className="h-4 w-4 text-purple-500" />
+    ) : planId === "pro" ? (
+      <Zap className="h-4 w-4 text-primary" />
+    ) : (
+      <TrendingUp className="h-4 w-4 text-muted-foreground" />
+    );
+  const planColor =
+    planId === "enterprise"
+      ? "bg-purple-500/10 text-purple-500 border-purple-500/20"
+      : planId === "pro"
+        ? "bg-primary/10 text-primary border-primary/20"
+        : "bg-muted text-muted-foreground border-border";
 
-  // Get icon based on plan
-  const getPlanIcon = () => {
-    switch (planId) {
-      case 'professional':
-        return <Zap className="h-4 w-4 text-primary" />;
-      case 'enterprise':
-        return <Sparkles className="h-4 w-4 text-purple-500" />;
-      default:
-        return <TrendingUp className="h-4 w-4 text-muted-foreground" />;
-    }
-  };
+  // Show AI credits + a couple of headline limits from the plan.
+  const aiLimit: number = plan?.limits?.aiCredits ?? 0;
+  const isUnlimitedAi = (aiLimit as number) === -1;
 
-  const getPlanColor = () => {
-    switch (planId) {
-      case 'professional':
-        return 'bg-primary/10 text-primary border-primary/20';
-      case 'enterprise':
-        return 'bg-purple-500/10 text-purple-500 border-purple-500/20';
-      default:
-        return 'bg-muted text-muted-foreground border-border';
-    }
-  };
+  const aiRemaining = aiCreditsUsed ?? 0;
+  const aiPct = !isUnlimitedAi && aiLimit > 0 ? Math.max(0, Math.min(100, 100 - (aiRemaining / aiLimit) * 100)) : 0;
 
   return (
     <PremiumCard className="p-4">
@@ -69,83 +76,49 @@ export const PlanUsageIndicator = () => {
         <motion.div
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium",
-            getPlanColor()
+            planColor,
           )}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200 }}
         >
-          {getPlanIcon()}
+          {planIcon}
           <span>{planName}</span>
         </motion.div>
       </div>
 
       <div className="space-y-3">
-        {Object.entries(features).map(([featureId, feature]: [string, any]) => {
-          const hasLimit = typeof feature.included_usage === 'number' && feature.included_usage !== -1;
-          const usage = feature.usage || 0;
-          const limit = feature.included_usage;
-          const isUnlimited = limit === -1;
-          const percentage = hasLimit ? Math.min(100, (usage / limit) * 100) : 0;
-
-          // Format feature name from ID
-          const featureName = featureId
-            .split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-
-          return (
-            <motion.div
-              key={featureId}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="flex justify-between items-center text-xs mb-1.5">
-                <span className="text-muted-foreground font-medium">
-                  {featureName}
-                </span>
-                <span className="font-mono text-xs font-semibold">
-                  {isUnlimited ? (
-                    <span className="text-primary">{t("unlimited")}</span>
-                  ) : hasLimit ? (
-                    <span className={cn(
-                      percentage > 90 ? "text-destructive" :
-                      percentage > 75 ? "text-orange-500" : "text-foreground"
-                    )}>
-                      {usage.toLocaleString(locale)}/{limit.toLocaleString(locale)}
-                    </span>
-                  ) : (
-                    <span className="text-primary">{t("enabled")}</span>
+        <div>
+          <div className="flex justify-between items-center text-xs mb-1.5">
+            <span className="text-muted-foreground font-medium">AI Credits</span>
+            <span className="font-mono text-xs font-semibold">
+              {isUnlimitedAi ? (
+                <span className="text-primary">{t("unlimited")}</span>
+              ) : (
+                <span
+                  className={cn(
+                    aiPct > 90 ? "text-destructive" : aiPct > 75 ? "text-orange-500" : "text-foreground",
                   )}
-
+                >
+                  {aiRemaining.toLocaleString(locale)}/{aiLimit.toLocaleString(locale)}
                 </span>
-              </div>
-
-              {hasLimit && (
-                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                  <motion.div
-                    className={cn(
-                      "h-full rounded-full transition-all duration-500",
-                      percentage > 90 ? "bg-destructive" :
-                      percentage > 75 ? "bg-orange-500" : "bg-primary"
-                    )}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${percentage}%` }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
-                  />
-                </div>
               )}
-
-              {hasLimit && feature.next_reset_at && (
-                <p className="text-[10px] text-muted-foreground mt-1">
-                  {t("resets", { date: new Date(feature.next_reset_at).toLocaleDateString(locale) })}
-                </p>
-              )}
-
-            </motion.div>
-          );
-        })}
+            </span>
+          </div>
+          {!isUnlimitedAi && (
+            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+              <motion.div
+                className={cn(
+                  "h-full rounded-full transition-all duration-500",
+                  aiPct > 90 ? "bg-destructive" : aiPct > 75 ? "bg-orange-500" : "bg-primary",
+                )}
+                initial={{ width: 0 }}
+                animate={{ width: `${aiPct}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <Link href="/pricing">
@@ -154,7 +127,7 @@ export const PlanUsageIndicator = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          {planId === 'free' ? t("upgradePlan") : t("managePlan")} →
+          {planId === "free" ? t("upgradePlan") : t("managePlan")} →
         </motion.button>
       </Link>
     </PremiumCard>

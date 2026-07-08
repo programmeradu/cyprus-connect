@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeClient, resolvePriceIdFromLookupKey, getStripeErrorMessage } from '@/lib/stripe/server';
+import { resolveStripeEnvFromRequest } from '@/lib/stripe/env';
 import {
   SUBSCRIPTION_PLANS,
   CREDIT_PACKAGES,
   resolveStripeVariant,
 } from '@/lib/stripe/config';
-import { getOrCreateStripeCustomer } from '@/lib/stripe/utils';
+import { getOrCreateStripeCustomer, ensureFreeSubscription } from '@/lib/stripe/utils';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 
@@ -17,18 +18,21 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { type, planId, packageId, successUrl, cancelUrl, currency, locale } = body;
 
-    const stripe = createStripeClient('sandbox');
-    const customerId = await getOrCreateStripeCustomer(session.user.id, session.user.email);
+    const env = resolveStripeEnvFromRequest(req);
+    const stripe = createStripeClient(env);
+
+    // Guarantee a Free-tier row exists first — used as fallback if payment
+    // is cancelled and needed for the customer id backfill below.
+    await ensureFreeSubscription(session.user.id);
+    const customerId = await getOrCreateStripeCustomer(env, session.user.id, session.user.email);
     const variant = resolveStripeVariant(currency);
     const isEur = variant === 'eur';
 
-    const taxSettings = {
-      automatic_tax: { enabled: true as const },
-      tax_id_collection: { enabled: true as const },
-      billing_address_collection: 'required' as const,
-      customer_update: { address: 'auto' as const, name: 'auto' as const },
-      locale: (locale === 'el' ? 'el' : 'en') as 'el' | 'en',
-    };
+    // Full compliance handling: Stripe handles tax + fraud + disputes +
+    // support end-to-end for buyers in the ~80 supported countries and
+    // falls back to tax calculation only for buyers elsewhere. Adds +3.5%
+    // per transaction. Customer bank statements show `LINK.COM* …`.
+    const managedPayments = { managed_payments: { enabled: true } as any };
 
     let checkoutSession;
 
@@ -46,21 +50,24 @@ export async function POST(req: NextRequest) {
       checkoutSession = await stripe.checkout.sessions.create({
         customer: customerId,
         mode: 'subscription',
-        payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
-        cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
+        success_url:
+          successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
+        cancel_url:
+          cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
+        locale: (locale === 'el' ? 'el' : 'en') as 'el' | 'en',
         metadata: {
           userId: session.user.id,
           planId: plan.id,
           type: 'subscription',
           currency: variant,
+          managed_payments: 'true',
         },
         subscription_data: {
           metadata: { userId: session.user.id, planId: plan.id, currency: variant },
         },
-        ...taxSettings,
-      });
+        ...managedPayments,
+      } as any);
     } else if (type === 'credits') {
       const package_ = CREDIT_PACKAGES[packageId as keyof typeof CREDIT_PACKAGES];
       const lookupKey = isEur ? package_?.priceIdEur : package_?.priceId;
@@ -75,10 +82,12 @@ export async function POST(req: NextRequest) {
       checkoutSession = await stripe.checkout.sessions.create({
         customer: customerId,
         mode: 'payment',
-        payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url: successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
-        cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
+        success_url:
+          successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
+        cancel_url:
+          cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
+        locale: (locale === 'el' ? 'el' : 'en') as 'el' | 'en',
         payment_intent_data: {
           description: `${package_.credits} AI Credits`,
           metadata: {
@@ -94,9 +103,10 @@ export async function POST(req: NextRequest) {
           type: 'credits',
           packageId: package_.id,
           credits: package_.credits.toString(),
+          managed_payments: 'true',
         },
-        ...taxSettings,
-      });
+        ...managedPayments,
+      } as any);
     } else {
       return NextResponse.json({ error: 'Invalid checkout type' }, { status: 400 });
     }

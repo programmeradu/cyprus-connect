@@ -1,4 +1,5 @@
 "use client";
+import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
 import { motion } from "framer-motion";
 import { PremiumButton } from "@/components/ui/PremiumButton";
@@ -46,6 +47,7 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
         body: JSON.stringify({
           type: 'subscription',

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeClient, getStripeErrorMessage } from '@/lib/stripe/server';
+import { resolveStripeEnvFromRequest } from '@/lib/stripe/env';
 import { getUserSubscription } from '@/lib/stripe/utils';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
@@ -16,11 +17,10 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json().catch(() => ({}));
     const { returnUrl } = body as { returnUrl?: string };
-    const stripe = createStripeClient('sandbox');
 
-    // Configure the portal so:
-    //  - Plan changes apply immediately with prorated invoicing
-    //  - Cancellation revokes access immediately (matches webhook behavior)
+    const env = resolveStripeEnvFromRequest(req);
+    const stripe = createStripeClient(env);
+
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: subscription.stripeCustomerId,
       return_url: returnUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,

@@ -6,6 +6,8 @@ import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import { PricingTable } from "@/components/billing/PricingTable";
+import { PaymentTestModeBanner } from "@/components/billing/PaymentTestModeBanner";
+
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";

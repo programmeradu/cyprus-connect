@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { getAutumnSubscriptionData } from '@/lib/autumn/client';
+
 
 export async function GET(
   request: NextRequest,
@@ -26,10 +26,12 @@ export async function GET(
         userId: user.id,
         name: user.name,
         email: user.email,
+        totalCredits: user.totalCredits,
       })
       .from(user)
       .where(eq(user.id, id))
       .limit(1);
+
 
     if (userRecord.length === 0) {
       return NextResponse.json(
@@ -41,16 +43,9 @@ export async function GET(
       );
     }
 
-    // Fetch actual AI credits balance from Autumn
-    let aiCreditsRemaining = 0;
-    try {
-      const autumnData = await getAutumnSubscriptionData(id);
-      if (autumnData) {
-        aiCreditsRemaining = autumnData.aiCreditsBalance;
-      }
-    } catch (autumnError) {
-      console.error('Failed to fetch Autumn balance:', autumnError);
-    }
+    // AI credit balance is stored on the user row (topped up by webhook + free-tier grants)
+    const aiCreditsRemaining = userRecord[0].totalCredits ?? 0;
+
 
     return NextResponse.json({
       userId: userRecord[0].userId,

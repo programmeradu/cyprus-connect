@@ -1,4 +1,5 @@
 "use client";
+import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -69,20 +70,14 @@ export const BillingDashboard = () => {
       setLoadingCredits(true);
       const token = localStorage.getItem('bearer_token');
       
-      // Sync Autumn data to database first
-      await fetch('/api/autumn/sync', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: session.user.id }),
-      });
+      // (Autumn sync removed — credits are the single source of truth in our DB, updated by the Stripe webhook.)
+
 
       // Fetch synced credit balance from database
       const response = await fetch(`/api/users/${session.user.id}/credits`, {
         headers: {
           'Authorization': `Bearer ${token}`,
+          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
       });
 
@@ -118,6 +113,7 @@ export const BillingDashboard = () => {
       const response = await fetch('/api/billing/complete', {
         headers: {
           'Authorization': `Bearer ${token}`,
+          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
       });
 
@@ -149,6 +145,7 @@ export const BillingDashboard = () => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
         body: JSON.stringify({
           returnUrl: window.location.href,
@@ -276,7 +273,7 @@ export const BillingDashboard = () => {
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted">
                     {currentSubscription.gateway === 'stripe' ? '🔵 Stripe' : 
                      currentSubscription.gateway === 'paystack' ? '🟢 Paystack' :
-                     currentSubscription.gateway === 'autumn' ? '🍂 Autumn' : currentSubscription.gateway}
+                     currentSubscription.gateway}
                   </span>
                 </div>
               )}
@@ -401,7 +398,7 @@ export const BillingDashboard = () => {
                             <span className="font-medium">
                               {payment.gateway === 'stripe' ? 'Stripe' : 
                                payment.gateway === 'paystack' ? 'Paystack' :
-                               payment.gateway === 'autumn' ? 'Autumn' : payment.gateway}
+                               payment.gateway}
                             </span>
                           </>
                         )}
