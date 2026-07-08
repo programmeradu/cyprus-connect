@@ -18,6 +18,7 @@ export default function Home() {
   const router = useRouter();
   const tNav = useTranslations("nav");
   const tHero = useTranslations("hero");
+  const tL = useTranslations("landing");
 
 
   const handleSignOut = async () => {
