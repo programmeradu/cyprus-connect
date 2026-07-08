@@ -177,7 +177,12 @@ export async function GET(request: Request) {
       }
     }
     
-    return NextResponse.json({ items });
+    return NextResponse.json({ items }, {
+      headers: {
+        // Cache 1h on CDN, serve stale for 24h while revalidating in background
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    });
   } catch (error: any) {
     console.error("News API error:", error);
     return NextResponse.json(
