@@ -2188,7 +2188,7 @@ export default function Home() {
                 </Link>
                 <Link href="/pricing">
                   <PremiumButton variant="outline" size="sm" className="text-xs px-5 py-2">
-                    View Pricing Plans
+                    {tL("ctaPricing")}
                   </PremiumButton>
                 </Link>
               </div>
