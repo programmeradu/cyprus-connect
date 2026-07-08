@@ -50,8 +50,11 @@ export const PricingTable = ({ currentPlanId = 'free' }: PricingTableProps) => {
         body: JSON.stringify({
           type: 'subscription',
           planId,
+          currency,
+          locale,
         }),
       });
+
 
       if (!response.ok) {
         const error = await response.json();
