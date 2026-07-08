@@ -131,7 +131,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     fetchRates();
   }, [selectedCurrency]);
 
-  const setCurrency = useCallback(async (currency: string) => {
+  const setCurrency = useCallback(async (_currency: string) => {
     const upperCurrency = "EUR";
     setSelectedCurrency(upperCurrency);
     

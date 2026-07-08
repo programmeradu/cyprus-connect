@@ -104,10 +104,10 @@ export async function POST(req: NextRequest) {
     }
 
     const compliance: ComplianceStatus = {
-      csrdScope: isLargeEnterprise || isMediumEnterprise || isNonEUinScope,
-      vsmeEligible: !isLargeEnterprise && smeData.employees <= 250,
+      csrdScope: complianceLevel.startsWith('MANDATORY'),
+      vsmeEligible: !complianceLevel.startsWith('MANDATORY'),
       applicableFrameworks: frameworks,
-      reportingDeadline: isLargeEnterprise 
+      reportingDeadline: complianceLevel.startsWith('MANDATORY') 
         ? greek
           ? 'Σταδιακή εφαρμογή CSRD στην Κύπρο — ελέγξτε χρήση και κύκλο εργασιών'
           : 'Cyprus CSRD phased reporting — verify financial year and listing status'

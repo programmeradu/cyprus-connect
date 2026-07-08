@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { useUser } from "@/lib/user-context";
 import { useCustomer } from "autumn-js/react";
 import { useRouter } from "next/navigation";
 import { Lock, Loader2 } from "lucide-react";
@@ -129,7 +128,6 @@ const INDUSTRIES = [
 ];
 
 export function ComplianceChecker() {
-  const { user } = useUser();
   const { customer, isLoading: isCustomerLoading } = useCustomer();
   const router = useRouter();
   const t = useTranslations("complianceChecker");
