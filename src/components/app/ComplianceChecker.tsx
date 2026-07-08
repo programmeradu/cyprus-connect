@@ -256,11 +256,11 @@ export function ComplianceChecker() {
           {/* Upgrade prompt */}
           <div className="text-center space-y-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1">
-                Professional Feature
+              <p className="text-xs font-semibold text-primary mb-1 break-words">
+                {t('proFeature')}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed">
-                Automated CSRD, ESRS, and VSME compliance tracking for your organization
+              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
+                {t('proBlurb')}
               </p>
             </div>
             
@@ -269,8 +269,8 @@ export function ComplianceChecker() {
               className="w-full"
               size="sm"
             >
-              <Lock className="w-3 h-3 mr-1.5" />
-              <span className="text-[10px]">Upgrade to Professional</span>
+              <Lock className="w-3 h-3 mr-1.5 flex-shrink-0" />
+              <span className="text-[10px] min-w-0 break-words">{t('upgradeCta')}</span>
             </PremiumButton>
           </div>
         </div>
