@@ -198,6 +198,47 @@ export default function LearnHubClient({
               className="h-11 w-full rounded-full border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-primary"
             />
           </div>
+          <div className="flex items-center gap-2">
+            <label className="relative inline-flex items-center gap-2">
+              <ArrowDownWideNarrow className="h-4 w-4 text-muted-foreground" />
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortKey)}
+                className="h-9 rounded-full border bg-background px-3 pr-8 text-xs font-medium outline-none transition focus:border-primary"
+                aria-label={locale === "el" ? "Ταξινόμηση" : "Sort"}
+              >
+                {(Object.keys(SORT_LABELS) as SortKey[]).map((k) => (
+                  <option key={k} value={k}>
+                    {SORT_LABELS[k][locale]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={() => setInteractiveOnly(!interactiveOnly)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                interactiveOnly
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "hover:border-primary/50"
+              }`}
+              aria-pressed={interactiveOnly}
+            >
+              <Sparkles className="h-3 w-3" />
+              {locale === "el" ? "Με εργαλείο" : "With tool"}
+            </button>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearAll}
+                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition hover:text-foreground"
+              >
+                <X className="h-3 w-3" />
+                {locale === "el" ? "Καθαρισμός" : "Clear"}
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-wrap gap-1.5">
             <button
               onClick={() => setCat("all")}
