@@ -71,6 +71,11 @@ export function SiteFooter() {
                 {t.pricing}
               </Link>
             </li>
+            <li>
+              <Link href={`/${locale}/learn`} className="text-foreground/80 hover:text-foreground">
+                {t.learn}
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
