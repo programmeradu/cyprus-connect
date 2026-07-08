@@ -107,31 +107,38 @@ export default function CsrdVsmeChecker({ locale }: Props) {
   const inScope = result.regime !== "none";
 
   return (
-    <div className="not-prose my-12 overflow-hidden rounded-3xl border bg-card shadow-sm">
-      <div className="border-b bg-gradient-to-br from-primary/10 to-transparent p-6 sm:p-8">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-primary">
-          {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
+    <div className="not-prose my-14 border-y border-foreground/15">
+      <div className="border-b border-foreground/10 py-8 sm:py-10">
+        <div className="flex items-baseline justify-between gap-6">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
+          </p>
+          <p className="tabular-nums text-[11px] text-foreground/40">02 / 03</p>
+        </div>
+        <h3 className="mt-3 max-w-3xl text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[32px]">
+          {l.title}
+        </h3>
+        <p className="mt-3 max-w-2xl text-[14.5px] leading-[1.6] text-foreground/65 sm:text-[15.5px]">
+          {l.subtitle}
         </p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{l.title}</h3>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">{l.subtitle}</p>
       </div>
 
-      <div className="grid gap-8 p-6 sm:p-8 md:grid-cols-2">
-        <div className="space-y-5">
+      <div className="grid gap-10 py-8 sm:py-10 md:grid-cols-2 md:gap-14">
+        <div className="space-y-6">
           <div>
-            <label className="mb-2 block text-sm font-medium">{l.listed}</label>
-            <div className="flex gap-2">
+            <label className="mb-3 block text-[13px] font-medium tracking-[-0.005em] text-foreground/80">{l.listed}</label>
+            <div className="flex gap-0 border border-foreground/15">
               <button
                 type="button"
                 onClick={() => setListed(true)}
-                className={`flex-1 rounded-full border px-4 py-2 text-sm font-medium transition ${listed ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"}`}
+                className={`flex-1 px-4 py-2.5 text-[13px] font-semibold uppercase tracking-[0.08em] transition ${listed ? "bg-foreground text-background" : "text-foreground/60 hover:text-foreground"}`}
               >
                 {l.yes}
               </button>
               <button
                 type="button"
                 onClick={() => setListed(false)}
-                className={`flex-1 rounded-full border px-4 py-2 text-sm font-medium transition ${!listed ? "border-primary bg-primary text-primary-foreground" : "hover:border-primary/50"}`}
+                className={`flex-1 border-l border-foreground/15 px-4 py-2.5 text-[13px] font-semibold uppercase tracking-[0.08em] transition ${!listed ? "bg-foreground text-background" : "text-foreground/60 hover:text-foreground"}`}
               >
                 {l.no}
               </button>
@@ -144,9 +151,9 @@ export default function CsrdVsmeChecker({ locale }: Props) {
             { label: l.balance, value: balance, set: setBalance, min: 0, max: 200, step: 0.5, suffix: "M€" },
           ].map((f) => (
             <div key={f.label}>
-              <div className="mb-2 flex items-center justify-between">
-                <label className="text-sm font-medium">{f.label}</label>
-                <span className="text-sm tabular-nums text-muted-foreground">
+              <div className="mb-2 flex items-baseline justify-between">
+                <label className="text-[13px] font-medium tracking-[-0.005em] text-foreground/80">{f.label}</label>
+                <span className="tabular-nums text-[13px] text-foreground/55">
                   {f.value}
                   {f.suffix}
                 </span>
@@ -158,41 +165,37 @@ export default function CsrdVsmeChecker({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary"
+                className="h-[3px] w-full cursor-pointer appearance-none rounded-none bg-foreground/10 accent-foreground"
               />
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col justify-center rounded-2xl border bg-background p-6">
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        <div className="border-l border-foreground/10 pl-8 sm:pl-10">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
             {l.result}
           </p>
-          <div className="mt-3 flex items-start gap-3">
-            {inScope ? (
-              <CheckCircle2 className="mt-0.5 h-6 w-6 flex-none text-primary" />
-            ) : (
-              <AlertCircle className="mt-0.5 h-6 w-6 flex-none text-muted-foreground" />
-            )}
-            <div>
-              <p className="text-lg font-semibold leading-snug">{regimeInfo.label}</p>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{regimeInfo.desc}</p>
-            </div>
-          </div>
+          <p className={`mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] ${inScope ? "text-foreground" : "text-foreground/45"}`}>
+            {inScope ? (locale === "el" ? "Εντός πεδίου" : "In scope") : (locale === "el" ? "Εκτός πεδίου" : "Out of scope")}
+          </p>
+          <p className="mt-3 text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] sm:text-[26px]">
+            {regimeInfo.label}
+          </p>
+          <p className="mt-3 max-w-md text-[14px] leading-[1.6] text-foreground/70">{regimeInfo.desc}</p>
+
           {result.firstReport !== "—" && (
-            <dl className="mt-5 grid grid-cols-2 gap-3 border-t pt-5 text-sm">
+            <dl className="mt-6 grid grid-cols-2 gap-6 border-t border-foreground/10 pt-5">
               <div>
-                <dt className="text-xs uppercase tracking-widest text-muted-foreground">{l.firstReport}</dt>
-                <dd className="mt-1 text-base font-semibold tabular-nums">{result.firstReport}</dd>
+                <dt className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/50">{l.firstReport}</dt>
+                <dd className="mt-2 text-[24px] font-semibold tabular-nums tracking-[-0.02em]">{result.firstReport}</dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-widest text-muted-foreground">{l.covering}</dt>
-                <dd className="mt-1 text-base font-semibold">{result.covering}</dd>
+                <dt className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/50">{l.covering}</dt>
+                <dd className="mt-2 text-[24px] font-semibold tracking-[-0.02em]">{result.covering}</dd>
               </div>
             </dl>
           )}
-          <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-muted-foreground">
-            <Info className="mt-0.5 h-3.5 w-3.5 flex-none" />
+          <p className="mt-8 border-t border-foreground/10 pt-5 text-[11.5px] leading-[1.6] text-foreground/50">
             {l.note}
           </p>
         </div>
