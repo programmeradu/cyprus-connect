@@ -10,6 +10,7 @@ const COPY = {
     product: "Product",
     home: "Home",
     pricing: "Pricing",
+    learn: "Learn",
     legal: "Legal",
     privacy: "Privacy",
     terms: "Terms",
@@ -26,6 +27,7 @@ const COPY = {
     product: "Προϊόν",
     home: "Αρχική",
     pricing: "Τιμές",
+    learn: "Μάθετε",
     legal: "Νομικά",
     privacy: "Απόρρητο",
     terms: "Όροι",
@@ -67,6 +69,11 @@ export function SiteFooter() {
             <li>
               <Link href={`/${locale}/pricing`} className="text-foreground/80 hover:text-foreground">
                 {t.pricing}
+              </Link>
+            </li>
+            <li>
+              <Link href={`/${locale}/learn`} className="text-foreground/80 hover:text-foreground">
+                {t.learn}
               </Link>
             </li>
           </ul>

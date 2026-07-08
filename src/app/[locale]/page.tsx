@@ -2203,25 +2203,7 @@ export default function Home() {
       {/* Learn / Knowledge Hub — internal linking to top pillar pages */}
       <LearnLinksSection />
 
-      {/* Footer */}
-      <footer className="relative border-t border-border/30 py-8 px-4 mt-10">
-        <div className="max-w-5xl mx-auto text-center">
-          <h3 className="text-lg font-bold gradient-text mb-3">VerdeIQ</h3>
-          <p className="text-foreground/80 dark:text-muted-foreground mb-4 text-xs font-light">
-            {tL("footerTagline")}
-          </p>
-          <div className="flex flex-col items-center gap-2 mb-4">
-            <p className="text-xs text-foreground/70 dark:text-muted-foreground font-light">
-              {tL("footerContact")}: <a href="mailto:samuel@stauniverse.tech" className="hover:text-primary transition-colors">samuel@stauniverse.tech</a>
-            </p>
-            <p className="text-xs text-foreground/70 dark:text-muted-foreground font-light">
-              {tL("footerPoweredBy")} <a href="https://stauniverse.tech" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-primary transition-colors">StaUniverse</a>
-            </p>
-          </div>
-          <p className="text-xs text-foreground/60 dark:text-muted-foreground font-light">© {new Date().getFullYear()} VerdeIQ. {tL("footerRights")}
-          </p>
-        </div>
-      </footer>
+      {/* Footer rendered globally by layout via <SiteFooter /> */}
     </div>);
 
 }
