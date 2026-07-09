@@ -579,18 +579,27 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
 
 interface DashboardDemoProps {
   landingMode?: boolean;
+  /** When set, forces this tab to be the only visible/active tab. */
+  focusTab?: TabType;
 }
 
-export const DashboardDemo = ({ landingMode = false }: DashboardDemoProps) => {
+export const DashboardDemo = ({ landingMode = false, focusTab }: DashboardDemoProps) => {
   const t = useTranslations("dashboardDemo")
-  // Random tab selection on mount
-  useEffect(() => {
-    const tabs: TabType[] = ["carbon", "report", "weather", "media"]
-    const randomTab = tabs[Math.floor(Math.random() * tabs.length)]
-    setActiveTab(randomTab)
-  }, [])
+  const [activeTab, setActiveTab] = useState<TabType>(focusTab ?? "carbon")
 
-  const [activeTab, setActiveTab] = useState<TabType>("carbon")
+  // Random tab selection on mount — skipped when a focus tab is fixed or
+  // when we're hiding "report" on the landing page.
+  useEffect(() => {
+    if (focusTab) {
+      setActiveTab(focusTab)
+      return
+    }
+    const pool: TabType[] = landingMode
+      ? ["carbon", "weather", "media"]
+      : ["carbon", "report", "weather", "media"]
+    const randomTab = pool[Math.floor(Math.random() * pool.length)]
+    setActiveTab(randomTab)
+  }, [focusTab, landingMode])
   const [loading, setLoading] = useState(false)
   
   // Carbon Analyzer State — Cyprus-locked defaults on landing
