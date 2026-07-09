@@ -318,3 +318,34 @@ export function FloatingAIAssistant() {
     </>
   );
 }
+
+/**
+ * VerdeMark — cute AI + sustainability glyph.
+ * A soft leaf silhouette cradling an orbiting AI spark.
+ */
+function VerdeMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {/* Leaf */}
+      <path
+        d="M20 4c0 8-5.5 13-13 13-1 0-2-.1-3-.4C4.5 9.5 10.5 4 20 4z"
+        fill="currentColor"
+        fillOpacity="0.22"
+      />
+      {/* Leaf vein */}
+      <path d="M5 19C9 14 14 9 19 5" strokeOpacity="0.9" />
+      {/* Orbiting spark */}
+      <circle cx="17.5" cy="6.5" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="17.5" cy="6.5" r="3.2" strokeOpacity="0.55" />
+    </svg>
+  );
+}
