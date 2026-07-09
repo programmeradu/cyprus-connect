@@ -41,7 +41,7 @@ const SANS: React.CSSProperties = {
 };
 
 const DISPLAY: React.CSSProperties = {
-  fontFamily: '"Fraunces", ui-serif, Georgia, serif',
+  fontFamily: '"FrauncesAmpFix", "Fraunces", ui-serif, Georgia, serif',
   fontOpticalSizing: "auto",
   letterSpacing: "-0.02em",
 };
