@@ -111,7 +111,7 @@ const formatReportText = (text: string) => {
       return (
         <div key={sectionIndex} className="mb-8">
           <div className="flex items-baseline gap-3 mb-4">
-            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white flex items-center justify-center text-sm font-bold">
+            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
               {number}
             </span>
             <h2 className="text-xl font-bold text-gray-900">{title}</h2>
@@ -397,7 +397,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                         <div className="flex items-center justify-end gap-2">
                           <div className="flex-1 max-w-[60px] h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div 
-                              className="h-full bg-gradient-to-r from-emerald-500 to-green-600 rounded-full"
+                              className="h-full bg-primary rounded-full"
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
@@ -521,7 +521,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     return (
       <div key={key} className="mb-6">
         <div className="flex items-start gap-3 mb-3">
-          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white flex items-center justify-center text-xs font-bold">
+          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
             {number}
           </span>
           <h3 className="text-sm font-bold text-gray-900 pt-0.5">{title}</h3>
@@ -1640,8 +1640,8 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     <div className="text-lg font-bold text-gray-900">{reportInput.location || "Global"}</div>
                                   </div>
                                 </div>
-                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border-2 border-purple-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
-                                  <div className="absolute top-0 right-0 w-20 h-20 bg-purple-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-5 rounded-xl border-2 border-primary/20 relative overflow-hidden group hover:shadow-lg transition-shadow">
+                                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">Employees</div>
                                     <div className="text-lg font-bold text-gray-900">{reportInput.employees || "N/A"}</div>
@@ -1669,7 +1669,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               <div className="flex items-center justify-between">
                                 <div>
                                   <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center">
+                                    <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                                       <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
                                         <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                       </svg>
@@ -2202,7 +2202,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             whileTap={{ scale: 0.98 }}
                             className={`px-1.5 py-0.5 rounded-md text-center transition-all ${
                               mediaAspectRatio === option.ratio
-                                ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg"
+                                ? "bg-primary text-primary-foreground shadow-lg"
                                 : "bg-muted hover:bg-muted/80"
                             }`}
                           >
@@ -2280,7 +2280,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       disabled={isGenerating || !mediaPrompt.trim()}
                       whileHover={!isGenerating && mediaPrompt.trim() ? { scale: 1.01 } : {}}
                       whileTap={!isGenerating && mediaPrompt.trim() ? { scale: 0.98 } : {}}
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-primary via-primary to-primary/80 text-primary-foreground font-bold text-[9px] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden group"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-[9px] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-1">
                         {isGenerating ? (
@@ -2330,7 +2330,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       whileTap={{ scale: 0.98 }}
                       className={`flex-1 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                         activeMediaTab === "preview"
-                          ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg"
+                          ? "bg-primary text-primary-foreground shadow-lg"
                           : "bg-muted hover:bg-muted/80"
                       }`}
                     >
@@ -2349,7 +2349,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       whileTap={{ scale: 0.98 }}
                       className={`flex-1 px-3 py-2 rounded-xl text-xs font-semibold transition-all relative ${
                         activeMediaTab === "references"
-                          ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg"
+                          ? "bg-primary text-primary-foreground shadow-lg"
                           : "bg-muted hover:bg-muted/80"
                       }`}
                     >
@@ -2400,7 +2400,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <a
                                   href={generatedMedia}
                                   download={`sustainability-${mediaType}-${Date.now()}.${mediaType === "image" ? "jpg" : "mp4"}`}
-                                  className="flex-1 px-3 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-semibold text-center hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                  className="flex-1 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold text-center hover:shadow-lg transition-all flex items-center justify-center gap-2"
                                 >
                                   <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
