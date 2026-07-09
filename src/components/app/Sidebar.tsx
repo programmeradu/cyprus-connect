@@ -69,15 +69,9 @@ export const Sidebar = () => {
   const [complianceScore, setComplianceScore] = useState<number | null>(null);
   const [urgentItems, setUrgentItems] = useState(0);
 
-  // Get display name and initials
+  // Get display name (avatar image handled via user.image if present).
   const displayName = user?.name || session?.user?.name || "User";
   const displayEmail = user?.email || session?.user?.email || "";
-  const initials = displayName
-    .split(" ")
-    .map(n => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "U";
 
   // Fetch compliance data
   useEffect(() => {
