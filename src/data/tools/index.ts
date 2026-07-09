@@ -75,11 +75,11 @@ export const TOOLS: ToolEntry[] = [
   {
     slug: "cbam-report-generator",
     category: "cbam",
-    available: false,
+    available: true,
     primaryKeyword: "cbam report",
     relatedPillars: ["cbam-explained", "cbam-cyprus"],
-    heroImage: "/assets/tools/hub/hero.jpg",
-    updatedAt: "2026-07-01",
+    heroImage: "/assets/tools/cbam-report-generator/hero.jpg",
+    updatedAt: "2026-07-09",
     en: {
       metaTitle: "CBAM Report Generator — Free Quarterly Report Tool | VerdeIQ",
       metaDescription:
