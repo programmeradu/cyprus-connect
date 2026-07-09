@@ -167,14 +167,13 @@ export function FloatingAIAssistant() {
             </span>
             {/* Core mark */}
             <span
-              className="relative grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-primary-foreground shadow-[0_6px_20px_-6px_oklch(0.72_0.18_145/0.6)]"
+              className="relative grid h-9 w-9 place-items-center rounded-full text-primary-foreground shadow-[0_6px_20px_-6px_oklch(0.72_0.18_145/0.6)]"
               style={{
                 background:
                   "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
-                fontFamily: "var(--editorial-serif)",
               }}
             >
-              V
+              <VerdeMark className="h-[18px] w-[18px]" />
             </span>
             {/* Presence dot */}
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_2px_var(--background)]">
@@ -196,14 +195,13 @@ export function FloatingAIAssistant() {
           <header className="flex items-center justify-between gap-3 border-b border-border/50 px-4 py-3">
             <div className="flex min-w-0 items-center gap-2.5">
               <span
-                className="grid h-8 w-8 place-items-center rounded-full text-[12px] font-semibold text-primary-foreground shadow-[0_4px_14px_-4px_oklch(0.72_0.18_145/0.7)]"
+                className="grid h-8 w-8 place-items-center rounded-full text-primary-foreground shadow-[0_4px_14px_-4px_oklch(0.72_0.18_145/0.7)]"
                 style={{
                   background:
                     "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
-                  fontFamily: "var(--editorial-serif)",
                 }}
               >
-                V
+                <VerdeMark className="h-4 w-4" />
               </span>
               <div className="min-w-0">
                 <div
@@ -318,5 +316,36 @@ export function FloatingAIAssistant() {
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * VerdeMark — cute AI + sustainability glyph.
+ * A soft leaf silhouette cradling an orbiting AI spark.
+ */
+function VerdeMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.75}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {/* Leaf */}
+      <path
+        d="M20 4c0 8-5.5 13-13 13-1 0-2-.1-3-.4C4.5 9.5 10.5 4 20 4z"
+        fill="currentColor"
+        fillOpacity="0.22"
+      />
+      {/* Leaf vein */}
+      <path d="M5 19C9 14 14 9 19 5" strokeOpacity="0.9" />
+      {/* Orbiting spark */}
+      <circle cx="17.5" cy="6.5" r="1.6" fill="currentColor" stroke="none" />
+      <circle cx="17.5" cy="6.5" r="3.2" strokeOpacity="0.55" />
+    </svg>
   );
 }
