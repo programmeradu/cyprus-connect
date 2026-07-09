@@ -91,9 +91,9 @@ Reuse existing editorial system (from Learn redesign):
 3. Sitemap + Learn pillar cross-links for these two
 4. Generated hero images (EN + shared)
 
-**Phase 2 — Timely + underserved**
-5. **CBAM Report Generator** — CN-code lookup table, per-installation aggregation, quarterly XML draft + branded PDF
-6. **Double Materiality Matrix** — interactive IRO scoring, 2D plot, stakeholder inputs, PDF export
+**Phase 2 — Timely + underserved** ✅ SHIPPED
+5. **CBAM Report Generator** ✅ — CN-code table (46 codes, 6 sectors), per-line direct/indirect factors with override, effective carbon price, quarterly XML draft + PDF + CSV export
+6. **Double Materiality Matrix** ✅ — 10 pre-loaded ESRS topics, dual-axis scoring (severity/scope/irremediability/likelihood + magnitude/likelihood), interactive SVG matrix, threshold slider, PDF + CSV export
 
 **Phase 3 — Long-tail authority**
 7. **VSME Template Builder** — guided EFRAG VSME Basic form → branded PDF matching EFRAG structure
