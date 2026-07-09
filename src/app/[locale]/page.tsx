@@ -17,6 +17,7 @@ import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
 import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
 import sectionHowImg from "@/assets/section-how-steps.jpg";
 import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
+import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 
 /**
  * Home — editorial redesign.
@@ -338,24 +339,41 @@ export default function Home() {
       <SectionDivider />
 
       {/* CTA */}
-      <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6 sm:py-28">
-        <h2 className="font-[family-name:var(--editorial-serif)] text-4xl leading-[1.05] tracking-[-0.02em] sm:text-6xl">
-          {tL("ctaTitleA")} <span className="italic text-muted-foreground">{tL("ctaTitleB")}</span>
-        </h2>
-        <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
-          {tL("ctaSubtitle")}
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Link href="/auth">
-            <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
-              {tL("ctaStart")}
-            </PremiumButton>
-          </Link>
-          <Link href="/pricing">
-            <PremiumButton variant="outline" size="sm" className="w-full text-sm sm:w-auto">
-              {tL("ctaPricing")}
-            </PremiumButton>
-          </Link>
+      <section className="relative overflow-hidden">
+        {/* Backdrop */}
+        <div className="pointer-events-none absolute inset-0">
+          <img
+            src={sectionCtaImg.src}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Scrims: left wash for text readability, top/bottom fade into page */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30 dark:from-background dark:via-background/90 dark:to-background/40" />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
+        </div>
+
+        <div className="relative mx-auto max-w-4xl px-4 py-24 sm:px-6 sm:py-36">
+          <h2 className="font-[family-name:var(--editorial-serif)] text-4xl leading-[1.05] tracking-[-0.02em] sm:text-6xl">
+            {tL("ctaTitleA")} <span className="italic text-muted-foreground">{tL("ctaTitleB")}</span>
+          </h2>
+          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
+            {tL("ctaSubtitle")}
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/auth">
+              <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
+                {tL("ctaStart")}
+              </PremiumButton>
+            </Link>
+            <Link href="/pricing">
+              <PremiumButton variant="outline" size="sm" className="w-full text-sm sm:w-auto">
+                {tL("ctaPricing")}
+              </PremiumButton>
+            </Link>
+          </div>
         </div>
       </section>
 
