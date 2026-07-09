@@ -126,14 +126,14 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
               >
                 {isPopular && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
-                    <div className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-medium">
+                    <div className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-[4px] text-[10px] font-medium">
                       {t("popular")}
                     </div>
                   </div>
                 )}
                 {isBestValue && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
-                    <div className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-medium">
+                    <div className="bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-[4px] text-[10px] font-medium">
                       {t("bestValue")}
                     </div>
                   </div>
