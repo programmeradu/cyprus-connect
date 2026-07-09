@@ -93,10 +93,10 @@ export const PlanUsageIndicator = () => {
             </span>
           </div>
           {!isUnlimitedAi && (
-            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-muted rounded-[2px] overflow-hidden">
               <motion.div
                 className={cn(
-                  "h-full rounded-full transition-all duration-500",
+                  "h-full rounded-[2px] transition-all duration-500",
                   aiPct > 90 ? "bg-destructive" : aiPct > 75 ? "bg-orange-500" : "bg-primary",
                 )}
                 initial={{ width: 0 }}
