@@ -155,7 +155,7 @@
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 0.5rem; /* Design-rule scale: rounded-sm 4px · rounded-md 6px (buttons/inputs) · rounded-lg 8px (cards) · rounded-xl 12px (modals). */
   
   /* Premium Green Sustainability Palette - Light Mode */
   --background: oklch(0.99 0.005 120);
