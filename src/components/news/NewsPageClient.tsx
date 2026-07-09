@@ -304,7 +304,7 @@ export function NewsPageClient() {
         </div>
       </section>
 
-      <SiteFooter />
+      
     </div>
   );
 }
