@@ -233,7 +233,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
               <ol className="space-y-3">
                 {VSME_BASIC.map((d, i) => (
                   <li key={d.id} className="grid grid-cols-[auto_auto_1fr] items-baseline gap-4">
-                    <span className="tabular-nums text-[11px] text-foreground/40">
+                    <span className="viq-minor-code tabular-nums">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span className="viq-minor-code">
@@ -409,7 +409,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
           >
             ← {l.prev}
           </button>
-          <p className="tabular-nums text-[11px] text-foreground/45">
+          <p className="viq-meta tabular-nums">
             {String(step + 1).padStart(2, "0")} {l.of} {String(totalSteps).padStart(2, "0")}
           </p>
           <button

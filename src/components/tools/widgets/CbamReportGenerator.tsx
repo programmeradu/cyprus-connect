@@ -524,7 +524,7 @@ ${lines}
                     <button
                       type="button"
                       onClick={() => removeLine(r.id)}
-                      className="text-[11px] text-foreground/45 underline underline-offset-4 hover:text-foreground"
+                      className="viq-button-sm text-foreground/65 underline underline-offset-4 hover:text-foreground"
                     >
                       {l.remove}
                     </button>
@@ -561,7 +561,7 @@ ${lines}
             {sectorBreakdown.map((b, i) => (
               <div key={b.sector}>
                 <div className="mb-1.5 grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-3 text-[13px]">
-                  <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
+                  <span className="viq-minor-code tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-foreground/85">{SECTOR_META[b.sector][locale]}</span>

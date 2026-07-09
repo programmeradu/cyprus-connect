@@ -296,7 +296,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
   const scopeRow = (label: string, value: number, i: number) => (
     <div key={label}>
       <div className="mb-1.5 grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-3 text-[13px]">
-        <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
+        <span className="viq-minor-code tabular-nums">
           {String(i + 1).padStart(2, "0")}
         </span>
         <span className="text-foreground/85">{label}</span>
