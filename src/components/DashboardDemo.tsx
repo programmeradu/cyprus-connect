@@ -1145,37 +1145,13 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
   }
 
   const getWeatherIcon = (code: number) => {
-    if (code === 0) return (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.2" />
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" strokeLinecap="round" />
-      </svg>
-    )
-    if (code <= 3) return (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="4" opacity="0.5" />
-        <path d="M14 16a4 4 0 018 0M14 20h8" strokeLinecap="round" />
-      </svg>
-    )
-    if (code <= 67) return (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M8 13v8M12 11v10M16 9v12" strokeLinecap="round" />
-        <path d="M18 5a4 4 0 00-6-2 4 4 0 00-6 2" />
-      </svg>
-    )
-    if (code <= 77) return (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M8 14l2-4M12 12l2-4M16 10l2-4" strokeLinecap="round" />
-        <path d="M18 5a4 4 0 00-6-2 4 4 0 00-6 2" />
-      </svg>
-    )
-    return (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M8 17l2-4M12 15l2-4M16 13l2-4" strokeLinecap="round" />
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor" opacity="0.2" />
-      </svg>
-    )
+    const cls = "w-full h-full"
+    const sw = 1.5
+    if (code === 0) return <Sun className={cls} strokeWidth={sw} />
+    if (code <= 3) return <Cloud className={cls} strokeWidth={sw} />
+    if (code <= 67) return <CloudRain className={cls} strokeWidth={sw} />
+    if (code <= 77) return <Snowflake className={cls} strokeWidth={sw} />
+    return <Zap className={cls} strokeWidth={sw} />
   }
 
   const getWeatherDescription = (code: number) => {
