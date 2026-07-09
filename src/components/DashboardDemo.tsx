@@ -2525,28 +2525,21 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
           </AnimatePresence>
         </div>
 
-        {/* Try All Tools Card - Now Below Main Content */}
-        <div className="max-w-md mx-auto">
-          <PremiumCard className="p-4 bg-primary/5 border-primary/20">
-            <div className="text-center">
-              <div className="flex justify-center mb-3">
-                <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 3l1.5 5 5 .5-4 3.5 1 5-3.5-2.5-3.5 2.5 1-5-4-3.5 5-.5z" fill="currentColor" opacity="0.2" />
-                  <path d="M12 3l1.5 5 5 .5-4 3.5 1 5-3.5-2.5-3.5 2.5 1-5-4-3.5 5-.5z" />
-                  <circle cx="12" cy="12" r="2" fill="currentColor" />
-                </svg>
-              </div>
-              <h4 className="text-sm font-bold mb-2">{t("cta.title")}</h4>
-              <p className="text-xs text-muted-foreground mb-3">
+        {/* Try All Tools — editorial CTA */}
+        <div className="mt-8 border-t border-border/60 pt-8">
+          <div className="mx-auto flex max-w-2xl flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <h4 className="font-[family-name:var(--editorial-serif)] text-2xl tracking-tight text-foreground">
+                {t("cta.title")}
+              </h4>
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t("cta.description")}
               </p>
-              <div className="flex justify-center">
-                <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-all">
-                  {t("cta.getStarted")}
-                </button>
-              </div>
             </div>
-          </PremiumCard>
+            <button className="shrink-0 border border-foreground bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:bg-foreground/85">
+              {t("cta.getStarted")} →
+            </button>
+          </div>
         </div>
       </div>
     </div>

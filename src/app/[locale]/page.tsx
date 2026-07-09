@@ -38,22 +38,8 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground antialiased">
-      {/* Premium 4K Background Image */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
-          }}
-        />
-        {/* Light: soft scrim on the left half so hero text is legible, right stays open */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/55 to-background/10 dark:hidden" />
-        {/* Dark: dim overlay */}
-        <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background/90 via-background/70 to-background/30" />
-        <div className="absolute inset-0 hidden dark:block bg-black/40" />
-      </div>
+    <div className="relative min-h-screen bg-background text-foreground antialiased">
+
 
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-md">
@@ -102,7 +88,21 @@ export default function Home() {
       </header>
 
       {/* HERO */}
-      <section className="mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-24 sm:pb-24">
+      <section className="relative overflow-hidden">
+        {/* Premium 4K Background Image — scoped to hero */}
+        <div className="absolute inset-0 -z-0 pointer-events-none">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage:
+                'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/10 dark:hidden" />
+          <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background via-background/80 to-background/30" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-24 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -142,21 +142,26 @@ export default function Home() {
             </Link>
           </div>
         </motion.div>
+        </div>
+      </section>
 
-        {/* Dashboard demo */}
-        <motion.div
-          className="mt-14 overflow-hidden rounded-lg border border-border/60 bg-card/40 sm:mt-20"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.25 }}
-        >
-          <div className="border-b border-border/60 px-4 py-2 eyebrow sm:px-6">
-            Live preview / Dashboard
-          </div>
-          <div className="p-3 sm:p-6">
-            <DashboardDemo landingMode />
-          </div>
-        </motion.div>
+      {/* Dashboard demo — separate section with solid bg */}
+      <section className="relative bg-background">
+        <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
+          <motion.div
+            className="overflow-hidden rounded-lg border border-border/60 bg-card"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.25 }}
+          >
+            <div className="border-b border-border/60 px-4 py-2 eyebrow sm:px-6">
+              Live preview / Dashboard
+            </div>
+            <div className="p-3 sm:p-6">
+              <DashboardDemo landingMode />
+            </div>
+          </motion.div>
+        </div>
       </section>
 
       <SectionDivider />
