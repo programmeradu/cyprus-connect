@@ -405,7 +405,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
             type="button"
             onClick={goPrev}
             disabled={step === 0}
-            className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40"
           >
             ← {l.prev}
           </button>
@@ -416,7 +416,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
             type="button"
             onClick={goNext}
             disabled={step === totalSteps - 1}
-            className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-40"
+            className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {l.next} →
           </button>
