@@ -85,12 +85,16 @@
 /* Updated: 2025-11-14T22:33:53.088Z */
 /* Updated: 2025-11-14T20:57:49.464Z */
 /* Updated: 2025-11-14T20:40:38.320Z */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root {
-  --editorial-serif: "Fraunces", "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
-  --editorial-display: "Instrument Serif", "Fraunces", ui-serif, Georgia, serif;
-  --editorial-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  /* VerdeIQ typography system — editorial display + neutral workhorse body.
+     No Inter/Space Grotesk/Geist/Poppins defaults. Fraunces variable with
+     optical sizing carries all display type; Instrument Sans (500/600 UI,
+     400 body) is the workhorse. */
+  --editorial-serif: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --editorial-display: "Fraunces", "Instrument Serif", ui-serif, Georgia, serif;
+  --editorial-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
 }
 
 @import "tailwindcss";
