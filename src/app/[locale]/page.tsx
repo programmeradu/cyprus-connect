@@ -193,14 +193,14 @@ export default function Home() {
 
       {/* BENEFITS — Why VerdeIQ */}
       <div className="relative">
-        {/* Growth-spark accent — rising data line sprouting olives; sits top-right,
+        {/* Growth-spark accent — rising data line sprouting olives; sits left blank margin,
             spills above the section into the divider, signaling growth from measurement */}
         <img
           src={accentGrowthSpark.src}
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -top-16 right-0 z-10 hidden w-[280px] max-w-none -translate-y-2 rotate-[6deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-24 lg:right-2 lg:w-[360px]"
+          className="pointer-events-none absolute -top-10 -left-8 z-10 hidden w-[240px] max-w-none rotate-[-8deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-16 lg:-left-16 lg:w-[320px]"
         />
         <EditorialSection
           eyebrow="01 / Why VerdeIQ"
@@ -244,13 +244,13 @@ export default function Home() {
       {/* ECOSYSTEM */}
       <div className="relative">
         {/* Network-constellation accent — nine hand-drawn nodes with one terracotta anchor,
-            sits bottom-left, spills into the Context Widgets below, evoking the ecosystem web */}
+            sits far left in the blank margin beside the eyebrow/title column */}
         <img
           src={accentNetwork.src}
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -bottom-24 -left-6 z-10 hidden w-[300px] max-w-none rotate-[-8deg] select-none opacity-50 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-bottom-32 lg:left-2 lg:w-[400px]"
+          className="pointer-events-none absolute top-1/2 -left-16 z-10 hidden w-[260px] max-w-none -translate-y-1/2 rotate-[-12deg] select-none opacity-45 mix-blend-multiply dark:opacity-65 dark:mix-blend-screen md:block lg:-left-28 lg:w-[360px]"
         />
         <EditorialSection
           eyebrow="03 / Ecosystem"
@@ -336,7 +336,7 @@ export default function Home() {
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -top-20 right-0 z-10 hidden w-[380px] max-w-none select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-28 lg:-right-4 lg:w-[520px]"
+          className="pointer-events-none absolute -bottom-16 -left-10 z-10 hidden w-[320px] max-w-none rotate-[4deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-bottom-24 lg:-left-20 lg:w-[440px]"
         />
         <EditorialSection
           eyebrow="04 / How it works"
