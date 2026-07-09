@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NewsTicker } from "@/components/news/NewsTicker";
+import { ContextWidgets } from "@/components/landing/ContextWidgets";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
@@ -221,6 +222,13 @@ export default function Home() {
       </EditorialSection>
 
       <SectionDivider />
+
+      {/* CONTEXT WIDGETS — geo + time */}
+      <ContextWidgets />
+
+      <SectionDivider />
+
+
 
       {/* INTEGRATIONS */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">

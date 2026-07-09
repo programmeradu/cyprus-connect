@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { SiteFooter } from "@/components/legal/SiteFooter";
 import { CookieBanner } from "@/components/legal/CookieBanner";
 import { ConsentedAnalytics } from "@/components/legal/ConsentedAnalytics";
+import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -132,6 +133,7 @@ export default async function LocaleLayout({
       <SiteFooter />
       <CookieBanner />
       <ConsentedAnalytics />
+      <FloatingAIAssistant />
     </NextIntlClientProvider>
   );
 }
