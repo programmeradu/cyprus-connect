@@ -43,6 +43,21 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased">
+      {/* Ambient background — subtle topographic pattern + radial glow, sits under all sections */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10 opacity-[0.35] dark:opacity-20"
+        style={{
+          backgroundImage: `
+            radial-gradient(ellipse 80% 50% at 50% 20%, color-mix(in oklab, var(--foreground) 4%, transparent), transparent 60%),
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><g fill='none' stroke='%23000' stroke-width='0.5' stroke-opacity='0.06'><path d='M0 120 Q150 60 300 120 T600 120'/><path d='M0 200 Q150 140 300 200 T600 200'/><path d='M0 280 Q150 220 300 280 T600 280'/><path d='M0 360 Q150 300 300 360 T600 360'/><path d='M0 440 Q150 380 300 440 T600 440'/><path d='M0 520 Q150 460 300 520 T600 520'/></g></svg>")
+          `,
+          backgroundSize: "auto, 600px 600px",
+          backgroundRepeat: "no-repeat, repeat",
+        }}
+      />
+
+
 
 
       {/* Nav */}
