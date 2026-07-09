@@ -104,7 +104,7 @@ export default function ToolShell({
               <p className="viq-kicker text-primary">{eyebrow}</p>
               <h1
                 className="mt-3 text-[34px] font-semibold leading-[1.05] tracking-[-0.02em] sm:mt-4 sm:text-[46px]"
-                style={SANS}
+                style={DISPLAY}
               >
                 {title}
               </h1>
@@ -137,7 +137,7 @@ export default function ToolShell({
         <section className="mt-20 border-t border-foreground/10 pt-12 sm:mt-24">
           <h2
             className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
-            style={SANS}
+            style={DISPLAY}
           >
             {methodologyHeading}
           </h2>
@@ -165,7 +165,7 @@ export default function ToolShell({
         <section className="mt-20 border-t border-foreground/10 pt-12 sm:mt-24">
           <h2
             className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
-            style={SANS}
+            style={DISPLAY}
           >
             {workedExampleHeading}
           </h2>
@@ -179,7 +179,7 @@ export default function ToolShell({
           <section className="mt-20 border-t border-foreground/10 pt-12 print:hidden sm:mt-24">
             <h2
               className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
-              style={SANS}
+              style={DISPLAY}
             >
               {faqHeading}
             </h2>
@@ -213,7 +213,7 @@ export default function ToolShell({
           <section className="mt-20 border-t border-foreground/10 pt-12 print:hidden sm:mt-24">
             <h2
               className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
-              style={SANS}
+              style={DISPLAY}
             >
               {relatedHeading}
             </h2>
@@ -236,7 +236,7 @@ export default function ToolShell({
                       </p>
                       <h3
                         className="mt-1.5 text-[17px] font-semibold leading-[1.3] tracking-[-0.005em] text-foreground group-hover:text-primary"
-                        style={SANS}
+                        style={DISPLAY}
                       >
                         {r.title}
                       </h3>
@@ -256,7 +256,7 @@ export default function ToolShell({
           <div className="mx-auto max-w-2xl sm:text-center">
             <h2
               className="text-[26px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[34px]"
-              style={SANS}
+              style={DISPLAY}
             >
               {ctaHeading}
             </h2>
