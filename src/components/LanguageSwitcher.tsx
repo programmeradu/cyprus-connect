@@ -83,7 +83,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <FlagIcon className="h-3 w-[18px] rounded-[1px] shrink-0" />
+            <FlagIcon className="h-3 w-[18px] rounded-[1px] shrink-0 pointer-events-none" />
             {lng === "en" ? "EN" : "EL"}
           </button>
         );
