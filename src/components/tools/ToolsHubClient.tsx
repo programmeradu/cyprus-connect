@@ -18,21 +18,14 @@ type Props = {
   ctaAction: string;
 };
 
-const SANS: React.CSSProperties = {
-  fontFamily: "var(--editorial-sans)",
-  fontFeatureSettings: '"ss01", "ss02", "cv11"',
-};
-
 const CATEGORY_ORDER: ToolCategory[] = ["carbon", "cbam", "csrd", "vsme", "taxonomy"];
 
 export default function ToolsHubClient({
   locale,
   heading,
   subheading,
-  eyebrow,
   countLabel,
   comingSoonLabel,
-  availableLabel,
   ctaHeading,
   ctaBody,
   ctaAction,
@@ -40,26 +33,22 @@ export default function ToolsHubClient({
   const available = TOOLS.filter((t) => t.available);
 
   return (
-    <div style={SANS}>
+    <div>
       <MarketingHeader />
 
-      <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-16">
-        {/* Editorial header */}
-        <header className="mx-auto mb-16 max-w-3xl sm:mb-24 sm:text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary sm:text-xs">
-            {eyebrow}
-          </p>
-          <h1
-            className="mt-5 text-[44px] font-semibold leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
-            style={SANS}
-          >
+      <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-14 sm:px-8 sm:pt-20">
+        {/* Header */}
+        <header className="mb-20 max-w-3xl sm:mb-28">
+          <h1 className="text-[44px] font-semibold leading-[1.02] tracking-[-0.025em] sm:text-[68px] md:text-[80px]">
             {heading}
           </h1>
-          <p className="mt-6 max-w-xl text-[17px] leading-[1.55] text-foreground/70 sm:mx-auto sm:text-[19px] sm:leading-[1.5]">
+          <p className="mt-6 max-w-2xl text-[17px] leading-[1.6] text-foreground/70 sm:text-[19px]">
             {subheading}
           </p>
-          <p className="mt-5 text-[13px] tabular-nums text-foreground/50">
-            {countLabel.replace("{count}", String(TOOLS.length)).replace("{available}", String(available.length))}
+          <p className="mt-6 text-[14px] text-foreground/50">
+            {countLabel
+              .replace("{count}", String(TOOLS.length))
+              .replace("{available}", String(available.length))}
           </p>
         </header>
 
@@ -68,25 +57,17 @@ export default function ToolsHubClient({
           const cat = CATEGORY_META[catKey][locale];
           const items = TOOLS.filter((t) => t.category === catKey);
           return (
-            <section key={catKey} className="mb-16 sm:mb-20">
-              <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
-                <div>
-                  <h2
-                    className="text-[26px] font-semibold leading-tight tracking-[-0.02em] sm:text-[32px]"
-                    style={SANS}
-                  >
-                    {cat.label}
-                  </h2>
-                  <p className="mt-1 text-[13px] text-foreground/55 sm:text-[14px]">
-                    {cat.description}
-                  </p>
-                </div>
-                <span className="text-[11px] tabular-nums text-foreground/40">
-                  {String(items.length).padStart(2, "0")}
-                </span>
+            <section key={catKey} className="mb-20 sm:mb-24">
+              <div className="mb-8 border-b border-foreground/10 pb-4">
+                <h2 className="text-[28px] font-semibold leading-tight tracking-[-0.02em] sm:text-[34px]">
+                  {cat.label}
+                </h2>
+                <p className="mt-2 max-w-xl text-[15px] leading-[1.5] text-foreground/60">
+                  {cat.description}
+                </p>
               </div>
 
-              <ul className="grid gap-8 sm:grid-cols-2">
+              <ul className="grid gap-x-8 gap-y-12 sm:grid-cols-2">
                 {items.map((tool) => {
                   const c = tool[locale];
                   const inner = (
@@ -101,31 +82,26 @@ export default function ToolsHubClient({
                             tool.available ? "group-hover:scale-[1.03]" : "opacity-60"
                           }`}
                         />
+                        {!tool.available && (
+                          <span className="absolute left-3 top-3 border border-foreground/20 bg-background/90 px-2 py-1 text-[12px] font-medium text-foreground/70 backdrop-blur">
+                            {comingSoonLabel}
+                          </span>
+                        )}
                       </div>
                       <div className="mt-5">
-                        <p className="flex items-center gap-3 text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary">
-                          <span>{c.eyebrow}</span>
-                          <span
-                            className={`tabular-nums ${
-                              tool.available ? "text-foreground/45" : "text-foreground/40"
-                            }`}
-                          >
-                            · {tool.available ? availableLabel : comingSoonLabel}
-                          </span>
-                        </p>
                         <h3
-                          className={`mt-2.5 text-[22px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[26px] ${
+                          className={`text-[22px] font-semibold leading-[1.2] tracking-[-0.015em] sm:text-[26px] ${
                             tool.available
                               ? "text-foreground group-hover:text-primary"
                               : "text-foreground/70"
                           }`}
-                          style={SANS}
                         >
                           {c.title}
                         </h3>
-                        <p className="mt-2.5 text-[14.5px] leading-[1.55] text-foreground/65">
+                        <p className="mt-3 text-[15px] leading-[1.6] text-foreground/65">
                           {c.cardDescription}
                         </p>
+                        <p className="mt-4 text-[13.5px] text-foreground/45">{c.eyebrow}</p>
                       </div>
                     </>
                   );
@@ -154,27 +130,24 @@ export default function ToolsHubClient({
         })}
 
         {/* CTA */}
-        <section className="mt-8 border-t border-foreground/15 pt-14 sm:pt-20">
-          <div className="mx-auto max-w-2xl sm:text-center">
-            <h2
-              className="text-[28px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[40px]"
-              style={SANS}
-            >
+        <section className="mt-8 border-t border-foreground/15 pt-16 sm:pt-20">
+          <div className="max-w-2xl">
+            <h2 className="text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] sm:text-[40px]">
               {ctaHeading}
             </h2>
-            <p className="mt-4 text-[16px] leading-[1.6] text-foreground/65 sm:text-[17px]">
+            <p className="mt-4 text-[16px] leading-[1.6] text-foreground/70 sm:text-[17px]">
               {ctaBody}
             </p>
-            <div className="mt-8 flex flex-wrap gap-4 sm:justify-center">
+            <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href={`/${locale}/auth`}
-                className="inline-flex h-11 items-center border border-foreground bg-foreground px-6 text-[14px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+                className="inline-flex h-11 items-center border border-foreground bg-foreground px-6 text-[14.5px] font-medium text-background transition hover:bg-foreground/85"
               >
                 {ctaAction}
               </Link>
               <Link
                 href={`/${locale}/learn`}
-                className="inline-flex h-11 items-center border border-foreground/25 px-6 text-[14px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+                className="inline-flex h-11 items-center border border-foreground/25 px-6 text-[14.5px] font-medium text-foreground transition hover:border-foreground"
               >
                 {locale === "el" ? "Δείτε τους οδηγούς →" : "Explore the guides →"}
               </Link>
