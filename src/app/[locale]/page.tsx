@@ -242,22 +242,33 @@ export default function Home() {
       <SectionDivider />
 
       {/* ECOSYSTEM */}
-      <EditorialSection
-        eyebrow="03 / Ecosystem"
-        titleA={tL("beyondTitleA")}
-        titleB={tL("beyondTitleB")}
-        subtitle={tL("beyondSubtitle")}
-        media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("ecoLearningTitle"), body: tL("ecoLearningDesc") },
-            { n: "02", title: tL("ecoMarketplaceTitle"), body: tL("ecoMarketplaceDesc") },
-            { n: "03", title: tL("ecoStudioTitle"), body: tL("ecoStudioDesc") },
-            { n: "04", title: tL("ecoLeaderboardTitle"), body: tL("ecoLeaderboardDesc") },
-          ]}
+      <div className="relative">
+        {/* Network-constellation accent — nine hand-drawn nodes with one terracotta anchor,
+            sits bottom-left, spills into the Context Widgets below, evoking the ecosystem web */}
+        <img
+          src={accentNetwork.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -bottom-24 -left-6 z-10 hidden w-[300px] max-w-none rotate-[-8deg] select-none opacity-50 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-bottom-32 lg:left-2 lg:w-[400px]"
         />
-      </EditorialSection>
+        <EditorialSection
+          eyebrow="03 / Ecosystem"
+          titleA={tL("beyondTitleA")}
+          titleB={tL("beyondTitleB")}
+          subtitle={tL("beyondSubtitle")}
+          media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
+        >
+          <NumberedList
+            items={[
+              { n: "01", title: tL("ecoLearningTitle"), body: tL("ecoLearningDesc") },
+              { n: "02", title: tL("ecoMarketplaceTitle"), body: tL("ecoMarketplaceDesc") },
+              { n: "03", title: tL("ecoStudioTitle"), body: tL("ecoStudioDesc") },
+              { n: "04", title: tL("ecoLeaderboardTitle"), body: tL("ecoLeaderboardDesc") },
+            ]}
+          />
+        </EditorialSection>
+      </div>
 
       <SectionDivider />
 
