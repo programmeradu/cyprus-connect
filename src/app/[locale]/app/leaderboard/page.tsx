@@ -199,10 +199,10 @@ export default function LeaderboardPage() {
                 >
                   <div className="flex items-center gap-3 p-3">
                     <div className="w-8 text-sm font-bold text-muted-foreground">#{entry.rank}</div>
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold ${
-                      isCurrentUser ? "bg-gradient-to-br from-primary to-primary/60 text-primary-foreground" : "bg-muted text-foreground"
-                    }`}>
-                      {getInitials(entry.name || entry.companyName || "??")}
+                    <div className={`w-10 h-10 rounded-md flex items-center justify-center text-xs font-semibold tabular-nums border ${
+                      isCurrentUser ? "bg-primary/10 border-primary/30 text-primary" : "bg-muted border-foreground/10 text-muted-foreground"
+                    }`} style={{ fontFamily: 'var(--editorial-display)' }}>
+                      {String(entry.rank).padStart(2, '0')}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
