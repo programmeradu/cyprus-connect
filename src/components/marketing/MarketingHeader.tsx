@@ -25,6 +25,17 @@ export function MarketingHeader() {
         <Link href="/" className="min-w-0 text-base font-semibold tracking-tight sm:text-lg">
           VerdeIQ
         </Link>
+        <nav className="hidden items-center gap-6 md:flex">
+          <Link href="/tools" className="text-sm text-foreground/80 hover:text-foreground">
+            {tNav("tools")}
+          </Link>
+          <Link href="/learn" className="text-sm text-foreground/80 hover:text-foreground">
+            {tNav("learn")}
+          </Link>
+          <Link href="/news" className="text-sm text-foreground/80 hover:text-foreground">
+            {tNav("news")}
+          </Link>
+        </nav>
         <div className="flex shrink-0 items-center gap-1.5">
           <LanguageSwitcher />
           <ThemeToggle />
