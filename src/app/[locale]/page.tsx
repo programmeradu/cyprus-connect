@@ -206,10 +206,41 @@ export default function Home() {
         <div className="mb-8 eyebrow">
           {tL("integratedWith")}
         </div>
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-3 font-[family-name:var(--editorial-serif)] text-lg tracking-tight sm:grid-cols-3 sm:text-2xl md:grid-cols-4">
-          {["QuickBooks", "Xero", "ClimateTRACE", "ElectricityMaps", "Gemini", "OpenEI", "WikiRate", "Google Cloud"].map((name) => (
-            <li key={name} className="border-t border-border/60 pt-3">
-              {name}
+        <ul className="grid grid-cols-2 items-stretch gap-x-6 gap-y-6 sm:grid-cols-3 md:grid-cols-4">
+          {[
+            { name: "QuickBooks", slug: "quickbooks" },
+            { name: "Xero", slug: "xero" },
+            { name: "ClimateTRACE", slug: null },
+            { name: "ElectricityMaps", slug: null },
+            { name: "Gemini", slug: "googlegemini" },
+            { name: "OpenEI", slug: null },
+            { name: "WikiRate", slug: null },
+            { name: "Google Cloud", slug: "googlecloud" },
+          ].map(({ name, slug }) => (
+            <li
+              key={name}
+              className="flex h-16 items-center justify-center border-t border-border/60 pt-4"
+            >
+              {slug ? (
+                <>
+                  <img
+                    src={`https://cdn.simpleicons.org/${slug}/000000`}
+                    alt={name}
+                    className="h-7 w-auto opacity-70 transition-opacity hover:opacity-100 dark:hidden"
+                    loading="lazy"
+                  />
+                  <img
+                    src={`https://cdn.simpleicons.org/${slug}/ffffff`}
+                    alt={name}
+                    className="hidden h-7 w-auto opacity-70 transition-opacity hover:opacity-100 dark:block"
+                    loading="lazy"
+                  />
+                </>
+              ) : (
+                <span className="font-[family-name:var(--editorial-serif)] text-xl tracking-tight text-foreground sm:text-2xl">
+                  {name}
+                </span>
+              )}
             </li>
           ))}
         </ul>
