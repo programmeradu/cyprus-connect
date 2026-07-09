@@ -67,7 +67,9 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
     >
       {(["en", "el"] as const).map((lng) => {
         const active = lng === locale;
+        const FlagIcon = FLAGS[lng];
         return (
+
           <button
             key={lng}
             type="button"
