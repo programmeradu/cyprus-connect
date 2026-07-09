@@ -192,20 +192,31 @@ export default function Home() {
       <SectionDivider />
 
       {/* BENEFITS — Why VerdeIQ */}
-      <EditorialSection
-        eyebrow="01 / Why VerdeIQ"
-        titleA={tL("whyTitleA")}
-        subtitle={tL("whySubtitle")}
-        media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
-            { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
-            { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
-          ]}
+      <div className="relative">
+        {/* Growth-spark accent — rising data line sprouting olives; sits top-right,
+            spills above the section into the divider, signaling growth from measurement */}
+        <img
+          src={accentGrowthSpark.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-16 right-0 z-10 hidden w-[280px] max-w-none -translate-y-2 rotate-[6deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-24 lg:right-2 lg:w-[360px]"
         />
-      </EditorialSection>
+        <EditorialSection
+          eyebrow="01 / Why VerdeIQ"
+          titleA={tL("whyTitleA")}
+          subtitle={tL("whySubtitle")}
+          media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
+        >
+          <NumberedList
+            items={[
+              { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
+              { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
+              { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
+            ]}
+          />
+        </EditorialSection>
+      </div>
 
       <SectionDivider />
 
