@@ -137,11 +137,11 @@ export const TOOLS: ToolEntry[] = [
   {
     slug: "vsme-template",
     category: "vsme",
-    available: false,
+    available: true,
     primaryKeyword: "vsme template",
     relatedPillars: ["vsme-reporting-guide", "sustainability-reporting-eu"],
-    heroImage: "/assets/tools/hub/hero.jpg",
-    updatedAt: "2026-07-01",
+    heroImage: "/assets/tools/vsme-template/hero.jpg",
+    updatedAt: "2026-07-09",
     en: {
       metaTitle: "VSME Reporting Template — Free EFRAG Basic Module Tool | VerdeIQ",
       metaDescription:
@@ -168,11 +168,11 @@ export const TOOLS: ToolEntry[] = [
   {
     slug: "eu-taxonomy-checker",
     category: "taxonomy",
-    available: false,
+    available: true,
     primaryKeyword: "eu taxonomy tool",
     relatedPillars: ["eu-taxonomy-explained", "sustainability-reporting-eu"],
-    heroImage: "/assets/tools/hub/hero.jpg",
-    updatedAt: "2026-07-01",
+    heroImage: "/assets/tools/eu-taxonomy-checker/hero.jpg",
+    updatedAt: "2026-07-09",
     en: {
       metaTitle: "EU Taxonomy Eligibility Checker — Free NACE Tool | VerdeIQ",
       metaDescription:
