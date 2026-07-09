@@ -81,7 +81,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <span aria-hidden className="text-sm leading-none">{FLAG[lng]}</span>
+            <FlagIcon className="h-3 w-[18px] rounded-[1px] shrink-0" />
             {lng === "en" ? "EN" : "EL"}
           </button>
         );
