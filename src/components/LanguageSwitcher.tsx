@@ -54,10 +54,24 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
 
   const switchTo = (next: "en" | "el") => {
     if (next === locale) return;
+    // Compute the destination path with the target locale prefix and use
+    // a full navigation. next-intl's typed router silently no-ops for
+    // locale-only switches in some configurations, so we sidestep it.
+    const currentPath = typeof window !== "undefined" ? window.location.pathname : `/${locale}`;
+    const stripped = currentPath.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
+    const target = `/${next}${stripped === "/" ? "" : stripped}` || `/${next}`;
+    const search = typeof window !== "undefined" ? window.location.search : "";
     startTransition(() => {
-      // Object form is required — the string form no-ops on locale-only switches.
-      router.replace({ pathname }, { locale: next });
+      router.replace((target + search) as never, { locale: next });
+      // Fallback: if the client router didn't navigate within a tick, hard-nav.
+      setTimeout(() => {
+        if (typeof window !== "undefined" && !window.location.pathname.startsWith(`/${next}`)) {
+          window.location.assign(target + search);
+        }
+      }, 150);
     });
+    // Silence unused when pathname isn't consumed here.
+    void pathname;
   };
 
   return (
