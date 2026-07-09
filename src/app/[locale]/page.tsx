@@ -321,14 +321,15 @@ export default function Home() {
       <SectionDivider />
 
       {/* TESTIMONIAL */}
-      <section className="relative mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32">
-        {/* Editorial olive branch — transparent line art blending into the page */}
+      <section className="relative z-20 mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32">
+        {/* Editorial impact-curve — transparent line art blending into the page,
+            allowed to extend past the section into the CTA below */}
         <img
           src={testimonialBranch.src}
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -top-6 right-2 hidden w-[320px] select-none opacity-60 mix-blend-multiply dark:opacity-80 dark:mix-blend-screen sm:block sm:w-[440px] lg:w-[560px] lg:-top-12 lg:-right-8"
+          className="pointer-events-none absolute -top-6 right-2 z-20 hidden w-[320px] max-w-none select-none opacity-60 mix-blend-multiply dark:opacity-80 dark:mix-blend-screen sm:block sm:w-[520px] lg:w-[680px] lg:-top-16 lg:-right-12"
         />
 
         <div className="relative max-w-3xl">
