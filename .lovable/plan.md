@@ -1,119 +1,77 @@
-# Phase 5 — New tools + programmatic SEO
+## Goal
 
-Two parallel workstreams. Both keep the same 7-block editorial layout, JSON-LD stack, bilingual EN/EL, and no-signup constraint as Phases 1-4.
+Replace the "Live preview / Dashboard" block on the landing page with a lighter, context-aware surface, and give news its own dedicated destination. Keep only Carbon Footprint + Report Visuals as standalone tools. Add a global floating AI assistant on marketing pages.
 
----
+## 1. News
 
-## Workstream A — 3 new tools
+**New page: `/news`**
+- Curated ESG/climate feed from existing `/api/news` route.
+- Topic filters as underlined tabs (no pills): All / CBAM / CSRD / Energy / EU Taxonomy / Markets.
+- Each item: source, timestamp, headline (serif), 1-line summary, external-link glyph.
+- Sidebar rail: "EU Regulatory Timeline" — next upcoming deadlines (CBAM definitive period, CSRD wave 2, VSME adoption dates) as a vertical numbered list.
+- Below the feed: "VerdeIQ takes" — 2-3 short editorial commentaries on the week's biggest stories (static MD content initially, extensible later).
+- Bilingual EN/EL, full head() metadata, hreflang.
 
-Semrush validation (US database, KD ≈ 0 across the board — wide-open niche, same profile as the Phase 1-3 tools):
+**Header nav**
+- Add "News" link to the header (both `MarketingHeader` and the inline header in `page.tsx`).
+- Add "News" to the footer nav.
 
-| Route | Primary keyword | Vol |
-|---|---|---|
-| `/tools/sbti-target-setter` | sbti calculator + sbti target setting tool | 20 + 20 |
-| `/tools/csrd-gap-analyzer` | csrd gap analysis + csrd readiness assessment | 30 + 20 |
-| `/tools/green-claims-checker` | green claims directive checker | emerging |
+**Landing ticker**
+- Replace the entire `DashboardDemo` section on `/` with a slim horizontal auto-scrolling marquee.
+- Continuous CSS-driven translateX loop, pauses on hover.
+- Format per item: `SOURCE / timestamp — headline`, separated by a slash divider glyph.
+- Eyebrow above: `Latest / ESG & climate wire`.
+- Trailing link: `All news →` routing to `/news`.
+- Pulls top ~12 items from `/api/news` via a server function (SSR-safe fallback to a static placeholder set on failure).
 
-### A1. SBTi Target Setter (`/tools/sbti-target-setter`)
-- Inputs: base year, base-year Scope 1+2 (and Scope 3 if >40% share), target year, sector
-- Logic: SBTi Near-Term Criteria v5.1 — 1.5°C absolute contraction (4.2%/yr linear), Scope 3 well-below-2°C (2.5%/yr), sector-specific SDA fallback for power/cement/steel/aluminium
-- Outputs: annual pathway table, required % reduction by year, PDF + CSV export, "share this scenario" URL via search params
+## 2. Context-aware widgets on landing
 
-### A2. CSRD Gap Analyzer (`/tools/csrd-gap-analyzer`)
-- Inputs: company size band, sector, listing status, current disclosures (ESRS 1/2 + E1-E5, S1-S4, G1 checkboxes)
-- Logic: wave-1/2/3 applicability under Omnibus timeline, per-topic data-point coverage against ESRS mandatory + material-if data points
-- Outputs: readiness score, per-standard gap heatmap, prioritized action list, PDF export
+A single editorial section titled "Right now / where you are", replacing the demo. Three compact widgets in a grid, driven by geo + time:
 
-### A3. Green Claims Checker (`/tools/green-claims-checker`)
-- Inputs: paste a claim; select market (B2C/B2B), product category, evidence type
-- Logic: rule engine against Green Claims Directive Art. 3-5 (substantiation, life-cycle basis, third-party verification) + UCPD Annex I blacklist (generic "eco/green/climate-neutral" without primary evidence, offsetting-only claims, unverified certifications)
-- Outputs: pass/warn/fail verdict per rule, remediation suggestions, cite-ready PDF
+1. **Grid intensity now** — visitor's country carbon intensity (gCO2/kWh) from the existing electricity-maps client. Big numeral, small delta vs 7-day avg, region label.
+2. **Next EU deadline** — computed from a static regulatory calendar; shows "CSRD Wave 2 filings — 47 days" style. Numeric prefix, serif title, muted subtext.
+3. **This week in climate** — top headline from `/api/news` filtered to policy tag, with source + date.
 
-### Shared per tool
-- `/src/data/tools/<slug>.ts` for rulesets/factors
-- `/src/components/tools/widgets/<Widget>.tsx` client-side, persisted state
-- `/src/app/[locale]/tools/<slug>/page.tsx` — metadata + JSON-LD + `ToolShell`
-- Register in `src/data/tools/index.ts` (`available: true`)
-- Generated hero images (context-aware, per mem://design/context-aware-assets)
+No cards with pills. Numeric prefixes (01/02/03), thin dividers, serif titles, sans body — consistent with the existing editorial system.
 
----
+## 3. Tools cleanup
 
-## Workstream B — Programmatic per-country landing pages
+- Keep as standalone `/tools/*` pages: **GHG Calculator** (existing) and **Report Visuals** (already extracted).
+- Remove other demo widgets (metrics, benchmarks, goals, actions, suggestions) from the marketing surface entirely — they live inside the authed `/app` dashboard and don't belong on the landing page.
+- Delete the `DashboardDemo` import from `src/app/[locale]/page.tsx`. Leave `DashboardDemo` intact for `/tools/report-visuals` (uses `focusTab="report"`).
+- Tools hub `/tools` stays as-is but the listing is trimmed to the two real tools + any existing compliance widgets already there.
 
-Turn the GHG Calculator into a country-scoped SEO surface. Same widget, but the page is pre-scoped to one grid factor with a locally worked example.
+## 4. Floating AI assistant
 
-### Route
-`/tools/ghg-calculator/[country]` — dynamic Next segment, statically generated for all 16 supported grids (EU-27 core + UK + a few key non-EU).
+- New component `FloatingAIAssistant` — fixed bottom-right on marketing pages only.
+- Minimal: circular button (no icon-chrome — a single monogram letter or "AI" wordmark), expands into a compact chat panel.
+- Streams from an existing `/api/gemini/stream` or equivalent route (reuse what's wired).
+- Mounted in the marketing layout / __root wrapper but **excluded on `/app/*` routes** via a path check.
+- Uses `mem://constraints/no-icons-no-pills` — no Lucide, no rounded pill chrome. Rectangular expandable panel with editorial typography.
 
-### Country data
-Extend `/src/data/tools/countries.ts`:
-- slug (`cyprus`, `germany`, `france`, …)
-- ISO code + Region key (already in `GRID_FACTORS`)
-- Localized grid factor + source citation + year
-- Bilingual (EN + EL) locale name + hero copy
-- One country-specific worked example (typical SME profile + Scope 2 impact)
-- Top-3 domestic emission drivers (short bullets)
+## 5. Files touched
 
-Total pages generated: 16 countries × 2 locales = **32 new URLs**.
+- `src/app/[locale]/page.tsx` — remove DashboardDemo section, add ticker + context section.
+- `src/app/[locale]/news/page.tsx` — **new**, news hub.
+- `src/components/news/NewsTicker.tsx` — **new**, marquee.
+- `src/components/news/NewsFeed.tsx` — **new**, filtered feed for /news.
+- `src/components/news/RegulatoryTimeline.tsx` — **new**.
+- `src/components/landing/ContextWidgets.tsx` — **new**, geo+time widgets.
+- `src/components/ai/FloatingAIAssistant.tsx` — **new**.
+- `src/app/[locale]/layout.tsx` — mount floating assistant conditionally.
+- `src/components/marketing/MarketingHeader.tsx` + inline header in `page.tsx` — add News link.
+- `src/components/legal/SiteFooter.tsx` — add News link.
+- `messages/en.json` + `messages/el.json` — new strings for news, ticker, widgets, assistant.
 
-### Page shape (same 7-block layout, country-scoped)
-1. Hero: "GHG Calculator for {Country} — 2024 grid factor {x} kg CO₂e/kWh"
-2. Widget pre-selected to that country's grid, year locked to current
-3. Methodology block cites the country's national inventory + EEA source
-4. Worked example uses country-specific SME (already draft-scaffolded per country)
-5. FAQ — 5 items, ~2 country-specific ("Why is Cyprus' grid so carbon-heavy?"), 3 shared
-6. Related: parent GHG Calculator + neighbouring countries + Learn pillar
-7. CTA
+## 6. Order of work
 
-### SEO wiring
-- Canonical: self-referencing per country + locale
-- hreflang alternates across all 32 URLs + `x-default`
-- JSON-LD: `SoftwareApplication` + `FAQPage` + `BreadcrumbList` (`Home > Tools > GHG Calculator > {Country}`)
-- Parent `/tools/ghg-calculator` links to every country page ("Localized versions")
-- Every country page links back to parent + 2 neighbours (internal-link mesh)
-- Sitemap: extend `sitemap.ts` to generate `[locale]/tools/ghg-calculator/[country]` for every available country
+1. News page + ticker + header/footer nav links (highest user value).
+2. Context widgets replacing demo section.
+3. Floating AI assistant.
+4. Remove obsolete DashboardDemo tabs from landing.
 
-### Anti-thin-content guardrail
-Each country page MUST have ≥ 300 words of unique copy: country-specific hero subhead, worked example, 2 country FAQs, methodology note citing the domestic source. Countries without a real domestic source or unique story get held back — no autogenerated filler.
+Ask before step 3 whether you want me to bundle the assistant now or defer to a follow-up turn — it's the largest single addition.
 
----
+## Open question
 
-## Files
-
-**Workstream A:**
-- create `src/data/tools/sbti-pathways.ts`
-- create `src/data/tools/csrd-datapoints.ts`
-- create `src/data/tools/green-claims-rules.ts`
-- create `src/components/tools/widgets/{SbtiTargetSetter,CsrdGapAnalyzer,GreenClaimsChecker}.tsx`
-- create `src/app/[locale]/tools/{sbti-target-setter,csrd-gap-analyzer,green-claims-checker}/page.tsx`
-- generate 3 hero images
-- edit `src/data/tools/index.ts`
-
-**Workstream B:**
-- create `src/data/tools/countries.ts` (16 entries × EN/EL)
-- create `src/app/[locale]/tools/ghg-calculator/[country]/page.tsx` (with `generateStaticParams`)
-- edit `src/components/tools/widgets/GhgCalculator.tsx` — accept optional `initialRegion` + `lockRegion` props
-- edit `src/app/[locale]/tools/ghg-calculator/page.tsx` — add "Localized versions" block
-- edit `src/app/sitemap.ts` — add country pages
-
-**Shared:**
-- edit `.lovable/plan.md` — mark Phase 5
-
----
-
-## Build order
-
-1. **Workstream B first — 🟡 IN PROGRESS (flagship launch)** — Shipped 8 country pages (16 URLs across EN/EL) for CY, GR, DE, FR, ES, IT, NL, PL. Each page carries genuinely differentiated content: national grid factor with cited source, domestic SME worked example, 2 country-specific FAQs, and country-mesh internal links. Widget updated with `initialRegion` / `lockRegion` / `storageKey` props. Parent `/tools/ghg-calculator` links to all 8 country versions. Sitemap auto-emits the 16 country URLs. Held back for future iteration: IE, PT, BE, AT, SE, FI, UK (need domestic-source research before shipping to stay above the anti-thin-content bar).
-2. **A1 SBTi Target Setter** — next up.
-3. **A2 CSRD Gap Analyzer** — highest search-intent match, cross-links to `/learn/csrd` pillar.
-4. **A3 Green Claims Checker** — newest regime; keeps ruleset small and citation-heavy for E-E-A-T.
-
-Ship each in its own turn (do not batch all 3 tools + country pages into one turn — the plan file exists so we don't have to).
-
----
-
-## Success signals (~8 weeks post-launch)
-
-- All 32 country pages indexed; at least 8 ranking top-20 for "{country} + carbon calculator / co2 rechner / calculateur carbone"
-- SBTi + CSRD tools ranking top-10 for primary keywords (KD 0)
-- Green Claims Checker owning the emerging keyword (first-mover)
+Should the news ticker render server-side (SSR from `/api/news` during route load, better SEO, no CLS) or client-side (fresher, no build-time coupling)? Recommendation: **SSR via a server function with a 5-minute cache**, falling back to a static seed list if the fetch fails.

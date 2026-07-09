@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { DashboardDemo } from "@/components/DashboardDemo";
+import { NewsTicker } from "@/components/news/NewsTicker";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
@@ -50,6 +50,17 @@ export default function Home() {
           >
             VerdeIQ
           </Link>
+          <nav className="hidden items-center gap-6 md:flex">
+            <Link href="/tools" className="text-sm text-foreground/80 hover:text-foreground">
+              {tNav("tools")}
+            </Link>
+            <Link href="/learn" className="text-sm text-foreground/80 hover:text-foreground">
+              {tNav("learn")}
+            </Link>
+            <Link href="/news" className="text-sm text-foreground/80 hover:text-foreground">
+              {tNav("news")}
+            </Link>
+          </nav>
           <div className="flex items-center gap-1.5">
             <LanguageSwitcher />
             <ThemeToggle />
@@ -146,22 +157,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Dashboard demo — separate section with solid bg */}
+      {/* News ticker — replaces the old live dashboard preview */}
       <section className="relative bg-background">
-        <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
-          <motion.div
-            className="overflow-hidden rounded-lg border border-border/60 bg-card"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.25 }}
-          >
-            <div className="border-b border-border/60 px-4 py-2 eyebrow sm:px-6">
-              Live preview / Dashboard
-            </div>
-            <div className="p-3 sm:p-6">
-              <DashboardDemo landingMode />
-            </div>
-          </motion.div>
+        <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12">
+          <NewsTicker />
         </div>
       </section>
 
