@@ -93,18 +93,20 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        {/* Premium 4K Background Image — desktop only; mobile keeps a clean canvas */}
-        <div className="pointer-events-none absolute inset-0 hidden sm:block">
+        {/* Premium 4K Background Image — visible on all viewports; scrim adapts */}
+        <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute inset-0 bg-cover bg-no-repeat"
+            className="absolute inset-0 bg-no-repeat bg-cover"
             style={{
               backgroundImage:
                 'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
-              backgroundPosition: '70% 50%',
+              backgroundPosition: '65% 50%',
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/10 dark:hidden" />
-          <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background via-background/80 to-background/30" />
+          {/* Mobile scrim: subtle top wash so text is readable while photo stays clearly visible */}
+          <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-background/85 via-background/40 to-background/70 dark:from-background/80 dark:via-background/40 dark:to-background/85" />
+          {/* Desktop scrim: fade image to the right so left column stays readable */}
+          <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
         </div>
         <div className="relative mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-24 sm:pb-24">
