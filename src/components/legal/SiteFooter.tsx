@@ -29,6 +29,7 @@ const COPY = {
     home: "Αρχική",
     pricing: "Τιμές",
     learn: "Μάθετε",
+    news: "Ειδήσεις",
     legal: "Νομικά",
     privacy: "Απόρρητο",
     terms: "Όροι",
