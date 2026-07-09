@@ -54,12 +54,7 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="px-5 pb-10 pt-14 sm:px-8 sm:pb-16 sm:pt-24">
         <div className="mx-auto max-w-4xl">
-          <div
-            className="mb-5 text-[11px] font-medium uppercase text-muted-foreground"
-            style={{ letterSpacing: "0.18em" }}
-          >
-            Pricing
-          </div>
+          <div className="eyebrow mb-5">Pricing</div>
           <h1
             className="text-balance text-[2.25rem] leading-[1.02] tracking-tight sm:text-6xl md:text-7xl"
             style={{ fontFamily: "var(--editorial-serif)", fontWeight: 400 }}
@@ -94,12 +89,7 @@ export default function PricingPage() {
       {/* FAQ */}
       <section className="px-5 py-14 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-4xl">
-          <div
-            className="mb-4 text-[11px] font-medium uppercase text-muted-foreground"
-            style={{ letterSpacing: "0.18em" }}
-          >
-            {t("faqSubtitle")}
-          </div>
+          <div className="eyebrow mb-4">{t("faqSubtitle")}</div>
           <h2
             className="mb-10 text-balance text-3xl leading-[1.05] tracking-tight sm:mb-14 sm:text-5xl"
             style={{ fontFamily: "var(--editorial-serif)", fontWeight: 400 }}

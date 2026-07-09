@@ -80,10 +80,10 @@ export default function RelatedSuggestions({ currentSlug, locale, context, keywo
                 <Image src={p.heroImage} alt="" fill sizes="80px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/50">
+                <p className="eyebrow text-foreground/60">
                   {c.heroEyebrow}
                 </p>
-                <p className="mt-1.5 line-clamp-2 text-[14.5px] font-semibold leading-[1.35] tracking-[-0.01em] text-foreground group-hover:underline group-hover:underline-offset-4">
+                <p className="mt-1.5 text-[14.5px] font-semibold leading-[1.35] tracking-[-0.01em] text-foreground group-hover:underline group-hover:underline-offset-4">
                   {c.title}
                 </p>
               </div>
