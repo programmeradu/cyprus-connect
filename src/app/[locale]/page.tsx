@@ -19,6 +19,9 @@ import sectionHowImg from "@/assets/section-how-steps.jpg";
 import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
+import accentGrowthSpark from "@/assets/accent-growth-spark.png";
+import accentJourneyPath from "@/assets/accent-journey-path.png";
+import accentNetwork from "@/assets/accent-network-constellation.png";
 
 /**
  * Home — editorial redesign.
@@ -189,20 +192,31 @@ export default function Home() {
       <SectionDivider />
 
       {/* BENEFITS — Why VerdeIQ */}
-      <EditorialSection
-        eyebrow="01 / Why VerdeIQ"
-        titleA={tL("whyTitleA")}
-        subtitle={tL("whySubtitle")}
-        media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
-            { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
-            { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
-          ]}
+      <div className="relative">
+        {/* Growth-spark accent — rising data line sprouting olives; sits top-right,
+            spills above the section into the divider, signaling growth from measurement */}
+        <img
+          src={accentGrowthSpark.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-16 right-0 z-10 hidden w-[280px] max-w-none -translate-y-2 rotate-[6deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-24 lg:right-2 lg:w-[360px]"
         />
-      </EditorialSection>
+        <EditorialSection
+          eyebrow="01 / Why VerdeIQ"
+          titleA={tL("whyTitleA")}
+          subtitle={tL("whySubtitle")}
+          media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
+        >
+          <NumberedList
+            items={[
+              { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
+              { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
+              { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
+            ]}
+          />
+        </EditorialSection>
+      </div>
 
       <SectionDivider />
 
@@ -228,22 +242,33 @@ export default function Home() {
       <SectionDivider />
 
       {/* ECOSYSTEM */}
-      <EditorialSection
-        eyebrow="03 / Ecosystem"
-        titleA={tL("beyondTitleA")}
-        titleB={tL("beyondTitleB")}
-        subtitle={tL("beyondSubtitle")}
-        media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("ecoLearningTitle"), body: tL("ecoLearningDesc") },
-            { n: "02", title: tL("ecoMarketplaceTitle"), body: tL("ecoMarketplaceDesc") },
-            { n: "03", title: tL("ecoStudioTitle"), body: tL("ecoStudioDesc") },
-            { n: "04", title: tL("ecoLeaderboardTitle"), body: tL("ecoLeaderboardDesc") },
-          ]}
+      <div className="relative">
+        {/* Network-constellation accent — nine hand-drawn nodes with one terracotta anchor,
+            sits bottom-left, spills into the Context Widgets below, evoking the ecosystem web */}
+        <img
+          src={accentNetwork.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -bottom-24 -left-6 z-10 hidden w-[300px] max-w-none rotate-[-8deg] select-none opacity-50 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-bottom-32 lg:left-2 lg:w-[400px]"
         />
-      </EditorialSection>
+        <EditorialSection
+          eyebrow="03 / Ecosystem"
+          titleA={tL("beyondTitleA")}
+          titleB={tL("beyondTitleB")}
+          subtitle={tL("beyondSubtitle")}
+          media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
+        >
+          <NumberedList
+            items={[
+              { n: "01", title: tL("ecoLearningTitle"), body: tL("ecoLearningDesc") },
+              { n: "02", title: tL("ecoMarketplaceTitle"), body: tL("ecoMarketplaceDesc") },
+              { n: "03", title: tL("ecoStudioTitle"), body: tL("ecoStudioDesc") },
+              { n: "04", title: tL("ecoLeaderboardTitle"), body: tL("ecoLeaderboardDesc") },
+            ]}
+          />
+        </EditorialSection>
+      </div>
 
       <SectionDivider />
 
@@ -302,21 +327,33 @@ export default function Home() {
       <SectionDivider />
 
       {/* HOW IT WORKS */}
-      <EditorialSection
-        eyebrow="04 / How it works"
-        titleA={tL("howTitleA")}
-        titleB={tL("howTitleB")}
-        subtitle={tL("howSubtitle")}
-        media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("stepConnectTitle"), body: tL("stepConnectDesc") },
-            { n: "02", title: tL("stepAnalyzeTitle"), body: tL("stepAnalyzeDesc") },
-            { n: "03", title: tL("stepActionTitle"), body: tL("stepActionDesc") },
-          ]}
+      <div className="relative">
+        {/* Journey-path accent — dotted trail with waypoints and compass rose,
+            sits top-right, spills upward past the integrations row above, echoing
+            the "connect → analyze → act" three-step flow of this section */}
+        <img
+          src={accentJourneyPath.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-20 right-0 z-10 hidden w-[380px] max-w-none select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-28 lg:-right-4 lg:w-[520px]"
         />
-      </EditorialSection>
+        <EditorialSection
+          eyebrow="04 / How it works"
+          titleA={tL("howTitleA")}
+          titleB={tL("howTitleB")}
+          subtitle={tL("howSubtitle")}
+          media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
+        >
+          <NumberedList
+            items={[
+              { n: "01", title: tL("stepConnectTitle"), body: tL("stepConnectDesc") },
+              { n: "02", title: tL("stepAnalyzeTitle"), body: tL("stepAnalyzeDesc") },
+              { n: "03", title: tL("stepActionTitle"), body: tL("stepActionDesc") },
+            ]}
+          />
+        </EditorialSection>
+      </div>
 
       <SectionDivider />
 
