@@ -152,12 +152,12 @@ export default function LeaderboardPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-2 ${
-                  position === 1 ? "bg-gradient-to-br from-yellow-400 to-yellow-600" :
-                  position === 2 ? "bg-gradient-to-br from-gray-300 to-gray-500" :
-                  "bg-gradient-to-br from-orange-400 to-orange-600"
+                <div className={`w-12 h-12 mx-auto rounded-md flex items-center justify-center mb-2 border ${
+                  position === 1 ? "bg-primary/15 border-primary/40 text-primary" :
+                  position === 2 ? "bg-muted border-foreground/20 text-foreground" :
+                  "bg-muted/60 border-foreground/15 text-foreground/70"
                 }`}>
-                  <TrophyIcon className="w-6 h-6 text-white" />
+                  <span className="text-lg font-semibold tabular-nums" style={{ fontFamily: 'var(--editorial-display)' }}>{String(position).padStart(2, '0')}</span>
                 </div>
                 <p className="text-xs font-bold mb-1 break-words">{entry.companyName || entry.name}</p>
                 <p className="text-[10px] text-muted-foreground mb-1">{t("podiumCredits", { credits: entry.totalCredits })}</p>
