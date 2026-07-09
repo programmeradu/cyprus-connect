@@ -244,13 +244,13 @@ export default function Home() {
       {/* ECOSYSTEM */}
       <div className="relative">
         {/* Network-constellation accent — nine hand-drawn nodes with one terracotta anchor,
-            sits bottom-left, spills into the Context Widgets below, evoking the ecosystem web */}
+            sits far left in the blank margin beside the eyebrow/title column */}
         <img
           src={accentNetwork.src}
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -bottom-24 -left-6 z-10 hidden w-[300px] max-w-none rotate-[-8deg] select-none opacity-50 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-bottom-32 lg:left-2 lg:w-[400px]"
+          className="pointer-events-none absolute top-1/2 -left-16 z-10 hidden w-[260px] max-w-none -translate-y-1/2 rotate-[-12deg] select-none opacity-45 mix-blend-multiply dark:opacity-65 dark:mix-blend-screen md:block lg:-left-28 lg:w-[360px]"
         />
         <EditorialSection
           eyebrow="03 / Ecosystem"
