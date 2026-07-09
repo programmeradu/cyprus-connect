@@ -660,7 +660,7 @@ nextjs-portal {
    Replaces tiny all-caps/tracked metadata with deliberate B2B UI type.
    ================================================================ */
 .viq-tool {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-feature-settings: "ss01", "ss02", "cv11", "tnum";
 }
 .viq-tool .uppercase {
@@ -678,7 +678,7 @@ nextjs-portal {
 .viq-field-label,
 .viq-table-heading,
 .viq-minor-code {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.9375rem;
   line-height: 1.35;
   font-weight: 700;
@@ -705,7 +705,7 @@ nextjs-portal {
 .viq-caption,
 .viq-print-note,
 .viq-numeric-note {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.875rem;
   line-height: 1.45;
   font-weight: 550;
@@ -725,7 +725,7 @@ nextjs-portal {
 }
 .viq-date {
   display: inline-block;
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.875rem;
   line-height: 1.4;
   font-weight: 550;
@@ -733,7 +733,7 @@ nextjs-portal {
   color: color-mix(in oklab, var(--foreground) 62%, transparent);
 }
 .viq-button {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.875rem;
   line-height: 1;
   font-weight: 600;
@@ -744,7 +744,7 @@ nextjs-portal {
 }
 .viq-tool table th,
 .viq-tool .viq-table-heading {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -755,7 +755,7 @@ nextjs-portal {
 .viq-tool select,
 .viq-tool textarea,
 .viq-tool button {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
 }
 .viq-tool .text-\[10\.5px\] {
   font-size: 0.875rem;
