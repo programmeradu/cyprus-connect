@@ -33,8 +33,7 @@ export const Badge = ({
 
   return (
     <motion.span
-      className={`inline-flex items-center gap-1 rounded-full border font-medium uppercase tracking-wider ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      whileHover={{ scale: 1.05 }}
+      className={`inline-flex items-center gap-1 rounded-[4px] border font-medium ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       transition={{ duration: 0.2 }}
     >
       {children}
