@@ -110,11 +110,11 @@ const formatReportText = (text: string) => {
       
       return (
         <div key={sectionIndex} className="mb-8">
-          <div className="flex items-baseline gap-3 mb-4">
-            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
-              {number}
+          <div className="flex items-baseline gap-4 mb-4 border-b border-border pb-2">
+            <span className="font-[family-name:var(--editorial-serif)] text-2xl tabular-nums text-muted-foreground">
+              {String(number).padStart(2, "0")}
             </span>
-            <h2 className="text-xl font-bold text-foreground">{title}</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
           </div>
           
           {isMetrics ? (
@@ -517,11 +517,11 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     
     return (
       <div key={key} className="mb-6">
-        <div className="flex items-start gap-3 mb-3">
-          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-            {number}
+        <div className="flex items-baseline gap-3 mb-3">
+          <span className="font-[family-name:var(--editorial-serif)] text-lg tabular-nums text-muted-foreground">
+            {String(number).padStart(2, "0")}
           </span>
-          <h3 className="text-sm font-bold text-foreground pt-0.5">{title}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         </div>
         
         <div className="ml-10 space-y-2">
