@@ -237,7 +237,9 @@ export default function Home() {
             { n: "04", title: tL("powerIntegrationsTitle"), body: tL("powerIntegrationsDesc") },
           ]}
         />
-      </EditorialSection>
+        </EditorialSection>
+      </div>
+
 
       <SectionDivider />
 
