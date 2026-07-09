@@ -61,7 +61,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`inline-flex items-center gap-0.5 rounded-full border border-border/60 bg-background/70 backdrop-blur p-0.5 ${className}`}
+      className={`inline-flex items-center gap-0.5 rounded-md border border-border/60 bg-background/70 backdrop-blur p-0.5 ${className}`}
       role="group"
       aria-label={t("label")}
     >
@@ -77,7 +77,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
             disabled={isPending}
             aria-pressed={active}
             aria-label={t(lng)}
-            className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
+            className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-[4px] transition-colors whitespace-nowrap ${
               active
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
