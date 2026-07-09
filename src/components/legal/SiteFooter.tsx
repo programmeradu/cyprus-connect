@@ -50,7 +50,12 @@ export function SiteFooter() {
     <footer className="border-t border-border/60 bg-background/60 backdrop-blur mt-12">
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2">
-          <p className="text-lg font-bold gradient-text tracking-tight mb-2">VerdeIQ</p>
+          <p
+            className="gradient-text text-2xl font-semibold italic mb-2"
+            style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}
+          >
+            VerdeIQ
+          </p>
           <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
             {t.tagline}
           </p>
