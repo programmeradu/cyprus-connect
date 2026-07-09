@@ -91,7 +91,7 @@ export default function LeaderboardPage() {
       {/* Your Rank Card */}
       {currentUser && (
         <motion.div
-          className="glass-strong rounded-xl p-5 mb-6 border-2 border-primary/30"
+          className="surface-card p-5 mb-6 border-2 border-primary/30"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -147,7 +147,7 @@ export default function LeaderboardPage() {
             return (
               <motion.div
                 key={entry.userId}
-                className={`glass rounded-xl p-4 text-center ${position === 1 ? "mt-0" : "mt-6"}`}
+                className={`surface-card p-4 text-center ${position === 1 ? "mt-0" : "mt-6"}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
@@ -171,7 +171,7 @@ export default function LeaderboardPage() {
 
       {/* Full Leaderboard */}
       <motion.div
-        className="glass-strong rounded-xl p-5"
+        className="surface-card p-5"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}

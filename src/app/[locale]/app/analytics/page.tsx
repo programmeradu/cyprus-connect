@@ -246,7 +246,7 @@ export default function AnalyticsPage() {
       {/* Emissions Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -281,7 +281,7 @@ export default function AnalyticsPage() {
         </motion.div>
 
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -308,7 +308,7 @@ export default function AnalyticsPage() {
 
       {/* Industry Benchmarking */}
       <motion.div
-        className="glass-strong rounded-xl p-5 mb-6"
+        className="surface-card p-5 mb-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -348,7 +348,7 @@ export default function AnalyticsPage() {
       {/* AI Insights Section */}
       {aiInsights && (
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}

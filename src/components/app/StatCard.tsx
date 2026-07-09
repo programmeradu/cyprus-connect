@@ -24,7 +24,7 @@ export const StatCard = ({
 }: StatCardProps) => {
   return (
     <motion.div
-      className={`relative glass-strong rounded-xl p-4 overflow-hidden ${className}`}
+      className={`relative surface-card p-4 overflow-hidden ${className}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}

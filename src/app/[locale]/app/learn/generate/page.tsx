@@ -121,7 +121,7 @@ export default function GenerateCoursePage() {
       </div>
 
       <div className="max-w-3xl mx-auto">
-        <div className="glass-strong rounded-xl p-8">
+        <div className="surface-card p-8">
           {!isGenerating ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -272,7 +272,7 @@ export default function GenerateCoursePage() {
 
         {/* Tips */}
         {!isGenerating && (
-          <div className="mt-6 glass rounded-xl p-6">
+          <div className="mt-6 surface-card p-6">
             <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-primary" />
               Tips for Better Results

@@ -305,7 +305,7 @@ function SettingsContent() {
         <>
           {/* Profile Section */}
           <motion.div
-            className="glass-strong rounded-xl p-4 mb-4"
+            className="surface-card p-4 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -386,7 +386,7 @@ function SettingsContent() {
 
           {/* Regional & Currency Preferences */}
           <motion.div
-            className="glass-strong rounded-xl p-4 mb-4"
+            className="surface-card p-4 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -425,7 +425,7 @@ function SettingsContent() {
 
           {/* Danger Zone */}
           <motion.div
-            className="glass-strong rounded-xl p-4 border-2 border-destructive/20"
+            className="surface-card p-4 border-2 border-destructive/20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -476,7 +476,7 @@ function SettingsContent() {
       {activeTab === 'notifications' && (
         <motion.div
           id="notifications"
-          className="glass-strong rounded-xl p-4 mb-4"
+          className="surface-card p-4 mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >

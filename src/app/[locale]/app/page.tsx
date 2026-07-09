@@ -334,7 +334,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Carbon Footprint */}
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -366,7 +366,7 @@ export default function DashboardPage() {
 
         {/* Resource Efficiency */}
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
@@ -415,7 +415,7 @@ export default function DashboardPage() {
 
         {/* Renewable Energy */}
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -441,7 +441,7 @@ export default function DashboardPage() {
 
         {/* Waste Diversion */}
         <motion.div
-          className="glass-strong rounded-xl p-5"
+          className="surface-card p-5"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
@@ -465,7 +465,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Progress Towards Net-Zero */}
         <motion.div
-          className="lg:col-span-2 glass-strong rounded-xl p-6"
+          className="lg:col-span-2 surface-card p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -552,7 +552,7 @@ export default function DashboardPage() {
 
         {/* Peer Comparison */}
         <motion.div
-          className="glass-strong rounded-xl p-6"
+          className="surface-card p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
@@ -691,7 +691,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Initiatives */}
         <motion.div
-          className="glass-strong rounded-xl p-6"
+          className="surface-card p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -738,7 +738,7 @@ export default function DashboardPage() {
 
         {/* Suggestions */}
         <motion.div
-          className="glass-strong rounded-xl p-6"
+          className="surface-card p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}

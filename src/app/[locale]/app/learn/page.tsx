@@ -403,7 +403,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-strong rounded-xl p-6 mb-6 border-2 border-primary/20"
+          className="surface-card p-6 mb-6 border-2 border-primary/20"
         >
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -455,7 +455,7 @@ export default function LearnPage() {
 
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="glass-strong rounded-xl p-4">
+        <div className="surface-card p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <CustomBookIcon className="w-5 h-5 text-primary" />
@@ -467,7 +467,7 @@ export default function LearnPage() {
           </div>
         </div>
 
-        <div className="glass-strong rounded-xl p-4">
+        <div className="surface-card p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <CustomProgressIcon className="w-5 h-5 text-primary" />
@@ -487,7 +487,7 @@ export default function LearnPage() {
           </div>
         </div>
 
-        <div className="glass-strong rounded-xl p-4">
+        <div className="surface-card p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <CustomAwardIcon className="w-5 h-5 text-primary" />
@@ -501,7 +501,7 @@ export default function LearnPage() {
           </div>
         </div>
 
-        <div className="glass-strong rounded-xl p-4">
+        <div className="surface-card p-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <CustomGraduationIcon className="w-5 h-5 text-primary" />
@@ -699,7 +699,7 @@ export default function LearnPage() {
 
         {/* Empty State */}
         {filteredCourses.length === 0 && (
-          <div className="glass-strong rounded-xl p-12 text-center">
+          <div className="surface-card p-12 text-center">
             <CustomBookIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-30" />
             <p className="text-sm text-muted-foreground mb-4">{t("noCourses")}</p>
             {hasActiveFilters && (
@@ -776,7 +776,7 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="glass-strong rounded-xl overflow-hidden group cursor-pointer"
+      className="surface-card overflow-hidden group cursor-pointer"
       onClick={onViewCourse}
     >
       {/* Thumbnail */}

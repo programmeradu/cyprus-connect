@@ -656,7 +656,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
       <div className="grid grid-cols-1 lg:grid-cols-[3fr_7fr] gap-6">
         {/* LEFT - Content Creator (30%) */}
-        <div className="glass-strong rounded-xl p-4">
+        <div className="surface-card p-4">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
               <Wand2 className="w-3.5 h-3.5 text-primary" />
@@ -768,7 +768,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
           {/* Preview */}
           {selectedMedia ? (
             <motion.div
-              className="glass-strong rounded-xl p-4"
+              className="surface-card p-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -902,7 +902,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               )}
             </motion.div>
           ) : (
-            <div className="glass-strong rounded-xl p-12 text-center">
+            <div className="surface-card p-12 text-center">
               <ImageIcon className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-30" />
               <p className="text-sm text-muted-foreground">{t("preview.empty")}</p>
               <p className="text-[10px] text-muted-foreground mt-1">
@@ -1077,7 +1077,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
       {/* Footer Stats */}
       {studioStats && (
-        <div className="mt-6 glass-strong rounded-xl p-3">
+        <div className="mt-6 surface-card p-3">
           <div className="flex items-center justify-between text-[9px]">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
