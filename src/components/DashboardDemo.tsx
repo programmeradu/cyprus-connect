@@ -399,7 +399,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
-                          <span className="text-xs font-semibold text-emerald-700 w-10 text-right">
+                          <span className="text-xs font-semibold text-chart-2 w-10 text-right">
                             {percentage}%
                           </span>
                         </div>
@@ -471,7 +471,6 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     return (
       <div key={key} className="mb-6">
         <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-xs">💰</span>
           Potential Cost Savings
         </h3>
         <div className="overflow-hidden rounded-lg border border-gray-200">
@@ -534,7 +533,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
             if (labelMatch) {
               return (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="text-xs font-semibold text-emerald-700 min-w-fit">
+                  <span className="text-xs font-semibold text-chart-2 min-w-fit">
                     {labelMatch[1]}:
                   </span>
                   <span className="text-xs text-foreground/80">{labelMatch[2]}</span>
@@ -1543,7 +1542,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         <div className="mb-6 pb-4 border-b-2 border-border">
                           <div className="flex items-center gap-2 mb-2">
                             <div className="px-2 py-0.5 rounded-[4px] border border-primary/30">
-                              <span className="text-emerald-700 font-bold text-xs tracking-wide">{t("report.badge")}</span>
+                              <span className="text-chart-2 font-bold text-xs tracking-wide">{t("report.badge")}</span>
                             </div>
                           </div>
                           <h2 className="text-2xl font-black text-foreground mb-1">{reportInput.company}</h2>
@@ -1590,7 +1589,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             onClick={() => setShowPreview(false)}
                             className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm font-medium transition-all"
                           >
-                            ✕
+                            ×
                           </button>
                         </div>
                       </div>
@@ -1608,17 +1607,17 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               <div className="flex items-start justify-between mb-6">
                                 <div>
                                   <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-[4px] border border-primary/30">
-                                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-emerald-600" fill="currentColor">
+                                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-chart-2" fill="currentColor">
                                       <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                     </svg>
-                                    <span className="text-emerald-700 font-bold text-sm tracking-wide">{t("report.badge")}</span>
+                                    <span className="text-chart-2 font-bold text-sm tracking-wide">{t("report.badge")}</span>
                                   </div>
                                   <h1 className="text-4xl font-black text-foreground mb-2 tracking-tight">{reportInput.company}</h1>
                                   <p className="text-muted-foreground text-base">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") }).split("•")[0].trim()}</p>
                                 </div>
                                 <div className="text-right bg-card px-6 py-4 rounded-xl border border-border">
                                   <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">{t("report.reportingPeriod")}</div>
-                                  <div className="text-2xl font-bold text-emerald-700">{reportInput.period || t("report.defaultPeriod")}</div>
+                                  <div className="text-2xl font-bold text-chart-2">{reportInput.period || t("report.defaultPeriod")}</div>
                                 </div>
                               </div>
 
@@ -1632,7 +1631,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                   </div>
                                 </div>
                                 <div className="bg-card p-5 rounded-xl border border-border relative overflow-hidden group transition-shadow">
-                                  <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                  <div className="absolute top-0 right-0 w-20 h-20 bg-muted rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Location</div>
                                     <div className="text-lg font-bold text-foreground">{reportInput.location || "Global"}</div>
@@ -1646,7 +1645,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                   </div>
                                 </div>
                                 <div className="bg-card p-5 rounded-xl border border-border relative overflow-hidden group transition-shadow">
-                                  <div className="absolute top-0 right-0 w-20 h-20 bg-orange-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                  <div className="absolute top-0 right-0 w-20 h-20 bg-muted rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Net-Zero Target</div>
                                     <div className="text-lg font-bold text-foreground">{reportInput.targetYear || "2050"}</div>
@@ -1973,7 +1972,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           className="px-2 py-1 rounded-lg bg-muted hover:bg-muted/80 text-xs transition-all"
                           title={t("weather.clearConversation")}
                         >
-                          ✕
+                          ×
                         </button>
                       )}
                     </div>
@@ -2495,7 +2494,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                       <video src={item.url} className="w-full aspect-square object-cover" />
                                     )}
                                     
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                       <div className="absolute bottom-0 left-0 right-0 p-3">
                                         <p className="text-xs text-primary-foreground font-medium line-clamp-2">{item.prompt}</p>
                                         <div className="flex items-center gap-2 mt-2">
