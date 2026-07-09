@@ -109,7 +109,7 @@ export const Sidebar = () => {
       {/* Brand */}
       <div className="p-4 border-b border-border/50">
         <Link href="/app" className="flex items-center gap-2 group">
-          <h1 className="text-base font-bold gradient-text">VerdeIQ</h1>
+          <h1 className="text-base font-semibold text-foreground" style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}>VerdeIQ</h1>
         </Link>
       </div>
 
