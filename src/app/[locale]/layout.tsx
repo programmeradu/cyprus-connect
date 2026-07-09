@@ -133,6 +133,7 @@ export default async function LocaleLayout({
       <SiteFooter />
       <CookieBanner />
       <ConsentedAnalytics />
+      <FloatingAIAssistant />
     </NextIntlClientProvider>
   );
 }
