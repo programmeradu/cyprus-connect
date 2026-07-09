@@ -288,6 +288,7 @@ export default function Home() {
         titleA={tL("howTitleA")}
         titleB={tL("howTitleB")}
         subtitle={tL("howSubtitle")}
+        media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
       >
         <NumberedList
           items={[
