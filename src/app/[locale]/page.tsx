@@ -89,13 +89,14 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative overflow-hidden">
-        {/* Premium 4K Background Image — scoped to hero */}
-        <div className="absolute inset-0 -z-0 pointer-events-none">
+        {/* Premium 4K Background Image — desktop only; mobile keeps a clean canvas */}
+        <div className="pointer-events-none absolute inset-0 hidden sm:block">
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            className="absolute inset-0 bg-cover bg-no-repeat"
             style={{
               backgroundImage:
                 'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
+              backgroundPosition: '70% 50%',
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/10 dark:hidden" />
