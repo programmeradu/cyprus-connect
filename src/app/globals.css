@@ -589,3 +589,56 @@ nextjs-portal {
   .verdeiq-article h2 { font-size: 34px; }
   .verdeiq-article h3 { font-size: 23px; }
 }
+
+/* ================================================================
+   Editorial range slider (used by learn/widgets/*).
+   Native track + visible circular thumb — no vibecoded pills.
+   ================================================================ */
+.verdeiq-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+.verdeiq-range::-webkit-slider-runnable-track {
+  height: 2px;
+  background: color-mix(in oklab, var(--foreground) 15%, transparent);
+  border-radius: 0;
+}
+.verdeiq-range::-moz-range-track {
+  height: 2px;
+  background: color-mix(in oklab, var(--foreground) 15%, transparent);
+  border-radius: 0;
+}
+.verdeiq-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--foreground);
+  border: 3px solid var(--background);
+  box-shadow: 0 0 0 1px var(--foreground);
+  margin-top: -7px;
+  transition: transform 0.15s ease;
+}
+.verdeiq-range::-webkit-slider-thumb:hover,
+.verdeiq-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.verdeiq-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--foreground);
+  border: 3px solid var(--background);
+  box-shadow: 0 0 0 1px var(--foreground);
+  transition: transform 0.15s ease;
+}
+.verdeiq-range::-moz-range-thumb:hover,
+.verdeiq-range:focus-visible::-moz-range-thumb {
+  transform: scale(1.15);
+}
