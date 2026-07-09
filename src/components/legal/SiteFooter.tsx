@@ -11,6 +11,7 @@ const COPY = {
     home: "Home",
     pricing: "Pricing",
     learn: "Learn",
+    news: "News",
     legal: "Legal",
     privacy: "Privacy",
     terms: "Terms",
