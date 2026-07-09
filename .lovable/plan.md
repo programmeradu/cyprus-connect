@@ -95,9 +95,9 @@ Reuse existing editorial system (from Learn redesign):
 5. **CBAM Report Generator** ✅ — CN-code table (46 codes, 6 sectors), per-line direct/indirect factors with override, effective carbon price, quarterly XML draft + PDF + CSV export
 6. **Double Materiality Matrix** ✅ — 10 pre-loaded ESRS topics, dual-axis scoring (severity/scope/irremediability/likelihood + magnitude/likelihood), interactive SVG matrix, threshold slider, PDF + CSV export
 
-**Phase 3 — Long-tail authority**
-7. **VSME Template Builder** — guided EFRAG VSME Basic form → branded PDF matching EFRAG structure
-8. **EU Taxonomy Eligibility Checker** — NACE code picker, substantial contribution + DNSH checklist
+**Phase 3 — Long-tail authority** ✅ SHIPPED
+7. **VSME Template Builder** ✅ — 12-step guided walkthrough of EFRAG VSME Basic Module (B1–B12), typed fields (text/number/yes-no/select) with hints, per-step navigation with progress bar, PDF/JSON/CSV export, persistent client-side state.
+8. **EU Taxonomy Eligibility Checker** ✅ — 30 curated eligible activities across all six objectives, NACE/keyword search, primary-objective picker, DNSH walk-through for the other 5 objectives, Art. 18 minimum safeguards, aligned/partial/not-aligned verdict, PDF + CSV export.
 
 **Phase 4 — Polish + measurement**
 9. Full EL translations for all 5 tools
