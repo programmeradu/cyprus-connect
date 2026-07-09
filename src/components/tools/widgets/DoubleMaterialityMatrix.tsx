@@ -222,22 +222,23 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
   const thrY = SIZE - scale(state.threshold);
 
   return (
-    <div className="not-prose border-y border-foreground/15 print:border-none">
+    <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            01 · {l.interactive}
+          <p className="viq-kicker">
+            <span className="viq-step-num">01</span>
+            <span>{l.interactive}</span>
           </p>
-          <p className="tabular-nums text-[11px] text-foreground/40 print:hidden">
+          <p className="viq-meta max-w-2xl print:hidden sm:text-right">
             {l.sourcesNote}
           </p>
         </div>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
           <div>
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              {l.threshold} · {fmt(state.threshold, 1)} / 5
+            <label className="viq-field-label block">
+              {l.threshold} <span className="tabular-nums text-foreground/60">{fmt(state.threshold, 1)} / 5</span>
             </label>
             <input
               type="range"
@@ -256,21 +257,21 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
             <button
               type="button"
               onClick={doPrint}
-              className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+              className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85"
             >
               {l.print}
             </button>
             <button
               type="button"
               onClick={downloadCsv}
-              className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+              className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
             >
               {l.csv}
             </button>
             <button
               type="button"
               onClick={reset}
-              className="inline-flex h-9 items-center px-2 text-[12.5px] text-foreground/55 underline underline-offset-4 transition hover:text-foreground"
+              className="viq-button inline-flex h-9 items-center px-2 text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
             >
               {l.reset}
             </button>
@@ -282,7 +283,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
       <div className="grid gap-10 py-8 sm:py-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
         {/* Matrix */}
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="viq-section-label">
             {l.matrix}
           </p>
           <div className="mt-4 aspect-square w-full max-w-[560px]">
@@ -309,10 +310,10 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                 </g>
               ))}
               {/* Axis labels */}
-              <text x={SIZE / 2} y={SIZE - 6} textAnchor="middle" className="fill-foreground/60 text-[11px] uppercase tracking-[0.2em]">
+              <text x={SIZE / 2} y={SIZE - 6} textAnchor="middle" className="fill-foreground/65 text-[12px] font-semibold">
                 {l.axisImpact}
               </text>
-              <text x={-SIZE / 2} y={14} textAnchor="middle" transform="rotate(-90)" className="fill-foreground/60 text-[11px] uppercase tracking-[0.2em]">
+              <text x={-SIZE / 2} y={14} textAnchor="middle" transform="rotate(-90)" className="fill-foreground/65 text-[12px] font-semibold">
                 {l.axisFinancial}
               </text>
               {/* Points */}
@@ -346,7 +347,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
 
         {/* Scoring panel */}
         <div className="print:hidden">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="viq-section-label">
             {l.topic}
           </p>
           {active ? (
@@ -362,7 +363,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                   type="text"
                   value={active.esrs}
                   onChange={(e) => setTopic(active.id, { esrs: e.target.value })}
-                  className="w-24 border-0 border-b border-foreground/25 bg-transparent pb-1 text-[13px] uppercase tracking-[0.14em] outline-none focus:border-primary"
+                  className="w-24 border-0 border-b border-foreground/25 bg-transparent pb-1 text-[13px] font-semibold outline-none focus:border-primary"
                 />
                 <button
                   type="button"
@@ -375,7 +376,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
 
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                  <p className="viq-section-label">
                     {l.impact}
                   </p>
                   <div className="mt-4 space-y-4">
@@ -404,7 +405,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                  <p className="viq-section-label">
                     {l.financial}
                   </p>
                   <div className="mt-4 space-y-4">
@@ -434,13 +435,13 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
 
               <div className="mt-6 grid grid-cols-2 gap-6 border-t border-foreground/10 pt-5 text-[13px]">
                 <div>
-                  <p className="text-[10.5px] uppercase tracking-[0.2em] text-foreground/50">{l.impact}</p>
+                  <p className="viq-caption">{l.impact}</p>
                   <p className="mt-1 text-[22px] font-semibold tabular-nums tracking-[-0.02em]">
                     {fmt(impactScore(active), 2)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10.5px] uppercase tracking-[0.2em] text-foreground/50">{l.financial}</p>
+                  <p className="viq-caption">{l.financial}</p>
                   <p className="mt-1 text-[22px] font-semibold tabular-nums tracking-[-0.02em]">
                     {fmt(financialScore(active), 2)}
                   </p>
@@ -454,7 +455,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
           <button
             type="button"
             onClick={addTopic}
-            className="mt-8 inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+            className="viq-button mt-8 inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
           >
             {l.add}
           </button>
@@ -464,17 +465,17 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
       {/* Topic list / material verdict */}
       <div className="border-t border-foreground/10 py-8 sm:py-10">
         <div className="mb-6 flex items-baseline justify-between">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            <p className="viq-section-label">
             {l.materialTopics}
           </p>
-          <p className="tabular-nums text-[11px] text-foreground/45">
+          <p className="viq-meta tabular-nums">
             {materialCount}/{rows.length}
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] border-collapse text-[13px]">
             <thead>
-              <tr className="border-b border-foreground/20 text-left uppercase tracking-[0.14em] text-foreground/55">
+              <tr className="border-b border-foreground/20 text-left text-foreground/65">
                 <th className="py-2 pr-3 text-[10.5px] font-semibold">#</th>
                 <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.topic}</th>
                 <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.esrs}</th>
@@ -494,12 +495,12 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                     {String(i + 1).padStart(2, "0")}
                   </td>
                   <td className="py-2 pr-3 font-medium">{r.name}</td>
-                  <td className="py-2 pr-3 uppercase tracking-[0.14em] text-foreground/60">{r.esrs}</td>
+                  <td className="py-2 pr-3 font-semibold text-foreground/70">{r.esrs}</td>
                   <td className="py-2 pr-3 text-right tabular-nums">{fmt(r.impact, 2)}</td>
                   <td className="py-2 pr-3 text-right tabular-nums">{fmt(r.financial, 2)}</td>
                   <td className="py-2 text-right">
                     <span
-                      className={`inline-block border px-2 py-0.5 text-[10.5px] uppercase tracking-[0.14em] ${
+                      className={`inline-block border px-2 py-0.5 text-[12px] font-semibold ${
                         r.material
                           ? "border-primary/70 text-primary"
                           : "border-foreground/20 text-foreground/50"
@@ -515,7 +516,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
         </div>
 
         <p className="mt-6 text-[11.5px] leading-[1.6] text-foreground/50">{l.disclaimer}</p>
-        <p className="mt-3 hidden text-[10.5px] tabular-nums uppercase tracking-[0.2em] text-foreground/45 print:block">
+        <p className="viq-print-note mt-3 hidden print:block">
           {l.reportTitle} · {l.generatedOn} {new Date().toLocaleDateString(numLocale)}
         </p>
       </div>
