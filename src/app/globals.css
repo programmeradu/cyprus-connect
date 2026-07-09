@@ -93,11 +93,23 @@
      optical sizing carries all display type; Instrument Sans (500/600 UI,
      400 body) is the workhorse. */
   --editorial-serif: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
-  --editorial-display: "Fraunces", "Instrument Serif", ui-serif, Georgia, serif;
+  --editorial-display: "FrauncesAmpFix", "Fraunces", "Instrument Serif", ui-serif, Georgia, serif;
   --editorial-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
 }
 
 @import "tailwindcss";
+
+/* Ampersand override — Fraunces's default & is too calligraphic/stylish.
+   Route U+0026 through Instrument Sans so headings keep a clean ampersand
+   while the rest of the glyphs stay in Fraunces. */
+@font-face {
+  font-family: "FrauncesAmpFix";
+  src: local("Instrument Sans"), local("InstrumentSans-Regular"), local("Instrument Sans Regular");
+  unicode-range: U+0026;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
