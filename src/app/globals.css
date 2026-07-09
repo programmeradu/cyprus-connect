@@ -667,9 +667,9 @@ nextjs-portal {
 .viq-table-heading,
 .viq-minor-code {
   font-family: "Space Grotesk", var(--editorial-sans);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   line-height: 1.35;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: 0;
   color: color-mix(in oklab, var(--foreground) 76%, transparent);
 }
@@ -679,9 +679,14 @@ nextjs-portal {
   gap: 0.55rem;
   color: color-mix(in oklab, var(--foreground) 82%, transparent);
 }
+.viq-field-label,
+.viq-minor-code,
+.viq-table-heading {
+  font-size: 0.875rem;
+}
 .viq-step-num {
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--primary);
 }
 .viq-meta,
@@ -689,9 +694,9 @@ nextjs-portal {
 .viq-print-note,
 .viq-numeric-note {
   font-family: "Space Grotesk", var(--editorial-sans);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.45;
-  font-weight: 500;
+  font-weight: 550;
   letter-spacing: 0;
   color: color-mix(in oklab, var(--foreground) 58%, transparent);
 }
@@ -723,13 +728,13 @@ nextjs-portal {
   letter-spacing: 0;
 }
 .viq-button-sm {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 .viq-tool table th,
 .viq-tool .viq-table-heading {
   font-family: "Space Grotesk", var(--editorial-sans);
-  font-size: 0.75rem;
-  font-weight: 650;
+  font-size: 0.8125rem;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
   color: color-mix(in oklab, var(--foreground) 64%, transparent);
@@ -741,11 +746,11 @@ nextjs-portal {
   font-family: "Space Grotesk", var(--editorial-sans);
 }
 .viq-tool .text-\[10\.5px\] {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 .viq-tool .text-\[11px\],
 .viq-tool .text-\[11\.5px\] {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 .viq-tool .text-\[12px\],
 .viq-tool .text-\[12\.5px\] {
