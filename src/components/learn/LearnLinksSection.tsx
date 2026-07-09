@@ -51,6 +51,7 @@ export function LearnLinksSection() {
       title: content.title,
       eyebrow: content.heroEyebrow,
       minutes: p.readingMinutes,
+      heroImage: p.heroImage,
     };
   }).filter((x): x is NonNullable<typeof x> => Boolean(x));
 
@@ -77,7 +78,7 @@ export function LearnLinksSection() {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {pillars.map((p, i) => (
             <motion.div
               key={p.slug}
@@ -88,16 +89,28 @@ export function LearnLinksSection() {
             >
               <Link
                 href={`/learn/${p.slug}`}
-                className="group block h-full rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm p-4 hover:border-primary/40 hover:bg-card/70 transition-all"
+                className="group block h-full overflow-hidden rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm hover:border-primary/40 hover:bg-card/70 transition-all"
               >
-                <div className="eyebrow text-primary mb-2">
-                  {p.eyebrow}
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={p.heroImage}
+                    alt={p.title}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
                 </div>
-                <h3 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
-                  {p.title}
-                </h3>
-                <div className="mt-3 text-[11px] text-muted-foreground font-light">
-                  {p.minutes} {minutesLabel}
+                <div className="p-4">
+                  <div className="eyebrow text-primary mb-2">
+                    {p.eyebrow}
+                  </div>
+                  <h3 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
+                    {p.title}
+                  </h3>
+                  <div className="mt-3 text-[11px] text-muted-foreground font-light">
+                    {p.minutes} {minutesLabel}
+                  </div>
                 </div>
               </Link>
             </motion.div>
