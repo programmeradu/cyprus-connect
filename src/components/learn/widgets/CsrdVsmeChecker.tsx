@@ -175,7 +175,7 @@ export default function CsrdVsmeChecker({ locale }: Props) {
           <p className="eyebrow">
             {l.result}
           </p>
-          <p className={`mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] ${inScope ? "text-foreground" : "text-foreground/45"}`}>
+          <p className={`mt-3 eyebrow ${inScope ? "text-foreground" : "text-foreground/45"}`}>
             {inScope ? (locale === "el" ? "Εντός πεδίου" : "In scope") : (locale === "el" ? "Εκτός πεδίου" : "Out of scope")}
           </p>
           <p className="mt-3 text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] sm:text-[26px]">

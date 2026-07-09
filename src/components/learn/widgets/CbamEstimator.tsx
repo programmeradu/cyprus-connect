@@ -146,7 +146,7 @@ export default function CbamEstimator({ locale }: Props) {
           <p className="mt-3 text-[32px] font-semibold tabular-nums leading-none tracking-[-0.02em]">
             {nf.format(Math.round(emissions))}
           </p>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">tCO₂e</p>
+          <p className="mt-2 eyebrow text-foreground/50">tCO₂e</p>
 
           <div className="my-8 border-t border-foreground/10" />
 

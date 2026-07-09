@@ -137,7 +137,7 @@ export default function ScopeCalculator({ locale }: Props) {
           <p className="mt-3 text-[56px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[72px]">
             {total.toLocaleString(locale === "el" ? "el-CY" : "en-GB", { maximumFractionDigits: 1 })}
           </p>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">{l.unit}</p>
+          <p className="mt-2 eyebrow text-foreground/50">{l.unit}</p>
 
           <p className="mt-8 eyebrow">
             {l.split}

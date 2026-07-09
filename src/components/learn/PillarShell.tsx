@@ -435,7 +435,7 @@ export default function PillarShell({
               <button
                 type="button"
                 onClick={share}
-                className="text-[11.5px] font-medium uppercase tracking-[0.2em] text-foreground/55 underline underline-offset-4 hover:text-primary"
+                className="eyebrow underline underline-offset-4 hover:text-primary"
               >
                 {shareLabel}
               </button>
