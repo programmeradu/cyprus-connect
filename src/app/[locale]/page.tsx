@@ -44,7 +44,11 @@ export default function Home() {
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link href="/" className="text-lg font-bold gradient-text tracking-tight">
+          <Link
+            href="/"
+            className="gradient-text text-2xl font-semibold italic tracking-tight"
+            style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}
+          >
             VerdeIQ
           </Link>
           <div className="flex items-center gap-1.5">
