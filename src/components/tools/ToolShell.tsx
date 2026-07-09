@@ -34,8 +34,9 @@ type Props = {
 };
 
 const SANS: React.CSSProperties = {
-  fontFamily: "var(--editorial-sans)",
-  fontFeatureSettings: '"ss01", "ss02", "cv11"',
+  fontFamily: '"Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif',
+  fontFeatureSettings: '"ss01", "cv11"',
+  letterSpacing: "-0.005em",
 };
 
 export default function ToolShell({
