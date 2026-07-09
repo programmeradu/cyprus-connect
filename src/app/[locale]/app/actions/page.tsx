@@ -442,7 +442,7 @@ OR
       {/* Stats Cards with Trend Charts */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <motion.div 
-          className="glass-strong rounded-xl p-4 border border-border/50"
+          className="surface-card p-4 border border-border/50"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -452,7 +452,7 @@ OR
           <MiniTrendChart data={completedTrend} />
         </motion.div>
         <motion.div 
-          className="glass-strong rounded-xl p-4 border border-border/50"
+          className="surface-card p-4 border border-border/50"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -462,7 +462,7 @@ OR
           <MiniTrendChart data={availableTrend} />
         </motion.div>
         <motion.div 
-          className="glass-strong rounded-xl p-4 border border-border/50"
+          className="surface-card p-4 border border-border/50"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -536,7 +536,7 @@ OR
               >
                 {/* AI Badge Indicator */}
                 <div className="absolute -top-2 -right-2 z-10">
-                  <div className="glass-strong rounded-full px-2 py-1 border border-primary/30 flex items-center gap-1">
+                  <div className="bg-card rounded-[4px] px-2 py-1 border border-primary/30 flex items-center gap-1">
                     <AIGenerateIcon className="w-3 h-3 text-primary" />
                     <span className="text-[10px] font-medium text-primary">AI</span>
                   </div>

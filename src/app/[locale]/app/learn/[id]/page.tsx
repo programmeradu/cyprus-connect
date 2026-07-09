@@ -229,7 +229,7 @@ export default function CourseDetailsPage() {
           {/* Main Content - Course Overview */}
           <div className="lg:col-span-2 space-y-4">
             {/* Course Info */}
-            <div className="glass-strong rounded-xl p-4">
+            <div className="surface-card p-4">
               {/* Course Thumbnail */}
               {thumbnailUrl && (
                 <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
@@ -299,7 +299,7 @@ export default function CourseDetailsPage() {
             </div>
 
             {/* Course Curriculum */}
-            <div className="glass-strong rounded-xl p-4">
+            <div className="surface-card p-4">
               <h2 className="text-base font-bold mb-3">Course Curriculum</h2>
 
               <div className="space-y-2">
@@ -400,7 +400,7 @@ export default function CourseDetailsPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="glass-strong rounded-xl p-4 text-center"
+                className="surface-card p-4 text-center"
               >
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
                   <Award className="w-6 h-6 text-primary" />
@@ -419,7 +419,7 @@ export default function CourseDetailsPage() {
             )}
 
             {/* What You'll Learn */}
-            <div className="glass-strong rounded-xl p-4">
+            <div className="surface-card p-4">
               <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-primary" />
                 What You'll Learn

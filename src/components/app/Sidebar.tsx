@@ -69,15 +69,9 @@ export const Sidebar = () => {
   const [complianceScore, setComplianceScore] = useState<number | null>(null);
   const [urgentItems, setUrgentItems] = useState(0);
 
-  // Get display name and initials
+  // Get display name (avatar image handled via user.image if present).
   const displayName = user?.name || session?.user?.name || "User";
   const displayEmail = user?.email || session?.user?.email || "";
-  const initials = displayName
-    .split(" ")
-    .map(n => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "U";
 
   // Fetch compliance data
   useEffect(() => {
@@ -115,7 +109,7 @@ export const Sidebar = () => {
       {/* Brand */}
       <div className="p-4 border-b border-border/50">
         <Link href="/app" className="flex items-center gap-2 group">
-          <h1 className="text-base font-bold gradient-text">VerdeIQ</h1>
+          <h1 className="text-base font-semibold text-foreground" style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}>VerdeIQ</h1>
         </Link>
       </div>
 
@@ -188,23 +182,18 @@ export const Sidebar = () => {
         
         {/* User Info */}
         <Link href="/app/settings" className="block">
-          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all-smooth cursor-pointer">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground text-xs font-bold">
-              {initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              {isUserLoading ? (
-                <div className="space-y-1">
-                  <div className="h-3 w-20 bg-muted animate-pulse rounded" />
-                  <div className="h-2 w-16 bg-muted animate-pulse rounded" />
-                </div>
-              ) : (
-                <>
-                  <p className="text-xs font-medium truncate">{displayName}</p>
-                  <p className="text-[10px] text-muted-foreground truncate">{displayEmail}</p>
-                </>
-              )}
-            </div>
+          <div className="p-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
+            {isUserLoading ? (
+              <div className="space-y-1">
+                <div className="h-3 w-24 bg-muted animate-pulse rounded" />
+                <div className="h-2 w-20 bg-muted animate-pulse rounded" />
+              </div>
+            ) : (
+              <>
+                <p className="text-xs font-medium text-foreground break-words leading-tight">{displayName}</p>
+                <p className="text-[10px] text-muted-foreground break-all leading-tight mt-0.5">{displayEmail}</p>
+              </>
+            )}
           </div>
         </Link>
       </div>
@@ -222,7 +211,7 @@ export const Sidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 glass-strong border-r border-border/50 z-40">
+      <aside className="hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 bg-card border-r border-border/50 z-40">
         <SidebarContent />
       </aside>
 
@@ -232,16 +221,16 @@ export const Sidebar = () => {
           <>
             {/* Overlay */}
             <motion.div
-              className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+              className="fixed inset-0 bg-foreground/60 z-40 lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
             />
-            
+
             {/* Sidebar */}
             <motion.aside
-              className="fixed left-0 top-0 h-screen w-64 glass-strong border-r border-border/50 z-50 lg:hidden flex flex-col"
+              className="fixed left-0 top-0 h-screen w-64 bg-card border-r border-border/50 z-50 lg:hidden flex flex-col"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}

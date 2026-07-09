@@ -401,7 +401,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.3 + index * 0.05 }}
-                      className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20 flex items-center justify-center text-[11px] font-bold text-primary hover:scale-110 transition-transform cursor-default"
+                      className="w-9 h-9 rounded-md bg-primary/10 border border-primary/20 flex items-center justify-center text-[11px] font-semibold text-primary tabular-nums transition-colors cursor-default"
                     >
                       {goal}
                     </motion.div>
@@ -500,7 +500,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-foreground/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowPurchaseDialog(false)}
         >
           <motion.div

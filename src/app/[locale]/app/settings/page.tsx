@@ -305,7 +305,7 @@ function SettingsContent() {
         <>
           {/* Profile Section */}
           <motion.div
-            className="glass-strong rounded-xl p-4 mb-4"
+            className="surface-card p-4 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -386,7 +386,7 @@ function SettingsContent() {
 
           {/* Regional & Currency Preferences */}
           <motion.div
-            className="glass-strong rounded-xl p-4 mb-4"
+            className="surface-card p-4 mb-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
@@ -425,7 +425,7 @@ function SettingsContent() {
 
           {/* Danger Zone */}
           <motion.div
-            className="glass-strong rounded-xl p-4 border-2 border-destructive/20"
+            className="surface-card p-4 border-2 border-destructive/20"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -439,7 +439,7 @@ function SettingsContent() {
             <p className="text-xs text-muted-foreground mb-3">
               {t("dangerBody")}
             </p>
-            <PremiumButton variant="outline" size="sm" className="text-[10px] h-7 border-destructive text-destructive hover:bg-destructive hover:text-white">
+            <PremiumButton variant="outline" size="sm" className="text-[10px] h-7 border-destructive text-destructive hover:bg-destructive hover:text-primary-foreground">
               {t("deleteAccount")}
             </PremiumButton>
           </motion.div>
@@ -476,7 +476,7 @@ function SettingsContent() {
       {activeTab === 'notifications' && (
         <motion.div
           id="notifications"
-          className="glass-strong rounded-xl p-4 mb-4"
+          className="surface-card p-4 mb-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -514,7 +514,7 @@ function SettingsContent() {
                     }`}
                   >
                     <span
-                      className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                      className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background transition-transform ${
                         notificationPrefs[item.key] ? "translate-x-4" : "translate-x-0"
                       }`}
                     />

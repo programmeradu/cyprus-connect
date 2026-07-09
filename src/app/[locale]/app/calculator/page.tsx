@@ -568,7 +568,7 @@ Return ONLY valid JSON (no markdown, no explanations):
       {!results ? (
         <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-6">
           {/* LEFT COLUMN - AI Document Analysis (70%) */}
-          <div className="glass-strong rounded-xl p-8">
+          <div className="surface-card p-8">
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
@@ -671,7 +671,7 @@ Return ONLY valid JSON (no markdown, no explanations):
           </div>
 
           {/* RIGHT COLUMN - Manual Form Entry (30%) */}
-          <div className="glass-strong rounded-xl p-6">
+          <div className="surface-card p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-bold">{t("manual.title")}</h2>
               <Badge variant="primary" size="sm">{t("manual.monthly")}</Badge>
@@ -796,7 +796,7 @@ Return ONLY valid JSON (no markdown, no explanations):
       ) : (
         /* Results Display */
         <motion.div
-          className="glass-strong rounded-xl p-8"
+          className="surface-card p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >

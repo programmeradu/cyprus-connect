@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BellIcon } from "@/components/icons/CustomIcons";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { Bell, Check, Trash2, Loader2 } from "lucide-react";
+import { Check, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -258,14 +258,15 @@ export const NotificationBell = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={handleBellClick}
-        className="relative w-9 h-9 rounded-lg border border-border/50 bg-card/50 hover:bg-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-all-smooth"
+        aria-label={t("title")}
+        className="relative w-9 h-9 rounded-md border border-foreground/15 bg-card hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
       >
         <BellIcon className="w-4 h-4" />
         {unreadCount > 0 && (
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center"
+            className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-[4px] bg-primary text-primary-foreground text-[10px] font-semibold flex items-center justify-center"
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </motion.span>
@@ -279,7 +280,7 @@ export const NotificationBell = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] glass-strong rounded-xl shadow-premium overflow-hidden z-50"
+            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] glass-strong rounded-lg shadow-premium overflow-hidden z-50"
           >
             {/* Header */}
             <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
@@ -308,12 +309,13 @@ export const NotificationBell = () => {
                   <Loader2 className="w-6 h-6 animate-spin text-primary" />
                 </div>
               ) : notifications.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 px-4">
-                  <Bell className="w-12 h-12 text-muted-foreground/30 mb-3" />
-                  <p className="text-sm text-muted-foreground text-center">
+                <div className="py-10 px-6 text-center">
+                  <p className="text-sm font-medium text-foreground">
                     {t("empty")}
                   </p>
-
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t("unread", { count: 0 })}
+                  </p>
                 </div>
               ) : (
                 <div className="divide-y divide-border/50">

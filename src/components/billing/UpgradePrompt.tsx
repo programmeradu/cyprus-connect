@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import Link from "next/link";
-import { Lock, Zap, Crown } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface UpgradePromptProps {
@@ -27,22 +26,15 @@ export const UpgradePrompt = ({
     pro: {
       name: tPlans("professional"),
       price: "$49/mo",
-      icon: Zap,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
     },
     enterprise: {
       name: tPlans("enterprise"),
       price: "$199/mo",
-      icon: Crown,
-      color: "text-purple-600 dark:text-purple-400",
-      bgColor: "bg-purple-500/10",
     },
   };
 
 
   const plan = planDetails[requiredPlan];
-  const Icon = plan.icon;
 
   return (
     <motion.div
@@ -51,22 +43,18 @@ export const UpgradePrompt = ({
       className="flex items-center justify-center min-h-[400px] p-4"
     >
       <PremiumCard className="max-w-md w-full p-8 text-center">
-        {/* Icon */}
-        <motion.div
-          className={`w-20 h-20 rounded-2xl ${plan.bgColor} flex items-center justify-center mx-auto mb-6`}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-        >
-          <Lock className={`w-10 h-10 ${plan.color}`} />
-        </motion.div>
+        {/* Eyebrow */}
+        <p className="eyebrow mb-3">
+          {t("planFeature", { name: plan.name })}
+        </p>
 
         {/* Title */}
         <motion.h3
-          className="text-2xl font-bold mb-3"
+          className="text-2xl font-semibold mb-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15 }}
+          style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}
         >
           {feature}
         </motion.h3>
@@ -77,24 +65,11 @@ export const UpgradePrompt = ({
             className="text-sm text-muted-foreground mb-6 leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.25 }}
           >
             {description}
           </motion.p>
         )}
-
-        {/* Plan Badge */}
-        <motion.div
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${plan.bgColor} mb-6`}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Icon className={`w-4 h-4 ${plan.color}`} />
-          <span className={`text-sm font-semibold ${plan.color}`}>
-            {t("planFeature", { name: plan.name })}
-          </span>
-        </motion.div>
 
         {/* Feature List */}
         <motion.div

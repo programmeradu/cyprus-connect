@@ -136,7 +136,7 @@ export async function sendMilestoneEmail(data: MilestoneEmailData): Promise<bool
         <head>
           <meta charset="utf-8" />
           <style>
-            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #f5f5f5; padding: 20px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #f5f5f5; padding: 20px; }
             .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
             .logo { font-size: 28px; font-weight: bold; color: #22c55e; text-align: center; margin-bottom: 30px; }
             .title { font-size: 24px; font-weight: bold; color: #1a1a1a; margin-bottom: 20px; }
@@ -212,7 +212,7 @@ export async function sendWelcomeEmail(
         <head>
           <meta charset="utf-8" />
           <style>
-            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #f5f5f5; padding: 20px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #f5f5f5; padding: 20px; }
             .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
             .logo { font-size: 28px; font-weight: bold; color: #22c55e; text-align: center; margin-bottom: 30px; }
             .title { font-size: 24px; font-weight: bold; color: #1a1a1a; margin-bottom: 20px; }

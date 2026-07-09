@@ -29,18 +29,17 @@ export function ThemeToggle() {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative w-9 h-9 rounded-full glass flex items-center justify-center group"
-      whileHover={{ scale: 1.05 }}
+      className="relative w-9 h-9 rounded-md border border-foreground/15 bg-card hover:bg-muted flex items-center justify-center group transition-colors"
       whileTap={{ scale: 0.95 }}
-      aria-label={t("label")}
+      aria-label={theme === "dark" ? t("label") + " — switch to light" : t("label") + " — switch to dark"}
     >
       {/* Animated background glow */}
       <motion.div
-        className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100"
+        className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100"
         animate={{
-          boxShadow: theme === "dark" 
-            ? "0 0 20px rgba(100, 255, 180, 0.3)" 
-            : "0 0 20px rgba(255, 200, 80, 0.3)"
+          boxShadow: theme === "dark"
+            ? "0 0 20px rgba(100, 255, 180, 0.15)"
+            : "0 0 20px rgba(255, 200, 80, 0.15)"
         }}
         transition={{ duration: 0.3 }}
       />

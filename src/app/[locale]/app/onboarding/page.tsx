@@ -244,7 +244,7 @@ export default function OnboardingPage() {
   if (isLoadingUserData || isSessionLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
-        <div className="glass-strong rounded-3xl p-8 text-center">
+        <div className="surface-card p-8 text-center">
           <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
           <p className="text-sm text-muted-foreground">{t("loading")}</p>
         </div>
@@ -267,7 +267,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="glass-strong rounded-3xl p-8 md:p-12"
+              className="surface-card p-8 md:p-12"
             >
               {/* Title at Top - Spans Full Width */}
               <div className="mb-8">
@@ -343,7 +343,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="glass-strong rounded-3xl p-8 md:p-12"
+              className="surface-card p-8 md:p-12"
             >
               {/* Progress bar */}
               <div className="mb-8">
@@ -544,7 +544,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="glass-strong rounded-3xl p-8 md:p-12"
+              className="surface-card p-8 md:p-12"
             >
               <div className="text-center mb-8">
                 <div className="inline-flex gap-1 mb-3">
@@ -660,7 +660,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="glass-strong rounded-3xl p-8 md:p-12"
+              className="surface-card p-8 md:p-12"
             >
               <div className="text-center mb-8">
                 <div className="inline-flex gap-1 mb-3">
@@ -730,14 +730,14 @@ export default function OnboardingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-foreground/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowUploadDialog(false)}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="glass-strong rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="surface-card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">

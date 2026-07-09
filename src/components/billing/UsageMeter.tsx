@@ -82,9 +82,9 @@ export const UsageMeter = ({
       {!unlimited && (
         <>
           {/* Progress Bar */}
-          <div className="relative h-2 bg-muted rounded-full overflow-hidden mb-2">
+          <div className="relative h-2 bg-muted rounded-[2px] overflow-hidden mb-2">
             <motion.div
-              className={`absolute inset-y-0 left-0 rounded-full ${
+              className={`absolute inset-y-0 left-0 rounded-[2px] ${
                 isAtLimit
                   ? "bg-destructive"
                   : isNearLimit

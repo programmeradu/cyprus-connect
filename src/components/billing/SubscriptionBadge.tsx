@@ -12,27 +12,27 @@ export const SubscriptionBadge = () => {
   const { plan, isLoading } = useSubscription();
 
   if (isSessionPending || !session?.user) return null;
-  if (isLoading) return <div className="h-7 w-16 bg-muted/50 animate-pulse rounded-full" />;
+  if (isLoading) return <div className="h-7 w-16 bg-muted/50 animate-pulse rounded-[4px]" />;
 
   const planId = plan?.id || "free";
   const planName = planId === "free" ? tPlans("free") : plan?.name;
 
   const badgeColor =
     planId === "pro" || planId === "enterprise"
-      ? "border-primary text-primary"
-      : "border-muted-foreground/50 text-muted-foreground";
+      ? "border-primary/60 text-primary"
+      : "border-foreground/20 text-muted-foreground";
+  // Plan-tier emoji is an approved exception (see mem://design/logos-and-assets).
   const badgeIcon = planId === "enterprise" ? "👑" : planId === "pro" ? "⭐" : "🌱";
 
   return (
     <Link href="/pricing">
       <motion.div
-        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border bg-transparent ${badgeColor} text-xs font-semibold cursor-pointer transition-all hover:bg-accent/50`}
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 200 }}
-        whileHover={{ y: -1 }}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[4px] border bg-transparent ${badgeColor} text-xs font-medium cursor-pointer transition-colors hover:bg-muted/50`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
       >
-        <span>{badgeIcon}</span>
+        <span aria-hidden>{badgeIcon}</span>
         <span>{planName}</span>
       </motion.div>
     </Link>

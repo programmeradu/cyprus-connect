@@ -79,11 +79,16 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
           
           {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
-            <button 
+            <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-9 h-9 rounded-lg border border-border/50 bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground transition-all-smooth hover:scale-105"
+              aria-label="Account menu"
+              className="w-9 h-9 rounded-md border border-foreground/15 bg-card hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors overflow-hidden"
             >
-              <UserIcon className="w-4 h-4" />
+              {session?.user?.image ? (
+                <img src={session.user.image} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <UserIcon className="w-4 h-4" />
+              )}
             </button>
 
             {/* Dropdown Menu */}
@@ -93,12 +98,12 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 mt-2 w-56 glass-strong rounded-xl shadow-premium overflow-hidden z-50"
+                className="absolute right-0 mt-2 w-64 glass-strong rounded-lg shadow-premium overflow-hidden z-50"
               >
                 {/* User Info */}
                 <div className="px-4 py-3 border-b border-border/50">
-                  <p className="text-sm font-medium truncate">{session?.user?.name || t("defaultUser")}</p>
-                  <p className="text-xs text-muted-foreground truncate">{session?.user?.email}</p>
+                  <p className="text-sm font-medium text-foreground break-words leading-tight">{session?.user?.name || t("defaultUser")}</p>
+                  <p className="text-xs text-muted-foreground break-all leading-tight mt-0.5">{session?.user?.email}</p>
                 </div>
 
                 {/* Menu Items */}

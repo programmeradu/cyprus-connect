@@ -91,14 +91,14 @@ export default function LeaderboardPage() {
       {/* Your Rank Card */}
       {currentUser && (
         <motion.div
-          className="glass-strong rounded-xl p-5 mb-6 border-2 border-primary/30"
+          className="surface-card p-5 mb-6 border-2 border-primary/30"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground text-lg font-bold">
-                {getInitials(currentUser.name || currentUser.companyName || "YC")}
+              <div className="w-14 h-14 rounded-md bg-primary/10 border border-primary/30 flex items-center justify-center text-primary text-lg font-semibold tabular-nums" style={{ fontFamily: 'var(--editorial-display)' }}>
+                {String(currentUser.rank).padStart(2, '0')}
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -147,17 +147,17 @@ export default function LeaderboardPage() {
             return (
               <motion.div
                 key={entry.userId}
-                className={`glass rounded-xl p-4 text-center ${position === 1 ? "mt-0" : "mt-6"}`}
+                className={`surface-card p-4 text-center ${position === 1 ? "mt-0" : "mt-6"}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-2 ${
-                  position === 1 ? "bg-gradient-to-br from-yellow-400 to-yellow-600" :
-                  position === 2 ? "bg-gradient-to-br from-gray-300 to-gray-500" :
-                  "bg-gradient-to-br from-orange-400 to-orange-600"
+                <div className={`w-12 h-12 mx-auto rounded-md flex items-center justify-center mb-2 border ${
+                  position === 1 ? "bg-primary/15 border-primary/40 text-primary" :
+                  position === 2 ? "bg-muted border-foreground/20 text-foreground" :
+                  "bg-muted/60 border-foreground/15 text-foreground/70"
                 }`}>
-                  <TrophyIcon className="w-6 h-6 text-white" />
+                  <span className="text-lg font-semibold tabular-nums" style={{ fontFamily: 'var(--editorial-display)' }}>{String(position).padStart(2, '0')}</span>
                 </div>
                 <p className="text-xs font-bold mb-1 break-words">{entry.companyName || entry.name}</p>
                 <p className="text-[10px] text-muted-foreground mb-1">{t("podiumCredits", { credits: entry.totalCredits })}</p>
@@ -171,7 +171,7 @@ export default function LeaderboardPage() {
 
       {/* Full Leaderboard */}
       <motion.div
-        className="glass-strong rounded-xl p-5"
+        className="surface-card p-5"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -199,10 +199,10 @@ export default function LeaderboardPage() {
                 >
                   <div className="flex items-center gap-3 p-3">
                     <div className="w-8 text-sm font-bold text-muted-foreground">#{entry.rank}</div>
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold ${
-                      isCurrentUser ? "bg-gradient-to-br from-primary to-primary/60 text-primary-foreground" : "bg-muted text-foreground"
-                    }`}>
-                      {getInitials(entry.name || entry.companyName || "??")}
+                    <div className={`w-10 h-10 rounded-md flex items-center justify-center text-xs font-semibold tabular-nums border ${
+                      isCurrentUser ? "bg-primary/10 border-primary/30 text-primary" : "bg-muted border-foreground/10 text-muted-foreground"
+                    }`} style={{ fontFamily: 'var(--editorial-display)' }}>
+                      {String(entry.rank).padStart(2, '0')}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
