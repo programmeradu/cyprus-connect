@@ -157,6 +157,7 @@ export default function Home() {
             <DashboardDemo landingMode />
           </div>
         </motion.div>
+        </div>
       </section>
 
       <SectionDivider />
