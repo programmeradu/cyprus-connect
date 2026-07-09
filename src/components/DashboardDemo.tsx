@@ -1399,7 +1399,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           
                           {/* Content */}
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-medium mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                            <h4 className="text-sm font-medium mb-1 group-hover:text-primary transition-colors">
                               {item.title}
                             </h4>
                             <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
@@ -1818,7 +1818,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 </div>
                               ) : humidityInsight ? (
                                 <div>
-                                  <span className="text-[10px] font-bold text-primary uppercase tracking-wide">
+                                  <span className="eyebrow text-primary">
                                     {getInsightTypeLabel(humidityInsight.type)}:
                                   </span>
                                   <p className="text-[10px] text-muted-foreground leading-tight mt-1">
@@ -1882,7 +1882,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 </div>
                               ) : windInsight ? (
                                 <div>
-                                  <span className="text-[10px] font-bold text-primary uppercase tracking-wide">
+                                  <span className="eyebrow text-primary">
                                     {getInsightTypeLabel(windInsight.type)}:
                                   </span>
                                   <p className="text-[10px] text-muted-foreground leading-tight mt-1">

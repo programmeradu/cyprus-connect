@@ -78,7 +78,7 @@ export default function CbamEstimator({ locale }: Props) {
     <div className="not-prose my-14 border-y border-foreground/15">
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <div className="flex items-baseline justify-between gap-6">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="eyebrow">
             {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
           </p>
           <p className="tabular-nums text-[11px] text-foreground/40">03 / 03</p>
@@ -140,17 +140,17 @@ export default function CbamEstimator({ locale }: Props) {
         </div>
 
         <div className="border-l border-foreground/10 pl-8 sm:pl-10">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="eyebrow">
             {l.exposure}
           </p>
           <p className="mt-3 text-[32px] font-semibold tabular-nums leading-none tracking-[-0.02em]">
             {nf.format(Math.round(emissions))}
           </p>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">tCO₂e</p>
+          <p className="mt-2 eyebrow text-foreground/50">tCO₂e</p>
 
           <div className="my-8 border-t border-foreground/10" />
 
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">{l.cost}</p>
+          <p className="eyebrow">{l.cost}</p>
           <p className="mt-3 text-[56px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[72px]">
             {cf.format(cost)}
           </p>

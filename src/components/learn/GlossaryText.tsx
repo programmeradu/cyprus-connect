@@ -61,7 +61,7 @@ function GlossaryTerm({ raw, entry, locale }: { raw: string; entry: GlossaryEntr
         role="tooltip"
         className="pointer-events-none absolute left-1/2 top-full z-40 mt-2 hidden w-72 -translate-x-1/2 rounded-xl border bg-popover p-3 text-left text-sm font-normal leading-relaxed text-popover-foreground shadow-lg group-hover:block group-focus-within:pointer-events-auto group-focus-within:block sm:w-80"
       >
-        <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+        <span className="mb-1 block eyebrow text-primary">
           {entry.term}
         </span>
         <span className="block whitespace-normal text-foreground/85">{definition}</span>

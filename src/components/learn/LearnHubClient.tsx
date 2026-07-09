@@ -125,7 +125,7 @@ export default function LearnHubClient({
 
       {/* Header — editorial, no pill, no icon */}
       <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary sm:text-xs">
+        <p className="eyebrow text-primary sm:text-xs">
           VerdeIQ Learn
         </p>
         <h1
@@ -146,7 +146,7 @@ export default function LearnHubClient({
       {showFeatured && (
         <section className="mb-16 sm:mb-20">
           <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
-            <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-foreground/60">
+            <p className="eyebrow">
               {featuredLabel}
             </p>
             <p className="text-[11px] tabular-nums text-foreground/40">
@@ -175,7 +175,7 @@ export default function LearnHubClient({
                   />
                 </div>
                 <div className="mt-5">
-                  <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary">
+                  <p className="eyebrow text-primary">
                     {p.eyebrow}
                     {p.hasWidget && (
                       <span className="ml-2 text-foreground/40">· {interactiveLabel}</span>
@@ -310,7 +310,7 @@ export default function LearnHubClient({
                           />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary">
+                          <p className="eyebrow text-primary">
                             {p.eyebrow}
                             {p.hasWidget && (
                               <span className="ml-2 text-foreground/40">· {interactiveLabel}</span>

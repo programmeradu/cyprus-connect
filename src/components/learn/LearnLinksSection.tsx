@@ -90,7 +90,7 @@ export function LearnLinksSection() {
                 href={`/learn/${p.slug}`}
                 className="group block h-full rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm p-4 hover:border-primary/40 hover:bg-card/70 transition-all"
               >
-                <div className="text-[10px] font-medium tracking-wider uppercase text-primary/80 mb-2">
+                <div className="eyebrow text-primary mb-2">
                   {p.eyebrow}
                 </div>
                 <h3 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">

@@ -61,7 +61,7 @@ export default function RelatedSuggestions({ currentSlug, locale, context, keywo
       aria-label={heading}
       className="not-prose my-10 border-t border-foreground/15 pt-6"
     >
-      <p className="mb-5 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+      <p className="mb-5 eyebrow">
         {heading}
       </p>
       <div className="grid gap-0 divide-y divide-foreground/10 border-b border-foreground/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0">

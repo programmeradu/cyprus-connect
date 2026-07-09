@@ -94,7 +94,7 @@ export default function ScopeCalculator({ locale }: Props) {
     <div className="not-prose my-14 border-y border-foreground/15">
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <div className="flex items-baseline justify-between gap-6">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="eyebrow">
             {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
           </p>
           <p className="tabular-nums text-[11px] text-foreground/40">01 / 03</p>
@@ -131,15 +131,15 @@ export default function ScopeCalculator({ locale }: Props) {
         </div>
 
         <div className="border-l border-foreground/10 pl-8 sm:pl-10">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="eyebrow">
             {l.total}
           </p>
           <p className="mt-3 text-[56px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[72px]">
             {total.toLocaleString(locale === "el" ? "el-CY" : "en-GB", { maximumFractionDigits: 1 })}
           </p>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">{l.unit}</p>
+          <p className="mt-2 eyebrow text-foreground/50">{l.unit}</p>
 
-          <p className="mt-8 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="mt-8 eyebrow">
             {l.split}
           </p>
           <div className="mt-4 space-y-4">

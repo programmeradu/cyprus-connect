@@ -325,21 +325,21 @@ export default function LessonViewerPage() {
         </button>
 
         <div className="flex flex-col md:flex-row md:items-start gap-6">
-          <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/5 border border-primary/10 ring-1 ring-white/20">
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 border border-border">
             {getContentIcon(lesson.contentType)}
           </div>
           <div className="flex-1 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20 shadow-sm">
+              <span className="eyebrow text-primary">
                 {lesson.contentType}
               </span>
               {lesson.completion && (
-                <span className="px-2.5 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-wider border border-green-500/20 shadow-sm flex items-center gap-1.5">
+                <span className="eyebrow text-chart-2 flex items-center gap-1.5">
                   <CheckCircle2 className="w-3 h-3" />
                   Completed
                 </span>
               )}
-              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground px-2 py-1 rounded-full bg-muted/50 border border-border/50">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{lesson.estimatedMinutes} min read</span>
               </div>

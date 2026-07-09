@@ -121,7 +121,7 @@ export default function LeaderboardPage() {
           {/* Recent Actions */}
           {currentUser.recentActions && currentUser.recentActions.length > 0 && (
             <div className="pt-4 border-t border-border/50">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium mb-2">{t("recentActions")}</p>
+              <p className="eyebrow mb-2">{t("recentActions")}</p>
               <div className="flex gap-2 flex-wrap">
                 {currentUser.recentActions.map((action: any, idx: number) => (
                   <div
