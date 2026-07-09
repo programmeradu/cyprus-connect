@@ -665,12 +665,19 @@ export const DashboardDemo = ({ landingMode = false, focusTab }: DashboardDemoPr
   const [windInsight, setWindInsight] = useState<{type: string, text: string} | null>(null)
   const [insightsLoading, setInsightsLoading] = useState(false)
 
-  const tabs = [
+  const allTabs = [
     { id: "carbon" as TabType, label: t("tabs.carbon"), icon: <Gauge className="w-4 h-4" strokeWidth={1.75} /> },
     { id: "report" as TabType, label: t("tabs.report"), icon: <FileText className="w-4 h-4" strokeWidth={1.75} /> },
     { id: "weather" as TabType, label: t("tabs.weather"), icon: <CloudSun className="w-4 h-4" strokeWidth={1.75} /> },
     { id: "media" as TabType, label: t("tabs.media"), icon: <ImageIcon className="w-4 h-4" strokeWidth={1.75} /> },
   ]
+  // Report Visuals is now a standalone tool at /tools/report-visuals, so it's
+  // hidden from the landing embed; the /tools page renders it via focusTab.
+  const tabs = focusTab
+    ? allTabs.filter((tab) => tab.id === focusTab)
+    : landingMode
+      ? allTabs.filter((tab) => tab.id !== "report")
+      : allTabs
 
   // Get user's location when weather tab is active
   useEffect(() => {
