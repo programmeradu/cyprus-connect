@@ -15,6 +15,7 @@
  * rather than restyling it.
  */
 
+import type { ComponentType } from "react";
 import {
   Leaf,
   LayoutGrid,
