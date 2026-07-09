@@ -140,11 +140,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="viq-kicker">
-            <span className="viq-step-num">01</span>
-            <span>{l.interactive}</span>
-          </p>
+        <div className="flex flex-wrap items-baseline justify-end gap-4">
           <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
         </div>
 
@@ -222,9 +218,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
       <div className="py-8 sm:py-10">
         {onOverview && (
           <div className="max-w-2xl">
-            <p className="viq-section-label">
-              <span className="viq-step-num">00</span> {l.stepOverview}
-            </p>
+            <p className="viq-section-label">{l.stepOverview}</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em] text-foreground">
               {l.reportTitle}
             </h3>
@@ -249,9 +243,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
 
         {currentDisclosure && (
           <div className="max-w-3xl">
-            <p className="viq-section-label">
-              <span className="viq-step-num">{String(step).padStart(2, "0")}</span> {l.disclosure} {currentDisclosure.code}
-            </p>
+            <p className="viq-section-label">{l.disclosure} {currentDisclosure.code}</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em] text-foreground">
               {currentDisclosure.title[locale]}
             </h3>
@@ -345,9 +337,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
 
         {onReview && (
           <div>
-            <p className="viq-section-label">
-              <span className="viq-step-num">{String(totalSteps).padStart(2, "0")}</span> {l.stepFinal}
-            </p>
+            <p className="viq-section-label">{l.stepFinal}</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em] text-foreground">
               {l.reportTitle}
             </h3>

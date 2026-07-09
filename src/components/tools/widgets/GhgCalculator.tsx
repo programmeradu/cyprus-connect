@@ -317,13 +317,9 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Tool header + controls */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="viq-kicker">
-            <span className="viq-step-num">01</span>
-            <span>{locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}</span>
-          </p>
+        <div className="flex flex-wrap items-baseline justify-end gap-4">
           <p className="viq-meta print:hidden sm:text-right">
-            {locale === "el" ? "Ανοιχτή μέθοδος" : "Open methodology"}
+            {l.factorNote}
           </p>
         </div>
 

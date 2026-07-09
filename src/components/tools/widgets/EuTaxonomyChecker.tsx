@@ -215,11 +215,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="viq-kicker">
-            <span className="viq-step-num">01</span>
-            <span>{l.interactive}</span>
-          </p>
+        <div className="flex flex-wrap items-baseline justify-end gap-4">
           <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
         </div>
         <p className="mt-4 max-w-2xl text-[13px] text-foreground/60 print:hidden">{l.disclaimer}</p>
@@ -251,9 +247,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
 
       {/* Step 1 — search + pick */}
       <div className="border-b border-foreground/10 py-8 sm:py-10 print:hidden">
-        <p className="viq-section-label">
-          <span className="viq-step-num">01</span> {l.step01}
-        </p>
+        <p className="viq-section-label">{l.step01}</p>
         <input
           type="text"
           value={query}
@@ -307,9 +301,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
 
       {/* Selected activity — always visible when set (also in print) */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <p className="viq-section-label">
-          <span className="viq-step-num">02</span> {l.selectedActivity}
-        </p>
+        <p className="viq-section-label">{l.selectedActivity}</p>
         {!activity && (
           <p className="mt-4 text-[13px] text-foreground/50">{l.selectedNone}</p>
         )}
@@ -359,9 +351,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
       {/* Step 3 — DNSH */}
       {activity && state.primary && (
         <div className="border-b border-foreground/10 py-8 sm:py-10">
-          <p className="viq-section-label">
-            <span className="viq-step-num">03</span> {l.step03}
-          </p>
+          <p className="viq-section-label">{l.step03}</p>
           <p className="mt-3 max-w-2xl text-[13px] leading-[1.6] text-foreground/60">{l.dnshIntro}</p>
           <ul className="mt-6 divide-y divide-foreground/10 border-y border-foreground/10">
             {otherObjectives.map((o) => {
@@ -390,9 +380,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
       {/* Step 4 — Safeguards */}
       {activity && state.primary && (
         <div className="border-b border-foreground/10 py-8 sm:py-10">
-          <p className="viq-section-label">
-            <span className="viq-step-num">04</span> {l.step04}
-          </p>
+          <p className="viq-section-label">{l.step04}</p>
           <p className="mt-3 max-w-2xl text-[13px] leading-[1.6] text-foreground/60">{l.safeguardsIntro}</p>
           <ul className="mt-6 divide-y divide-foreground/10 border-y border-foreground/10">
             {MIN_SAFEGUARDS.map((s, i) => (
@@ -407,9 +395,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
 
       {/* Step 5 — Verdict */}
       <div className="py-8 sm:py-10">
-        <p className="viq-section-label">
-          <span className="viq-step-num">05</span> {l.step05}
-        </p>
+        <p className="viq-section-label">{l.step05}</p>
         {verdict === "empty" && (
           <p className="mt-4 text-[13px] text-foreground/55">{l.verdictEmpty}</p>
         )}

@@ -267,11 +267,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="viq-kicker">
-            <span className="viq-step-num">01</span>
-            <span>{l.interactive}</span>
-          </p>
+        <div className="flex flex-wrap items-baseline justify-end gap-4">
           <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
         </div>
 
@@ -314,7 +310,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
       <div className="py-8 sm:py-10">
         {step === 0 && (
           <div className="max-w-2xl">
-            <p className="viq-section-label"><span className="viq-step-num">01</span> {l.step} 1</p>
+            <p className="viq-section-label">{l.step} 1</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s1Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65">{l.s1Body}</p>
             <div className="mt-6 space-y-5">
@@ -333,7 +329,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {step === 1 && (
           <div className="max-w-2xl">
-            <p className="viq-section-label"><span className="viq-step-num">02</span> {l.step} 2</p>
+            <p className="viq-section-label">{l.step} 2</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s2Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65">{l.s2Body}</p>
             <div className="mt-6 space-y-5">
@@ -353,7 +349,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {step === 2 && (
           <div className="max-w-2xl">
-            <p className="viq-section-label"><span className="viq-step-num">03</span> {l.step} 3</p>
+            <p className="viq-section-label">{l.step} 3</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s3Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65">{l.s3Body}</p>
             <div className="mt-6 space-y-6">
@@ -368,7 +364,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {step === 3 && (
           <div>
-            <p className="viq-section-label"><span className="viq-step-num">04</span> {l.step} 4</p>
+            <p className="viq-section-label">{l.step} 4</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s4Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65 print:hidden">{l.s4Body}</p>
             <p className="viq-print-note mt-2 hidden print:block">
