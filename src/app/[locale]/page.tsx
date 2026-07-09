@@ -359,6 +359,7 @@ function EditorialSection({
   titleMid,
   titleB,
   subtitle,
+  media,
   children,
 }: {
   eyebrow: string;
@@ -366,6 +367,7 @@ function EditorialSection({
   titleMid?: string;
   titleB?: string;
   subtitle?: string;
+  media?: { src: string; alt: string };
   children: React.ReactNode;
 }) {
   return (
@@ -386,7 +388,21 @@ function EditorialSection({
             </p>
           )}
         </div>
-        <div className="sm:col-span-7">{children}</div>
+        <div className="sm:col-span-7">
+          {media && (
+            <div className="mb-8 overflow-hidden rounded-md border border-border/60 bg-muted/30">
+              <img
+                src={media.src}
+                alt={media.alt}
+                width={1600}
+                height={1008}
+                loading="lazy"
+                className="h-auto w-full object-cover"
+              />
+            </div>
+          )}
+          {children}
+        </div>
       </div>
     </section>
   );
