@@ -196,6 +196,41 @@ export const TOOLS: ToolEntry[] = [
         "Επιλεξιμότητα NACE, λίστα DNSH και οδηγίες ελάχιστων εγγυήσεων.",
     },
   },
+  {
+    slug: "sbti-target-setter",
+    category: "carbon",
+    available: true,
+    primaryKeyword: "sbti target setter",
+    relatedPillars: [
+      "science-based-targets-sbti",
+      "net-zero-roadmap-smes",
+      "ghg-protocol-guide",
+    ],
+    heroImage: "/assets/tools/sbti-target-setter/hero.jpg",
+    updatedAt: "2026-07-09",
+    en: {
+      metaTitle: "SBTi Target Setter — Free Science-Based Target Tool | VerdeIQ",
+      metaDescription:
+        "Free SBTi target-setting tool. Enter base-year Scope 1, 2 and 3 emissions, pick ambition, get a 1.5°C-aligned near-term target and net-zero pathway. No signup.",
+      eyebrow: "SBTi · Net-Zero Standard v1.2",
+      title: "SBTi target setter — near-term & net-zero",
+      subtitle:
+        "Convert your base-year emissions into an SBTi-aligned near-term target and long-term net-zero pathway using the Corporate Net-Zero Standard's linear contraction method. Bilingual guided form, PDF export, no signup.",
+      cardDescription:
+        "1.5°C-aligned near-term target and 2050 net-zero pathway from your base-year Scope 1, 2 and 3 emissions.",
+    },
+    el: {
+      metaTitle: "Εργαλείο SBTi — Δωρεάν επιστημονικός στόχος | VerdeIQ",
+      metaDescription:
+        "Δωρεάν εργαλείο SBTi. Εισαγάγετε Scope 1, 2, 3 έτους βάσης, επιλέξτε φιλοδοξία, λάβετε στόχο 1,5°C και τροχιά net-zero. Χωρίς εγγραφή.",
+      eyebrow: "SBTi · Net-Zero Standard v1.2",
+      title: "Εργαλείο SBTi — βραχυπρόθεσμος στόχος & net-zero",
+      subtitle:
+        "Μετατρέψτε τις εκπομπές έτους βάσης σε ευθυγραμμισμένο με SBTi βραχυπρόθεσμο στόχο και μακροπρόθεσμη τροχιά net-zero, με γραμμική μείωση κατά το Corporate Net-Zero Standard.",
+      cardDescription:
+        "Στόχος 1,5°C και τροχιά net-zero 2050 από τις εκπομπές Scope 1, 2, 3 του έτους βάσης.",
+    },
+  },
 ];
 
 export const TOOL_SLUGS = TOOLS.map((t) => t.slug);
