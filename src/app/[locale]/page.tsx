@@ -103,8 +103,8 @@ export default function Home() {
               backgroundPosition: '65% 50%',
             }}
           />
-          {/* Mobile scrim: readable text over full-bleed photo */}
-          <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-background/90 via-background/70 to-background/95 dark:from-background/85 dark:via-background/60 dark:to-background/95" />
+          {/* Mobile scrim: subtle top wash so text is readable while photo stays clearly visible */}
+          <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-background/85 via-background/40 to-background/70 dark:from-background/80 dark:via-background/40 dark:to-background/85" />
           {/* Desktop scrim: fade image to the right so left column stays readable */}
           <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
