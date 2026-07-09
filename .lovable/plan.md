@@ -103,12 +103,12 @@ Each country page MUST have ≥ 300 words of unique copy: country-specific hero 
 
 ## Build order
 
-1. **Workstream B first** — biggest indexation impact, reuses shipped widget, unlocks 32 URLs quickly.
-2. **A1 SBTi Target Setter** — highest complementarity with existing GHG Calculator (users who compute can immediately set a target).
+1. **Workstream B first — 🟡 IN PROGRESS (flagship launch)** — Shipped 8 country pages (16 URLs across EN/EL) for CY, GR, DE, FR, ES, IT, NL, PL. Each page carries genuinely differentiated content: national grid factor with cited source, domestic SME worked example, 2 country-specific FAQs, and country-mesh internal links. Widget updated with `initialRegion` / `lockRegion` / `storageKey` props. Parent `/tools/ghg-calculator` links to all 8 country versions. Sitemap auto-emits the 16 country URLs. Held back for future iteration: IE, PT, BE, AT, SE, FI, UK (need domestic-source research before shipping to stay above the anti-thin-content bar).
+2. **A1 SBTi Target Setter** — next up.
 3. **A2 CSRD Gap Analyzer** — highest search-intent match, cross-links to `/learn/csrd` pillar.
 4. **A3 Green Claims Checker** — newest regime; keeps ruleset small and citation-heavy for E-E-A-T.
 
-Ship each in its own turn (do not batch all 3 tools + 32 pages into one turn — the plan file exists so we don't have to).
+Ship each in its own turn (do not batch all 3 tools + country pages into one turn — the plan file exists so we don't have to).
 
 ---
 
