@@ -328,7 +328,7 @@ export default function Home() {
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -top-6 right-2 hidden w-[320px] select-none opacity-[0.22] mix-blend-multiply dark:opacity-[0.28] dark:invert dark:mix-blend-screen sm:block sm:w-[420px] lg:w-[520px] lg:-top-10 lg:-right-10"
+          className="pointer-events-none absolute -top-6 right-2 hidden w-[320px] select-none opacity-60 mix-blend-multiply dark:opacity-80 dark:mix-blend-screen sm:block sm:w-[440px] lg:w-[560px] lg:-top-12 lg:-right-8"
         />
 
         <div className="relative max-w-3xl">
