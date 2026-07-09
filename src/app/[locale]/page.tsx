@@ -38,7 +38,7 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground antialiased">
+    <div className="relative min-h-screen overflow-hidden text-foreground antialiased">
       {/* Premium 4K Background Image */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div
