@@ -55,7 +55,8 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const switchTo = (next: "en" | "el") => {
     if (next === locale) return;
     startTransition(() => {
-      router.replace(pathname, { locale: next });
+      // Object form is required — the string form no-ops on locale-only switches.
+      router.replace({ pathname }, { locale: next });
     });
   };
 
