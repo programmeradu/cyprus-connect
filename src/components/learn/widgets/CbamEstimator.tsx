@@ -133,7 +133,7 @@ export default function CbamEstimator({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="h-[3px] w-full cursor-pointer appearance-none rounded-none bg-foreground/10 accent-foreground"
+                className="verdeiq-range"
               />
             </div>
           ))}
