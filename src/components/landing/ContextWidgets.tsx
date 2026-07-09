@@ -394,39 +394,41 @@ function DeadlineVisual({
 }) {
   if (!dateISO) return null;
   const d = new Date(dateISO);
-  const month = d
-    .toLocaleDateString(locale, { month: "short" })
-    .toUpperCase();
+  const month = d.toLocaleDateString(locale, { month: "short" }).toUpperCase();
+  const weekday = d.toLocaleDateString(locale, { weekday: "short" }).toUpperCase();
   const day = d.getDate();
   const year = d.getFullYear();
   return (
     <div
-      className="hidden sm:flex relative h-[112px] w-[92px] flex-col overflow-hidden rounded-[3px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(0,0,0,0.04),0_10px_24px_-18px_rgba(0,0,0,0.35)]"
+      className="hidden sm:flex relative h-[112px] w-[96px] flex-col overflow-hidden rounded-[4px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset,0_1px_2px_rgba(0,0,0,0.04),0_14px_28px_-18px_rgba(0,0,0,0.35)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_14px_28px_-18px_rgba(0,0,0,0.6)]"
       aria-hidden
     >
-      {/* Perforation strip */}
-      <div className="absolute inset-y-0 left-[14px] w-px bg-border/70" />
-      <div className="absolute inset-y-0 left-[14px] flex -translate-x-1/2 flex-col justify-around">
-        {Array.from({ length: 9 }).map((_, i) => (
-          <span
-            key={i}
-            className="block h-[3px] w-[3px] rounded-full bg-border"
-          />
-        ))}
+      {/* Binding rings at top */}
+      <div className="pointer-events-none absolute top-[3px] left-0 right-0 flex justify-around px-4">
+        <span className="block h-[5px] w-[2px] rounded-full bg-foreground/70" />
+        <span className="block h-[5px] w-[2px] rounded-full bg-foreground/70" />
       </div>
 
-      {/* Month bar */}
-      <div className="bg-foreground py-[3px] pl-[22px] pr-2 text-left text-[9px] font-semibold uppercase tracking-[0.24em] text-background">
+      {/* Month header */}
+      <div className="relative bg-foreground pt-[10px] pb-[5px] text-center text-[9px] font-semibold uppercase tracking-[0.28em] text-background">
         {month}
       </div>
 
+      {/* Hairline under header */}
+      <div className="h-px w-full bg-foreground/10" />
+
       {/* Day numeral */}
-      <div className="flex flex-1 items-center justify-center pl-[14px] font-[family-name:var(--editorial-serif)] text-[44px] tabular-nums leading-none tracking-[-0.03em]">
-        {day}
+      <div className="flex flex-1 flex-col items-center justify-center gap-[2px]">
+        <span className="font-[family-name:var(--editorial-serif)] text-[46px] tabular-nums leading-none tracking-[-0.04em]">
+          {day}
+        </span>
+        <span className="text-[8px] uppercase tracking-[0.28em] text-muted-foreground">
+          {weekday}
+        </span>
       </div>
 
       {/* Year footer */}
-      <div className="border-t border-border/60 pl-[22px] pr-2 py-[3px] text-left text-[9px] tabular-nums tracking-[0.22em] text-muted-foreground">
+      <div className="border-t border-border/60 py-[4px] text-center text-[9px] tabular-nums tracking-[0.28em] text-muted-foreground">
         {year}
       </div>
     </div>
