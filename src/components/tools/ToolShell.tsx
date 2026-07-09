@@ -34,8 +34,9 @@ type Props = {
 };
 
 const SANS: React.CSSProperties = {
-  fontFamily: "var(--editorial-sans)",
-  fontFeatureSettings: '"ss01", "ss02", "cv11"',
+  fontFamily: '"Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif',
+  fontFeatureSettings: '"ss01", "cv11"',
+  letterSpacing: "-0.005em",
 };
 
 export default function ToolShell({
@@ -93,7 +94,7 @@ export default function ToolShell({
         <header className="mb-14 sm:mb-20">
           <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-end md:gap-14">
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-primary sm:text-xs">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary sm:text-xs">
                 {eyebrow}
               </p>
               <h1
@@ -105,7 +106,7 @@ export default function ToolShell({
               <p className="mt-5 max-w-xl text-[16px] leading-[1.55] text-foreground/70 sm:text-[18px]">
                 {subtitle}
               </p>
-              <p className="mt-6 text-[12px] tabular-nums uppercase tracking-[0.2em] text-foreground/45">
+              <p className="mt-6 text-[12px] tabular-nums uppercase tracking-[0.12em] text-foreground/45">
                 {updatedLabel} · {updatedFmt}
               </p>
             </div>
@@ -131,7 +132,7 @@ export default function ToolShell({
         <section className="mt-20 border-t border-foreground/15 pt-14 sm:mt-24">
           <div className="grid gap-10 md:grid-cols-[240px_minmax(0,1fr)] md:gap-16">
             <div>
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/55">
                 02 · {locale === "el" ? "Μεθοδολογία" : "Methodology"}
               </p>
               <h2
@@ -171,7 +172,7 @@ export default function ToolShell({
         <section className="mt-20 border-t border-foreground/15 pt-14 sm:mt-24">
           <div className="grid gap-10 md:grid-cols-[240px_minmax(0,1fr)] md:gap-16">
             <div>
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/55">
                 03 · {locale === "el" ? "Παράδειγμα" : "Worked example"}
               </p>
               <h2
@@ -191,7 +192,7 @@ export default function ToolShell({
         {faq.length > 0 && (
           <section className="mt-20 border-t border-foreground/15 pt-14 print:hidden sm:mt-24">
             <div className="mb-8">
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/55">
                 04 · FAQ
               </p>
               <h2
@@ -235,7 +236,7 @@ export default function ToolShell({
         {related.length > 0 && (
           <section className="mt-20 border-t border-foreground/15 pt-14 print:hidden sm:mt-24">
             <div className="mb-8 flex items-baseline justify-between border-b border-foreground/10 pb-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-foreground/60">
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/60">
                 05 · {relatedHeading}
               </p>
               <span className="tabular-nums text-[11px] text-foreground/40">
@@ -256,7 +257,7 @@ export default function ToolShell({
                       />
                     </div>
                     <div className="mt-4">
-                      <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary">
+                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">
                         {r.eyebrow}
                       </p>
                       <h3
