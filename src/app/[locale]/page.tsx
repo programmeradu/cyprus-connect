@@ -223,6 +223,13 @@ export default function Home() {
 
       <SectionDivider />
 
+      {/* CONTEXT WIDGETS — geo + time */}
+      <ContextWidgets />
+
+      <SectionDivider />
+
+
+
       {/* INTEGRATIONS */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <div className="mb-8 text-center eyebrow">
