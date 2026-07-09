@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "next-intl";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
-import { SiteFooter } from "@/components/legal/SiteFooter";
+// SiteFooter is rendered by the locale layout globally.
 
 type NewsItem = {
   title: string;
