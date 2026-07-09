@@ -317,13 +317,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Tool header + controls */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-end gap-4">
-          <p className="viq-meta print:hidden sm:text-right">
-            {l.factorNote}
-          </p>
-        </div>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+        <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
           <div>
             <label className="viq-field-label block">
               {l.reportingYear}

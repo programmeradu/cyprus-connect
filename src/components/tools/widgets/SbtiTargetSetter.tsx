@@ -267,15 +267,11 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-end gap-4">
-          <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
-        </div>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
           <div>
             <p className="viq-tool-status viq-meta">
-              <strong>{l.progress}</strong>
-              <span>{filledSteps}/{TOTAL_STEPS} ({percent}%)</span>
+              <strong>{l.steps[step]}</strong>
+              <span>{filledSteps} {l.of} {TOTAL_STEPS} complete</span>
             </p>
             <div className="mt-3 h-1.5 w-full max-w-md bg-foreground/10">
               <div className="h-full bg-primary transition-all" style={{ width: `${percent}%` }} aria-hidden />
@@ -292,7 +288,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
                       : "border-foreground/25 text-foreground/70 hover:border-foreground"
                   }`}
                 >
-                  <span className="tabular-nums">{String(i + 1).padStart(2, "0")}</span> {label}
+                  <span className="tabular-nums">{i + 1}</span> {label}
                 </button>
               ))}
             </div>
@@ -440,7 +436,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
         {/* Nav */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 print:hidden">
           <button type="button" onClick={goPrev} disabled={step === 0} className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40">← {l.prev}</button>
-          <p className="viq-meta tabular-nums">{String(step + 1).padStart(2, "0")} {l.of} {String(TOTAL_STEPS).padStart(2, "0")}</p>
+          <p className="viq-meta tabular-nums">{step + 1} {l.of} {TOTAL_STEPS}</p>
           <button type="button" onClick={goNext} disabled={step === TOTAL_STEPS - 1} className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-40">{l.next} →</button>
         </div>
       </div>

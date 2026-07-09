@@ -215,10 +215,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
     <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-end gap-4">
-          <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
-        </div>
-        <p className="mt-4 max-w-2xl text-[13px] text-foreground/60 print:hidden">{l.disclaimer}</p>
+        <p className="max-w-2xl text-[13px] text-foreground/60 print:hidden">{l.disclaimer}</p>
         <div className="mt-6 flex flex-wrap gap-3 print:hidden">
           <button
             type="button"
