@@ -18,7 +18,7 @@ export function MarketingHeader() {
 
   return (
     <header
-      className="sticky top-0 z-50 border-b border-foreground/10 bg-background/85 backdrop-blur-md"
+      className="sticky top-0 z-50 bg-transparent"
       style={{ fontFamily: "var(--editorial-sans)" }}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3 sm:px-8">

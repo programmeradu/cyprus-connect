@@ -151,8 +151,8 @@ export function ContextWidgets() {
         <div className="sm:col-span-7">
           <ul className="divide-y divide-border/60 border-y border-border/60">
             {/* Grid intensity */}
-            <li className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
-              <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground">
+            <li className="grid grid-cols-[auto_1fr_auto] items-center gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
+              <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground self-start">
                 01
               </span>
               <div className="min-w-0">
@@ -179,11 +179,15 @@ export function ContextWidgets() {
                   </p>
                 )}
               </div>
+              <GridIntensityVisual
+                intensity={carbonValue}
+                renewables={renewables}
+              />
             </li>
 
             {/* Next EU deadline */}
-            <li className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
-              <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground">
+            <li className="grid grid-cols-[auto_1fr_auto] items-center gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
+              <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground self-start">
                 02
               </span>
               <div className="min-w-0">
@@ -200,11 +204,15 @@ export function ContextWidgets() {
                   <p className="mt-2 text-sm text-muted-foreground">{deadlineCopy.title}</p>
                 )}
               </div>
+              <DeadlineVisual
+                dateISO={nextDeadline?.date}
+                locale={locale}
+              />
             </li>
 
             {/* This week in climate */}
-            <li className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
-              <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground">
+            <li className="grid grid-cols-[auto_1fr_auto] items-center gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
+              <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground self-start">
                 03
               </span>
               <div className="min-w-0">
@@ -231,10 +239,133 @@ export function ContextWidgets() {
                   {t.newsAll}
                 </Link>
               </div>
+              <NewsPulseVisual />
             </li>
           </ul>
         </div>
       </div>
     </section>
+  );
+}
+
+/* ── Right-side context visuals ─────────────────────────────────── */
+
+function GridIntensityVisual({
+  intensity,
+  renewables,
+}: {
+  intensity: number | null;
+  renewables: number | null;
+}) {
+  // Two concentric arcs: outer = renewables share, inner = carbon intensity heat
+  const size = 76;
+  const r = 30;
+  const c = 2 * Math.PI * r;
+  const pct = Math.max(0, Math.min(100, renewables ?? 0));
+  const dash = (pct / 100) * c;
+  // color hint: greener when renewables high, warmer when intensity high
+  const warmth = Math.max(0, Math.min(1, (intensity ?? 400) / 700));
+  const stroke = `oklch(0.72 0.16 ${145 - warmth * 100})`;
+
+  return (
+    <div
+      className="hidden sm:grid h-[76px] w-[76px] place-items-center rounded-full border border-border/60 bg-background/40"
+      aria-hidden
+    >
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity={0.12}
+          strokeWidth={3}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={stroke}
+          strokeWidth={3}
+          strokeLinecap="round"
+          strokeDasharray={`${dash} ${c}`}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+        <text
+          x="50%"
+          y="52%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="fill-foreground"
+          style={{ fontSize: 12, fontFamily: "var(--editorial-serif)" }}
+        >
+          {renewables !== null ? `${renewables}%` : "—"}
+        </text>
+      </svg>
+    </div>
+  );
+}
+
+function DeadlineVisual({
+  dateISO,
+  locale,
+}: {
+  dateISO?: string;
+  locale: "en" | "el";
+}) {
+  if (!dateISO) return null;
+  const d = new Date(dateISO);
+  const month = d
+    .toLocaleDateString(locale, { month: "short" })
+    .toUpperCase();
+  const day = d.getDate();
+  const year = d.getFullYear();
+  return (
+    <div
+      className="hidden sm:flex h-[76px] w-[76px] flex-col overflow-hidden rounded-sm border border-border/60 bg-background/40"
+      aria-hidden
+    >
+      <div className="bg-foreground py-0.5 text-center text-[9px] font-semibold uppercase tracking-[0.2em] text-background">
+        {month}
+      </div>
+      <div className="flex flex-1 items-center justify-center font-[family-name:var(--editorial-serif)] text-2xl tabular-nums leading-none">
+        {day}
+      </div>
+      <div className="pb-1 text-center text-[9px] tabular-nums tracking-[0.15em] text-muted-foreground">
+        {year}
+      </div>
+    </div>
+  );
+}
+
+function NewsPulseVisual() {
+  // Editorial sparkline / signal wave
+  return (
+    <div
+      className="hidden sm:grid h-[76px] w-[76px] place-items-center rounded-sm border border-border/60 bg-background/40"
+      aria-hidden
+    >
+      <svg width={60} height={40} viewBox="0 0 60 40">
+        <path
+          d="M2 28 L10 24 L16 30 L22 14 L28 22 L34 10 L40 26 L46 18 L52 22 L58 20"
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity={0.85}
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx={34} cy={10} r={2.5} className="fill-foreground">
+          <animate
+            attributeName="r"
+            values="2;3.5;2"
+            dur="2.4s"
+            repeatCount="indefinite"
+          />
+        </circle>
+      </svg>
+    </div>
   );
 }
