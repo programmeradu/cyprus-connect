@@ -231,6 +231,7 @@ export default function Home() {
         titleA={tL("beyondTitleA")}
         titleB={tL("beyondTitleB")}
         subtitle={tL("beyondSubtitle")}
+        media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
       >
         <NumberedList
           items={[
