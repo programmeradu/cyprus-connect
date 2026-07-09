@@ -1,103 +1,136 @@
-# Payments consolidation & gap fix
+# VerdeIQ `/tools` — Interactive Tools Hub Build Plan
 
-## Current state (findings)
+Goal: rank on high-intent ESG/CBAM/CSRD tool searches across EU + global English by shipping 5 deep, free, no-signup interactive tools under a dedicated `/tools` section.
 
-**Business logic**
-- Two subscription sources: Autumn SDK (checked first in `GET /api/stripe/subscription`) + `subscriptions` table populated by the new Lovable Payments webhook. State can diverge.
-- Third gateway (Paystack) still wired: `/api/paystack/*` routes, `PaystackButton`, `PaymentGatewaySelector`.
-- `useSubscription` hits `/api/stripe/subscription` (which calls Autumn) — no realtime, no env awareness.
-- No Free-plan handling on signup — new users have no `subscriptions` row, and the checkout route rejects `planId='free'` because `priceId` is null.
+---
 
-**Technical**
-- No products/prices exist in Lovable Payments yet — `resolvePriceIdFromLookupKey('pro_monthly_usd')` will 404 on the first real checkout.
-- Everything hardcoded to `'sandbox'`; no auto env split.
-- Tax handled via manual `automatic_tax` + `tax_id_collection` — not the managed compliance flow.
-- Checkout route uses `success_url`/`cancel_url` redirect, not embedded checkout.
-- Legacy Stripe webhook (`/api/stripe/webhook`) still present as 410 stub — fine.
+## Target keywords (validated via Semrush)
 
-## Plan
+| Route | Primary keyword | Vol | KD |
+|---|---|---|---|
+| `/tools` (hub) | esg reporting tool | 590 US | 30 |
+| `/tools/ghg-calculator` | ghg calculator + scope 3 emissions calculator | 210 + 50 | 45 / 31 |
+| `/tools/cbam-report-generator` | cbam calculator + cbam report | 20 + 30 | 0 / 25 |
+| `/tools/double-materiality` | double materiality matrix + template | 50 + 30 | 0 |
+| `/tools/vsme-template` | vsme template + vsme reporting template | 40 | 0 |
+| `/tools/eu-taxonomy-checker` | eu taxonomy tool + calculator | 40 + 20 | 0 |
 
-### 1. Create products & prices in Lovable Payments (sandbox → auto-syncs to live)
-Batch-create 5 products with USD + EUR prices, each tagged with the SaaS tax code `txcd_10103001`:
-- `pro` → `pro_monthly_usd` ($49), `pro_monthly_eur` (€45)
-- `enterprise` → `enterprise_monthly_usd` ($199), `enterprise_monthly_eur` (€185)
-- `credits_100`, `credits_500`, `credits_1000` → one-time USD + EUR each
+All KDs are near-zero except the hub's — wide-open niche. Real reachable demand ≈ 10-20x these single-country volumes across 27 EU markets.
 
-Free plan is NOT created in Stripe (per your answer — entitlement only).
+---
 
-### 2. Env auto-switch
-- Add `getStripeEnvironment()` deriving `sandbox`/`live` from `VITE_PAYMENTS_CLIENT_TOKEN` prefix.
-- Server side: `resolveStripeEnv(request)` reads `X-Stripe-Env` header sent by client, falls back to `sandbox`.
-- Add `environment` column to `subscriptions`, `payment_history`, `credit_purchases` tables (migration). Filter every read by env.
+## Architecture
 
-### 3. Free-plan auto-assignment on signup
-- Better-Auth `after` hook on user creation: insert `subscriptions` row `{planId:'free', status:'active', environment}` and grant 100 free AI credits.
-- Downgrade path (webhook `customer.subscription.deleted` — already immediate) sets `planId='free'` — already correct.
-- Frontend: "Downgrade to Free" button calls `DELETE /api/stripe/subscription` (already exists).
+```text
+src/app/[locale]/tools/
+  page.tsx                          → hub (grid of all 5 tools)
+  layout.tsx                        → shared MarketingHeader + Footer
+  ghg-calculator/page.tsx
+  cbam-report-generator/page.tsx
+  double-materiality/page.tsx
+  vsme-template/page.tsx
+  eu-taxonomy-checker/page.tsx
 
-### 4. Full compliance handling on checkout
-Rewrite `/api/stripe/checkout` and `/api/stripe/subscription` (POST):
-- Add `managed_payments: { enabled: true }` on session creation.
-- Remove incompatible params: `automatic_tax`, `tax_id_collection`, `billing_address_collection`, `customer_update`, `payment_method_types`.
-- Keep `resolveOrCreateCustomer` for `metadata.userId` (needed for webhooks/portal).
-- Add `PaymentTestModeBanner` component; render at billing page top.
+src/components/tools/
+  ToolShell.tsx                     → shared: hero, tool slot, methodology, worked example, FAQ, related-guides, CTA
+  ToolCard.tsx                      → hub grid card
+  MethodologyBlock.tsx
+  WorkedExample.tsx
+  ExportPdfButton.tsx               → branded PDF export (shared)
 
-### 5. Remove Autumn + Paystack (single source of truth)
-- Delete: `autumn.config.ts`, `src/lib/autumn/`, `src/lib/autumn-provider.tsx`, `src/app/api/autumn/`, `src/components/autumn/`, `AUTUMN_SECRET_KEY` usage.
-- Delete: `src/lib/paystack/`, `src/app/api/paystack/`, `src/components/billing/PaystackButton.tsx`, `PaymentGatewaySelector.tsx`, paystack types.
-- Rewrite `GET /api/stripe/subscription` to read only from DB (no Autumn fallback).
-- Refactor `useSubscription` to query Supabase directly (env-filtered) + subscribe to realtime changes so Stripe webhook writes reflect instantly in the UI.
-- Update `PricingTable`, `CreditPurchaseDialog`, `BillingDashboard` — drop gateway toggle.
+src/components/tools/widgets/
+  GhgCalculator.tsx                 → full-page Scope 1/2/3 calculator, Climatiq-wired
+  CbamReportGenerator.tsx           → CN-code table, quarterly aggregation, XML/PDF export
+  DoubleMaterialityMatrix.tsx       → 2D IRO plotter + stakeholder scoring
+  VsmeTemplateBuilder.tsx           → guided EFRAG VSME Basic form
+  EuTaxonomyChecker.tsx             → NACE picker → eligibility + DNSH checklist
 
-### 6. Portal & upgrades (already exist — verify + patch)
-- `POST /api/stripe/subscription` already uses `proration_behavior: 'always_invoice'` — keep.
-- `/api/stripe/billing-portal` — swap to `createStripeClient(env)`, open in new tab from client.
-- Realtime: `useSubscription` subscribes to `subscriptions` table filtered by `user_id`, refetches on any change.
+src/data/tools/
+  index.ts                          → tool registry (slug, keywords, category, related-pillar slugs)
+```
 
-### 7. Analytics + emails (already wired in webhook)
-Keep the existing `plan_started` / `plan_changed` / `plan_canceled` / `credits_purchased` events and `sendWelcomeEmail`. Add a `plan_started` event on the signup free-tier insert too.
+Each tool page follows the **same 7-block layout** (locks in E-E-A-T + on-page SEO):
+1. Hero (H1 = primary keyword phrased naturally, subhead, "free · no signup" badge)
+2. Interactive tool (works immediately, above the fold on desktop)
+3. Methodology (sources, formulas, factor version, last-updated date)
+4. Worked example (real numbers, Cyprus/EU context)
+5. FAQ (5-8 questions, `FAQPage` schema)
+6. Related guides (2-3 links into `/learn/*`)
+7. CTA → sign up for VerdeIQ platform
 
-## Files touched
-- **Create**: DB migration (env columns + free-tier default), `src/lib/stripe/env.ts`, `src/components/billing/PaymentTestModeBanner.tsx`, auth hook update
-- **Rewrite**: `src/app/api/stripe/checkout/route.ts`, `src/app/api/stripe/subscription/route.ts`, `src/app/api/stripe/billing-portal/route.ts`, `src/hooks/useSubscription.ts`, `src/components/billing/PricingTable.tsx`, `src/components/billing/BillingDashboard.tsx`, `src/components/billing/CreditPurchaseDialog.tsx`
-- **Delete**: `autumn.config.ts`, `src/lib/autumn*`, `src/app/api/autumn/`, `src/components/autumn/`, `src/lib/paystack/`, `src/app/api/paystack/`, `src/components/billing/PaystackButton.tsx`, `src/components/billing/PaymentGatewaySelector.tsx`
+---
 
-## Test plan (preview)
+## SEO wiring (per tool page)
 
-### Setup
-1. Sign in as a **new** user via `/en/auth` — confirm a `subscriptions` row appears with `plan_id='free'`, `environment='sandbox'`.
-2. Confirm the orange test-mode banner shows at the top of `/en/app/billing`.
+- Bilingual EN + EL with `hreflang` alternates
+- Head metadata: unique title, description, og:title, og:description, og:image (per-tool, generated), twitter:card
+- Canonical + `og:url` self-referencing
+- JSON-LD stack: `SoftwareApplication` + `HowTo` + `FAQPage` + `BreadcrumbList`
+- Sitemap: add 12 new URLs (6 pages × 2 locales) to `src/app/sitemap.ts`
+- Reciprocal internal links: matching Learn pillars link to their tool, tools link back
+- Robots: `/tools/*` explicitly allowed (already covered by current rules)
 
-### Subscribe (Pro)
-1. Billing page → "Upgrade to Pro" (USD).
-2. Embedded Stripe form loads. Card: `4242 4242 4242 4242`, exp `12/34`, CVC `123`, ZIP `10001`.
-3. Return page → billing dashboard refreshes automatically (realtime): plan shows Pro, `plan_started` in server logs, welcome email logged, 1000 AI credits granted.
+---
 
-### Upgrade (Pro → Enterprise)
-1. Click "Upgrade to Enterprise". Immediate switch; a prorated invoice appears in Stripe dashboard.
-2. Billing card updates without page reload; `plan_changed` in logs; AI credits topped up to 10000.
+## Design system
 
-### Downgrade (Enterprise → Free)
-1. Click "Cancel plan". Confirms → `DELETE /api/stripe/subscription` → immediate revoke.
-2. Row flips to `plan_id='free'`, `status='canceled'`; `plan_canceled` in logs. Enterprise-gated pages become locked immediately.
+Reuse existing editorial system (from Learn redesign):
+- `--editorial-sans` (Geist/Inter) typography
+- `MarketingHeader` from `src/components/marketing/`
+- `verdeiq-range` slider style
+- Numeric `01/02/03` section prefixes, sharp borders, no gradients/pills/decorative icons (per `mem://constraints/no-icons-no-pills`)
+- Per-tool generated hero image (context-aware, per `mem://design/context-aware-assets`)
 
-### Credit pack
-1. "Buy 500 credits" → embedded checkout → `4242…`.
-2. Return: balance +500, `credits_purchased` in logs, row in `credit_purchases`. Re-submitting same session doesn't double-grant (idempotent by session id).
+---
 
-### VAT (EU)
-1. Switch currency to EUR, use card `4000 0025 0000 0000 0053` (Cyprus BIN) or set billing country CY → 19% VAT calculated by Stripe automatically. Statement descriptor shows `LINK.COM* …`.
+## Build order (ship in this sequence)
 
-### Failure paths
-- Decline: `4000 0000 0000 0002` → checkout shows error, no DB write.
-- 3DS: `4000 0025 0000 3155` → challenge shown inline.
+**Phase 1 — Foundation + biggest keyword (this batch)**
+1. `/tools` hub + shared `ToolShell`, `ToolCard`, `MethodologyBlock`, `WorkedExample`, `ExportPdfButton`
+2. **GHG Calculator** — full Scope 1/2/3, region selector, Climatiq-wired, PDF export, methodology page, worked example, 8 FAQs
+3. Sitemap + Learn pillar cross-links for these two
+4. Generated hero images (EN + shared)
 
-### Test-card cheat sheet
-| Purpose | Number |
-|---|---|
-| Success | 4242 4242 4242 4242 |
-| Decline | 4000 0000 0000 0002 |
-| 3DS required | 4000 0025 0000 3155 |
-| Insufficient funds | 4000 0000 0000 9995 |
+**Phase 2 — Timely + underserved**
+5. **CBAM Report Generator** — CN-code lookup table, per-installation aggregation, quarterly XML draft + branded PDF
+6. **Double Materiality Matrix** — interactive IRO scoring, 2D plot, stakeholder inputs, PDF export
 
-Any future expiry, any 3-digit CVC, any ZIP.
+**Phase 3 — Long-tail authority**
+7. **VSME Template Builder** — guided EFRAG VSME Basic form → branded PDF matching EFRAG structure
+8. **EU Taxonomy Eligibility Checker** — NACE code picker, substantial contribution + DNSH checklist
+
+**Phase 4 — Polish + measurement**
+9. Full EL translations for all 5 tools
+10. Rescan SEO, verify structured data validates, submit updated sitemap to GSC
+
+---
+
+## Technical details
+
+- **Climatiq**: reuse `src/lib/climatiq.ts` + `/api/emissions/estimate` and `/api/emissions/batch` for GHG Calculator
+- **PDF export**: reuse `src/lib/pdf/export-report.ts` pattern; brand each tool's export
+- **CN codes for CBAM**: static JSON in `src/data/tools/cbam-cn-codes.ts` (starter set: iron/steel, aluminium, cement, fertilisers, electricity, hydrogen)
+- **NACE codes for Taxonomy**: static JSON `src/data/tools/nace-taxonomy.ts` — Annex I/II eligible activities
+- **VSME schema**: static JSON `src/data/tools/vsme-basic-module.ts` — 11 Basic Module disclosures per EFRAG standard
+- **Materiality**: pure client-side state (no persistence needed for v1); "save as PDF" is the export path
+- **Analytics**: track tool starts + completions via existing `ConsentedAnalytics`
+- **No new backend routes required for Phase 1** — Climatiq endpoints already exist
+
+---
+
+## Success signals (post-launch, ~8 weeks)
+
+- All 12 tool URLs indexed in GSC
+- Hub page ranking top-20 for "esg reporting tool"
+- At least 2 of 5 tools ranking top-10 for their primary keyword (KDs are ≤5, this is realistic)
+- Organic tool → app signup conversion tracked
+
+---
+
+## Out of scope (explicitly deferred)
+
+- SBTi calculator (low volume, complex methodology)
+- PPA / renewable cost calculator (off-topic vs. compliance focus)
+- Green Claims Directive checker (too early, deadline 2026)
+- Emission Factor Database as standalone tool (needs massive backend; kept as internal to GHG Calculator)
+- User accounts / saving tool results server-side (v2 feature)
