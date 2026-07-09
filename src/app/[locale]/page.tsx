@@ -102,8 +102,8 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO */}
-      <section className="relative overflow-hidden">
+      {/* HERO — pulled up beneath the transparent header so the image sits under it */}
+      <section className="relative -mt-16 overflow-hidden">
         {/* Premium 4K Background Image — visible on all viewports; scrim adapts */}
         <div className="pointer-events-none absolute inset-0">
           <div
@@ -120,7 +120,7 @@ export default function Home() {
           <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
         </div>
-        <div className="relative mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-24 sm:pb-24">
+        <div className="relative mx-auto max-w-6xl px-4 pt-28 pb-16 sm:px-6 sm:pt-40 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
