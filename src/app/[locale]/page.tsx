@@ -192,43 +192,43 @@ export default function Home() {
       <SectionDivider />
 
       {/* BENEFITS — Why VerdeIQ */}
+      <EditorialSection
+        eyebrow="01 / Why VerdeIQ"
+        titleA={tL("whyTitleA")}
+        subtitle={tL("whySubtitle")}
+        media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
+      >
+        <NumberedList
+          items={[
+            { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
+            { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
+            { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
+          ]}
+        />
+      </EditorialSection>
+
+      <SectionDivider />
+
+      {/* POWER — Platform Capabilities */}
       <div className="relative">
-        {/* Growth-spark accent — rising data line sprouting olives; sits left blank margin,
-            spills above the section into the divider, signaling growth from measurement */}
+        {/* Growth-spark accent — rising data line sprouting olives; occupies the tall
+            blank left margin next to the Platform section's stats module, echoing the
+            "upward trend" story told by the chart to its right. */}
         <img
           src={accentGrowthSpark.src}
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -top-10 -left-8 z-10 hidden w-[240px] max-w-none rotate-[-8deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-16 lg:-left-16 lg:w-[320px]"
+          className="pointer-events-none absolute top-24 -left-6 z-10 hidden w-[240px] max-w-none rotate-[-6deg] select-none opacity-80 mix-blend-multiply dark:opacity-90 dark:mix-blend-screen md:block lg:top-32 lg:-left-24 lg:w-[340px]"
         />
         <EditorialSection
-          eyebrow="01 / Why VerdeIQ"
-          titleA={tL("whyTitleA")}
-          subtitle={tL("whySubtitle")}
-          media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
+          eyebrow="02 / The Platform"
+          titleA={tL("powerTitleA")}
+          titleMid={tL("powerTitleMid")}
+          titleB={tL("powerTitleB")}
+          subtitle={tL("powerSubtitle")}
+          media={{ src: sectionPlatformImg.src, alt: "Scope 1, 2, and 3 emissions breakdown and year-over-year trend" }}
         >
-          <NumberedList
-            items={[
-              { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
-              { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
-              { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
-            ]}
-          />
-        </EditorialSection>
-      </div>
-
-      <SectionDivider />
-
-      {/* POWER — Platform Capabilities */}
-      <EditorialSection
-        eyebrow="02 / The Platform"
-        titleA={tL("powerTitleA")}
-        titleMid={tL("powerTitleMid")}
-        titleB={tL("powerTitleB")}
-        subtitle={tL("powerSubtitle")}
-        media={{ src: sectionPlatformImg.src, alt: "Scope 1, 2, and 3 emissions breakdown and year-over-year trend" }}
-      >
         <NumberedList
           items={[
             { n: "01", title: tL("powerEnergyTitle"), body: tL("powerEnergyDesc") },
