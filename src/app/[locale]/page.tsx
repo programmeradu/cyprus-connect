@@ -38,22 +38,8 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden text-foreground antialiased">
-      {/* Premium 4K Background Image */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
-          }}
-        />
-        {/* Light: soft scrim on the left half so hero text is legible, right stays open */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/55 to-background/10 dark:hidden" />
-        {/* Dark: dim overlay */}
-        <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background/90 via-background/70 to-background/30" />
-        <div className="absolute inset-0 hidden dark:block bg-black/40" />
-      </div>
+    <div className="relative min-h-screen bg-background text-foreground antialiased">
+
 
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-md">
