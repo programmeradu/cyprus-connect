@@ -251,11 +251,19 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--editorial-sans);
+    font-feature-settings: "ss01", "cv11", "cv06";
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-family: var(--editorial-display);
+    font-optical-sizing: auto;
+    font-feature-settings: "ss01";
+    letter-spacing: -0.015em;
   }
   
   /* Premium Glassmorphism */
