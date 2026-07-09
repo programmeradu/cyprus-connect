@@ -182,23 +182,18 @@ export const Sidebar = () => {
         
         {/* User Info */}
         <Link href="/app/settings" className="block">
-          <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all-smooth cursor-pointer">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground text-xs font-bold">
-              {initials}
-            </div>
-            <div className="flex-1 min-w-0">
-              {isUserLoading ? (
-                <div className="space-y-1">
-                  <div className="h-3 w-20 bg-muted animate-pulse rounded" />
-                  <div className="h-2 w-16 bg-muted animate-pulse rounded" />
-                </div>
-              ) : (
-                <>
-                  <p className="text-xs font-medium truncate">{displayName}</p>
-                  <p className="text-[10px] text-muted-foreground truncate">{displayEmail}</p>
-                </>
-              )}
-            </div>
+          <div className="p-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
+            {isUserLoading ? (
+              <div className="space-y-1">
+                <div className="h-3 w-24 bg-muted animate-pulse rounded" />
+                <div className="h-2 w-20 bg-muted animate-pulse rounded" />
+              </div>
+            ) : (
+              <>
+                <p className="text-xs font-medium text-foreground break-words leading-tight">{displayName}</p>
+                <p className="text-[10px] text-muted-foreground break-all leading-tight mt-0.5">{displayEmail}</p>
+              </>
+            )}
           </div>
         </Link>
       </div>
