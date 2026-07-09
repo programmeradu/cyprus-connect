@@ -10,8 +10,10 @@ Greek-shorter-word swap list (use these forms): Ταμπλό (not Πίνακας
 Locale hook `:lang(el)` in globals.css already tightens letter-spacing and scales nav/button/badge font-size ~0.94–0.95em — do not duplicate per-component.
 Fraunces ampersand override: `FrauncesAmpFix` @font-face in globals.css routes U+0026 through Instrument Sans so display headings don't get Fraunces's ornate calligraphic `&`. Any inline `fontFamily` for display type MUST prefix `"FrauncesAmpFix"` before `"Fraunces"`.
 30-layer UX rulebook applies everywhere: one primary CTA per view, 8pt spacing, 6/8/12px radii (never rounded-2xl+ on rectangles or full on chips), borders over shadows, tabular-nums, 44px touch targets, visible focus rings, real copy (no Empower/Unlock/Supercharge), skeleton loaders matching final layout, motion 150–250ms ease-out. Full list in mem://design/ux-principles.
+NO fake identity assets: no initials-avatar circles, no gradient-circle placeholders, no stock abstracts, no emoji-as-logo, no `via.placeholder.com`/`picsum.photos`. Real logos (Logo.dev or real SVG) or cut the element. Real screenshots > illustrations. See mem://design/logos-and-assets.
 
 ## Memories
+- [Logos & real assets](mem://design/logos-and-assets) — Ban on initials avatars, placeholder circles, stock abstracts; rules for logo rows, testimonials, hero imagery
 - [30-layer UX rulebook](mem://design/ux-principles) — Consolidated premium UI/UX rules (spacing, hierarchy, motion, a11y, empty/error states, applied bans)
 - [Typography system](mem://design/typography) — Locked pairing: Fraunces (display) + Instrument Sans (body/UI). No Inter/Space Grotesk/Geist/Poppins.
 - [No icons, no pills](mem://constraints/no-icons-no-pills) — Global UI ban on decorative icons and pill/badge chips
