@@ -85,12 +85,16 @@
 /* Updated: 2025-11-14T22:33:53.088Z */
 /* Updated: 2025-11-14T20:57:49.464Z */
 /* Updated: 2025-11-14T20:40:38.320Z */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root {
-  --editorial-serif: "Fraunces", "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
-  --editorial-display: "Instrument Serif", "Fraunces", ui-serif, Georgia, serif;
-  --editorial-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  /* VerdeIQ typography system — editorial display + neutral workhorse body.
+     No Inter/Space Grotesk/Geist/Poppins defaults. Fraunces variable with
+     optical sizing carries all display type; Instrument Sans (500/600 UI,
+     400 body) is the workhorse. */
+  --editorial-serif: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --editorial-display: "Fraunces", "Instrument Serif", ui-serif, Georgia, serif;
+  --editorial-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
 }
 
 @import "tailwindcss";
@@ -247,11 +251,19 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--editorial-sans);
+    font-feature-settings: "ss01", "cv11", "cv06";
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    font-family: var(--editorial-display);
+    font-optical-sizing: auto;
+    font-feature-settings: "ss01";
+    letter-spacing: -0.015em;
   }
   
   /* Premium Glassmorphism */
@@ -648,7 +660,7 @@ nextjs-portal {
    Replaces tiny all-caps/tracked metadata with deliberate B2B UI type.
    ================================================================ */
 .viq-tool {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-feature-settings: "ss01", "ss02", "cv11", "tnum";
 }
 .viq-tool .uppercase {
@@ -666,7 +678,7 @@ nextjs-portal {
 .viq-field-label,
 .viq-table-heading,
 .viq-minor-code {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.9375rem;
   line-height: 1.35;
   font-weight: 700;
@@ -693,7 +705,7 @@ nextjs-portal {
 .viq-caption,
 .viq-print-note,
 .viq-numeric-note {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.875rem;
   line-height: 1.45;
   font-weight: 550;
@@ -713,7 +725,7 @@ nextjs-portal {
 }
 .viq-date {
   display: inline-block;
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.875rem;
   line-height: 1.4;
   font-weight: 550;
@@ -721,7 +733,7 @@ nextjs-portal {
   color: color-mix(in oklab, var(--foreground) 62%, transparent);
 }
 .viq-button {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.875rem;
   line-height: 1;
   font-weight: 600;
@@ -732,7 +744,7 @@ nextjs-portal {
 }
 .viq-tool table th,
 .viq-tool .viq-table-heading {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -743,7 +755,7 @@ nextjs-portal {
 .viq-tool select,
 .viq-tool textarea,
 .viq-tool button {
-  font-family: "Space Grotesk", var(--editorial-sans);
+  font-family: var(--editorial-sans);
 }
 .viq-tool .text-\[10\.5px\] {
   font-size: 0.875rem;

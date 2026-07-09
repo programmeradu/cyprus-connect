@@ -33,7 +33,7 @@ export default function ToolsHubClient({
   const available = TOOLS.filter((t) => t.available);
 
   return (
-    <div style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}>
+    <div style={{ fontFamily: '"Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif', fontFeatureSettings: '"ss01","cv11"', fontVariantNumeric: "tabular-nums" }}>
       <MarketingHeader />
 
 

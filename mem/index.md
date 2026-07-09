@@ -10,5 +10,6 @@ Greek-shorter-word swap list (use these forms): Ταμπλό (not Πίνακας
 Locale hook `:lang(el)` in globals.css already tightens letter-spacing and scales nav/button/badge font-size ~0.94–0.95em — do not duplicate per-component.
 
 ## Memories
+- [Typography system](mem://design/typography) — Locked pairing: Fraunces (display) + Instrument Sans (body/UI). No Inter/Space Grotesk/Geist/Poppins.
 - [No icons, no pills](mem://constraints/no-icons-no-pills) — Global UI ban on decorative icons and pill/badge chips
 - [Anti-vibecode UI rules](mem://constraints/anti-vibecode-ui) — Rules against generic AI/vibecoded UI tells, especially small metadata typography
