@@ -142,21 +142,25 @@ export default function Home() {
             </Link>
           </div>
         </motion.div>
+        </div>
+      </section>
 
-        {/* Dashboard demo */}
-        <motion.div
-          className="mt-14 overflow-hidden rounded-lg border border-border/60 bg-card/40 sm:mt-20"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.25 }}
-        >
-          <div className="border-b border-border/60 px-4 py-2 eyebrow sm:px-6">
-            Live preview / Dashboard
-          </div>
-          <div className="p-3 sm:p-6">
-            <DashboardDemo landingMode />
-          </div>
-        </motion.div>
+      {/* Dashboard demo — separate section with solid bg */}
+      <section className="relative bg-background">
+        <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
+          <motion.div
+            className="overflow-hidden rounded-lg border border-border/60 bg-card"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.25 }}
+          >
+            <div className="border-b border-border/60 px-4 py-2 eyebrow sm:px-6">
+              Live preview / Dashboard
+            </div>
+            <div className="p-3 sm:p-6">
+              <DashboardDemo landingMode />
+            </div>
+          </motion.div>
         </div>
       </section>
 
