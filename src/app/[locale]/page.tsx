@@ -46,8 +46,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
             href="/"
-            className="gradient-text text-2xl font-semibold italic tracking-tight"
-            style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}
+            className="gradient-text text-lg font-bold tracking-tight"
           >
             VerdeIQ
           </Link>
