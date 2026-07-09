@@ -33,8 +33,9 @@ export default function ToolsHubClient({
   const available = TOOLS.filter((t) => t.available);
 
   return (
-    <div>
+    <div style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}>
       <MarketingHeader />
+
 
       <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-14 sm:px-8 sm:pt-20">
         {/* Header */}
