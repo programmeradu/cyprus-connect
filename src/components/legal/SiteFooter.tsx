@@ -51,7 +51,7 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2">
           <p
-            className="gradient-text text-lg font-bold tracking-tight mb-2"
+            className="gradient-text text-lg font-bold tracking-tight mb-2 font-[family-name:var(--font-geist-sans)]"
           >
             VerdeIQ
           </p>

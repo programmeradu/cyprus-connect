@@ -54,9 +54,15 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
 
   const switchTo = (next: "en" | "el") => {
     if (next === locale) return;
-    startTransition(() => {
-      router.replace(pathname, { locale: next });
-    });
+    const currentPath = typeof window !== "undefined" ? window.location.pathname : `/${locale}`;
+    const stripped = currentPath.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
+    const target = `/${next}${stripped === "/" ? "" : stripped}`;
+    const search = typeof window !== "undefined" ? window.location.search : "";
+    if (typeof window !== "undefined") {
+      window.location.assign(target + search);
+    }
+    // Silence unused when the typed router isn't consumed here.
+    void router; void pathname; void startTransition;
   };
 
   return (
