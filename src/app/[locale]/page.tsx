@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { DashboardDemo } from "@/components/DashboardDemo";
+import { NewsTicker } from "@/components/news/NewsTicker";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
