@@ -195,6 +195,7 @@ export default function Home() {
         titleMid={tL("powerTitleMid")}
         titleB={tL("powerTitleB")}
         subtitle={tL("powerSubtitle")}
+        media={{ src: sectionPlatformImg.src, alt: "Scope 1, 2, and 3 emissions breakdown and year-over-year trend" }}
       >
         <NumberedList
           items={[
