@@ -142,32 +142,78 @@ export function FloatingAIAssistant() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label={t.open}
-          className="fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-sm border border-foreground/15 bg-background/90 px-4 text-sm font-medium tracking-tight text-foreground shadow-lg backdrop-blur transition-all hover:border-foreground/40 hover:shadow-xl sm:bottom-6 sm:right-6"
+          className="group fixed bottom-5 right-5 z-40 sm:bottom-6 sm:right-6"
         >
-          <span
-            className="grid h-6 w-6 place-items-center rounded-full text-[10px] font-bold text-primary-foreground"
-            style={{ background: "var(--gradient-primary, hsl(var(--primary)))" }}
-          >
-            V
+          <span className="relative flex h-14 w-14 items-center justify-center">
+            {/* Soft glow */}
+            <span
+              className="pointer-events-none absolute inset-0 rounded-full opacity-70 blur-xl transition-opacity duration-500 group-hover:opacity-100"
+              style={{
+                background:
+                  "radial-gradient(closest-side, oklch(0.72 0.18 145 / 0.55), transparent 70%)",
+              }}
+              aria-hidden
+            />
+            {/* Animated gradient ring */}
+            <span
+              className="absolute inset-0 rounded-full p-[1.5px] transition-transform duration-500 group-hover:scale-[1.04]"
+              style={{
+                background:
+                  "conic-gradient(from 180deg at 50% 50%, oklch(0.78 0.16 150), oklch(0.62 0.18 165), oklch(0.86 0.11 105), oklch(0.78 0.16 150))",
+              }}
+              aria-hidden
+            >
+              <span className="block h-full w-full rounded-full bg-background/85 backdrop-blur-xl" />
+            </span>
+            {/* Core mark */}
+            <span
+              className="relative grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-primary-foreground shadow-[0_6px_20px_-6px_oklch(0.72_0.18_145/0.6)]"
+              style={{
+                background:
+                  "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
+                fontFamily: "var(--editorial-serif)",
+              }}
+            >
+              V
+            </span>
+            {/* Presence dot */}
+            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_2px_var(--background)]">
+              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/70" />
+            </span>
           </span>
-          {t.open}
         </button>
       )}
 
       {/* Panel */}
       {open && (
-        <div className="fixed inset-x-3 bottom-3 z-40 flex max-h-[80vh] flex-col overflow-hidden rounded-sm border border-foreground/15 bg-background/95 shadow-2xl backdrop-blur sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[26rem]">
-          <header className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3">
-            <div className="flex items-center gap-2 min-w-0">
+        <div
+          className="fixed inset-x-3 bottom-3 z-40 flex max-h-[80vh] flex-col overflow-hidden rounded-2xl border border-foreground/10 bg-background/80 shadow-[0_30px_80px_-20px_oklch(0.2_0.05_170/0.45)] backdrop-blur-2xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[26rem]"
+          style={{
+            backgroundImage:
+              "radial-gradient(120% 60% at 0% 0%, oklch(0.78 0.16 150 / 0.10), transparent 60%), radial-gradient(120% 60% at 100% 0%, oklch(0.62 0.18 250 / 0.08), transparent 60%)",
+          }}
+        >
+          <header className="flex items-center justify-between gap-3 border-b border-border/50 px-4 py-3">
+            <div className="flex min-w-0 items-center gap-2.5">
               <span
-                className="grid h-7 w-7 place-items-center rounded-full text-[11px] font-bold text-primary-foreground"
-                style={{ background: "var(--gradient-primary, hsl(var(--primary)))" }}
+                className="grid h-8 w-8 place-items-center rounded-full text-[12px] font-semibold text-primary-foreground shadow-[0_4px_14px_-4px_oklch(0.72_0.18_145/0.7)]"
+                style={{
+                  background:
+                    "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
+                  fontFamily: "var(--editorial-serif)",
+                }}
               >
                 V
               </span>
               <div className="min-w-0">
-                <div className="text-sm font-semibold tracking-tight truncate">{t.title}</div>
-                <div className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground truncate">
+                <div
+                  className="truncate text-sm font-semibold tracking-tight"
+                  style={{ fontFamily: "var(--editorial-serif)" }}
+                >
+                  {t.title}
+                </div>
+                <div className="flex items-center gap-1.5 truncate text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   {t.subtitle}
                 </div>
               </div>
@@ -176,7 +222,7 @@ export function FloatingAIAssistant() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label={t.close}
-              className="text-sm text-muted-foreground hover:text-foreground"
+              className="grid h-7 w-7 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
             >
               ×
             </button>
@@ -188,25 +234,35 @@ export function FloatingAIAssistant() {
             style={{ minHeight: "16rem" }}
           >
             {messages.length === 0 ? (
-              <p className="text-muted-foreground leading-relaxed">{t.empty}</p>
+              <p className="leading-relaxed text-muted-foreground">{t.empty}</p>
             ) : (
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {messages.map((m, i) => (
                   <li key={i}>
                     {m.role === "user" ? (
                       <div className="flex justify-end">
-                        <div className="max-w-[85%] rounded-sm bg-foreground px-3 py-2 text-background">
+                        <div
+                          className="max-w-[85%] rounded-2xl rounded-br-md px-3.5 py-2 text-sm text-primary-foreground shadow-sm"
+                          style={{
+                            background:
+                              "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
+                          }}
+                        >
                           {m.text}
                         </div>
                       </div>
                     ) : (
-                      <div className="text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                        {m.text ||
-                          (streaming && i === messages.length - 1 ? (
-                            <span className="text-muted-foreground italic">{t.thinking}</span>
-                          ) : (
-                            ""
-                          ))}
+                      <div className="flex justify-start">
+                        <div className="max-w-[90%] whitespace-pre-wrap rounded-2xl rounded-bl-md border border-border/50 bg-background/60 px-3.5 py-2 leading-relaxed text-foreground/90 backdrop-blur">
+                          {m.text ||
+                            (streaming && i === messages.length - 1 ? (
+                              <span className="italic text-muted-foreground">
+                                {t.thinking}
+                              </span>
+                            ) : (
+                              ""
+                            ))}
+                        </div>
                       </div>
                     )}
                   </li>
@@ -215,8 +271,8 @@ export function FloatingAIAssistant() {
             )}
           </div>
 
-          <div className="border-t border-border/60 p-3">
-            <div className="flex items-end gap-2">
+          <div className="border-t border-border/50 p-3">
+            <div className="flex items-end gap-2 rounded-2xl border border-border/60 bg-background/70 p-1.5 pl-3 transition-colors focus-within:border-foreground/40">
               <textarea
                 ref={inputRef}
                 value={input}
@@ -229,16 +285,33 @@ export function FloatingAIAssistant() {
                 }}
                 placeholder={t.placeholder}
                 rows={1}
-                className="min-h-[38px] max-h-32 flex-1 resize-none rounded-sm border border-border/60 bg-background px-3 py-2 text-sm outline-none focus:border-foreground/40"
+                className="min-h-[34px] max-h-32 flex-1 resize-none bg-transparent py-1.5 text-sm outline-none placeholder:text-muted-foreground/70"
                 disabled={streaming}
               />
               <button
                 type="button"
                 onClick={send}
                 disabled={streaming || !input.trim()}
-                className="h-[38px] rounded-sm bg-foreground px-4 text-xs font-medium tracking-tight text-background transition-opacity disabled:opacity-40"
+                aria-label={t.send}
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-primary-foreground shadow-[0_6px_16px_-6px_oklch(0.72_0.18_145/0.6)] transition-all hover:scale-[1.04] disabled:opacity-40 disabled:hover:scale-100"
+                style={{
+                  background:
+                    "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
+                }}
               >
-                {t.send}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M4 12l16-8-6 18-3-8-7-2z" />
+                </svg>
               </button>
             </div>
           </div>
