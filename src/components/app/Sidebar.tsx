@@ -211,7 +211,7 @@ export const Sidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 glass-strong border-r border-border/50 z-40">
+      <aside className="hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 bg-card border-r border-border/50 z-40">
         <SidebarContent />
       </aside>
 
@@ -221,16 +221,16 @@ export const Sidebar = () => {
           <>
             {/* Overlay */}
             <motion.div
-              className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+              className="fixed inset-0 bg-foreground/60 z-40 lg:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
             />
-            
+
             {/* Sidebar */}
             <motion.aside
-              className="fixed left-0 top-0 h-screen w-64 glass-strong border-r border-border/50 z-50 lg:hidden flex flex-col"
+              className="fixed left-0 top-0 h-screen w-64 bg-card border-r border-border/50 z-50 lg:hidden flex flex-col"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
