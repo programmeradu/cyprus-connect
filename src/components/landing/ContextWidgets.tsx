@@ -250,6 +250,10 @@ export function ContextWidgets() {
 
 /* ── Right-side context visuals ─────────────────────────────────── */
 
+/**
+ * Instrument-style gauge — perimeter tick marks, dual arc (track + renewables),
+ * warmth-mapped stroke, tabular readout inside. Reads as a real dial, not a chip.
+ */
 function GridIntensityVisual({
   intensity,
   renewables,
@@ -257,57 +261,130 @@ function GridIntensityVisual({
   intensity: number | null;
   renewables: number | null;
 }) {
-  // Two concentric arcs: outer = renewables share, inner = carbon intensity heat
-  const size = 76;
-  const r = 30;
-  const c = 2 * Math.PI * r;
+  const size = 112;
+  const cx = size / 2;
+  const cy = size / 2;
+  const rOuter = 50;
+  const rArc = 42;
+  const c = 2 * Math.PI * rArc;
   const pct = Math.max(0, Math.min(100, renewables ?? 0));
   const dash = (pct / 100) * c;
-  // color hint: greener when renewables high, warmer when intensity high
   const warmth = Math.max(0, Math.min(1, (intensity ?? 400) / 700));
-  const stroke = `oklch(0.72 0.16 ${145 - warmth * 100})`;
+  const hue = 145 - warmth * 100; // green → amber as intensity climbs
+  const stroke = `oklch(0.68 0.15 ${hue})`;
+  const gradId = "grid-arc-grad";
+
+  // 60 minor ticks around the perimeter, every 5th a major tick
+  const ticks = Array.from({ length: 60 }, (_, i) => {
+    const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;
+    const major = i % 5 === 0;
+    const rIn = major ? rOuter - 6 : rOuter - 3;
+    const rOut = rOuter;
+    return {
+      x1: cx + Math.cos(angle) * rIn,
+      y1: cy + Math.sin(angle) * rIn,
+      x2: cx + Math.cos(angle) * rOut,
+      y2: cy + Math.sin(angle) * rOut,
+      major,
+    };
+  });
 
   return (
     <div
-      className="hidden sm:grid h-[76px] w-[76px] place-items-center rounded-full border border-border/60 bg-background/40"
+      className="hidden sm:grid h-[112px] w-[112px] place-items-center"
       aria-hidden
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor={stroke} stopOpacity={0.35} />
+            <stop offset="100%" stopColor={stroke} stopOpacity={1} />
+          </linearGradient>
+        </defs>
+        {/* Perimeter tick ring */}
+        {ticks.map((t, i) => (
+          <line
+            key={i}
+            x1={t.x1}
+            y1={t.y1}
+            x2={t.x2}
+            y2={t.y2}
+            stroke="currentColor"
+            strokeOpacity={t.major ? 0.35 : 0.14}
+            strokeWidth={t.major ? 1 : 0.6}
+            strokeLinecap="round"
+          />
+        ))}
+        {/* Track */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
+          cx={cx}
+          cy={cy}
+          r={rArc}
           fill="none"
           stroke="currentColor"
-          strokeOpacity={0.12}
-          strokeWidth={3}
+          strokeOpacity={0.08}
+          strokeWidth={4}
         />
+        {/* Renewables arc */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
+          cx={cx}
+          cy={cy}
+          r={rArc}
           fill="none"
-          stroke={stroke}
-          strokeWidth={3}
+          stroke={`url(#${gradId})`}
+          strokeWidth={4}
           strokeLinecap="round"
           strokeDasharray={`${dash} ${c}`}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          transform={`rotate(-90 ${cx} ${cy})`}
         />
+        {/* Inner hairline */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={rArc - 8}
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity={0.1}
+          strokeWidth={0.75}
+        />
+        {/* Readout */}
         <text
           x="50%"
-          y="52%"
+          y="47%"
           textAnchor="middle"
           dominantBaseline="middle"
           className="fill-foreground"
-          style={{ fontSize: 12, fontFamily: "var(--editorial-serif)" }}
+          style={{
+            fontSize: 18,
+            fontFamily: "var(--editorial-serif)",
+            letterSpacing: "-0.02em",
+          }}
         >
-          {renewables !== null ? `${renewables}%` : "—"}
+          {renewables !== null ? renewables : "—"}
+        </text>
+        <text
+          x="50%"
+          y="63%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="fill-muted-foreground"
+          style={{
+            fontSize: 6.5,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+          }}
+        >
+          % RENEW
         </text>
       </svg>
     </div>
   );
 }
 
+/**
+ * Editorial punch-card / ticket stub — month header bar, oversized day numeral,
+ * perforated edge, footer year. Feels like something you'd tear off a calendar.
+ */
 function DeadlineVisual({
   dateISO,
   locale,
@@ -324,47 +401,156 @@ function DeadlineVisual({
   const year = d.getFullYear();
   return (
     <div
-      className="hidden sm:flex h-[76px] w-[76px] flex-col overflow-hidden rounded-sm border border-border/60 bg-background/40"
+      className="hidden sm:flex relative h-[112px] w-[92px] flex-col overflow-hidden rounded-[3px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(0,0,0,0.04),0_10px_24px_-18px_rgba(0,0,0,0.35)]"
       aria-hidden
     >
-      <div className="bg-foreground py-0.5 text-center text-[9px] font-semibold uppercase tracking-[0.2em] text-background">
+      {/* Perforation strip */}
+      <div className="absolute inset-y-0 left-[14px] w-px bg-border/70" />
+      <div className="absolute inset-y-0 left-[14px] flex -translate-x-1/2 flex-col justify-around">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <span
+            key={i}
+            className="block h-[3px] w-[3px] rounded-full bg-border"
+          />
+        ))}
+      </div>
+
+      {/* Month bar */}
+      <div className="bg-foreground py-[3px] pl-[22px] pr-2 text-left text-[9px] font-semibold uppercase tracking-[0.24em] text-background">
         {month}
       </div>
-      <div className="flex flex-1 items-center justify-center font-[family-name:var(--editorial-serif)] text-2xl tabular-nums leading-none">
+
+      {/* Day numeral */}
+      <div className="flex flex-1 items-center justify-center pl-[14px] font-[family-name:var(--editorial-serif)] text-[44px] tabular-nums leading-none tracking-[-0.03em]">
         {day}
       </div>
-      <div className="pb-1 text-center text-[9px] tabular-nums tracking-[0.15em] text-muted-foreground">
+
+      {/* Year footer */}
+      <div className="border-t border-border/60 pl-[22px] pr-2 py-[3px] text-left text-[9px] tabular-nums tracking-[0.22em] text-muted-foreground">
         {year}
       </div>
     </div>
   );
 }
 
+/**
+ * Editorial signal chart — baseline grid, filled area beneath a sparkline,
+ * animated pulse on the latest peak. Reads as a real newsroom pulse indicator.
+ */
 function NewsPulseVisual() {
-  // Editorial sparkline / signal wave
+  const w = 112;
+  const h = 96;
+  const pts: Array<[number, number]> = [
+    [6, 68],
+    [16, 60],
+    [26, 72],
+    [36, 42],
+    [46, 54],
+    [56, 30],
+    [66, 58],
+    [76, 40],
+    [86, 46],
+    [98, 34],
+    [106, 44],
+  ];
+  const line = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x} ${y}`).join(" ");
+  const area = `${line} L${pts[pts.length - 1][0]} ${h - 8} L${pts[0][0]} ${h - 8} Z`;
+  const peak = pts.reduce((a, b) => (b[1] < a[1] ? b : a));
+  const gradId = "news-area-grad";
+
   return (
     <div
-      className="hidden sm:grid h-[76px] w-[76px] place-items-center rounded-sm border border-border/60 bg-background/40"
+      className="hidden sm:grid h-[112px] w-[112px] place-items-center"
       aria-hidden
     >
-      <svg width={60} height={40} viewBox="0 0 60 40">
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
+        <defs>
+          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="currentColor" stopOpacity={0.22} />
+            <stop offset="100%" stopColor="currentColor" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+
+        {/* Baseline grid */}
+        {[0.25, 0.5, 0.75].map((f) => (
+          <line
+            key={f}
+            x1={4}
+            y1={8 + (h - 16) * f}
+            x2={w - 4}
+            y2={8 + (h - 16) * f}
+            stroke="currentColor"
+            strokeOpacity={0.06}
+            strokeWidth={0.5}
+            strokeDasharray="2 3"
+          />
+        ))}
+        <line
+          x1={4}
+          y1={h - 8}
+          x2={w - 4}
+          y2={h - 8}
+          stroke="currentColor"
+          strokeOpacity={0.2}
+          strokeWidth={0.75}
+        />
+
+        {/* Filled area */}
+        <path d={area} fill={`url(#${gradId})`} className="text-foreground" />
+        {/* Line */}
         <path
-          d="M2 28 L10 24 L16 30 L22 14 L28 22 L34 10 L40 26 L46 18 L52 22 L58 20"
+          d={line}
           fill="none"
           stroke="currentColor"
-          strokeOpacity={0.85}
-          strokeWidth={1.5}
+          strokeOpacity={0.9}
+          strokeWidth={1.25}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <circle cx={34} cy={10} r={2.5} className="fill-foreground">
+
+        {/* Peak marker */}
+        <circle
+          cx={peak[0]}
+          cy={peak[1]}
+          r={6}
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity={0.25}
+          strokeWidth={0.75}
+        >
           <animate
             attributeName="r"
-            values="2;3.5;2"
-            dur="2.4s"
+            values="4;9;4"
+            dur="2.6s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="stroke-opacity"
+            values="0.35;0;0.35"
+            dur="2.6s"
             repeatCount="indefinite"
           />
         </circle>
+        <circle
+          cx={peak[0]}
+          cy={peak[1]}
+          r={2.25}
+          className="fill-foreground"
+        />
+
+        {/* Axis eyebrow */}
+        <text
+          x={4}
+          y={h - 1}
+          className="fill-muted-foreground"
+          style={{
+            fontSize: 5.5,
+            letterSpacing: "0.24em",
+            textTransform: "uppercase",
+          }}
+        >
+          7D · SIGNAL
+        </text>
       </svg>
     </div>
   );
