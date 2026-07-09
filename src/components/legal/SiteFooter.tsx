@@ -76,6 +76,11 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
+              <Link href={`/${locale}/tools`} className="text-foreground/80 hover:text-foreground">
+                {locale === "el" ? "Εργαλεία" : "Tools"}
+              </Link>
+            </li>
+            <li>
               <Link href={`/${locale}/learn`} className="text-foreground/80 hover:text-foreground">
                 {t.learn}
               </Link>
