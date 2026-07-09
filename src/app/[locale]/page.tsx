@@ -175,6 +175,7 @@ export default function Home() {
         eyebrow="01 / Why VerdeIQ"
         titleA={tL("whyTitleA")}
         subtitle={tL("whySubtitle")}
+        media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
       >
         <NumberedList
           items={[
