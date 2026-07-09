@@ -88,7 +88,21 @@ export default function Home() {
       </header>
 
       {/* HERO */}
-      <section className="mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-24 sm:pb-24">
+      <section className="relative overflow-hidden">
+        {/* Premium 4K Background Image — scoped to hero */}
+        <div className="absolute inset-0 -z-0 pointer-events-none">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage:
+                'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/10 dark:hidden" />
+          <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background via-background/80 to-background/30" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
+        </div>
+        <div className="relative mx-auto max-w-6xl px-4 pt-14 pb-16 sm:px-6 sm:pt-24 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
