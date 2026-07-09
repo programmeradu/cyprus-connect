@@ -89,33 +89,31 @@ export default function ToolShell({
         <MarketingHeader />
       </div>
 
-      <article className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-14">
+      <article className="mx-auto w-full max-w-5xl px-5 pb-24 pt-10 sm:px-8 sm:pt-14">
         {/* Hero */}
         <header className="mb-14 sm:mb-20">
-          <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-end md:gap-14">
+          <div className="grid gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-center md:gap-14">
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary sm:text-xs">
-                {eyebrow}
-              </p>
+              <p className="text-sm font-medium text-primary">{eyebrow}</p>
               <h1
-                className="mt-4 text-[38px] font-semibold leading-[1.02] tracking-[-0.03em] sm:mt-6 sm:text-[56px] md:text-[64px]"
+                className="mt-3 text-[34px] font-semibold leading-[1.05] tracking-[-0.02em] sm:mt-4 sm:text-[46px]"
                 style={SANS}
               >
                 {title}
               </h1>
-              <p className="mt-5 max-w-xl text-[16px] leading-[1.55] text-foreground/70 sm:text-[18px]">
+              <p className="mt-5 max-w-xl text-[16px] leading-[1.6] text-foreground/70 sm:text-[17px]">
                 {subtitle}
               </p>
-              <p className="mt-6 text-[12px] tabular-nums uppercase tracking-[0.12em] text-foreground/45">
-                {updatedLabel} · {updatedFmt}
+              <p className="mt-6 text-[13px] text-foreground/50">
+                {updatedLabel} {updatedFmt}
               </p>
             </div>
-            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted print:hidden">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted print:hidden">
               <Image
                 src={heroImage}
                 alt=""
                 fill
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 768px) 45vw, 100vw"
                 priority
                 className="object-cover"
               />
@@ -129,100 +127,71 @@ export default function ToolShell({
         </section>
 
         {/* Methodology */}
-        <section className="mt-20 border-t border-foreground/15 pt-14 sm:mt-24">
-          <div className="grid gap-10 md:grid-cols-[240px_minmax(0,1fr)] md:gap-16">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/55">
-                02 · {locale === "el" ? "Μεθοδολογία" : "Methodology"}
-              </p>
-              <h2
-                className="mt-3 text-[28px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[36px]"
-                style={SANS}
+        <section className="mt-20 border-t border-foreground/10 pt-12 sm:mt-24">
+          <h2
+            className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
+            style={SANS}
+          >
+            {methodologyHeading}
+          </h2>
+          <p className="mt-4 max-w-3xl text-[15.5px] leading-[1.65] text-foreground/70 sm:text-[16px]">
+            {methodologyIntro}
+          </p>
+          <dl className="mt-8 divide-y divide-foreground/10 border-y border-foreground/10">
+            {methodology.map((m, i) => (
+              <div
+                key={i}
+                className="grid gap-2 py-4 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-8"
               >
-                {methodologyHeading}
-              </h2>
-            </div>
-            <div>
-              <p className="max-w-2xl text-[15.5px] leading-[1.65] text-foreground/70 sm:text-[16.5px]">
-                {methodologyIntro}
-              </p>
-              <dl className="mt-8 divide-y divide-foreground/10 border-y border-foreground/15">
-                {methodology.map((m, i) => (
-                  <div
-                    key={i}
-                    className="grid grid-cols-[28px_minmax(0,1fr)] gap-4 py-4 sm:grid-cols-[40px_180px_minmax(0,1fr)] sm:gap-6"
-                  >
-                    <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <dt className="text-[14px] font-medium tracking-[-0.005em] text-foreground/80 sm:col-span-1">
-                      {m.label}
-                    </dt>
-                    <dd className="col-span-2 text-[14px] leading-[1.6] text-foreground/65 sm:col-span-1 sm:col-start-3">
-                      {m.value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </div>
+                <dt className="text-[14.5px] font-medium text-foreground">
+                  {m.label}
+                </dt>
+                <dd className="text-[14.5px] leading-[1.6] text-foreground/70">
+                  {m.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </section>
 
         {/* Worked example */}
-        <section className="mt-20 border-t border-foreground/15 pt-14 sm:mt-24">
-          <div className="grid gap-10 md:grid-cols-[240px_minmax(0,1fr)] md:gap-16">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/55">
-                03 · {locale === "el" ? "Παράδειγμα" : "Worked example"}
-              </p>
-              <h2
-                className="mt-3 text-[28px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[36px]"
-                style={SANS}
-              >
-                {workedExampleHeading}
-              </h2>
-            </div>
-            <div className="max-w-2xl text-[15.5px] leading-[1.7] text-foreground/75 sm:text-[16.5px]">
-              {workedExampleBody}
-            </div>
+        <section className="mt-20 border-t border-foreground/10 pt-12 sm:mt-24">
+          <h2
+            className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
+            style={SANS}
+          >
+            {workedExampleHeading}
+          </h2>
+          <div className="mt-5 max-w-3xl text-[15.5px] leading-[1.7] text-foreground/75 sm:text-[16px]">
+            {workedExampleBody}
           </div>
         </section>
 
         {/* FAQ */}
         {faq.length > 0 && (
-          <section className="mt-20 border-t border-foreground/15 pt-14 print:hidden sm:mt-24">
-            <div className="mb-8">
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/55">
-                04 · FAQ
-              </p>
-              <h2
-                className="mt-3 text-[28px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[36px]"
-                style={SANS}
-              >
-                {faqHeading}
-              </h2>
-            </div>
-            <ul className="divide-y divide-foreground/10 border-y border-foreground/15">
+          <section className="mt-20 border-t border-foreground/10 pt-12 print:hidden sm:mt-24">
+            <h2
+              className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
+              style={SANS}
+            >
+              {faqHeading}
+            </h2>
+            <ul className="mt-8 divide-y divide-foreground/10 border-y border-foreground/10">
               {faq.map((f, i) => (
-                <li key={i} className="py-6">
-                  <details className="group">
+                <li key={i}>
+                  <details className="group py-5">
                     <summary className="flex cursor-pointer list-none items-start justify-between gap-6">
-                      <div className="grid grid-cols-[28px_minmax(0,1fr)] items-baseline gap-4">
-                        <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span className="text-[16px] font-medium leading-[1.35] tracking-[-0.01em] text-foreground sm:text-[17.5px]">
-                          {f.q}
-                        </span>
-                      </div>
+                      <span className="text-[16px] font-medium leading-[1.4] text-foreground sm:text-[17px]">
+                        {f.q}
+                      </span>
                       <span
                         aria-hidden
-                        className="shrink-0 pt-0.5 text-[18px] leading-none text-foreground/40 transition group-open:rotate-45"
+                        className="mt-1 shrink-0 text-[18px] leading-none text-foreground/40 transition group-open:rotate-45"
                       >
                         +
                       </span>
                     </summary>
-                    <div className="ml-[44px] mt-3 max-w-3xl text-[14.5px] leading-[1.7] text-foreground/70 sm:text-[15.5px]">
+                    <div className="mt-3 max-w-3xl text-[15px] leading-[1.7] text-foreground/70">
                       {f.a}
                     </div>
                   </details>
@@ -234,20 +203,18 @@ export default function ToolShell({
 
         {/* Related guides */}
         {related.length > 0 && (
-          <section className="mt-20 border-t border-foreground/15 pt-14 print:hidden sm:mt-24">
-            <div className="mb-8 flex items-baseline justify-between border-b border-foreground/10 pb-3">
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-foreground/60">
-                05 · {relatedHeading}
-              </p>
-              <span className="tabular-nums text-[11px] text-foreground/40">
-                {String(related.length).padStart(2, "0")}
-              </span>
-            </div>
-            <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <section className="mt-20 border-t border-foreground/10 pt-12 print:hidden sm:mt-24">
+            <h2
+              className="text-[24px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[30px]"
+              style={SANS}
+            >
+              {relatedHeading}
+            </h2>
+            <ul className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((r) => (
                 <li key={r.slug}>
                   <Link href={`/${locale}/learn/${r.slug}`} className="group block">
-                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
                       <Image
                         src={r.heroImage}
                         alt=""
@@ -257,16 +224,16 @@ export default function ToolShell({
                       />
                     </div>
                     <div className="mt-4">
-                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-primary">
+                      <p className="text-[13px] font-medium text-primary">
                         {r.eyebrow}
                       </p>
                       <h3
-                        className="mt-2 text-[18px] font-semibold leading-[1.2] tracking-[-0.01em] text-foreground group-hover:text-primary sm:text-[20px]"
+                        className="mt-1.5 text-[17px] font-semibold leading-[1.3] tracking-[-0.005em] text-foreground group-hover:text-primary"
                         style={SANS}
                       >
                         {r.title}
                       </h3>
-                      <p className="mt-3 text-[11.5px] tabular-nums text-foreground/45">
+                      <p className="mt-2 text-[13px] text-foreground/50">
                         {r.readingMinutes} {minRead}
                       </p>
                     </div>
@@ -278,29 +245,29 @@ export default function ToolShell({
         )}
 
         {/* CTA */}
-        <section className="mt-20 border-t border-foreground/15 pt-14 print:hidden sm:mt-24">
+        <section className="mt-20 border-t border-foreground/10 pt-12 print:hidden sm:mt-24">
           <div className="mx-auto max-w-2xl sm:text-center">
             <h2
-              className="text-[28px] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[40px]"
+              className="text-[26px] font-semibold leading-[1.15] tracking-[-0.015em] sm:text-[34px]"
               style={SANS}
             >
               {ctaHeading}
             </h2>
-            <p className="mt-4 text-[16px] leading-[1.6] text-foreground/65 sm:text-[17px]">
+            <p className="mt-4 text-[16px] leading-[1.6] text-foreground/70">
               {ctaBody}
             </p>
-            <div className="mt-8 flex flex-wrap gap-4 sm:justify-center">
+            <div className="mt-8 flex flex-wrap gap-3 sm:justify-center">
               <Link
                 href={`/${locale}/auth`}
-                className="inline-flex h-11 items-center border border-foreground bg-foreground px-6 text-[14px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+                className="inline-flex h-11 items-center rounded-md bg-foreground px-6 text-[14.5px] font-medium text-background transition hover:bg-foreground/85"
               >
                 {ctaAction}
               </Link>
               <Link
                 href={`/${locale}/tools`}
-                className="inline-flex h-11 items-center border border-foreground/25 px-6 text-[14px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+                className="inline-flex h-11 items-center rounded-md border border-foreground/20 px-6 text-[14.5px] font-medium text-foreground transition hover:border-foreground/60"
               >
-                {locale === "el" ? "Όλα τα εργαλεία →" : "All tools →"}
+                {locale === "el" ? "Όλα τα εργαλεία" : "All tools"}
               </Link>
             </div>
           </div>
