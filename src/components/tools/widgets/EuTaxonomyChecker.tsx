@@ -212,21 +212,22 @@ export default function EuTaxonomyChecker({ locale }: Props) {
   );
 
   return (
-    <div className="not-prose border-y border-foreground/15 print:border-none">
+    <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            00 · {l.interactive}
+          <p className="viq-kicker">
+            <span className="viq-step-num">01</span>
+            <span>{l.interactive}</span>
           </p>
-          <p className="tabular-nums text-[11px] text-foreground/40 print:hidden">{l.sourcesNote}</p>
+          <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
         </div>
         <p className="mt-4 max-w-2xl text-[13px] text-foreground/60 print:hidden">{l.disclaimer}</p>
         <div className="mt-6 flex flex-wrap gap-3 print:hidden">
           <button
             type="button"
             onClick={doPrint}
-            className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+            className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85"
           >
             {l.print}
           </button>
@@ -234,14 +235,14 @@ export default function EuTaxonomyChecker({ locale }: Props) {
             type="button"
             onClick={downloadCsv}
             disabled={!activity}
-            className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40"
           >
             {l.csv}
           </button>
           <button
             type="button"
             onClick={reset}
-            className="inline-flex h-9 items-center px-2 text-[12.5px] text-foreground/55 underline underline-offset-4 transition hover:text-foreground"
+            className="viq-button inline-flex h-9 items-center px-2 text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
           >
             {l.reset}
           </button>
@@ -250,8 +251,8 @@ export default function EuTaxonomyChecker({ locale }: Props) {
 
       {/* Step 1 — search + pick */}
       <div className="border-b border-foreground/10 py-8 sm:py-10 print:hidden">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-          01 · {l.step01}
+        <p className="viq-section-label">
+          <span className="viq-step-num">01</span> {l.step01}
         </p>
         <input
           type="text"
@@ -290,7 +291,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
                       {a.objectives.map((o) => (
                         <span
                           key={o}
-                          className="border border-foreground/25 px-1.5 py-0.5 text-[10.5px] uppercase tracking-[0.14em] text-foreground/70"
+                          className="border border-foreground/25 px-1.5 py-0.5 text-[12px] font-semibold text-foreground/75"
                         >
                           {o}
                         </span>
@@ -306,8 +307,8 @@ export default function EuTaxonomyChecker({ locale }: Props) {
 
       {/* Selected activity — always visible when set (also in print) */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-          02 · {l.selectedActivity}
+        <p className="viq-section-label">
+          <span className="viq-step-num">02</span> {l.selectedActivity}
         </p>
         {!activity && (
           <p className="mt-4 text-[13px] text-foreground/50">{l.selectedNone}</p>
@@ -321,13 +322,13 @@ export default function EuTaxonomyChecker({ locale }: Props) {
               {activity[locale].description}
             </p>
             <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-[12.5px]">
-              <dt className="uppercase tracking-[0.14em] text-foreground/50">{l.nace}</dt>
+              <dt className="viq-caption">{l.nace}</dt>
               <dd className="tabular-nums text-foreground">{activity.nace}</dd>
-              <dt className="uppercase tracking-[0.14em] text-foreground/50">{l.ref}</dt>
+              <dt className="viq-caption">{l.ref}</dt>
               <dd className="tabular-nums text-foreground">{activity.ref}</dd>
             </dl>
 
-            <p className="mt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-foreground/60">
+            <p className="viq-section-label mt-6">
               {l.contributes}
             </p>
             <p className="mt-1 text-[12px] text-foreground/50">{l.primaryHelp}</p>
@@ -358,8 +359,8 @@ export default function EuTaxonomyChecker({ locale }: Props) {
       {/* Step 3 — DNSH */}
       {activity && state.primary && (
         <div className="border-b border-foreground/10 py-8 sm:py-10">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            03 · {l.step03}
+          <p className="viq-section-label">
+            <span className="viq-step-num">03</span> {l.step03}
           </p>
           <p className="mt-3 max-w-2xl text-[13px] leading-[1.6] text-foreground/60">{l.dnshIntro}</p>
           <ul className="mt-6 divide-y divide-foreground/10 border-y border-foreground/10">
@@ -370,7 +371,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
               return (
                 <li key={o} className="grid gap-4 py-4 sm:grid-cols-[220px_1fr_auto] sm:items-center">
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/70">
+                    <p className="viq-minor-code">
                       {o}
                     </p>
                     <p className="text-[13px] text-foreground">{objMeta[locale]}</p>
@@ -389,8 +390,8 @@ export default function EuTaxonomyChecker({ locale }: Props) {
       {/* Step 4 — Safeguards */}
       {activity && state.primary && (
         <div className="border-b border-foreground/10 py-8 sm:py-10">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            04 · {l.step04}
+          <p className="viq-section-label">
+            <span className="viq-step-num">04</span> {l.step04}
           </p>
           <p className="mt-3 max-w-2xl text-[13px] leading-[1.6] text-foreground/60">{l.safeguardsIntro}</p>
           <ul className="mt-6 divide-y divide-foreground/10 border-y border-foreground/10">
@@ -406,8 +407,8 @@ export default function EuTaxonomyChecker({ locale }: Props) {
 
       {/* Step 5 — Verdict */}
       <div className="py-8 sm:py-10">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-          05 · {l.step05}
+        <p className="viq-section-label">
+          <span className="viq-step-num">05</span> {l.step05}
         </p>
         {verdict === "empty" && (
           <p className="mt-4 text-[13px] text-foreground/55">{l.verdictEmpty}</p>
@@ -432,7 +433,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
                   ? l.verdictNotBody
                   : l.verdictPartialBody}
             </p>
-            <p className="mt-4 hidden text-[11px] tabular-nums text-foreground/45 print:block">
+            <p className="viq-print-note mt-4 hidden print:block">
               {l.generatedOn} {new Date().toLocaleDateString(locale === "el" ? "el-CY" : "en-GB")}
             </p>
           </div>
