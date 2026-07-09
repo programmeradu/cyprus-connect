@@ -1818,7 +1818,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 </div>
                               ) : humidityInsight ? (
                                 <div>
-                                  <span className="text-[10px] font-bold text-primary uppercase tracking-wide">
+                                  <span className="eyebrow text-primary">
                                     {getInsightTypeLabel(humidityInsight.type)}:
                                   </span>
                                   <p className="text-[10px] text-muted-foreground leading-tight mt-1">
@@ -1882,7 +1882,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 </div>
                               ) : windInsight ? (
                                 <div>
-                                  <span className="text-[10px] font-bold text-primary uppercase tracking-wide">
+                                  <span className="eyebrow text-primary">
                                     {getInsightTypeLabel(windInsight.type)}:
                                   </span>
                                   <p className="text-[10px] text-muted-foreground leading-tight mt-1">

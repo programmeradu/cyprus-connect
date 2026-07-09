@@ -37,7 +37,7 @@ export const StatCard = ({
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1">
+            <p className="eyebrow mb-1">
               {title}
             </p>
             <div className="flex items-baseline gap-2">

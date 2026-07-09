@@ -110,7 +110,7 @@ export default function CsrdVsmeChecker({ locale }: Props) {
     <div className="not-prose my-14 border-y border-foreground/15">
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <div className="flex items-baseline justify-between gap-6">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="eyebrow">
             {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
           </p>
           <p className="tabular-nums text-[11px] text-foreground/40">02 / 03</p>
@@ -172,7 +172,7 @@ export default function CsrdVsmeChecker({ locale }: Props) {
         </div>
 
         <div className="border-l border-foreground/10 pl-8 sm:pl-10">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="eyebrow">
             {l.result}
           </p>
           <p className={`mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] ${inScope ? "text-foreground" : "text-foreground/45"}`}>
@@ -186,11 +186,11 @@ export default function CsrdVsmeChecker({ locale }: Props) {
           {result.firstReport !== "—" && (
             <dl className="mt-6 grid grid-cols-2 gap-6 border-t border-foreground/10 pt-5">
               <div>
-                <dt className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/50">{l.firstReport}</dt>
+                <dt className="eyebrow">{l.firstReport}</dt>
                 <dd className="mt-2 text-[24px] font-semibold tabular-nums tracking-[-0.02em]">{result.firstReport}</dd>
               </div>
               <div>
-                <dt className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/50">{l.covering}</dt>
+                <dt className="eyebrow">{l.covering}</dt>
                 <dd className="mt-2 text-[24px] font-semibold tracking-[-0.02em]">{result.covering}</dd>
               </div>
             </dl>

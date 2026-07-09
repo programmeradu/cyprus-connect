@@ -658,7 +658,7 @@ function IntegrationsContent() {
               {energyData.utilityRates && !energyData.utilityRates.error && (
                 <div className="grid md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("energy.rate")}</p>
+                    <p className="eyebrow mb-1">{t("energy.rate")}</p>
                     <p className="text-xl font-bold text-primary mb-0.5">
                       ${energyData.utilityRates.averageRatePerKwh?.toFixed(4)}
                     </p>
@@ -666,7 +666,7 @@ function IntegrationsContent() {
                   </div>
 
                   <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                    <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("energy.monthlyCost")}</p>
+                    <p className="eyebrow mb-1">{t("energy.monthlyCost")}</p>
                     <p className="text-xl font-bold text-primary mb-0.5">
                       ${energyData.utilityRates.monthlyCost?.totalCost?.toFixed(2)}
                     </p>
@@ -678,7 +678,7 @@ function IntegrationsContent() {
               {energyData.carbonIntensity && !energyData.carbonIntensity.error && (
                 <div className="p-3 rounded-xl bg-primary/5 border border-primary/10">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("energy.carbonIntensity")}</p>
+                    <p className="eyebrow">{t("energy.carbonIntensity")}</p>
                     <p className="text-[10px] text-primary font-medium">
                       {t("energy.renewable", { pct: energyData.carbonIntensity.renewablePercentage?.toFixed(1) })}
                     </p>
@@ -804,7 +804,7 @@ function IntegrationsContent() {
               {/* Performance Overview */}
               <div className={`p-4 rounded-xl border ${getInterpretationBg(benchmarkComparison.interpretation)}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{t("benchmarks.performanceRating")}</p>
+                  <p className="eyebrow">{t("benchmarks.performanceRating")}</p>
                   <p className={`text-sm font-bold ${getInterpretationColor(benchmarkComparison.interpretation)}`}>
                     {t(`benchmarks.ratings.${benchmarkComparison.interpretation}` as any)}
                   </p>
@@ -834,7 +834,7 @@ function IntegrationsContent() {
               {/* Detailed Metrics */}
               <div className="grid md:grid-cols-3 gap-3">
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.regionalPercentile")}</p>
+                  <p className="eyebrow mb-1">{t("benchmarks.regionalPercentile")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.percentile_rank}th
                   </p>
@@ -842,7 +842,7 @@ function IntegrationsContent() {
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.globalPercentile")}</p>
+                  <p className="eyebrow mb-1">{t("benchmarks.globalPercentile")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.global_percentile_rank}th
                   </p>
@@ -850,7 +850,7 @@ function IntegrationsContent() {
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">{t("benchmarks.countryContext")}</p>
+                  <p className="eyebrow mb-1">{t("benchmarks.countryContext")}</p>
                   <p className="text-xl font-bold text-primary mb-0.5">
                     {benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%
                   </p>
@@ -861,7 +861,7 @@ function IntegrationsContent() {
               {/* Intensity Metrics */}
               <div className="grid md:grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">{t("benchmarks.perEmployeeMetric")}</p>
+                  <p className="eyebrow mb-2">{t("benchmarks.perEmployeeMetric")}</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-base font-bold text-foreground">
                       {benchmarkComparison.emissions_per_employee.toFixed(2)}
@@ -873,7 +873,7 @@ function IntegrationsContent() {
                 </div>
 
                 <div className="p-3 rounded-xl bg-accent/30 border border-border/30">
-                  <p className="text-[10px] text-muted-foreground mb-2 uppercase tracking-wide">{t("benchmarks.perRevenue")}</p>
+                  <p className="eyebrow mb-2">{t("benchmarks.perRevenue")}</p>
                   <div className="flex items-baseline gap-2">
                     <p className="text-base font-bold text-foreground">
                       {benchmarkComparison.emissions_per_revenue.toFixed(2)}

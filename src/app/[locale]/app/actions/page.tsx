@@ -447,7 +447,7 @@ OR
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">{t("completed")}</p>
+          <p className="eyebrow mb-1">{t("completed")}</p>
           <p className="text-3xl font-bold mb-1">{completedCount}</p>
           <MiniTrendChart data={completedTrend} />
         </motion.div>
@@ -457,7 +457,7 @@ OR
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">{t("available")}</p>
+          <p className="eyebrow mb-1">{t("available")}</p>
           <p className="text-3xl font-bold mb-1">{availableCount}</p>
           <MiniTrendChart data={availableTrend} />
         </motion.div>
@@ -467,7 +467,7 @@ OR
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wider font-medium">{t("creditsEarned")}</p>
+          <p className="eyebrow mb-1">{t("creditsEarned")}</p>
           <p className="text-3xl font-bold mb-1">{user?.totalCredits || 0}</p>
           <MiniTrendChart data={creditsTrend} />
         </motion.div>

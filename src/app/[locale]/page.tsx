@@ -93,7 +93,7 @@ export default function Home() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="max-w-3xl"
         >
-          <div className="mb-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          <div className="mb-6 flex items-center gap-3 eyebrow">
             <span>VerdeIQ</span>
             <span className="h-px w-8 bg-border" />
             <span>{tHero("badge")}</span>
@@ -134,7 +134,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.25 }}
         >
-          <div className="border-b border-border/60 px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:px-6">
+          <div className="border-b border-border/60 px-4 py-2 eyebrow sm:px-6">
             Live preview / Dashboard
           </div>
           <div className="p-3 sm:p-6">
@@ -203,7 +203,7 @@ export default function Home() {
 
       {/* INTEGRATIONS */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mb-8 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+        <div className="mb-8 eyebrow">
           {tL("integratedWith")}
         </div>
         <ul className="grid grid-cols-2 gap-x-6 gap-y-3 font-[family-name:var(--editorial-serif)] text-lg tracking-tight sm:grid-cols-3 sm:text-2xl md:grid-cols-4">
@@ -237,7 +237,7 @@ export default function Home() {
 
       {/* TESTIMONIAL */}
       <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6 sm:py-28">
-        <div className="mb-6 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+        <div className="mb-6 eyebrow">
           {tL("trustedTitleA")} / {tL("trustedTitleB")}
         </div>
         <blockquote className="font-[family-name:var(--editorial-serif)] text-2xl italic leading-snug tracking-tight text-foreground sm:text-4xl sm:leading-[1.15]">
@@ -309,7 +309,7 @@ function EditorialSection({
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
         <div className="sm:col-span-5">
-          <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          <div className="eyebrow">
             {eyebrow}
           </div>
           <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2rem] leading-[1.05] tracking-[-0.02em] sm:text-[3rem]">

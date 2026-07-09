@@ -158,7 +158,7 @@ export default function PillarShell({
       <button
         type="button"
         onClick={() => setMobileTocOpen(true)}
-        className="fixed bottom-6 right-5 z-30 border border-foreground/15 bg-background/95 px-4 py-2.5 text-[11px] font-medium uppercase tracking-[0.18em] text-foreground shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)] backdrop-blur lg:hidden"
+        className="fixed bottom-6 right-5 z-30 border border-foreground/15 bg-background/95 px-4 py-2.5 eyebrow text-foreground shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)] backdrop-blur lg:hidden"
         aria-label={tocMobileLabel}
       >
         {tocMobileLabel}
@@ -175,13 +175,13 @@ export default function PillarShell({
             style={SANS}
           >
             <div className="mb-5 flex items-center justify-between border-b border-foreground/10 pb-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/60">
+              <p className="eyebrow">
                 {tocLabel}
               </p>
               <button
                 onClick={() => setMobileTocOpen(false)}
                 aria-label="Close"
-                className="text-[11px] font-medium uppercase tracking-[0.18em] text-foreground/60 hover:text-foreground"
+                className="eyebrow hover:text-foreground"
               >
                 Close
               </button>
@@ -232,7 +232,7 @@ export default function PillarShell({
 
         {/* Hero */}
         <header className="mx-auto mb-10 max-w-4xl sm:mb-14">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+          <p className="eyebrow text-primary">
             {eyebrow}
           </p>
           <h1 className="mt-5 text-balance text-[36px] font-semibold leading-[1.05] tracking-[-0.025em] sm:mt-7 sm:text-[52px] md:text-[64px]">
@@ -282,7 +282,7 @@ export default function PillarShell({
           {/* Left TOC — desktop */}
           <aside className="hidden lg:block">
             <div className="sticky top-24">
-              <p className="mb-4 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/55">
+              <p className="mb-4 eyebrow">
                 {tocLabel}
               </p>
               <ol className="space-y-0 border-l border-foreground/10">
@@ -316,7 +316,7 @@ export default function PillarShell({
             >
               <div className="grid gap-6 sm:grid-cols-[minmax(0,180px)_minmax(0,1fr)] sm:gap-10">
                 <div>
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                  <p className="eyebrow">
                     {takeawaysLabel}
                   </p>
                   <p className="mt-2 tabular-nums text-[11px] text-foreground/40">
@@ -348,7 +348,7 @@ export default function PillarShell({
             {/* FAQ */}
             <section aria-labelledby="faq-heading" className="mt-20 max-w-[68ch] sm:mt-24">
               <div className="mb-8 border-b border-foreground/10 pb-4">
-                <p className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/55">
+                <p className="eyebrow">
                   FAQ
                 </p>
                 <h2
@@ -411,7 +411,7 @@ export default function PillarShell({
           <aside className="hidden lg:block">
             <div className="sticky top-24 space-y-6">
               <div className="rounded-[4px] border border-foreground/10 p-5">
-                <p className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-primary">
+                <p className="eyebrow text-primary">
                   VerdeIQ
                 </p>
                 <p className="mt-3 text-[13.5px] leading-[1.55] text-foreground/70">
@@ -447,7 +447,7 @@ export default function PillarShell({
         {related.length > 0 && (
           <section aria-labelledby="related" className="mx-auto mt-24 max-w-6xl sm:mt-28">
             <div className="mb-8 border-b border-foreground/10 pb-4">
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-foreground/55">
+              <p className="eyebrow">
                 {String(related.length).padStart(2, "0")} · {relatedLabel}
               </p>
               <h2
@@ -470,7 +470,7 @@ export default function PillarShell({
                         className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                       />
                     </div>
-                    <p className="mt-4 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-primary">
+                    <p className="mt-4 eyebrow text-primary">
                       {r.eyebrow}
                     </p>
                     <h3 className="mt-2 text-[19px] font-semibold leading-[1.2] tracking-[-0.015em] text-foreground group-hover:text-primary">

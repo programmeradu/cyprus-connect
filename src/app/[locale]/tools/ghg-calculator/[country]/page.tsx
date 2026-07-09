@@ -208,7 +208,7 @@ export default async function GhgCalculatorCountryPage({
     <>
       <p>{c.workedExample}</p>
       <div className="mt-10 border-t border-foreground/15 pt-8">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+        <p className="eyebrow">
           {copy.localizedHeading}
         </p>
         <p className="mt-3 max-w-2xl text-[14.5px] leading-[1.6] text-foreground/60">

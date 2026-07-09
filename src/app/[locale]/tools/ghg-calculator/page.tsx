@@ -247,7 +247,7 @@ export default async function GhgCalculatorPage({ params }: { params: Promise<{ 
           <>
             <p>{copy.workedExampleBody}</p>
             <div className="mt-10 border-t border-foreground/15 pt-8">
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+              <p className="eyebrow">
                 {safeLocale === "el" ? "Εκδόσεις ανά χώρα" : "Country-specific versions"}
               </p>
               <p className="mt-3 max-w-2xl text-[14.5px] leading-[1.6] text-foreground/60">
