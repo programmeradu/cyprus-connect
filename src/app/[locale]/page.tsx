@@ -336,7 +336,7 @@ export default function Home() {
           alt=""
           aria-hidden
           loading="lazy"
-          className="pointer-events-none absolute -top-20 right-0 z-10 hidden w-[380px] max-w-none select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-28 lg:-right-4 lg:w-[520px]"
+          className="pointer-events-none absolute -bottom-16 -left-10 z-10 hidden w-[320px] max-w-none rotate-[4deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-bottom-24 lg:-left-20 lg:w-[440px]"
         />
         <EditorialSection
           eyebrow="04 / How it works"
