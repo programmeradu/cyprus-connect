@@ -476,12 +476,12 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
           <table className="w-full min-w-[640px] border-collapse text-[13px]">
             <thead>
               <tr className="border-b border-foreground/20 text-left text-foreground/65">
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">#</th>
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.topic}</th>
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.esrs}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.impactCol}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.financialCol}</th>
-                <th className="py-2 text-right text-[10.5px] font-semibold">{l.verdict}</th>
+                <th className="py-2 pr-3 viq-table-heading">#</th>
+                <th className="py-2 pr-3 viq-table-heading">{l.topic}</th>
+                <th className="py-2 pr-3 viq-table-heading">{l.esrs}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.impactCol}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.financialCol}</th>
+                <th className="py-2 text-right viq-table-heading">{l.verdict}</th>
               </tr>
             </thead>
             <tbody>

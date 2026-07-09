@@ -423,14 +423,14 @@ ${lines}
           <table className="w-full min-w-[900px] border-collapse text-[12.5px]">
             <thead>
               <tr className="border-b border-foreground/20 text-left text-foreground/65">
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.cn}</th>
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.country}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.quantity}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.directFactor}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.indirectFactor}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.carbonPrice}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.lineTotal}</th>
-                <th className="py-2 text-right text-[10.5px] font-semibold print:hidden"></th>
+                <th className="py-2 pr-3 viq-table-heading">{l.cn}</th>
+                <th className="py-2 pr-3 viq-table-heading">{l.country}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.quantity}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.directFactor}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.indirectFactor}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.carbonPrice}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.lineTotal}</th>
+                <th className="py-2 text-right viq-table-heading print:hidden"></th>
               </tr>
             </thead>
             <tbody>
