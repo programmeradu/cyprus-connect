@@ -167,14 +167,13 @@ export function FloatingAIAssistant() {
             </span>
             {/* Core mark */}
             <span
-              className="relative grid h-9 w-9 place-items-center rounded-full text-[13px] font-semibold text-primary-foreground shadow-[0_6px_20px_-6px_oklch(0.72_0.18_145/0.6)]"
+              className="relative grid h-9 w-9 place-items-center rounded-full text-primary-foreground shadow-[0_6px_20px_-6px_oklch(0.72_0.18_145/0.6)]"
               style={{
                 background:
                   "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
-                fontFamily: "var(--editorial-serif)",
               }}
             >
-              V
+              <VerdeMark className="h-[18px] w-[18px]" />
             </span>
             {/* Presence dot */}
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_2px_var(--background)]">
