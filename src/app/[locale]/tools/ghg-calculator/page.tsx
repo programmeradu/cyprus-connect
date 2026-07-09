@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getTool } from "@/data/tools";
+import { COUNTRIES } from "@/data/tools/countries";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import GhgCalculator from "@/components/tools/widgets/GhgCalculator";
 
