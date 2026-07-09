@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getTool } from "@/data/tools";
+import { COUNTRIES } from "@/data/tools/countries";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import GhgCalculator from "@/components/tools/widgets/GhgCalculator";
 
@@ -241,7 +243,38 @@ export default async function GhgCalculatorPage({ params }: { params: Promise<{ 
         methodologyIntro={copy.methodologyIntro}
         methodology={copy.methodology}
         workedExampleHeading={copy.workedExampleHeading}
-        workedExampleBody={<p>{copy.workedExampleBody}</p>}
+        workedExampleBody={
+          <>
+            <p>{copy.workedExampleBody}</p>
+            <div className="mt-10 border-t border-foreground/15 pt-8">
+              <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                {safeLocale === "el" ? "Εκδόσεις ανά χώρα" : "Country-specific versions"}
+              </p>
+              <p className="mt-3 max-w-2xl text-[14.5px] leading-[1.6] text-foreground/60">
+                {safeLocale === "el"
+                  ? "Ο ίδιος υπολογιστής, με προεπιλεγμένο τον συντελεστή δικτύου κάθε χώρας και ένα τοπικό παράδειγμα."
+                  : "Same calculator, pre-loaded with each country's grid factor and a domestic worked example."}
+              </p>
+              <ul className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {COUNTRIES.map((k) => (
+                  <li key={k.slug}>
+                    <Link
+                      href={`/${safeLocale}/tools/${SLUG}/${k.slug}`}
+                      className="group flex items-baseline justify-between gap-4 border-b border-foreground/10 py-2 text-[14px] transition hover:border-foreground/40"
+                    >
+                      <span className="font-medium text-foreground/85 group-hover:text-foreground">
+                        {k[safeLocale].name}
+                      </span>
+                      <span className="tabular-nums text-[11.5px] text-foreground/45">
+                        {k.gridFactor} kg/kWh
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        }
         faqHeading={copy.faqHeading}
         faq={copy.faq}
         relatedHeading={copy.relatedHeading}

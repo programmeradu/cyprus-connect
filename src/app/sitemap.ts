@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
 import { PILLAR_SLUGS } from "@/data/learn/pillars";
 import { AVAILABLE_TOOL_SLUGS } from "@/data/tools";
+import { COUNTRY_SLUGS } from "@/data/tools/countries";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
 
@@ -9,7 +10,8 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniver
 const STATIC_PATHS = ["", "/pricing", "/privacy", "/terms", "/security", "/dpa", "/learn", "/tools"] as const;
 const LEARN_PATHS = PILLAR_SLUGS.map((slug) => `/learn/${slug}` as const);
 const TOOL_PATHS = AVAILABLE_TOOL_SLUGS.map((slug) => `/tools/${slug}` as const);
-const PUBLIC_PATHS = [...STATIC_PATHS, ...LEARN_PATHS, ...TOOL_PATHS];
+const COUNTRY_TOOL_PATHS = COUNTRY_SLUGS.map((slug) => `/tools/ghg-calculator/${slug}` as const);
+const PUBLIC_PATHS = [...STATIC_PATHS, ...LEARN_PATHS, ...TOOL_PATHS, ...COUNTRY_TOOL_PATHS];
 
 const hrefLangKey = (locale: string) => (locale === "el" ? "el-CY" : locale);
 

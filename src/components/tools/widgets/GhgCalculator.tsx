@@ -12,7 +12,15 @@ import { useMemo, useState } from "react";
 import { usePersistedState } from "@/hooks/usePersistedState";
 import type { Locale } from "@/data/tools";
 
-type Props = { locale: Locale };
+type Props = {
+  locale: Locale;
+  /** Pre-select a country/region for programmatic per-country pages. */
+  initialRegion?: Region;
+  /** When true, hide the region selector (country page has already chosen it). */
+  lockRegion?: boolean;
+  /** Override localStorage key so per-country pages don't collide. */
+  storageKey?: string;
+};
 
 /* ---------- Emission factors (kg CO2e per unit) ---------- */
 
@@ -183,9 +191,10 @@ const DEFAULT_STATE: State = {
   water: 800,
 };
 
-export default function GhgCalculator({ locale }: Props) {
+export default function GhgCalculator({ locale, initialRegion, lockRegion, storageKey }: Props) {
   const l = t[locale];
-  const [state, setState] = usePersistedState<State>("verdeiq.tool.ghg", DEFAULT_STATE);
+  const seed: State = initialRegion ? { ...DEFAULT_STATE, region: initialRegion } : DEFAULT_STATE;
+  const [state, setState] = usePersistedState<State>(storageKey ?? "verdeiq.tool.ghg", seed);
   const [tab, setTab] = useState<"scope1" | "scope2" | "scope3">("scope1");
 
   const set = <K extends keyof State>(key: K, val: State[K]) =>
@@ -331,22 +340,33 @@ export default function GhgCalculator({ locale }: Props) {
               className="mt-2 w-32 border-0 border-b border-foreground/25 bg-transparent pb-1 text-[26px] font-semibold tabular-nums tracking-[-0.02em] outline-none focus:border-primary"
             />
           </div>
-          <div>
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              {l.region}
-            </label>
-            <select
-              value={state.region}
-              onChange={(e) => set("region", e.target.value as Region)}
-              className="mt-2 w-full min-w-[180px] border-0 border-b border-foreground/25 bg-transparent pb-1 text-[16px] font-medium tracking-[-0.005em] outline-none focus:border-primary sm:w-auto"
-            >
-              {(Object.keys(GRID_FACTORS) as Region[]).map((r) => (
-                <option key={r} value={r}>
-                  {REGION_LABELS[r][locale]} — {GRID_FACTORS[r]} kg/kWh
-                </option>
-              ))}
-            </select>
-          </div>
+          {lockRegion ? (
+            <div>
+              <p className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                {l.region}
+              </p>
+              <p className="mt-2 pb-1 text-[16px] font-medium tracking-[-0.005em]">
+                {REGION_LABELS[state.region][locale]} — {GRID_FACTORS[state.region]} kg/kWh
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+                {l.region}
+              </label>
+              <select
+                value={state.region}
+                onChange={(e) => set("region", e.target.value as Region)}
+                className="mt-2 w-full min-w-[180px] border-0 border-b border-foreground/25 bg-transparent pb-1 text-[16px] font-medium tracking-[-0.005em] outline-none focus:border-primary sm:w-auto"
+              >
+                {(Object.keys(GRID_FACTORS) as Region[]).map((r) => (
+                  <option key={r} value={r}>
+                    {REGION_LABELS[r][locale]} — {GRID_FACTORS[r]} kg/kWh
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <div className="flex flex-wrap gap-3 print:hidden">
             <button
               type="button"

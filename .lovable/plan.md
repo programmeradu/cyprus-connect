@@ -1,136 +1,119 @@
-# VerdeIQ `/tools` — Interactive Tools Hub Build Plan
+# Phase 5 — New tools + programmatic SEO
 
-Goal: rank on high-intent ESG/CBAM/CSRD tool searches across EU + global English by shipping 5 deep, free, no-signup interactive tools under a dedicated `/tools` section.
-
----
-
-## Target keywords (validated via Semrush)
-
-| Route | Primary keyword | Vol | KD |
-|---|---|---|---|
-| `/tools` (hub) | esg reporting tool | 590 US | 30 |
-| `/tools/ghg-calculator` | ghg calculator + scope 3 emissions calculator | 210 + 50 | 45 / 31 |
-| `/tools/cbam-report-generator` | cbam calculator + cbam report | 20 + 30 | 0 / 25 |
-| `/tools/double-materiality` | double materiality matrix + template | 50 + 30 | 0 |
-| `/tools/vsme-template` | vsme template + vsme reporting template | 40 | 0 |
-| `/tools/eu-taxonomy-checker` | eu taxonomy tool + calculator | 40 + 20 | 0 |
-
-All KDs are near-zero except the hub's — wide-open niche. Real reachable demand ≈ 10-20x these single-country volumes across 27 EU markets.
+Two parallel workstreams. Both keep the same 7-block editorial layout, JSON-LD stack, bilingual EN/EL, and no-signup constraint as Phases 1-4.
 
 ---
 
-## Architecture
+## Workstream A — 3 new tools
 
-```text
-src/app/[locale]/tools/
-  page.tsx                          → hub (grid of all 5 tools)
-  layout.tsx                        → shared MarketingHeader + Footer
-  ghg-calculator/page.tsx
-  cbam-report-generator/page.tsx
-  double-materiality/page.tsx
-  vsme-template/page.tsx
-  eu-taxonomy-checker/page.tsx
+Semrush validation (US database, KD ≈ 0 across the board — wide-open niche, same profile as the Phase 1-3 tools):
 
-src/components/tools/
-  ToolShell.tsx                     → shared: hero, tool slot, methodology, worked example, FAQ, related-guides, CTA
-  ToolCard.tsx                      → hub grid card
-  MethodologyBlock.tsx
-  WorkedExample.tsx
-  ExportPdfButton.tsx               → branded PDF export (shared)
+| Route | Primary keyword | Vol |
+|---|---|---|
+| `/tools/sbti-target-setter` | sbti calculator + sbti target setting tool | 20 + 20 |
+| `/tools/csrd-gap-analyzer` | csrd gap analysis + csrd readiness assessment | 30 + 20 |
+| `/tools/green-claims-checker` | green claims directive checker | emerging |
 
-src/components/tools/widgets/
-  GhgCalculator.tsx                 → full-page Scope 1/2/3 calculator, Climatiq-wired
-  CbamReportGenerator.tsx           → CN-code table, quarterly aggregation, XML/PDF export
-  DoubleMaterialityMatrix.tsx       → 2D IRO plotter + stakeholder scoring
-  VsmeTemplateBuilder.tsx           → guided EFRAG VSME Basic form
-  EuTaxonomyChecker.tsx             → NACE picker → eligibility + DNSH checklist
+### A1. SBTi Target Setter (`/tools/sbti-target-setter`)
+- Inputs: base year, base-year Scope 1+2 (and Scope 3 if >40% share), target year, sector
+- Logic: SBTi Near-Term Criteria v5.1 — 1.5°C absolute contraction (4.2%/yr linear), Scope 3 well-below-2°C (2.5%/yr), sector-specific SDA fallback for power/cement/steel/aluminium
+- Outputs: annual pathway table, required % reduction by year, PDF + CSV export, "share this scenario" URL via search params
 
-src/data/tools/
-  index.ts                          → tool registry (slug, keywords, category, related-pillar slugs)
-```
+### A2. CSRD Gap Analyzer (`/tools/csrd-gap-analyzer`)
+- Inputs: company size band, sector, listing status, current disclosures (ESRS 1/2 + E1-E5, S1-S4, G1 checkboxes)
+- Logic: wave-1/2/3 applicability under Omnibus timeline, per-topic data-point coverage against ESRS mandatory + material-if data points
+- Outputs: readiness score, per-standard gap heatmap, prioritized action list, PDF export
 
-Each tool page follows the **same 7-block layout** (locks in E-E-A-T + on-page SEO):
-1. Hero (H1 = primary keyword phrased naturally, subhead, "free · no signup" badge)
-2. Interactive tool (works immediately, above the fold on desktop)
-3. Methodology (sources, formulas, factor version, last-updated date)
-4. Worked example (real numbers, Cyprus/EU context)
-5. FAQ (5-8 questions, `FAQPage` schema)
-6. Related guides (2-3 links into `/learn/*`)
-7. CTA → sign up for VerdeIQ platform
+### A3. Green Claims Checker (`/tools/green-claims-checker`)
+- Inputs: paste a claim; select market (B2C/B2B), product category, evidence type
+- Logic: rule engine against Green Claims Directive Art. 3-5 (substantiation, life-cycle basis, third-party verification) + UCPD Annex I blacklist (generic "eco/green/climate-neutral" without primary evidence, offsetting-only claims, unverified certifications)
+- Outputs: pass/warn/fail verdict per rule, remediation suggestions, cite-ready PDF
+
+### Shared per tool
+- `/src/data/tools/<slug>.ts` for rulesets/factors
+- `/src/components/tools/widgets/<Widget>.tsx` client-side, persisted state
+- `/src/app/[locale]/tools/<slug>/page.tsx` — metadata + JSON-LD + `ToolShell`
+- Register in `src/data/tools/index.ts` (`available: true`)
+- Generated hero images (context-aware, per mem://design/context-aware-assets)
 
 ---
 
-## SEO wiring (per tool page)
+## Workstream B — Programmatic per-country landing pages
 
-- Bilingual EN + EL with `hreflang` alternates
-- Head metadata: unique title, description, og:title, og:description, og:image (per-tool, generated), twitter:card
-- Canonical + `og:url` self-referencing
-- JSON-LD stack: `SoftwareApplication` + `HowTo` + `FAQPage` + `BreadcrumbList`
-- Sitemap: add 12 new URLs (6 pages × 2 locales) to `src/app/sitemap.ts`
-- Reciprocal internal links: matching Learn pillars link to their tool, tools link back
-- Robots: `/tools/*` explicitly allowed (already covered by current rules)
+Turn the GHG Calculator into a country-scoped SEO surface. Same widget, but the page is pre-scoped to one grid factor with a locally worked example.
 
----
+### Route
+`/tools/ghg-calculator/[country]` — dynamic Next segment, statically generated for all 16 supported grids (EU-27 core + UK + a few key non-EU).
 
-## Design system
+### Country data
+Extend `/src/data/tools/countries.ts`:
+- slug (`cyprus`, `germany`, `france`, …)
+- ISO code + Region key (already in `GRID_FACTORS`)
+- Localized grid factor + source citation + year
+- Bilingual (EN + EL) locale name + hero copy
+- One country-specific worked example (typical SME profile + Scope 2 impact)
+- Top-3 domestic emission drivers (short bullets)
 
-Reuse existing editorial system (from Learn redesign):
-- `--editorial-sans` (Geist/Inter) typography
-- `MarketingHeader` from `src/components/marketing/`
-- `verdeiq-range` slider style
-- Numeric `01/02/03` section prefixes, sharp borders, no gradients/pills/decorative icons (per `mem://constraints/no-icons-no-pills`)
-- Per-tool generated hero image (context-aware, per `mem://design/context-aware-assets`)
+Total pages generated: 16 countries × 2 locales = **32 new URLs**.
 
----
+### Page shape (same 7-block layout, country-scoped)
+1. Hero: "GHG Calculator for {Country} — 2024 grid factor {x} kg CO₂e/kWh"
+2. Widget pre-selected to that country's grid, year locked to current
+3. Methodology block cites the country's national inventory + EEA source
+4. Worked example uses country-specific SME (already draft-scaffolded per country)
+5. FAQ — 5 items, ~2 country-specific ("Why is Cyprus' grid so carbon-heavy?"), 3 shared
+6. Related: parent GHG Calculator + neighbouring countries + Learn pillar
+7. CTA
 
-## Build order (ship in this sequence)
+### SEO wiring
+- Canonical: self-referencing per country + locale
+- hreflang alternates across all 32 URLs + `x-default`
+- JSON-LD: `SoftwareApplication` + `FAQPage` + `BreadcrumbList` (`Home > Tools > GHG Calculator > {Country}`)
+- Parent `/tools/ghg-calculator` links to every country page ("Localized versions")
+- Every country page links back to parent + 2 neighbours (internal-link mesh)
+- Sitemap: extend `sitemap.ts` to generate `[locale]/tools/ghg-calculator/[country]` for every available country
 
-**Phase 1 — Foundation + biggest keyword (this batch)**
-1. `/tools` hub + shared `ToolShell`, `ToolCard`, `MethodologyBlock`, `WorkedExample`, `ExportPdfButton`
-2. **GHG Calculator** — full Scope 1/2/3, region selector, Climatiq-wired, PDF export, methodology page, worked example, 8 FAQs
-3. Sitemap + Learn pillar cross-links for these two
-4. Generated hero images (EN + shared)
-
-**Phase 2 — Timely + underserved** ✅ SHIPPED
-5. **CBAM Report Generator** ✅ — CN-code table (46 codes, 6 sectors), per-line direct/indirect factors with override, effective carbon price, quarterly XML draft + PDF + CSV export
-6. **Double Materiality Matrix** ✅ — 10 pre-loaded ESRS topics, dual-axis scoring (severity/scope/irremediability/likelihood + magnitude/likelihood), interactive SVG matrix, threshold slider, PDF + CSV export
-
-**Phase 3 — Long-tail authority** ✅ SHIPPED
-7. **VSME Template Builder** ✅ — 12-step guided walkthrough of EFRAG VSME Basic Module (B1–B12), typed fields (text/number/yes-no/select) with hints, per-step navigation with progress bar, PDF/JSON/CSV export, persistent client-side state.
-8. **EU Taxonomy Eligibility Checker** ✅ — 30 curated eligible activities across all six objectives, NACE/keyword search, primary-objective picker, DNSH walk-through for the other 5 objectives, Art. 18 minimum safeguards, aligned/partial/not-aligned verdict, PDF + CSV export.
-
-**Phase 4 — Polish + measurement** ✅ SHIPPED
-9. ✅ Full EL translations — every tool page (metadata + copy blocks) and every widget (labels, buttons, exports) ships bilingual EN/EL. Data schemas (`vsme-basic-module.ts`, `nace-taxonomy.ts`, `cbam-cn-codes.ts`) carry `{ en, el }` labels throughout.
-10. ✅ SEO rescan triggered — verifies JSON-LD (`SoftwareApplication` + `HowTo` + `FAQPage` + `BreadcrumbList`), hreflang, canonical, and sitemap coverage (12 URLs: 6 pages × 2 locales) for all 5 tools + hub.
+### Anti-thin-content guardrail
+Each country page MUST have ≥ 300 words of unique copy: country-specific hero subhead, worked example, 2 country FAQs, methodology note citing the domestic source. Countries without a real domestic source or unique story get held back — no autogenerated filler.
 
 ---
 
-## Technical details
+## Files
 
-- **Climatiq**: reuse `src/lib/climatiq.ts` + `/api/emissions/estimate` and `/api/emissions/batch` for GHG Calculator
-- **PDF export**: reuse `src/lib/pdf/export-report.ts` pattern; brand each tool's export
-- **CN codes for CBAM**: static JSON in `src/data/tools/cbam-cn-codes.ts` (starter set: iron/steel, aluminium, cement, fertilisers, electricity, hydrogen)
-- **NACE codes for Taxonomy**: static JSON `src/data/tools/nace-taxonomy.ts` — Annex I/II eligible activities
-- **VSME schema**: static JSON `src/data/tools/vsme-basic-module.ts` — 11 Basic Module disclosures per EFRAG standard
-- **Materiality**: pure client-side state (no persistence needed for v1); "save as PDF" is the export path
-- **Analytics**: track tool starts + completions via existing `ConsentedAnalytics`
-- **No new backend routes required for Phase 1** — Climatiq endpoints already exist
+**Workstream A:**
+- create `src/data/tools/sbti-pathways.ts`
+- create `src/data/tools/csrd-datapoints.ts`
+- create `src/data/tools/green-claims-rules.ts`
+- create `src/components/tools/widgets/{SbtiTargetSetter,CsrdGapAnalyzer,GreenClaimsChecker}.tsx`
+- create `src/app/[locale]/tools/{sbti-target-setter,csrd-gap-analyzer,green-claims-checker}/page.tsx`
+- generate 3 hero images
+- edit `src/data/tools/index.ts`
+
+**Workstream B:**
+- create `src/data/tools/countries.ts` (16 entries × EN/EL)
+- create `src/app/[locale]/tools/ghg-calculator/[country]/page.tsx` (with `generateStaticParams`)
+- edit `src/components/tools/widgets/GhgCalculator.tsx` — accept optional `initialRegion` + `lockRegion` props
+- edit `src/app/[locale]/tools/ghg-calculator/page.tsx` — add "Localized versions" block
+- edit `src/app/sitemap.ts` — add country pages
+
+**Shared:**
+- edit `.lovable/plan.md` — mark Phase 5
 
 ---
 
-## Success signals (post-launch, ~8 weeks)
+## Build order
 
-- All 12 tool URLs indexed in GSC
-- Hub page ranking top-20 for "esg reporting tool"
-- At least 2 of 5 tools ranking top-10 for their primary keyword (KDs are ≤5, this is realistic)
-- Organic tool → app signup conversion tracked
+1. **Workstream B first — 🟡 IN PROGRESS (flagship launch)** — Shipped 8 country pages (16 URLs across EN/EL) for CY, GR, DE, FR, ES, IT, NL, PL. Each page carries genuinely differentiated content: national grid factor with cited source, domestic SME worked example, 2 country-specific FAQs, and country-mesh internal links. Widget updated with `initialRegion` / `lockRegion` / `storageKey` props. Parent `/tools/ghg-calculator` links to all 8 country versions. Sitemap auto-emits the 16 country URLs. Held back for future iteration: IE, PT, BE, AT, SE, FI, UK (need domestic-source research before shipping to stay above the anti-thin-content bar).
+2. **A1 SBTi Target Setter** — next up.
+3. **A2 CSRD Gap Analyzer** — highest search-intent match, cross-links to `/learn/csrd` pillar.
+4. **A3 Green Claims Checker** — newest regime; keeps ruleset small and citation-heavy for E-E-A-T.
+
+Ship each in its own turn (do not batch all 3 tools + country pages into one turn — the plan file exists so we don't have to).
 
 ---
 
-## Out of scope (explicitly deferred)
+## Success signals (~8 weeks post-launch)
 
-- SBTi calculator (low volume, complex methodology)
-- PPA / renewable cost calculator (off-topic vs. compliance focus)
-- Green Claims Directive checker (too early, deadline 2026)
-- Emission Factor Database as standalone tool (needs massive backend; kept as internal to GHG Calculator)
-- User accounts / saving tool results server-side (v2 feature)
+- All 32 country pages indexed; at least 8 ranking top-20 for "{country} + carbon calculator / co2 rechner / calculateur carbone"
+- SBTi + CSRD tools ranking top-10 for primary keywords (KD 0)
+- Green Claims Checker owning the emerging keyword (first-mover)
