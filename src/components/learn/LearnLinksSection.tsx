@@ -66,7 +66,7 @@ export function LearnLinksSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <span className="text-xs font-medium tracking-wider uppercase bg-gradient-to-r from-primary via-primary/90 to-primary bg-clip-text text-transparent">
+          <span className="eyebrow">
             {copy.eyebrow}
           </span>
           <h2 className="text-2xl md:text-3xl font-bold mt-3 mb-3 tracking-tight">
