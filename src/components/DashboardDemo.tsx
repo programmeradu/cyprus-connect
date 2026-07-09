@@ -8,6 +8,17 @@ import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import {
+  Gauge,
+  FileText,
+  CloudSun,
+  Image as ImageIcon,
+  Sun,
+  Cloud,
+  CloudRain,
+  Snowflake,
+  Zap,
+} from "lucide-react"
 
 type TabType = "carbon" | "report" | "weather" | "media"
 
