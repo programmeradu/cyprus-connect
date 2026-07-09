@@ -334,7 +334,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                     <text
                       x={cx + 12}
                       y={cy + 4}
-                      className={`text-[10.5px] tabular-nums ${isActive ? "fill-foreground" : "fill-foreground/60"}`}
+                      className={`text-[12px] font-semibold tabular-nums ${isActive ? "fill-foreground" : "fill-foreground/60"}`}
                     >
                       {String(i + 1).padStart(2, "0")} {r.esrs}
                     </text>
