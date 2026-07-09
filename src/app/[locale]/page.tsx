@@ -327,21 +327,33 @@ export default function Home() {
       <SectionDivider />
 
       {/* HOW IT WORKS */}
-      <EditorialSection
-        eyebrow="04 / How it works"
-        titleA={tL("howTitleA")}
-        titleB={tL("howTitleB")}
-        subtitle={tL("howSubtitle")}
-        media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("stepConnectTitle"), body: tL("stepConnectDesc") },
-            { n: "02", title: tL("stepAnalyzeTitle"), body: tL("stepAnalyzeDesc") },
-            { n: "03", title: tL("stepActionTitle"), body: tL("stepActionDesc") },
-          ]}
+      <div className="relative">
+        {/* Journey-path accent — dotted trail with waypoints and compass rose,
+            sits top-right, spills upward past the integrations row above, echoing
+            the "connect → analyze → act" three-step flow of this section */}
+        <img
+          src={accentJourneyPath.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-20 right-0 z-10 hidden w-[380px] max-w-none select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-28 lg:-right-4 lg:w-[520px]"
         />
-      </EditorialSection>
+        <EditorialSection
+          eyebrow="04 / How it works"
+          titleA={tL("howTitleA")}
+          titleB={tL("howTitleB")}
+          subtitle={tL("howSubtitle")}
+          media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
+        >
+          <NumberedList
+            items={[
+              { n: "01", title: tL("stepConnectTitle"), body: tL("stepConnectDesc") },
+              { n: "02", title: tL("stepAnalyzeTitle"), body: tL("stepAnalyzeDesc") },
+              { n: "03", title: tL("stepActionTitle"), body: tL("stepActionDesc") },
+            ]}
+          />
+        </EditorialSection>
+      </div>
 
       <SectionDivider />
 
