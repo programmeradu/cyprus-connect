@@ -34,3 +34,7 @@ Do NOT invent one and do NOT drop in a placeholder. Options in priority order:
 3. Generate a real, subject-specific image via `imagegen` (see context-aware-assets rule).
 
 Never: initials avatar, gradient circle, stock abstract, emoji, `?` glyph.
+
+## Approved exceptions
+
+- **SubscriptionBadge** (`src/components/billing/SubscriptionBadge.tsx`): plan-tier emoji `👑 / ⭐ / 🌱` are allowed. Treated as tier glyph, not brand identity. Do not propose removing.
