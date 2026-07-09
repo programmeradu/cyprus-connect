@@ -46,20 +46,12 @@ export const PlanUsageIndicator = () => {
   const planId = plan?.id || "free";
   const planName = planId === "free" ? tPlans("free") : plan?.name;
 
-  const planIcon =
-    planId === "enterprise" ? (
-      <Sparkles className="h-4 w-4 text-purple-500" />
-    ) : planId === "pro" ? (
-      <Zap className="h-4 w-4 text-primary" />
-    ) : (
-      <TrendingUp className="h-4 w-4 text-muted-foreground" />
-    );
   const planColor =
     planId === "enterprise"
-      ? "bg-purple-500/10 text-purple-500 border-purple-500/20"
+      ? "border-primary/60 text-primary"
       : planId === "pro"
-        ? "bg-primary/10 text-primary border-primary/20"
-        : "bg-muted text-muted-foreground border-border";
+        ? "border-primary/60 text-primary"
+        : "border-foreground/20 text-muted-foreground";
 
   // Show AI credits + a couple of headline limits from the plan.
   const aiLimit: number = plan?.limits?.aiCredits ?? 0;
@@ -72,18 +64,14 @@ export const PlanUsageIndicator = () => {
     <PremiumCard className="p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-sm">{t("yourPlan")}</h3>
-        <motion.div
+        <div
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium",
+            "inline-flex items-center px-2 py-0.5 rounded-[4px] border text-xs font-medium",
             planColor,
           )}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 200 }}
         >
-          {planIcon}
           <span>{planName}</span>
-        </motion.div>
+        </div>
       </div>
 
       <div className="space-y-3">
