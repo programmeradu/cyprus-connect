@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { Sparkles, TrendingUp, Zap } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 
