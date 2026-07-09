@@ -236,7 +236,7 @@ export default function ToolShell({
                       </p>
                       <h3
                         className="mt-1.5 text-[17px] font-semibold leading-[1.3] tracking-[-0.005em] text-foreground group-hover:text-primary"
-                        style={DISPLAY}
+                        style={SANS}
                       >
                         {r.title}
                       </h3>
