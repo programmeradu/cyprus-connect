@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BellIcon } from "@/components/icons/CustomIcons";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { Bell, Check, Trash2, Loader2 } from "lucide-react";
+import { Check, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
