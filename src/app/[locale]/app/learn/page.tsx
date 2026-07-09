@@ -791,12 +791,12 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
           <CustomGraduationIcon className="w-16 h-16 text-primary opacity-50" />
         )}
         {isEnrolled && course.progress !== undefined && (
-          <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2">
-            <div className="flex items-center justify-between text-xs text-white mb-1">
+          <div className="absolute bottom-0 left-0 right-0 bg-foreground/60 backdrop-blur-sm p-2">
+            <div className="flex items-center justify-between text-xs text-primary-foreground mb-1">
               <span>{t("progress")}</span>
               <span>{course.progress}%</span>
             </div>
-            <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 bg-background/20 rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary transition-all"
                 style={{ width: `${course.progress}%` }}

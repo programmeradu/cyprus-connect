@@ -439,7 +439,7 @@ function SettingsContent() {
             <p className="text-xs text-muted-foreground mb-3">
               {t("dangerBody")}
             </p>
-            <PremiumButton variant="outline" size="sm" className="text-[10px] h-7 border-destructive text-destructive hover:bg-destructive hover:text-white">
+            <PremiumButton variant="outline" size="sm" className="text-[10px] h-7 border-destructive text-destructive hover:bg-destructive hover:text-primary-foreground">
               {t("deleteAccount")}
             </PremiumButton>
           </motion.div>
@@ -514,7 +514,7 @@ function SettingsContent() {
                     }`}
                   >
                     <span
-                      className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                      className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-background transition-transform ${
                         notificationPrefs[item.key] ? "translate-x-4" : "translate-x-0"
                       }`}
                     />

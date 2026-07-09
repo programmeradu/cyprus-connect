@@ -301,7 +301,7 @@ export function EnergyCostCalculator() {
             step="5000"
             value={consumption}
             onChange={(e) => setConsumption(parseInt(e.target.value))}
-            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
           />
           <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
             <span>10k</span>
@@ -321,7 +321,7 @@ export function EnergyCostCalculator() {
             step="5"
             value={efficiencyGain}
             onChange={(e) => setEfficiencyGain(parseInt(e.target.value))}
-            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
           />
           <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
             <span>5%</span>

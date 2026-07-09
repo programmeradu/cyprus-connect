@@ -500,7 +500,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-foreground/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
           onClick={() => setShowPurchaseDialog(false)}
         >
           <motion.div

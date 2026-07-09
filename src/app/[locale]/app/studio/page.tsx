@@ -644,7 +644,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
         >
           <LibraryIcon />
           {studioStats && studioStats.savedCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-white text-[8px] flex items-center justify-center font-bold">
+            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[8px] flex items-center justify-center font-bold">
               {studioStats.savedCount}
             </span>
           )}
@@ -923,7 +923,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsSidebarOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-foreground/50 backdrop-blur-sm z-40"
             />
             
             {/* Sidebar */}
@@ -1038,7 +1038,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
                           }}
                           className="absolute top-2 left-2 w-6 h-6 rounded bg-destructive/80 hover:bg-destructive flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
                         >
-                          <Trash2 className="w-3 h-3 text-white" />
+                          <Trash2 className="w-3 h-3 text-primary-foreground" />
                         </button>
                         
                         {media.type === "image" ? (

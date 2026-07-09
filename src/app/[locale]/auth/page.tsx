@@ -126,7 +126,7 @@ export default function AuthPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/25 via-transparent to-background/25 dark:hidden" />
         
         {/* Dark Mode - Dim overlay */}
-        <div className="absolute inset-0 hidden dark:block bg-black/60" />
+        <div className="absolute inset-0 hidden dark:block bg-foreground/60" />
         <div className="absolute inset-0 hidden dark:block bg-gradient-to-b from-background/40 via-background/20 to-background/40" />
         
         {/* Subtle animated accents */}

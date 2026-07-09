@@ -111,10 +111,10 @@ const formatReportText = (text: string) => {
       return (
         <div key={sectionIndex} className="mb-8">
           <div className="flex items-baseline gap-3 mb-4">
-            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
+            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
               {number}
             </span>
-            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-xl font-bold text-foreground">{title}</h2>
           </div>
           
           {isMetrics ? (
@@ -129,11 +129,11 @@ const formatReportText = (text: string) => {
                     const value = line.substring(colonIndex + 1).trim()
                     if (!key || !value) return null
                     return (
-                      <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                        <td className="px-4 py-3 text-sm font-semibold text-gray-700 w-1/2">
+                      <tr key={i} className={i % 2 === 0 ? 'bg-muted/30' : 'bg-background'}>
+                        <td className="px-4 py-3 text-sm font-semibold text-foreground/80 w-1/2">
                           {key.replace(/^[-•]\s*/, '').replace(/^\d+\.\s*/, '')}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-900">
+                        <td className="px-4 py-3 text-sm text-foreground">
                           {value}
                         </td>
                       </tr>
@@ -157,7 +157,7 @@ const formatReportText = (text: string) => {
                         const cleanLine = line.trim().replace(/^[-•]\s*/, '').replace(/^\d+\.\s*/, '')
                         if (!cleanLine) return null
                         return (
-                          <li key={lIndex} className="flex items-start gap-2 text-sm text-gray-700">
+                          <li key={lIndex} className="flex items-start gap-2 text-sm text-foreground/80">
                             <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2"></span>
                             <span className="flex-1">{cleanLine}</span>
                           </li>
@@ -167,7 +167,7 @@ const formatReportText = (text: string) => {
                   )
                 } else if (paragraph.trim()) {
                   return (
-                    <p key={pIndex} className="text-sm text-gray-700 leading-relaxed">
+                    <p key={pIndex} className="text-sm text-foreground/80 leading-relaxed">
                       {paragraph.trim()}
                     </p>
                   )
@@ -261,7 +261,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     
     return (
       <div key={key} className="mb-6">
-        <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
           <span className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs">ℹ️</span>
           CO2e Conversion Factors
         </h3>
@@ -269,8 +269,8 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
           <table className="w-full">
             <thead className="bg-gradient-to-r from-blue-50 to-cyan-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Category</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Factor</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Category</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Factor</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -285,9 +285,9 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                 if (!category || !factor) return null
                 
                 return (
-                  <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-3 text-xs font-medium text-gray-700">{category}</td>
-                    <td className="px-4 py-3 text-xs text-gray-900">{factor}</td>
+                  <tr key={i} className={i % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                    <td className="px-4 py-3 text-xs font-medium text-foreground/80">{category}</td>
+                    <td className="px-4 py-3 text-xs text-foreground">{factor}</td>
                   </tr>
                 )
               })}
@@ -326,7 +326,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     
     return (
       <div key={key} className="mb-6">
-        <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
           <span className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs">📊</span>
           Emissions Breakdown
         </h3>
@@ -334,9 +334,9 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
           <table className="w-full">
             <thead className="bg-gradient-to-r from-emerald-50 to-green-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Category</th>
-                <th className="px-4 py-2 text-right text-xs font-semibold text-gray-700">Emissions</th>
-                <th className="px-4 py-2 text-right text-xs font-semibold text-gray-700 w-32">Share</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Category</th>
+                <th className="px-4 py-2 text-right text-xs font-semibold text-foreground/80">Emissions</th>
+                <th className="px-4 py-2 text-right text-xs font-semibold text-foreground/80 w-32">Share</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -385,17 +385,17 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                 if (!category) return null
                 
                 return (
-                  <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="px-4 py-3 text-xs font-medium text-gray-700">
+                  <tr key={i} className={i % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                    <td className="px-4 py-3 text-xs font-medium text-foreground/80">
                       {category}
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-900 text-right font-semibold">
+                    <td className="px-4 py-3 text-xs text-foreground text-right font-semibold">
                       {emissions ? `${emissions} ${unit} CO2e` : '-'}
                     </td>
                     <td className="px-4 py-3 text-right">
                       {percentage !== null && (
                         <div className="flex items-center justify-end gap-2">
-                          <div className="flex-1 max-w-[60px] h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="flex-1 max-w-[60px] h-2 bg-muted rounded-full overflow-hidden">
                             <div 
                               className="h-full bg-primary rounded-full"
                               style={{ width: `${percentage}%` }}
@@ -472,7 +472,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     
     return (
       <div key={key} className="mb-6">
-        <h3 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
           <span className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-xs">💰</span>
           Potential Cost Savings
         </h3>
@@ -480,14 +480,14 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
           <table className="w-full">
             <thead className="bg-gradient-to-r from-amber-50 to-orange-50">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Category</th>
-                <th className="px-4 py-2 text-right text-xs font-semibold text-gray-700">Monthly Savings</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Category</th>
+                <th className="px-4 py-2 text-right text-xs font-semibold text-foreground/80">Monthly Savings</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {categories.map((category, i) => (
-                <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-4 py-3 text-xs font-medium text-gray-700">
+                <tr key={i} className={i % 2 === 0 ? 'bg-background' : 'bg-muted/30'}>
+                  <td className="px-4 py-3 text-xs font-medium text-foreground/80">
                     {category}
                   </td>
                   <td className="px-4 py-3 text-xs font-bold text-green-700 text-right">
@@ -498,7 +498,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
               {/* Total row */}
               {total && (
                 <tr className="bg-gradient-to-r from-green-50 to-emerald-50 font-bold">
-                  <td className="px-4 py-3 text-xs text-gray-900">
+                  <td className="px-4 py-3 text-xs text-foreground">
                     Total Monthly Savings
                   </td>
                   <td className="px-4 py-3 text-sm font-bold text-green-700 text-right">
@@ -521,10 +521,10 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     return (
       <div key={key} className="mb-6">
         <div className="flex items-start gap-3 mb-3">
-          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
+          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
             {number}
           </span>
-          <h3 className="text-sm font-bold text-gray-900 pt-0.5">{title}</h3>
+          <h3 className="text-sm font-bold text-foreground pt-0.5">{title}</h3>
         </div>
         
         <div className="ml-10 space-y-2">
@@ -539,7 +539,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                   <span className="text-xs font-semibold text-emerald-700 min-w-fit">
                     {labelMatch[1]}:
                   </span>
-                  <span className="text-xs text-gray-700">{labelMatch[2]}</span>
+                  <span className="text-xs text-foreground/80">{labelMatch[2]}</span>
                 </div>
               )
             }
@@ -549,14 +549,14 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
               return (
                 <div key={i} className="flex items-start gap-2">
                   <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5"></span>
-                  <span className="text-xs text-gray-700 flex-1">{cleanLine}</span>
+                  <span className="text-xs text-foreground/80 flex-1">{cleanLine}</span>
                 </div>
               )
             }
             
             // Regular paragraph
             return (
-              <p key={i} className="text-xs text-gray-700 leading-relaxed">
+              <p key={i} className="text-xs text-foreground/80 leading-relaxed">
                 {cleanLine}
               </p>
             )
@@ -1323,7 +1323,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
-                      className="mt-4 rounded-lg bg-white border border-border shadow-sm max-h-[600px] overflow-y-auto"
+                      className="mt-4 rounded-lg bg-background border border-border shadow-sm max-h-[600px] overflow-y-auto"
                     >
                       <div className="sticky top-0 bg-gradient-to-r from-emerald-50 to-green-50 px-4 py-3 border-b border-emerald-200 z-10">
                         <h4 className="text-sm font-bold gradient-text flex items-center gap-2">
@@ -1540,7 +1540,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         </svg>
                         {t("report.previewTitle")}
                       </h4>
-                      <div className="bg-white rounded-lg p-6 text-gray-900">
+                      <div className="bg-background rounded-lg p-6 text-foreground">
                         {/* Company Info Header */}
                         <div className="mb-6 pb-4 border-b-2 border-emerald-200">
                           <div className="flex items-center gap-2 mb-2">
@@ -1548,8 +1548,8 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               <span className="text-emerald-700 font-bold text-xs tracking-wide">{t("report.badge")}</span>
                             </div>
                           </div>
-                          <h2 className="text-2xl font-black text-gray-900 mb-1">{reportInput.company}</h2>
-                          <p className="text-gray-600 text-sm">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") })}</p>
+                          <h2 className="text-2xl font-black text-foreground mb-1">{reportInput.company}</h2>
+                          <p className="text-muted-foreground text-sm">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") })}</p>
                         </div>
                         
                         {/* Formatted Report Content */}
@@ -1566,7 +1566,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 backdrop-blur-sm p-4"
                     onClick={() => setShowPreview(false)}
                   >
                     <motion.div
@@ -1600,7 +1600,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       {/* Modal Content - Scrollable */}
                       <div className="overflow-y-auto max-h-[calc(90vh-80px)] p-6">
                         {/* Premium Report Design */}
-                        <div id="report-preview" className="bg-white p-10 rounded-lg">
+                        <div id="report-preview" className="bg-background p-10 rounded-lg">
                           {/* Report Header */}
                           <div className="mb-10 pb-8 border-b-4 border-gradient-to-r from-emerald-500 via-green-50 to-emerald-600 relative">
                             {/* Decorative corner element */}
@@ -1615,11 +1615,11 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     </svg>
                                     <span className="text-emerald-700 font-bold text-sm tracking-wide">{t("report.badge")}</span>
                                   </div>
-                                  <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">{reportInput.company}</h1>
-                                  <p className="text-gray-600 text-base">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") }).split("•")[0].trim()}</p>
+                                  <h1 className="text-4xl font-black text-foreground mb-2 tracking-tight">{reportInput.company}</h1>
+                                  <p className="text-muted-foreground text-base">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") }).split("•")[0].trim()}</p>
                                 </div>
                                 <div className="text-right bg-gradient-to-br from-emerald-50 to-green-50 px-6 py-4 rounded-xl border-2 border-emerald-200">
-                                  <div className="text-xs text-gray-600 mb-1 uppercase tracking-wide">{t("report.reportingPeriod")}</div>
+                                  <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">{t("report.reportingPeriod")}</div>
                                   <div className="text-2xl font-bold text-emerald-700">{reportInput.period || t("report.defaultPeriod")}</div>
                                 </div>
                               </div>
@@ -1629,29 +1629,29 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-5 rounded-xl border-2 border-emerald-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
                                   <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
-                                    <div className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">Industry</div>
-                                    <div className="text-lg font-bold text-gray-900">{reportInput.industry}</div>
+                                    <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Industry</div>
+                                    <div className="text-lg font-bold text-foreground">{reportInput.industry}</div>
                                   </div>
                                 </div>
                                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-xl border-2 border-blue-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
                                   <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
-                                    <div className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">Location</div>
-                                    <div className="text-lg font-bold text-gray-900">{reportInput.location || "Global"}</div>
+                                    <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Location</div>
+                                    <div className="text-lg font-bold text-foreground">{reportInput.location || "Global"}</div>
                                   </div>
                                 </div>
                                 <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-5 rounded-xl border-2 border-primary/20 relative overflow-hidden group hover:shadow-lg transition-shadow">
                                   <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
-                                    <div className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">Employees</div>
-                                    <div className="text-lg font-bold text-gray-900">{reportInput.employees || "N/A"}</div>
+                                    <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Employees</div>
+                                    <div className="text-lg font-bold text-foreground">{reportInput.employees || "N/A"}</div>
                                   </div>
                                 </div>
                                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-xl border-2 border-orange-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
                                   <div className="absolute top-0 right-0 w-20 h-20 bg-orange-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
-                                    <div className="text-xs text-gray-600 mb-2 font-semibold uppercase tracking-wide">Net-Zero Target</div>
-                                    <div className="text-lg font-bold text-gray-900">{reportInput.targetYear || "2050"}</div>
+                                    <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Net-Zero Target</div>
+                                    <div className="text-lg font-bold text-foreground">{reportInput.targetYear || "2050"}</div>
                                   </div>
                                 </div>
                               </div>
@@ -1670,20 +1670,20 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <div>
                                   <div className="flex items-center gap-3 mb-2">
                                     <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
+                                      <svg viewBox="0 0 24 24" className="w-6 h-6 text-primary-foreground" fill="currentColor">
                                         <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                       </svg>
                                     </div>
                                     <div>
-                                      <div className="text-lg font-bold text-gray-900">VerdeIQ</div>
-                                      <div className="text-xs text-gray-600">AI-Powered Sustainability Platform</div>
+                                      <div className="text-lg font-bold text-foreground">VerdeIQ</div>
+                                      <div className="text-xs text-muted-foreground">AI-Powered Sustainability Platform</div>
                                     </div>
                                   </div>
-                                  <p className="text-xs text-gray-500 italic">Empowering SMEs to Lead on Sustainability</p>
+                                  <p className="text-xs text-muted-foreground italic">Empowering SMEs to Lead on Sustainability</p>
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-xs text-gray-500 mb-1">Report Generated</div>
-                                  <div className="text-sm font-semibold text-gray-700">
+                                  <div className="text-xs text-muted-foreground mb-1">Report Generated</div>
+                                  <div className="text-sm font-semibold text-foreground/80">
                                     {new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                                   </div>
                                 </div>
@@ -1691,7 +1691,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             </div>
                             
                             <div className="text-center mt-6">
-                              <p className="text-xs text-gray-400">
+                              <p className="text-xs text-muted-foreground">
                                 {t("report.disclaimer")}
                               </p>
                             </div>
@@ -2499,9 +2499,9 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                       <div className="absolute bottom-0 left-0 right-0 p-3">
-                                        <p className="text-xs text-white font-medium line-clamp-2">{item.prompt}</p>
+                                        <p className="text-xs text-primary-foreground font-medium line-clamp-2">{item.prompt}</p>
                                         <div className="flex items-center gap-2 mt-2">
-                                          <span className="px-2 py-1 rounded-md bg-white/20 backdrop-blur-sm text-xs text-white font-medium">
+                                          <span className="px-2 py-1 rounded-md bg-background/20 backdrop-blur-sm text-xs text-primary-foreground font-medium">
                                              {item.type === "image" ? t("media.image") : t("media.video")}
                                           </span>
                                         </div>
@@ -2509,7 +2509,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     </div>
                                     
                                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <div className="p-2 rounded-lg bg-white/95 backdrop-blur-sm shadow-lg">
+                                      <div className="p-2 rounded-lg bg-background/95 backdrop-blur-sm shadow-lg">
                                         <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
                                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                           <circle cx="12" cy="12" r="3" />
