@@ -46,8 +46,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
             href="/"
-            className="gradient-text text-2xl font-semibold italic tracking-tight"
-            style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}
+            className="gradient-text text-lg font-bold tracking-tight"
           >
             VerdeIQ
           </Link>
@@ -226,10 +225,10 @@ export default function Home() {
 
       {/* INTEGRATIONS */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mb-8 eyebrow">
+        <div className="mb-8 text-center eyebrow">
           {tL("integratedWith")}
         </div>
-        <ul className="grid grid-cols-2 items-stretch gap-x-6 gap-y-6 sm:grid-cols-3 md:grid-cols-4">
+        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14 md:gap-x-16">
           {[
             { name: "QuickBooks", slug: "quickbooks" },
             { name: "Xero", slug: "xero" },
@@ -242,7 +241,7 @@ export default function Home() {
           ].map(({ name, slug }) => (
             <li
               key={name}
-              className="flex h-16 items-center justify-center border-t border-border/60 pt-4"
+              className="flex h-10 shrink-0 items-center justify-center"
             >
               {slug ? (
                 <>
@@ -260,7 +259,7 @@ export default function Home() {
                   />
                 </>
               ) : (
-                <span className="font-[family-name:var(--editorial-serif)] text-xl tracking-tight text-foreground sm:text-2xl">
+                <span className="text-xl font-semibold tracking-tight text-foreground/80 sm:text-2xl">
                   {name}
                 </span>
               )}
