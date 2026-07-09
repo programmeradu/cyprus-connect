@@ -75,7 +75,7 @@ export default function ToolShell({
     })
     .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
-  const updatedLabel = locale === "el" ? "Ενημερώθηκε" : "Updated";
+  const updatedLabel = locale === "el" ? "Ενημερώθηκε" : "Current revision";
   const updatedFmt = new Date(updatedAt).toLocaleDateString(locale === "el" ? "el-CY" : "en-GB", {
     year: "numeric",
     month: "long",
@@ -84,7 +84,7 @@ export default function ToolShell({
   const minRead = locale === "el" ? "min" : "min read";
 
   return (
-    <div style={SANS} className="print:!bg-white print:!text-black">
+    <div style={SANS} className="viq-tool print:!bg-white print:!text-black">
       <div className="print:hidden">
         <MarketingHeader />
       </div>
@@ -94,7 +94,7 @@ export default function ToolShell({
         <header className="mb-14 sm:mb-20">
           <div className="grid gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-center md:gap-14">
             <div>
-              <p className="text-sm font-medium text-primary">{eyebrow}</p>
+              <p className="viq-kicker text-primary">{eyebrow}</p>
               <h1
                 className="mt-3 text-[34px] font-semibold leading-[1.05] tracking-[-0.02em] sm:mt-4 sm:text-[46px]"
                 style={SANS}
@@ -104,8 +104,8 @@ export default function ToolShell({
               <p className="mt-5 max-w-xl text-[16px] leading-[1.6] text-foreground/70 sm:text-[17px]">
                 {subtitle}
               </p>
-              <p className="mt-6 text-[13px] text-foreground/50">
-                {updatedLabel} {updatedFmt}
+              <p className="viq-date mt-6">
+                <strong>{updatedLabel}</strong> {updatedFmt}
               </p>
             </div>
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted print:hidden">
@@ -224,7 +224,7 @@ export default function ToolShell({
                       />
                     </div>
                     <div className="mt-4">
-                      <p className="text-[13px] font-medium text-primary">
+                      <p className="viq-kicker text-primary">
                         {r.eyebrow}
                       </p>
                       <h3
@@ -233,7 +233,7 @@ export default function ToolShell({
                       >
                         {r.title}
                       </h3>
-                      <p className="mt-2 text-[13px] text-foreground/50">
+                      <p className="viq-meta mt-2">
                         {r.readingMinutes} {minRead}
                       </p>
                     </div>

@@ -296,7 +296,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
   const scopeRow = (label: string, value: number, i: number) => (
     <div key={label}>
       <div className="mb-1.5 grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-3 text-[13px]">
-        <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
+        <span className="viq-minor-code tabular-nums">
           {String(i + 1).padStart(2, "0")}
         </span>
         <span className="text-foreground/85">{label}</span>
@@ -314,21 +314,12 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
   );
 
   return (
-    <div className="not-prose border-y border-foreground/15 print:border-none">
+    <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Tool header + controls */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            01 · {locale === "el" ? "Διαδραστικό εργαλείο" : "Interactive tool"}
-          </p>
-          <p className="tabular-nums text-[11px] text-foreground/40 print:hidden">
-            {locale === "el" ? "Ανοιχτή μέθοδος" : "Open methodology"}
-          </p>
-        </div>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+        <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
           <div>
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            <label className="viq-field-label block">
               {l.reportingYear}
             </label>
             <input
@@ -342,7 +333,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
           </div>
           {lockRegion ? (
             <div>
-              <p className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+              <p className="viq-field-label block">
                 {l.region}
               </p>
               <p className="mt-2 pb-1 text-[16px] font-medium tracking-[-0.005em]">
@@ -351,7 +342,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
             </div>
           ) : (
             <div>
-              <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+              <label className="viq-field-label block">
                 {l.region}
               </label>
               <select
@@ -371,21 +362,21 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
             <button
               type="button"
               onClick={doPrint}
-              className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+              className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85"
             >
               {l.print}
             </button>
             <button
               type="button"
               onClick={downloadCsv}
-              className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+              className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
             >
               {l.downloadCsv}
             </button>
             <button
               type="button"
               onClick={reset}
-              className="inline-flex h-9 items-center px-2 text-[12.5px] text-foreground/55 underline underline-offset-4 transition hover:text-foreground"
+              className="viq-button inline-flex h-9 items-center px-2 text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
             >
               {l.reset}
             </button>
@@ -453,15 +444,15 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
 
         {/* Right: totals — always visible, also renders in print */}
         <div className="border-l border-foreground/10 pl-8 sm:pl-10 print:border-none print:pl-0">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            {l.total} · {state.year} · {REGION_LABELS[state.region][locale]}
+          <p className="viq-section-label">
+            {l.total} <span className="tabular-nums text-foreground/60">{state.year}</span> <span className="text-foreground/60">{REGION_LABELS[state.region][locale]}</span>
           </p>
           <p className="mt-3 text-[56px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[80px]">
             {totals.total.toLocaleString(numLocale, { maximumFractionDigits: 1 })}
           </p>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">{l.unit}</p>
+          <p className="viq-meta mt-2">{l.unit}</p>
 
-          <p className="mt-8 text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="viq-section-label mt-8">
             {l.breakdown}
           </p>
           <div className="mt-4 space-y-4">
@@ -474,7 +465,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
           <div className="mt-10 hidden border-t border-foreground/10 pt-6 print:block">
             <table className="w-full border-collapse text-[11.5px]">
               <thead>
-                <tr className="border-b border-foreground/20 text-left uppercase tracking-[0.16em] text-foreground/55">
+                <tr className="border-b border-foreground/20 text-left text-foreground/65">
                   <th className="py-2 pr-3">Scope</th>
                   <th className="py-2 pr-3">{l.activity}</th>
                   <th className="py-2 pr-3 text-right">Value</th>
@@ -495,7 +486,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
                   </tr>
                 ))}
                 <tr className="font-semibold">
-                  <td colSpan={4} className="py-2 pr-3 text-right uppercase tracking-[0.16em]">
+                  <td colSpan={4} className="py-2 pr-3 text-right font-semibold">
                     {l.total}
                   </td>
                   <td className="py-2 text-right tabular-nums">{totals.total.toFixed(2)}</td>
@@ -507,7 +498,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
           <p className="mt-8 border-t border-foreground/10 pt-5 text-[11.5px] leading-[1.6] text-foreground/50">
             {l.factorNote} {l.disclaimer}
           </p>
-          <p className="mt-3 hidden text-[10.5px] tabular-nums uppercase tracking-[0.2em] text-foreground/45 print:block">
+          <p className="viq-print-note mt-3 hidden print:block">
             {l.reportTitle} · {l.generatedOn} {new Date().toLocaleDateString(numLocale)}
           </p>
         </div>

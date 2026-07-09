@@ -642,3 +642,123 @@ nextjs-portal {
 .verdeiq-range:focus-visible::-moz-range-thumb {
   transform: scale(1.15);
 }
+
+/* ================================================================
+   VerdeIQ tool typography — anti-generic small text system.
+   Replaces tiny all-caps/tracked metadata with deliberate B2B UI type.
+   ================================================================ */
+.viq-tool {
+  font-family: "Space Grotesk", var(--editorial-sans);
+  font-feature-settings: "ss01", "ss02", "cv11", "tnum";
+}
+.viq-tool .uppercase {
+  text-transform: none;
+}
+.viq-tool .tracking-\[0\.24em\],
+.viq-tool .tracking-\[0\.2em\],
+.viq-tool .tracking-\[0\.18em\],
+.viq-tool .tracking-\[0\.16em\],
+.viq-tool .tracking-\[0\.14em\] {
+  letter-spacing: 0;
+}
+.viq-kicker,
+.viq-section-label,
+.viq-field-label,
+.viq-table-heading,
+.viq-minor-code {
+  font-family: "Space Grotesk", var(--editorial-sans);
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: color-mix(in oklab, var(--foreground) 76%, transparent);
+}
+.viq-kicker {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+}
+.viq-field-label,
+.viq-minor-code,
+.viq-table-heading {
+  font-size: 0.875rem;
+}
+.viq-step-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  color: var(--primary);
+}
+.viq-meta,
+.viq-caption,
+.viq-print-note,
+.viq-numeric-note {
+  font-family: "Space Grotesk", var(--editorial-sans);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  font-weight: 550;
+  letter-spacing: 0;
+  color: color-mix(in oklab, var(--foreground) 58%, transparent);
+}
+.viq-meta strong,
+.viq-caption strong {
+  font-weight: 650;
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
+}
+.viq-tool-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.7rem;
+}
+.viq-date {
+  display: inline-block;
+  font-family: "Space Grotesk", var(--editorial-sans);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 550;
+  letter-spacing: 0;
+  color: color-mix(in oklab, var(--foreground) 62%, transparent);
+}
+.viq-button {
+  font-family: "Space Grotesk", var(--editorial-sans);
+  font-size: 0.875rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.viq-button-sm {
+  font-size: 0.875rem;
+}
+.viq-tool table th,
+.viq-tool .viq-table-heading {
+  font-family: "Space Grotesk", var(--editorial-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: color-mix(in oklab, var(--foreground) 64%, transparent);
+}
+.viq-tool input,
+.viq-tool select,
+.viq-tool textarea,
+.viq-tool button {
+  font-family: "Space Grotesk", var(--editorial-sans);
+}
+.viq-tool .text-\[10\.5px\] {
+  font-size: 0.875rem;
+}
+.viq-tool .text-\[11px\],
+.viq-tool .text-\[11\.5px\] {
+  font-size: 0.875rem;
+}
+.viq-tool .text-\[12px\],
+.viq-tool .text-\[12\.5px\] {
+  font-size: 0.875rem;
+}
+.viq-tool .text-foreground\/40,
+.viq-tool .text-foreground\/45,
+.viq-tool .text-foreground\/50,
+.viq-tool .text-foreground\/55 {
+  color: color-mix(in oklab, var(--foreground) 58%, transparent);
+}

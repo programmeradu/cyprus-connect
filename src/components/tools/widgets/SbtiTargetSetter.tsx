@@ -264,20 +264,14 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
   });
 
   return (
-    <div className="not-prose border-y border-foreground/15 print:border-none">
+    <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            01 · {l.interactive}
-          </p>
-          <p className="tabular-nums text-[11px] text-foreground/40 print:hidden">{l.sourcesNote}</p>
-        </div>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              {l.progress} · {filledSteps}/{TOTAL_STEPS} ({percent}%)
+            <p className="viq-tool-status viq-meta">
+              <strong>{l.steps[step]}</strong>
+              <span>{filledSteps} {l.of} {TOTAL_STEPS} complete</span>
             </p>
             <div className="mt-3 h-1.5 w-full max-w-md bg-foreground/10">
               <div className="h-full bg-primary transition-all" style={{ width: `${percent}%` }} aria-hidden />
@@ -288,22 +282,22 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
                   key={label}
                   type="button"
                   onClick={() => setStep(i)}
-                  className={`h-8 border px-3 text-[11px] font-medium tracking-[-0.005em] transition ${
+                  className={`viq-button viq-button-sm h-9 border px-3 transition ${
                     step === i
                       ? "border-foreground bg-foreground text-background"
                       : "border-foreground/25 text-foreground/70 hover:border-foreground"
                   }`}
                 >
-                  {String(i + 1).padStart(2, "0")} · {label}
+                  <span className="tabular-nums">{i + 1}</span> {label}
                 </button>
               ))}
             </div>
           </div>
           <div className="flex flex-wrap gap-3 print:hidden">
-            <button type="button" onClick={doPrint} className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85">{l.print}</button>
-            <button type="button" onClick={downloadCsv} className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground">{l.csv}</button>
-            <button type="button" onClick={downloadJson} className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground">{l.json}</button>
-            <button type="button" onClick={doReset} className="inline-flex h-9 items-center px-2 text-[12.5px] text-foreground/55 underline underline-offset-4 transition hover:text-foreground">{l.reset}</button>
+            <button type="button" onClick={doPrint} className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85">{l.print}</button>
+            <button type="button" onClick={downloadCsv} className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground">{l.csv}</button>
+            <button type="button" onClick={downloadJson} className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground">{l.json}</button>
+            <button type="button" onClick={doReset} className="viq-button inline-flex h-9 items-center px-2 text-foreground/70 underline underline-offset-4 transition hover:text-foreground">{l.reset}</button>
           </div>
         </div>
       </div>
@@ -312,7 +306,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
       <div className="py-8 sm:py-10">
         {step === 0 && (
           <div className="max-w-2xl">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">01 · {l.step} 1</p>
+            <p className="viq-section-label">{l.step} 1</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s1Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65">{l.s1Body}</p>
             <div className="mt-6 space-y-5">
@@ -331,7 +325,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {step === 1 && (
           <div className="max-w-2xl">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">02 · {l.step} 2</p>
+            <p className="viq-section-label">{l.step} 2</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s2Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65">{l.s2Body}</p>
             <div className="mt-6 space-y-5">
@@ -351,7 +345,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {step === 2 && (
           <div className="max-w-2xl">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">03 · {l.step} 3</p>
+            <p className="viq-section-label">{l.step} 3</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s3Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65">{l.s3Body}</p>
             <div className="mt-6 space-y-6">
@@ -366,10 +360,10 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {step === 3 && (
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">04 · {l.step} 4</p>
+            <p className="viq-section-label">{l.step} 4</p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em]">{l.s4Title}</h3>
             <p className="mt-3 text-[14px] leading-[1.65] text-foreground/65 print:hidden">{l.s4Body}</p>
-            <p className="mt-2 text-[11.5px] tabular-nums text-foreground/45 hidden print:block">
+            <p className="viq-print-note mt-2 hidden print:block">
               {l.generatedOn} {new Date().toLocaleDateString(locale === "el" ? "el-CY" : "en-GB")}
             </p>
 
@@ -405,12 +399,12 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
             </div>
 
             <div className="mt-10 border-t border-foreground/15 pt-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/60">{l.statementHeading}</p>
+              <p className="viq-section-label">{l.statementHeading}</p>
               <p className="mt-3 text-[14.5px] leading-[1.7] text-foreground">{statement}</p>
             </div>
 
             <div className="mt-10 border-t border-foreground/15 pt-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/60">{l.trajectoryHeading}</p>
+              <p className="viq-section-label">{l.trajectoryHeading}</p>
               <div className="mt-4 overflow-x-auto">
                 <table className="w-full min-w-[520px] border-collapse text-[12.5px]">
                   <thead>
@@ -441,9 +435,9 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
         {/* Nav */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 print:hidden">
-          <button type="button" onClick={goPrev} disabled={step === 0} className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40">← {l.prev}</button>
-          <p className="tabular-nums text-[11px] text-foreground/45">{String(step + 1).padStart(2, "0")} {l.of} {String(TOTAL_STEPS).padStart(2, "0")}</p>
-          <button type="button" onClick={goNext} disabled={step === TOTAL_STEPS - 1} className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-40">{l.next} →</button>
+          <button type="button" onClick={goPrev} disabled={step === 0} className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-40">← {l.prev}</button>
+          <p className="viq-meta tabular-nums">{step + 1} {l.of} {TOTAL_STEPS}</p>
+          <button type="button" onClick={goNext} disabled={step === TOTAL_STEPS - 1} className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-40">{l.next} →</button>
         </div>
       </div>
     </div>
@@ -457,7 +451,7 @@ function inputCls(extra = "") {
 function Field({ label, suffix, children }: { label: string; suffix?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-foreground/70">
+      <label className="viq-field-label block">
         {label}
         {suffix ? <span className="ml-2 font-normal normal-case tracking-normal text-foreground/45">({suffix})</span> : null}
       </label>
@@ -469,7 +463,7 @@ function Field({ label, suffix, children }: { label: string; suffix?: string; ch
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-foreground/5 py-1.5 last:border-b-0">
-      <span className="text-[12px] text-foreground/60">{label}</span>
+      <span className="viq-caption">{label}</span>
       <span className="text-right text-[13px] font-medium tabular-nums text-foreground">{value}</span>
     </div>
   );
@@ -478,7 +472,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 function ResultCard({ heading, children }: { heading: string; children: React.ReactNode }) {
   return (
     <div className="border border-foreground/15 p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/60">{heading}</p>
+      <p className="viq-section-label">{heading}</p>
       <div className="mt-3">{children}</div>
     </div>
   );
@@ -506,7 +500,7 @@ function AmbitionPicker({
   const opts: AmbitionKey[] = ["1.5C", "WB2C"];
   return (
     <div>
-      <label className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-foreground/70">{label}</label>
+      <label className="viq-field-label block">{label}</label>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
         {opts.map((k) => {
           const active = value === k;
@@ -521,7 +515,7 @@ function AmbitionPicker({
               }`}
             >
               <p className="text-[12.5px] font-semibold">{labels[`amb-${k}` as const]}</p>
-              <p className={`mt-1 text-[11.5px] tabular-nums ${active ? "text-background/70" : "text-foreground/55"}`}>
+              <p className={`viq-caption mt-1 tabular-nums ${active ? "text-background/75" : "text-foreground/65"}`}>
                 {labels[`amb-${k}-desc` as const]} · {(rate * 100).toFixed(1)}%/yr
               </p>
             </button>

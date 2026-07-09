@@ -312,21 +312,12 @@ ${lines}
   const reset = () => setState(DEFAULT_STATE);
 
   return (
-    <div className="not-prose border-y border-foreground/15 print:border-none">
+    <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header + controls */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            01 · {l.interactive}
-          </p>
-          <p className="tabular-nums text-[11px] text-foreground/40 print:hidden">
-            {l.sourcesNote}
-          </p>
-        </div>
-
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
           <div>
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            <label className="viq-field-label block">
               {l.quarter}
             </label>
             <select
@@ -342,7 +333,7 @@ ${lines}
             </select>
           </div>
           <div>
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            <label className="viq-field-label block">
               {l.year}
             </label>
             <input
@@ -355,7 +346,7 @@ ${lines}
             />
           </div>
           <div className="lg:col-span-1">
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            <label className="viq-field-label block">
               {l.importerName}
             </label>
             <input
@@ -367,7 +358,7 @@ ${lines}
             />
           </div>
           <div>
-            <label className="block text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+            <label className="viq-field-label block">
               {l.importerEori}
             </label>
             <input
@@ -384,28 +375,28 @@ ${lines}
           <button
             type="button"
             onClick={doPrint}
-            className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+              className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85"
           >
             {l.print}
           </button>
           <button
             type="button"
             onClick={downloadXml}
-            className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+              className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
           >
             {l.downloadXml}
           </button>
           <button
             type="button"
             onClick={downloadCsv}
-            className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+              className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
           >
             {l.downloadCsv}
           </button>
           <button
             type="button"
             onClick={reset}
-            className="inline-flex h-9 items-center px-2 text-[12.5px] text-foreground/55 underline underline-offset-4 transition hover:text-foreground"
+              className="viq-button inline-flex h-9 items-center px-2 text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
           >
             {l.reset}
           </button>
@@ -414,22 +405,22 @@ ${lines}
 
       {/* Goods table */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="viq-section-label">
           {l.goods}
         </p>
 
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[900px] border-collapse text-[12.5px]">
             <thead>
-              <tr className="border-b border-foreground/20 text-left uppercase tracking-[0.14em] text-foreground/55">
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.cn}</th>
-                <th className="py-2 pr-3 text-[10.5px] font-semibold">{l.country}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.quantity}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.directFactor}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.indirectFactor}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.carbonPrice}</th>
-                <th className="py-2 pr-3 text-right text-[10.5px] font-semibold">{l.lineTotal}</th>
-                <th className="py-2 text-right text-[10.5px] font-semibold print:hidden"></th>
+              <tr className="border-b border-foreground/20 text-left text-foreground/65">
+                <th className="py-2 pr-3 viq-table-heading">{l.cn}</th>
+                <th className="py-2 pr-3 viq-table-heading">{l.country}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.quantity}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.directFactor}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.indirectFactor}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.carbonPrice}</th>
+                <th className="py-2 pr-3 text-right viq-table-heading">{l.lineTotal}</th>
+                <th className="py-2 text-right viq-table-heading print:hidden"></th>
               </tr>
             </thead>
             <tbody>
@@ -447,7 +438,7 @@ ${lines}
                         </option>
                       ))}
                     </select>
-                    <p className="mt-1 text-[10.5px] uppercase tracking-[0.16em] text-foreground/45">
+                    <p className="viq-caption mt-1">
                       {r.cnInfo ? SECTOR_META[r.cnInfo.sector][locale] : "—"}
                     </p>
                   </td>
@@ -473,7 +464,7 @@ ${lines}
                       onChange={(e) => setLine(r.id, { quantity: Number(e.target.value) })}
                       className="w-24 border-0 border-b border-foreground/20 bg-transparent pb-0.5 text-right text-[12.5px] tabular-nums outline-none focus:border-primary"
                     />
-                    <p className="mt-1 text-right text-[10px] tabular-nums text-foreground/40">
+                    <p className="viq-numeric-note mt-1 text-right tabular-nums">
                       {l.tonnes}
                     </p>
                   </td>
@@ -487,7 +478,7 @@ ${lines}
                       onChange={(e) => setLine(r.id, { directOverride: e.target.value })}
                       className="w-24 border-0 border-b border-foreground/20 bg-transparent pb-0.5 text-right text-[12.5px] tabular-nums outline-none placeholder:text-foreground/30 focus:border-primary"
                     />
-                    <p className="mt-1 text-right text-[10px] tabular-nums text-foreground/40">
+                    <p className="viq-numeric-note mt-1 text-right tabular-nums">
                       {r.directOverride === "" ? l.default : "override"}
                     </p>
                   </td>
@@ -501,7 +492,7 @@ ${lines}
                       onChange={(e) => setLine(r.id, { indirectOverride: e.target.value })}
                       className="w-24 border-0 border-b border-foreground/20 bg-transparent pb-0.5 text-right text-[12.5px] tabular-nums outline-none placeholder:text-foreground/30 focus:border-primary"
                     />
-                    <p className="mt-1 text-right text-[10px] tabular-nums text-foreground/40">
+                    <p className="viq-numeric-note mt-1 text-right tabular-nums">
                       {r.directOverride === "" && r.indirectOverride === "" ? l.default : "override"}
                     </p>
                   </td>
@@ -523,7 +514,7 @@ ${lines}
                     <button
                       type="button"
                       onClick={() => removeLine(r.id)}
-                      className="text-[11px] text-foreground/45 underline underline-offset-4 hover:text-foreground"
+                      className="viq-button-sm text-foreground/65 underline underline-offset-4 hover:text-foreground"
                     >
                       {l.remove}
                     </button>
@@ -541,7 +532,7 @@ ${lines}
         <button
           type="button"
           onClick={addLine}
-          className="mt-6 inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground print:hidden"
+          className="viq-button mt-6 inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground print:hidden"
         >
           {l.addRow}
         </button>
@@ -550,7 +541,7 @@ ${lines}
       {/* Totals */}
       <div className="grid gap-10 py-8 sm:py-10 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:gap-14">
         <div>
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
+          <p className="viq-section-label">
             {l.breakdownBySector}
           </p>
           <div className="mt-6 space-y-5">
@@ -560,7 +551,7 @@ ${lines}
             {sectorBreakdown.map((b, i) => (
               <div key={b.sector}>
                 <div className="mb-1.5 grid grid-cols-[28px_minmax(0,1fr)_auto] items-baseline gap-3 text-[13px]">
-                  <span className="tabular-nums text-[11px] font-semibold text-foreground/40">
+                  <span className="viq-minor-code tabular-nums">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-foreground/85">{SECTOR_META[b.sector][locale]}</span>
@@ -580,13 +571,13 @@ ${lines}
         </div>
 
         <div className="border-l border-foreground/10 pl-8 sm:pl-10 print:border-none print:pl-0">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            {l.totals} · {state.year} Q{state.quarter}
+          <p className="viq-section-label">
+            {l.totals} <span className="tabular-nums text-foreground/60">{state.year} Q{state.quarter}</span>
           </p>
           <p className="mt-3 text-[48px] font-semibold leading-none tabular-nums tracking-[-0.03em] sm:text-[64px]">
             {fmt(totals.embedded, 1)}
           </p>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.2em] text-foreground/45">
+          <p className="viq-meta mt-2">
             {l.totalEmbedded} · {l.tCO2e}
           </p>
 
@@ -612,7 +603,7 @@ ${lines}
           <p className="mt-6 text-[11.5px] leading-[1.6] text-foreground/50">
             {l.disclaimer}
           </p>
-          <p className="mt-3 hidden text-[10.5px] tabular-nums uppercase tracking-[0.2em] text-foreground/45 print:block">
+          <p className="viq-print-note mt-3 hidden print:block">
             {l.reportTitle} · {l.generatedOn} {new Date().toLocaleDateString(numLocale)}
           </p>
         </div>
