@@ -18,7 +18,7 @@ import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
 import sectionHowImg from "@/assets/section-how-steps.jpg";
 import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
-import testimonialBranch from "@/assets/testimonial-olive-branch.png";
+import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 
 /**
  * Home — editorial redesign.
