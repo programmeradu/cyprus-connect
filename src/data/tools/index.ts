@@ -106,11 +106,11 @@ export const TOOLS: ToolEntry[] = [
   {
     slug: "double-materiality",
     category: "csrd",
-    available: false,
+    available: true,
     primaryKeyword: "double materiality matrix",
     relatedPillars: ["double-materiality-assessment", "csrd-reporting-guide", "esrs-standards-explained"],
-    heroImage: "/assets/tools/hub/hero.jpg",
-    updatedAt: "2026-07-01",
+    heroImage: "/assets/tools/double-materiality/hero.jpg",
+    updatedAt: "2026-07-09",
     en: {
       metaTitle: "Double Materiality Matrix — Free CSRD Assessment Tool | VerdeIQ",
       metaDescription:
