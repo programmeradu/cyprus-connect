@@ -12,7 +12,15 @@ import { useMemo, useState } from "react";
 import { usePersistedState } from "@/hooks/usePersistedState";
 import type { Locale } from "@/data/tools";
 
-type Props = { locale: Locale };
+type Props = {
+  locale: Locale;
+  /** Pre-select a country/region for programmatic per-country pages. */
+  initialRegion?: Region;
+  /** When true, hide the region selector (country page has already chosen it). */
+  lockRegion?: boolean;
+  /** Override localStorage key so per-country pages don't collide. */
+  storageKey?: string;
+};
 
 /* ---------- Emission factors (kg CO2e per unit) ---------- */
 
