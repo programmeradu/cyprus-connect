@@ -195,14 +195,13 @@ export function FloatingAIAssistant() {
           <header className="flex items-center justify-between gap-3 border-b border-border/50 px-4 py-3">
             <div className="flex min-w-0 items-center gap-2.5">
               <span
-                className="grid h-8 w-8 place-items-center rounded-full text-[12px] font-semibold text-primary-foreground shadow-[0_4px_14px_-4px_oklch(0.72_0.18_145/0.7)]"
+                className="grid h-8 w-8 place-items-center rounded-full text-primary-foreground shadow-[0_4px_14px_-4px_oklch(0.72_0.18_145/0.7)]"
                 style={{
                   background:
                     "linear-gradient(140deg, oklch(0.78 0.16 150), oklch(0.55 0.17 170))",
-                  fontFamily: "var(--editorial-serif)",
                 }}
               >
-                V
+                <VerdeMark className="h-4 w-4" />
               </span>
               <div className="min-w-0">
                 <div
