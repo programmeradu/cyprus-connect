@@ -13,6 +13,9 @@ import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
+import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
+import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
+import sectionHowImg from "@/assets/section-how-steps.jpg";
 
 /**
  * Home — editorial redesign.
@@ -40,6 +43,21 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased">
+      {/* Ambient background — subtle topographic pattern + radial glow, sits under all sections */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10 opacity-[0.35] dark:opacity-20"
+        style={{
+          backgroundImage: `
+            radial-gradient(ellipse 80% 50% at 50% 20%, color-mix(in oklab, var(--foreground) 4%, transparent), transparent 60%),
+            url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><g fill='none' stroke='%23000' stroke-width='0.5' stroke-opacity='0.06'><path d='M0 120 Q150 60 300 120 T600 120'/><path d='M0 200 Q150 140 300 200 T600 200'/><path d='M0 280 Q150 220 300 280 T600 280'/><path d='M0 360 Q150 300 300 360 T600 360'/><path d='M0 440 Q150 380 300 440 T600 440'/><path d='M0 520 Q150 460 300 520 T600 520'/></g></svg>")
+          `,
+          backgroundSize: "auto, 600px 600px",
+          backgroundRepeat: "no-repeat, repeat",
+        }}
+      />
+
+
 
 
       {/* Nav */}
@@ -172,6 +190,7 @@ export default function Home() {
         eyebrow="01 / Why VerdeIQ"
         titleA={tL("whyTitleA")}
         subtitle={tL("whySubtitle")}
+        media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
       >
         <NumberedList
           items={[
@@ -191,6 +210,7 @@ export default function Home() {
         titleMid={tL("powerTitleMid")}
         titleB={tL("powerTitleB")}
         subtitle={tL("powerSubtitle")}
+        media={{ src: sectionPlatformImg.src, alt: "Scope 1, 2, and 3 emissions breakdown and year-over-year trend" }}
       >
         <NumberedList
           items={[
@@ -283,6 +303,7 @@ export default function Home() {
         titleA={tL("howTitleA")}
         titleB={tL("howTitleB")}
         subtitle={tL("howSubtitle")}
+        media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
       >
         <NumberedList
           items={[
@@ -356,6 +377,7 @@ function EditorialSection({
   titleMid,
   titleB,
   subtitle,
+  media,
   children,
 }: {
   eyebrow: string;
@@ -363,6 +385,7 @@ function EditorialSection({
   titleMid?: string;
   titleB?: string;
   subtitle?: string;
+  media?: { src: string; alt: string };
   children: React.ReactNode;
 }) {
   return (
@@ -383,7 +406,21 @@ function EditorialSection({
             </p>
           )}
         </div>
-        <div className="sm:col-span-7">{children}</div>
+        <div className="sm:col-span-7">
+          {media && (
+            <div className="mb-8 overflow-hidden rounded-md border border-border/60 bg-muted/30">
+              <img
+                src={media.src}
+                alt={media.alt}
+                width={1600}
+                height={1008}
+                loading="lazy"
+                className="h-auto w-full object-cover"
+              />
+            </div>
+          )}
+          {children}
+        </div>
       </div>
     </section>
   );
