@@ -97,8 +97,8 @@ export default function LeaderboardPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-primary-foreground text-lg font-bold">
-                {getInitials(currentUser.name || currentUser.companyName || "YC")}
+              <div className="w-14 h-14 rounded-md bg-primary/10 border border-primary/30 flex items-center justify-center text-primary text-lg font-semibold tabular-nums" style={{ fontFamily: 'var(--editorial-display)' }}>
+                {String(currentUser.rank).padStart(2, '0')}
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
