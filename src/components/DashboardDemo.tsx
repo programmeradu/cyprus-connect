@@ -110,11 +110,11 @@ const formatReportText = (text: string) => {
       
       return (
         <div key={sectionIndex} className="mb-8">
-          <div className="flex items-baseline gap-3 mb-4">
-            <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
-              {number}
+          <div className="flex items-baseline gap-4 mb-4 border-b border-border pb-2">
+            <span className="font-[family-name:var(--editorial-serif)] text-2xl tabular-nums text-muted-foreground">
+              {String(number).padStart(2, "0")}
             </span>
-            <h2 className="text-xl font-bold text-foreground">{title}</h2>
+            <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
           </div>
           
           {isMetrics ? (
@@ -158,7 +158,7 @@ const formatReportText = (text: string) => {
                         if (!cleanLine) return null
                         return (
                           <li key={lIndex} className="flex items-start gap-2 text-sm text-foreground/80">
-                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2"></span>
+                            <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-chart-2 mt-2"></span>
                             <span className="flex-1">{cleanLine}</span>
                           </li>
                         )
@@ -262,12 +262,11 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     return (
       <div key={key} className="mb-6">
         <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs">ℹ️</span>
           CO2e Conversion Factors
         </h3>
         <div className="overflow-hidden rounded-lg border border-gray-200">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-blue-50 to-cyan-50">
+            <thead className="bg-muted/40">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Category</th>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Factor</th>
@@ -327,12 +326,11 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     return (
       <div key={key} className="mb-6">
         <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs">📊</span>
           Emissions Breakdown
         </h3>
         <div className="overflow-hidden rounded-lg border border-gray-200">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-emerald-50 to-green-50">
+            <thead className="bg-muted/40">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Category</th>
                 <th className="px-4 py-2 text-right text-xs font-semibold text-foreground/80">Emissions</th>
@@ -401,7 +399,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                               style={{ width: `${percentage}%` }}
                             />
                           </div>
-                          <span className="text-xs font-semibold text-emerald-700 w-10 text-right">
+                          <span className="text-xs font-semibold text-chart-2 w-10 text-right">
                             {percentage}%
                           </span>
                         </div>
@@ -473,12 +471,11 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     return (
       <div key={key} className="mb-6">
         <h3 className="text-sm font-bold text-foreground/80 mb-3 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center text-xs">💰</span>
           Potential Cost Savings
         </h3>
         <div className="overflow-hidden rounded-lg border border-gray-200">
           <table className="w-full">
-            <thead className="bg-gradient-to-r from-amber-50 to-orange-50">
+            <thead className="bg-muted/40">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-foreground/80">Category</th>
                 <th className="px-4 py-2 text-right text-xs font-semibold text-foreground/80">Monthly Savings</th>
@@ -490,18 +487,18 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
                   <td className="px-4 py-3 text-xs font-medium text-foreground/80">
                     {category}
                   </td>
-                  <td className="px-4 py-3 text-xs font-bold text-green-700 text-right">
+                  <td className="px-4 py-3 text-xs font-bold text-chart-2 text-right">
                     {categoryData[category].currency}{categoryData[category].amount}
                   </td>
                 </tr>
               ))}
               {/* Total row */}
               {total && (
-                <tr className="bg-gradient-to-r from-green-50 to-emerald-50 font-bold">
+                <tr className="bg-muted/40 font-bold">
                   <td className="px-4 py-3 text-xs text-foreground">
                     Total Monthly Savings
                   </td>
-                  <td className="px-4 py-3 text-sm font-bold text-green-700 text-right">
+                  <td className="px-4 py-3 text-sm font-bold text-chart-2 text-right">
                     {total.currency}{total.amount}
                   </td>
                 </tr>
@@ -520,11 +517,11 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
     
     return (
       <div key={key} className="mb-6">
-        <div className="flex items-start gap-3 mb-3">
-          <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-            {number}
+        <div className="flex items-baseline gap-3 mb-3">
+          <span className="font-[family-name:var(--editorial-serif)] text-lg tabular-nums text-muted-foreground">
+            {String(number).padStart(2, "0")}
           </span>
-          <h3 className="text-sm font-bold text-foreground pt-0.5">{title}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         </div>
         
         <div className="ml-10 space-y-2">
@@ -536,7 +533,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
             if (labelMatch) {
               return (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="text-xs font-semibold text-emerald-700 min-w-fit">
+                  <span className="text-xs font-semibold text-chart-2 min-w-fit">
                     {labelMatch[1]}:
                   </span>
                   <span className="text-xs text-foreground/80">{labelMatch[2]}</span>
@@ -548,7 +545,7 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
             if (line.match(/^[*\-•]\s+/)) {
               return (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5"></span>
+                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-chart-2 mt-1.5"></span>
                   <span className="text-xs text-foreground/80 flex-1">{cleanLine}</span>
                 </div>
               )
@@ -1228,7 +1225,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
             onClick={() => setActiveTab(tab.id)}
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 ${
               activeTab === tab.id
-                ? "bg-primary text-primary-foreground shadow-lg"
+                ? "bg-primary text-primary-foreground"
                 : "bg-muted/50 hover:bg-muted text-muted-foreground"
             }`}
             whileHover={{ scale: 1.02 }}
@@ -1269,7 +1266,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       {t("carbon.description")}
                     </p>
                     {location.city !== "Detecting..." && (
-                      <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 border border-primary/20">
+                      <div className="flex items-center gap-1 px-2 py-0.5 rounded-[4px] border border-primary/30 text-primary">
                         <svg viewBox="0 0 24 24" className="w-3 h-3 text-primary" fill="currentColor">
                           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                         </svg>
@@ -1325,7 +1322,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       animate={{ opacity: 1, height: "auto" }}
                       className="mt-4 rounded-lg bg-background border border-border shadow-sm max-h-[600px] overflow-y-auto"
                     >
-                      <div className="sticky top-0 bg-gradient-to-r from-emerald-50 to-green-50 px-4 py-3 border-b border-emerald-200 z-10">
+                      <div className="sticky top-0 bg-muted/40 px-4 py-3 border-b border-border z-10">
                         <h4 className="text-sm font-bold gradient-text flex items-center gap-2">
                           <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
                             <circle cx="12" cy="12" r="9" />
@@ -1542,10 +1539,10 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       </h4>
                       <div className="bg-background rounded-lg p-6 text-foreground">
                         {/* Company Info Header */}
-                        <div className="mb-6 pb-4 border-b-2 border-emerald-200">
+                        <div className="mb-6 pb-4 border-b-2 border-border">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="px-3 py-1 bg-emerald-100 rounded-full">
-                              <span className="text-emerald-700 font-bold text-xs tracking-wide">{t("report.badge")}</span>
+                            <div className="px-2 py-0.5 rounded-[4px] border border-primary/30">
+                              <span className="text-chart-2 font-bold text-xs tracking-wide">{t("report.badge")}</span>
                             </div>
                           </div>
                           <h2 className="text-2xl font-black text-foreground mb-1">{reportInput.company}</h2>
@@ -1572,11 +1569,11 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      className="bg-background rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden"
+                      className="bg-background rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {/* Modal Header */}
-                      <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/10 to-primary/5">
+                      <div className="flex items-center justify-between p-4 border-b border-border bg-primary/5">
                         <h3 className="text-lg font-bold gradient-text">{t("report.modalTitle")}</h3>
                         <div className="flex gap-2">
                           <button
@@ -1592,7 +1589,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             onClick={() => setShowPreview(false)}
                             className="px-3 py-2 rounded-lg bg-muted hover:bg-muted/80 text-sm font-medium transition-all"
                           >
-                            ✕
+                            ×
                           </button>
                         </div>
                       </div>
@@ -1604,51 +1601,51 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           {/* Report Header */}
                           <div className="mb-10 pb-8 border-b-4 border-gradient-to-r from-emerald-500 via-green-50 to-emerald-600 relative">
                             {/* Decorative corner element */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-100 to-transparent rounded-bl-full opacity-30"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full opacity-30"></div>
                             
                             <div className="relative">
                               <div className="flex items-start justify-between mb-6">
                                 <div>
-                                  <div className="inline-flex items-center gap-2 mb-3 px-4 py-2 bg-gradient-to-r from-emerald-100 to-green-100 rounded-full">
-                                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-emerald-600" fill="currentColor">
+                                  <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-[4px] border border-primary/30">
+                                    <svg viewBox="0 0 24 24" className="w-5 h-5 text-chart-2" fill="currentColor">
                                       <path d="M12 2C8 2 4 6 4 10c0 4 4 8 8 12 4-4 8-8 8-12 0-4-4-8-8-8zm0 14c-2.5-2-5-4.5-5-6 0-2.5 2.5-5 5-5s5 2.5 5 5c0 1.5-2.5 4-5 6z" />
                                     </svg>
-                                    <span className="text-emerald-700 font-bold text-sm tracking-wide">{t("report.badge")}</span>
+                                    <span className="text-chart-2 font-bold text-sm tracking-wide">{t("report.badge")}</span>
                                   </div>
                                   <h1 className="text-4xl font-black text-foreground mb-2 tracking-tight">{reportInput.company}</h1>
                                   <p className="text-muted-foreground text-base">{t("report.industryLine", { industry: reportInput.industry, period: reportInput.period || t("report.defaultPeriod") }).split("•")[0].trim()}</p>
                                 </div>
-                                <div className="text-right bg-gradient-to-br from-emerald-50 to-green-50 px-6 py-4 rounded-xl border-2 border-emerald-200">
+                                <div className="text-right bg-card px-6 py-4 rounded-xl border border-border">
                                   <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wide">{t("report.reportingPeriod")}</div>
-                                  <div className="text-2xl font-bold text-emerald-700">{reportInput.period || t("report.defaultPeriod")}</div>
+                                  <div className="text-2xl font-bold text-chart-2">{reportInput.period || t("report.defaultPeriod")}</div>
                                 </div>
                               </div>
 
                               {/* Company Info Grid */}
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                                <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-5 rounded-xl border-2 border-emerald-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
-                                  <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                <div className="bg-card p-5 rounded-xl border border-border relative overflow-hidden group transition-shadow">
+                                  <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Industry</div>
                                     <div className="text-lg font-bold text-foreground">{reportInput.industry}</div>
                                   </div>
                                 </div>
-                                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-5 rounded-xl border-2 border-blue-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
-                                  <div className="absolute top-0 right-0 w-20 h-20 bg-blue-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                <div className="bg-card p-5 rounded-xl border border-border relative overflow-hidden group transition-shadow">
+                                  <div className="absolute top-0 right-0 w-20 h-20 bg-muted rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Location</div>
                                     <div className="text-lg font-bold text-foreground">{reportInput.location || "Global"}</div>
                                   </div>
                                 </div>
-                                <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-5 rounded-xl border-2 border-primary/20 relative overflow-hidden group hover:shadow-lg transition-shadow">
+                                <div className="bg-primary/5 p-5 rounded-xl border-2 border-primary/20 relative overflow-hidden group transition-shadow">
                                   <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Employees</div>
                                     <div className="text-lg font-bold text-foreground">{reportInput.employees || "N/A"}</div>
                                   </div>
                                 </div>
-                                <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-5 rounded-xl border-2 border-orange-200 relative overflow-hidden group hover:shadow-lg transition-shadow">
-                                  <div className="absolute top-0 right-0 w-20 h-20 bg-orange-200 rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                <div className="bg-card p-5 rounded-xl border border-border relative overflow-hidden group transition-shadow">
+                                  <div className="absolute top-0 right-0 w-20 h-20 bg-muted rounded-bl-full opacity-20 group-hover:opacity-30 transition-opacity"></div>
                                   <div className="relative">
                                     <div className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Net-Zero Target</div>
                                     <div className="text-lg font-bold text-foreground">{reportInput.targetYear || "2050"}</div>
@@ -1665,7 +1662,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                           {/* Report Footer */}
                           <div className="mt-12 pt-8 border-t-2 border-gray-200">
-                            <div className="bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 p-6 rounded-xl border border-emerald-200">
+                            <div className="bg-muted/40 p-6 rounded-xl border border-border">
                               <div className="flex items-center justify-between">
                                 <div>
                                   <div className="flex items-center gap-3 mb-2">
@@ -1931,7 +1928,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <span className="font-medium w-12">{t("weather.day", { day: i + 1 })}</span>
                                 <div className="flex items-center gap-2 flex-1">
                                   <span className="text-muted-foreground">{weather.daily.temperature_2m_min[i]}°</span>
-                                  <div className="flex-1 h-1.5 bg-gradient-to-r from-blue-400 to-orange-400 rounded-full" />
+                                  <div className="flex-1 h-1.5 bg-primary rounded-full" />
                                   <span className="font-medium">{max}°</span>
                                 </div>
                               </div>
@@ -1954,7 +1951,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                   <PremiumCard className="p-5 h-full flex flex-col max-h-[600px]">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                           <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
                             <rect x="4" y="4" width="16" height="16" rx="2" />
                             <circle cx="9" cy="10" r="1" fill="currentColor" />
@@ -1975,7 +1972,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           className="px-2 py-1 rounded-lg bg-muted hover:bg-muted/80 text-xs transition-all"
                           title={t("weather.clearConversation")}
                         >
-                          ✕
+                          ×
                         </button>
                       )}
                     </div>
@@ -1988,7 +1985,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           animate={{ opacity: 1 }}
                           className="flex flex-col items-center justify-center h-full text-center px-4"
                         >
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-3">
+                          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
                             <svg viewBox="0 0 24 24" className="w-6 h-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M8 10h.01M12 10h.01M16 10h.01M9 16h6" strokeLinecap="round" />
                               <circle cx="12" cy="12" r="10" />
@@ -2009,7 +2006,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           transition={{ delay: 0.1 }}
                           className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                          <div className={`max-w-[85%] rounded-2xl px-3 py-2 ${
+                          <div className={`max-w-[85%] rounded-lg px-3 py-2 ${
                             msg.role === 'user' 
                               ? 'bg-primary text-primary-foreground rounded-br-sm' 
                               : 'bg-muted rounded-bl-sm'
@@ -2028,7 +2025,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           animate={{ opacity: 1, y: 0 }}
                           className="flex justify-start"
                         >
-                          <div className="max-w-[85%] rounded-2xl px-3 py-2 bg-muted rounded-bl-sm">
+                          <div className="max-w-[85%] rounded-lg px-3 py-2 bg-muted rounded-bl-sm">
                             <p className="text-xs leading-relaxed whitespace-pre-wrap">
                               {advisorResponse}
                             </p>
@@ -2043,7 +2040,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           animate={{ opacity: 1, y: 0 }}
                           className="flex justify-start"
                         >
-                          <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-muted rounded-bl-sm">
+                          <div className="max-w-[85%] rounded-lg px-4 py-3 bg-muted rounded-bl-sm">
                             <div className="flex items-center gap-1">
                               <motion.div
                                 className="w-2 h-2 rounded-full bg-primary/60"
@@ -2108,7 +2105,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                 >
                   {/* Left Column - Controls */}
                   <div className="space-y-4">
-                  <PremiumCard className="p-5 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                  <PremiumCard className="p-5 bg-primary/5 border-primary/20">
                     {/* Header */}
                     <div className="mb-6">
                       <h4 className="text-base font-bold gradient-text mb-1">{t("media.title")}</h4>
@@ -2127,7 +2124,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           whileTap={{ scale: 0.98 }}
                           className={`relative px-1.5 py-0.5 rounded-md text-xs font-semibold transition-all overflow-hidden ${
                             mediaType === "image"
-                              ? "bg-primary text-primary-foreground shadow-lg"
+                              ? "bg-primary text-primary-foreground"
                               : "bg-muted hover:bg-muted/80"
                           }`}
                         >
@@ -2141,7 +2138,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           </div>
                           {mediaType === "image" && (
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                              className="absolute inset-0 bg-transparent"
                               animate={{ x: ["-100%", "100%"] }}
                               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                             />
@@ -2154,7 +2151,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           whileTap={{ scale: 0.98 }}
                           className={`relative px-1.5 py-0.5 rounded-md text-xs font-semibold transition-all overflow-hidden ${
                             mediaType === "video"
-                              ? "bg-primary text-primary-foreground shadow-lg"
+                              ? "bg-primary text-primary-foreground"
                               : "bg-muted hover:bg-muted/80"
                           }`}
                         >
@@ -2166,7 +2163,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           </div>
                           {mediaType === "video" && (
                             <motion.div
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                              className="absolute inset-0 bg-transparent"
                               animate={{ x: ["-100%", "100%"] }}
                               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                             />
@@ -2182,7 +2179,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                         placeholder={t("media.visionPlaceholder")}
                         value={mediaPrompt}
                         onChange={(e) => setMediaPrompt(e.target.value)}
-                        className="w-full px-2.5 py-2 rounded-lg border-2 border-border hover:border-primary/50 focus:border-primary bg-background text-xs min-h-[90px] resize-none transition-colors"
+                        className="w-full px-2.5 py-2 rounded-lg border border-border hover:border-primary/50 focus:border-primary bg-background text-xs min-h-[90px] resize-none transition-colors"
                       />
                     </div>
 
@@ -2202,7 +2199,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                             whileTap={{ scale: 0.98 }}
                             className={`px-1.5 py-0.5 rounded-md text-center transition-all ${
                               mediaAspectRatio === option.ratio
-                                ? "bg-primary text-primary-foreground shadow-lg"
+                                ? "bg-primary text-primary-foreground"
                                 : "bg-muted hover:bg-muted/80"
                             }`}
                           >
@@ -2217,7 +2214,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
                     {/* Logo Branding */}
                     <div className="mb-5 p-2 rounded-lg bg-accent/30 border border-accent/50">
-                      <label className="text-[9px] font-bold mb-2 block uppercase tracking-wide flex items-center gap-1">
+                      <label className="eyebrow mb-2 block flex items-center gap-1">
                         <svg viewBox="0 0 24 24" className="w-2 h-2" fill="none" stroke="currentColor" strokeWidth="2">
                           <rect x="3" y="3" width="18" height="18" rx="2" />
                           <path d="M9 9h6v6H9z" />
@@ -2280,7 +2277,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       disabled={isGenerating || !mediaPrompt.trim()}
                       whileHover={!isGenerating && mediaPrompt.trim() ? { scale: 1.01 } : {}}
                       whileTap={!isGenerating && mediaPrompt.trim() ? { scale: 0.98 } : {}}
-                      className="w-full px-2.5 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-[9px] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden group"
+                      className="w-full px-2.5 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-[9px] disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center justify-center gap-1">
                         {isGenerating ? (
@@ -2310,7 +2307,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       
                       {!isGenerating && mediaPrompt.trim() && (
                         <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          className="absolute inset-0 bg-transparent"
                           initial={{ x: "-100%" }}
                           whileHover={{ x: "100%" }}
                           transition={{ duration: 0.6 }}
@@ -2330,7 +2327,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       whileTap={{ scale: 0.98 }}
                       className={`flex-1 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                         activeMediaTab === "preview"
-                          ? "bg-primary text-primary-foreground shadow-lg"
+                          ? "bg-primary text-primary-foreground"
                           : "bg-muted hover:bg-muted/80"
                       }`}
                     >
@@ -2349,7 +2346,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                       whileTap={{ scale: 0.98 }}
                       className={`flex-1 px-3 py-2 rounded-xl text-xs font-semibold transition-all relative ${
                         activeMediaTab === "references"
-                          ? "bg-primary text-primary-foreground shadow-lg"
+                          ? "bg-primary text-primary-foreground"
                           : "bg-muted hover:bg-muted/80"
                       }`}
                     >
@@ -2387,11 +2384,11 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                               animate={{ opacity: 1, scale: 1 }}
                               className="w-full"
                             >
-                              <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-muted/30 to-muted/10 mb-4">
+                              <div className="relative rounded-lg overflow-hidden bg-muted/30 mb-4">
                                 {mediaType === "image" ? (
-                                  <img src={generatedMedia} alt={t("media.generatedAlt")} className="w-full rounded-2xl" />
+                                  <img src={generatedMedia} alt={t("media.generatedAlt")} className="w-full rounded-lg" />
                                 ) : (
-                                  <video src={generatedMedia} controls className="w-full rounded-2xl" />
+                                  <video src={generatedMedia} controls className="w-full rounded-lg" />
                                 )}
                               </div>
                               
@@ -2400,7 +2397,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                 <a
                                   href={generatedMedia}
                                   download={`sustainability-${mediaType}-${Date.now()}.${mediaType === "image" ? "jpg" : "mp4"}`}
-                                  className="flex-1 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold text-center hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                  className="flex-1 px-3 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold text-center transition-all flex items-center justify-center gap-2"
                                 >
                                   <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2">
                                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
@@ -2424,7 +2421,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           ) : (
                             <div className="text-center">
                               <motion.div
-                                className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-muted to-muted/50 mb-4"
+                                className="inline-flex items-center justify-center w-20 h-20 rounded-lg bg-muted mb-4"
                                 animate={{ 
                                   scale: [1, 1.05, 1],
                                   rotate: [0, 5, -5, 0]
@@ -2497,7 +2494,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                       <video src={item.url} className="w-full aspect-square object-cover" />
                                     )}
                                     
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                                       <div className="absolute bottom-0 left-0 right-0 p-3">
                                         <p className="text-xs text-primary-foreground font-medium line-clamp-2">{item.prompt}</p>
                                         <div className="flex items-center gap-2 mt-2">
@@ -2509,7 +2506,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                     </div>
                                     
                                     <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                      <div className="p-2 rounded-lg bg-background/95 backdrop-blur-sm shadow-lg">
+                                      <div className="p-2 rounded-lg bg-background/95 backdrop-blur-sm">
                                         <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
                                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                                           <circle cx="12" cy="12" r="3" />
@@ -2523,7 +2520,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           ) : (
                             <div className="flex flex-col items-center justify-center h-full text-center py-20">
                               <motion.div
-                                className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-muted to-muted/50 mb-4"
+                                className="inline-flex items-center justify-center w-20 h-20 rounded-lg bg-muted mb-4"
                                 animate={{ 
                                   scale: [1, 1.05, 1],
                                 }}
@@ -2582,7 +2579,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
 
         {/* Try All Tools Card - Now Below Main Content */}
         <div className="max-w-md mx-auto">
-          <PremiumCard className="p-4 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+          <PremiumCard className="p-4 bg-primary/5 border-primary/20">
             <div className="text-center">
               <div className="flex justify-center mb-3">
                 <svg viewBox="0 0 24 24" className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="1.5">
