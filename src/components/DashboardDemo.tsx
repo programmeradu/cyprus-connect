@@ -579,18 +579,27 @@ const renderCarbonSection = (header: string, lines: string[], key: number): Reac
 
 interface DashboardDemoProps {
   landingMode?: boolean;
+  /** When set, forces this tab to be the only visible/active tab. */
+  focusTab?: TabType;
 }
 
-export const DashboardDemo = ({ landingMode = false }: DashboardDemoProps) => {
+export const DashboardDemo = ({ landingMode = false, focusTab }: DashboardDemoProps) => {
   const t = useTranslations("dashboardDemo")
-  // Random tab selection on mount
-  useEffect(() => {
-    const tabs: TabType[] = ["carbon", "report", "weather", "media"]
-    const randomTab = tabs[Math.floor(Math.random() * tabs.length)]
-    setActiveTab(randomTab)
-  }, [])
+  const [activeTab, setActiveTab] = useState<TabType>(focusTab ?? "carbon")
 
-  const [activeTab, setActiveTab] = useState<TabType>("carbon")
+  // Random tab selection on mount — skipped when a focus tab is fixed or
+  // when we're hiding "report" on the landing page.
+  useEffect(() => {
+    if (focusTab) {
+      setActiveTab(focusTab)
+      return
+    }
+    const pool: TabType[] = landingMode
+      ? ["carbon", "weather", "media"]
+      : ["carbon", "report", "weather", "media"]
+    const randomTab = pool[Math.floor(Math.random() * pool.length)]
+    setActiveTab(randomTab)
+  }, [focusTab, landingMode])
   const [loading, setLoading] = useState(false)
   
   // Carbon Analyzer State — Cyprus-locked defaults on landing
@@ -656,12 +665,19 @@ export const DashboardDemo = ({ landingMode = false }: DashboardDemoProps) => {
   const [windInsight, setWindInsight] = useState<{type: string, text: string} | null>(null)
   const [insightsLoading, setInsightsLoading] = useState(false)
 
-  const tabs = [
+  const allTabs = [
     { id: "carbon" as TabType, label: t("tabs.carbon"), icon: <Gauge className="w-4 h-4" strokeWidth={1.75} /> },
     { id: "report" as TabType, label: t("tabs.report"), icon: <FileText className="w-4 h-4" strokeWidth={1.75} /> },
     { id: "weather" as TabType, label: t("tabs.weather"), icon: <CloudSun className="w-4 h-4" strokeWidth={1.75} /> },
     { id: "media" as TabType, label: t("tabs.media"), icon: <ImageIcon className="w-4 h-4" strokeWidth={1.75} /> },
   ]
+  // Report Visuals is now a standalone tool at /tools/report-visuals, so it's
+  // hidden from the landing embed; the /tools page renders it via focusTab.
+  const tabs = focusTab
+    ? allTabs.filter((tab) => tab.id === focusTab)
+    : landingMode
+      ? allTabs.filter((tab) => tab.id !== "report")
+      : allTabs
 
   // Get user's location when weather tab is active
   useEffect(() => {

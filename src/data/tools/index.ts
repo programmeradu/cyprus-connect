@@ -231,6 +231,41 @@ export const TOOLS: ToolEntry[] = [
         "Στόχος 1,5°C και τροχιά net-zero 2050 από τις εκπομπές Scope 1, 2, 3 του έτους βάσης.",
     },
   },
+  {
+    slug: "report-visuals",
+    category: "csrd",
+    available: true,
+    primaryKeyword: "sustainability report generator demo",
+    relatedPillars: [
+      "csrd-reporting-guide",
+      "vsme-reporting-guide",
+      "sustainability-kpis-for-smes",
+    ],
+    heroImage: "/assets/tools/report-visuals/hero.jpg",
+    updatedAt: "2026-07-09",
+    en: {
+      metaTitle: "Demo Report Visuals — AI Sustainability Report Generator | VerdeIQ",
+      metaDescription:
+        "Interactive demo of VerdeIQ's AI sustainability report generator. Enter company details and generate a full narrative sustainability report with charts, KPIs and CSRD-ready structure.",
+      eyebrow: "AI · CSRD-ready · Interactive demo",
+      title: "Demo report visuals — AI-generated sustainability report",
+      subtitle:
+        "Try the report engine that powers VerdeIQ: enter your company, sector and reporting period and receive a full narrative sustainability report with KPIs, charts and CSRD/VSME-aligned structure — in seconds.",
+      cardDescription:
+        "Interactive demo of the AI sustainability report generator — narrative, KPIs, charts and CSRD-ready structure from a short intake form.",
+    },
+    el: {
+      metaTitle: "Demo Report Visuals — Δημιουργός αναφορών βιωσιμότητας AI | VerdeIQ",
+      metaDescription:
+        "Διαδραστικό demo της γεννήτριας αναφορών βιωσιμότητας VerdeIQ. Εισαγάγετε στοιχεία εταιρείας και λάβετε πλήρη αναφορά με γραφήματα, KPIs και δομή έτοιμη για CSRD.",
+      eyebrow: "AI · Έτοιμο για CSRD · Διαδραστικό demo",
+      title: "Demo report visuals — αναφορά βιωσιμότητας με AI",
+      subtitle:
+        "Δοκιμάστε τη μηχανή αναφορών της VerdeIQ: εισαγάγετε εταιρεία, κλάδο και περίοδο και λάβετε πλήρη αναφορά βιωσιμότητας με KPIs, γραφήματα και δομή CSRD/VSME — σε δευτερόλεπτα.",
+      cardDescription:
+        "Διαδραστικό demo της AI γεννήτριας αναφορών βιωσιμότητας — αφήγηση, KPIs, γραφήματα και δομή CSRD από μία σύντομη φόρμα.",
+    },
+  },
 ];
 
 export const TOOL_SLUGS = TOOLS.map((t) => t.slug);
