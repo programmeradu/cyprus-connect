@@ -191,9 +191,10 @@ const DEFAULT_STATE: State = {
   water: 800,
 };
 
-export default function GhgCalculator({ locale }: Props) {
+export default function GhgCalculator({ locale, initialRegion, lockRegion, storageKey }: Props) {
   const l = t[locale];
-  const [state, setState] = usePersistedState<State>("verdeiq.tool.ghg", DEFAULT_STATE);
+  const seed: State = initialRegion ? { ...DEFAULT_STATE, region: initialRegion } : DEFAULT_STATE;
+  const [state, setState] = usePersistedState<State>(storageKey ?? "verdeiq.tool.ghg", seed);
   const [tab, setTab] = useState<"scope1" | "scope2" | "scope3">("scope1");
 
   const set = <K extends keyof State>(key: K, val: State[K]) =>
