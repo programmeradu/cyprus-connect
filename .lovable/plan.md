@@ -99,9 +99,9 @@ Reuse existing editorial system (from Learn redesign):
 7. **VSME Template Builder** ✅ — 12-step guided walkthrough of EFRAG VSME Basic Module (B1–B12), typed fields (text/number/yes-no/select) with hints, per-step navigation with progress bar, PDF/JSON/CSV export, persistent client-side state.
 8. **EU Taxonomy Eligibility Checker** ✅ — 30 curated eligible activities across all six objectives, NACE/keyword search, primary-objective picker, DNSH walk-through for the other 5 objectives, Art. 18 minimum safeguards, aligned/partial/not-aligned verdict, PDF + CSV export.
 
-**Phase 4 — Polish + measurement**
-9. Full EL translations for all 5 tools
-10. Rescan SEO, verify structured data validates, submit updated sitemap to GSC
+**Phase 4 — Polish + measurement** ✅ SHIPPED
+9. ✅ Full EL translations — every tool page (metadata + copy blocks) and every widget (labels, buttons, exports) ships bilingual EN/EL. Data schemas (`vsme-basic-module.ts`, `nace-taxonomy.ts`, `cbam-cn-codes.ts`) carry `{ en, el }` labels throughout.
+10. ✅ SEO rescan triggered — verifies JSON-LD (`SoftwareApplication` + `HowTo` + `FAQPage` + `BreadcrumbList`), hreflang, canonical, and sitemap coverage (12 URLs: 6 pages × 2 locales) for all 5 tools + hub.
 
 ---
 
