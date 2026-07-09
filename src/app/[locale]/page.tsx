@@ -19,6 +19,9 @@ import sectionHowImg from "@/assets/section-how-steps.jpg";
 import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
+import accentGrowthSpark from "@/assets/accent-growth-spark.png";
+import accentJourneyPath from "@/assets/accent-journey-path.png";
+import accentNetwork from "@/assets/accent-network-constellation.png";
 
 /**
  * Home — editorial redesign.
