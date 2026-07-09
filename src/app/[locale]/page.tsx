@@ -321,35 +321,29 @@ export default function Home() {
       <SectionDivider />
 
       {/* TESTIMONIAL */}
-      <section className="mx-auto max-w-5xl px-4 py-20 sm:px-6 sm:py-28">
-        <div className="grid gap-10 sm:grid-cols-12 sm:gap-14">
-          <figure className="sm:col-span-4">
-            <div className="relative overflow-hidden rounded-sm border border-border/60 bg-muted/30">
-              <img
-                src={testimonialPortrait.src}
-                alt="A sustainability leader reviewing an emissions report"
-                width={1024}
-                height={1280}
-                loading="lazy"
-                className="h-auto w-full object-cover"
-              />
-            </div>
-          </figure>
+      <section className="relative mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32">
+        {/* Editorial olive branch — transparent line art blending into the page */}
+        <img
+          src={testimonialBranch.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-6 right-2 hidden w-[320px] select-none opacity-[0.22] mix-blend-multiply dark:opacity-[0.28] dark:invert dark:mix-blend-screen sm:block sm:w-[420px] lg:w-[520px] lg:-top-10 lg:-right-10"
+        />
 
-          <div className="sm:col-span-8">
-            <div className="mb-6 eyebrow">
-              {tL("trustedTitleA")} / {tL("trustedTitleB")}
-            </div>
-            <blockquote className="font-[family-name:var(--editorial-serif)] text-2xl italic leading-snug tracking-tight text-foreground sm:text-[2.5rem] sm:leading-[1.15]">
-              &ldquo;{tL("testimonialQuoteA")}{" "}
-              <span className="not-italic">{tL("testimonialQuoteB")}</span>&rdquo;
-            </blockquote>
-            <div className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
-              <span className="font-medium">{tL("testimonialAuthor")}</span>
-              <span className="text-muted-foreground">{tL("testimonialRole")}</span>
-              <span className="hidden text-border sm:inline">/</span>
-              <span className="text-muted-foreground">{tL("testimonialImpact")}</span>
-            </div>
+        <div className="relative max-w-3xl">
+          <div className="mb-6 eyebrow">
+            {tL("trustedTitleA")} / {tL("trustedTitleB")}
+          </div>
+          <blockquote className="font-[family-name:var(--editorial-serif)] text-2xl italic leading-snug tracking-tight text-foreground sm:text-4xl sm:leading-[1.15]">
+            &ldquo;{tL("testimonialQuoteA")}{" "}
+            <span className="not-italic">{tL("testimonialQuoteB")}</span>&rdquo;
+          </blockquote>
+          <div className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
+            <span className="font-medium">{tL("testimonialAuthor")}</span>
+            <span className="text-muted-foreground">{tL("testimonialRole")}</span>
+            <span className="hidden text-border sm:inline">/</span>
+            <span className="text-muted-foreground">{tL("testimonialImpact")}</span>
           </div>
         </div>
       </section>
