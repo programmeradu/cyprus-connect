@@ -95,19 +95,11 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
           >
             {/* Numeric marker */}
             <div className="mb-6 flex items-baseline justify-between">
-              <span
-                className="text-xs tabular-nums text-muted-foreground"
-                style={{ letterSpacing: "0.18em" }}
-              >
+              <span className="text-xs tabular-nums text-muted-foreground">
                 {String(index + 1).padStart(2, "0")}
               </span>
               {isPopular && (
-                <span
-                  className="text-[10px] font-medium uppercase text-primary"
-                  style={{ letterSpacing: "0.2em" }}
-                >
-                  {t("mostPopular")}
-                </span>
+                <span className="eyebrow text-primary">{t("mostPopular")}</span>
               )}
             </div>
 
@@ -159,12 +151,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
 
             {/* Features */}
             <div className="mt-8 border-t border-border/60 pt-6">
-              <div
-                className="mb-4 text-[10px] font-medium uppercase text-muted-foreground"
-                style={{ letterSpacing: "0.2em" }}
-              >
-                Includes
-              </div>
+              <div className="eyebrow mb-4">Includes</div>
               <ul className="space-y-3">
                 {features.map((feature, idx) => (
                   <li key={idx} className="flex items-baseline gap-3 text-sm leading-relaxed">
