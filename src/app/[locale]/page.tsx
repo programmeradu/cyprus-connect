@@ -116,11 +116,6 @@ export default function Home() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="max-w-3xl"
         >
-          <div className="mb-6 flex items-center gap-3 eyebrow">
-            <span>VerdeIQ</span>
-            <span className="h-px w-8 bg-border" />
-            <span>{tHero("badge")}</span>
-          </div>
 
           <h1
             className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.2rem] sm:leading-[0.98]"
