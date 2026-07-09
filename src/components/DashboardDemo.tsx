@@ -2127,7 +2127,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           whileTap={{ scale: 0.98 }}
                           className={`relative px-1.5 py-0.5 rounded-md text-xs font-semibold transition-all overflow-hidden ${
                             mediaType === "image"
-                              ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg"
+                              ? "bg-primary text-primary-foreground shadow-lg"
                               : "bg-muted hover:bg-muted/80"
                           }`}
                         >
@@ -2154,7 +2154,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                           whileTap={{ scale: 0.98 }}
                           className={`relative px-1.5 py-0.5 rounded-md text-xs font-semibold transition-all overflow-hidden ${
                             mediaType === "video"
-                              ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg"
+                              ? "bg-primary text-primary-foreground shadow-lg"
                               : "bg-muted hover:bg-muted/80"
                           }`}
                         >
