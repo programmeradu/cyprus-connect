@@ -16,6 +16,7 @@ import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
 import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
 import sectionHowImg from "@/assets/section-how-steps.jpg";
+import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
 
 /**
  * Home — editorial redesign.
@@ -230,6 +231,7 @@ export default function Home() {
         titleA={tL("beyondTitleA")}
         titleB={tL("beyondTitleB")}
         subtitle={tL("beyondSubtitle")}
+        media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
       >
         <NumberedList
           items={[
