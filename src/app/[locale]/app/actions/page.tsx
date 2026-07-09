@@ -536,7 +536,7 @@ OR
               >
                 {/* AI Badge Indicator */}
                 <div className="absolute -top-2 -right-2 z-10">
-                  <div className="glass-strong rounded-full px-2 py-1 border border-primary/30 flex items-center gap-1">
+                  <div className="bg-card rounded-[4px] px-2 py-1 border border-primary/30 flex items-center gap-1">
                     <AIGenerateIcon className="w-3 h-3 text-primary" />
                     <span className="text-[10px] font-medium text-primary">AI</span>
                   </div>
