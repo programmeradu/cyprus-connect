@@ -137,20 +137,22 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
   };
 
   return (
-    <div className="not-prose border-y border-foreground/15 print:border-none">
+    <div className="viq-tool not-prose border-y border-foreground/15 print:border-none">
       {/* Header */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-            01 · {l.interactive}
+          <p className="viq-kicker">
+            <span className="viq-step-num">01</span>
+            <span>{l.interactive}</span>
           </p>
-          <p className="tabular-nums text-[11px] text-foreground/40 print:hidden">{l.sourcesNote}</p>
+          <p className="viq-meta max-w-2xl print:hidden sm:text-right">{l.sourcesNote}</p>
         </div>
 
         <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_auto]">
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              {l.progress} · {answeredCount}/{VSME_BASIC.length} {l.complete} ({percent}%)
+            <p className="viq-tool-status viq-meta">
+              <strong>{l.progress}</strong>
+              <span>{answeredCount}/{VSME_BASIC.length} {l.complete} ({percent}%)</span>
             </p>
             <div className="mt-3 h-1.5 w-full max-w-md bg-foreground/10">
               <div
@@ -168,7 +170,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
                     key={d.id}
                     type="button"
                     onClick={() => setStep(i + 1)}
-                    className={`h-8 min-w-[36px] border px-2 text-[11px] font-medium tabular-nums transition ${
+                    className={`viq-button viq-button-sm h-9 min-w-[40px] border px-2 tabular-nums transition ${
                       isCurrent
                         ? "border-foreground bg-foreground text-background"
                         : isFilled
@@ -187,28 +189,28 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
             <button
               type="button"
               onClick={doPrint}
-              className="inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-[12.5px] font-medium tracking-[-0.005em] text-background transition hover:bg-foreground/85"
+              className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85"
             >
               {l.print}
             </button>
             <button
               type="button"
               onClick={downloadCsv}
-              className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+              className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
             >
               {l.csv}
             </button>
             <button
               type="button"
               onClick={downloadJson}
-              className="inline-flex h-9 items-center border border-foreground/25 px-4 text-[12.5px] font-medium tracking-[-0.005em] text-foreground transition hover:border-foreground"
+              className="viq-button inline-flex h-9 items-center border border-foreground/25 px-4 text-foreground transition hover:border-foreground"
             >
               {l.json}
             </button>
             <button
               type="button"
               onClick={doReset}
-              className="inline-flex h-9 items-center px-2 text-[12.5px] text-foreground/55 underline underline-offset-4 transition hover:text-foreground"
+              className="viq-button inline-flex h-9 items-center px-2 text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
             >
               {l.reset}
             </button>
@@ -220,8 +222,8 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
       <div className="py-8 sm:py-10">
         {onOverview && (
           <div className="max-w-2xl">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              00 · {l.stepOverview}
+            <p className="viq-section-label">
+              <span className="viq-step-num">00</span> {l.stepOverview}
             </p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em] text-foreground">
               {l.reportTitle}
@@ -234,7 +236,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
                     <span className="tabular-nums text-[11px] text-foreground/40">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-[12px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
+                    <span className="viq-minor-code">
                       {d.code}
                     </span>
                     <span className="text-[13.5px] text-foreground">{d.title[locale]}</span>
@@ -247,14 +249,14 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
 
         {currentDisclosure && (
           <div className="max-w-3xl">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              {String(step).padStart(2, "0")} · {l.disclosure} {currentDisclosure.code}
+            <p className="viq-section-label">
+              <span className="viq-step-num">{String(step).padStart(2, "0")}</span> {l.disclosure} {currentDisclosure.code}
             </p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em] text-foreground">
               {currentDisclosure.title[locale]}
             </h3>
             <p className="mt-3 text-[13.5px] leading-[1.65] text-foreground/60">
-              <span className="font-semibold uppercase tracking-[0.14em] text-foreground/50">{l.purpose}: </span>
+              <span className="viq-caption font-semibold">{l.purpose}: </span>
               {currentDisclosure.purpose[locale]}
             </p>
 
@@ -262,7 +264,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
               {currentDisclosure.fields.map((f) => {
                 const val = values[currentDisclosure.id]?.[f.id] ?? "";
                 const commonLabel = (
-                  <label className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-foreground/70">
+                  <label className="viq-field-label block">
                     {f.label[locale]}
                     {f.unit ? <span className="ml-2 font-normal normal-case tracking-normal text-foreground/45">({f.unit})</span> : null}
                   </label>
@@ -343,14 +345,14 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
 
         {onReview && (
           <div>
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-foreground/55">
-              {String(totalSteps).padStart(2, "0")} · {l.stepFinal}
+            <p className="viq-section-label">
+              <span className="viq-step-num">{String(totalSteps).padStart(2, "0")}</span> {l.stepFinal}
             </p>
             <h3 className="mt-2 text-[24px] font-medium tracking-[-0.015em] text-foreground">
               {l.reportTitle}
             </h3>
             <p className="mt-3 text-[13.5px] text-foreground/55 print:hidden">{l.reviewIntro}</p>
-            <p className="mt-2 text-[11.5px] tabular-nums text-foreground/45 hidden print:block">
+            <p className="viq-print-note mt-2 hidden print:block">
               {l.generatedOn} {new Date().toLocaleDateString(locale === "el" ? "el-CY" : "en-GB")}
             </p>
 
@@ -358,7 +360,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
               {VSME_BASIC.map((d) => (
                 <div key={d.id} className="grid gap-4 py-6 sm:grid-cols-[160px_1fr]">
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/60">
+                    <p className="viq-minor-code">
                       {d.code}
                     </p>
                     <p className="mt-1 text-[13.5px] font-medium text-foreground">
