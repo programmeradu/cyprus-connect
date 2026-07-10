@@ -22,6 +22,8 @@ import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentGrowthSpark from "@/assets/accent-growth-spark.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentNetwork from "@/assets/accent-network-constellation.png";
+import accentWheatStalk from "@/assets/accent-wheat-stalk.png";
+import accentCompassDial from "@/assets/accent-compass-dial.png";
 
 /**
  * Home — editorial redesign.
