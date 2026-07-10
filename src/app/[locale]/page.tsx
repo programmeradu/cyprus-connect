@@ -230,6 +230,8 @@ export default function Home() {
           ]}
         />
       </EditorialSection>
+      </div>
+
 
       <SectionDivider />
 
