@@ -67,7 +67,7 @@ export default function Home() {
 
 
       {/* Nav */}
-      <header className="sticky top-0 z-50 bg-transparent">
+      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
             href="/"
