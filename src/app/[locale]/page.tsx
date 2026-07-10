@@ -22,6 +22,8 @@ import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentGrowthSpark from "@/assets/accent-growth-spark.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentNetwork from "@/assets/accent-network-constellation.png";
+import accentWheatStalk from "@/assets/accent-wheat-stalk.png";
+import accentCompassDial from "@/assets/accent-compass-dial.png";
 
 /**
  * Home — editorial redesign.
@@ -180,7 +182,29 @@ export default function Home() {
           </div>
         </motion.div>
         </div>
+        {/* Wheat-stalk accent — tall vertical botanical anchoring the hero's
+            left blank margin, echoing the "cultivate / grow" story of the copy.
+            Sits behind the scrim but above the background photo. */}
+        <img
+          src={accentWheatStalk.src}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute -bottom-8 -left-4 z-[1] hidden h-[520px] w-auto max-w-none rotate-[-4deg] select-none opacity-70 mix-blend-multiply dark:opacity-80 dark:mix-blend-screen md:block lg:-left-2 lg:h-[680px]"
+        />
       </section>
+
+      {/* BENEFITS — Why VerdeIQ */}
+      <div className="relative">
+        {/* Compass-dial accent — hand-drawn gauge with a needle pointing to the
+            upper-right, sits in the left blank column below the "Why Choose"
+            title and echoes the "measure / know where you stand" story. */}
+        <img
+          src={accentCompassDial.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute top-64 -left-20 z-10 hidden w-[280px] max-w-none rotate-[-4deg] select-none opacity-45 mix-blend-multiply dark:opacity-65 dark:mix-blend-screen md:block lg:top-72 lg:-left-32 lg:w-[380px]"
+        />
 
       {/* News ticker — replaces the old live dashboard preview */}
       <section className="relative bg-background">
@@ -206,6 +230,8 @@ export default function Home() {
           ]}
         />
       </EditorialSection>
+      </div>
+
 
       <SectionDivider />
 
