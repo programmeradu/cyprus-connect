@@ -24,6 +24,7 @@ import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentNetwork from "@/assets/accent-network-constellation.png";
 import accentWheatStalk from "@/assets/accent-wheat-stalk.png";
 import accentCompassDial from "@/assets/accent-compass-dial.png";
+import accentWindCurrents from "@/assets/accent-wind-currents.png";
 
 /**
  * Home — editorial redesign.
