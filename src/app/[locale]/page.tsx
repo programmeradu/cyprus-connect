@@ -294,18 +294,40 @@ export default function Home() {
       <SectionDivider />
 
       {/* CONTEXT WIDGETS — geo + time */}
-      <ContextWidgets />
+      <div className="relative overflow-hidden">
+        {/* Wind-currents accent — horizontal dotted airflow with a terracotta compass
+            arrow, spans the wide blank band above the widgets and echoes the
+            "where you are / what's blowing your way" story of this section. */}
+        <img
+          src={accentWindCurrents.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-6 right-0 z-0 hidden w-[720px] max-w-none select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-top-10 lg:-right-16 lg:w-[960px]"
+        />
+        <ContextWidgets />
+      </div>
 
       <SectionDivider />
 
 
 
       {/* INTEGRATIONS */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mb-8 text-center eyebrow">
+      <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+        {/* Wheat-stalk accent — tall vertical botanical filling the deep blank left
+            margin next to the integrations logo row, grounding the section with
+            an organic counterweight to the geometric brand marks. */}
+        <img
+          src={accentWheatStalk.src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="pointer-events-none absolute -top-8 -left-4 z-0 hidden h-[420px] w-auto max-w-none rotate-[-6deg] select-none opacity-55 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-left-24 lg:h-[540px]"
+        />
+        <div className="relative z-10 mb-8 text-center eyebrow">
           {tL("integratedWith")}
         </div>
-        <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14 md:gap-x-16">
+        <ul className="relative z-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14 md:gap-x-16">
           {[
             { name: "QuickBooks", slug: "quickbooks" },
             { name: "Xero", slug: "xero" },
@@ -344,6 +366,7 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
 
       <SectionDivider />
 
