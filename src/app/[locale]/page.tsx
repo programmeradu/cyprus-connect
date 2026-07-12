@@ -183,16 +183,8 @@ export default function Home() {
           </div>
         </motion.div>
         </div>
-        {/* Wheat-stalk accent — tall vertical botanical anchoring the hero's
-            left blank margin, echoing the "cultivate / grow" story of the copy.
-            Sits behind the scrim but above the background photo. */}
-        <img
-          src={accentWheatStalk.src}
-          alt=""
-          aria-hidden
-          className="pointer-events-none absolute -bottom-8 -left-4 z-[1] hidden h-[520px] w-auto max-w-none rotate-[-4deg] select-none opacity-70 mix-blend-multiply dark:opacity-80 dark:mix-blend-screen md:block lg:-left-2 lg:h-[680px]"
-        />
       </section>
+
 
       {/* BENEFITS — Why VerdeIQ */}
       <div className="relative">
