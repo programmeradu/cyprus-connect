@@ -223,16 +223,6 @@ export default function Home() {
 
       {/* POWER — Platform Capabilities */}
       <div className="relative">
-        {/* Growth-spark accent — rising data line sprouting olives; occupies the tall
-            blank left margin next to the Platform section's stats module, echoing the
-            "upward trend" story told by the chart to its right. */}
-        <img
-          src={accentGrowthSpark.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute top-24 -left-6 z-10 hidden w-[240px] max-w-none rotate-[-6deg] select-none opacity-80 mix-blend-multiply dark:opacity-90 dark:mix-blend-screen md:block lg:top-32 lg:-left-24 lg:w-[340px]"
-        />
         <EditorialSection
           eyebrow="02 / The Platform"
           titleA={tL("powerTitleA")}
