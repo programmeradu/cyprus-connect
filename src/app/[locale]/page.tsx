@@ -65,12 +65,12 @@ export default function Home() {
 
 
 
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+      {/* Nav — solid opaque bar (no glass, no blur) */}
+      <header className="sticky top-0 z-50 border-b border-border bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
             href="/"
-            className="gradient-text text-lg font-bold tracking-tight font-[family-name:var(--font-geist-sans)]"
+            className="text-lg font-bold tracking-[-0.02em] text-foreground font-[family-name:var(--editorial-serif)]"
           >
             VerdeIQ
           </Link>
