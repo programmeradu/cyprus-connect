@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NewsTicker } from "@/components/news/NewsTicker";
