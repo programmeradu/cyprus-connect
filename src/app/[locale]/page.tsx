@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NewsTicker } from "@/components/news/NewsTicker";
@@ -19,11 +19,7 @@ import sectionHowImg from "@/assets/section-how-steps.jpg";
 import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
-import accentGrowthSpark from "@/assets/accent-growth-spark.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
-import accentNetwork from "@/assets/accent-network-constellation.png";
-import accentWheatStalk from "@/assets/accent-wheat-stalk.png";
-import accentCompassDial from "@/assets/accent-compass-dial.png";
 import accentWindCurrents from "@/assets/accent-wind-currents.png";
 
 /**
@@ -69,12 +65,12 @@ export default function Home() {
 
 
 
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+      {/* Nav — solid opaque bar (no glass, no blur) */}
+      <header className="sticky top-0 z-50 border-b border-border bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
             href="/"
-            className="gradient-text text-lg font-bold tracking-tight font-[family-name:var(--font-geist-sans)]"
+            className="text-lg font-bold tracking-[-0.02em] text-foreground font-[family-name:var(--editorial-serif)]"
           >
             VerdeIQ
           </Link>
@@ -129,9 +125,9 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO — pulled up beneath the transparent header so the image sits under it */}
-      <section className="relative -mt-16 overflow-hidden">
-        {/* Premium 4K Background Image — visible on all viewports; scrim adapts */}
+      {/* HERO — offset composition, no opacity gate, single CTA, grained scrim */}
+      <section className="relative -mt-[57px] overflow-hidden">
+        {/* Photographic backdrop */}
         <div className="pointer-events-none absolute inset-0">
           <div
             className="absolute inset-0 bg-no-repeat bg-cover"
@@ -141,63 +137,60 @@ export default function Home() {
               backgroundPosition: '65% 50%',
             }}
           />
-          {/* Mobile scrim: subtle top wash so text is readable while photo stays clearly visible */}
+          {/* Mobile scrim */}
           <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-background/85 via-background/40 to-background/70 dark:from-background/80 dark:via-background/40 dark:to-background/85" />
           {/* Desktop scrim: fade image to the right so left column stays readable */}
           <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
+          {/* Grain — SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+              backgroundSize: "240px 240px",
+            }}
+          />
         </div>
-        <div className="relative mx-auto max-w-6xl px-4 pt-28 pb-16 sm:px-6 sm:pt-40 sm:pb-24">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="max-w-3xl"
-        >
 
-          <h1
-            className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.2rem] sm:leading-[0.98]"
-          >
-            {tHero("titleLine1")}
-            <br />
-            <span className="italic text-muted-foreground">{tHero("titleLine2")}</span>
-            <br />
-            {tHero("titleLine3")}
-          </h1>
+        <div className="relative mx-auto max-w-6xl px-4 pt-32 pb-20 sm:px-6 sm:pt-56 sm:pb-32">
+          {/* Offset column — narrower, indented on desktop, deep top gap; no centered stack */}
+          <div className="max-w-[36rem] sm:pl-6 md:pl-14 lg:pl-20">
+            {/* Signature marker replaces the eyebrow pill: hairline + numeric prefix */}
+            <div className="mb-10 flex items-center gap-4">
+              <span aria-hidden className="h-px w-14 bg-foreground/50" />
+              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-foreground/70">
+                00 / VerdeIQ
+              </span>
+            </div>
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
-            {tHero("subtitle")}
-          </p>
+            <h1 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.4rem] sm:leading-[0.96]">
+              {tHero("titleLine1")}
+              <br />
+              <span className="italic text-muted-foreground">{tHero("titleLine2")}</span>
+              <br />
+              {tHero("titleLine3")}
+            </h1>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link href="/auth">
-              <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
-                {tHero("ctaPrimary")}
-              </PremiumButton>
-            </Link>
-            <Link href="/pricing">
-              <PremiumButton variant="outline" size="sm" className="w-full text-sm sm:w-auto">
-                {tHero("ctaSecondary")}
-              </PremiumButton>
-            </Link>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
+              {tHero("subtitle")}
+            </p>
+
+            <div className="mt-10">
+              <Link href="/auth">
+                <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
+                  {tHero("ctaPrimary")}
+                </PremiumButton>
+              </Link>
+            </div>
           </div>
-        </motion.div>
         </div>
       </section>
 
 
       {/* BENEFITS — Why VerdeIQ */}
       <div className="relative">
-        {/* Compass-dial accent — hand-drawn gauge with a needle pointing to the
-            upper-right, sits in the left blank column below the "Why Choose"
-            title and echoes the "measure / know where you stand" story. */}
-        <img
-          src={accentCompassDial.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute top-64 -left-20 z-10 hidden w-[280px] max-w-none rotate-[-4deg] select-none opacity-45 mix-blend-multiply dark:opacity-65 dark:mix-blend-screen md:block lg:top-72 lg:-left-32 lg:w-[380px]"
-        />
 
       {/* News ticker — replaces the old live dashboard preview */}
       <section className="relative bg-background">
@@ -230,16 +223,6 @@ export default function Home() {
 
       {/* POWER — Platform Capabilities */}
       <div className="relative">
-        {/* Growth-spark accent — rising data line sprouting olives; occupies the tall
-            blank left margin next to the Platform section's stats module, echoing the
-            "upward trend" story told by the chart to its right. */}
-        <img
-          src={accentGrowthSpark.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute top-24 -left-6 z-10 hidden w-[240px] max-w-none rotate-[-6deg] select-none opacity-80 mix-blend-multiply dark:opacity-90 dark:mix-blend-screen md:block lg:top-32 lg:-left-24 lg:w-[340px]"
-        />
         <EditorialSection
           eyebrow="02 / The Platform"
           titleA={tL("powerTitleA")}
@@ -264,15 +247,6 @@ export default function Home() {
 
       {/* ECOSYSTEM */}
       <div className="relative">
-        {/* Network-constellation accent — nine hand-drawn nodes with one terracotta anchor,
-            sits far left in the blank margin beside the eyebrow/title column */}
-        <img
-          src={accentNetwork.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute top-1/2 -left-16 z-10 hidden w-[260px] max-w-none -translate-y-1/2 rotate-[-12deg] select-none opacity-45 mix-blend-multiply dark:opacity-65 dark:mix-blend-screen md:block lg:-left-28 lg:w-[360px]"
-        />
         <EditorialSection
           eyebrow="03 / Ecosystem"
           titleA={tL("beyondTitleA")}
@@ -314,16 +288,6 @@ export default function Home() {
 
       {/* INTEGRATIONS */}
       <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        {/* Wheat-stalk accent — tall vertical botanical filling the deep blank left
-            margin next to the integrations logo row, grounding the section with
-            an organic counterweight to the geometric brand marks. */}
-        <img
-          src={accentWheatStalk.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute -top-8 -left-4 z-0 hidden h-[420px] w-auto max-w-none rotate-[-6deg] select-none opacity-55 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-left-24 lg:h-[540px]"
-        />
         <div className="relative z-10 mb-8 text-center eyebrow">
           {tL("integratedWith")}
         </div>
@@ -447,6 +411,16 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30 dark:from-background dark:via-background/90 dark:to-background/40" />
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
+          {/* Grain — SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+              backgroundSize: "240px 240px",
+            }}
+          />
         </div>
 
         <div className="relative mx-auto max-w-4xl px-4 py-24 sm:px-6 sm:py-36">
