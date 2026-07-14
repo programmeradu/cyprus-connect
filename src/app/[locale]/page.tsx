@@ -125,9 +125,9 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO — pulled up beneath the transparent header so the image sits under it */}
-      <section className="relative -mt-16 overflow-hidden">
-        {/* Premium 4K Background Image — visible on all viewports; scrim adapts */}
+      {/* HERO — offset composition, no opacity gate, single CTA, grained scrim */}
+      <section className="relative -mt-[57px] overflow-hidden">
+        {/* Photographic backdrop */}
         <div className="pointer-events-none absolute inset-0">
           <div
             className="absolute inset-0 bg-no-repeat bg-cover"
@@ -137,47 +137,54 @@ export default function Home() {
               backgroundPosition: '65% 50%',
             }}
           />
-          {/* Mobile scrim: subtle top wash so text is readable while photo stays clearly visible */}
+          {/* Mobile scrim */}
           <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-background/85 via-background/40 to-background/70 dark:from-background/80 dark:via-background/40 dark:to-background/85" />
           {/* Desktop scrim: fade image to the right so left column stays readable */}
           <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
+          {/* Grain — SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+              backgroundSize: "240px 240px",
+            }}
+          />
         </div>
-        <div className="relative mx-auto max-w-6xl px-4 pt-28 pb-16 sm:px-6 sm:pt-40 sm:pb-24">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="max-w-3xl"
-        >
 
-          <h1
-            className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.2rem] sm:leading-[0.98]"
-          >
-            {tHero("titleLine1")}
-            <br />
-            <span className="italic text-muted-foreground">{tHero("titleLine2")}</span>
-            <br />
-            {tHero("titleLine3")}
-          </h1>
+        <div className="relative mx-auto max-w-6xl px-4 pt-32 pb-20 sm:px-6 sm:pt-56 sm:pb-32">
+          {/* Offset column — narrower, indented on desktop, deep top gap; no centered stack */}
+          <div className="max-w-[36rem] sm:pl-6 md:pl-14 lg:pl-20">
+            {/* Signature marker replaces the eyebrow pill: hairline + numeric prefix */}
+            <div className="mb-10 flex items-center gap-4">
+              <span aria-hidden className="h-px w-14 bg-foreground/50" />
+              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-foreground/70">
+                00 / VerdeIQ
+              </span>
+            </div>
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
-            {tHero("subtitle")}
-          </p>
+            <h1 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.4rem] sm:leading-[0.96]">
+              {tHero("titleLine1")}
+              <br />
+              <span className="italic text-muted-foreground">{tHero("titleLine2")}</span>
+              <br />
+              {tHero("titleLine3")}
+            </h1>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Link href="/auth">
-              <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
-                {tHero("ctaPrimary")}
-              </PremiumButton>
-            </Link>
-            <Link href="/pricing">
-              <PremiumButton variant="outline" size="sm" className="w-full text-sm sm:w-auto">
-                {tHero("ctaSecondary")}
-              </PremiumButton>
-            </Link>
+            <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
+              {tHero("subtitle")}
+            </p>
+
+            <div className="mt-10">
+              <Link href="/auth">
+                <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
+                  {tHero("ctaPrimary")}
+                </PremiumButton>
+              </Link>
+            </div>
           </div>
-        </motion.div>
         </div>
       </section>
 
