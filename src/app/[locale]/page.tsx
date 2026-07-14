@@ -191,16 +191,6 @@ export default function Home() {
 
       {/* BENEFITS — Why VerdeIQ */}
       <div className="relative">
-        {/* Compass-dial accent — hand-drawn gauge with a needle pointing to the
-            upper-right, sits in the left blank column below the "Why Choose"
-            title and echoes the "measure / know where you stand" story. */}
-        <img
-          src={accentCompassDial.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute top-64 -left-20 z-10 hidden w-[280px] max-w-none rotate-[-4deg] select-none opacity-45 mix-blend-multiply dark:opacity-65 dark:mix-blend-screen md:block lg:top-72 lg:-left-32 lg:w-[380px]"
-        />
 
       {/* News ticker — replaces the old live dashboard preview */}
       <section className="relative bg-background">
