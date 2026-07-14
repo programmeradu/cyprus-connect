@@ -288,16 +288,6 @@ export default function Home() {
 
       {/* INTEGRATIONS */}
       <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        {/* Wheat-stalk accent — tall vertical botanical filling the deep blank left
-            margin next to the integrations logo row, grounding the section with
-            an organic counterweight to the geometric brand marks. */}
-        <img
-          src={accentWheatStalk.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute -top-8 -left-4 z-0 hidden h-[420px] w-auto max-w-none rotate-[-6deg] select-none opacity-55 mix-blend-multiply dark:opacity-70 dark:mix-blend-screen md:block lg:-left-24 lg:h-[540px]"
-        />
         <div className="relative z-10 mb-8 text-center eyebrow">
           {tL("integratedWith")}
         </div>
