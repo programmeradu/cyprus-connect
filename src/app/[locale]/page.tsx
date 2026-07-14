@@ -411,6 +411,16 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30 dark:from-background dark:via-background/90 dark:to-background/40" />
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
+          {/* Grain — SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
+              backgroundSize: "240px 240px",
+            }}
+          />
         </div>
 
         <div className="relative mx-auto max-w-4xl px-4 py-24 sm:px-6 sm:py-36">
