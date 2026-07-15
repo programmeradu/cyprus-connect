@@ -14,11 +14,6 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
-      srcDirectory: "src/lovable-shell",
-      router: {
-        routesDirectory: "routes",
-        generatedRouteTree: "routeTree.gen.ts",
-      },
       // `customViteReactPlugin` is accepted at runtime but not typed in the
       // installed schema; cast the options object to keep TS happy while we
       // explicitly own the React plugin below.
