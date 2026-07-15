@@ -14,18 +14,17 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Track, optimize, and report your environmental impact effortlessly. VerdeIQ turns compliance into competitive advantage for small and medium businesses.",
+          "Track, optimize, and report environmental impact with VerdeIQ's AI-native sustainability platform for small and medium businesses.",
       },
       { property: "og:title", content: "VerdeIQ — AI-Powered Sustainability" },
       {
         property: "og:description",
         content:
-          "Turn ESG compliance into competitive advantage with AI-native carbon tracking, reporting, and insights.",
+          "AI-native carbon tracking, CSRD-ready reporting, and real-time sustainability insights for SMEs.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "icon", href: "/favicon.ico" }],
   }),
   shellComponent: RootShell,
 });

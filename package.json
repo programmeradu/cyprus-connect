@@ -4,12 +4,14 @@
     "description": "AI-Powered Sustainability Platform for SMEs - Track, optimize, and report your environmental impact effortlessly",
     "private": true,
     "scripts": {
-        "dev": "next dev",
-        "build": "next build",
+        "dev": "vite --host 0.0.0.0",
+        "dev:next": "next dev",
+        "build": "vite build",
         "build:next": "next build",
         "build:vite": "vite build",
         "build:dev": "vite build",
         "start": "next start",
+        "start:next": "next start",
         "lint": "next lint",
         "db:push": "drizzle-kit push",
         "db:studio": "drizzle-kit studio"

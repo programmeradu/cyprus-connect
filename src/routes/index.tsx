@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+const PRODUCTION_URL = "https://verdeiq.stauniverse.tech";
+
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
-
-const PRODUCTION_URL = "https://verdeiq.stauniverse.tech";
 
 function LandingPage() {
   return (
@@ -37,12 +37,12 @@ function LandingPage() {
         </div>
         <h1
           style={{
-            fontFamily: "'Fraunces', Georgia, serif",
+            fontFamily: "Georgia, 'Times New Roman', serif",
             fontSize: "clamp(2.5rem, 6vw, 4.75rem)",
             lineHeight: 1.02,
             margin: 0,
             fontWeight: 400,
-            letterSpacing: "-0.02em",
+            letterSpacing: "0",
           }}
         >
           Sustainability, made operational.
