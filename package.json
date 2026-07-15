@@ -6,7 +6,9 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "build:dev": "next build",
+        "build:next": "next build",
+        "build:vite": "vite build",
+        "build:dev": "vite build",
         "start": "next start",
         "lint": "next lint",
         "db:push": "drizzle-kit push",
