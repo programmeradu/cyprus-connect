@@ -15,8 +15,8 @@ export default defineConfig({
     tanstackStart({
       srcDirectory: "src/lovable-shell",
       router: {
-        routesDirectory: "src/lovable-shell/routes",
-        generatedRouteTree: "src/lovable-shell/routeTree.gen.ts",
+        routesDirectory: "routes",
+        generatedRouteTree: "routeTree.gen.ts",
       },
     }),
   ],
