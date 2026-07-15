@@ -13,14 +13,17 @@ export default defineConfig({
     alias: { "@": path.resolve(__dirname, "./src") },
   },
   plugins: [
+    // `customViteReactPlugin` is accepted at runtime but not typed in the
+    // current schema; cast to keep TS happy while explicitly owning the React
+    // plugin below.
     tanstackStart({
-      customViteReactPlugin: true,
       srcDirectory: "src/lovable-shell",
       router: {
         routesDirectory: "routes",
         generatedRouteTree: "routeTree.gen.ts",
       },
-    }),
+      customViteReactPlugin: true,
+    } as Parameters<typeof tanstackStart>[0]),
     viteReact(),
   ],
 });
