@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import viteReact from "@vitejs/plugin-react";
 import path from "node:path";
 
 // Vite / TanStack Start shell used ONLY by Lovable Publish (lovable.app).
