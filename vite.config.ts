@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
 import path from "node:path";
 
 // Vite / TanStack Start shell used ONLY by Lovable Publish (lovable.app).
@@ -14,13 +13,11 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
-      customViteReactPlugin: true,
-      tsr: {
-        // Isolate the TanStack routes so the plugin does not scan Next's src/app.
+      srcDirectory: "src/lovable-shell",
+      router: {
         routesDirectory: "src/lovable-shell/routes",
         generatedRouteTree: "src/lovable-shell/routeTree.gen.ts",
       },
     }),
-    viteReact(),
   ],
 });
