@@ -1,15 +1,11 @@
-import { Generator } from '@tanstack/router-generator';
-import path from 'node:path';
-const gen = new Generator({
-  config: {
-    routesDirectory: path.resolve('src/lovable-shell/routes'),
-    generatedRouteTree: path.resolve('src/lovable-shell/routeTree.gen.ts'),
-    routeFileIgnorePrefix: '-',
-    quoteStyle: 'double',
-    semicolons: true,
-    target: 'react',
-  },
-  root: process.cwd(),
+import { Generator } from "@tanstack/router-generator";
+import { getConfig } from "@tanstack/router-generator";
+
+const config = getConfig({
+  routesDirectory: "src/lovable-shell/routes",
+  generatedRouteTree: "src/lovable-shell/routeTree.gen.ts",
+  target: "react",
 });
+const gen = new Generator({ config, root: process.cwd() });
 await gen.run();
-console.log('generated');
+console.log("routeTree generated");
