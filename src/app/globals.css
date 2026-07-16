@@ -99,12 +99,6 @@
 
 @import "tailwindcss";
 
-/* Explicit sources — Tailwind v4 auto-detection sometimes misses files
-   under src/routes/ (TanStack landing shell). Listing sources here scans
-   both the Next app and the Lovable shell without affecting the Next build. */
-@source "../app/**/*.{ts,tsx}";
-@source "../components/**/*.{ts,tsx}";
-@source "../routes/**/*.{ts,tsx}";
 
 /* Ampersand override — Fraunces's default & is too calligraphic/stylish.
    Route U+0026 through Instrument Sans so headings keep a clean ampersand
