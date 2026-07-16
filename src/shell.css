@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@source "../src/routes/**/*.{ts,tsx}";
+@source "../src/components/shell/**/*.{ts,tsx}";
+@source "../src/app/**/*.{ts,tsx}";
+@source "../src/components/**/*.{ts,tsx}";
+
+/* Also pull in the design tokens from the shared globals so the shell
+   uses the same theme as the Next.js site. */
+@import "./app/globals.css";
