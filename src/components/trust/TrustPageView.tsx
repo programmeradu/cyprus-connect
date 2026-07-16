@@ -100,7 +100,7 @@ export function trustMetadataFor(locale: Locale, page: TrustPageKey) {
     languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/${page}`;
   }
   languages["x-default"] = `${SITE_URL}/${routing.defaultLocale}/${page}`;
-  const title = `${c.title} — VerdeIQ`;
+  const title = `${c.title} - VerdeIQ`;
   return {
     title,
     description: c.intro.slice(0, 155),

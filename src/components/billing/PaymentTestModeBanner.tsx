@@ -28,7 +28,7 @@ export function PaymentTestModeBanner() {
         className="w-full bg-orange-100 border-b border-orange-300 px-4 py-2 text-center text-sm text-orange-800"
         role="status"
       >
-        Preview / test mode — no real charges. Use card{" "}
+        Preview / test mode - no real charges. Use card{" "}
         <code className="font-mono">4242 4242 4242 4242</code>, any future
         expiry, any CVC.{" "}
         <a
