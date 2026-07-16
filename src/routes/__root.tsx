@@ -1,6 +1,4 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
-import "@/lib/i18n-shell";
-import "@/shell.css";
 
 export const Route = createRootRoute({
   head: () => ({

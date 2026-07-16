@@ -1,14 +1,19 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
+/**
+ * The production site is the Next.js app under src/app/[locale].
+ * This TanStack route only exists to satisfy the Lovable preview shell;
+ * we redirect to the real deployed site.
+ */
 export const Route = createFileRoute("/")({
-  beforeLoad: ({ location }) => {
-    // Prefer Greek for el-CY visitors; default to English otherwise.
-    let target: "en" | "el" = "en";
-    if (typeof navigator !== "undefined") {
-      const langs = (navigator.languages ?? [navigator.language ?? ""]).join(",").toLowerCase();
-      if (/\bel\b/.test(langs)) target = "el";
+  beforeLoad: () => {
+    if (typeof window !== "undefined") {
+      window.location.replace("https://verdeiq.stauniverse.tech/");
     }
-    throw redirect({ to: "/$locale", params: { locale: target }, search: location.search });
   },
-  component: () => null,
+  component: () => (
+    <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", padding: 32, fontFamily: "system-ui" }}>
+      <a href="https://verdeiq.stauniverse.tech/">Open VerdeIQ →</a>
+    </div>
+  ),
 });
