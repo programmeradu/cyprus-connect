@@ -19,7 +19,7 @@ export function TrustPageView({ locale, page }: { locale: Locale; page: TrustPag
       {/* Header */}
       <header className="border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <Link href={`/${locale}`} className="text-sm font-bold gradient-text tracking-tight">
+          <Link href={`/${locale}`} className="text-sm font-semibold tracking-tight" style={{ fontFamily: "var(--editorial-serif)" }}>
             VerdeIQ
           </Link>
           <Link
