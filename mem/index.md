@@ -1,6 +1,7 @@
 # Project Memory
 
 ## Core
+Scope: Cyprus SMEs only. Never add Africa (Ghana/Nigeria/ZAF/etc.) coverage, copy, or integrations. EUR + CY grid.
 NO ICONS as decoration (Lucide/emoji) — icons flatten the brand and mark work as vibe-coded. Use type, spacing, dividers, numerals, and color for hierarchy. Exception: minimal functional icons only (search magnifier in input, close X, external-link arrow, accordion chevron).
 NO PILLS / rounded-full chip badges for tags/categories/status. Use small-caps eyebrow labels, underlined labels, or numeric prefixes.
 NO vibecoded microtype: no tiny overtracked uppercase metadata/dates/progress/source labels. Use heavier readable VerdeIQ editorial UI text.
@@ -18,3 +19,4 @@ NO fake identity assets: no initials-avatar circles, no gradient-circle placehol
 - [Typography system](mem://design/typography) — Locked pairing: Fraunces (display) + Instrument Sans (body/UI). No Inter/Space Grotesk/Geist/Poppins.
 - [No icons, no pills](mem://constraints/no-icons-no-pills) — Global UI ban on decorative icons and pill/badge chips
 - [Anti-vibecode UI rules](mem://constraints/anti-vibecode-ui) — Rules against generic AI/vibecoded UI tells, especially small metadata typography
+- [Cyprus-only scope](mem://constraints/scope-cyprus-only) — No Africa features/copy; EUR + CY grid only
