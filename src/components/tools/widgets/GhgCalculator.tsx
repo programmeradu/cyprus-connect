@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ GHG Calculator — Scope 1 / 2 / 3 emissions estimator.
+ * VerdeIQ GHG Calculator - Scope 1 / 2 / 3 emissions estimator.
  *
  * Not audit-grade. Uses published 2024 factors from DEFRA, IEA and EEA
  * (see /tools/ghg-calculator methodology block). All calculations are
@@ -25,9 +25,9 @@ type Props = {
 /* ---------- Emission factors (kg CO2e per unit) ---------- */
 
 const SCOPE1 = {
-  naturalGas_kWh: 0.184, // DEFRA 2024 natural gas — kWh gross CV
-  diesel_L: 2.51, // DEFRA 2024 mobile combustion — diesel avg
-  petrol_L: 2.31, // DEFRA 2024 mobile combustion — petrol avg
+  naturalGas_kWh: 0.184, // DEFRA 2024 natural gas - kWh gross CV
+  diesel_L: 2.51, // DEFRA 2024 mobile combustion - diesel avg
+  petrol_L: 2.31, // DEFRA 2024 mobile combustion - petrol avg
   lpg_kg: 2.94, // DEFRA 2024 LPG
 } as const;
 
@@ -41,7 +41,7 @@ const SCOPE3 = {
   water_m3: 0.344, // DEFRA 2024 water supply + treatment combined
 } as const;
 
-/* Location-based grid factors (kg CO2e / kWh) — 2023 EEA / national inventories */
+/* Location-based grid factors (kg CO2e / kWh) - 2023 EEA / national inventories */
 const GRID_FACTORS = {
   EU27: 0.253,
   CY: 0.622,
@@ -92,7 +92,7 @@ const t = {
     scope2: "Scope 2 · Purchased energy",
     scope3: "Scope 3 · Value chain",
     naturalGas: "Natural gas (kWh / yr)",
-    diesel: "Diesel — fleet, generators (L / yr)",
+    diesel: "Diesel - fleet, generators (L / yr)",
     petrol: "Petrol (L / yr)",
     lpg: "LPG (kg / yr)",
     electricity: "Grid electricity (kWh / yr)",
@@ -126,7 +126,7 @@ const t = {
     scope2: "Scope 2 · Αγορασμένη ενέργεια",
     scope3: "Scope 3 · Αλυσίδα αξίας",
     naturalGas: "Φυσικό αέριο (kWh / έτος)",
-    diesel: "Πετρέλαιο — στόλος, γεννήτριες (L / έτος)",
+    diesel: "Πετρέλαιο - στόλος, γεννήτριες (L / έτος)",
     petrol: "Βενζίνη (L / έτος)",
     lpg: "LPG (kg / έτος)",
     electricity: "Ηλεκτρισμός δικτύου (kWh / έτος)",
@@ -337,7 +337,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
                 {l.region}
               </p>
               <p className="mt-2 pb-1 text-[16px] font-medium tracking-[-0.005em]">
-                {REGION_LABELS[state.region][locale]} — {GRID_FACTORS[state.region]} kg/kWh
+                {REGION_LABELS[state.region][locale]} - {GRID_FACTORS[state.region]} kg/kWh
               </p>
             </div>
           ) : (
@@ -352,7 +352,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
               >
                 {(Object.keys(GRID_FACTORS) as Region[]).map((r) => (
                   <option key={r} value={r}>
-                    {REGION_LABELS[r][locale]} — {GRID_FACTORS[r]} kg/kWh
+                    {REGION_LABELS[r][locale]} - {GRID_FACTORS[r]} kg/kWh
                   </option>
                 ))}
               </select>
@@ -442,7 +442,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
           </div>
         </div>
 
-        {/* Right: totals — always visible, also renders in print */}
+        {/* Right: totals - always visible, also renders in print */}
         <div className="border-l border-foreground/10 pl-8 sm:pl-10 print:border-none print:pl-0">
           <p className="viq-section-label">
             {l.total} <span className="tabular-nums text-foreground/60">{state.year}</span> <span className="text-foreground/60">{REGION_LABELS[state.region][locale]}</span>
@@ -461,7 +461,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
             {scopeRow(l.scope3, totals.s3, 2)}
           </div>
 
-          {/* Full category table — visible on print + optional on screen */}
+          {/* Full category table - visible on print + optional on screen */}
           <div className="mt-10 hidden border-t border-foreground/10 pt-6 print:block">
             <table className="w-full border-collapse text-[11.5px]">
               <thead>

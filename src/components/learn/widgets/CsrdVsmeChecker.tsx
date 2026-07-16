@@ -28,9 +28,9 @@ const t = {
     covering: "Covering financial year",
     note: "Applicability is our best estimate based on published EU thresholds; consult your auditor for a formal determination.",
     regimes: {
-      "csrd-wave1": { label: "CSRD (Wave 1 — large PIEs)", desc: "You are already in scope. Reporting is annual under ESRS." },
-      "csrd-wave2": { label: "CSRD (Wave 2 — large undertakings)", desc: "Full ESRS reporting required." },
-      "csrd-wave3": { label: "CSRD (Wave 3 — listed SMEs)", desc: "Simplified LSME standard applies. Opt-out possible until 2028." },
+      "csrd-wave1": { label: "CSRD (Wave 1 - large PIEs)", desc: "You are already in scope. Reporting is annual under ESRS." },
+      "csrd-wave2": { label: "CSRD (Wave 2 - large undertakings)", desc: "Full ESRS reporting required." },
+      "csrd-wave3": { label: "CSRD (Wave 3 - listed SMEs)", desc: "Simplified LSME standard applies. Opt-out possible until 2028." },
       "vsme": { label: "VSME (voluntary standard for SMEs)", desc: "Not in scope of CSRD, but VSME is the recommended framework for value-chain requests." },
       "none": { label: "No mandatory EU sustainability reporting", desc: "Your size falls below all thresholds. VSME Basic module is still recommended for supplier/finance requests." },
     },
@@ -50,9 +50,9 @@ const t = {
     covering: "Καλύπτει χρήση",
     note: "Η εφαρμογή είναι εκτίμηση βάσει των δημοσιευμένων ορίων της ΕΕ· συμβουλευτείτε τον ελεγκτή σας.",
     regimes: {
-      "csrd-wave1": { label: "CSRD (Κύμα 1 — μεγάλες PIEs)", desc: "Είστε ήδη εντός πεδίου. Ετήσια αναφορά κατά ESRS." },
-      "csrd-wave2": { label: "CSRD (Κύμα 2 — μεγάλες οντότητες)", desc: "Πλήρης αναφορά ESRS απαιτείται." },
-      "csrd-wave3": { label: "CSRD (Κύμα 3 — εισηγμένες ΜμΕ)", desc: "Ισχύει το απλοποιημένο LSME. Δυνατότητα opt-out έως το 2028." },
+      "csrd-wave1": { label: "CSRD (Κύμα 1 - μεγάλες PIEs)", desc: "Είστε ήδη εντός πεδίου. Ετήσια αναφορά κατά ESRS." },
+      "csrd-wave2": { label: "CSRD (Κύμα 2 - μεγάλες οντότητες)", desc: "Πλήρης αναφορά ESRS απαιτείται." },
+      "csrd-wave3": { label: "CSRD (Κύμα 3 - εισηγμένες ΜμΕ)", desc: "Ισχύει το απλοποιημένο LSME. Δυνατότητα opt-out έως το 2028." },
       "vsme": { label: "VSME (εθελοντικό πρότυπο για ΜμΕ)", desc: "Εκτός CSRD, αλλά το VSME είναι το προτεινόμενο πλαίσιο για αιτήματα από την αλυσίδα αξίας." },
       "none": { label: "Καμία υποχρεωτική αναφορά βιωσιμότητας ΕΕ", desc: "Το μέγεθος είναι κάτω από όλα τα όρια. Το VSME Basic συνιστάται για αιτήματα προμηθευτών/χρηματοδοτών." },
     },
@@ -80,9 +80,9 @@ function determine(listed: boolean, employees: number, turnover: number, balance
     return { regime: "csrd-wave3", firstReport: "2029", covering: "FY 2028" };
   }
   if (isMedium || (!isMicro && employees > 10)) {
-    return { regime: "vsme", firstReport: "—", covering: "voluntary" };
+    return { regime: "vsme", firstReport: "-", covering: "voluntary" };
   }
-  return { regime: "none", firstReport: "—", covering: "—" };
+  return { regime: "none", firstReport: "-", covering: "-" };
 }
 
 
@@ -183,7 +183,7 @@ export default function CsrdVsmeChecker({ locale }: Props) {
           </p>
           <p className="mt-3 max-w-md text-[14px] leading-[1.6] text-foreground/70">{regimeInfo.desc}</p>
 
-          {result.firstReport !== "—" && (
+          {result.firstReport !== "-" && (
             <dl className="mt-6 grid grid-cols-2 gap-6 border-t border-foreground/10 pt-5">
               <div>
                 <dt className="eyebrow">{l.firstReport}</dt>

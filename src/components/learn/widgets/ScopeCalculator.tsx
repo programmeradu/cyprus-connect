@@ -2,7 +2,7 @@
 
 /**
  * Scope 1 / 2 / 3 mini emissions calculator.
- * Not a certified tool — indicative estimates using rounded 2024 UK/EU DEFRA-style factors.
+ * Not a certified tool - indicative estimates using rounded 2024 UK/EU DEFRA-style factors.
  */
 
 import { useMemo } from "react";
@@ -23,10 +23,10 @@ const FACTORS = {
 const t = {
   en: {
     title: "Scope 1 / 2 / 3 mini-calculator",
-    subtitle: "Rough annual emissions estimate. For directional planning — replace with metered data before reporting.",
-    scope1: "Scope 1 — direct fuel",
-    scope2: "Scope 2 — electricity",
-    scope3: "Scope 3 — value chain",
+    subtitle: "Rough annual emissions estimate. For directional planning - replace with metered data before reporting.",
+    scope1: "Scope 1 - direct fuel",
+    scope2: "Scope 2 - electricity",
+    scope3: "Scope 3 - value chain",
     gas: "Natural gas (kWh / yr)",
     diesel: "Diesel for fleet (L / yr)",
     elec: "Grid electricity (kWh / yr)",
@@ -39,10 +39,10 @@ const t = {
   },
   el: {
     title: "Μίνι υπολογιστής Scope 1 / 2 / 3",
-    subtitle: "Ενδεικτική ετήσια εκτίμηση εκπομπών — για κατεύθυνση σχεδιασμού, αντικαταστήστε με μετρημένα δεδομένα πριν την αναφορά.",
-    scope1: "Scope 1 — άμεσα καύσιμα",
-    scope2: "Scope 2 — ηλεκτρισμός",
-    scope3: "Scope 3 — αλυσίδα αξίας",
+    subtitle: "Ενδεικτική ετήσια εκτίμηση εκπομπών - για κατεύθυνση σχεδιασμού, αντικαταστήστε με μετρημένα δεδομένα πριν την αναφορά.",
+    scope1: "Scope 1 - άμεσα καύσιμα",
+    scope2: "Scope 2 - ηλεκτρισμός",
+    scope3: "Scope 3 - αλυσίδα αξίας",
     gas: "Φυσικό αέριο (kWh / έτος)",
     diesel: "Πετρέλαιο στόλου (L / έτος)",
     elec: "Ηλεκτρισμός δικτύου (kWh / έτος)",

@@ -29,7 +29,7 @@ const COPY = {
     eyebrow: "Newsroom",
     title: "ESG & climate wire",
     subtitle:
-      "Curated feed of the sustainability, energy and EU compliance stories that matter for SMEs — updated hourly.",
+      "Curated feed of the sustainability, energy and EU compliance stories that matter for SMEs - updated hourly.",
     filterAll: "All",
     filterCbam: "CBAM",
     filterCsrd: "CSRD / VSME",
@@ -48,7 +48,7 @@ const COPY = {
     eyebrow: "Ειδήσεις",
     title: "ESG & κλιματική ροή",
     subtitle:
-      "Επιμελημένη ροή για βιωσιμότητα, ενέργεια και συμμόρφωση ΕΕ — ενημερώνεται ωριαία.",
+      "Επιμελημένη ροή για βιωσιμότητα, ενέργεια και συμμόρφωση ΕΕ - ενημερώνεται ωριαία.",
     filterAll: "Όλα",
     filterCbam: "CBAM",
     filterCsrd: "CSRD / VSME",
@@ -83,8 +83,8 @@ const REGULATORY_DEADLINES = [
   },
   {
     date: "2027-01-01",
-    en: { title: "CSRD Wave 3 — listed SMEs", body: "Listed SMEs (with 2-year opt-out) begin sustainability reporting on FY26." },
-    el: { title: "CSRD Κύμα 3 — εισηγμένες ΜμΕ", body: "Εισηγμένες ΜμΕ ξεκινούν αναφορές βιωσιμότητας για FY26." },
+    en: { title: "CSRD Wave 3 - listed SMEs", body: "Listed SMEs (with 2-year opt-out) begin sustainability reporting on FY26." },
+    el: { title: "CSRD Κύμα 3 - εισηγμένες ΜμΕ", body: "Εισηγμένες ΜμΕ ξεκινούν αναφορές βιωσιμότητας για FY26." },
   },
 ];
 
@@ -313,11 +313,11 @@ const EDITORIAL_TAKES = {
   en: [
     {
       title: "CBAM's definitive period will surface hidden supply-chain costs",
-      body: "Cyprus importers of steel, cement and fertilizer are underestimating certificate exposure. Start collecting supplier emissions data now — not in Q4 2025.",
+      body: "Cyprus importers of steel, cement and fertilizer are underestimating certificate exposure. Start collecting supplier emissions data now - not in Q4 2025.",
     },
     {
       title: "VSME is the on-ramp, not the ceiling",
-      body: "Adopting VSME early gives SMEs a defensible answer when banks and large customers request sustainability data — before CSRD Wave 3 arrives.",
+      body: "Adopting VSME early gives SMEs a defensible answer when banks and large customers request sustainability data - before CSRD Wave 3 arrives.",
     },
     {
       title: "Grid intensity matters more than tariff shopping",

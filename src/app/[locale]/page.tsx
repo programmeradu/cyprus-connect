@@ -23,7 +23,7 @@ import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentWindCurrents from "@/assets/accent-wind-currents.png";
 
 /**
- * Home — editorial redesign.
+ * Home - editorial redesign.
  * Style guide: no decorative icons, no pill badges, no illustrative SVGs.
  * Mobile-first typography with serif display, numeric prefixes, slash separators.
  */
@@ -48,7 +48,7 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased">
-      {/* Ambient background — subtle topographic pattern + radial glow, sits under all sections */}
+      {/* Ambient background - subtle topographic pattern + radial glow, sits under all sections */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 -z-10 opacity-[0.35] dark:opacity-20"
@@ -65,7 +65,7 @@ export default function Home() {
 
 
 
-      {/* Nav — solid opaque bar (no glass, no blur) */}
+      {/* Nav - solid opaque bar (no glass, no blur) */}
       <header className="sticky top-0 z-50 border-b border-border bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <Link
@@ -125,7 +125,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* HERO — offset composition, no opacity gate, single CTA, grained scrim */}
+      {/* HERO - offset composition, no opacity gate, single CTA, grained scrim */}
       <section className="relative -mt-[57px] overflow-hidden">
         {/* Photographic backdrop */}
         <div className="pointer-events-none absolute inset-0">
@@ -142,7 +142,7 @@ export default function Home() {
           {/* Desktop scrim: fade image to the right so left column stays readable */}
           <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
-          {/* Grain — SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
+          {/* Grain - SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
           <div
             aria-hidden
             className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
@@ -155,7 +155,7 @@ export default function Home() {
         </div>
 
         <div className="relative mx-auto max-w-6xl px-4 pt-32 pb-20 sm:px-6 sm:pt-56 sm:pb-32">
-          {/* Offset column — narrower, indented on desktop, deep top gap; no centered stack */}
+          {/* Offset column - narrower, indented on desktop, deep top gap; no centered stack */}
           <div className="max-w-[36rem] sm:pl-6 md:pl-14 lg:pl-20">
             {/* Signature marker replaces the eyebrow pill: hairline + numeric prefix */}
             <div className="mb-10 flex items-center gap-4">
@@ -189,10 +189,10 @@ export default function Home() {
       </section>
 
 
-      {/* BENEFITS — Why VerdeIQ */}
+      {/* BENEFITS - Why VerdeIQ */}
       <div className="relative">
 
-      {/* News ticker — replaces the old live dashboard preview */}
+      {/* News ticker - replaces the old live dashboard preview */}
       <section className="relative bg-background">
         <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12">
           <NewsTicker />
@@ -201,7 +201,7 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* BENEFITS — Why VerdeIQ */}
+      {/* BENEFITS - Why VerdeIQ */}
       <EditorialSection
         eyebrow="01 / Why VerdeIQ"
         titleA={tL("whyTitleA")}
@@ -221,7 +221,7 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* POWER — Platform Capabilities */}
+      {/* POWER - Platform Capabilities */}
       <div className="relative">
         <EditorialSection
           eyebrow="02 / The Platform"
@@ -267,9 +267,9 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* CONTEXT WIDGETS — geo + time */}
+      {/* CONTEXT WIDGETS - geo + time */}
       <div className="relative overflow-hidden">
-        {/* Wind-currents accent — horizontal dotted airflow with a terracotta compass
+        {/* Wind-currents accent - horizontal dotted airflow with a terracotta compass
             arrow, spans the wide blank band above the widgets and echoes the
             "where you are / what's blowing your way" story of this section. */}
         <img
@@ -336,7 +336,7 @@ export default function Home() {
 
       {/* HOW IT WORKS */}
       <div className="relative">
-        {/* Journey-path accent — dotted trail with waypoints and compass rose,
+        {/* Journey-path accent - dotted trail with waypoints and compass rose,
             sits top-right, spills upward past the integrations row above, echoing
             the "connect → analyze → act" three-step flow of this section */}
         <img
@@ -351,7 +351,7 @@ export default function Home() {
           titleA={tL("howTitleA")}
           titleB={tL("howTitleB")}
           subtitle={tL("howSubtitle")}
-          media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act — three-step data flow diagram" }}
+          media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act - three-step data flow diagram" }}
         >
           <NumberedList
             items={[
@@ -367,7 +367,7 @@ export default function Home() {
 
       {/* TESTIMONIAL */}
       <section className="relative z-20 mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32">
-        {/* Editorial impact-curve — transparent line art blending into the page,
+        {/* Editorial impact-curve - transparent line art blending into the page,
             allowed to extend past the section into the CTA below */}
         <img
           src={testimonialBranch.src}
@@ -411,7 +411,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/30 dark:from-background dark:via-background/90 dark:to-background/40" />
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
-          {/* Grain — SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
+          {/* Grain - SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
           <div
             aria-hidden
             className="absolute inset-0 opacity-[0.04] mix-blend-overlay"

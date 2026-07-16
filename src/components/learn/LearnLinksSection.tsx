@@ -7,7 +7,7 @@ import { PILLARS } from "@/data/learn/pillars";
 
 /**
  * Top pillar internal links for homepage + pricing.
- * Deliberately curated (not every pillar) — highest-intent, highest-volume, and Cyprus-local.
+ * Deliberately curated (not every pillar) - highest-intent, highest-volume, and Cyprus-local.
  */
 const TOP_PILLAR_SLUGS = [
   "csrd-reporting-guide",
@@ -25,14 +25,14 @@ const HEADINGS: Record<string, { eyebrow: string; title: string; subtitle: strin
     eyebrow: "Knowledge Hub",
     title: "Learn sustainability reporting",
     subtitle:
-      "In-depth guides on CSRD, VSME, CBAM, and carbon accounting — written for European SMEs, updated as the regulations evolve.",
+      "In-depth guides on CSRD, VSME, CBAM, and carbon accounting - written for European SMEs, updated as the regulations evolve.",
     viewAll: "Browse all guides →",
   },
   el: {
     eyebrow: "Κόμβος Γνώσης",
     title: "Μάθετε αναφορά βιωσιμότητας",
     subtitle:
-      "Αναλυτικοί οδηγοί για CSRD, VSME, CBAM και ανθρακική λογιστική — γραμμένοι για ευρωπαϊκές ΜμΕ, ενημερώνονται με τους κανονισμούς.",
+      "Αναλυτικοί οδηγοί για CSRD, VSME, CBAM και ανθρακική λογιστική - γραμμένοι για ευρωπαϊκές ΜμΕ, ενημερώνονται με τους κανονισμούς.",
     viewAll: "Δείτε όλους τους οδηγούς →",
   },
 };

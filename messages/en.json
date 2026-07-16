@@ -41,7 +41,7 @@
       "q4": "What happens if I cancel?",
       "a4": "You can cancel any time. Your account stays active until the end of the current billing period, then moves to the free plan.",
       "q5": "Do you offer discounts for annual billing?",
-      "a5": "Yes — contact sales for annual billing with up to 20% savings."
+      "a5": "Yes - contact sales for annual billing with up to 20% savings."
     },
     "ctaTitleA": "Ready to Start Your",
     "ctaTitleB": "Sustainability Journey?",
@@ -757,7 +757,7 @@
     },
     "studio": {
       "title": "Report Visuals",
-      "subtitle": "Generate charts, infographics and social snippets from your live ESG data — S1/S2/S3 breakdowns, CBAM exposure, YoY trends.",
+      "subtitle": "Generate charts, infographics and social snippets from your live ESG data - S1/S2/S3 breakdowns, CBAM exposure, YoY trends.",
       "recent": "Recent",
       "library": "Library",
       "recentGenerations": "Recent Generations",
@@ -1649,11 +1649,11 @@
   },
   "seo": {
     "home": {
-      "title": "VerdeIQ — AI-Powered Sustainability for SMEs in Cyprus & the EU",
-      "description": "Track, optimize, and report your environmental impact with AI. Built for SMEs in Cyprus and across the EU — GDPR-compliant, EUR pricing, EN & EL."
+      "title": "VerdeIQ - AI-Powered Sustainability for SMEs in Cyprus & the EU",
+      "description": "Track, optimize, and report your environmental impact with AI. Built for SMEs in Cyprus and across the EU - GDPR-compliant, EUR pricing, EN & EL."
     },
     "pricing": {
-      "title": "Pricing — VerdeIQ Sustainability Plans (EUR, incl. Cyprus VAT)",
+      "title": "Pricing - VerdeIQ Sustainability Plans (EUR, incl. Cyprus VAT)",
       "description": "Simple, transparent pricing in EUR for SMEs in Cyprus and the EU. Includes 19% Cyprus VAT. Choose Free, Pro, or Enterprise."
     }
   },

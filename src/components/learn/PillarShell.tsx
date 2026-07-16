@@ -279,7 +279,7 @@ export default function PillarShell({
 
         {/* Main grid */}
         <div ref={articleRef} className="grid gap-12 lg:grid-cols-[220px_minmax(0,1fr)_240px] lg:gap-16">
-          {/* Left TOC — desktop */}
+          {/* Left TOC - desktop */}
           <aside className="hidden lg:block">
             <div className="sticky top-24">
               <p className="mb-4 eyebrow">
@@ -309,7 +309,7 @@ export default function PillarShell({
 
           {/* Article */}
           <article className="min-w-0">
-            {/* Key takeaways — editorial pull column */}
+            {/* Key takeaways - editorial pull column */}
             <aside
               aria-label={takeawaysLabel}
               className="mb-16 border-y border-foreground/15 py-8 sm:py-10"
@@ -339,7 +339,7 @@ export default function PillarShell({
               </div>
             </aside>
 
-            {/* Article prose — professional editorial formatting */}
+            {/* Article prose - professional editorial formatting */}
             <div className="verdeiq-article max-w-[68ch]">
               <div className="verdeiq-lead">{introduction}</div>
               <div className="mt-4">{sectionsContent}</div>
