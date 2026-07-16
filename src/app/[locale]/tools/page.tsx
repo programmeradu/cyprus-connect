@@ -18,12 +18,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   const title =
     safeLocale === "el"
-      ? "Δωρεάν εργαλεία ESG — CBAM, CSRD, VSME & Υπολογιστές GHG | VerdeIQ"
-      : "Free ESG Reporting Tools — CBAM, CSRD, VSME & GHG Calculators | VerdeIQ";
+      ? "Δωρεάν εργαλεία ESG - CBAM, CSRD, VSME & Υπολογιστές GHG | VerdeIQ"
+      : "Free ESG Reporting Tools - CBAM, CSRD, VSME & GHG Calculators | VerdeIQ";
   const description =
     safeLocale === "el"
-      ? "Δωρεάν διαδραστικά εργαλεία για CSRD, VSME, CBAM, EU Taxonomy και GHG — χωρίς εγγραφή, με ανοιχτή μεθοδολογία και εξαγωγή PDF."
-      : "Free interactive tools for CSRD, VSME, CBAM, EU Taxonomy and GHG accounting — no signup, open methodology, PDF export.";
+      ? "Δωρεάν διαδραστικά εργαλεία για CSRD, VSME, CBAM, EU Taxonomy και GHG - χωρίς εγγραφή, με ανοιχτή μεθοδολογία και εξαγωγή PDF."
+      : "Free interactive tools for CSRD, VSME, CBAM, EU Taxonomy and GHG accounting - no signup, open methodology, PDF export.";
 
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/tools`;
@@ -103,8 +103,8 @@ export default async function ToolsHub({ params }: { params: Promise<{ locale: s
         }
         ctaBody={
           safeLocale === "el"
-            ? "Η πλατφόρμα VerdeIQ συνδέει λογιστική άνθρακα, CSRD, CBAM και VSME σε μία πηγή αλήθειας — με ελεγμένα δεδομένα, δικαιώματα ρόλων και ετοιμότητα ελέγχου."
-            : "The VerdeIQ platform connects carbon accounting, CSRD, CBAM and VSME in one source of truth — with audited data, role permissions and audit-ready trails."
+            ? "Η πλατφόρμα VerdeIQ συνδέει λογιστική άνθρακα, CSRD, CBAM και VSME σε μία πηγή αλήθειας - με ελεγμένα δεδομένα, δικαιώματα ρόλων και ετοιμότητα ελέγχου."
+            : "The VerdeIQ platform connects carbon accounting, CSRD, CBAM and VSME in one source of truth - with audited data, role permissions and audit-ready trails."
         }
         ctaAction={safeLocale === "el" ? "Δοκιμάστε το VerdeIQ" : "Try VerdeIQ"}
       />

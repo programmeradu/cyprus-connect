@@ -70,7 +70,7 @@ export const BillingDashboard = () => {
       setLoadingCredits(true);
       const token = localStorage.getItem('bearer_token');
       
-      // (Autumn sync removed — credits are the single source of truth in our DB, updated by the Stripe webhook.)
+      // (Autumn sync removed - credits are the single source of truth in our DB, updated by the Stripe webhook.)
 
 
       // Fetch synced credit balance from database

@@ -6,7 +6,7 @@ import { getAllPillars, getPillar } from "@/data/learn/pillars";
 type Props = {
   currentSlug: string;
   locale: "en" | "el";
-  /** Heuristic bucket — used to pick topically-adjacent guides. */
+  /** Heuristic bucket - used to pick topically-adjacent guides. */
   context: "widget" | "faq";
   /** Optional keyword hint used to rank suggestions. */
   keyword?: string;
@@ -14,7 +14,7 @@ type Props = {
 };
 
 /**
- * "AI-style" contextual suggestions. No inference call — we rank pillars by:
+ * "AI-style" contextual suggestions. No inference call - we rank pillars by:
  *   1. Explicit `relatedSlugs`
  *   2. Same `category`
  *   3. Keyword hits against title + eyebrow

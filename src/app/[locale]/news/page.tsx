@@ -9,11 +9,11 @@ export async function generateMetadata({
   const { locale } = await params;
   const isEl = locale === "el";
   const title = isEl
-    ? "Ειδήσεις — ESG & κλίμα | VerdeIQ"
-    : "News — ESG & climate wire | VerdeIQ";
+    ? "Ειδήσεις - ESG & κλίμα | VerdeIQ"
+    : "News - ESG & climate wire | VerdeIQ";
   const description = isEl
     ? "Επιμελημένη ροή ειδήσεων για βιωσιμότητα, ενέργεια και συμμόρφωση ΕΕ, με χρονοδιάγραμμα προθεσμιών και ανάλυση από την VerdeIQ."
-    : "Curated ESG, climate, energy and EU compliance news for SMEs — with a live regulatory timeline and VerdeIQ analysis.";
+    : "Curated ESG, climate, energy and EU compliance news for SMEs - with a live regulatory timeline and VerdeIQ analysis.";
   return {
     title,
     description,

@@ -9,7 +9,7 @@
  *    objectives and the minimum safeguards under Art. 18.
  * 3. Produces a verdict: aligned / partially aligned / not aligned.
  *
- * All state client-side. Not legal advice — links to the underlying
+ * All state client-side. Not legal advice - links to the underlying
  * Delegated Acts on each activity card.
  */
 
@@ -72,7 +72,7 @@ const T = {
     sourcesNote: "Sources: EU Taxonomy Regulation (Reg. 2020/852) · Climate Delegated Act (Reg. 2021/2139) · Environmental Delegated Act (Reg. 2023/2486).",
     generatedOn: "Generated on",
     reportTitle: "EU Taxonomy eligibility screening",
-    noResults: "No matching activity — try a different keyword.",
+    noResults: "No matching activity - try a different keyword.",
   },
   el: {
     interactive: "Διαδραστικό εργαλείο",
@@ -108,7 +108,7 @@ const T = {
     sourcesNote: "Πηγές: Κανονισμός Taxonomy (2020/852) · Climate Delegated Act (2021/2139) · Environmental Delegated Act (2023/2486).",
     generatedOn: "Δημιουργήθηκε",
     reportTitle: "Έλεγχος επιλεξιμότητας EU Taxonomy",
-    noResults: "Δεν βρέθηκε — δοκιμάστε άλλη λέξη-κλειδί.",
+    noResults: "Δεν βρέθηκε - δοκιμάστε άλλη λέξη-κλειδί.",
   },
 } as const;
 
@@ -175,7 +175,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
   const downloadCsv = () => {
     if (!activity) return;
     const rows: string[] = ["section,item,answer"];
-    rows.push(`activity,${activity.ref} — ${activity.en.name.replace(/,/g, ";")},${state.primary}`);
+    rows.push(`activity,${activity.ref} - ${activity.en.name.replace(/,/g, ";")},${state.primary}`);
     otherObjectives.forEach((o) => rows.push(`dnsh,${o},${state.dnsh[o] ?? ""}`));
     MIN_SAFEGUARDS.forEach((s, i) => rows.push(`safeguard_${i + 1},${s.en.replace(/,/g, ";")},${state.safeguards[i] ?? ""}`));
     rows.push(`verdict,,${verdict}`);
@@ -242,7 +242,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
         </div>
       </div>
 
-      {/* Step 1 — search + pick */}
+      {/* Step 1 - search + pick */}
       <div className="border-b border-foreground/10 py-8 sm:py-10 print:hidden">
         <p className="viq-section-label">{l.step01}</p>
         <input
@@ -296,7 +296,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
         </div>
       </div>
 
-      {/* Selected activity — always visible when set (also in print) */}
+      {/* Selected activity - always visible when set (also in print) */}
       <div className="border-b border-foreground/10 py-8 sm:py-10">
         <p className="viq-section-label">{l.selectedActivity}</p>
         {!activity && (
@@ -345,7 +345,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
         )}
       </div>
 
-      {/* Step 3 — DNSH */}
+      {/* Step 3 - DNSH */}
       {activity && state.primary && (
         <div className="border-b border-foreground/10 py-8 sm:py-10">
           <p className="viq-section-label">{l.step03}</p>
@@ -374,7 +374,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
         </div>
       )}
 
-      {/* Step 4 — Safeguards */}
+      {/* Step 4 - Safeguards */}
       {activity && state.primary && (
         <div className="border-b border-foreground/10 py-8 sm:py-10">
           <p className="viq-section-label">{l.step04}</p>
@@ -390,7 +390,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
         </div>
       )}
 
-      {/* Step 5 — Verdict */}
+      {/* Step 5 - Verdict */}
       <div className="py-8 sm:py-10">
         <p className="viq-section-label">{l.step05}</p>
         {verdict === "empty" && (

@@ -38,11 +38,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     : routing.defaultLocale;
 
   const title = safeLocale === "el"
-    ? "Κόμβος Γνώσης VerdeIQ — Οδηγοί CSRD, VSME, CBAM & Λογιστικής Άνθρακα"
-    : "VerdeIQ Learn — CSRD, VSME, CBAM & Carbon Accounting Guides";
+    ? "Κόμβος Γνώσης VerdeIQ - Οδηγοί CSRD, VSME, CBAM & Λογιστικής Άνθρακα"
+    : "VerdeIQ Learn - CSRD, VSME, CBAM & Carbon Accounting Guides";
   const description = safeLocale === "el"
-    ? "Πρακτικοί, διαδραστικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ — με ελεύθερα εργαλεία υπολογισμού για CFOs και υπεύθυνους βιωσιμότητας."
-    : "Practical, interactive guides on CSRD, VSME, CBAM, ESRS and SME sustainability — with free built-in calculators for CFOs and sustainability leads.";
+    ? "Πρακτικοί, διαδραστικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ - με ελεύθερα εργαλεία υπολογισμού για CFOs και υπεύθυνους βιωσιμότητας."
+    : "Practical, interactive guides on CSRD, VSME, CBAM, ESRS and SME sustainability - with free built-in calculators for CFOs and sustainability leads.";
 
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/learn`;
@@ -66,27 +66,27 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 const CATEGORY_META: Record<string, { en: { label: string; desc: string }; el: { label: string; desc: string } }> = {
   csrd: {
-    en: { label: "CSRD & ESRS", desc: "The core EU sustainability reporting regime — who's in scope, when, and how." },
-    el: { label: "CSRD & ESRS", desc: "Το βασικό καθεστώς αναφοράς βιωσιμότητας της ΕΕ — ποιοι, πότε, πώς." },
+    en: { label: "CSRD & ESRS", desc: "The core EU sustainability reporting regime - who's in scope, when, and how." },
+    el: { label: "CSRD & ESRS", desc: "Το βασικό καθεστώς αναφοράς βιωσιμότητας της ΕΕ - ποιοι, πότε, πώς." },
   },
   cbam: {
-    en: { label: "CBAM", desc: "Carbon border adjustment mechanism — costs, compliance, and Cyprus-specific impact." },
-    el: { label: "CBAM", desc: "Μηχανισμός συνοριακής προσαρμογής άνθρακα — κόστη, συμμόρφωση και επίπτωση στην Κύπρο." },
+    en: { label: "CBAM", desc: "Carbon border adjustment mechanism - costs, compliance, and Cyprus-specific impact." },
+    el: { label: "CBAM", desc: "Μηχανισμός συνοριακής προσαρμογής άνθρακα - κόστη, συμμόρφωση και επίπτωση στην Κύπρο." },
   },
   carbon: {
     en: { label: "Carbon accounting", desc: "Measure, model and reduce Scope 1, 2 and 3 emissions." },
     el: { label: "Λογιστική άνθρακα", desc: "Μέτρηση, μοντελοποίηση και μείωση εκπομπών Scope 1, 2 και 3." },
   },
   standards: {
-    en: { label: "Standards & frameworks", desc: "GHG Protocol, ESRS, SBTi, EU Taxonomy — the rulebooks behind reporting." },
-    el: { label: "Πρότυπα & πλαίσια", desc: "GHG Protocol, ESRS, SBTi, EU Taxonomy — τα βιβλία κανόνων." },
+    en: { label: "Standards & frameworks", desc: "GHG Protocol, ESRS, SBTi, EU Taxonomy - the rulebooks behind reporting." },
+    el: { label: "Πρότυπα & πλαίσια", desc: "GHG Protocol, ESRS, SBTi, EU Taxonomy - τα βιβλία κανόνων." },
   },
   esg: {
     en: { label: "ESG reporting", desc: "Software, KPIs and disclosure workflow for finance and sustainability teams." },
     el: { label: "ESG αναφορές", desc: "Λογισμικό, KPIs και ροή αποκάλυψης για ομάδες οικονομικών και βιωσιμότητας." },
   },
   sme: {
-    en: { label: "For SMEs", desc: "Right-sized guidance for small and medium businesses — VSME, roadmaps, KPIs." },
+    en: { label: "For SMEs", desc: "Right-sized guidance for small and medium businesses - VSME, roadmaps, KPIs." },
     el: { label: "Για ΜμΕ", desc: "Καθοδήγηση προσαρμοσμένη για μικρές και μεσαίες επιχειρήσεις." },
   },
   cyprus: {
@@ -132,8 +132,8 @@ export default async function LearnIndex({ params }: { params: Promise<{ locale:
 
   const heading = safeLocale === "el" ? "Κόμβος Γνώσης" : "The Learn hub";
   const subheading = safeLocale === "el"
-    ? "Πρακτικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ — με διαδραστικά εργαλεία υπολογισμού μέσα σε κάθε άρθρο."
-    : "Practical guides on CSRD, VSME, CBAM, ESRS and SME sustainability — with interactive calculators built into every article.";
+    ? "Πρακτικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ - με διαδραστικά εργαλεία υπολογισμού μέσα σε κάθε άρθρο."
+    : "Practical guides on CSRD, VSME, CBAM, ESRS and SME sustainability - with interactive calculators built into every article.";
   const searchPlaceholder = safeLocale === "el" ? "Αναζήτηση οδηγών…" : "Search guides…";
 
   return (

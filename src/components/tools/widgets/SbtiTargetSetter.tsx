@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ SBTi Target Setter — bilingual guided form producing an
+ * VerdeIQ SBTi Target Setter - bilingual guided form producing an
  * SBTi Near-Term Target draft, exportable as PDF (window.print), JSON, CSV.
  *
  * Method: SBTi Corporate Net-Zero Standard v1.2 + Near-Term Criteria v5.1.
@@ -74,9 +74,9 @@ const T = {
     // Step 2
     s2Title: "Base-year emissions",
     s2Body: "Enter your inventoried Scope 1, 2 and 3 emissions for the base year, in tonnes of CO₂-equivalent (t CO₂e). Location-based Scope 2 is the SBTi default.",
-    scope1: "Scope 1 — direct",
-    scope2: "Scope 2 — purchased energy (location-based)",
-    scope3: "Scope 3 — value chain",
+    scope1: "Scope 1 - direct",
+    scope2: "Scope 2 - purchased energy (location-based)",
+    scope3: "Scope 3 - value chain",
     tCO2e: "t CO₂e",
     // Step 3
     s3Title: "Ambition & target year",
@@ -107,9 +107,9 @@ const T = {
     no: "No",
     reductionBy: "reduction by",
     residualBy: "residual by",
-    warnHorizonShort: `Horizon shorter than ${SBTI_MIN_HORIZON} years — SBTi near-term targets require a minimum horizon of ${SBTI_MIN_HORIZON} years.`,
-    warnHorizonLong: `Horizon longer than ${SBTI_MAX_HORIZON} years — SBTi near-term targets have a maximum horizon of ${SBTI_MAX_HORIZON} years.`,
-    warnScope3: `Scope 3 exceeds ${Math.round(SBTI_SCOPE3_THRESHOLD * 100)}% of your inventory — a Scope 3 target is mandatory (criterion C15).`,
+    warnHorizonShort: `Horizon shorter than ${SBTI_MIN_HORIZON} years - SBTi near-term targets require a minimum horizon of ${SBTI_MIN_HORIZON} years.`,
+    warnHorizonLong: `Horizon longer than ${SBTI_MAX_HORIZON} years - SBTi near-term targets have a maximum horizon of ${SBTI_MAX_HORIZON} years.`,
+    warnScope3: `Scope 3 exceeds ${Math.round(SBTI_SCOPE3_THRESHOLD * 100)}% of your inventory - a Scope 3 target is mandatory (criterion C15).`,
     warnNoBase: "Enter base-year emissions above zero to produce a target.",
     statementTemplate: (o: {
       company: string; sector: string; base: string; target: string;
@@ -143,9 +143,9 @@ const T = {
     baseYear: "Έτος βάσης",
     s2Title: "Εκπομπές έτους βάσης",
     s2Body: "Καταχωρίστε Scope 1, 2 και 3 του έτους βάσης σε τόνους CO₂e. Το Scope 2 δηλώνεται προεπιλεγμένα με τη μέθοδο θέσης (location-based).",
-    scope1: "Scope 1 — άμεσες",
-    scope2: "Scope 2 — αγορασμένη ενέργεια (location-based)",
-    scope3: "Scope 3 — αλυσίδα αξίας",
+    scope1: "Scope 1 - άμεσες",
+    scope2: "Scope 2 - αγορασμένη ενέργεια (location-based)",
+    scope3: "Scope 3 - αλυσίδα αξίας",
     tCO2e: "t CO₂e",
     s3Title: "Φιλοδοξία & έτος στόχος",
     s3Body: "Οι βραχυπρόθεσμοι στόχοι SBTi καλύπτουν 5–10 έτη από τη βάση. Στόχος Scope 3 απαιτείται όταν το Scope 3 ξεπερνά το 40% του συνόλου.",
@@ -174,9 +174,9 @@ const T = {
     no: "Όχι",
     reductionBy: "μείωση έως",
     residualBy: "υπόλοιπο έως",
-    warnHorizonShort: `Ο ορίζοντας είναι κάτω από ${SBTI_MIN_HORIZON} έτη — το SBTi απαιτεί τουλάχιστον ${SBTI_MIN_HORIZON} έτη.`,
-    warnHorizonLong: `Ο ορίζοντας υπερβαίνει τα ${SBTI_MAX_HORIZON} έτη — μέγιστος βραχυπρόθεσμος ορίζοντας κατά SBTi.`,
-    warnScope3: `Το Scope 3 ξεπερνά το ${Math.round(SBTI_SCOPE3_THRESHOLD * 100)}% — στόχος Scope 3 υποχρεωτικός (κριτήριο C15).`,
+    warnHorizonShort: `Ο ορίζοντας είναι κάτω από ${SBTI_MIN_HORIZON} έτη - το SBTi απαιτεί τουλάχιστον ${SBTI_MIN_HORIZON} έτη.`,
+    warnHorizonLong: `Ο ορίζοντας υπερβαίνει τα ${SBTI_MAX_HORIZON} έτη - μέγιστος βραχυπρόθεσμος ορίζοντας κατά SBTi.`,
+    warnScope3: `Το Scope 3 ξεπερνά το ${Math.round(SBTI_SCOPE3_THRESHOLD * 100)}% - στόχος Scope 3 υποχρεωτικός (κριτήριο C15).`,
     warnNoBase: "Καταχωρίστε εκπομπές έτους βάσης πάνω από μηδέν.",
     statementTemplate: (o: {
       company: string; sector: string; base: string; target: string;

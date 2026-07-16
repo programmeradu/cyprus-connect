@@ -66,7 +66,7 @@ const SHARED_FAQ = {
   en: [
     {
       q: "Are the calculations audit-grade?",
-      a: "No. The tool is an indicative screening estimate using published 2024 factors. For CSRD, VSME or SBTi disclosure you still need metered activity data, a defined organisational boundary and — for Scope 2 — dual location-based and market-based reporting.",
+      a: "No. The tool is an indicative screening estimate using published 2024 factors. For CSRD, VSME or SBTi disclosure you still need metered activity data, a defined organisational boundary and - for Scope 2 - dual location-based and market-based reporting.",
     },
     {
       q: "Is my data saved anywhere?",
@@ -80,7 +80,7 @@ const SHARED_FAQ = {
   el: [
     {
       q: "Είναι οι υπολογισμοί έτοιμοι για έλεγχο;",
-      a: "Όχι. Το εργαλείο δίνει ενδεικτική εκτίμηση με δημοσιευμένους συντελεστές 2024. Για CSRD/VSME/SBTi χρειάζεστε μετρημένα δεδομένα, ορισμένα οργανωσιακά όρια και — για Scope 2 — location-based + market-based αναφορά.",
+      a: "Όχι. Το εργαλείο δίνει ενδεικτική εκτίμηση με δημοσιευμένους συντελεστές 2024. Για CSRD/VSME/SBTi χρειάζεστε μετρημένα δεδομένα, ορισμένα οργανωσιακά όρια και - για Scope 2 - location-based + market-based αναφορά.",
     },
     {
       q: "Αποθηκεύονται τα δεδομένα μου;",
@@ -106,7 +106,7 @@ const COPY = {
       "Same calculator, pre-loaded with each country's grid factor and a domestic worked example. Handy when a multi-country group needs consistent per-site numbers.",
     ctaHeading: "Ready to go beyond a country calculator?",
     ctaBody:
-      "VerdeIQ centralises your GHG inventory, CBAM filings and CSRD disclosures across every site — with supplier data collection, evidence trails and role-based permissions.",
+      "VerdeIQ centralises your GHG inventory, CBAM filings and CSRD disclosures across every site - with supplier data collection, evidence trails and role-based permissions.",
     ctaAction: "Try VerdeIQ",
   },
   el: {
@@ -121,7 +121,7 @@ const COPY = {
       "Ο ίδιος υπολογιστής, με προεπιλεγμένο τον συντελεστή δικτύου κάθε χώρας και τοπικό παράδειγμα. Χρήσιμο όταν πολυεθνικός όμιλος χρειάζεται συνεπείς μετρήσεις ανά εγκατάσταση.",
     ctaHeading: "Έτοιμοι για κάτι περισσότερο από έναν υπολογιστή χώρας;",
     ctaBody:
-      "Η VerdeIQ ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε όλες τις εγκαταστάσεις — με συλλογή δεδομένων προμηθευτών και δικαιώματα ρόλων.",
+      "Η VerdeIQ ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε όλες τις εγκαταστάσεις - με συλλογή δεδομένων προμηθευτών και δικαιώματα ρόλων.",
     ctaAction: "Δοκιμάστε το VerdeIQ",
   },
 } as const;
@@ -202,7 +202,7 @@ export default async function GhgCalculatorCountryPage({
   const neighbours = COUNTRY_NEIGHBOURS[entry.slug] ?? [];
   const otherCountries = COUNTRIES.filter((k) => k.slug !== entry.slug);
 
-  // "Localized versions" block — rendered inside worked-example slot so it
+  // "Localized versions" block - rendered inside worked-example slot so it
   // sits directly after the domestic story and drives the internal-link mesh.
   const workedExampleBody = (
     <>

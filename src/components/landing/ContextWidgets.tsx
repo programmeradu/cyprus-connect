@@ -32,8 +32,8 @@ const REGULATORY_DEADLINES = [
   },
   {
     date: "2027-01-01",
-    en: { title: "CSRD Wave 3 — listed SMEs", short: "CSRD Wave 3" },
-    el: { title: "CSRD Κύμα 3 — εισηγμένες ΜμΕ", short: "CSRD Κύμα 3" },
+    en: { title: "CSRD Wave 3 - listed SMEs", short: "CSRD Wave 3" },
+    el: { title: "CSRD Κύμα 3 - εισηγμένες ΜμΕ", short: "CSRD Κύμα 3" },
   },
 ];
 
@@ -43,7 +43,7 @@ const COPY = {
     titleA: "Where you are,",
     titleB: "what matters",
     subtitle:
-      "Live signals for your location — the grid, the calendar, and the headlines shaping sustainability decisions right now.",
+      "Live signals for your location - the grid, the calendar, and the headlines shaping sustainability decisions right now.",
     gridLabel: "Grid intensity",
     gridSub: "gCO₂ / kWh",
     gridRenewables: "renewables",
@@ -51,14 +51,14 @@ const COPY = {
     deadlineDays: "days away",
     newsLabel: "This week in climate",
     newsAll: "All news →",
-    loading: "—",
+    loading: "-",
   },
   el: {
     eyebrow: "05 / Αυτή τη στιγμή",
     titleA: "Πού βρίσκεστε,",
     titleB: "τι έχει σημασία",
     subtitle:
-      "Ζωντανά σήματα για την τοποθεσία σας — δίκτυο, ημερολόγιο και ειδήσεις που διαμορφώνουν αποφάσεις βιωσιμότητας.",
+      "Ζωντανά σήματα για την τοποθεσία σας - δίκτυο, ημερολόγιο και ειδήσεις που διαμορφώνουν αποφάσεις βιωσιμότητας.",
     gridLabel: "Ένταση δικτύου",
     gridSub: "gCO₂ / kWh",
     gridRenewables: "ΑΠΕ",
@@ -66,7 +66,7 @@ const COPY = {
     deadlineDays: "μέρες",
     newsLabel: "Αυτή την εβδομάδα",
     newsAll: "Όλες οι ειδήσεις →",
-    loading: "—",
+    loading: "-",
   },
 } as const;
 
@@ -251,7 +251,7 @@ export function ContextWidgets() {
 /* ── Right-side context visuals ─────────────────────────────────── */
 
 /**
- * Instrument-style gauge — perimeter tick marks, dual arc (track + renewables),
+ * Instrument-style gauge - perimeter tick marks, dual arc (track + renewables),
  * warmth-mapped stroke, tabular readout inside. Reads as a real dial, not a chip.
  */
 function GridIntensityVisual({
@@ -360,7 +360,7 @@ function GridIntensityVisual({
             letterSpacing: "-0.02em",
           }}
         >
-          {renewables !== null ? renewables : "—"}
+          {renewables !== null ? renewables : "-"}
         </text>
         <text
           x="50%"
@@ -382,7 +382,7 @@ function GridIntensityVisual({
 }
 
 /**
- * Editorial punch-card / ticket stub — month header bar, oversized day numeral,
+ * Editorial punch-card / ticket stub - month header bar, oversized day numeral,
  * perforated edge, footer year. Feels like something you'd tear off a calendar.
  */
 function DeadlineVisual({
@@ -436,7 +436,7 @@ function DeadlineVisual({
 }
 
 /**
- * Editorial signal chart — baseline grid, filled area beneath a sparkline,
+ * Editorial signal chart - baseline grid, filled area beneath a sparkline,
  * animated pulse on the latest peak. Reads as a real newsroom pulse indicator.
  */
 function NewsPulseVisual() {

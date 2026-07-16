@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ VSME Template Builder — EFRAG Voluntary SME Standard, Basic Module.
+ * VerdeIQ VSME Template Builder - EFRAG Voluntary SME Standard, Basic Module.
  *
  * Guides the user through B1–B12 disclosures. All data stays client-side.
  * Exports: printable PDF (window.print), JSON snapshot, CSV.
@@ -35,11 +35,11 @@ const T = {
     purpose: "Purpose",
     yes: "Yes",
     no: "No",
-    notAnswered: "—",
+    notAnswered: "-",
     reportTitle: "VSME Basic Module report",
     generatedOn: "Generated on",
-    sourcesNote: "Structure follows EFRAG Voluntary SME Standard (VSME), Basic Module — disclosures B1–B12.",
-    disclaimer: "This tool produces a structured working document following the VSME Basic Module. It is a template — a full VSME report requires review by qualified sustainability staff and, where relevant, external assurance.",
+    sourcesNote: "Structure follows EFRAG Voluntary SME Standard (VSME), Basic Module - disclosures B1–B12.",
+    disclaimer: "This tool produces a structured working document following the VSME Basic Module. It is a template - a full VSME report requires review by qualified sustainability staff and, where relevant, external assurance.",
     reviewIntro: "Review your entries below, then export as PDF or CSV. Everything stays in your browser.",
     empty: "Not answered",
   },
@@ -60,10 +60,10 @@ const T = {
     purpose: "Σκοπός",
     yes: "Ναι",
     no: "Όχι",
-    notAnswered: "—",
+    notAnswered: "-",
     reportTitle: "Αναφορά VSME Βασικής Ενότητας",
     generatedOn: "Δημιουργήθηκε",
-    sourcesNote: "Ακολουθεί το EFRAG VSME — Βασική Ενότητα, αποκαλύψεις B1–B12.",
+    sourcesNote: "Ακολουθεί το EFRAG VSME - Βασική Ενότητα, αποκαλύψεις B1–B12.",
     disclaimer: "Το εργαλείο παράγει δομημένο έγγραφο εργασίας. Πλήρης αναφορά VSME απαιτεί έλεγχο από ειδικευμένο προσωπικό.",
     reviewIntro: "Ελέγξτε τις καταχωρίσεις σας και εξάγετε ως PDF ή CSV. Όλα παραμένουν στο πρόγραμμα περιήγησής σας.",
     empty: "Δεν απαντήθηκε",

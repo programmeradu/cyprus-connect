@@ -123,7 +123,7 @@ export default function LearnHubClient({
       <MarketingHeader />
       <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-16">
 
-      {/* Header — editorial, no pill, no icon */}
+      {/* Header - editorial, no pill, no icon */}
       <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">
         <p className="eyebrow text-primary sm:text-xs">
           VerdeIQ Learn
@@ -142,7 +142,7 @@ export default function LearnHubClient({
         </p>
       </header>
 
-      {/* Featured — mobile: single-column editorial stack; desktop: hero + two */}
+      {/* Featured - mobile: single-column editorial stack; desktop: hero + two */}
       {showFeatured && (
         <section className="mb-16 sm:mb-20">
           <div className="mb-6 flex items-baseline justify-between border-b border-foreground/10 pb-3">
@@ -204,7 +204,7 @@ export default function LearnHubClient({
         </section>
       )}
 
-      {/* Search bar — editorial, no pill buttons */}
+      {/* Search bar - editorial, no pill buttons */}
       <div className="sticky top-0 z-20 -mx-5 mb-10 border-y border-foreground/10 bg-background/90 px-5 py-3 backdrop-blur sm:mx-0 sm:border sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
           <input
@@ -251,7 +251,7 @@ export default function LearnHubClient({
           </div>
         </div>
 
-        {/* Category rail — horizontal scroll on mobile, no pills */}
+        {/* Category rail - horizontal scroll on mobile, no pills */}
         <div className="mt-3 -mx-1 flex gap-1 overflow-x-auto pb-1 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-4 sm:flex-wrap sm:overflow-visible">
           <CatButton active={cat === "all"} onClick={() => setCat("all")}>
             {allLabel}

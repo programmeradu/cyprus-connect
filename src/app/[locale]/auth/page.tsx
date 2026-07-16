@@ -161,7 +161,8 @@ export default function AuthPage() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/">
             <motion.h1
-              className="text-lg font-bold gradient-text tracking-tight cursor-pointer"
+              className="text-lg font-semibold tracking-tight cursor-pointer"
+              style={{ fontFamily: "var(--editorial-serif)" }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
@@ -186,7 +187,7 @@ export default function AuthPage() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           {/* Glass Card */}
-          <div className="relative bg-card/40 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-premium">
+          <div className="relative bg-card/60 border border-border/60 rounded-2xl p-6">
             {/* Gradient overlay */}
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
             

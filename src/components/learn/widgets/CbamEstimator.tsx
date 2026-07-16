@@ -2,7 +2,7 @@
 
 /**
  * CBAM indicative cost estimator.
- * Rough only — CBAM certificate price ≈ weekly EU ETS average.
+ * Rough only - CBAM certificate price ≈ weekly EU ETS average.
  */
 
 import { useMemo } from "react";
@@ -11,7 +11,7 @@ import { usePersistedState } from "@/hooks/usePersistedState";
 
 type Props = { locale: "en" | "el" };
 
-// Default embedded-emission intensities (tCO2e / tonne of product) — indicative.
+// Default embedded-emission intensities (tCO2e / tonne of product) - indicative.
 const PRODUCTS = {
   steel: { en: "Iron & steel", el: "Σίδηρος & χάλυβας", intensity: 2.0 },
   aluminium: { en: "Aluminium", el: "Αλουμίνιο", intensity: 8.6 },

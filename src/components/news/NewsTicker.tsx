@@ -13,7 +13,7 @@ type NewsItem = {
 };
 
 /**
- * NewsTicker — auto-scrolling marquee of latest ESG/climate headlines.
+ * NewsTicker - auto-scrolling marquee of latest ESG/climate headlines.
  * - CSS-driven translateX loop, pauses on hover.
  * - Duplicates track so the loop is seamless.
  * - Silent fallback: if fetch fails, renders nothing (no broken chrome).
@@ -118,7 +118,7 @@ export function NewsTicker() {
 function getSource(url: string): string {
   try {
     const host = new URL(url).hostname.replace(/^www\./, "");
-    // Google News wraps articles at news.google.com/rss/articles/... — strip that
+    // Google News wraps articles at news.google.com/rss/articles/... - strip that
     if (host === "news.google.com") return "";
     return host.split(".")[0];
   } catch {

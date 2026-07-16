@@ -17,7 +17,7 @@ type Props = {
   subtitle: string;
   heroImage: string;
   updatedAt: string;
-  /** The interactive widget itself — a client component. */
+  /** The interactive widget itself - a client component. */
   children: React.ReactNode;
   methodologyHeading: string;
   methodologyIntro: string;

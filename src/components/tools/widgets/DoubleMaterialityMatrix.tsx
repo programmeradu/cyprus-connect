@@ -1,14 +1,14 @@
 "use client";
 
 /**
- * VerdeIQ Double Materiality Matrix — CSRD / ESRS 1 §3.
+ * VerdeIQ Double Materiality Matrix - CSRD / ESRS 1 §3.
  *
  * Score each topic on:
  *   Impact materiality  = f(severity, scope, irremediability, likelihood)
  *   Financial materiality = f(magnitude, likelihood)
  *
  * Plots a 2D scatter and marks topics as "material" when either axis
- * crosses the threshold — as required by ESRS 1 §3.4.
+ * crosses the threshold - as required by ESRS 1 §3.4.
  *
  * Client-side only; no data leaves the browser.
  */
@@ -98,7 +98,7 @@ const T = {
     disclaimer:
       "This is a screening tool. Under ESRS 1 §3 the double materiality assessment must be documented with evidence, stakeholder engagement and time horizons. Treat this scoring as a working baseline, not the final assessment.",
     sourcesNote: "Sources: ESRS 1 §3 (double materiality) · EFRAG IG1 Materiality Assessment Implementation Guidance.",
-    empty: "No topics — add one below.",
+    empty: "No topics - add one below.",
     impactCol: "Impact score",
     financialCol: "Financial score",
     verdict: "Verdict",
@@ -134,7 +134,7 @@ const T = {
     disclaimer:
       "Αυτό είναι εργαλείο προκαταρκτικού ελέγχου. Το ESRS 1 §3 απαιτεί τεκμηρίωση, εμπλοκή ενδιαφερομένων και χρονικούς ορίζοντες. Θεωρήστε το ενδεικτικό, όχι τελική αξιολόγηση.",
     sourcesNote: "Πηγές: ESRS 1 §3 · EFRAG IG1 Materiality Assessment Implementation Guidance.",
-    empty: "Χωρίς θέματα — προσθέστε ένα.",
+    empty: "Χωρίς θέματα - προσθέστε ένα.",
     impactCol: "Βαθμ. επίπτωσης",
     financialCol: "Βαθμ. οικον.",
     verdict: "Ετυμηγορία",
@@ -158,7 +158,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
       ...s,
       topics: [
         ...s.topics,
-        { id, name: l.newTopicName, esrs: "—", severity: 2, scope: 2, irremediability: 2, impactLikelihood: 2, magnitude: 2, financialLikelihood: 2 },
+        { id, name: l.newTopicName, esrs: "-", severity: 2, scope: 2, irremediability: 2, impactLikelihood: 2, magnitude: 2, financialLikelihood: 2 },
       ],
     }));
     setSelected(id);

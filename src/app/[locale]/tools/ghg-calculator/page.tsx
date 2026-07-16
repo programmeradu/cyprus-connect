@@ -56,29 +56,29 @@ const COPY = {
   en: {
     methodologyHeading: "How the numbers are calculated",
     methodologyIntro:
-      "Every activity is multiplied by a peer-reviewed 2024 emission factor and expressed in tonnes of CO₂-equivalent. Scope 2 uses the location-based method — pick your country and the electricity factor updates instantly. Nothing is stored on our servers; the calculation runs entirely in your browser.",
+      "Every activity is multiplied by a peer-reviewed 2024 emission factor and expressed in tonnes of CO₂-equivalent. Scope 2 uses the location-based method - pick your country and the electricity factor updates instantly. Nothing is stored on our servers; the calculation runs entirely in your browser.",
     methodology: [
       { label: "Natural gas (Scope 1)", value: "0.184 kg CO₂e / kWh gross CV · DEFRA 2024 combustion factor." },
       { label: "Diesel & petrol (Scope 1)", value: "2.51 kg / L diesel, 2.31 kg / L petrol · DEFRA 2024 mobile combustion, well-to-wheel." },
       { label: "Grid electricity (Scope 2)", value: "Country-specific 2023 residual mix factors (EEA / national inventories). Range from 0.008 (SE) to 0.657 (PL) kg CO₂e / kWh." },
       { label: "Business travel by car (Scope 3.6)", value: "0.170 kg / km · DEFRA 2024 average passenger vehicle." },
       { label: "Flights (Scope 3.6)", value: "Short-haul 0.246 kg / passenger-km, long-haul 0.195 kg / passenger-km · DEFRA 2024 economy class, radiative forcing included." },
-      { label: "Purchased goods & services (Scope 3.1)", value: "0.35 kg CO₂e / EUR — spend-based EEIO screening factor. Replace with supplier-specific data before disclosure." },
+      { label: "Purchased goods & services (Scope 3.1)", value: "0.35 kg CO₂e / EUR - spend-based EEIO screening factor. Replace with supplier-specific data before disclosure." },
       { label: "Waste to landfill (Scope 3.5)", value: "0.467 kg / kg · DEFRA 2024 mixed municipal solid waste." },
       { label: "Water supply (Scope 3.4)", value: "0.344 kg / m³ · DEFRA 2024 water supply + treatment combined." },
     ] as MethodologyItem[],
     workedExampleHeading: "A 45-person consultancy in Nicosia",
     workedExampleBody:
-      "Consider a professional services firm in Nicosia: 120,000 kWh of grid electricity in Cyprus (0.622 factor), 25,000 km of pool-car travel, 15,000 km of short-haul flights across the EU, and €400,000 of purchased services. Scope 1 is near zero — no combustion on site. Scope 2 hits 74.6 tCO₂e — the Cyprus grid does the damage. Scope 3 adds 4.3 t travel + 3.7 t flights + 140 t spend-based = around 148 t. Total: ~223 tCO₂e / year. Two levers dominate: switching electricity supply to a Guarantee-of-Origin renewable tariff (Scope 2 → ~7 t) and asking the largest three suppliers for verified activity data (Scope 3.1 drops sharply once EEIO is replaced).",
+      "Consider a professional services firm in Nicosia: 120,000 kWh of grid electricity in Cyprus (0.622 factor), 25,000 km of pool-car travel, 15,000 km of short-haul flights across the EU, and €400,000 of purchased services. Scope 1 is near zero - no combustion on site. Scope 2 hits 74.6 tCO₂e - the Cyprus grid does the damage. Scope 3 adds 4.3 t travel + 3.7 t flights + 140 t spend-based = around 148 t. Total: ~223 tCO₂e / year. Two levers dominate: switching electricity supply to a Guarantee-of-Origin renewable tariff (Scope 2 → ~7 t) and asking the largest three suppliers for verified activity data (Scope 3.1 drops sharply once EEIO is replaced).",
     faqHeading: "GHG accounting, answered",
     faq: [
       {
         q: "Is this calculator compliant with the GHG Protocol Corporate Standard?",
-        a: "It uses the same three-scope structure and location-based Scope 2 method that the GHG Protocol prescribes. For a formal disclosure under CSRD, VSME or SBTi you still need metered activity data, a defined organisational boundary and — for Scope 2 — a dual reporting of market-based factors. Treat the output as directional planning, not audit evidence.",
+        a: "It uses the same three-scope structure and location-based Scope 2 method that the GHG Protocol prescribes. For a formal disclosure under CSRD, VSME or SBTi you still need metered activity data, a defined organisational boundary and - for Scope 2 - a dual reporting of market-based factors. Treat the output as directional planning, not audit evidence.",
       },
       {
-        q: "Which grid factors should I choose — location-based or market-based?",
-        a: "This tool shows location-based factors (the grid average where the electricity was consumed). If you have Guarantees of Origin, PPAs or a green tariff, calculate the market-based number separately using the supplier's residual mix — the GHG Protocol requires both to be reported.",
+        q: "Which grid factors should I choose - location-based or market-based?",
+        a: "This tool shows location-based factors (the grid average where the electricity was consumed). If you have Guarantees of Origin, PPAs or a green tariff, calculate the market-based number separately using the supplier's residual mix - the GHG Protocol requires both to be reported.",
       },
       {
         q: "Why is my Scope 3 spend-based number so large?",
@@ -94,11 +94,11 @@ const COPY = {
       },
       {
         q: "Which reporting frameworks map to which scopes?",
-        a: "CSRD / ESRS E1 requires all three scopes disclosed separately. VSME Basic Module requires Scope 1 and Scope 2 (location-based). SBTi near-term targets require Scope 1+2 always, and Scope 3 if it is more than 40% of total. CBAM is a separate embedded-emissions regime — use our CBAM tool for that.",
+        a: "CSRD / ESRS E1 requires all three scopes disclosed separately. VSME Basic Module requires Scope 1 and Scope 2 (location-based). SBTi near-term targets require Scope 1+2 always, and Scope 3 if it is more than 40% of total. CBAM is a separate embedded-emissions regime - use our CBAM tool for that.",
       },
       {
         q: "How often are the emission factors updated?",
-        a: "DEFRA publishes annually (typically June). EEA grid factors publish annually. This tool is updated within 30 days of a new release — the methodology block shows the version in use.",
+        a: "DEFRA publishes annually (typically June). EEA grid factors publish annually. This tool is updated within 30 days of a new release - the methodology block shows the version in use.",
       },
       {
         q: "Can I export the report for my auditor?",
@@ -108,35 +108,35 @@ const COPY = {
     relatedHeading: "Related guides",
     ctaHeading: "Ready to move beyond a calculator?",
     ctaBody:
-      "VerdeIQ centralises your GHG inventory, CBAM filings and CSRD disclosures in one audit-ready platform — with supplier data collection, evidence trails and role-based permissions.",
+      "VerdeIQ centralises your GHG inventory, CBAM filings and CSRD disclosures in one audit-ready platform - with supplier data collection, evidence trails and role-based permissions.",
     ctaAction: "Try VerdeIQ",
   },
   el: {
     methodologyHeading: "Πώς υπολογίζονται οι αριθμοί",
     methodologyIntro:
-      "Κάθε δραστηριότητα πολλαπλασιάζεται με έναν επιστημονικά τεκμηριωμένο συντελεστή 2024 και εκφράζεται σε τόνους ισοδύναμου CO₂. Το Scope 2 χρησιμοποιεί τη μέθοδο βάσει τοποθεσίας — επιλέξτε τη χώρα σας και ο συντελεστής ενημερώνεται άμεσα. Ο υπολογισμός γίνεται εξ ολοκλήρου στο πρόγραμμα περιήγησής σας — τίποτα δεν αποθηκεύεται στους διακομιστές μας.",
+      "Κάθε δραστηριότητα πολλαπλασιάζεται με έναν επιστημονικά τεκμηριωμένο συντελεστή 2024 και εκφράζεται σε τόνους ισοδύναμου CO₂. Το Scope 2 χρησιμοποιεί τη μέθοδο βάσει τοποθεσίας - επιλέξτε τη χώρα σας και ο συντελεστής ενημερώνεται άμεσα. Ο υπολογισμός γίνεται εξ ολοκλήρου στο πρόγραμμα περιήγησής σας - τίποτα δεν αποθηκεύεται στους διακομιστές μας.",
     methodology: [
       { label: "Φυσικό αέριο (Scope 1)", value: "0,184 kg CO₂e / kWh · DEFRA 2024." },
       { label: "Πετρέλαιο & βενζίνη (Scope 1)", value: "2,51 kg / L πετρέλαιο, 2,31 kg / L βενζίνη · DEFRA 2024." },
       { label: "Ηλεκτρισμός δικτύου (Scope 2)", value: "Συντελεστές 2023 ανά χώρα (EEA / εθνικά μητρώα). Από 0,008 (SE) έως 0,657 (PL) kg CO₂e / kWh." },
-      { label: "Επαγγελματικά ταξίδια — αυτοκίνητο (Scope 3.6)", value: "0,170 kg / km · DEFRA 2024." },
+      { label: "Επαγγελματικά ταξίδια - αυτοκίνητο (Scope 3.6)", value: "0,170 kg / km · DEFRA 2024." },
       { label: "Πτήσεις (Scope 3.6)", value: "Μικρή απόσταση 0,246 kg/πκμ, μεγάλη 0,195 kg/πκμ · DEFRA 2024 economy, με RF." },
-      { label: "Αγορές αγαθών & υπηρεσιών (Scope 3.1)", value: "0,35 kg CO₂e / € — EEIO για προκαταρκτικό έλεγχο. Αντικαταστήστε με δεδομένα προμηθευτή." },
+      { label: "Αγορές αγαθών & υπηρεσιών (Scope 3.1)", value: "0,35 kg CO₂e / € - EEIO για προκαταρκτικό έλεγχο. Αντικαταστήστε με δεδομένα προμηθευτή." },
       { label: "Απόβλητα σε ΧΥΤΑ (Scope 3.5)", value: "0,467 kg / kg · DEFRA 2024." },
       { label: "Παροχή νερού (Scope 3.4)", value: "0,344 kg / m³ · DEFRA 2024 (παροχή + επεξεργασία)." },
     ] as MethodologyItem[],
     workedExampleHeading: "Συμβουλευτική εταιρεία 45 ατόμων στη Λευκωσία",
     workedExampleBody:
-      "Μια εταιρεία επαγγελματικών υπηρεσιών: 120.000 kWh ηλεκτρισμού στην Κύπρο (συντελεστής 0,622), 25.000 km με εταιρικά αυτοκίνητα, 15.000 km πτήσεων μικρής απόστασης στην ΕΕ, €400.000 αγορές υπηρεσιών. Scope 1 σχεδόν μηδέν. Scope 2 φτάνει τους 74,6 tCO₂e — το κυπριακό δίκτυο έχει την ευθύνη. Scope 3: 4,3 t αυτοκίνητο + 3,7 t πτήσεις + 140 t δαπάνες = ~148 t. Σύνολο ~223 tCO₂e / έτος. Δύο μοχλοί κυριαρχούν: αλλαγή σε τιμολόγιο GO (Scope 2 → ~7 t) και συλλογή πραγματικών δεδομένων από τους 3 μεγαλύτερους προμηθευτές.",
+      "Μια εταιρεία επαγγελματικών υπηρεσιών: 120.000 kWh ηλεκτρισμού στην Κύπρο (συντελεστής 0,622), 25.000 km με εταιρικά αυτοκίνητα, 15.000 km πτήσεων μικρής απόστασης στην ΕΕ, €400.000 αγορές υπηρεσιών. Scope 1 σχεδόν μηδέν. Scope 2 φτάνει τους 74,6 tCO₂e - το κυπριακό δίκτυο έχει την ευθύνη. Scope 3: 4,3 t αυτοκίνητο + 3,7 t πτήσεις + 140 t δαπάνες = ~148 t. Σύνολο ~223 tCO₂e / έτος. Δύο μοχλοί κυριαρχούν: αλλαγή σε τιμολόγιο GO (Scope 2 → ~7 t) και συλλογή πραγματικών δεδομένων από τους 3 μεγαλύτερους προμηθευτές.",
     faqHeading: "Συχνές ερωτήσεις",
     faq: [
       {
         q: "Είναι ο υπολογιστής συμβατός με το GHG Protocol Corporate Standard;",
-        a: "Χρησιμοποιεί την ίδια δομή τριών scopes και τη μέθοδο βάσει τοποθεσίας για το Scope 2. Για επίσημη αναφορά υπό CSRD, VSME ή SBTi χρειάζεστε μετρημένα δεδομένα και σαφή οργανωσιακά όρια — θεωρήστε το αποτέλεσμα ενδεικτικό σχεδιασμού.",
+        a: "Χρησιμοποιεί την ίδια δομή τριών scopes και τη μέθοδο βάσει τοποθεσίας για το Scope 2. Για επίσημη αναφορά υπό CSRD, VSME ή SBTi χρειάζεστε μετρημένα δεδομένα και σαφή οργανωσιακά όρια - θεωρήστε το αποτέλεσμα ενδεικτικό σχεδιασμού.",
       },
       {
         q: "Location-based ή market-based συντελεστές;",
-        a: "Το εργαλείο δείχνει location-based. Αν έχετε GO ή PPA, υπολογίστε ξεχωριστά το market-based — το GHG Protocol απαιτεί και τα δύο.",
+        a: "Το εργαλείο δείχνει location-based. Αν έχετε GO ή PPA, υπολογίστε ξεχωριστά το market-based - το GHG Protocol απαιτεί και τα δύο.",
       },
       {
         q: "Γιατί είναι τόσο μεγάλο το Scope 3 βάσει δαπάνης;",
@@ -148,7 +148,7 @@ const COPY = {
       },
       {
         q: "Ποιο πλαίσιο απαιτεί ποια scopes;",
-        a: "CSRD/ESRS E1: και τα τρία. VSME Basic: 1+2. SBTi: 1+2 πάντα, 3 αν >40% του συνόλου. CBAM: ξεχωριστό καθεστώς — χρησιμοποιήστε το αντίστοιχο εργαλείο.",
+        a: "CSRD/ESRS E1: και τα τρία. VSME Basic: 1+2. SBTi: 1+2 πάντα, 3 αν >40% του συνόλου. CBAM: ξεχωριστό καθεστώς - χρησιμοποιήστε το αντίστοιχο εργαλείο.",
       },
       {
         q: "Πόσο συχνά ενημερώνονται οι συντελεστές;",
@@ -162,7 +162,7 @@ const COPY = {
     relatedHeading: "Σχετικοί οδηγοί",
     ctaHeading: "Έτοιμοι για κάτι περισσότερο από έναν υπολογιστή;",
     ctaBody:
-      "Η VerdeIQ ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε μία πλατφόρμα έτοιμη για έλεγχο — με συλλογή δεδομένων προμηθευτών, αποδεικτικά και δικαιώματα ρόλων.",
+      "Η VerdeIQ ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε μία πλατφόρμα έτοιμη για έλεγχο - με συλλογή δεδομένων προμηθευτών, αποδεικτικά και δικαιώματα ρόλων.",
     ctaAction: "Δοκιμάστε το VerdeIQ",
   },
 } as const;

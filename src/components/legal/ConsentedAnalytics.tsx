@@ -4,7 +4,7 @@
  * Renders analytics/tracking scripts ONLY when the visitor has accepted the
  * optional analytics cookies via the cookie banner. Wire up your analytics
  * providers (Plausible, GA4, PostHog, etc.) inside the `ConsentedAnalytics`
- * body — they will mount when consent is granted and unmount when consent is
+ * body - they will mount when consent is granted and unmount when consent is
  * revoked, keeping the site GDPR/ePrivacy compliant.
  *
  * The strictly-necessary Lovable error/log script is loaded in root layout

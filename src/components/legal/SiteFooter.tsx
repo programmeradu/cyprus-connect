@@ -53,7 +53,8 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
         <div className="col-span-2">
           <p
-            className="gradient-text text-lg font-bold tracking-tight mb-2 font-[family-name:var(--font-geist-sans)]"
+            className="text-xl tracking-tight mb-2"
+            style={{ fontFamily: "var(--editorial-serif)", fontWeight: 500 }}
           >
             VerdeIQ
           </p>
