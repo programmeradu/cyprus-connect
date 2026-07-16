@@ -430,16 +430,17 @@ export default function Home() {
           <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
             {tL("ctaSubtitle")}
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-3">
             <Link href="/auth">
-              <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
+              <PremiumButton size="sm" className="text-sm">
                 {tL("ctaStart")}
               </PremiumButton>
             </Link>
-            <Link href="/pricing">
-              <PremiumButton variant="outline" size="sm" className="w-full text-sm sm:w-auto">
-                {tL("ctaPricing")}
-              </PremiumButton>
+            <Link
+              href="/pricing"
+              className="text-sm text-foreground/70 underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:text-foreground hover:decoration-foreground/70"
+            >
+              {tL("ctaPricing")}
             </Link>
           </div>
         </div>
