@@ -13,6 +13,7 @@ export function makePillar(input: {
   relatedSlugs: string[];
   publishedAt?: string;
   updatedAt?: string;
+  heroImage?: string;
   en: PillarLocaleContent;
   el: PillarLocaleContent;
 }): Pillar {
@@ -25,7 +26,7 @@ export function makePillar(input: {
     publishedAt: input.publishedAt ?? today,
     updatedAt: input.updatedAt ?? today,
     readingMinutes: input.readingMinutes,
-    heroImage: `/assets/learn/${input.slug}/hero.jpg`,
+    heroImage: input.heroImage ?? `/assets/learn/${input.slug}/hero.jpg`,
     relatedSlugs: input.relatedSlugs,
     en: input.en,
     el: input.el,
