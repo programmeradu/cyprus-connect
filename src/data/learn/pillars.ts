@@ -107,6 +107,11 @@ import { scope3EmissionsCalculation } from "./pillars/scope-3-emissions-calculat
 import { carbonOffsettingVsReduction } from "./pillars/carbon-offsetting-vs-reduction";
 import { sustainabilityKpisForSmes } from "./pillars/sustainability-kpis-for-smes";
 import { esrsStandardsExplained } from "./pillars/esrs-standards-explained";
+import { whatIsCarbonFootprint } from "./pillars/what-is-a-carbon-footprint";
+import { scope123ExplainedSimply } from "./pillars/scope-1-2-3-explained-simply";
+import { csrVsEsgVsSustainability } from "./pillars/csr-vs-esg-vs-sustainability";
+import { whatIsNetZero } from "./pillars/what-is-net-zero";
+import { greenTechnologyExamples } from "./pillars/green-technology-examples";
 
 export const PILLARS: Record<PillarSlug, Pillar> = {
   "csrd-reporting-guide": csrdReportingGuide,
