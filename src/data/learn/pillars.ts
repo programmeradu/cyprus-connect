@@ -134,6 +134,11 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
   "carbon-offsetting-vs-reduction": carbonOffsettingVsReduction,
   "sustainability-kpis-for-smes": sustainabilityKpisForSmes,
   "esrs-standards-explained": esrsStandardsExplained,
+  "what-is-a-carbon-footprint": whatIsCarbonFootprint,
+  "scope-1-2-3-explained-simply": scope123ExplainedSimply,
+  "csr-vs-esg-vs-sustainability": csrVsEsgVsSustainability,
+  "what-is-net-zero": whatIsNetZero,
+  "green-technology-examples": greenTechnologyExamples,
 };
 
 export function getPillar(slug: string): Pillar | null {
