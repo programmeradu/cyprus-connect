@@ -78,7 +78,7 @@ export default async function GlossaryTermPage({ params }: { params: Params }) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <MarketingHeader locale={safeLocale} />
+      <MarketingHeader />
       <main className="mx-auto max-w-3xl px-6 pb-24 pt-32">
         <nav className="mb-8 text-xs uppercase tracking-[0.2em] text-foreground/50">
           <Link href={`/${safeLocale}/glossary`} className="hover:text-foreground">
