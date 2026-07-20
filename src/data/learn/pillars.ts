@@ -76,7 +76,13 @@ export const PILLAR_SLUGS = [
   "carbon-offsetting-vs-reduction",
   "sustainability-kpis-for-smes",
   "esrs-standards-explained",
+  "what-is-a-carbon-footprint",
+  "scope-1-2-3-explained-simply",
+  "csr-vs-esg-vs-sustainability",
+  "what-is-net-zero",
+  "green-technology-examples",
 ] as const;
+
 
 export type PillarSlug = (typeof PILLAR_SLUGS)[number];
 
@@ -101,6 +107,11 @@ import { scope3EmissionsCalculation } from "./pillars/scope-3-emissions-calculat
 import { carbonOffsettingVsReduction } from "./pillars/carbon-offsetting-vs-reduction";
 import { sustainabilityKpisForSmes } from "./pillars/sustainability-kpis-for-smes";
 import { esrsStandardsExplained } from "./pillars/esrs-standards-explained";
+import { whatIsCarbonFootprint } from "./pillars/what-is-a-carbon-footprint";
+import { scope123ExplainedSimply } from "./pillars/scope-1-2-3-explained-simply";
+import { csrVsEsgVsSustainability } from "./pillars/csr-vs-esg-vs-sustainability";
+import { whatIsNetZero } from "./pillars/what-is-net-zero";
+import { greenTechnologyExamples } from "./pillars/green-technology-examples";
 
 export const PILLARS: Record<PillarSlug, Pillar> = {
   "csrd-reporting-guide": csrdReportingGuide,
@@ -123,6 +134,11 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
   "carbon-offsetting-vs-reduction": carbonOffsettingVsReduction,
   "sustainability-kpis-for-smes": sustainabilityKpisForSmes,
   "esrs-standards-explained": esrsStandardsExplained,
+  "what-is-a-carbon-footprint": whatIsCarbonFootprint,
+  "scope-1-2-3-explained-simply": scope123ExplainedSimply,
+  "csr-vs-esg-vs-sustainability": csrVsEsgVsSustainability,
+  "what-is-net-zero": whatIsNetZero,
+  "green-technology-examples": greenTechnologyExamples,
 };
 
 export function getPillar(slug: string): Pillar | null {

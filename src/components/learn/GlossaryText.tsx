@@ -65,12 +65,18 @@ function GlossaryTerm({ raw, entry, locale }: { raw: string; entry: GlossaryEntr
           {entry.term}
         </span>
         <span className="block whitespace-normal text-foreground/85">{definition}</span>
+        <Link
+          href={`/${locale}/glossary/${entry.termSlug}`}
+          className="mt-2 inline-block whitespace-normal text-xs font-medium text-primary hover:underline"
+        >
+          {locale === "el" ? "Ορισμός →" : "Full definition →"}
+        </Link>
         {entry.slug && (
           <Link
             href={`/${locale}/learn/${entry.slug}`}
-            className="mt-2 inline-block whitespace-normal text-xs font-medium text-primary hover:underline"
+            className="ml-3 mt-2 inline-block whitespace-normal text-xs font-medium text-foreground/70 hover:underline"
           >
-            {locale === "el" ? "Διαβάστε τον οδηγό →" : "Read the guide →"}
+            {locale === "el" ? "Οδηγός →" : "Guide →"}
           </Link>
         )}
       </span>
