@@ -76,7 +76,13 @@ export const PILLAR_SLUGS = [
   "carbon-offsetting-vs-reduction",
   "sustainability-kpis-for-smes",
   "esrs-standards-explained",
+  "what-is-a-carbon-footprint",
+  "scope-1-2-3-explained-simply",
+  "csr-vs-esg-vs-sustainability",
+  "what-is-net-zero",
+  "green-technology-examples",
 ] as const;
+
 
 export type PillarSlug = (typeof PILLAR_SLUGS)[number];
 
