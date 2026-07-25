@@ -305,3 +305,36 @@ That is what the intersection of the two research documents produces. Everything
 ---
 
 **End of synthesis.**
+
+---
+
+## 8. Fusion 21: Compliance Gap → Auto-Generated Course → Certified Staff
+
+The Automated Course Generator at `/app/learn` is the fusion play we already shipped and under-sold in earlier drafts. Restated cleanly so the roadmap treats it as a first-class agent, not a content feature.
+
+**The loop:**
+
+1. **Signal.** The insights agent, the CSRD/VSME checker, or an emissions-hotspot rule fires (electricity > 40% of footprint, missing Scope 3 category, new ESRS amendment, RIF window opening).
+2. **Gap check.** The generator queries the tenant's course catalogue, filtered by industry, and skips anything already covered.
+3. **Prioritise.** Compliance and explicit recommendations rank high; hotspots rank medium. Cap at three courses per run so we never spam.
+4. **Generate.** Gemini produces a 3-4 module scaffold with 4-5 lessons each, mixing text (800-1500 words), video (8-second explainers), quiz, and multi-step exercise. Course thumbnail, per-lesson images, and per-lesson videos are generated inline.
+5. **Persist and notify.** Course lands published in Postgres. A notification with a deep link fires to the sustainability lead and the tagged staff.
+6. **Certify.** On completion, the certificate endpoint issues a signed PDF the accountant can attach to the CSRD Article 29d "adequate training" disclosure or hand to the bank at loan-review time.
+
+**Why this is a fusion, not a standalone feature:**
+
+- The **integrations layer** (EAC, JCC, SoftOne, Cyprus Customs) produces the emissions and invoice data that surfaces the gap.
+- The **agent layer** (CBAM Autopilot, Supplier Chaser, Compliance Scanner) interprets that data and emits the trigger.
+- The **learning layer** turns the trigger into training that the human on the other end of the recommendation can actually act on.
+- The **marketplace layer** closes it: the course ends with a marketplace CTA ("book a certified installer" or "apply to the RIF window we just wrote a module about").
+
+Without the integrations, the courses are generic. Without the agents, there is nothing to trigger them. Without the certificate, the auditor does not care. Without the marketplace, the training does not convert into revenue. Fusion 21 is the only one of the twenty-one plays that touches all four layers in a single loop.
+
+**Sharpening backlog (already visible in the code):**
+
+- Replace the English keyword extractor with an embedding classifier so Greek terms and new regulations are picked up without a code deploy.
+- Add a draft-review-publish gate for compliance and tax topics before the course goes live in the tenant academy.
+- Enforce ASD-STE100 in the generator prompt and add a linter pass before persistence.
+- Version courses when the underlying regulation is amended, so completed certificates carry the ESRS revision they were trained on.
+
+Fusion 21 is the play that most obviously answers "so what does the agentic stack actually do for my accountant on Tuesday morning." The answer is: it hands them a fifty-minute course, in Greek, on the exact gap the system found in their data last night, and a certificate at the end that their auditor will accept.
