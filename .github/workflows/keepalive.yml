@@ -2,8 +2,10 @@ name: Supabase Keep-Alive
 
 on:
   schedule:
-    # Every 6 days at 09:00 UTC (Supabase free-tier pauses at 7 days idle)
-    - cron: "0 9 */6 * *"
+    # Every 3 days at 09:00 UTC. Supabase free-tier pauses at 7 days idle;
+    # day-of-month step syntax (e.g. */6) resets at month boundaries and can
+    # produce gaps >7 days, so we use a plain day-of-week schedule instead.
+    - cron: "0 9 * * 1,4"
   workflow_dispatch:
 
 jobs:
