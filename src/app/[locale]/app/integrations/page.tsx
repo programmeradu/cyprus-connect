@@ -571,30 +571,11 @@ function IntegrationsContent() {
                   onChange={(e) => setLocation(e.target.value)}
                   className="px-3 py-2 rounded-lg border border-input bg-background/50 text-[12px] h-9 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 >
-                  <optgroup label="🌍 Africa">
-                    <option value="GH">Ghana</option>
-                    <option value="NG">Nigeria</option>
-                    <option value="ZA">South Africa</option>
+                  <optgroup label="Cyprus">
+                    <option value="CY">Cyprus (EAC grid)</option>
                   </optgroup>
-                  <optgroup label="🌎 Americas">
-                    <option value="US-CAL-CISO">California (US)</option>
-                    <option value="US-TEX-ERCO">Texas (US)</option>
-                    <option value="US-NY-NYIS">New York (US)</option>
-                    <option value="BR-CS">Brazil (Central-South)</option>
-                    <option value="CA-ON">Ontario (Canada)</option>
-                    <option value="CA-QC">Quebec (Canada)</option>
-                  </optgroup>
-                  <optgroup label="🌏 Asia & Pacific">
-                    <option value="IN-DL">Delhi (India)</option>
-                    <option value="IN-KA">Karnataka (India)</option>
-                    <option value="CN-NM">Inner Mongolia (China)</option>
-                    <option value="JP-TK">Tokyo (Japan)</option>
-                    <option value="SG">Singapore</option>
-                    <option value="AU-NSW">New South Wales (Australia)</option>
-                    <option value="AU-VIC">Victoria (Australia)</option>
-                  </optgroup>
-                  <optgroup label="🌍 Europe">
-                    <option value="GB">United Kingdom</option>
+                  <optgroup label="EU / EEA">
+                    <option value="GR">Greece</option>
                     <option value="DE">Germany</option>
                     <option value="FR">France</option>
                     <option value="ES">Spain</option>
@@ -604,14 +585,7 @@ function IntegrationsContent() {
                     <option value="NO">Norway</option>
                     <option value="DK-DK1">Denmark (West)</option>
                     <option value="DK-DK2">Denmark (East)</option>
-                  </optgroup>
-                  <optgroup label="🌐 Continents">
-                    <option value="AF">Africa (Continental)</option>
-                    <option value="AS">Asia (Continental)</option>
-                    <option value="EU">Europe (Continental)</option>
-                    <option value="NA">North America (Continental)</option>
-                    <option value="OC">Oceania (Continental)</option>
-                    <option value="SA">South America (Continental)</option>
+                    <option value="EU">EU (continental average)</option>
                   </optgroup>
                 </select>
               ) : (

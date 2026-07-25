@@ -179,17 +179,8 @@ export default function InsightsPage() {
       
       setUserLocation({ country, countryCode });
 
-      // CRITICAL: Validate energy zone matches country
-      // Ghana (GH) should NEVER use Nigeria (NG) zones
+      // Validate the resolved energy zone matches the user's country.
       let energyZone = preferences.energyZone || getDefaultEnergyZone(countryCode);
-      
-      // Force correct zone if mismatch detected
-      if (countryCode === "GH" && energyZone && energyZone.startsWith("NG")) {
-        console.warn("⚠️ Correcting energy zone mismatch: Ghana should not use Nigeria zones");
-        energyZone = "GH";
-      }
-      
-      // General validation: ensure zone matches country
       const zoneCountry = energyZone.split("-")[0];
       if (zoneCountry !== countryCode && !energyZone.includes(countryCode)) {
         console.warn(`⚠️ Energy zone mismatch detected. Country: ${countryCode}, Zone: ${energyZone}. Using country default.`);
@@ -313,31 +304,28 @@ export default function InsightsPage() {
     fetchAllData();
   };
 
-  // Map country code to country name
+  // Map country code to country name (Cyprus + EU/EEA scope).
   const getCountryName = (code: string): string => {
     const countryMap: Record<string, string> = {
-      US: "United States",
-      CA: "Canada",
+      CY: "Cyprus",
+      GR: "Greece",
       GB: "United Kingdom",
       DE: "Germany",
       FR: "France",
       ES: "Spain",
       IT: "Italy",
       NL: "Netherlands",
-      GH: "Ghana",
-      NG: "Nigeria",
-      ZA: "South Africa",
-      KE: "Kenya",
-      EG: "Egypt",
-      AU: "Australia",
-      NZ: "New Zealand",
-      JP: "Japan",
-      CN: "China",
-      IN: "India",
-      BR: "Brazil",
-      MX: "Mexico",
-      AR: "Argentina",
-      AE: "United Arab Emirates",
+      BE: "Belgium",
+      LU: "Luxembourg",
+      IE: "Ireland",
+      PT: "Portugal",
+      AT: "Austria",
+      PL: "Poland",
+      SE: "Sweden",
+      DK: "Denmark",
+      FI: "Finland",
+      NO: "Norway",
+      IS: "Iceland",
       SA: "Saudi Arabia",
       SG: "Singapore",
       MY: "Malaysia",
