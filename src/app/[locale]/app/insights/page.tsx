@@ -333,48 +333,35 @@ export default function InsightsPage() {
       ID: "Indonesia",
       PH: "Philippines",
       VN: "Vietnam",
-      KR: "South Korea",
-      TR: "Turkey",
-      PL: "Poland",
-      SE: "Sweden",
-      NO: "Norway",
-      DK: "Denmark",
-      FI: "Finland",
-      CH: "Switzerland",
-      AT: "Austria",
-      BE: "Belgium",
-      PT: "Portugal",
-      GR: "Greece",
       CZ: "Czech Republic",
       RO: "Romania",
       HU: "Hungary",
-      IE: "Ireland",
-      IL: "Israel",
+      SK: "Slovakia",
+      SI: "Slovenia",
+      HR: "Croatia",
+      BG: "Bulgaria",
+      MT: "Malta",
+      EE: "Estonia",
+      LV: "Latvia",
+      LT: "Lithuania",
     };
     return countryMap[code] || code;
   };
 
-  // Map country code to default energy zone
+  // Map country code to default energy zone (Cyprus + EU/EEA scope).
   const getDefaultEnergyZone = (countryCode: string): string => {
     const zoneMap: Record<string, string> = {
-      US: "US-CAL-CISO",
-      CA: "CA-ON",
-      GB: "GB",
+      CY: "CY",
+      GR: "GR",
       DE: "DE",
       FR: "FR",
       ES: "ES",
       IT: "IT",
       NL: "NL",
-      GH: "GH",
-      NG: "NG",
-      ZA: "ZA",
-      KE: "KE",
-      EG: "EG",
-      AU: "AU-NSW",
-      JP: "JP",
-      CN: "CN",
-      IN: "IN",
-      BR: "BR",
+      GB: "GB",
+      SE: "SE",
+      NO: "NO",
+      DK: "DK-DK1",
     };
     return zoneMap[countryCode] || countryCode;
   };

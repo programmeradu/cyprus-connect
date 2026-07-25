@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       forecast: null,
     };
 
-    // Get carbon intensity data (supports Ghana, Nigeria, and all continents)
+    // Get carbon intensity data for the requested zone (Cyprus + EU/EEA scope).
     try {
       // Get current carbon intensity
       const carbonData = await carbonClient.getCarbonIntensity(zone);
