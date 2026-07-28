@@ -198,7 +198,6 @@ export default function Home() {
 
       {/* BENEFITS - Why VerdeIQ */}
       <EditorialSection
-        eyebrow="01 / Why VerdeIQ"
         titleA={tL("whyTitleA")}
         subtitle={tL("whySubtitle")}
         media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
@@ -219,7 +218,6 @@ export default function Home() {
       {/* POWER - Platform Capabilities */}
       <div className="relative">
         <EditorialSection
-          eyebrow="02 / The Platform"
           titleA={tL("powerTitleA")}
           titleMid={tL("powerTitleMid")}
           titleB={tL("powerTitleB")}
@@ -243,7 +241,6 @@ export default function Home() {
       {/* ECOSYSTEM */}
       <div className="relative">
         <EditorialSection
-          eyebrow="03 / Ecosystem"
           titleA={tL("beyondTitleA")}
           titleB={tL("beyondTitleB")}
           subtitle={tL("beyondSubtitle")}
@@ -339,7 +336,6 @@ export default function Home() {
           className="pointer-events-none absolute -bottom-16 -left-10 z-10 hidden w-[320px] max-w-none rotate-[4deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-bottom-24 lg:-left-20 lg:w-[440px]"
         />
         <EditorialSection
-          eyebrow="04 / How it works"
           titleA={tL("howTitleA")}
           titleB={tL("howTitleB")}
           subtitle={tL("howSubtitle")}
