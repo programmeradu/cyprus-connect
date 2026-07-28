@@ -447,6 +447,7 @@ function SectionDivider() {
 
 function EditorialSection({
   eyebrow,
+
   titleA,
   titleMid,
   titleB,
