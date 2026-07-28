@@ -2,17 +2,16 @@
 
 
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { ContextWidgets } from "@/components/landing/ContextWidgets";
-import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
 import { useSession, authClient } from "@/lib/auth-client";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
 import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
 import sectionHowImg from "@/assets/section-how-steps.jpg";
