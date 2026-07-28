@@ -206,6 +206,10 @@
   --sidebar-accent-foreground: oklch(0.25 0.03 150);
   --sidebar-border: oklch(0.92 0.01 140);
   --sidebar-ring: oklch(0.55 0.15 155);
+
+  /* Chartreuse accent — reserved for hero CTA + tag chips only (Lifecycle-inspired) */
+  --accent-lime: oklch(0.93 0.20 118);
+  --accent-lime-foreground: oklch(0.18 0.03 150);
 }
 
 .dark {

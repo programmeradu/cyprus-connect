@@ -2,17 +2,14 @@
 
 
 import { PremiumButton } from "@/components/ui/PremiumButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { ContextWidgets } from "@/components/landing/ContextWidgets";
-import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Link } from "@/i18n/navigation";
-import { useSession, authClient } from "@/lib/auth-client";
-import { useRouter } from "@/i18n/navigation";
-import { toast } from "sonner";
+import { useSession } from "@/lib/auth-client";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
+import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
 import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
 import sectionHowImg from "@/assets/section-how-steps.jpg";
@@ -28,23 +25,8 @@ import accentWindCurrents from "@/assets/accent-wind-currents.png";
  * Mobile-first typography with serif display, numeric prefixes, slash separators.
  */
 export default function Home() {
-  const { data: session, isPending, refetch } = useSession();
-  const router = useRouter();
-  const tNav = useTranslations("nav");
-  const tHero = useTranslations("hero");
+  useSession();
   const tL = useTranslations("landing");
-
-  const handleSignOut = async () => {
-    const { error } = await authClient.signOut();
-    if (error?.code) {
-      toast.error(tNav("signOutError"));
-    } else {
-      localStorage.removeItem("bearer_token");
-      refetch();
-      toast.success(tNav("signOutSuccess"));
-      router.push("/");
-    }
-  };
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased">
@@ -65,123 +47,9 @@ export default function Home() {
 
 
 
-      {/* Nav - solid opaque bar (no glass, no blur) */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <Link
-            href="/"
-            className="text-lg font-bold tracking-[-0.02em] text-foreground font-[family-name:var(--editorial-serif)]"
-          >
-            VerdeIQ
-          </Link>
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href="/tools" className="text-sm text-foreground/80 hover:text-foreground">
-              {tNav("tools")}
-            </Link>
-            <Link href="/learn" className="text-sm text-foreground/80 hover:text-foreground">
-              {tNav("learn")}
-            </Link>
-            <Link href="/news" className="text-sm text-foreground/80 hover:text-foreground">
-              {tNav("news")}
-            </Link>
-          </nav>
-          <div className="flex items-center gap-1.5">
-            <LanguageSwitcher />
-            <ThemeToggle />
-            {!isPending && (
-              session?.user ? (
-                <>
-                  <SubscriptionBadge />
-                  <Link href="/app" className="hidden sm:inline">
-                    <PremiumButton variant="outline" size="sm" className="text-xs">
-                      {tNav("dashboard")}
-                    </PremiumButton>
-                  </Link>
-                  <PremiumButton
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                    onClick={handleSignOut}
-                  >
-                    {tNav("signOut")}
-                  </PremiumButton>
-                </>
-              ) : (
-                <>
-                  <Link href="/pricing" className="hidden sm:inline">
-                    <PremiumButton variant="outline" size="sm" className="text-xs">
-                      {tNav("pricing")}
-                    </PremiumButton>
-                  </Link>
-                  <Link href="/auth">
-                    <PremiumButton size="sm" className="text-xs">
-                      {tNav("signIn")}
-                    </PremiumButton>
-                  </Link>
-                </>
-              )
-            )}
-          </div>
-        </div>
-      </header>
+      <MarketingHeader />
 
-      {/* HERO - offset composition, no opacity gate, single CTA, grained scrim */}
-      <section className="relative -mt-[57px] overflow-hidden">
-        {/* Photographic backdrop */}
-        <div className="pointer-events-none absolute inset-0">
-          <div
-            className="absolute inset-0 bg-no-repeat bg-cover"
-            style={{
-              backgroundImage:
-                'url(https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/941d64ce-418c-43a8-8d2f-da8a089432ee/generated_images/premium-4k-photorealistic-image-of-a-mod-7e888bf4-20251114215917.jpg)',
-              backgroundPosition: '65% 50%',
-            }}
-          />
-          {/* Mobile scrim */}
-          <div className="absolute inset-0 sm:hidden bg-gradient-to-b from-background/85 via-background/40 to-background/70 dark:from-background/80 dark:via-background/40 dark:to-background/85" />
-          {/* Desktop scrim: fade image to the right so left column stays readable */}
-          <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-background via-background/70 to-background/10 dark:from-background dark:via-background/80 dark:to-background/30" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
-          {/* Grain - SVG turbulence noise at ~4% opacity to kill banding on the scrim */}
-          <div
-            aria-hidden
-            className="absolute inset-0 opacity-[0.04] mix-blend-overlay"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>\")",
-              backgroundSize: "240px 240px",
-            }}
-          />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl px-4 pt-32 pb-20 sm:px-6 sm:pt-56 sm:pb-32">
-          {/* Offset column - narrower, indented on desktop, deep top gap; no centered stack */}
-          <div className="max-w-[36rem] sm:pl-6 md:pl-14 lg:pl-20">
-
-
-
-            <h1 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.4rem] sm:leading-[0.96]">
-              {tHero("titleLine1")}
-              <br />
-              <span className="italic text-muted-foreground">{tHero("titleLine2")}</span>
-              <br />
-              {tHero("titleLine3")}
-            </h1>
-
-            <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
-              {tHero("subtitle")}
-            </p>
-
-            <div className="mt-10">
-              <Link href="/auth">
-                <PremiumButton size="sm" className="w-full text-sm sm:w-auto">
-                  {tHero("ctaPrimary")}
-                </PremiumButton>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroCinematic />
 
 
       {/* BENEFITS - Why VerdeIQ */}
