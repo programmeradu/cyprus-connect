@@ -67,9 +67,6 @@ export function LearnLinksSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <span className="eyebrow">
-            {copy.eyebrow}
-          </span>
           <h2 className="text-2xl md:text-3xl font-bold mt-3 mb-3 tracking-tight">
             {copy.title}
           </h2>
@@ -102,9 +99,6 @@ export function LearnLinksSection() {
                   <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
                 </div>
                 <div className="p-4">
-                  <div className="eyebrow text-primary mb-2">
-                    {p.eyebrow}
-                  </div>
                   <h3 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
                     {p.title}
                   </h3>

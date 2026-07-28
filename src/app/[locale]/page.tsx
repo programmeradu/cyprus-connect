@@ -288,9 +288,6 @@ export default function Home() {
 
       {/* INTEGRATIONS */}
       <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <div className="relative z-10 mb-8 text-center eyebrow">
-          {tL("integratedWith")}
-        </div>
         <ul className="relative z-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14 md:gap-x-16">
           {[
             { name: "QuickBooks", slug: "quickbooks" },
@@ -378,9 +375,6 @@ export default function Home() {
         />
 
         <div className="relative max-w-3xl">
-          <div className="mb-6 eyebrow">
-            {tL("trustedTitleA")} / {tL("trustedTitleB")}
-          </div>
           <blockquote className="font-[family-name:var(--editorial-serif)] text-2xl italic leading-snug tracking-tight text-foreground sm:text-4xl sm:leading-[1.15]">
             &ldquo;{tL("testimonialQuoteA")}{" "}
             <span className="not-italic">{tL("testimonialQuoteB")}</span>&rdquo;
@@ -481,9 +475,6 @@ function EditorialSection({
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
         <div className="sm:col-span-5">
-          <div className="eyebrow">
-            {eyebrow}
-          </div>
           <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2rem] leading-[1.05] tracking-[-0.02em] sm:text-[3rem]">
             {titleA}
             {titleMid && <> <span className="italic text-muted-foreground">{titleMid}</span></>}

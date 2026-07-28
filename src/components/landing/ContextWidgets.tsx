@@ -137,7 +137,7 @@ export function ContextWidgets() {
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
         <div className="sm:col-span-5">
-          <div className="eyebrow">{t.eyebrow}</div>
+          
           <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2rem] leading-[1.05] tracking-[-0.02em] sm:text-[3rem]">
             {t.titleA}
             <br />
@@ -156,9 +156,6 @@ export function ContextWidgets() {
                 01
               </span>
               <div className="min-w-0">
-                <div className="eyebrow">
-                  {t.gridLabel} · {region}
-                </div>
                 <div className="mt-3 flex items-baseline gap-3">
                   <span className="font-[family-name:var(--editorial-serif)] text-5xl tabular-nums leading-none tracking-tight sm:text-6xl">
                     {carbonValue ?? t.loading}
@@ -191,7 +188,7 @@ export function ContextWidgets() {
                 02
               </span>
               <div className="min-w-0">
-                <div className="eyebrow">{t.deadlineLabel}</div>
+                
                 <div className="mt-3 flex items-baseline gap-3">
                   <span className="font-[family-name:var(--editorial-serif)] text-5xl tabular-nums leading-none tracking-tight sm:text-6xl">
                     {daysAway ?? t.loading}
@@ -216,10 +213,6 @@ export function ContextWidgets() {
                 03
               </span>
               <div className="min-w-0">
-                <div className="eyebrow">
-                  {t.newsLabel}
-                  {newsDate && <> · {newsDate}</>}
-                </div>
                 {topNews ? (
                   <a
                     href={topNews.link}
