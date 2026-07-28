@@ -157,13 +157,8 @@ export default function Home() {
         <div className="relative mx-auto max-w-6xl px-4 pt-32 pb-20 sm:px-6 sm:pt-56 sm:pb-32">
           {/* Offset column - narrower, indented on desktop, deep top gap; no centered stack */}
           <div className="max-w-[36rem] sm:pl-6 md:pl-14 lg:pl-20">
-            {/* Signature marker replaces the eyebrow pill: hairline + numeric prefix */}
-            <div className="mb-10 flex items-center gap-4">
-              <span aria-hidden className="h-px w-14 bg-foreground/50" />
-              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-foreground/70">
-                00 / VerdeIQ
-              </span>
-            </div>
+
+
 
             <h1 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.4rem] sm:leading-[0.96]">
               {tHero("titleLine1")}
