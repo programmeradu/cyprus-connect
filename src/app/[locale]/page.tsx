@@ -157,13 +157,8 @@ export default function Home() {
         <div className="relative mx-auto max-w-6xl px-4 pt-32 pb-20 sm:px-6 sm:pt-56 sm:pb-32">
           {/* Offset column - narrower, indented on desktop, deep top gap; no centered stack */}
           <div className="max-w-[36rem] sm:pl-6 md:pl-14 lg:pl-20">
-            {/* Signature marker replaces the eyebrow pill: hairline + numeric prefix */}
-            <div className="mb-10 flex items-center gap-4">
-              <span aria-hidden className="h-px w-14 bg-foreground/50" />
-              <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-foreground/70">
-                00 / VerdeIQ
-              </span>
-            </div>
+
+
 
             <h1 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.02em] sm:text-[4.4rem] sm:leading-[0.96]">
               {tHero("titleLine1")}
@@ -203,7 +198,6 @@ export default function Home() {
 
       {/* BENEFITS - Why VerdeIQ */}
       <EditorialSection
-        eyebrow="01 / Why VerdeIQ"
         titleA={tL("whyTitleA")}
         subtitle={tL("whySubtitle")}
         media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
@@ -224,7 +218,6 @@ export default function Home() {
       {/* POWER - Platform Capabilities */}
       <div className="relative">
         <EditorialSection
-          eyebrow="02 / The Platform"
           titleA={tL("powerTitleA")}
           titleMid={tL("powerTitleMid")}
           titleB={tL("powerTitleB")}
@@ -248,7 +241,6 @@ export default function Home() {
       {/* ECOSYSTEM */}
       <div className="relative">
         <EditorialSection
-          eyebrow="03 / Ecosystem"
           titleA={tL("beyondTitleA")}
           titleB={tL("beyondTitleB")}
           subtitle={tL("beyondSubtitle")}
@@ -344,7 +336,6 @@ export default function Home() {
           className="pointer-events-none absolute -bottom-16 -left-10 z-10 hidden w-[320px] max-w-none rotate-[4deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-bottom-24 lg:-left-20 lg:w-[440px]"
         />
         <EditorialSection
-          eyebrow="04 / How it works"
           titleA={tL("howTitleA")}
           titleB={tL("howTitleB")}
           subtitle={tL("howSubtitle")}
@@ -455,7 +446,6 @@ function SectionDivider() {
 }
 
 function EditorialSection({
-  eyebrow,
   titleA,
   titleMid,
   titleB,
@@ -463,7 +453,6 @@ function EditorialSection({
   media,
   children,
 }: {
-  eyebrow: string;
   titleA: string;
   titleMid?: string;
   titleB?: string;
@@ -471,6 +460,7 @@ function EditorialSection({
   media?: { src: string; alt: string };
   children: React.ReactNode;
 }) {
+
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
