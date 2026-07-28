@@ -1,19 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+const TARGET = "https://verdeiq.stauniverse.tech/";
+
 /**
- * The production site is the Next.js app under src/app/[locale].
+ * The production site is the Next.js app deployed at verdeiq.stauniverse.tech.
  * This TanStack route only exists to satisfy the Lovable preview shell;
- * we redirect to the real deployed site.
+ * redirect immediately with no interstitial UI.
  */
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "VerdeIQ" },
+      { name: "description", content: "VerdeIQ — Cyprus-native sustainability platform for SMEs." },
+      { name: "robots", content: "noindex" },
+      { httpEquiv: "refresh", content: `0; url=${TARGET}` },
+    ],
+    links: [{ rel: "canonical", href: TARGET }],
+  }),
   beforeLoad: () => {
     if (typeof window !== "undefined") {
-      window.location.replace("https://verdeiq.stauniverse.tech/");
+      window.location.replace(TARGET);
     }
   },
-  component: () => (
-    <div style={{ minHeight: "60vh", display: "grid", placeItems: "center", padding: 32, fontFamily: "system-ui" }}>
-      <a href="https://verdeiq.stauniverse.tech/">Open VerdeIQ →</a>
-    </div>
-  ),
+  component: () => null,
 });
