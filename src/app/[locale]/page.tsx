@@ -446,8 +446,6 @@ function SectionDivider() {
 }
 
 function EditorialSection({
-  eyebrow,
-
   titleA,
   titleMid,
   titleB,
@@ -455,7 +453,6 @@ function EditorialSection({
   media,
   children,
 }: {
-  eyebrow: string;
   titleA: string;
   titleMid?: string;
   titleB?: string;
@@ -463,6 +460,7 @@ function EditorialSection({
   media?: { src: string; alt: string };
   children: React.ReactNode;
 }) {
+
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
