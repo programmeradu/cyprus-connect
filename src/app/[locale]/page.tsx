@@ -5,9 +5,7 @@ import { PremiumButton } from "@/components/ui/PremiumButton";
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { ContextWidgets } from "@/components/landing/ContextWidgets";
 import { Link } from "@/i18n/navigation";
-import { useSession, authClient } from "@/lib/auth-client";
-import { useRouter } from "@/i18n/navigation";
-import { toast } from "sonner";
+import { useSession } from "@/lib/auth-client";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
@@ -27,23 +25,8 @@ import accentWindCurrents from "@/assets/accent-wind-currents.png";
  * Mobile-first typography with serif display, numeric prefixes, slash separators.
  */
 export default function Home() {
-  const { data: session, isPending, refetch } = useSession();
-  const router = useRouter();
-  const tNav = useTranslations("nav");
-  const tHero = useTranslations("hero");
+  useSession();
   const tL = useTranslations("landing");
-
-  const handleSignOut = async () => {
-    const { error } = await authClient.signOut();
-    if (error?.code) {
-      toast.error(tNav("signOutError"));
-    } else {
-      localStorage.removeItem("bearer_token");
-      refetch();
-      toast.success(tNav("signOutSuccess"));
-      router.push("/");
-    }
-  };
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased">
