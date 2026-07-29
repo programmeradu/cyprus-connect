@@ -1,7 +1,7 @@
 "use client";
 
 
-import { PremiumButton } from "@/components/ui/PremiumButton";
+
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { ContextWidgets } from "@/components/landing/ContextWidgets";
 import { Link } from "@/i18n/navigation";
