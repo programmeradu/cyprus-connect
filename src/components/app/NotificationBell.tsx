@@ -129,7 +129,7 @@ export const NotificationBell = () => {
         await fetch(`/api/notifications/${notification.id}`, {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+ "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
           },
           body: JSON.stringify({ isRead: true }),
@@ -159,7 +159,7 @@ export const NotificationBell = () => {
       const response = await fetch("/api/notifications/mark-all-read", {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+ "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
         },
         body: JSON.stringify({ userId: session.user.id }),
@@ -280,7 +280,7 @@ export const NotificationBell = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] glass-strong rounded-lg shadow-premium overflow-hidden z-50"
+            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] app-overlay overflow-hidden z-50"
           >
             {/* Header */}
             <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">

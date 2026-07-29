@@ -205,7 +205,7 @@ export default function MarketplaceAdminPage() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-              Marketplace <span className="gradient-text">Admin</span>
+              Marketplace <span className="text-primary">Admin</span>
             </h1>
             <p className="text-xs text-muted-foreground font-light">
               Manage project badges, verification status, and banner images

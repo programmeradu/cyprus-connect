@@ -31,10 +31,10 @@ interface SMEData {
 // Vuneli is Cyprus-focused. The compliance checker covers Cyprus and the
 // wider EU/EEA where CSRD, VSME, EU Taxonomy, and CBAM apply.
 const WORLD_COUNTRIES = {
-  "Cyprus": [
+ "Cyprus": [
     { code: "CY", name: "Cyprus" },
   ],
-  "EU / EEA": [
+ "EU / EEA": [
     { code: "AT", name: "Austria" }, { code: "BE", name: "Belgium" }, { code: "BG", name: "Bulgaria" },
     { code: "HR", name: "Croatia" }, { code: "CZ", name: "Czech Republic" }, { code: "DK", name: "Denmark" },
     { code: "EE", name: "Estonia" }, { code: "FI", name: "Finland" }, { code: "FR", name: "France" },
@@ -138,7 +138,6 @@ export function ComplianceChecker() {
     return (
       <PremiumCard className="p-4 relative overflow-hidden">
         {/* Blurred preview background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-sm z-0" />
         
         <div className="relative z-10">
           <div className="mb-4">

@@ -252,7 +252,7 @@ export const BillingDashboard = () => {
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("currentPlan")}</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold gradient-text">
+                <span className="text-xl font-bold text-primary">
                   {(() => {
                     const pid = currentSubscription.planId;
                     if (pid === 'free' || pid === 'pro' || pid === 'enterprise') {
@@ -340,13 +340,13 @@ export const BillingDashboard = () => {
             <h3 className="text-sm font-medium mb-3">{t("purchaseSummary")}</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
-                <div className="text-xl font-bold gradient-text">
+                <div className="text-xl font-bold text-primary">
                   {billingData.purchases.credits.toLocaleString(locale)}
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-0.5">{t("creditsPurchased")}</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold gradient-text">
+                <div className="text-xl font-bold text-primary">
                   ${(billingData.purchases.totalSpent / 100).toFixed(2)}
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-0.5">{t("totalSpent")}</div>

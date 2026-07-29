@@ -42,9 +42,9 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+ "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "X-Stripe-Env": getStripeEnvironmentOrSandbox(),
+ "X-Stripe-Env": getStripeEnvironmentOrSandbox(),
         },
         body: JSON.stringify({ type: "subscription", planId, currency, locale }),
       });
@@ -139,7 +139,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
                 onClick={() => handleSubscribe(plan.id)}
                 disabled={isCurrentPlan || loading === plan.id}
                 className={[
-                  "inline-flex h-11 w-full items-center justify-center rounded-full px-6 text-[15px] font-semibold tracking-[-0.01em] transition-transform disabled:cursor-not-allowed disabled:opacity-55",
+ "inline-flex h-11 w-full items-center justify-center rounded-full px-6 text-[15px] font-semibold tracking-[-0.01em] transition-transform disabled:cursor-not-allowed disabled:opacity-55",
                   isPopular
                     ? "bg-[var(--accent-lime)] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] hover:scale-[1.02] disabled:hover:scale-100"
                     : "border border-foreground/25 text-foreground hover:border-foreground",

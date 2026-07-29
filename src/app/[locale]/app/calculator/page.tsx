@@ -138,12 +138,12 @@ RULES:
 Return ONLY valid JSON (no markdown, no explanations):
 [
   {
-    "title": "Specific action title (max 60 chars)",
-    "description": "Detailed description with savings estimate (max 200 chars)",
-    "category": "energy|waste|water|operations|transport",
-    "impact": "medium|high",
-    "points": 100-500,
-    "estimatedSavings": "X kg CO2e/year or X%"
+ "title": "Specific action title (max 60 chars)",
+ "description": "Detailed description with savings estimate (max 200 chars)",
+ "category": "energy|waste|water|operations|transport",
+ "impact": "medium|high",
+ "points": 100-500,
+ "estimatedSavings": "X kg CO2e/year or X%"
   }
 ]`;
 
@@ -415,8 +415,8 @@ Return ONLY valid JSON (no markdown, no explanations):
         await fetch("/api/dashboard/metrics", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             userId,
@@ -432,8 +432,8 @@ Return ONLY valid JSON (no markdown, no explanations):
       await fetch("/api/dashboard/historical", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           userId,
@@ -586,7 +586,7 @@ Return ONLY valid JSON (no markdown, no explanations):
             {/* Document Upload Area */}
             <div className="relative">
               <div 
-                className="border-2 border-dashed border-primary/30 rounded-xl p-12 bg-gradient-to-br from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all cursor-pointer group"
+                className="border-2 border-dashed border-primary/30 rounded-xl p-12 bg-primary/8 hover:from-primary/10 hover:to-primary/15 transition-all cursor-pointer group"
                 onClick={() => setShowDocumentUploader(true)}
               >
                 <div className="flex flex-col items-center text-center gap-6">
@@ -810,7 +810,7 @@ Return ONLY valid JSON (no markdown, no explanations):
 
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             {/* Total Emissions */}
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-xl border border-primary/20">
+            <div className="bg-primary/8 p-6 rounded-xl border border-primary/20">
               <h3 className="font-medium mb-3 text-sm flex items-center gap-2">
                 <CarbonIcon className="w-4 h-4 text-primary" />
                 {t("results.totalTitle")}

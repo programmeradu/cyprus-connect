@@ -155,7 +155,7 @@ export default function LeaderboardPage() {
                 <div className={`w-12 h-12 mx-auto rounded-md flex items-center justify-center mb-2 border ${
                   position === 1 ? "bg-primary/15 border-primary/40 text-primary" :
                   position === 2 ? "bg-muted border-foreground/20 text-foreground" :
-                  "bg-muted/60 border-foreground/15 text-foreground/70"
+ "bg-muted/60 border-foreground/15 text-foreground/70"
                 }`}>
                   <span className="text-lg font-semibold tabular-nums" style={{ fontFamily: 'var(--editorial-display)' }}>{String(position).padStart(2, '0')}</span>
                 </div>

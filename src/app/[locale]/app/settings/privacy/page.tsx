@@ -13,17 +13,17 @@ const COPY = {
   en: {
     title: "Privacy & data",
     subtitle:
-      "Manage your personal data under the EU General Data Protection Regulation (GDPR) and the Cyprus Data Protection Law.",
+ "Manage your personal data under the EU General Data Protection Regulation (GDPR) and the Cyprus Data Protection Law.",
     exportTitle: "Export your data",
     exportBody:
-      "Download a JSON file containing your Vuneli profile and preferences. Corresponds to your GDPR right of access (Art. 15) and portability (Art. 20).",
+ "Download a JSON file containing your Vuneli profile and preferences. Corresponds to your GDPR right of access (Art. 15) and portability (Art. 20).",
     exportCta: "Download my data",
     exporting: "Preparing export…",
     exportOk: "Export downloaded",
     exportErr: "Could not export data",
     deleteTitle: "Delete your account",
     deleteBody:
-      "This permanently deletes your account and associated records. Invoices are retained for 7 years to meet Cyprus tax law; encrypted backups are pruned within 12 months. This action cannot be undone.",
+ "This permanently deletes your account and associated records. Invoices are retained for 7 years to meet Cyprus tax law; encrypted backups are pruned within 12 months. This action cannot be undone.",
     deleteCta: "Delete my account",
     deleting: "Deleting…",
     confirmTitle: "Type DELETE to confirm",
@@ -41,17 +41,17 @@ const COPY = {
   el: {
     title: "Απόρρητο & δεδομένα",
     subtitle:
-      "Διαχειριστείτε τα προσωπικά σας δεδομένα βάσει του GDPR και του Κυπριακού Νόμου Προστασίας Δεδομένων.",
+ "Διαχειριστείτε τα προσωπικά σας δεδομένα βάσει του GDPR και του Κυπριακού Νόμου Προστασίας Δεδομένων.",
     exportTitle: "Εξαγωγή δεδομένων",
     exportBody:
-      "Κατεβάστε ένα αρχείο JSON με το προφίλ και τις προτιμήσεις σας στο Vuneli. Αντιστοιχεί στο δικαίωμα πρόσβασης (Άρ. 15) και φορητότητας (Άρ. 20) του GDPR.",
+ "Κατεβάστε ένα αρχείο JSON με το προφίλ και τις προτιμήσεις σας στο Vuneli. Αντιστοιχεί στο δικαίωμα πρόσβασης (Άρ. 15) και φορητότητας (Άρ. 20) του GDPR.",
     exportCta: "Λήψη των δεδομένων μου",
     exporting: "Προετοιμασία εξαγωγής…",
     exportOk: "Η εξαγωγή κατέβηκε",
     exportErr: "Αποτυχία εξαγωγής",
     deleteTitle: "Διαγραφή λογαριασμού",
     deleteBody:
-      "Διαγράφει οριστικά τον λογαριασμό και τα σχετικά αρχεία. Τα τιμολόγια διατηρούνται 7 έτη για φορολογικούς λόγους· τα κρυπτογραφημένα αντίγραφα εκκαθαρίζονται εντός 12 μηνών. Η ενέργεια είναι μη αναστρέψιμη.",
+ "Διαγράφει οριστικά τον λογαριασμό και τα σχετικά αρχεία. Τα τιμολόγια διατηρούνται 7 έτη για φορολογικούς λόγους· τα κρυπτογραφημένα αντίγραφα εκκαθαρίζονται εντός 12 μηνών. Η ενέργεια είναι μη αναστρέψιμη.",
     deleteCta: "Διαγραφή λογαριασμού",
     deleting: "Διαγραφή…",
     confirmTitle: "Πληκτρολογήστε DELETE για επιβεβαίωση",

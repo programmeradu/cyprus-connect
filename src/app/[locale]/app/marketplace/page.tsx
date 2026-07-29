@@ -165,7 +165,7 @@ export default function MarketplacePage() {
       >
         <div>
           <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-            {t("titleA")} <span className="gradient-text">{t("titleB")}</span>
+            {t("titleA")} <span className="text-primary">{t("titleB")}</span>
           </h1>
           <p className="text-xs text-muted-foreground font-light">
             {t("subtitle")}
@@ -276,7 +276,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
             </>
           ) : (
             <>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
+              <div className="absolute inset-0 bg-muted" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent)]" />
             </>
           )}

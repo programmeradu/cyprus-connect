@@ -133,7 +133,7 @@ export default function OnboardingPage() {
         const response = await fetch(`/api/users?id=${existingUser.id}`, {
           method: "PUT",
           headers: { 
-            "Content-Type": "application/json",
+ "Content-Type": "application/json",
             ...(token && { "Authorization": `Bearer ${token}` })
           },
           body: JSON.stringify({
@@ -158,7 +158,7 @@ export default function OnboardingPage() {
         const response = await fetch("/api/users", {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json",
+ "Content-Type": "application/json",
             ...(token && { "Authorization": `Bearer ${token}` })
           },
           body: JSON.stringify({
@@ -183,7 +183,7 @@ export default function OnboardingPage() {
         const updateResponse = await fetch(`/api/users?id=${userData.id}`, {
           method: "PUT",
           headers: { 
-            "Content-Type": "application/json",
+ "Content-Type": "application/json",
             ...(token && { "Authorization": `Bearer ${token}` })
           },
           body: JSON.stringify({
@@ -243,7 +243,7 @@ export default function OnboardingPage() {
   // Show loading state while fetching session data
   if (isLoadingUserData || isSessionLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+      <div className="min-h-screen app-page flex items-center justify-center p-4">
         <div className="surface-card p-8 text-center">
           <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
           <p className="text-sm text-muted-foreground">{t("loading")}</p>
@@ -257,7 +257,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+    <div className="min-h-screen app-page flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
         <AnimatePresence mode="wait">
           {/* Step 1: Welcome */}

@@ -161,7 +161,6 @@ export function EnergyCostCalculator() {
     return (
       <PremiumCard className="p-4 relative overflow-hidden">
         {/* Blurred preview background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-sm z-0" />
         
         <div className="relative z-10">
           <div className="mb-4">
@@ -177,11 +176,11 @@ export function EnergyCostCalculator() {
           {/* Preview content (dimmed) */}
           <div className="opacity-40 space-y-3 mb-6">
             <div className="grid grid-cols-2 gap-2">
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
+              <div className="p-2.5 rounded-lg bg-primary/8 border border-primary/20">
                 <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("spotPrice")}</p>
                 <p className="text-base font-bold">€••• <span className="text-[10px] font-normal">/MWh</span></p>
               </div>
-              <div className="p-2.5 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20">
+              <div className="p-2.5 rounded-lg bg-primary/8 border border-green-500/20">
                 <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("carbonIntensity")}</p>
                 <p className="text-base font-bold">••• <span className="text-[10px] font-normal">gCO₂/kWh</span></p>
               </div>
@@ -257,7 +256,7 @@ export function EnergyCostCalculator() {
       {/* Real-time Energy Data */}
       <div className="grid grid-cols-2 gap-2 mb-4">
         <motion.div
-          className="p-2.5 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20"
+          className="p-2.5 rounded-lg bg-primary/8 border border-primary/20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -272,7 +271,7 @@ export function EnergyCostCalculator() {
         </motion.div>
 
         <motion.div
-          className="p-2.5 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20"
+          className="p-2.5 rounded-lg bg-primary/8 border border-green-500/20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -338,7 +337,7 @@ export function EnergyCostCalculator() {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-2"
         >
-          <div className="p-3 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20">
+          <div className="p-3 rounded-lg bg-primary/8 border border-green-500/20">
             <p className="text-[9px] text-muted-foreground mb-0.5">{t("annualSavings")}</p>
             <p className="text-xl font-bold text-green-600">
               {formatAmount(savings.annualSavings)}

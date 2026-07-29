@@ -232,7 +232,7 @@ export default function LessonViewerPage() {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Content-Type": "application/json"
         },
         body: JSON.stringify({
           userId: session.user.id,
@@ -352,7 +352,7 @@ export default function LessonViewerPage() {
       </div>
 
       <div className="max-w-4xl mx-auto">
-        <div className="surface-card p-8 md:p-12 shadow-premium relative overflow-hidden">
+        <div className="surface-card p-8 md:p-12  relative overflow-hidden">
           {/* Decorative background gradient */}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
           

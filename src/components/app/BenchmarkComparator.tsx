@@ -159,7 +159,6 @@ export function BenchmarkComparator() {
     return (
       <PremiumCard className="p-4 relative overflow-hidden">
         {/* Blurred preview background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 backdrop-blur-sm z-0" />
         
         <div className="relative z-10">
           <div className="mb-4">

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
 interface BadgeProps {
@@ -10,33 +9,37 @@ interface BadgeProps {
   className?: string;
 }
 
+/**
+ * Workspace tag. Rectangular, bordered, 4px radius — never a rounded-full pill.
+ * Tone is carried by the border and the text colour, not by a filled wash.
+ */
 export const Badge = ({
   children,
   variant = "primary",
   size = "md",
   className = ""
 }: BadgeProps) => {
-  const variantClasses = {
-    primary: "bg-primary/10 text-primary border-primary/20",
-    secondary: "bg-secondary text-secondary-foreground border-border",
-    success: "bg-chart-2/10 text-chart-2 border-chart-2/20",
-    warning: "bg-chart-4/10 text-chart-4 border-chart-4/20",
-    danger: "bg-destructive/10 text-destructive border-destructive/20",
-    outline: "bg-transparent text-foreground border-border"
+  const tone: Record<string, string | undefined> = {
+    primary: "positive",
+    success: "positive",
+    warning: "caution",
+    danger: "critical",
+    secondary: undefined,
+    outline: undefined
   };
 
   const sizeClasses = {
-    sm: "text-[9px] px-1.5 py-0.5",
-    md: "text-[10px] px-2 py-1",
-    lg: "text-xs px-2.5 py-1"
+    sm: "text-xs px-1.5 py-0.5",
+    md: "text-xs px-2 py-0.5",
+    lg: "text-[0.8125rem] px-2.5 py-1"
   };
 
   return (
-    <motion.span
-      className={`inline-flex items-center gap-1 rounded-[4px] border font-medium ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      transition={{ duration: 0.2 }}
+    <span
+      className={`app-tag ${sizeClasses[size]} ${className}`}
+      data-tone={tone[variant]}
     >
       {children}
-    </motion.span>
+    </span>
   );
 };

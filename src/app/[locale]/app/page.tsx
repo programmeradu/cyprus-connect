@@ -151,8 +151,8 @@ export default function DashboardPage() {
     try {
       const token = localStorage.getItem("bearer_token");
       const headers = {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
       };
 
       await Promise.all([

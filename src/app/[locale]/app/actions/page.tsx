@@ -250,13 +250,13 @@ Return ONLY valid JSON (no markdown, no explanations):
 OR
 [
   {
-    "title": "Unique action title (max 60 chars, DIFFERENT from existing)",
-    "description": "Detailed description (max 200 chars)",
-    "impact": "medium|high",
-    "category": "energy|waste|water|operations",
-    "points": 100-500,
-    "iconName": "bolt|fire|water|leaf|recycle|target|bulb",
-    "estimatedSavings": "e.g., 500 kg CO2/year"
+ "title": "Unique action title (max 60 chars, DIFFERENT from existing)",
+ "description": "Detailed description (max 200 chars)",
+ "impact": "medium|high",
+ "category": "energy|waste|water|operations",
+ "points": 100-500,
+ "iconName": "bolt|fire|water|leaf|recycle|target|bulb",
+ "estimatedSavings": "e.g., 500 kg CO2/year"
   }
 ]`,
           context: analysisData
@@ -478,7 +478,7 @@ OR
         <button
           onClick={generateAIActions}
           disabled={isGenerating || !user}
-          className="glass-strong rounded-lg px-3 py-1.5 border border-primary/30 hover:border-primary/60 transition-all-smooth group disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="app-card px-3 py-1.5 border border-primary/30 hover:border-primary/60 transition-all-smooth group disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <AIGenerateIcon className="w-3.5 h-3.5 text-primary flex-shrink-0" />
           <span className="text-xs font-medium whitespace-nowrap">
