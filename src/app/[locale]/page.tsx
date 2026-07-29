@@ -297,12 +297,15 @@ export default function Home() {
           <p className="mt-7 max-w-xl font-[family-name:var(--editorial-serif)] text-[20px] italic leading-[1.45] text-foreground/75 sm:text-[24px]">
             {tL("ctaSubtitle")}
           </p>
-          <div className="mt-12 flex flex-wrap items-baseline gap-x-7 gap-y-3">
-            <Link href="/auth">
-              <PremiumButton size="sm" className="text-[13.5px]">
-                {tL("ctaStart")}
-              </PremiumButton>
+          <div className="mt-12 flex flex-wrap items-center gap-x-7 gap-y-3">
+            <Link
+              href="/auth"
+              className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-6 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
+              style={{ fontFamily: "var(--editorial-display)" }}
+            >
+              {tL("ctaStart")}
             </Link>
+
             <Link
               href="/pricing"
               className="text-[15px] font-medium text-foreground/75 underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:text-foreground hover:decoration-foreground/70"
