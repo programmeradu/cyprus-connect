@@ -57,8 +57,10 @@ export function HeroCinematic() {
         <div className="absolute inset-0 hidden bg-gradient-to-r from-black/65 via-black/25 to-transparent md:block" />
         {/* Mobile: full darken to keep the giant type legible */}
         <div className="absolute inset-0 bg-black/45 md:hidden" />
-        {/* Bottom fade into next section — stays in-theme so the seam disappears */}
-        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-transparent via-background/70 to-background" />
+        {/* Bottom seam into next section — short and subtle so light mode
+            never gets a chalky white wash across the photo */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-background" />
+
         {/* Grain */}
         <div
           aria-hidden
