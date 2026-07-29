@@ -338,16 +338,18 @@ export function SiteFooter() {
       </div>
 
 
-      {/* Bottom bar */}
+      {/* Bottom bar — stacks on mobile, with clearance for the floating assistant */}
       <div className="border-t border-white/12">
         <div
-          className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-[12.5px] text-white/55 sm:px-10"
+          className="mx-auto flex max-w-7xl flex-col gap-4 px-6 pb-24 pt-6 text-[12.5px] leading-relaxed text-white/55 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-10 sm:pb-6"
           style={{ fontFamily: "var(--editorial-sans)" }}
         >
-          <span>© {year} Verde IQ · {t.rights}</span>
-          <div className="flex items-center gap-5">
-            <span className="hidden sm:inline">{t.made}</span>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+            <span>© {year} Vuneli · {t.rights}</span>
             <span aria-hidden className="hidden h-3 w-px bg-white/20 sm:inline-block" />
+            <span>{t.made}</span>
+          </div>
+          <div className="flex items-center gap-5">
             <a href="https://www.linkedin.com/company/vuneli" target="_blank" rel="noopener noreferrer" className="hover:text-white" aria-label="LinkedIn">
               LinkedIn
             </a>
