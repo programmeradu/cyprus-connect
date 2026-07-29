@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth-client";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { IntegrationsMarquee } from "@/components/marketing/IntegrationsMarquee";
 import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
 import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
@@ -148,46 +149,8 @@ export default function Home() {
 
 
       {/* INTEGRATIONS */}
-      <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <ul className="relative z-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-6 sm:gap-x-14 md:gap-x-16">
-          {[
-            { name: "QuickBooks", slug: "quickbooks" },
-            { name: "Xero", slug: "xero" },
-            { name: "ClimateTRACE", slug: null },
-            { name: "ElectricityMaps", slug: null },
-            { name: "Gemini", slug: "googlegemini" },
-            { name: "OpenEI", slug: null },
-            { name: "WikiRate", slug: null },
-            { name: "Google Cloud", slug: "googlecloud" },
-          ].map(({ name, slug }) => (
-            <li
-              key={name}
-              className="flex h-10 shrink-0 items-center justify-center"
-            >
-              {slug ? (
-                <>
-                  <img
-                    src={`https://cdn.simpleicons.org/${slug}/000000`}
-                    alt={name}
-                    className="h-7 w-auto opacity-70 transition-opacity hover:opacity-100 dark:hidden"
-                    loading="lazy"
-                  />
-                  <img
-                    src={`https://cdn.simpleicons.org/${slug}/ffffff`}
-                    alt={name}
-                    className="hidden h-7 w-auto opacity-70 transition-opacity hover:opacity-100 dark:block"
-                    loading="lazy"
-                  />
-                </>
-              ) : (
-                <span className="text-xl font-semibold tracking-tight text-foreground/80 sm:text-2xl">
-                  {name}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <IntegrationsMarquee />
+
 
 
       <SectionDivider />
