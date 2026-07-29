@@ -1,101 +1,90 @@
 "use client";
 
 /**
- * Continuous horizontal marquee of real integration logos.
- * Cyprus marks use official logo assets served from /public/integrations
- * so they render identically on localhost, preview, and published domains.
+ * Real integration logos, served by Logo.dev.
+ * No card containers — logos sit directly on the section background.
+ * Light and dark variants are served via Logo.dev's `theme` param and
+ * swapped with Tailwind `dark:` visibility classes so each mode gets the
+ * right colorway (dark logos on light, light logos on dark).
  */
+
+const LOGO_TOKEN =
+  (process.env.NEXT_PUBLIC_LOGO_DEV_KEY as string | undefined) ?? "";
+
+function logoUrl(domain: string, theme: "light" | "dark") {
+  // `theme=light` returns dark marks (for light backgrounds); `theme=dark`
+  // returns light marks (for dark backgrounds). retina=true for crispness.
+  const params = new URLSearchParams({
+    token: LOGO_TOKEN,
+    theme,
+    retina: "true",
+    format: "png",
+  });
+  return `https://img.logo.dev/${domain}?${params.toString()}`;
+}
+
 type Mark = {
   name: string;
-  /** Simple Icons slug for monochrome vector logos. */
-  simpleIcon?: string;
-  logo?: string;
-  logoClassName?: string;
+  domain: string;
+  /** Optional width class per logo so wordmarks and monograms sit balanced. */
+  widthClass?: string;
 };
 
 const CYPRUS_MARKS: Mark[] = [
-  { name: "EAC", logo: "/integrations/eac-logo.png", logoClassName: "h-12 w-8" },
-  { name: "JCC", logo: "/integrations/jcc-logo.svg", logoClassName: "h-8 w-20" },
-  { name: "SoftOne", logo: "/integrations/softone-logo.png", logoClassName: "h-7 w-28" },
-  { name: "CY Login", logo: "/integrations/cylogin-coat.png", logoClassName: "h-9 w-9" },
-  { name: "Registrar", logo: "/integrations/registrar-logo.svg", logoClassName: "h-9 w-40" },
-  { name: "TAXISnet", logo: "/integrations/taxisnet-title.gif", logoClassName: "h-7 w-40" },
-  { name: "Ariadni", logo: "/integrations/ariadni-logo.png", logoClassName: "h-8 w-28" },
-  { name: "CyStat", logo: "/integrations/cystat-logo.png", logoClassName: "h-8 w-28" },
+  { name: "EAC", domain: "eac.com.cy", widthClass: "w-24" },
+  { name: "JCC", domain: "jcc.com.cy", widthClass: "w-24" },
+  { name: "SoftOne", domain: "softone.com.cy", widthClass: "w-28" },
+  { name: "gov.cy", domain: "gov.cy", widthClass: "w-24" },
+  { name: "Registrar of Companies", domain: "companies.gov.cy", widthClass: "w-32" },
+  { name: "TAXISnet", domain: "mof.gov.cy", widthClass: "w-28" },
+  { name: "Ariadni", domain: "ariadni.gov.cy", widthClass: "w-28" },
+  { name: "CyStat", domain: "cystat.gov.cy", widthClass: "w-28" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
-  { name: "QuickBooks",     simpleIcon: "quickbooks" },
-  { name: "Xero",           simpleIcon: "xero" },
-  { name: "Gemini",         simpleIcon: "googlegemini" },
-  { name: "Google Cloud",   simpleIcon: "googlecloud" },
-  { name: "Climate TRACE", logo: "/integrations/climatetrace-logo.png", logoClassName: "h-8 w-28" },
-  { name: "Electricity Maps", logo: "/integrations/electricitymaps-logo.svg", logoClassName: "h-7 w-36" },
-  { name: "OpenEI", logo: "/integrations/openei-logo.svg", logoClassName: "h-8 w-28" },
-  { name: "WikiRate", logo: "/integrations/wikirate-logo.svg", logoClassName: "h-8 w-28" },
+  { name: "QuickBooks", domain: "quickbooks.intuit.com", widthClass: "w-28" },
+  { name: "Xero", domain: "xero.com", widthClass: "w-20" },
+  { name: "Google Gemini", domain: "gemini.google.com", widthClass: "w-24" },
+  { name: "Google Cloud", domain: "cloud.google.com", widthClass: "w-28" },
+  { name: "Climate TRACE", domain: "climatetrace.org", widthClass: "w-32" },
+  { name: "Electricity Maps", domain: "electricitymaps.com", widthClass: "w-32" },
+  { name: "OpenEI", domain: "openei.org", widthClass: "w-24" },
+  { name: "WikiRate", domain: "wikirate.org", widthClass: "w-28" },
 ];
 
-function LogoImage({ mark, dark }: { mark: Mark; dark?: boolean }) {
-  if (mark.logo) {
-    return (
-      <img
-        src={mark.logo}
-        alt={`${mark.name} logo`}
-        loading="eager"
-        fetchPriority="low"
-        className={`object-contain ${mark.logoClassName ?? "h-8 w-28"}`}
-      />
-    );
-  }
-
-  if (mark.simpleIcon) {
-    const color = dark ? "ffffff" : "000000";
-    return (
-      <img
-        src={`https://cdn.simpleicons.org/${mark.simpleIcon}/${color}`}
-        alt={`${mark.name} logo`}
-        loading="eager"
-        fetchPriority="low"
-        className="h-8 w-20 object-contain opacity-80"
-      />
-    );
-  }
-
-  return null;
-}
-
-function Entry({ mark, dark }: { mark: Mark; dark?: boolean }) {
-  const hasOfficialLogo = Boolean(mark.logo);
+function Logo({ mark }: { mark: Mark }) {
+  const width = mark.widthClass ?? "w-24";
   return (
-    <div className="flex items-center" title={mark.name}>
-      <span
-        className={
-          hasOfficialLogo
-            ? "flex h-16 min-w-32 items-center justify-center rounded-md border border-border/50 bg-card/85 px-5 shadow-sm sm:min-w-40"
-            : "flex h-16 min-w-28 items-center justify-center rounded-md border border-border/40 bg-card/60 px-5 shadow-sm sm:min-w-32"
-        }
-      >
-        <LogoImage mark={mark} dark={dark} />
-      </span>
-      <span className="sr-only">{mark.name}</span>
+    <div
+      className="flex h-10 items-center justify-center"
+      title={mark.name}
+    >
+      {/* Light mode: dark logos */}
+      <img
+        src={logoUrl(mark.domain, "light")}
+        alt={`${mark.name} logo`}
+        loading="lazy"
+        className={`block h-full ${width} object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 dark:hidden`}
+      />
+      {/* Dark mode: light logos */}
+      <img
+        src={logoUrl(mark.domain, "dark")}
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        className={`hidden h-full ${width} object-contain opacity-60 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 dark:block`}
+      />
     </div>
   );
 }
 
 function Row({ marks }: { marks: Mark[] }) {
   return (
-    <>
-      <div className="flex flex-wrap justify-center gap-3 sm:gap-4 dark:hidden">
-        {marks.map((m) => (
-          <Entry key={m.name} mark={m} dark={false} />
-        ))}
-      </div>
-      <div className="hidden flex-wrap justify-center gap-3 sm:gap-4 dark:flex">
-        {marks.map((m) => (
-          <Entry key={`${m.name}-d`} mark={m} dark />
-        ))}
-      </div>
-    </>
+    <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 sm:gap-x-14">
+      {marks.map((m) => (
+        <Logo key={m.name} mark={m} />
+      ))}
+    </div>
   );
 }
 
@@ -103,9 +92,9 @@ export function IntegrationsMarquee() {
   return (
     <section
       aria-labelledby="integrations-heading"
-      className="relative border-y border-border/60 bg-background/40 py-14 sm:py-20"
+      className="relative py-20 sm:py-28"
     >
-      <div className="mx-auto mb-10 max-w-6xl px-4 sm:mb-14 sm:px-6">
+      <div className="mx-auto mb-14 max-w-6xl px-4 sm:mb-20 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2
             id="integrations-heading"
@@ -119,7 +108,7 @@ export function IntegrationsMarquee() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 sm:gap-5 sm:px-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:gap-16 sm:px-6">
         <Row marks={CYPRUS_MARKS} />
         <Row marks={GLOBAL_MARKS} />
       </div>
