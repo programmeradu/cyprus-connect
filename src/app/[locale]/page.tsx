@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth-client";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { IntegrationsMarquee } from "@/components/marketing/IntegrationsMarquee";
 import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
 import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
