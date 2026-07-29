@@ -830,22 +830,29 @@ nextjs-portal {
 }
 
 /* News ticker marquee. Defined globally because styled-jsx scopes @keyframes
-   names, which broke the animation when referenced from a utility class. */
+   names, which broke the animation when referenced from a utility class.
+   The shift distance is the measured width of one copy of the list (plus the
+   gap), so the loop is seamless whatever the headline lengths are. */
 @keyframes vuneli-ticker {
   from {
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(calc(-1 * var(--viq-ticker-shift, 50%)), 0, 0);
   }
 }
 .vuneli-ticker-track {
-  animation: vuneli-ticker 64s linear infinite;
+  animation: vuneli-ticker var(--viq-ticker-duration, 64s) linear infinite;
   will-change: transform;
   transform: translate3d(0, 0, 0);
+}
+.vuneli-ticker-track:hover,
+.vuneli-ticker-track:focus-within {
+  animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
   .vuneli-ticker-track {
     animation: none;
   }
 }
+
