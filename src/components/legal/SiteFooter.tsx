@@ -339,22 +339,6 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Colossal wordmark band */}
-      <div aria-hidden className="relative overflow-hidden border-t border-white/12">
-        <div
-          className="mx-auto max-w-[100rem] px-6 pt-10 pb-2 text-center sm:px-10"
-          style={{
-            fontFamily: "var(--editorial-display)",
-            fontWeight: 400,
-            letterSpacing: "-0.045em",
-            lineHeight: 0.85,
-            fontSize: "clamp(4.5rem, 18vw, 17rem)",
-            color: "color-mix(in oklab, var(--accent-lime) 22%, transparent)",
-          }}
-        >
-          Verde<em className="italic" style={{ color: "color-mix(in oklab, var(--accent-lime) 45%, transparent)" }}>IQ</em>
-        </div>
-      </div>
 
       {/* Bottom bar */}
       <div className="border-t border-white/12">
