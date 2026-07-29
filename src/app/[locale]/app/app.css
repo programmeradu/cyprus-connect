@@ -1,0 +1,233 @@
+/* ============================================================
+   Vuneli Workspace stylesheet — /app only.
+   Scoped entirely under `.viq-app`, which the app layout sets on
+   its root element. Nothing here can leak into the marketing site,
+   and marketing-only treatments (hero scrims, ticker, article
+   typography) are not needed here.
+
+   Doctrine: flat opaque surfaces, hairline rules, value-based depth.
+   No glassmorphism, no gradients, no neumorphic shadows.
+   ============================================================ */
+
+.viq-app {
+  /* ---- Light workspace: warm paper, not tinted green ---- */
+  --app-surface-0: oklch(0.985 0.002 120); /* page */
+  --app-surface-1: oklch(1 0 0);           /* card */
+  --app-surface-2: oklch(0.972 0.003 120); /* inset / table stripe */
+  --app-surface-3: oklch(0.955 0.004 120); /* hover */
+  --app-rule: color-mix(in oklab, var(--foreground) 12%, transparent);
+  --app-rule-strong: color-mix(in oklab, var(--foreground) 22%, transparent);
+  --app-chrome: oklch(0.975 0.003 120);    /* sidebar / header */
+
+  background: var(--app-surface-0);
+  color: var(--foreground);
+  font-family: var(--editorial-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+.dark .viq-app {
+  /* ---- ChatGPT grey: a true neutral ramp, zero chroma ----
+     Surfaces step by value only. 0.185 chrome, 0.24 page,
+     0.27 card, 0.30 inset, 0.33 hover. */
+  --app-surface-0: oklch(0.24 0 0);   /* #212121 page */
+  --app-surface-1: oklch(0.27 0 0);   /* #2a2a2a card */
+  --app-surface-2: oklch(0.30 0 0);   /* #303030 inset */
+  --app-surface-3: oklch(0.33 0 0);   /* #383838 hover */
+  --app-rule: oklch(0.34 0 0);
+  --app-rule-strong: oklch(0.42 0 0);
+  --app-chrome: oklch(0.185 0 0);     /* #171717 sidebar */
+}
+
+/* Headings inside the workspace stay on the editorial display face,
+   but tighter and smaller than marketing — this is dense UI. */
+.viq-app h1,
+.viq-app h2,
+.viq-app h3,
+.viq-app h4 {
+  font-family: var(--editorial-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.018em;
+  font-weight: 600;
+}
+
+.viq-app p,
+.viq-app li,
+.viq-app label,
+.viq-app input,
+.viq-app select,
+.viq-app textarea,
+.viq-app button,
+.viq-app table {
+  font-family: var(--editorial-sans);
+}
+
+/* ---------- Surfaces ---------- */
+
+.app-page {
+  background: var(--app-surface-0);
+}
+
+/* The workspace card: flat fill, 1px hairline, 8px radius, no shadow. */
+.app-card {
+  background: var(--app-surface-1);
+  border: 1px solid var(--app-rule);
+  border-radius: 0.5rem;
+}
+
+.app-card-inset {
+  background: var(--app-surface-2);
+  border: 1px solid var(--app-rule);
+  border-radius: 0.375rem;
+}
+
+/* Ledger: a card whose children are separated by hairlines, no gaps. */
+.app-ledger {
+  background: var(--app-surface-1);
+  border: 1px solid var(--app-rule);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.app-ledger > * + * {
+  border-top: 1px solid var(--app-rule);
+}
+
+.app-rule {
+  border-color: var(--app-rule);
+}
+
+/* True overlays keep depth — this is the ONLY place a shadow is allowed. */
+.app-overlay {
+  background: var(--popover);
+  border: 1px solid var(--app-rule-strong);
+  border-radius: 0.75rem;
+  box-shadow: 0 16px 48px -12px rgb(0 0 0 / 0.28);
+}
+
+/* ---------- Typography roles ---------- */
+
+/* Section label — replaces 9px uppercase wide-tracking microtype. */
+.app-label {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: color-mix(in oklab, var(--foreground) 68%, transparent);
+}
+
+.app-meta {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: color-mix(in oklab, var(--foreground) 66%, transparent);
+}
+
+.app-metric {
+  font-family: var(--editorial-display);
+  font-optical-sizing: auto;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.app-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Rectangular bordered tag — never a rounded-full pill. */
+.app-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid var(--app-rule-strong);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.4375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--foreground) 78%, transparent);
+  background: transparent;
+}
+.app-tag[data-tone="positive"] {
+  border-color: color-mix(in oklab, var(--primary) 45%, transparent);
+  color: var(--primary);
+}
+.app-tag[data-tone="caution"] {
+  border-color: color-mix(in oklab, var(--accent-oxidized) 45%, transparent);
+  color: var(--accent-oxidized);
+}
+.app-tag[data-tone="critical"] {
+  border-color: color-mix(in oklab, var(--destructive) 50%, transparent);
+  color: var(--destructive);
+}
+
+/* ---------- Controls ---------- */
+
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0 0.9375rem;
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid transparent;
+  transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+.app-btn:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--primary) 88%, black);
+}
+.app-btn:disabled {
+  opacity: 0.5;
+}
+
+.app-btn-ghost {
+  background: transparent;
+  color: var(--foreground);
+  border-color: var(--app-rule-strong);
+}
+.app-btn-ghost:hover:not(:disabled) {
+  background: var(--app-surface-3);
+}
+
+.viq-app input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.viq-app select,
+.viq-app textarea {
+  background: var(--app-surface-1);
+  border-color: var(--app-rule-strong);
+}
+
+.viq-app :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ---------- Legacy safety net ----------
+   Any glass/neumorphic class that survives inside the workspace is
+   flattened to the editorial surface rather than rendering blurred. */
+.viq-app .glass,
+.viq-app .glass-strong,
+.viq-app .neomorph,
+.viq-app .shadow-premium {
+  background: var(--app-surface-1);
+  backdrop-filter: none;
+  border: 1px solid var(--app-rule);
+  box-shadow: none;
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .viq-app *,
+  .viq-app *::before,
+  .viq-app *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
