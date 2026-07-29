@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import NextImage from "next/image";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Lesson {
   id: number;
@@ -69,7 +70,7 @@ export default function CourseDetailsPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isPending, router]);
 

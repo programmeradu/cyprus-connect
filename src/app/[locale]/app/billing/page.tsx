@@ -13,6 +13,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 export default function BillingPage() {
   const { data: session, isPending } = useSession();
@@ -24,7 +25,7 @@ export default function BillingPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push(`/auth?redirect=${encodeURIComponent('/app/billing')}`);
+      if (!APP_OPEN_ACCESS) router.push(`/auth?redirect=${encodeURIComponent('/app/billing')}`);
     }
   }, [session, isPending, router]);
 

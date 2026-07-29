@@ -16,6 +16,7 @@ import { Check, Cloud, Settings, FolderUp, Trophy, BarChart3, Loader2, ExternalL
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -63,7 +64,7 @@ export default function OnboardingPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isSessionLoading && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isSessionLoading, router]);
 
@@ -111,7 +112,7 @@ export default function OnboardingPage() {
   const handleComplete = async () => {
     if (!session?.user?.id) {
       toast.error(t("toasts.noSession"));
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
       return;
     }
 
