@@ -396,29 +396,7 @@ export default function AuthPage() {
                 </button>
               </form>
 
-              <p className="mt-[clamp(0.7rem,2vh,1.25rem)] text-[14px] font-medium text-foreground/65">
-                {mode === "login" ? t("noAccount") : t("haveAccount")}{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode(mode === "login" ? "register" : "login")}
-                  className="font-semibold text-foreground underline decoration-[var(--accent-lime)] decoration-2 underline-offset-4 transition-opacity hover:opacity-70"
-                  disabled={isLoading}
-                >
-                  {mode === "login" ? t("switchSignUp") : t("switchSignIn")}
-                </button>
-              </p>
 
-              <div className="mt-[clamp(0.7rem,2vh,1.25rem)] hidden flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/60 pt-[clamp(0.5rem,1.5vh,1rem)] text-[14px] [@media(min-height:640px)]:flex">
-                <span className="font-medium text-foreground/60">{t("demoQuestion")}</span>
-                <button
-                  type="button"
-                  onClick={handleDemoAccess}
-                  className="font-semibold text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                  disabled={isLoading}
-                >
-                  {t("demoTry")}
-                </button>
-              </div>
 
             </div>
           </div>
