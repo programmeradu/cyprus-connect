@@ -202,7 +202,7 @@ export function SiteFooter() {
           </div>
 
           {/* Newsletter card */}
-          <aside className="relative rounded-2xl border border-white/12 bg-white/[0.04] p-7 backdrop-blur-sm sm:p-9">
+          <aside className="relative rounded-2xl border border-white/12 bg-white/[0.04] p-6 backdrop-blur-sm sm:p-9">
             <p className={labelCls}>{t.grants}</p>
             <h3
               className="text-balance text-white"
@@ -223,7 +223,7 @@ export function SiteFooter() {
               {t.newsletterBody}
             </p>
             <form onSubmit={onSubmit} className="mt-6">
-              <div className="flex items-stretch overflow-hidden rounded-md border border-white/20 bg-white/[0.06] focus-within:border-white/50">
+              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:gap-0 sm:overflow-hidden sm:rounded-md sm:border sm:border-white/20 sm:bg-white/[0.06] sm:focus-within:border-white/50">
                 <input
                   type="email"
                   required
@@ -234,23 +234,21 @@ export function SiteFooter() {
                   }}
                   placeholder={t.emailPlaceholder}
                   aria-label={t.emailLabel}
-                  className="min-w-0 flex-1 bg-transparent px-4 py-3 text-[15px] text-white placeholder:text-white/40 focus:outline-none"
+                  className="min-w-0 flex-1 rounded-md border border-white/20 bg-white/[0.06] px-4 py-3 text-[15px] text-white placeholder:text-white/40 focus:outline-none sm:rounded-none sm:border-0 sm:bg-transparent"
                   style={{ fontFamily: "var(--editorial-sans)" }}
                 />
                 <button
                   type="submit"
                   disabled={state === "loading"}
-                  className="flex shrink-0 items-center gap-2 px-5 text-[13px] font-semibold uppercase tracking-[0.14em] transition-colors hover:brightness-95 disabled:opacity-60"
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-md px-5 py-3 text-[13px] font-semibold uppercase tracking-[0.14em] transition-colors hover:brightness-95 disabled:opacity-60 sm:rounded-none sm:py-0"
                   style={{
                     backgroundColor: "var(--accent-lime)",
                     color: "var(--accent-lime-foreground)",
                     fontFamily: "var(--editorial-sans)",
                   }}
                 >
-                  <span className="hidden sm:inline">
-                    {state === "loading" ? "…" : t.subscribe}
-                  </span>
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
+                  <span>{state === "loading" ? "…" : t.subscribe}</span>
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden className="shrink-0">
                     <path d="M3 10h13M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
                   </svg>
                 </button>
