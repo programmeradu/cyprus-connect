@@ -3,50 +3,49 @@
 type Mark = {
   name: string;
   file: string;
-  /** Per-logo width so wordmarks and monograms sit balanced without cards. */
-  widthClass?: string;
+  /** Per-logo optical size so wordmarks and monograms sit balanced without cards. */
+  sizeClass: string;
 };
 
 const CYPRUS_MARKS: Mark[] = [
-  { name: "Electricity Authority of Cyprus", file: "eac", widthClass: "w-20" },
-  { name: "JCC Payment Systems", file: "jcc", widthClass: "w-32" },
-  { name: "SoftOne", file: "softone", widthClass: "w-36" },
-  { name: "gov.cy", file: "govcy", widthClass: "w-24" },
-  { name: "Registrar of Companies", file: "companies", widthClass: "w-44" },
-  { name: "CyStat", file: "cystat", widthClass: "w-36" },
+  { name: "Electricity Authority of Cyprus", file: "eac", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "JCC Payment Systems", file: "jcc", sizeClass: "h-9 w-32 sm:h-10 sm:w-36" },
+  { name: "SoftOne", file: "softone", sizeClass: "h-12 w-40 sm:h-14 sm:w-44" },
+  { name: "gov.cy", file: "govcy", sizeClass: "h-14 w-24 sm:h-16" },
+  { name: "Registrar of Companies", file: "companies", sizeClass: "h-9 w-44 sm:h-10 sm:w-52" },
+  { name: "CyStat", file: "cystat", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
-  { name: "QuickBooks", file: "quickbooks", widthClass: "w-36" },
-  { name: "Xero", file: "xero", widthClass: "w-20" },
-  { name: "Stripe", file: "stripe", widthClass: "w-32" },
-  { name: "Climate TRACE", file: "climatetrace", widthClass: "w-20" },
-  { name: "Electricity Maps", file: "electricitymaps", widthClass: "w-20" },
-  { name: "WikiRate", file: "wikirate", widthClass: "w-36" },
+  { name: "QuickBooks", file: "quickbooks", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
+  { name: "Xero", file: "xero", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "Stripe", file: "stripe", sizeClass: "h-11 w-36 sm:h-12 sm:w-40" },
+  { name: "Climate TRACE", file: "climatetrace", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "Electricity Maps", file: "electricitymaps", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "WikiRate", file: "wikirate", sizeClass: "h-12 w-40 sm:h-14 sm:w-48" },
 ];
 
 function Logo({ mark }: { mark: Mark }) {
-  const width = mark.widthClass ?? "w-28";
   const lightSrc = `/integrations/${mark.file}-light.png`;
   const darkSrc = `/integrations/${mark.file}-dark.png`;
 
   return (
     <div
-      className="flex h-14 items-center justify-center sm:h-16"
+      className="flex h-16 w-full items-center justify-center sm:h-20"
       title={mark.name}
     >
       <img
         src={lightSrc}
         alt={`${mark.name} logo`}
         loading="lazy"
-        className={`block h-full ${width} object-contain opacity-75 transition duration-300 hover:opacity-100 dark:hidden`}
+        className={`block ${mark.sizeClass} object-contain opacity-85 transition duration-300 hover:opacity-100 dark:hidden`}
       />
       <img
         src={darkSrc}
         alt=""
         aria-hidden="true"
         loading="lazy"
-        className={`hidden h-full ${width} object-contain opacity-70 transition duration-300 hover:opacity-100 dark:block`}
+        className={`hidden ${mark.sizeClass} object-contain opacity-85 transition duration-300 hover:opacity-100 dark:block`}
       />
     </div>
   );
@@ -54,9 +53,9 @@ function Logo({ mark }: { mark: Mark }) {
 
 function Row({ marks }: { marks: Mark[] }) {
   return (
-    <div className="grid grid-cols-2 items-center gap-x-7 gap-y-10 sm:grid-cols-3 sm:gap-x-12 lg:grid-cols-6 lg:gap-x-8">
+    <div className="grid grid-cols-2 items-center justify-items-center gap-x-8 gap-y-9 sm:grid-cols-3 sm:gap-x-12 sm:gap-y-11 lg:grid-cols-6 lg:gap-x-7">
       {marks.map((m) => (
-        <div key={m.name} className="flex items-center justify-center">
+        <div key={m.name} className="flex min-w-0 items-center justify-center">
           <Logo mark={m} />
         </div>
       ))}
