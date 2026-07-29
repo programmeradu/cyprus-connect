@@ -67,7 +67,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`inline-flex h-11 items-center gap-0.5 rounded-full border border-foreground/15 bg-card/70 backdrop-blur p-1 ${className}`}
+      className={`inline-flex h-9 items-center gap-0.5 rounded-full bg-foreground/5 p-0.5 ${className}`}
       role="group"
       aria-label={t("label")}
     >
@@ -75,7 +75,6 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         const active = lng === locale;
         const FlagIcon = FLAGS[lng];
         return (
-
           <button
             key={lng}
             type="button"
@@ -83,18 +82,17 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
             disabled={isPending}
             aria-pressed={active}
             aria-label={t(lng)}
-            className={`inline-flex items-center gap-1.5 h-full text-[13px] font-semibold px-3 rounded-full transition-colors whitespace-nowrap ${
+            className={`inline-flex items-center gap-1.5 h-full text-[12px] font-semibold px-2.5 rounded-full transition-colors whitespace-nowrap ${
               active
-                ? "bg-foreground text-background"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-foreground/60 hover:text-foreground"
             }`}
           >
-            <FlagIcon className="h-3.5 w-[20px] rounded-[1px] shrink-0 pointer-events-none" />
+            <FlagIcon className="h-3 w-[18px] rounded-[1px] shrink-0 pointer-events-none" />
             {lng === "en" ? "EN" : "EL"}
           </button>
         );
       })}
-
     </div>
   );
 }
