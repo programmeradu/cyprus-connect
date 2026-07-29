@@ -73,10 +73,8 @@ export function MarketingHeader() {
       <div className="flex justify-center">
         <div
           className={[
-            "pointer-events-auto flex items-center gap-1 rounded-full border px-2 py-1.5 transition-all duration-300",
-            scrolled
-              ? "border-foreground/10 bg-background/70 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-2xl backdrop-saturate-150 [text-shadow:none]"
-              : "border-white/25 bg-white/10 shadow-[0_8px_30px_-16px_rgba(0,0,0,0.45)] backdrop-blur-2xl backdrop-saturate-200 dark:border-white/15 dark:bg-white/[0.06]",
+            "pointer-events-auto flex items-center gap-1 rounded-full px-2 py-1.5 transition-colors duration-300",
+            scrolled ? "bg-background/60 [text-shadow:none]" : "bg-transparent",
           ].join(" ")}
         >
           <nav className="hidden items-center md:flex">
