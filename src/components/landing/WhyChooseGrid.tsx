@@ -1,74 +1,55 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Sparkles, FileCheck2, Activity, Recycle } from "lucide-react";
+import heroDashboard from "@/assets/section-why-dashboard.jpg";
+import heroOlive from "@/assets/hero-04-olive-grove.jpg";
 
 /**
- * Why Choose Vuneli — editorial 4-tile grid.
- * Verified Nature aesthetic distilled from the 5-site audit:
- *  - Lifecycle: bracketed mono micro-labels, oxidized-red accent, ledger paper.
- *  - Envirogen: giant italic chapter numerals anchoring each tile.
- *  - Solaric / Emitra: hairline architectural grid + tabular ref metadata.
- *  - GreenX: mixed-weight editorial voice via Fraunces italic titles.
+ * Why Choose Vuneli — Emitra-style bento.
+ * Asymmetric 6-col grid: two large image feature tiles paired with two
+ * compact text tiles anchored by rounded-square icon marks.
  */
 export function WhyChooseGrid() {
   const t = useTranslations("landing");
 
-  const cards = [
+  const iconTiles = [
     {
-      numeral: "I",
-      slug: "ANALYTICS",
+      icon: Sparkles,
       kicker: t("benefitAiKicker"),
       title: t("benefitAiTitle"),
       body: t("benefitAiDesc"),
-      ref: "VN · 01 / ANALYTICS",
     },
     {
-      numeral: "II",
-      slug: "COMPLIANCE",
-      kicker: t("benefitReportKicker"),
-      title: t("benefitReportTitle"),
-      body: t("benefitReportDesc"),
-      ref: "VN · 02 / CSRD",
-    },
-    {
-      numeral: "III",
-      slug: "TELEMETRY",
+      icon: Activity,
       kicker: t("benefitMonitorKicker"),
       title: t("benefitMonitorTitle"),
       body: t("benefitMonitorDesc"),
-      ref: "VN · 03 / MONITORING",
-    },
-    {
-      numeral: "IV",
-      slug: "LIFECYCLE",
-      kicker: t("benefitLcaKicker"),
-      title: t("benefitLcaTitle"),
-      body: t("benefitLcaDesc"),
-      ref: "VN · 04 / LCA",
     },
   ];
 
   return (
     <section className="relative w-full py-24 px-6 sm:px-10 lg:px-12">
       <div className="mx-auto w-full max-w-6xl">
-        {/* Section header — bracketed mono eyebrow + Fraunces italic title */}
-        <div className="mb-16 flex flex-col justify-between gap-8 border-b border-border pb-10 md:flex-row md:items-end">
+        {/* Header */}
+        <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div className="max-w-2xl">
             <span
-              className="mb-5 block text-[11px] font-medium uppercase tracking-[0.22em]"
+              className="mb-4 block text-[11px] font-medium uppercase tracking-[0.22em]"
               style={{
                 fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
                 color: "var(--accent-oxidized)",
               }}
             >
-              [ THE VERIFIED NATURE STANDARD ]
+              [ WHY VUNELI ]
             </span>
             <h2
-              className="text-5xl leading-[0.95] tracking-tight text-foreground md:text-6xl lg:text-7xl"
-              style={{ fontFamily: "var(--editorial-display)", fontStyle: "italic" }}
+              className="text-5xl leading-[0.95] tracking-tight text-foreground md:text-6xl"
+              style={{ fontFamily: "var(--editorial-display)" }}
             >
               {t("whyTitleA")}{" "}
-              <span className="whitespace-nowrap">{t("whyTitleB")}.</span>
+              <em className="font-normal italic">{t("whyTitleB")}</em>.
             </h2>
           </div>
           <p className="max-w-sm text-base leading-relaxed text-muted-foreground md:text-right">
@@ -76,99 +57,134 @@ export function WhyChooseGrid() {
           </p>
         </div>
 
-        {/* 4-tile editorial grid — hairline architectural rails */}
-        <div className="grid grid-cols-1 border-l border-t border-border sm:grid-cols-2 lg:grid-cols-4">
-          {cards.map((c) => (
+        {/* Bento — 6-col asymmetric */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:auto-rows-[minmax(220px,auto)]">
+          {/* A — big feature: dashboard image, spans 4 cols x 2 rows */}
+          <article className="group relative overflow-hidden rounded-3xl border border-border md:col-span-4 md:row-span-2">
+            <Image
+              src={heroDashboard}
+              alt=""
+              fill
+              sizes="(min-width: 768px) 66vw, 100vw"
+              className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
+              placeholder="blur"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+            <div className="relative flex h-full min-h-[460px] flex-col justify-end p-8 lg:p-10">
+              <span
+                className="mb-3 block text-[11px] font-medium uppercase tracking-[0.22em] text-white/85"
+                style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
+              >
+                {t("benefitReportKicker")}
+              </span>
+              <h3
+                className="mb-3 max-w-md text-3xl leading-tight text-white md:text-4xl"
+                style={{ fontFamily: "var(--editorial-display)" }}
+              >
+                {t("benefitReportTitle")}
+              </h3>
+              <p className="max-w-md text-sm leading-relaxed text-white/80 md:text-base">
+                {t("benefitReportDesc")}
+              </p>
+            </div>
+          </article>
+
+          {/* Icon tiles B & C — 2 cols each */}
+          {iconTiles.map(({ icon: Icon, kicker, title, body }) => (
             <article
-              key={c.numeral}
-              className="group relative flex min-h-[460px] flex-col border-b border-r border-border p-8 transition-colors duration-500 hover:bg-[color:color-mix(in_oklab,var(--foreground)_3%,var(--background))] lg:p-9"
+              key={title}
+              className="relative flex flex-col justify-between rounded-3xl border border-border bg-card p-7 md:col-span-2"
             >
-              {/* Bracketed mono kicker */}
-              <div className="mb-10 flex items-center justify-between">
-                <span
-                  className="text-[10.5px] font-medium uppercase leading-none tracking-[0.18em]"
+              <div>
+                <div
+                  className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl"
                   style={{
-                    fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
+                    background:
+                      "color-mix(in oklab, var(--accent-oxidized) 12%, var(--card))",
                     color: "var(--accent-oxidized)",
                   }}
                 >
-                  [ {c.slug} ]
-                </span>
-              </div>
-
-              {/* Giant italic ghost numeral — the Envirogen chapter anchor */}
-              <span
-                aria-hidden
-                className="pointer-events-none mb-6 block select-none text-[128px] leading-[0.75] text-foreground/[0.06] transition-colors duration-700 group-hover:text-[color:color-mix(in_oklab,var(--accent-oxidized)_18%,transparent)]"
-                style={{ fontFamily: "var(--editorial-display)", fontStyle: "italic" }}
-              >
-                {c.numeral}
-              </span>
-
-              {/* Title + body */}
-              <h3
-                className="mb-4 text-[26px] leading-[1.15] text-foreground"
-                style={{ fontFamily: "var(--editorial-display)", fontStyle: "italic" }}
-              >
-                {c.title}
-              </h3>
-              <p className="text-[15px] leading-relaxed text-muted-foreground">
-                {c.body}
-              </p>
-
-              {/* Bottom ref rail — ledger metadata */}
-              <div className="mt-auto pt-8">
-                <div className="mb-3 h-px w-full bg-border" />
-                <div className="flex items-center justify-between">
-                  <span
-                    className="text-[10px] tabular-nums uppercase tracking-[0.14em] text-foreground/40"
-                    style={{
-                      fontFamily:
-                        "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
-                    }}
-                  >
-                    {c.ref}
-                  </span>
-                  <span
-                    aria-hidden
-                    className="block h-px w-6 origin-left scale-x-0 bg-[color:var(--accent-oxidized)] transition-transform duration-500 group-hover:scale-x-100"
-                  />
+                  <Icon className="h-5 w-5" strokeWidth={1.75} />
                 </div>
+                <span
+                  className="mb-2 block text-[10.5px] font-medium uppercase tracking-[0.2em] text-muted-foreground"
+                  style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
+                >
+                  {kicker}
+                </span>
+                <h3
+                  className="mb-2 text-2xl leading-tight text-foreground"
+                  style={{ fontFamily: "var(--editorial-display)" }}
+                >
+                  {title}
+                </h3>
               </div>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {body}
+              </p>
             </article>
           ))}
-        </div>
 
-        {/* Footer meta */}
-        <div className="mt-10 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-4">
-            <span
-              className="text-[10px] uppercase tracking-[0.22em] text-foreground/50"
-              style={{
-                fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
-              }}
-            >
-              Vuneli · Verified Nature · {new Date().getFullYear()}
-            </span>
-            <span className="h-px w-10 bg-[color:var(--accent-oxidized)]" />
-            <span
-              className="text-[10px] uppercase tracking-[0.22em] text-foreground/50"
-              style={{
-                fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
-              }}
-            >
-              Cyprus Origin
-            </span>
-          </div>
-          <a
-            href="#methodology"
-            className="group/link inline-flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-[color:var(--accent-oxidized)]"
-          >
-            <span className="border-b border-foreground pb-0.5 transition-colors group-hover/link:border-[color:var(--accent-oxidized)]">
-              {t("whyMethodology")}
-            </span>
-            <span aria-hidden>→</span>
-          </a>
+          {/* D — second image feature: olive grove, 4 cols */}
+          <article className="group relative overflow-hidden rounded-3xl border border-border md:col-span-4">
+            <Image
+              src={heroOlive}
+              alt=""
+              fill
+              sizes="(min-width: 768px) 66vw, 100vw"
+              className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
+              placeholder="blur"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+            <div className="relative flex h-full min-h-[240px] flex-col justify-center p-8 lg:p-10">
+              <span
+                className="mb-2 block text-[11px] font-medium uppercase tracking-[0.22em] text-white/85"
+                style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
+              >
+                {t("benefitLcaKicker")}
+              </span>
+              <h3
+                className="mb-2 max-w-md text-2xl leading-tight text-white md:text-3xl"
+                style={{ fontFamily: "var(--editorial-display)" }}
+              >
+                {t("benefitLcaTitle")}
+              </h3>
+              <p className="max-w-md text-sm leading-relaxed text-white/80">
+                {t("benefitLcaDesc")}
+              </p>
+            </div>
+          </article>
+
+          {/* E — accent tile matching row height */}
+          <article className="relative flex flex-col justify-between rounded-3xl border border-border bg-card p-7 md:col-span-2">
+            <div>
+              <div
+                className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl"
+                style={{
+                  background:
+                    "color-mix(in oklab, var(--accent-oxidized) 12%, var(--card))",
+                  color: "var(--accent-oxidized)",
+                }}
+              >
+                <Recycle className="h-5 w-5" strokeWidth={1.75} />
+              </div>
+              <span
+                className="mb-2 block text-[10.5px] font-medium uppercase tracking-[0.2em] text-muted-foreground"
+                style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
+              >
+                [ CYPRUS ORIGIN ]
+              </span>
+              <h3
+                className="mb-2 text-2xl leading-tight text-foreground"
+                style={{ fontFamily: "var(--editorial-display)" }}
+              >
+                Built for the Mediterranean.
+              </h3>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Tuned to Cyprus grid data, EU CSRD wave 3, and local utility feeds. No US-first defaults, no bolt-on translations.
+            </p>
+          </article>
         </div>
       </div>
     </section>
