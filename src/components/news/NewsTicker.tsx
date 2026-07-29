@@ -22,6 +22,7 @@ type NewsItem = {
 export function NewsTicker() {
   const locale = (useLocale() as "en" | "el") ?? "en";
   const [items, setItems] = useState<NewsItem[]>([]);
+  const trackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,6 +39,33 @@ export function NewsTicker() {
     };
   }, []);
 
+  // Measure one copy of the list so the loop repeats exactly, and scale the
+  // duration to the measured width so the drift speed stays constant no
+  // matter how many (or how long) the headlines are.
+  useLayoutEffect(() => {
+    const el = trackRef.current;
+    if (!el || items.length === 0) return;
+
+    const measure = () => {
+      const first = el.children[0] as HTMLElement | undefined;
+      const second = el.children[items.length] as HTMLElement | undefined;
+      if (!first || !second) return;
+      const shift = second.offsetLeft - first.offsetLeft;
+      if (shift <= 0) return;
+      el.style.setProperty("--viq-ticker-shift", `${shift}px`);
+      // ~48 px per second reads calmly at any width.
+      el.style.setProperty("--viq-ticker-duration", `${Math.max(20, shift / 48)}s`);
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    if (typeof document !== "undefined" && "fonts" in document) {
+      (document as Document & { fonts: FontFaceSet }).fonts.ready.then(measure).catch(() => {});
+    }
+    return () => ro.disconnect();
+  }, [items]);
+
   if (items.length === 0) return null;
 
   const label = locale === "el" ? "Ροή ESG & κλίματος" : "ESG & climate wire";
@@ -45,6 +73,7 @@ export function NewsTicker() {
 
   // Duplicate for a seamless loop
   const track = [...items, ...items];
+
 
   return (
     <section aria-label="News ticker" className="relative">
