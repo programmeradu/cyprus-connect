@@ -20,8 +20,10 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
   const locale = useLocale();
-  const isEur = locale === "el";
-  const currency = isEur ? "EUR" : "USD";
+  // Vuneli is Cyprus-only: every plan is billed in EUR, in both locales.
+  const isEur = true;
+  const currency = "EUR";
+
   const t = useTranslations("billing.pricingTable");
 
   const handleSubscribe = async (planId: string) => {
