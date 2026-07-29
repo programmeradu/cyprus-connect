@@ -73,9 +73,8 @@ export function HeroCinematic() {
 
       {/* Content: flex column that fills the viewport height */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="max-w-[56rem]">
+        <div className="max-w-[56rem] [--hero-ink:theme(colors.white)]">
           <h1
-            className="text-foreground"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 600,
@@ -83,6 +82,7 @@ export function HeroCinematic() {
               lineHeight: 0.98,
               letterSpacing: "-0.03em",
               textWrap: "balance",
+              color: "var(--hero-ink)",
             }}
           >
             {t("titleLine1")}
@@ -98,7 +98,7 @@ export function HeroCinematic() {
                 fontOpticalSizing: "auto",
                 fontVariationSettings: "'opsz' 144",
                 letterSpacing: "-0.02em",
-                color: "color-mix(in oklab, var(--foreground) 88%, var(--accent-lime) 12%)",
+                color: "color-mix(in oklab, var(--hero-ink) 82%, var(--accent-lime) 18%)",
               }}
             >
               {t("titleLine3")}
@@ -107,12 +107,13 @@ export function HeroCinematic() {
           </h1>
 
           <p
-            className="mt-8 max-w-[34rem] leading-[1.55] text-foreground/70 sm:mt-10"
+            className="mt-8 max-w-[34rem] leading-[1.55] sm:mt-10"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 400,
               fontSize: "clamp(1rem, 1.25vw, 1.25rem)",
               letterSpacing: "-0.005em",
+              color: "color-mix(in oklab, var(--hero-ink) 78%, transparent)",
             }}
           >
             {t("subtitle")}
