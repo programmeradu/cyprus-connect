@@ -201,8 +201,6 @@ export default function AuthPage() {
 
           <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-5 pb-[clamp(0.75rem,2.5vh,2.5rem)] sm:px-10">
             <div className="my-auto w-full max-w-[27rem] shrink-0">
-
-            <div className="w-full max-w-[27rem]">
               {/* Mode switch */}
               <div className="flex items-center gap-6 border-b border-border/60">
                 {(["login", "register"] as const).map((m) => (
