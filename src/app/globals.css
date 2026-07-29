@@ -830,12 +830,9 @@ nextjs-portal {
   }
 }
 .vuneli-ticker-track {
-  animation: vuneli-ticker 90s linear infinite;
+  animation: vuneli-ticker 64s linear infinite;
   will-change: transform;
-}
-.vuneli-ticker-track:hover,
-.group:hover .vuneli-ticker-track {
-  animation-play-state: paused;
+  transform: translate3d(0, 0, 0);
 }
 @media (prefers-reduced-motion: reduce) {
   .vuneli-ticker-track {
