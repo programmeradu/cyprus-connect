@@ -51,14 +51,14 @@ export function HeroCinematic() {
           className="object-cover"
           style={{ objectPosition: shot.focus }}
         />
-        {/* Top scrim keeps the floating header readable */}
-        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/70 to-transparent" />
-        {/* Left readability wash for the hero text on desktop */}
-        <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/40 to-transparent md:block" />
+        {/* Top scrim keeps the floating header readable — dark tint in both modes */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/45 to-transparent" />
+        {/* Left readability wash for the hero text on desktop — dark tint, never white */}
+        <div className="absolute inset-0 hidden bg-gradient-to-r from-black/65 via-black/25 to-transparent md:block" />
         {/* Mobile: full darken to keep the giant type legible */}
-        <div className="absolute inset-0 bg-background/60 md:hidden" />
-        {/* Bottom fade into next section */}
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent via-background/70 to-background" />
+        <div className="absolute inset-0 bg-black/45 md:hidden" />
+        {/* Bottom fade into next section — stays in-theme so the seam disappears */}
+        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-transparent via-background/70 to-background" />
         {/* Grain */}
         <div
           aria-hidden
