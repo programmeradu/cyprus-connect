@@ -79,9 +79,11 @@ function Logo({ mark }: { mark: Mark }) {
 
 function Row({ marks }: { marks: Mark[] }) {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-8 sm:gap-x-14">
+    <div className="grid grid-cols-2 items-center gap-x-8 gap-y-10 sm:grid-cols-3 sm:gap-x-12 lg:grid-cols-6 lg:gap-x-10">
       {marks.map((m) => (
-        <Logo key={m.name} mark={m} />
+        <div key={m.name} className="flex items-center justify-center">
+          <Logo mark={m} />
+        </div>
       ))}
     </div>
   );
