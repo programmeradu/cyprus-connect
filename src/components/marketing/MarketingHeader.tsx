@@ -26,41 +26,41 @@ export function MarketingHeader() {
 
   return (
     <header
-      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-6 sm:px-6"
+      className="fixed inset-x-0 top-3 z-50 flex justify-center px-3 sm:top-4 sm:px-6"
       style={{ fontFamily: "var(--editorial-sans)" }}
     >
       <div
         className={[
-          "flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border px-4 py-2.5 transition-all duration-300 sm:px-5 sm:py-3",
+          "flex w-full max-w-4xl items-center justify-between gap-2 rounded-full border px-3 py-1.5 transition-all duration-300 sm:px-3.5 sm:py-2",
           scrolled
-            ? "border-foreground/10 bg-background/85 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl"
-            : "border-foreground/10 bg-background/55 shadow-[0_8px_30px_-16px_rgba(0,0,0,0.35)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/40",
+            ? "border-foreground/10 bg-background/85 shadow-[0_8px_30px_-14px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+            : "border-foreground/10 bg-background/55 shadow-[0_6px_24px_-16px_rgba(0,0,0,0.35)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/40",
         ].join(" ")}
       >
         <Link
           href="/"
-          className="flex items-center pl-1.5 text-[19px] font-semibold tracking-[-0.025em] text-foreground"
+          className="flex items-center pl-1 text-[16px] font-semibold tracking-[-0.025em] text-foreground"
           style={{ fontFamily: "var(--editorial-display)" }}
         >
           Vuneli
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
-          <Link href="/tools" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+        <nav className="hidden items-center gap-6 md:flex">
+          <Link href="/tools" className="text-[13.5px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("tools")}
           </Link>
-          <Link href="/learn" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+          <Link href="/learn" className="text-[13.5px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("learn")}
           </Link>
-          <Link href="/news" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+          <Link href="/news" className="text-[13.5px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("news")}
           </Link>
-          <Link href="/pricing" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+          <Link href="/pricing" className="text-[13.5px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("pricing")}
           </Link>
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5">
           <LanguageSwitcher />
           <ThemeToggle />
           {!isPending &&
@@ -69,7 +69,7 @@ export function MarketingHeader() {
                 <SubscriptionBadge />
                 <Link
                   href="/app"
-                  className="ml-1 inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-5 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
+                  className="ml-0.5 inline-flex h-8 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-3.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
                 >
                   {tNav("dashboard")}
                 </Link>
@@ -77,7 +77,7 @@ export function MarketingHeader() {
             ) : (
               <Link
                 href="/auth"
-                className="ml-1 inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-5 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
+                className="ml-0.5 inline-flex h-8 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-3.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
               >
                 {tNav("signIn")}
               </Link>
