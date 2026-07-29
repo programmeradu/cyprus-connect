@@ -86,17 +86,13 @@ export function IntegrationsMarquee() {
             >
               Connected to the systems Cyprus SMEs already run on.
             </h2>
-
-                : "Connected to the systems Cyprus SMEs already run on."}
-            </h2>
           </div>
           <p className="max-w-sm text-[14px] leading-[1.5] text-foreground/60">
-            {tL.has?.("integrationsSubtitle")
-              ? tL("integrationsSubtitle")
-              : "One-click sync with the national utilities, tax portals and accounting stacks your team touches every day."}
+            One-click sync with the national utilities, tax portals and accounting stacks your team touches every day.
           </p>
         </div>
       </div>
+
 
       {/* Marquee track */}
       <div
