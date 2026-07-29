@@ -8,9 +8,8 @@
  * right colorway (dark logos on light, light logos on dark).
  */
 
-const LOGO_TOKEN = import.meta.env.VITE_LOVABLE_CONNECTOR_LOGO_DEV_API_KEY as
-  | string
-  | undefined;
+const LOGO_TOKEN =
+  (process.env.NEXT_PUBLIC_LOGO_DEV_KEY as string | undefined) ?? "";
 
 function logoUrl(domain: string, theme: "light" | "dark") {
   // `theme=light` returns dark marks (for light backgrounds); `theme=dark`
