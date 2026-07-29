@@ -149,8 +149,8 @@ export function SiteFooter() {
       </div>
 
       {/* Top statement + CTA */}
-      <div className="relative mx-auto max-w-7xl px-6 pt-24 pb-14 sm:px-10 sm:pt-32">
-        <div className="grid gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-20">
+      <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-12 sm:px-10 sm:pt-32 sm:pb-14">
+        <div className="grid gap-10 sm:gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-20">
           <div>
             <Link
               href={`/${locale}`}
@@ -165,12 +165,12 @@ export function SiteFooter() {
               </span>
             </Link>
             <h2
-              className="mt-8 max-w-xl text-balance text-white"
+              className="mt-6 max-w-xl text-balance text-white sm:mt-8"
               style={{
                 fontFamily: "var(--editorial-display)",
                 fontWeight: 400,
-                fontSize: "clamp(2rem, 3.6vw, 3.4rem)",
-                lineHeight: 1.02,
+                fontSize: "clamp(1.85rem, 3.6vw, 3.4rem)",
+                lineHeight: 1.05,
                 letterSpacing: "-0.02em",
               }}
             >
@@ -178,10 +178,10 @@ export function SiteFooter() {
               <br />
               <em className="italic text-white/60">{t.statementB}</em>
             </h2>
-            <div className="mt-10">
+            <div className="mt-8 sm:mt-10">
               <Link
                 href={`/${locale}/auth`}
-                className="group inline-flex items-center gap-4 rounded-md px-6 py-4 text-[13px] font-semibold uppercase tracking-[0.14em] transition-transform hover:-translate-y-0.5 sm:text-[14px]"
+                className="group inline-flex w-full items-center justify-between gap-4 rounded-md px-6 py-4 text-[13px] font-semibold uppercase tracking-[0.14em] transition-transform hover:-translate-y-0.5 sm:w-auto sm:justify-start sm:text-[14px]"
                 style={{
                   backgroundColor: "var(--accent-lime)",
                   color: "var(--accent-lime-foreground)",
@@ -189,7 +189,7 @@ export function SiteFooter() {
                 }}
               >
                 <span>{t.ctaLabel}</span>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
                   <path
                     d="M3 10h13M11 5l5 5-5 5"
                     stroke="currentColor"
