@@ -846,7 +846,6 @@ nextjs-portal {
   will-change: transform;
   transform: translate3d(0, 0, 0);
 }
-.vuneli-ticker-track:hover,
 .vuneli-ticker-track:focus-within {
   animation-play-state: paused;
 }

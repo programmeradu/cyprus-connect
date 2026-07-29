@@ -53,8 +53,8 @@ export function NewsTicker() {
       const shift = second.offsetLeft - first.offsetLeft;
       if (shift <= 0) return;
       el.style.setProperty("--viq-ticker-shift", `${shift}px`);
-      // ~48 px per second reads calmly at any width.
-      el.style.setProperty("--viq-ticker-duration", `${Math.max(20, shift / 48)}s`);
+      // ~90 px per second: clearly in motion without being restless.
+      el.style.setProperty("--viq-ticker-duration", `${Math.max(20, shift / 90)}s`);
     };
 
     measure();
