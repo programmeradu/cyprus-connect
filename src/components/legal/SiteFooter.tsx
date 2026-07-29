@@ -137,7 +137,7 @@ export function SiteFooter() {
   const linkCls =
     "text-[15px] leading-[1.9] text-white/70 hover:text-white transition-colors";
   const labelCls =
-    "text-[11px] font-semibold uppercase tracking-[0.22em] text-white/45 mb-5";
+    "text-[11px] font-semibold uppercase tracking-[0.22em] text-white/45 mb-4 sm:mb-5";
 
   return (
     <footer
@@ -149,8 +149,8 @@ export function SiteFooter() {
       </div>
 
       {/* Top statement + CTA */}
-      <div className="relative mx-auto max-w-7xl px-6 pt-24 pb-14 sm:px-10 sm:pt-32">
-        <div className="grid gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-20">
+      <div className="relative mx-auto max-w-7xl px-6 pt-20 pb-12 sm:px-10 sm:pt-32 sm:pb-14">
+        <div className="grid gap-10 sm:gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-20">
           <div>
             <Link
               href={`/${locale}`}
@@ -165,12 +165,12 @@ export function SiteFooter() {
               </span>
             </Link>
             <h2
-              className="mt-8 max-w-xl text-balance text-white"
+              className="mt-6 max-w-xl text-balance text-white sm:mt-8"
               style={{
                 fontFamily: "var(--editorial-display)",
                 fontWeight: 400,
-                fontSize: "clamp(2rem, 3.6vw, 3.4rem)",
-                lineHeight: 1.02,
+                fontSize: "clamp(1.85rem, 3.6vw, 3.4rem)",
+                lineHeight: 1.05,
                 letterSpacing: "-0.02em",
               }}
             >
@@ -178,10 +178,10 @@ export function SiteFooter() {
               <br />
               <em className="italic text-white/60">{t.statementB}</em>
             </h2>
-            <div className="mt-10">
+            <div className="mt-8 sm:mt-10">
               <Link
                 href={`/${locale}/auth`}
-                className="group inline-flex items-center gap-4 rounded-md px-6 py-4 text-[13px] font-semibold uppercase tracking-[0.14em] transition-transform hover:-translate-y-0.5 sm:text-[14px]"
+                className="group inline-flex w-full items-center justify-between gap-4 rounded-md px-6 py-4 text-[13px] font-semibold uppercase tracking-[0.14em] transition-transform hover:-translate-y-0.5 sm:w-auto sm:justify-start sm:text-[14px]"
                 style={{
                   backgroundColor: "var(--accent-lime)",
                   color: "var(--accent-lime-foreground)",
@@ -189,7 +189,7 @@ export function SiteFooter() {
                 }}
               >
                 <span>{t.ctaLabel}</span>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
                   <path
                     d="M3 10h13M11 5l5 5-5 5"
                     stroke="currentColor"
@@ -202,7 +202,7 @@ export function SiteFooter() {
           </div>
 
           {/* Newsletter card */}
-          <aside className="relative rounded-2xl border border-white/12 bg-white/[0.04] p-7 backdrop-blur-sm sm:p-9">
+          <aside className="relative rounded-2xl border border-white/12 bg-white/[0.04] p-6 backdrop-blur-sm sm:p-9">
             <p className={labelCls}>{t.grants}</p>
             <h3
               className="text-balance text-white"
@@ -223,7 +223,7 @@ export function SiteFooter() {
               {t.newsletterBody}
             </p>
             <form onSubmit={onSubmit} className="mt-6">
-              <div className="flex items-stretch overflow-hidden rounded-md border border-white/20 bg-white/[0.06] focus-within:border-white/50">
+              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:gap-0 sm:overflow-hidden sm:rounded-md sm:border sm:border-white/20 sm:bg-white/[0.06] sm:focus-within:border-white/50">
                 <input
                   type="email"
                   required
@@ -234,23 +234,21 @@ export function SiteFooter() {
                   }}
                   placeholder={t.emailPlaceholder}
                   aria-label={t.emailLabel}
-                  className="min-w-0 flex-1 bg-transparent px-4 py-3 text-[15px] text-white placeholder:text-white/40 focus:outline-none"
+                  className="min-w-0 flex-1 rounded-md border border-white/20 bg-white/[0.06] px-4 py-3 text-[15px] text-white placeholder:text-white/40 focus:outline-none sm:rounded-none sm:border-0 sm:bg-transparent"
                   style={{ fontFamily: "var(--editorial-sans)" }}
                 />
                 <button
                   type="submit"
                   disabled={state === "loading"}
-                  className="flex shrink-0 items-center gap-2 px-5 text-[13px] font-semibold uppercase tracking-[0.14em] transition-colors hover:brightness-95 disabled:opacity-60"
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-md px-5 py-3 text-[13px] font-semibold uppercase tracking-[0.14em] transition-colors hover:brightness-95 disabled:opacity-60 sm:rounded-none sm:py-0"
                   style={{
                     backgroundColor: "var(--accent-lime)",
                     color: "var(--accent-lime-foreground)",
                     fontFamily: "var(--editorial-sans)",
                   }}
                 >
-                  <span className="hidden sm:inline">
-                    {state === "loading" ? "…" : t.subscribe}
-                  </span>
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden>
+                  <span>{state === "loading" ? "…" : t.subscribe}</span>
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden className="shrink-0">
                     <path d="M3 10h13M11 5l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="square" />
                   </svg>
                 </button>
@@ -274,10 +272,10 @@ export function SiteFooter() {
       </div>
 
       {/* Sitemap + Contact rail */}
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-8 gap-y-14 px-6 py-16 sm:px-10 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-6 py-12 sm:gap-x-8 sm:gap-y-14 sm:px-10 sm:py-16 md:grid-cols-4 lg:grid-cols-5">
         <div className="col-span-2 md:col-span-4 lg:col-span-1">
           <p className={labelCls}>{locale === "el" ? "Επικοινωνία" : "Contact"}</p>
-          <dl className="space-y-5 text-[15px]" style={{ fontFamily: "var(--editorial-sans)" }}>
+          <dl className="space-y-4 text-[15px] sm:space-y-5" style={{ fontFamily: "var(--editorial-sans)" }}>
             <div>
               <dt className="text-[11px] uppercase tracking-[0.18em] text-white/40">{t.officeLabel}</dt>
               <dd className="mt-1 text-white/85">{t.office}</dd>
@@ -285,7 +283,7 @@ export function SiteFooter() {
             <div>
               <dt className="text-[11px] uppercase tracking-[0.18em] text-white/40">{t.emailLabel}</dt>
               <dd className="mt-1">
-                <a href="mailto:samuel@stauniverse.tech" className="text-white/85 underline-offset-4 hover:text-white hover:underline">
+                <a href="mailto:samuel@stauniverse.tech" className="break-words text-white/85 underline-offset-4 hover:text-white hover:underline">
                   samuel@stauniverse.tech
                 </a>
               </dd>
@@ -340,16 +338,18 @@ export function SiteFooter() {
       </div>
 
 
-      {/* Bottom bar */}
+      {/* Bottom bar — stacks on mobile, with clearance for the floating assistant */}
       <div className="border-t border-white/12">
         <div
-          className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-[12.5px] text-white/55 sm:px-10"
+          className="mx-auto flex max-w-7xl flex-col gap-4 px-6 pb-24 pt-6 text-[12.5px] leading-relaxed text-white/55 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-10 sm:pb-6"
           style={{ fontFamily: "var(--editorial-sans)" }}
         >
-          <span>© {year} Verde IQ · {t.rights}</span>
-          <div className="flex items-center gap-5">
-            <span className="hidden sm:inline">{t.made}</span>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+            <span>© {year} Vuneli · {t.rights}</span>
             <span aria-hidden className="hidden h-3 w-px bg-white/20 sm:inline-block" />
+            <span>{t.made}</span>
+          </div>
+          <div className="flex items-center gap-5">
             <a href="https://www.linkedin.com/company/vuneli" target="_blank" rel="noopener noreferrer" className="hover:text-white" aria-label="LinkedIn">
               LinkedIn
             </a>
