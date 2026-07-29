@@ -67,6 +67,7 @@ export default function Home() {
       {/* BENEFITS - Why VerdeIQ */}
       <EditorialSection
         titleA={tL("whyTitleA")}
+        titleB={tL("whyTitleB")}
         subtitle={tL("whySubtitle")}
         media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
       >
