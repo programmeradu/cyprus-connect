@@ -39,9 +39,19 @@ export function HeroCinematic() {
   const shot = HERO_SET[idx];
 
   return (
-    <section className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden">
-      {/* Photographic backdrop */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
+    <section className="relative isolate flex min-h-[100svh] w-full flex-col">
+      {/* Photographic backdrop - extends past the hero and dissolves (alpha mask)
+          into the next section, so no flat wash of background colour appears
+          over the photo in light mode. */}
+      <div
+        className="absolute inset-x-0 top-0 -bottom-64 -z-10"
+        style={{
+          WebkitMaskImage:
+            "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.18) 92%, transparent 100%)",
+          maskImage:
+            "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.18) 92%, transparent 100%)",
+        }}
+      >
         <Image
           src={shot.src}
           alt={shot.alt}
@@ -57,15 +67,7 @@ export function HeroCinematic() {
         <div className="absolute inset-0 hidden bg-gradient-to-r from-black/65 via-black/25 to-transparent md:block" />
         {/* Mobile: full darken to keep the giant type legible */}
         <div className="absolute inset-0 bg-black/45 md:hidden" />
-        {/* Bottom seam into next section — taller, multi-stop easing so
-            neither dark nor light mode shows a hard cut against the photo */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-64"
-          style={{
-            backgroundImage:
-              "linear-gradient(to bottom, transparent 0%, color-mix(in oklab, var(--background) 25%, transparent) 35%, color-mix(in oklab, var(--background) 65%, transparent) 65%, var(--background) 100%)",
-          }}
-        />
+
 
         {/* Grain */}
         <div
