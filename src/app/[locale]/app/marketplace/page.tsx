@@ -276,7 +276,7 @@ function ProjectCard({ project, index, onSelect }: { project: Project; index: nu
             </>
           ) : (
             <>
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
+              <div className="absolute inset-0 bg-muted" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.1),transparent)]" />
             </>
           )}
