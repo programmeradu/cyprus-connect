@@ -11,7 +11,7 @@ import { useTranslations, useLocale } from "next-intl";
 import authPhoto from "@/assets/auth-limestone-desk.jpg";
 
 const FIELD =
-  "w-full rounded-none border-0 border-b border-border/70 bg-transparent px-0 py-2.5 text-[15.5px] font-medium text-foreground placeholder:font-normal placeholder:text-foreground/35 focus:border-foreground focus:outline-none focus:ring-0 disabled:opacity-60";
+  "w-full rounded-none border-0 border-b border-border/70 bg-transparent px-0 py-2 text-[15.5px] font-medium text-foreground placeholder:font-normal placeholder:text-foreground/35 focus:border-foreground focus:outline-none focus:ring-0 disabled:opacity-60";
 
 const LABEL =
   "block text-[12.5px] font-semibold uppercase tracking-[0.1em] text-foreground/60";
@@ -182,8 +182,8 @@ export default function AuthPage() {
         </aside>
 
         {/* -------------------------------------------------------- Form side */}
-        <main className="flex min-h-screen flex-col">
-          <header className="flex items-center justify-between gap-4 px-5 py-5 sm:px-10">
+        <main className="flex min-h-[100svh] flex-col">
+          <header className="flex items-center justify-between gap-4 px-5 py-4 sm:px-10">
             <Link
               href="/"
               className="font-[family-name:var(--editorial-display)] text-[20px] font-semibold tracking-[-0.02em] lg:invisible"
@@ -196,7 +196,7 @@ export default function AuthPage() {
             </div>
           </header>
 
-          <div className="flex flex-1 items-center justify-center px-5 pb-16 pt-4 sm:px-10">
+          <div className="flex flex-1 items-center justify-center px-5 pb-8 pt-2 sm:px-10 sm:pb-10">
             <div className="w-full max-w-[27rem]">
               {/* Mode switch */}
               <div className="flex items-center gap-6 border-b border-border/60">
@@ -219,12 +219,12 @@ export default function AuthPage() {
               </div>
 
               <h1
-                className="mt-8 font-[family-name:var(--editorial-display)] text-[2rem] font-semibold leading-[1.08] tracking-[-0.025em] sm:text-[2.35rem]"
+                className="mt-6 font-[family-name:var(--editorial-display)] text-[1.8rem] font-semibold leading-[1.08] tracking-[-0.025em] sm:text-[2.05rem]"
                 style={{ textWrap: "balance" }}
               >
                 {mode === "login" ? t("signInTitle") : t("createTitle")}
               </h1>
-              <p className="mt-3 text-[15.5px] font-medium leading-[1.6] text-foreground/65">
+              <p className="mt-2.5 text-[15px] font-medium leading-[1.55] text-foreground/65">
                 {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
               </p>
 
@@ -232,7 +232,7 @@ export default function AuthPage() {
               <button
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
-                className="mt-8 flex h-12 w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
+                className="mt-6 flex h-11 w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
               >
                 <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -255,7 +255,7 @@ export default function AuthPage() {
                 <span className="min-w-0 truncate">{t("google")}</span>
               </button>
 
-              <div className="my-7 flex items-center gap-4">
+              <div className="my-5 flex items-center gap-4">
                 <span className="h-px flex-1 bg-border/70" />
                 <span className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-foreground/50">
                   {t("orEmail")}
@@ -263,7 +263,14 @@ export default function AuthPage() {
                 <span className="h-px flex-1 bg-border/70" />
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div
+                  className={
+                    mode === "register"
+                      ? "grid gap-x-6 gap-y-4 sm:grid-cols-2"
+                      : "space-y-5"
+                  }
+                >
                 {mode === "register" && (
                   <div>
                     <label className={LABEL} htmlFor="name">
@@ -337,6 +344,7 @@ export default function AuthPage() {
                     />
                   </div>
                 )}
+                </div>
 
                 {mode === "login" && (
                   <label className="flex cursor-pointer items-center gap-2.5">
@@ -358,7 +366,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                 >
                   <span className="min-w-0 truncate">
                     {isLoading ? t("processing") : mode === "login" ? t("signIn") : t("createAccount")}
@@ -382,7 +390,7 @@ export default function AuthPage() {
                 </button>
               </form>
 
-              <p className="mt-7 text-[14.5px] font-medium text-foreground/65">
+              <p className="mt-5 text-[14.5px] font-medium text-foreground/65">
                 {mode === "login" ? t("noAccount") : t("haveAccount")}{" "}
                 <button
                   type="button"
@@ -394,7 +402,7 @@ export default function AuthPage() {
                 </button>
               </p>
 
-              <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/60 pt-5 text-[14px]">
+              <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/60 pt-4 text-[14px]">
                 <span className="font-medium text-foreground/60">{t("demoQuestion")}</span>
                 <button
                   type="button"
@@ -406,19 +414,6 @@ export default function AuthPage() {
                 </button>
               </div>
 
-              {/* Mobile assurance ledger */}
-              <dl className="mt-10 grid grid-cols-1 gap-px border border-border/60 bg-border/60 sm:grid-cols-3 lg:hidden">
-                {assurances.map(([label, value]) => (
-                  <div key={label} className="bg-background px-4 py-4">
-                    <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-foreground/55">
-                      {label}
-                    </dt>
-                    <dd className="mt-1.5 text-[13.5px] font-semibold leading-snug text-foreground">
-                      {value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
             </div>
           </div>
         </main>
