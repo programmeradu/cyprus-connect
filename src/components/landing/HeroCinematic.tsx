@@ -92,7 +92,7 @@ export function HeroCinematic() {
       </div>
 
       {/* Content: flex column that fills the viewport height */}
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-10 pt-24 sm:justify-end sm:pb-14 sm:pt-32 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-10 pt-24 sm:justify-end sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
         <div className="max-w-[56rem] [--hero-ink:theme(colors.white)]">
           <h1
             style={{
