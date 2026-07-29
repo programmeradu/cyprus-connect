@@ -45,9 +45,31 @@ export function MarketingHeader() {
         Vuneli
       </Link>
 
-      {/* Dynamic-island pill — centered, fits its content.
-          Over the hero: true frosted glass (no white wash), light text.
-          Scrolled: subtle tinted glass that respects the theme background. */}
+      {/* Top-right CTA — always visible, adapts to hero vs scrolled */}
+      {!isPending && (
+        <div className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 sm:right-8">
+          {session?.user ? (
+            <div className="flex items-center gap-2">
+              <SubscriptionBadge />
+              <Link
+                href="/app"
+                className="inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
+              >
+                {tNav("dashboard")}
+              </Link>
+            </div>
+          ) : (
+            <Link
+              href="/auth"
+              className="inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
+            >
+              {tHero("ctaPrimary")}
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* Dynamic-island pill */}
       <div className="flex justify-center">
         <div
           className={[
@@ -74,30 +96,9 @@ export function MarketingHeader() {
 
           <span aria-hidden className={["mx-1 hidden h-4 w-px md:block", scrolled ? "bg-foreground/10" : "bg-white/25"].join(" ")} />
 
-          <div className="relative flex shrink-0 items-center gap-0.5">
-            <LanguageSwitcher />
-            <ThemeToggle />
-
-            {!isPending &&
-              (session?.user ? (
-                <>
-                  <SubscriptionBadge />
-                  <Link
-                    href="/app"
-                    className="ml-1 inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
-                  >
-                    {tNav("dashboard")}
-                  </Link>
-                </>
-              ) : (
-                <Link
-                  href="/auth"
-                  aria-label={tNav("signIn")}
-                  className="pointer-events-none absolute right-0 top-1/2 z-10 inline-flex h-9 -translate-y-1/2 translate-x-[calc(100%+8px)] items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] opacity-0 shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-opacity duration-300 ease-out focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/header:pointer-events-auto group-hover/header:opacity-100"
-                >
-                  {tNav("signIn")}
-                </Link>
-              ))}
+          <div className="flex shrink-0 items-center gap-0.5">
+            <LanguageSwitcher overHero={!scrolled} />
+            <ThemeToggle overHero={!scrolled} />
           </div>
         </div>
       </div>
