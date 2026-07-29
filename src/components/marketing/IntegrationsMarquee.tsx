@@ -1,77 +1,51 @@
 "use client";
 
-/**
- * Real integration logos, served by Logo.dev.
- * No card containers — logos sit directly on the section background.
- * Light and dark variants are served via Logo.dev's `theme` param and
- * swapped with Tailwind `dark:` visibility classes so each mode gets the
- * right colorway (dark logos on light, light logos on dark).
- */
-
-const LOGO_TOKEN =
-  (process.env.NEXT_PUBLIC_LOGO_DEV_KEY as string | undefined) ?? "";
-
-function logoUrl(domain: string, theme: "light" | "dark") {
-  // `theme=light` returns dark marks (for light backgrounds); `theme=dark`
-  // returns light marks (for dark backgrounds). retina=true for crispness.
-  const params = new URLSearchParams({
-    token: LOGO_TOKEN,
-    theme,
-    retina: "true",
-    format: "png",
-  });
-  return `https://img.logo.dev/${domain}?${params.toString()}`;
-}
-
 type Mark = {
   name: string;
-  domain: string;
-  /** Optional width class per logo so wordmarks and monograms sit balanced. */
-  widthClass?: string;
+  file: string;
+  /** Per-logo optical size so wordmarks and monograms sit balanced without cards. */
+  sizeClass: string;
 };
 
-// Six Cyprus marks, six global marks — even rows, no duplicates,
-// each domain hand-verified against Logo.dev so nothing falls back
-// to a generic favicon.
 const CYPRUS_MARKS: Mark[] = [
-  { name: "EAC", domain: "eac.com.cy", widthClass: "w-24" },
-  { name: "JCC", domain: "jcc.com.cy", widthClass: "w-24" },
-  { name: "SoftOne", domain: "softone.com.cy", widthClass: "w-28" },
-  { name: "gov.cy", domain: "cyprus.gov.cy", widthClass: "w-24" },
-  { name: "Registrar of Companies", domain: "companies.gov.cy", widthClass: "w-28" },
-  { name: "CyStat", domain: "cystat.gov.cy", widthClass: "w-24" },
+  { name: "Electricity Authority of Cyprus", file: "eac", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "JCC Payment Systems", file: "jcc", sizeClass: "h-9 w-32 sm:h-10 sm:w-36" },
+  { name: "SoftOne", file: "softone", sizeClass: "h-12 w-40 sm:h-14 sm:w-44" },
+  { name: "gov.cy", file: "govcy", sizeClass: "h-14 w-24 sm:h-16" },
+  { name: "Registrar of Companies", file: "companies", sizeClass: "h-9 w-44 sm:h-10 sm:w-52" },
+  { name: "CyStat", file: "cystat", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
-  { name: "QuickBooks", domain: "quickbooks.intuit.com", widthClass: "w-28" },
-  { name: "Xero", domain: "xero.com", widthClass: "w-20" },
-  { name: "Stripe", domain: "stripe.com", widthClass: "w-20" },
-  { name: "Climate TRACE", domain: "climatetrace.org", widthClass: "w-32" },
-  { name: "Electricity Maps", domain: "electricitymaps.com", widthClass: "w-32" },
-  { name: "WikiRate", domain: "wikirate.org", widthClass: "w-24" },
+  { name: "QuickBooks", file: "quickbooks", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
+  { name: "Xero", file: "xero", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "Stripe", file: "stripe", sizeClass: "h-11 w-36 sm:h-12 sm:w-40" },
+  { name: "Climate TRACE", file: "climatetrace", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "Electricity Maps", file: "electricitymaps", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "WikiRate", file: "wikirate", sizeClass: "h-12 w-40 sm:h-14 sm:w-48" },
 ];
 
 function Logo({ mark }: { mark: Mark }) {
-  const width = mark.widthClass ?? "w-24";
+  const lightSrc = `/integrations/${mark.file}-light.png`;
+  const darkSrc = `/integrations/${mark.file}-dark.png`;
+
   return (
     <div
-      className="flex h-10 items-center justify-center"
+      className="flex h-16 w-full items-center justify-center sm:h-20"
       title={mark.name}
     >
-      {/* Light mode: dark logos */}
       <img
-        src={logoUrl(mark.domain, "light")}
+        src={lightSrc}
         alt={`${mark.name} logo`}
         loading="lazy"
-        className={`block h-full ${width} object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 dark:hidden`}
+        className={`block ${mark.sizeClass} object-contain opacity-85 transition duration-300 hover:opacity-100 dark:hidden`}
       />
-      {/* Dark mode: light logos */}
       <img
-        src={logoUrl(mark.domain, "dark")}
+        src={darkSrc}
         alt=""
         aria-hidden="true"
         loading="lazy"
-        className={`hidden h-full ${width} object-contain opacity-60 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 dark:block`}
+        className={`hidden ${mark.sizeClass} object-contain opacity-85 transition duration-300 hover:opacity-100 dark:block`}
       />
     </div>
   );
@@ -79,9 +53,9 @@ function Logo({ mark }: { mark: Mark }) {
 
 function Row({ marks }: { marks: Mark[] }) {
   return (
-    <div className="grid grid-cols-2 items-center gap-x-8 gap-y-10 sm:grid-cols-3 sm:gap-x-12 lg:grid-cols-6 lg:gap-x-10">
+    <div className="grid grid-cols-2 items-center justify-items-center gap-x-8 gap-y-9 sm:grid-cols-3 sm:gap-x-12 sm:gap-y-11 lg:grid-cols-6 lg:gap-x-7">
       {marks.map((m) => (
-        <div key={m.name} className="flex items-center justify-center">
+        <div key={m.name} className="flex min-w-0 items-center justify-center">
           <Logo mark={m} />
         </div>
       ))}
