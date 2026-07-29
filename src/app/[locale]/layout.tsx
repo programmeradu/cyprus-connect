@@ -3,10 +3,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { SiteFooter } from "@/components/legal/SiteFooter";
+import { GlobalChrome } from "@/components/legal/GlobalChrome";
 import { CookieBanner } from "@/components/legal/CookieBanner";
 import { ConsentedAnalytics } from "@/components/legal/ConsentedAnalytics";
-import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
@@ -130,10 +129,9 @@ export default async function LocaleLayout({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }}
       />
       {children}
-      <SiteFooter />
+      <GlobalChrome />
       <CookieBanner />
       <ConsentedAnalytics />
-      <FloatingAIAssistant />
     </NextIntlClientProvider>
   );
 }
