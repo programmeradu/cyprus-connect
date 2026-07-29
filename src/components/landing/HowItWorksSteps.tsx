@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import stepConnect from "@/assets/step-01-connect.jpg";
 import stepAnalyze from "@/assets/step-02-analyze.jpg";
 import stepAct from "@/assets/step-03-act.jpg";
+import { SnapRail } from "./SnapRail";
 
 /**
  * How It Works - staggered three-step sequence.
