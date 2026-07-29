@@ -818,3 +818,27 @@ nextjs-portal {
 .viq-tool .text-foreground\/55 {
   color: color-mix(in oklab, var(--foreground) 58%, transparent);
 }
+
+/* News ticker marquee. Defined globally because styled-jsx scopes @keyframes
+   names, which broke the animation when referenced from a utility class. */
+@keyframes vuneli-ticker {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.vuneli-ticker-track {
+  animation: vuneli-ticker 90s linear infinite;
+  will-change: transform;
+}
+.vuneli-ticker-track:hover,
+.group:hover .vuneli-ticker-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vuneli-ticker-track {
+    animation: none;
+  }
+}
