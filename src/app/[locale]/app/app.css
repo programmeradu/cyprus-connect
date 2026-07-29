@@ -35,7 +35,7 @@
   --app-surface-3: oklch(0.33 0 0);   /* #383838 hover */
   --app-rule: oklch(0.34 0 0);
   --app-rule-strong: oklch(0.42 0 0);
-  --app-chrome: oklch(0.185 0 0);     /* #171717 sidebar */
+  --app-chrome: oklch(0.215 0 0);     /* #1c1c1c sidebar - grey, not black */
 }
 
 /* Headings inside the workspace stay on the editorial display face,
