@@ -15,18 +15,18 @@ type RowProps = {
 const CYPRUS_MARKS: Mark[] = [
   { name: "Electricity Authority of Cyprus", file: "eac", sizeClass: "h-12 w-20 sm:h-14" },
   { name: "JCC Payment Systems", file: "jcc", sizeClass: "h-9 w-32 sm:h-10 sm:w-36" },
-  { name: "SoftOne", file: "softone", sizeClass: "h-12 w-40 sm:h-14 sm:w-44" },
   { name: "gov.cy", file: "govcy", sizeClass: "h-14 w-24 sm:h-16" },
-  { name: "Registrar of Companies", file: "companies", sizeClass: "h-9 w-44 sm:h-10 sm:w-52" },
-  { name: "CyStat", file: "cystat", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
+  { name: "Registrar of Companies", file: "companies", sizeClass: "h-12 w-48 sm:h-14 sm:w-60" },
+  { name: "CyStat", file: "cystat", sizeClass: "h-12 w-36 sm:h-14 sm:w-44" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
-  { name: "QuickBooks", file: "quickbooks", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
+  { name: "QuickBooks", file: "quickbooks", sizeClass: "h-12 w-12 sm:h-14 sm:w-14" },
   { name: "Xero", file: "xero", sizeClass: "h-12 w-20 sm:h-14" },
-  { name: "Climate TRACE", file: "climatetrace", sizeClass: "h-12 w-20 sm:h-14" },
+  { name: "Climate TRACE", file: "climatetrace", sizeClass: "h-9 w-40 sm:h-10 sm:w-48" },
   { name: "Electricity Maps", file: "electricitymaps", sizeClass: "h-12 w-20 sm:h-14" },
-  { name: "WikiRate", file: "wikirate", sizeClass: "h-12 w-40 sm:h-14 sm:w-48" },
+  { name: "OpenEI", file: "openei", sizeClass: "h-9 w-36 sm:h-10 sm:w-40" },
+  { name: "WikiRate", file: "wikirate", sizeClass: "h-9 w-36 sm:h-10 sm:w-44" },
 ];
 
 function Logo({ mark }: { mark: Mark }) {
@@ -88,8 +88,8 @@ export function IntegrationsMarquee() {
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:gap-16 sm:px-6">
-        <Row marks={CYPRUS_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
-        <Row marks={GLOBAL_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" />
+        <Row marks={CYPRUS_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" />
+        <Row marks={GLOBAL_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
       </div>
     </section>
   );
