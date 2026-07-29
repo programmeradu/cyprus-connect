@@ -207,7 +207,7 @@ export default function AuthPage() {
                     onClick={() => setMode(m)}
                     aria-current={mode === m}
                     className={[
-                      "-mb-px border-b-2 pb-[clamp(0.4rem,1.2vh,0.75rem)] text-[14px] font-semibold tracking-[-0.01em] transition-colors",
+                      "-mb-px border-b-2 pb-[clamp(0.45rem,1.4vh,0.85rem)] text-[14px] font-semibold tracking-[-0.01em] transition-colors",
                       mode === m
                         ? "border-foreground text-foreground"
                         : "border-transparent text-foreground/50 hover:text-foreground/80",
