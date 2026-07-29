@@ -101,7 +101,7 @@ export function MarketingHeader() {
       </div>
 
       {/* Desktop nav pill */}
-      <div className="hidden justify-center md:flex">
+      <div className="hidden w-full justify-center md:flex">
         <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-black/25 px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
           <nav className="hidden items-center md:flex">
             <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
