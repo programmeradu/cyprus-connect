@@ -28,7 +28,7 @@ export function MarketingHeader() {
 
   return (
     <header
-      className="group/header pointer-events-none fixed inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6"
+      className="group/header pointer-events-none fixed inset-x-0 top-3 z-50 flex min-h-12 items-center px-4 sm:top-6 sm:min-h-14 sm:px-6"
       style={{ fontFamily: "var(--editorial-sans)" }}
       data-over-hero={!scrolled}
     >
