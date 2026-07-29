@@ -73,39 +73,44 @@ export function HeroCinematic() {
 
       {/* Content: flex column that fills the viewport height */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="max-w-[68rem]">
+        <div className="max-w-[64rem]">
           <h1
-            className="font-[family-name:var(--editorial-display)] font-medium text-foreground"
+            className="font-[family-name:var(--editorial-display)] text-foreground"
             style={{
               fontOpticalSizing: "auto",
               fontVariationSettings: "'opsz' 144",
-              fontSize: "clamp(3rem, 9.4vw, 8.25rem)",
-              lineHeight: 0.92,
-              letterSpacing: "-0.035em",
+              fontWeight: 420,
+              fontSize: "clamp(2.75rem, 8.2vw, 7.25rem)",
+              lineHeight: 0.95,
+              letterSpacing: "-0.038em",
+              textWrap: "balance",
             }}
           >
             {t("titleLine1")}
             <br />
-            <span
-              className="italic font-normal text-foreground/55"
+            <em
+              className="not-italic"
               style={{
+                fontStyle: "italic",
+                fontWeight: 340,
                 fontVariationSettings: "'opsz' 144, 'SOFT' 100",
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.028em",
+                color: "color-mix(in oklab, var(--foreground) 82%, var(--accent-lime) 18%)",
               }}
             >
               {t("titleLine2")}
-            </span>
+            </em>
             <br />
-            {t("titleLine3")}
+            <span style={{ fontWeight: 500 }}>{t("titleLine3")}</span>
             <span className="text-[var(--accent-lime)]">.</span>
           </h1>
 
           <p
-            className="mt-7 max-w-[36rem] leading-[1.5] text-foreground/75 sm:mt-9"
+            className="mt-8 max-w-[34rem] leading-[1.55] text-foreground/70 sm:mt-10"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 400,
-              fontSize: "clamp(1.05rem, 1.4vw, 1.4rem)",
+              fontSize: "clamp(1rem, 1.25vw, 1.25rem)",
               letterSpacing: "-0.005em",
             }}
           >

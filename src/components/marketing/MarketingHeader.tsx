@@ -26,7 +26,7 @@ export function MarketingHeader() {
 
   return (
     <header
-      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-6 sm:px-6"
+      className="group/header fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-6 sm:px-6"
       style={{ fontFamily: "var(--editorial-sans)" }}
     >
       <div
@@ -77,7 +77,8 @@ export function MarketingHeader() {
             ) : (
               <Link
                 href="/auth"
-                className="ml-1 inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-5 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
+                aria-label={tNav("signIn")}
+                className="ml-1 inline-flex h-11 max-w-0 items-center overflow-hidden whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-0 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] opacity-0 transition-all duration-300 ease-out focus-visible:max-w-[220px] focus-visible:px-5 focus-visible:opacity-100 group-hover/header:max-w-[220px] group-hover/header:px-5 group-hover/header:opacity-100"
               >
                 {tNav("signIn")}
               </Link>
