@@ -2,6 +2,7 @@
 
 import Image, { type StaticImageData } from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
+import { Link } from "@/i18n/navigation";
 
 import { useTranslations } from "next-intl";
 import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
@@ -127,7 +128,7 @@ export function HeroCinematic() {
           </h1>
 
           <p
-            className="mt-8 max-w-[34rem] leading-[1.55] sm:mt-10"
+            className="mx-auto mt-7 max-w-[34rem] leading-[1.55] sm:mx-0 sm:mt-10"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 400,
@@ -138,6 +139,17 @@ export function HeroCinematic() {
           >
             {t("subtitle")}
           </p>
+
+          {/* Mobile-only CTA, stacked under the subtitle */}
+          <div className="mt-9 flex justify-center sm:hidden">
+            <Link
+              href="/auth"
+              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-7 text-[16px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_14px_36px_-14px_color-mix(in_oklab,var(--accent-lime)_60%,transparent)]"
+              style={{ fontFamily: "var(--editorial-display)" }}
+            >
+              {t("ctaPrimary")}
+            </Link>
+          </div>
 
         </div>
 
