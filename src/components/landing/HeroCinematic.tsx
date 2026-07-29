@@ -2,6 +2,7 @@
 
 import Image, { type StaticImageData } from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
+import { Link } from "@/i18n/navigation";
 
 import { useTranslations } from "next-intl";
 import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
@@ -39,7 +40,7 @@ export function HeroCinematic() {
   const shot = HERO_SET[idx];
 
   return (
-    <section className="relative isolate flex min-h-[86svh] w-full flex-col sm:min-h-[100svh]">
+    <section className="relative isolate flex min-h-[100svh] w-full flex-col">
       {/* Photographic backdrop - extends past the hero and dissolves (alpha mask)
           into the next section, so no flat wash of background colour appears
           over the photo in light mode. */}
@@ -92,8 +93,8 @@ export function HeroCinematic() {
       </div>
 
       {/* Content: flex column that fills the viewport height */}
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-10 pt-24 sm:justify-end sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="max-w-[56rem] [--hero-ink:theme(colors.white)]">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-16 pt-24 sm:justify-end sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
+        <div className="mx-auto max-w-[56rem] text-center sm:mx-0 sm:text-left [--hero-ink:theme(colors.white)]">
           <h1
             style={{
               fontFamily: "var(--editorial-sans)",
@@ -127,7 +128,7 @@ export function HeroCinematic() {
           </h1>
 
           <p
-            className="mt-8 max-w-[34rem] leading-[1.55] sm:mt-10"
+            className="mx-auto mt-7 max-w-[34rem] leading-[1.55] sm:mx-0 sm:mt-10"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 400,
@@ -138,6 +139,17 @@ export function HeroCinematic() {
           >
             {t("subtitle")}
           </p>
+
+          {/* Mobile-only CTA, stacked under the subtitle */}
+          <div className="mt-9 flex justify-center sm:hidden">
+            <Link
+              href="/auth"
+              className="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-7 text-[16px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_14px_36px_-14px_color-mix(in_oklab,var(--accent-lime)_60%,transparent)]"
+              style={{ fontFamily: "var(--editorial-display)" }}
+            >
+              {t("ctaPrimary")}
+            </Link>
+          </div>
 
         </div>
 
