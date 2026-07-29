@@ -7,6 +7,11 @@ type Mark = {
   sizeClass: string;
 };
 
+type RowProps = {
+  marks: Mark[];
+  layoutClass: string;
+};
+
 const CYPRUS_MARKS: Mark[] = [
   { name: "Electricity Authority of Cyprus", file: "eac", sizeClass: "h-12 w-20 sm:h-14" },
   { name: "JCC Payment Systems", file: "jcc", sizeClass: "h-9 w-32 sm:h-10 sm:w-36" },
@@ -19,7 +24,6 @@ const CYPRUS_MARKS: Mark[] = [
 const GLOBAL_MARKS: Mark[] = [
   { name: "QuickBooks", file: "quickbooks", sizeClass: "h-10 w-36 sm:h-11 sm:w-40" },
   { name: "Xero", file: "xero", sizeClass: "h-12 w-20 sm:h-14" },
-  { name: "Stripe", file: "stripe", sizeClass: "h-11 w-36 sm:h-12 sm:w-40" },
   { name: "Climate TRACE", file: "climatetrace", sizeClass: "h-12 w-20 sm:h-14" },
   { name: "Electricity Maps", file: "electricitymaps", sizeClass: "h-12 w-20 sm:h-14" },
   { name: "WikiRate", file: "wikirate", sizeClass: "h-12 w-40 sm:h-14 sm:w-48" },
@@ -51,9 +55,9 @@ function Logo({ mark }: { mark: Mark }) {
   );
 }
 
-function Row({ marks }: { marks: Mark[] }) {
+function Row({ marks, layoutClass }: RowProps) {
   return (
-    <div className="grid grid-cols-2 items-center justify-items-center gap-x-8 gap-y-9 sm:grid-cols-3 sm:gap-x-12 sm:gap-y-11 lg:grid-cols-6 lg:gap-x-7">
+    <div className={`grid items-center justify-items-center gap-x-8 gap-y-9 sm:gap-x-12 sm:gap-y-11 lg:gap-x-7 ${layoutClass}`}>
       {marks.map((m) => (
         <div key={m.name} className="flex min-w-0 items-center justify-center">
           <Logo mark={m} />
@@ -84,8 +88,8 @@ export function IntegrationsMarquee() {
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:gap-16 sm:px-6">
-        <Row marks={CYPRUS_MARKS} />
-        <Row marks={GLOBAL_MARKS} />
+        <Row marks={CYPRUS_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
+        <Row marks={GLOBAL_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" />
       </div>
     </section>
   );
