@@ -46,12 +46,16 @@ export function HeroCinematic() {
       <div
         className="absolute inset-x-0 top-0 -bottom-40 -z-10 overflow-hidden"
         style={{
+          // The dissolve happens ONLY in the 160px that hang below the hero
+          // viewport, level with the news marquee. Inside the hero itself the
+          // photo stays fully opaque, so no page background bleeds through it.
           WebkitMaskImage:
-            "linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.55) 83%, rgba(0,0,0,0.18) 93%, transparent 100%)",
+            "linear-gradient(to top, transparent 0px, rgba(0,0,0,0.25) 48px, rgba(0,0,0,0.75) 108px, #000 160px)",
           maskImage:
-            "linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.55) 83%, rgba(0,0,0,0.18) 93%, transparent 100%)",
+            "linear-gradient(to top, transparent 0px, rgba(0,0,0,0.25) 48px, rgba(0,0,0,0.75) 108px, #000 160px)",
         }}
       >
+
         {/* The container runs ~160px past the viewport so the photo can dissolve
             into the next section. Without compensation, object-cover centres the
             frame inside that taller box and the visible viewport only shows the

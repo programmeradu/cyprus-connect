@@ -56,13 +56,15 @@ export default function Home() {
       {/* BENEFITS - Why Vuneli */}
       <div className="relative">
 
-      {/* News ticker - sits inside the hero photo's dissolve so the image
-          oozes into this section instead of ending on a colour wash */}
+      {/* News ticker - the hero photo dissolves through the space above it, so
+          the image oozes into this section. The headlines themselves sit just
+          past the tail of the dissolve to stay legible over any hero shot. */}
       <section className="relative z-10 -mt-28 bg-transparent">
-        <div className="mx-auto max-w-6xl px-4 pb-8 pt-28 sm:px-6 sm:pb-12 sm:pt-32">
+        <div className="mx-auto max-w-6xl px-4 pb-8 pt-44 sm:px-6 sm:pb-12 sm:pt-48">
           <NewsTicker />
         </div>
       </section>
+
 
 
 
