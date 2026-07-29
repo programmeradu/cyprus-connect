@@ -113,9 +113,6 @@ export default function AuthPage() {
     }
   };
 
-  const handleDemoAccess = () => {
-    toast.info(t("demoToast"));
-  };
 
   const assurances: [string, string][] = [
     [el ? "Δεδομένα" : "Data", el ? "Φιλοξενία στην ΕΕ" : "Hosted in the EU"],
