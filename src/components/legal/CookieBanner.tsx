@@ -55,34 +55,48 @@ export function CookieBanner() {
       role="dialog"
       aria-live="polite"
       aria-label={t.title}
-      className="fixed bottom-3 left-3 right-3 md:left-6 md:right-auto md:max-w-md z-50 rounded-xl border border-border/70 bg-background/95 backdrop-blur shadow-xl p-4 md:p-5"
+      className="fixed bottom-4 left-4 right-4 z-50 md:left-6 md:right-auto md:bottom-6 md:max-w-[420px]"
+      style={{ fontFamily: "var(--editorial-sans)" }}
     >
-      <p className="text-sm font-semibold mb-1.5">{t.title}</p>
-      <p className="text-xs text-muted-foreground leading-relaxed mb-3">
-        {t.body}{" "}
-        <a
-          href={`/${locale}/privacy`}
-          className="underline hover:text-foreground"
-        >
-          {t.manage}
-        </a>
-        .
-      </p>
-      <div className="flex gap-2 justify-end">
-        <button
-          type="button"
-          onClick={() => choose("necessary")}
-          className="text-xs px-3 py-1.5 rounded-md border border-border hover:bg-muted transition-colors"
-        >
-          {t.necessary}
-        </button>
-        <button
-          type="button"
-          onClick={() => choose("accepted")}
-          className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          {t.accept}
-        </button>
+      <div className="overflow-hidden rounded-2xl border border-foreground/10 bg-background/85 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.35)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/70">
+        <div className="px-5 pt-5 pb-4">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-lime)]" aria-hidden />
+            <p
+              className="text-[15px] font-semibold tracking-[-0.01em] text-foreground"
+              style={{ fontFamily: "var(--editorial-display)" }}
+            >
+              {t.title}
+            </p>
+          </div>
+          <p className="text-[13px] leading-[1.55] text-foreground/70">
+            {t.body}{" "}
+            <a
+              href={`/${locale}/privacy`}
+              className="text-foreground underline decoration-foreground/30 underline-offset-2 transition-colors hover:decoration-foreground"
+            >
+              {t.manage}
+            </a>
+            .
+          </p>
+        </div>
+        <div className="flex items-stretch border-t border-foreground/10">
+          <button
+            type="button"
+            onClick={() => choose("necessary")}
+            className="flex-1 px-4 py-3 text-[12.5px] font-medium text-foreground/70 transition-colors hover:bg-foreground/5 hover:text-foreground"
+          >
+            {t.necessary}
+          </button>
+          <div className="w-px bg-foreground/10" aria-hidden />
+          <button
+            type="button"
+            onClick={() => choose("accepted")}
+            className="flex-1 px-4 py-3 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--accent-lime-foreground)] bg-[var(--accent-lime)] transition-transform hover:scale-[1.005]"
+          >
+            {t.accept}
+          </button>
+        </div>
       </div>
     </div>
   );
