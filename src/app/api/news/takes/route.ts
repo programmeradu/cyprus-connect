@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
 
 /**
  * "Vuneli takes" - three short analyst notes written from the live Cyprus
@@ -80,7 +79,7 @@ export async function GET(request: Request) {
     const items: Array<{ title?: string; description?: string; pubDate?: string }> =
       Array.isArray(feedJson.items) ? feedJson.items.slice(0, 10) : [];
 
-    const key = process.env.GOOGLE_GEMINI_API_KEY;
+    const key = process.env.LOVABLE_API_KEY;
     if (items.length === 0 || !key) {
       return NextResponse.json({
         takes: FALLBACK[locale],
@@ -114,17 +113,30 @@ Rules:
 
 Return JSON only, in the form {"takes":[{"title":"...","body":"..."}]}.`;
 
-    const client = new GoogleGenAI({ apiKey: key });
-    const result = await client.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-      config: {
-        temperature: 0.6,
-        responseMimeType: "application/json",
+    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Lovable-API-Key": key,
+        "X-Lovable-AIG-SDK": "fetch",
       },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        temperature: 0.6,
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
+      }),
     });
 
-    const raw = (result.text ?? "").replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+    if (!aiRes.ok) {
+      throw new Error(`gateway ${aiRes.status}: ${(await aiRes.text()).slice(0, 200)}`);
+    }
+
+    const aiJson = (await aiRes.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+
+    const raw = (aiJson.choices?.[0]?.message?.content ?? "").replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
     const parsed = JSON.parse(raw) as { takes?: Take[] };
     const takes = (parsed.takes ?? [])
       .map((t) => ({ title: clean(t.title, 120), body: clean(t.body, 420) }))
