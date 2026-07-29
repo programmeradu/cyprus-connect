@@ -1,7 +1,7 @@
 "use client";
 import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
-import { PremiumButton } from "@/components/ui/PremiumButton";
+
 import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
@@ -20,8 +20,10 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
   const router = useRouter();
   const locale = useLocale();
-  const isEur = locale === "el";
-  const currency = isEur ? "EUR" : "USD";
+  // Vuneli is Cyprus-only: every plan is billed in EUR, in both locales.
+  const isEur = true;
+  const currency = "EUR";
+
   const t = useTranslations("billing.pricingTable");
 
   const handleSubscribe = async (planId: string) => {
@@ -94,50 +96,54 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
             }`}
           >
             {/* Numeric marker */}
-            <div className="mb-6 flex items-baseline justify-between">
-              <span className="text-xs tabular-nums text-muted-foreground">
+            <div className="mb-6 flex items-baseline justify-between gap-4">
+              <span
+                aria-hidden
+                className="font-[family-name:var(--editorial-display)] text-[1.15rem] italic leading-none tracking-[-0.03em] text-foreground/30"
+              >
                 {String(index + 1).padStart(2, "0")}
               </span>
               {isPopular && (
-                <span className="eyebrow text-primary">{t("mostPopular")}</span>
+                <span className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-foreground/70">
+                  {t("mostPopular")}
+                </span>
               )}
             </div>
 
             {/* Plan name */}
-            <h3
-              className="text-2xl leading-none tracking-tight sm:text-3xl"
-              style={{ fontFamily: "var(--editorial-serif)", fontWeight: 400 }}
-            >
+            <h3 className="font-[family-name:var(--editorial-display)] text-[1.75rem] font-semibold leading-[1.1] tracking-[-0.025em] sm:text-[2.1rem]">
               {planName}
             </h3>
 
             {/* Price */}
-            <div className="mt-6 flex items-baseline gap-1.5">
-              <span
-                className="text-4xl tabular-nums tracking-tight sm:text-5xl"
-                style={{ fontFamily: "var(--editorial-serif)", fontWeight: 400 }}
-              >
+            <div className="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="font-[family-name:var(--editorial-display)] text-[2.5rem] font-semibold tabular-nums leading-none tracking-[-0.03em] sm:text-[3rem]">
                 {priceLabel}
               </span>
               {intervalLabel && (
-                <span className="text-sm text-muted-foreground">/ {intervalLabel}</span>
+                <span className="text-[14.5px] font-medium text-foreground/60">/ {intervalLabel}</span>
               )}
             </div>
             {isEur && displayPrice > 0 ? (
-              <p className="mt-2 text-[11px] text-muted-foreground/70">
+              <p className="mt-2 text-[13.5px] font-medium text-foreground/55">
                 {t("vatIncluded", { pct: Math.round(CYPRUS_VAT_RATE * 100) })}
               </p>
             ) : (
-              <p className="mt-2 text-[11px] text-transparent select-none">.</p>
+              <p className="mt-2 select-none text-[13.5px] text-transparent">.</p>
             )}
 
             {/* CTA */}
-            <div className="mt-6">
-              <PremiumButton
-                className="h-11 w-full text-sm"
-                variant={isPopular ? "primary" : "outline"}
+            <div className="mt-7">
+              <button
+                type="button"
                 onClick={() => handleSubscribe(plan.id)}
                 disabled={isCurrentPlan || loading === plan.id}
+                className={[
+                  "inline-flex h-11 w-full items-center justify-center rounded-full px-6 text-[15px] font-semibold tracking-[-0.01em] transition-transform disabled:cursor-not-allowed disabled:opacity-55",
+                  isPopular
+                    ? "bg-[var(--accent-lime)] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] hover:scale-[1.02] disabled:hover:scale-100"
+                    : "border border-foreground/25 text-foreground hover:border-foreground",
+                ].join(" ")}
               >
                 {loading === plan.id
                   ? t("processing")
@@ -146,22 +152,26 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
                     : plan.id === "free"
                       ? t("getStarted")
                       : t("upgradeTo", { plan: planName })}
-              </PremiumButton>
+              </button>
             </div>
 
             {/* Features */}
             <div className="mt-8 border-t border-border/60 pt-6">
-              <div className="eyebrow mb-4">Includes</div>
-              <ul className="space-y-3">
+              <div className="mb-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-foreground/60">
+                {locale === "el" ? "Περιλαμβάνει" : "Includes"}
+              </div>
+
+              <ul className="space-y-3.5">
                 {features.map((feature, idx) => (
-                  <li key={idx} className="flex items-baseline gap-3 text-sm leading-relaxed">
-                    <span className="shrink-0 tabular-nums text-muted-foreground/60 text-[11px]">
+                  <li key={idx} className="flex items-baseline gap-3 text-[15px] leading-[1.55]">
+                    <span aria-hidden className="shrink-0 text-[12.5px] font-semibold tabular-nums text-foreground/35">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-foreground/85">{feature}</span>
+                    <span className="text-foreground/80">{feature}</span>
                   </li>
                 ))}
               </ul>
+
             </div>
           </div>
         );
