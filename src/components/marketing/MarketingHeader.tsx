@@ -15,6 +15,7 @@ import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 export function MarketingHeader() {
   const { data: session, isPending } = useSession();
   const tNav = useTranslations("nav");
+  const tHero = useTranslations("hero");
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
