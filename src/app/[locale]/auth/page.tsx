@@ -219,7 +219,7 @@ export default function AuthPage() {
               </div>
 
               <h1
-                className="mt-[clamp(0.85rem,2.4vh,1.5rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.45rem,3.4vh,2.05rem)] font-semibold leading-[1.08] tracking-[-0.025em]"
+                className="mt-[clamp(1rem,3vh,1.75rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.5rem,3.6vh,2.15rem)] font-semibold leading-[1.08] tracking-[-0.025em]"
                 style={{ textWrap: "balance" }}
               >
                 {mode === "login" ? t("signInTitle") : t("createTitle")}
