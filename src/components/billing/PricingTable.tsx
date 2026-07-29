@@ -161,16 +161,17 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
                 {locale === "el" ? "Περιλαμβάνει" : "Includes"}
               </div>
 
-              <ul className="space-y-3">
+              <ul className="space-y-3.5">
                 {features.map((feature, idx) => (
-                  <li key={idx} className="flex items-baseline gap-3 text-sm leading-relaxed">
-                    <span className="shrink-0 tabular-nums text-muted-foreground/60 text-[11px]">
+                  <li key={idx} className="flex items-baseline gap-3 text-[15px] leading-[1.55]">
+                    <span aria-hidden className="shrink-0 text-[12.5px] font-semibold tabular-nums text-foreground/35">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-foreground/85">{feature}</span>
+                    <span className="text-foreground/80">{feature}</span>
                   </li>
                 ))}
               </ul>
+
             </div>
           </div>
         );
