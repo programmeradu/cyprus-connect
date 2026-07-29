@@ -18,7 +18,7 @@ export default function PricingPage() {
 
   const facts: [string, string][] = [
     [el ? "Νόμισμα" : "Currency", el ? "EUR, τιμολόγηση Κύπρου" : "EUR, Cyprus billing"],
-    [el ? "ΦΠΑ" : "VAT", el ? "19% προστίθεται στο ταμείο" : "19% added at checkout"],
+    [el ? "ΦΠΑ" : "VAT", el ? "19% περιλαμβάνεται στις τιμές" : "19% included in shown prices"],
     [el ? "Δέσμευση" : "Commitment", el ? "Μηνιαία, ακύρωση ανά πάσα στιγμή" : "Monthly, cancel anytime"],
     [el ? "Δεδομένα" : "Data", el ? "Φιλοξενία στην ΕΕ" : "Hosted in the EU"],
   ];
