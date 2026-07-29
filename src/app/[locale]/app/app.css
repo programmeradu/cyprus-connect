@@ -231,3 +231,51 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   Legacy microtype correction.
+   The workspace was originally built on 9-11px uppercase
+   wide-tracking labels. Rather than leave 200+ call sites in a
+   half-migrated state, the scoped rules below lift every one of
+   them to a readable, professional B2B treatment. New code should
+   use `.app-label` / `.app-meta` directly.
+   ============================================================ */
+
+.viq-app .text-\[9px\],
+.viq-app .text-\[10px\],
+.viq-app .text-\[10\.5px\],
+.viq-app .text-\[11px\] {
+  font-size: 0.75rem;   /* 12px floor */
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.viq-app .uppercase {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.viq-app .tracking-wide,
+.viq-app .tracking-wider,
+.viq-app .tracking-widest,
+.viq-app .tracking-\[0\.2em\],
+.viq-app .tracking-\[0\.18em\],
+.viq-app .tracking-\[0\.16em\],
+.viq-app .tracking-\[0\.14em\] {
+  letter-spacing: 0;
+}
+
+/* Contrast floor: nothing readable sits below ~4.5:1. */
+.viq-app .text-foreground\/40,
+.viq-app .text-foreground\/45,
+.viq-app .text-foreground\/50,
+.viq-app .text-foreground\/55,
+.viq-app .text-foreground\/60 {
+  color: color-mix(in oklab, var(--foreground) 72%, transparent);
+}
+
+/* Radius discipline: 4 / 6 / 8 / 12px. No 16px+ on rectangles. */
+.viq-app .rounded-2xl,
+.viq-app .rounded-3xl {
+  border-radius: 0.75rem;
+}
