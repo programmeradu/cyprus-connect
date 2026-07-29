@@ -1,61 +1,91 @@
 "use client";
 
-type Mark = {
+/**
+ * Integrations row.
+ *
+ * Two source types, no fabricated logos:
+ *  - `simpleicons` marks pull the official SVG glyph from cdn.simpleicons.org
+ *    (colored per mode via the URL path).
+ *  - `wordmark` marks render the brand name in the editorial serif — used for
+ *    orgs whose visual identity is primarily typographic (Cyprus utilities,
+ *    open-data climate projects) and where scraping their site logo would
+ *    look worse than a clean wordmark.
+ */
+
+type SimpleIconMark = {
+  kind: "simpleicon";
   name: string;
-  file: string;
-  /** Per-logo optical size so wordmarks and monograms sit balanced without cards. */
+  slug: string;
   sizeClass: string;
 };
 
-type RowProps = {
-  marks: Mark[];
-  layoutClass: string;
+type WordmarkMark = {
+  kind: "wordmark";
+  name: string;
+  /** Optional smaller subtitle rendered under the wordmark. */
+  sub?: string;
+  sizeClass: string;
 };
 
+type Mark = SimpleIconMark | WordmarkMark;
+
 const CYPRUS_MARKS: Mark[] = [
-  { name: "Electricity Authority of Cyprus", file: "eac", sizeClass: "h-12 w-20 sm:h-14" },
-  { name: "JCC Payment Systems", file: "jcc", sizeClass: "h-9 w-32 sm:h-10 sm:w-36" },
-  { name: "gov.cy", file: "govcy", sizeClass: "h-14 w-24 sm:h-16" },
-  { name: "Registrar of Companies", file: "companies", sizeClass: "h-12 w-48 sm:h-14 sm:w-60" },
-  { name: "CyStat", file: "cystat", sizeClass: "h-12 w-36 sm:h-14 sm:w-44" },
+  { kind: "wordmark", name: "EAC", sub: "Electricity Authority", sizeClass: "text-[22px] sm:text-[26px]" },
+  { kind: "wordmark", name: "JCC", sub: "Payment Systems", sizeClass: "text-[22px] sm:text-[26px]" },
+  { kind: "wordmark", name: "gov.cy", sizeClass: "text-[24px] sm:text-[28px]" },
+  { kind: "wordmark", name: "Companies.cy", sizeClass: "text-[22px] sm:text-[26px]" },
+  { kind: "wordmark", name: "CyStat", sizeClass: "text-[22px] sm:text-[26px]" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
-  { name: "QuickBooks", file: "quickbooks", sizeClass: "h-12 w-12 sm:h-14 sm:w-14" },
-  { name: "Xero", file: "xero", sizeClass: "h-12 w-20 sm:h-14" },
-  { name: "Climate TRACE", file: "climatetrace", sizeClass: "h-9 w-40 sm:h-10 sm:w-48" },
-  { name: "Electricity Maps", file: "electricitymaps", sizeClass: "h-12 w-20 sm:h-14" },
-  { name: "OpenEI", file: "openei", sizeClass: "h-9 w-36 sm:h-10 sm:w-40" },
-  { name: "WikiRate", file: "wikirate", sizeClass: "h-9 w-36 sm:h-10 sm:w-44" },
+  { kind: "simpleicon", name: "QuickBooks", slug: "quickbooks", sizeClass: "h-9 w-9 sm:h-10 sm:w-10" },
+  { kind: "simpleicon", name: "Xero", slug: "xero", sizeClass: "h-9 w-9 sm:h-10 sm:w-10" },
+  { kind: "wordmark", name: "ClimateTRACE", sizeClass: "text-[22px] sm:text-[26px]" },
+  { kind: "wordmark", name: "ElectricityMaps", sizeClass: "text-[22px] sm:text-[26px]" },
+  { kind: "wordmark", name: "OpenEI", sizeClass: "text-[22px] sm:text-[26px]" },
+  { kind: "wordmark", name: "WikiRate", sizeClass: "text-[22px] sm:text-[26px]" },
 ];
 
 function Logo({ mark }: { mark: Mark }) {
-  const lightSrc = `/integrations/${mark.file}-light.png`;
-  const darkSrc = `/integrations/${mark.file}-dark.png`;
+  if (mark.kind === "simpleicon") {
+    // Simple Icons serves the official brand glyph. Two <img> tags let us
+    // recolor per mode without a client-side theme hook.
+    return (
+      <div className="flex h-16 w-full items-center justify-center sm:h-20" title={mark.name}>
+        <img
+          src={`https://cdn.simpleicons.org/${mark.slug}/1a1a1a`}
+          alt={`${mark.name} logo`}
+          loading="lazy"
+          className={`block ${mark.sizeClass} object-contain opacity-80 transition duration-300 hover:opacity-100 dark:hidden`}
+        />
+        <img
+          src={`https://cdn.simpleicons.org/${mark.slug}/ffffff`}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className={`hidden ${mark.sizeClass} object-contain opacity-80 transition duration-300 hover:opacity-100 dark:block`}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className="flex h-16 w-full items-center justify-center sm:h-20"
-      title={mark.name}
-    >
-      <img
-        src={lightSrc}
-        alt={`${mark.name} logo`}
-        loading="lazy"
-        className={`block ${mark.sizeClass} object-contain opacity-85 transition duration-300 hover:opacity-100 dark:hidden`}
-      />
-      <img
-        src={darkSrc}
-        alt=""
-        aria-hidden="true"
-        loading="lazy"
-        className={`hidden ${mark.sizeClass} object-contain opacity-85 transition duration-300 hover:opacity-100 dark:block`}
-      />
+    <div className="flex h-16 w-full flex-col items-center justify-center gap-0.5 sm:h-20" title={mark.name}>
+      <span
+        className={`font-[family-name:var(--editorial-serif)] ${mark.sizeClass} leading-none tracking-[-0.01em] text-foreground/80 transition duration-300 hover:text-foreground`}
+      >
+        {mark.name}
+      </span>
+      {mark.sub ? (
+        <span className="text-[10px] uppercase tracking-[0.14em] text-foreground/45">
+          {mark.sub}
+        </span>
+      ) : null}
     </div>
   );
 }
 
-function Row({ marks, layoutClass }: RowProps) {
+function Row({ marks, layoutClass }: { marks: Mark[]; layoutClass: string }) {
   return (
     <div className={`grid items-center justify-items-center gap-x-8 gap-y-9 sm:gap-x-12 sm:gap-y-11 lg:gap-x-7 ${layoutClass}`}>
       {marks.map((m) => (
