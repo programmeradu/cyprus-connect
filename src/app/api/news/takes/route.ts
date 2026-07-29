@@ -86,7 +86,6 @@ export async function GET(request: Request) {
         generatedAt: Date.now(),
         sourceCount: items.length,
         fallback: true,
-        debug: `origin=${origin} feedOk=${feed.ok} hasKey=${Boolean(key)}`,
       });
     }
 
@@ -167,7 +166,6 @@ Return JSON only, in the form {"takes":[{"title":"...","body":"..."}]}.`;
       generatedAt: Date.now(),
       sourceCount: 0,
       fallback: true,
-      debug: String((error as Error)?.message ?? error).slice(0, 300),
     });
   }
 }
