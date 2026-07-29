@@ -166,6 +166,10 @@ export function NewsPageClient() {
 
   const [items, setItems] = useState<NewsItem[] | null>(null);
   const [topic, setTopic] = useState<Topic>("all");
+  const [takes, setTakes] = useState<Take[] | null>(null);
+  const [takesMeta, setTakesMeta] = useState<{ sourceCount: number; fallback: boolean } | null>(
+    null,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -181,6 +185,33 @@ export function NewsPageClient() {
       cancelled = true;
     };
   }, []);
+
+  // Vuneli takes: three analyst notes written from the live feed. The route
+  // caches per locale for an hour and always answers with an editorial
+  // baseline, so this never leaves the section empty.
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/news/takes?locale=${locale}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((data) => {
+        if (cancelled || !Array.isArray(data.takes) || data.takes.length === 0) return;
+        setTakes(data.takes as Take[]);
+        setTakesMeta({
+          sourceCount: Number(data.sourceCount) || 0,
+          fallback: Boolean(data.fallback),
+        });
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTakes(EDITORIAL_TAKES[locale] ?? EDITORIAL_TAKES.en);
+          setTakesMeta({ sourceCount: 0, fallback: true });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+
 
   const filtered = useMemo(() => {
     if (!items) return [];
