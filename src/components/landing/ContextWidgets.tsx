@@ -455,7 +455,8 @@ function NewsPulseVisual() {
 
   return (
     <div
-      className="grid h-[88px] w-[88px] shrink-0 place-items-center sm:h-[112px] sm:w-[112px]"
+      className="grid h-[64px] w-[76px] shrink-0 place-items-center sm:h-[112px] sm:w-[112px]"
+
       aria-hidden
     >
       <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="h-full w-full">
