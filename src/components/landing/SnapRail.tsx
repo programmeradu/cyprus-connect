@@ -55,7 +55,7 @@ export function SnapRail({
     const el = ref.current;
     const child = el?.children[i] as HTMLElement | undefined;
     if (!el || !child) return;
-    el.scrollTo({ left: child.offsetLeft - el.offsetLeft, behavior: "smooth" });
+    el.scrollTo({ left: child.offsetLeft - el.offsetLeft - 16, behavior: "smooth" });
   };
 
   const Tag = as as "ul";
