@@ -273,7 +273,7 @@ export default function AuthPage() {
                 <div
                   className={
                     mode === "register"
-                      ? "grid gap-x-6 gap-y-[clamp(0.6rem,1.6vh,1rem)] sm:grid-cols-2"
+                      ? "grid grid-cols-1 gap-x-4 gap-y-[clamp(0.6rem,1.6vh,1rem)] [@media(max-height:820px)]:grid-cols-2 sm:grid-cols-2 sm:gap-x-6"
                       : "space-y-[clamp(0.7rem,2vh,1.25rem)]"
                   }
                 >
