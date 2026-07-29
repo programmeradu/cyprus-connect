@@ -13,8 +13,6 @@ import { WhyChooseGrid } from "@/components/landing/WhyChooseGrid";
 import { IntegrationsMarquee } from "@/components/marketing/IntegrationsMarquee";
 import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import { PowerChapters } from "@/components/landing/PowerChapters";
-import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
-import sectionPlatformImg from "@/assets/section-platform-scopes.jpg";
 import sectionHowImg from "@/assets/section-how-steps.jpg";
 import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
