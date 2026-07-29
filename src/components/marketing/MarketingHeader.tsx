@@ -26,44 +26,45 @@ export function MarketingHeader() {
 
   return (
     <header
-      className="fixed inset-x-0 top-3 z-50 flex justify-center px-3 sm:top-5 sm:px-6"
+      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-6 sm:px-6"
       style={{ fontFamily: "var(--editorial-sans)" }}
     >
       <div
         className={[
-          "flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border px-3 py-2 transition-all duration-300 sm:px-4",
+          "flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border px-4 py-2.5 transition-all duration-300 sm:px-5 sm:py-3",
           scrolled
-            ? "border-foreground/10 bg-background/70 shadow-[0_8px_32px_-12px_rgba(0,0,0,0.18)] backdrop-blur-xl"
-            : "border-white/15 bg-white/5 backdrop-blur-md",
+            ? "border-foreground/10 bg-background/75 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+            : "border-white/20 bg-white/10 backdrop-blur-lg dark:border-white/10 dark:bg-white/[0.06]",
         ].join(" ")}
       >
         <Link
           href="/"
-          className="flex items-center gap-2 pl-2 text-[15px] font-semibold tracking-[-0.02em] text-foreground"
+          className="flex items-center gap-2.5 pl-1.5 text-[18px] font-semibold tracking-[-0.02em] text-foreground"
+          style={{ fontFamily: "var(--editorial-display)" }}
         >
           <span
             aria-hidden
-            className="inline-block h-2 w-2 rounded-full bg-[oklch(0.55_0.15_155)]"
+            className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent-lime)]"
           />
           VerdeIQ
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
-          <Link href="/tools" className="text-[13.5px] text-foreground/75 transition-colors hover:text-foreground">
+        <nav className="hidden items-center gap-8 md:flex">
+          <Link href="/tools" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("tools")}
           </Link>
-          <Link href="/learn" className="text-[13.5px] text-foreground/75 transition-colors hover:text-foreground">
+          <Link href="/learn" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("learn")}
           </Link>
-          <Link href="/news" className="text-[13.5px] text-foreground/75 transition-colors hover:text-foreground">
+          <Link href="/news" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("news")}
           </Link>
-          <Link href="/pricing" className="text-[13.5px] text-foreground/75 transition-colors hover:text-foreground">
+          <Link href="/pricing" className="text-[15px] font-medium text-foreground/80 transition-colors hover:text-foreground">
             {tNav("pricing")}
           </Link>
         </nav>
 
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
           {!isPending &&
@@ -72,7 +73,7 @@ export function MarketingHeader() {
                 <SubscriptionBadge />
                 <Link
                   href="/app"
-                  className="ml-1 inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
+                  className="ml-1 inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-5 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
                 >
                   {tNav("dashboard")}
                 </Link>
@@ -80,7 +81,7 @@ export function MarketingHeader() {
             ) : (
               <Link
                 href="/auth"
-                className="ml-1 inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
+                className="ml-1 inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-5 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] transition-transform hover:scale-[1.02]"
               >
                 {tNav("signIn")}
               </Link>

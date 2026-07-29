@@ -67,7 +67,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`inline-flex items-center gap-0.5 rounded-md border border-border/60 bg-background/70 backdrop-blur p-0.5 ${className}`}
+      className={`inline-flex h-11 items-center gap-0.5 rounded-full border border-foreground/15 bg-card/70 backdrop-blur p-1 ${className}`}
       role="group"
       aria-label={t("label")}
     >
@@ -83,13 +83,13 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
             disabled={isPending}
             aria-pressed={active}
             aria-label={t(lng)}
-            className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-[4px] transition-colors whitespace-nowrap ${
+            className={`inline-flex items-center gap-1.5 h-full text-[13px] font-semibold px-3 rounded-full transition-colors whitespace-nowrap ${
               active
-                ? "bg-primary text-primary-foreground"
+                ? "bg-foreground text-background"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <FlagIcon className="h-3 w-[18px] rounded-[1px] shrink-0 pointer-events-none" />
+            <FlagIcon className="h-3.5 w-[20px] rounded-[1px] shrink-0 pointer-events-none" />
             {lng === "en" ? "EN" : "EL"}
           </button>
         );
