@@ -30,26 +30,25 @@ type Mark = {
   widthClass?: string;
 };
 
+// Six Cyprus marks, six global marks — even rows, no duplicates,
+// each domain hand-verified against Logo.dev so nothing falls back
+// to a generic favicon.
 const CYPRUS_MARKS: Mark[] = [
   { name: "EAC", domain: "eac.com.cy", widthClass: "w-24" },
   { name: "JCC", domain: "jcc.com.cy", widthClass: "w-24" },
   { name: "SoftOne", domain: "softone.com.cy", widthClass: "w-28" },
-  { name: "gov.cy", domain: "gov.cy", widthClass: "w-24" },
-  { name: "Registrar of Companies", domain: "companies.gov.cy", widthClass: "w-32" },
-  { name: "TAXISnet", domain: "mof.gov.cy", widthClass: "w-28" },
-  { name: "Ariadni", domain: "ariadni.gov.cy", widthClass: "w-28" },
-  { name: "CyStat", domain: "cystat.gov.cy", widthClass: "w-28" },
+  { name: "gov.cy", domain: "cyprus.gov.cy", widthClass: "w-24" },
+  { name: "Registrar of Companies", domain: "companies.gov.cy", widthClass: "w-28" },
+  { name: "CyStat", domain: "cystat.gov.cy", widthClass: "w-24" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
   { name: "QuickBooks", domain: "quickbooks.intuit.com", widthClass: "w-28" },
   { name: "Xero", domain: "xero.com", widthClass: "w-20" },
-  { name: "Google Gemini", domain: "gemini.google.com", widthClass: "w-24" },
-  { name: "Google Cloud", domain: "cloud.google.com", widthClass: "w-28" },
+  { name: "Stripe", domain: "stripe.com", widthClass: "w-20" },
   { name: "Climate TRACE", domain: "climatetrace.org", widthClass: "w-32" },
   { name: "Electricity Maps", domain: "electricitymaps.com", widthClass: "w-32" },
-  { name: "OpenEI", domain: "openei.org", widthClass: "w-24" },
-  { name: "WikiRate", domain: "wikirate.org", widthClass: "w-28" },
+  { name: "WikiRate", domain: "wikirate.org", widthClass: "w-24" },
 ];
 
 function Logo({ mark }: { mark: Mark }) {
