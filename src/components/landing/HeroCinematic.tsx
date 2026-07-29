@@ -1,45 +1,64 @@
 "use client";
 
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
+import { useMemo } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import heroPort from "@/assets/hero-limassol-port.jpg";
-import heroDashboard from "@/assets/hero-dashboard-mockup.png";
+import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
+import hero02 from "@/assets/hero-02-troodos-dawn.jpg";
+import hero03 from "@/assets/hero-03-limassol-blue.jpg";
+import hero04 from "@/assets/hero-04-olive-grove.jpg";
 import avatar1 from "@/assets/avatar-advisor-1.jpg";
 import avatar2 from "@/assets/avatar-advisor-2.jpg";
 
 /**
- * HeroCinematic — full-bleed Limassol port photograph with a frosted glass
- * hero card, bracketed mono eyebrow, mixed-weight headline, chartreuse CTA,
- * and a human trust cluster. Below: a tilted dashboard mockup that anchors
- * "this is a real product".
+ * HeroCinematic — full-bleed Cyprus cinematic photography behind a bold
+ * editorial hero. Rotates one of four photos per reload. No eyebrows,
+ * premium display-weight Fraunces type, chartreuse lime CTA.
  *
- * Composition steals (audit ref):
- *  - Lifecycle: full-bleed photo + glass card + bracketed eyebrow + lime CTA
- *  - Solaric:   split layout + trust cluster with avatars
- *  - GreenX:    mixed serif-italic headline weight
- *  - Emitra:    tilted product screenshot below the fold
+ * The photo carries through to the next section (no hard bottom edge) via
+ * a long scrim fade rather than a hard cut.
  */
+const HERO_SET: { src: StaticImageData; alt: string; focus: string }[] = [
+  { src: hero01, alt: "Oreites wind turbines at Cyprus golden hour", focus: "60% 55%" },
+  { src: hero02, alt: "Troodos mountain ridges at dawn with morning mist", focus: "50% 55%" },
+  { src: hero03, alt: "Limassol port cranes at blue hour", focus: "40% 50%" },
+  { src: hero04, alt: "Ancient Cypriot olive grove at first light", focus: "55% 55%" },
+];
+
 export function HeroCinematic() {
   const t = useTranslations("hero");
 
+  // Rotate on every render/reload — client component, so this reshuffles
+  // per navigation to /en without needing a server-side signal.
+  const idx = useMemo(() => Math.floor(Math.random() * HERO_SET.length), []);
+  const shot = HERO_SET[idx];
+
   return (
-    <section className="relative isolate overflow-hidden">
-      {/* Photographic backdrop — bleeds under the floating header */}
-      <div className="absolute inset-0 -z-10">
+    <section className="relative isolate">
+      {/* Photographic backdrop — bleeds under the floating header AND
+          extends past the hero into the next section via the long
+          bottom scrim fade below. */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
         <Image
-          src={heroPort}
-          alt="Limassol port at golden hour"
+          src={shot.src}
+          alt={shot.alt}
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[70%_50%]"
+          className="object-cover"
+          style={{ objectPosition: shot.focus }}
         />
-        {/* Vertical scrim so the wordmark + card stay readable across themes */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background" />
-        {/* Desktop: fade image to the right so the glass card reads clearly on the left */}
-        <div className="absolute inset-0 hidden bg-gradient-to-r from-background/70 via-background/20 to-transparent md:block" />
-        {/* Grain — kills banding on the scrim */}
+        {/* Top scrim keeps the floating header readable */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/60 to-transparent" />
+        {/* Left readability wash for the hero text on desktop */}
+        <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/40 to-transparent md:block" />
+        {/* Mobile: full darken to keep the giant type legible */}
+        <div className="absolute inset-0 bg-background/55 md:hidden" />
+        {/* Long bottom fade — carries the image into the next section
+            instead of cutting hard at the fold */}
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent via-background/70 to-background" />
+        {/* Grain */}
         <div
           aria-hidden
           className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
@@ -51,115 +70,94 @@ export function HeroCinematic() {
         />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 pb-16 pt-40 sm:px-6 sm:pb-24 sm:pt-52 md:pt-64">
-        <div className="grid gap-10 md:grid-cols-12 md:gap-8">
-          {/* Frosted glass hero card */}
-          <div className="md:col-span-7 lg:col-span-6">
-            <div
-              className="relative rounded-2xl border border-white/25 bg-white/10 p-7 backdrop-blur-2xl backdrop-saturate-150 sm:p-9 dark:border-white/10 dark:bg-white/[0.04]"
-              style={{
-                boxShadow:
-                  "0 24px 60px -24px rgba(0,0,0,0.35), inset 0 1px 0 0 rgba(255,255,255,0.25)",
-              }}
+      <div className="mx-auto max-w-6xl px-5 pb-40 pt-36 sm:px-8 sm:pb-56 sm:pt-48 md:pt-64 lg:pb-72">
+        <div className="grid gap-12 md:grid-cols-12 md:gap-10">
+          <div className="md:col-span-8 lg:col-span-9">
+            {/* Bold editorial headline — no eyebrow, no pill.
+                Fraunces display weight, tight tracking, mixed roman/italic. */}
+            <h1
+              className="font-[family-name:var(--editorial-display)] text-[3.4rem] font-medium leading-[0.95] tracking-[-0.03em] text-foreground sm:text-[5.2rem] md:text-[6.4rem] lg:text-[7.4rem]"
+              style={{ fontOpticalSizing: "auto" }}
             >
-              {/* Bracketed mono eyebrow — Lifecycle steal */}
-              <p
-                className="mb-6 text-[11px] uppercase tracking-[0.22em] text-foreground/70"
-                style={{ fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}
+              {t("titleLine1")}
+              <br />
+              <span className="italic font-normal text-foreground/60">
+                {t("titleLine2")}
+              </span>
+              <br />
+              {t("titleLine3")}
+              <span className="text-[var(--accent-lime)]">.</span>
+            </h1>
+
+            <p
+              className="mt-10 max-w-xl text-lg leading-[1.55] text-foreground/80 sm:text-[22px] sm:leading-[1.5]"
+              style={{ fontFamily: "var(--editorial-sans)", fontWeight: 400 }}
+            >
+              {t("subtitle")}
+            </p>
+
+            {/* CTAs — chunky chartreuse primary + underline secondary */}
+            <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-5">
+              <Link
+                href="/auth"
+                className="group inline-flex items-center gap-4 rounded-md bg-[var(--accent-lime)] px-7 py-5 text-[14px] font-semibold uppercase tracking-[0.14em] text-[var(--accent-lime-foreground)] shadow-[0_20px_50px_-20px_color-mix(in_oklab,var(--accent-lime)_60%,transparent)] transition-all hover:translate-y-[-2px]"
+                style={{ fontFamily: "var(--editorial-sans)" }}
               >
-                [ CYPRUS SUSTAINABILITY OS ]
-              </p>
-
-              {/* Mixed-weight headline — GreenX steal */}
-              <h1 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] text-foreground sm:text-[3.4rem] sm:leading-[0.98]">
-                {t("titleLine1")}
-                <br />
-                <span className="italic font-normal text-foreground/70">
-                  {t("titleLine2")}
-                </span>
-                <br />
-                {t("titleLine3")}
-                <span className="text-[oklch(0.55_0.15_155)]">.</span>
-              </h1>
-
-              <p className="mt-6 max-w-md text-[15px] leading-[1.6] text-foreground/75 sm:text-base">
-                {t("subtitle")}
-              </p>
-
-              {/* CTA — Lifecycle-style sharp chartreuse rectangle */}
-              <div className="mt-8">
-                <Link
-                  href="/auth"
-                  className="group inline-flex w-full items-center justify-between gap-4 rounded-md bg-[var(--accent-lime)] px-5 py-4 text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--accent-lime-foreground)] transition-all hover:translate-y-[-1px] sm:w-auto"
-                >
-                  <span>{t("ctaPrimary")}</span>
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 18 18"
-                    fill="none"
-                    className="transition-transform group-hover:translate-x-1"
-                  >
-                    <path
-                      d="M3 9h11M10 5l4 4-4 4"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="square"
-                    />
-                  </svg>
-                </Link>
-              </div>
+                <span>{t("ctaPrimary")}</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M3 10h13M11 5l5 5-5 5"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="square"
+                  />
+                </svg>
+              </Link>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center gap-3 text-[15px] font-medium text-foreground/75 underline decoration-foreground/25 decoration-1 underline-offset-[8px] transition-colors hover:text-foreground hover:decoration-foreground"
+                style={{ fontFamily: "var(--editorial-sans)" }}
+              >
+                {t("ctaPricing") ?? "See pricing"}
+              </Link>
             </div>
           </div>
 
-          {/* Trust cluster — Solaric + Lifecycle steal, sits to the right of the card on desktop */}
-          <div className="md:col-span-5 lg:col-span-6 md:flex md:items-end md:justify-end">
-            <div className="inline-flex items-center gap-4 rounded-full border border-white/25 bg-white/10 py-2 pl-2 pr-5 backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.04]">
-              <div className="flex -space-x-2">
+          {/* Advisor trust cluster — pinned bottom-right on desktop
+              (Lifecycle steal, done properly this time) */}
+          <div className="md:col-span-4 lg:col-span-3 md:flex md:items-end md:justify-end">
+            <div
+              className="inline-flex items-center gap-4 rounded-full border border-white/30 bg-white/15 py-2 pl-2 pr-6 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06]"
+            >
+              <div className="flex -space-x-3">
                 <Image
                   src={avatar1}
                   alt=""
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full border-2 border-background object-cover"
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full border-2 border-background object-cover"
                 />
                 <Image
                   src={avatar2}
                   alt=""
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full border-2 border-background object-cover"
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 rounded-full border-2 border-background object-cover"
                 />
               </div>
               <div className="flex flex-col">
-                <span
-                  className="text-[10.5px] uppercase tracking-[0.16em] text-foreground/60"
-                  style={{ fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace' }}
-                >
+                <span className="text-[15px] font-semibold leading-tight text-foreground">
                   Talk to a Cyprus advisor
                 </span>
-                <span className="text-[13.5px] font-medium text-foreground">
+                <span
+                  className="text-[13px] leading-tight text-foreground/65"
+                  style={{ fontFamily: "var(--editorial-sans)" }}
+                >
                   Free 20-minute consultation
                 </span>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Tilted dashboard mockup — Emitra steal, product proof */}
-        <div className="relative mt-20 sm:mt-28">
-          <div
-            className="pointer-events-none absolute inset-x-0 -bottom-8 -top-8 -z-10 rounded-[2rem] bg-gradient-to-b from-[oklch(0.55_0.15_155)]/10 via-transparent to-transparent blur-2xl"
-            aria-hidden
-          />
-          <Image
-            src={heroDashboard}
-            alt="VerdeIQ dashboard: Scope 1+2+3 emissions trending down, CBAM import value, Cyprus grid intensity"
-            width={1600}
-            height={1104}
-            priority
-            className="mx-auto h-auto w-full max-w-5xl drop-shadow-[0_40px_80px_rgba(0,0,0,0.35)]"
-          />
         </div>
       </div>
     </section>
