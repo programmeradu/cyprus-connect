@@ -2,7 +2,7 @@
 
 import Image, { type StaticImageData } from "next/image";
 import { useEffect, useState } from "react";
-import { Link } from "@/i18n/navigation";
+
 import { useTranslations } from "next-intl";
 import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
 import hero02 from "@/assets/hero-02-troodos-dawn.jpg";
