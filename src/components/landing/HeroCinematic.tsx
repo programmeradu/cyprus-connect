@@ -20,10 +20,10 @@ import avatar2 from "@/assets/avatar-advisor-2.jpg";
  * a long scrim fade rather than a hard cut.
  */
 const HERO_SET: { src: StaticImageData; alt: string; focus: string }[] = [
-  { src: hero01, alt: "Oreites wind turbines at Cyprus golden hour", focus: "60% 55%" },
-  { src: hero02, alt: "Troodos mountain ridges at dawn with morning mist", focus: "50% 55%" },
-  { src: hero03, alt: "Limassol port cranes at blue hour", focus: "40% 50%" },
-  { src: hero04, alt: "Ancient Cypriot olive grove at first light", focus: "55% 55%" },
+  { src: hero01, alt: "Oreites wind turbines at Cyprus golden hour", focus: "60% 68%" },
+  { src: hero02, alt: "Troodos mountain ridges at dawn with morning mist", focus: "50% 70%" },
+  { src: hero03, alt: "Limassol port cranes at blue hour", focus: "40% 64%" },
+  { src: hero04, alt: "Ancient Cypriot olive grove at first light", focus: "55% 68%" },
 ];
 
 export function HeroCinematic() {
@@ -44,14 +44,19 @@ export function HeroCinematic() {
           into the next section, so no flat wash of background colour appears
           over the photo in light mode. */}
       <div
-        className="absolute inset-x-0 top-0 -bottom-64 -z-10"
+        className="absolute inset-x-0 top-0 -bottom-40 -z-10 overflow-hidden"
         style={{
           WebkitMaskImage:
-            "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.18) 92%, transparent 100%)",
+            "linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.55) 83%, rgba(0,0,0,0.18) 93%, transparent 100%)",
           maskImage:
-            "linear-gradient(to bottom, #000 0%, #000 62%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.18) 92%, transparent 100%)",
+            "linear-gradient(to bottom, #000 0%, #000 68%, rgba(0,0,0,0.55) 83%, rgba(0,0,0,0.18) 93%, transparent 100%)",
         }}
       >
+        {/* The container runs ~160px past the viewport so the photo can dissolve
+            into the next section. Without compensation, object-cover centres the
+            frame inside that taller box and the visible viewport only shows the
+            top slice. Pushing objectPosition down pulls the subject back into
+            the part of the photo people actually see on load. */}
         <Image
           src={shot.src}
           alt={shot.alt}
@@ -61,6 +66,7 @@ export function HeroCinematic() {
           className="object-cover"
           style={{ objectPosition: shot.focus }}
         />
+
         {/* Top scrim keeps the floating header readable — dark tint in both modes */}
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/45 to-transparent" />
         {/* Left readability wash for the hero text on desktop — dark tint, never white */}
