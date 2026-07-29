@@ -13,8 +13,9 @@ import { WhyChooseGrid } from "@/components/landing/WhyChooseGrid";
 import { IntegrationsMarquee } from "@/components/marketing/IntegrationsMarquee";
 import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import { PowerChapters } from "@/components/landing/PowerChapters";
-import sectionHowImg from "@/assets/section-how-steps.jpg";
-import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
+import { EcosystemRail } from "@/components/landing/EcosystemRail";
+import { HowItWorksSteps } from "@/components/landing/HowItWorksSteps";
+
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
@@ -95,22 +96,9 @@ export default function Home() {
 
       {/* ECOSYSTEM */}
       <div className="relative">
-        <EditorialSection
-          titleA={tL("beyondTitleA")}
-          titleB={tL("beyondTitleB")}
-          subtitle={tL("beyondSubtitle")}
-          media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
-        >
-          <NumberedList
-            items={[
-              { n: "01", title: tL("ecoLearningTitle"), body: tL("ecoLearningDesc") },
-              { n: "02", title: tL("ecoMarketplaceTitle"), body: tL("ecoMarketplaceDesc") },
-              { n: "03", title: tL("ecoStudioTitle"), body: tL("ecoStudioDesc") },
-              { n: "04", title: tL("ecoLeaderboardTitle"), body: tL("ecoLeaderboardDesc") },
-            ]}
-          />
-        </EditorialSection>
+        <EcosystemRail />
       </div>
+
 
       <SectionDivider />
 
@@ -135,10 +123,8 @@ export default function Home() {
       <section className="relative overflow-hidden border-y border-border/50 bg-muted/25">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
-            <p className="text-[15px] font-semibold tracking-[-0.01em] text-foreground/60">
-              Strategic roadmap, 2026 to 2028
-            </p>
-            <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
+            <h2 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
+
               Discover the{" "}
               <span className="italic text-muted-foreground">autonomous ESG vision</span>
             </h2>
@@ -231,20 +217,8 @@ export default function Home() {
           loading="lazy"
           className="pointer-events-none absolute -bottom-16 -left-10 z-10 hidden w-[320px] max-w-none rotate-[4deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-bottom-24 lg:-left-20 lg:w-[440px]"
         />
-        <EditorialSection
-          titleA={tL("howTitleA")}
-          titleB={tL("howTitleB")}
-          subtitle={tL("howSubtitle")}
-          media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act - three-step data flow diagram" }}
-        >
-          <NumberedList
-            items={[
-              { n: "01", title: tL("stepConnectTitle"), body: tL("stepConnectDesc") },
-              { n: "02", title: tL("stepAnalyzeTitle"), body: tL("stepAnalyzeDesc") },
-              { n: "03", title: tL("stepActionTitle"), body: tL("stepActionDesc") },
-            ]}
-          />
-        </EditorialSection>
+        <HowItWorksSteps />
+
       </div>
 
       <SectionDivider />
@@ -344,75 +318,3 @@ function SectionDivider() {
   return <div className="mx-auto max-w-6xl px-4 sm:px-6"><div className="h-px w-full bg-border/60" /></div>;
 }
 
-function EditorialSection({
-  titleA,
-  titleMid,
-  titleB,
-  subtitle,
-  media,
-  children,
-}: {
-  titleA: string;
-  titleMid?: string;
-  titleB?: string;
-  subtitle?: string;
-  media?: { src: string; alt: string };
-  children: React.ReactNode;
-}) {
-
-  return (
-    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-      <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
-        <div className="sm:col-span-5">
-          <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
-            {titleA}
-            {titleMid && <> <span className="italic text-muted-foreground">{titleMid}</span></>}
-            {titleB && <> <span className="italic text-muted-foreground">{titleB}</span></>}
-          </h2>
-          {subtitle && (
-            <p className="mt-6 max-w-md font-[family-name:var(--editorial-serif)] text-[19px] italic leading-[1.45] text-foreground/70 sm:text-[22px]">
-              {subtitle}
-            </p>
-          )}
-        </div>
-        <div className="sm:col-span-7">
-          {media && (
-            <div className="mb-8 overflow-hidden rounded-md border border-border/60 bg-muted/30">
-              <img
-                src={media.src}
-                alt={media.alt}
-                width={1600}
-                height={1008}
-                loading="lazy"
-                className="h-auto w-full object-cover"
-              />
-            </div>
-          )}
-          {children}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function NumberedList({ items }: { items: { n: string; title: string; body: string }[] }) {
-  return (
-    <ul className="divide-y divide-border/60 border-y border-border/60">
-      {items.map((it) => (
-        <li key={it.n} className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 py-7 sm:gap-x-10 sm:py-9">
-          <span className="pt-2 text-[11px] font-medium tabular-nums tracking-[0.22em] text-foreground/50">
-            {it.n}
-          </span>
-          <div className="min-w-0">
-            <h3 className="font-[family-name:var(--editorial-serif)] text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
-              {it.title}
-            </h3>
-            <p className="mt-3 text-[16px] font-normal leading-[1.55] text-foreground/65 sm:text-[17.5px]">
-              {it.body}
-            </p>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
