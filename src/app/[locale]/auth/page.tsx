@@ -113,9 +113,6 @@ export default function AuthPage() {
     }
   };
 
-  const handleDemoAccess = () => {
-    toast.info(t("demoToast"));
-  };
 
   const assurances: [string, string][] = [
     [el ? "Δεδομένα" : "Data", el ? "Φιλοξενία στην ΕΕ" : "Hosted in the EU"],
@@ -210,7 +207,7 @@ export default function AuthPage() {
                     onClick={() => setMode(m)}
                     aria-current={mode === m}
                     className={[
-                      "-mb-px border-b-2 pb-[clamp(0.4rem,1.2vh,0.75rem)] text-[14px] font-semibold tracking-[-0.01em] transition-colors",
+                      "-mb-px border-b-2 pb-[clamp(0.45rem,1.4vh,0.85rem)] text-[14px] font-semibold tracking-[-0.01em] transition-colors",
                       mode === m
                         ? "border-foreground text-foreground"
                         : "border-transparent text-foreground/50 hover:text-foreground/80",
@@ -222,12 +219,12 @@ export default function AuthPage() {
               </div>
 
               <h1
-                className="mt-[clamp(0.85rem,2.4vh,1.5rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.45rem,3.4vh,2.05rem)] font-semibold leading-[1.08] tracking-[-0.025em]"
+                className="mt-[clamp(1rem,3vh,1.75rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.5rem,3.6vh,2.15rem)] font-semibold leading-[1.08] tracking-[-0.025em]"
                 style={{ textWrap: "balance" }}
               >
                 {mode === "login" ? t("signInTitle") : t("createTitle")}
               </h1>
-              <p className="mt-[clamp(0.4rem,1vh,0.65rem)] hidden text-[clamp(14px,1.9vh,15px)] font-medium leading-[1.5] text-foreground/65 [@media(min-height:600px)]:block">
+              <p className="mt-[clamp(0.45rem,1.2vh,0.75rem)] hidden text-[clamp(14px,1.9vh,15.5px)] font-medium leading-[1.5] text-foreground/65 [@media(min-height:560px)]:block">
                 {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
               </p>
 
@@ -235,7 +232,7 @@ export default function AuthPage() {
               <button
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
-                className="mt-[clamp(0.85rem,2.4vh,1.5rem)] flex h-[clamp(2.4rem,5vh,2.75rem)] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
+                className="mt-[clamp(1rem,3vh,1.75rem)] flex h-[clamp(2.5rem,5.4vh,2.9rem)] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
               >
                 <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -258,7 +255,7 @@ export default function AuthPage() {
                 <span className="min-w-0 truncate">{t("google")}</span>
               </button>
 
-              <div className="my-[clamp(0.7rem,2vh,1.25rem)] flex items-center gap-4">
+              <div className="my-[clamp(0.9rem,2.6vh,1.6rem)] flex items-center gap-4">
                 <span className="h-px flex-1 bg-border/70" />
                 <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground/50">
                   {t("orEmail")}
@@ -268,13 +265,14 @@ export default function AuthPage() {
 
               <form
                 onSubmit={handleSubmit}
-                className="space-y-[clamp(0.7rem,2vh,1.25rem)]"
+                className="space-y-[clamp(0.85rem,2.5vh,1.5rem)]"
               >
                 <div
                   className={
                     mode === "register"
-                      ? "grid grid-cols-1 gap-x-4 gap-y-[clamp(0.6rem,1.6vh,1rem)] [@media(max-height:820px)]:grid-cols-2 sm:grid-cols-2 sm:gap-x-6"
-                      : "space-y-[clamp(0.7rem,2vh,1.25rem)]"
+                      ? "grid grid-cols-1 gap-x-4 gap-y-[clamp(0.75rem,2vh,1.25rem)] [@media(max-height:820px)]:grid-cols-2 sm:grid-cols-2 sm:gap-x-6"
+                      : "space-y-[clamp(0.85rem,2.5vh,1.5rem)]"
+
                   }
                 >
                 {mode === "register" && (
@@ -372,7 +370,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex h-[clamp(2.4rem,5vh,2.75rem)] w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                  className="mt-[clamp(0.25rem,1vh,0.6rem)] inline-flex h-[clamp(2.5rem,5.4vh,2.9rem)] w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                 >
                   <span className="min-w-0 truncate">
                     {isLoading ? t("processing") : mode === "login" ? t("signIn") : t("createAccount")}
@@ -396,29 +394,7 @@ export default function AuthPage() {
                 </button>
               </form>
 
-              <p className="mt-[clamp(0.7rem,2vh,1.25rem)] text-[14px] font-medium text-foreground/65">
-                {mode === "login" ? t("noAccount") : t("haveAccount")}{" "}
-                <button
-                  type="button"
-                  onClick={() => setMode(mode === "login" ? "register" : "login")}
-                  className="font-semibold text-foreground underline decoration-[var(--accent-lime)] decoration-2 underline-offset-4 transition-opacity hover:opacity-70"
-                  disabled={isLoading}
-                >
-                  {mode === "login" ? t("switchSignUp") : t("switchSignIn")}
-                </button>
-              </p>
 
-              <div className="mt-[clamp(0.7rem,2vh,1.25rem)] hidden flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/60 pt-[clamp(0.5rem,1.5vh,1rem)] text-[14px] [@media(min-height:640px)]:flex">
-                <span className="font-medium text-foreground/60">{t("demoQuestion")}</span>
-                <button
-                  type="button"
-                  onClick={handleDemoAccess}
-                  className="font-semibold text-foreground underline underline-offset-4 transition-opacity hover:opacity-70"
-                  disabled={isLoading}
-                >
-                  {t("demoTry")}
-                </button>
-              </div>
 
             </div>
           </div>
