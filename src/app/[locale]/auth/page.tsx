@@ -232,7 +232,7 @@ export default function AuthPage() {
               <button
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
-                className="mt-[clamp(0.85rem,2.4vh,1.5rem)] flex h-[clamp(2.4rem,5vh,2.75rem)] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
+                className="mt-[clamp(1rem,3vh,1.75rem)] flex h-[clamp(2.5rem,5.4vh,2.9rem)] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
               >
                 <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                   <path
