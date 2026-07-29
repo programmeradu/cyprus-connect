@@ -39,12 +39,12 @@ export function HeroCinematic() {
   const shot = HERO_SET[idx];
 
   return (
-    <section className="relative isolate flex min-h-[100svh] w-full flex-col">
+    <section className="relative isolate flex min-h-[86svh] w-full flex-col sm:min-h-[100svh]">
       {/* Photographic backdrop - extends past the hero and dissolves (alpha mask)
           into the next section, so no flat wash of background colour appears
           over the photo in light mode. */}
       <div
-        className="absolute inset-x-0 top-0 -bottom-40 -z-10 overflow-hidden"
+        className="absolute inset-x-0 top-0 -bottom-24 -z-10 overflow-hidden sm:-bottom-40"
         style={{
           // The dissolve happens ONLY in the 160px that hang below the hero
           // viewport, level with the news marquee. Inside the hero itself the
