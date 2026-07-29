@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { PILLARS } from "@/data/learn/pillars";
 
 /**
- * Top pillar internal links for homepage + pricing.
- * Deliberately curated (not every pillar) - highest-intent, highest-volume, and Cyprus-local.
+ * Knowledge index - editorial ledger of the highest-intent guides.
+ * Reads as a printed contents page: hairline rules, serif numerals,
+ * small square plates, reading time in the right margin.
  */
 const TOP_PILLAR_SLUGS = [
   "csrd-reporting-guide",
@@ -20,20 +20,23 @@ const TOP_PILLAR_SLUGS = [
   "cbam-cyprus",
 ] as const;
 
-const HEADINGS: Record<string, { eyebrow: string; title: string; subtitle: string; viewAll: string }> = {
+const HEADINGS: Record<
+  string,
+  { titleA: string; titleB: string; subtitle: string; viewAll: string }
+> = {
   en: {
-    eyebrow: "Knowledge Hub",
-    title: "Learn sustainability reporting",
+    titleA: "Learn sustainability",
+    titleB: "reporting",
     subtitle:
       "In-depth guides on CSRD, VSME, CBAM, and carbon accounting - written for European SMEs, updated as the regulations evolve.",
-    viewAll: "Browse all guides →",
+    viewAll: "Browse all guides",
   },
   el: {
-    eyebrow: "Κόμβος Γνώσης",
-    title: "Μάθετε αναφορά βιωσιμότητας",
+    titleA: "Μάθετε αναφορά",
+    titleB: "βιωσιμότητας",
     subtitle:
       "Αναλυτικοί οδηγοί για CSRD, VSME, CBAM και ανθρακική λογιστική - γραμμένοι για ευρωπαϊκές ΜμΕ, ενημερώνονται με τους κανονισμούς.",
-    viewAll: "Δείτε όλους τους οδηγούς →",
+    viewAll: "Δείτε όλους τους οδηγούς",
   },
 };
 
@@ -49,74 +52,73 @@ export function LearnLinksSection() {
     return {
       slug: p.slug,
       title: content.title,
-      eyebrow: content.heroEyebrow,
       minutes: p.readingMinutes,
       heroImage: p.heroImage,
     };
   }).filter((x): x is NonNullable<typeof x> => Boolean(x));
 
-  const minutesLabel = locale === "el" ? "λεπτά ανάγνωσης" : "min read";
+  const minutesLabel = locale === "el" ? "λεπτά" : "min";
 
   return (
-    <section className="relative py-16 px-4 border-t border-border/30">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          className="text-center mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-2xl md:text-3xl font-bold mt-3 mb-3 tracking-tight">
-            {copy.title}
+    <section className="py-16 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid gap-6 sm:grid-cols-12 sm:items-end sm:gap-12">
+          <h2 className="sm:col-span-6 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
+            {copy.titleA}{" "}
+            <span className="italic text-muted-foreground">{copy.titleB}</span>
           </h2>
-          <p className="text-sm text-foreground/70 dark:text-muted-foreground font-light max-w-2xl mx-auto">
+          <p className="sm:col-span-6 max-w-md text-[16.5px] leading-[1.6] text-foreground/70 sm:text-[17.5px]">
             {copy.subtitle}
           </p>
-        </motion.div>
+        </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ol className="mt-12 grid border-t border-border/60 sm:mt-16 sm:grid-cols-2 sm:gap-x-12">
           {pillars.map((p, i) => (
-            <motion.div
-              key={p.slug}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.04, duration: 0.4 }}
-            >
+            <li key={p.slug} className="min-w-0 border-b border-border/60">
               <Link
                 href={`/learn/${p.slug}`}
-                className="group block h-full overflow-hidden rounded-xl border border-border/50 bg-card/40 backdrop-blur-sm hover:border-primary/40 hover:bg-card/70 transition-all"
+                className="group flex items-center gap-4 py-4 transition-colors sm:gap-5 sm:py-5"
               >
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                <span className="w-6 shrink-0 font-[family-name:var(--editorial-serif)] text-[15px] italic tabular-nums text-foreground/40">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-sm bg-muted/40 sm:h-16 sm:w-16">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={p.heroImage}
-                    alt={p.title}
+                    alt=""
+                    aria-hidden="true"
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary transition-colors">
-                    {p.title}
-                  </h3>
-                  <div className="mt-3 text-[11px] text-muted-foreground font-light">
-                    {p.minutes} {minutesLabel}
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                </span>
 
-        <div className="mt-8 text-center">
+                <span className="min-w-0 flex-1">
+                  <span className="block font-[family-name:var(--editorial-serif)] text-[18px] leading-[1.2] tracking-[-0.015em] text-foreground decoration-foreground/25 underline-offset-[6px] group-hover:underline sm:text-[20px]">
+                    {p.title}
+                  </span>
+                </span>
+
+                <span className="shrink-0 self-start pt-1 text-[12px] tabular-nums text-foreground/45 sm:self-center sm:pt-0 sm:text-[13px]">
+                  {p.minutes} {minutesLabel}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-10">
           <Link
             href="/learn"
-            className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+            className="group inline-flex items-baseline gap-2 font-[family-name:var(--editorial-serif)] text-[18px] italic text-foreground transition-colors sm:text-[20px]"
           >
-            {copy.viewAll}
+            <span className="border-b border-foreground/25 pb-0.5 transition-colors group-hover:border-foreground/70">
+              {copy.viewAll}
+            </span>
+            <span aria-hidden="true" className="not-italic transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
           </Link>
         </div>
       </div>
