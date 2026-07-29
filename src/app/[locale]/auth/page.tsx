@@ -255,7 +255,7 @@ export default function AuthPage() {
                 <span className="min-w-0 truncate">{t("google")}</span>
               </button>
 
-              <div className="my-[clamp(0.7rem,2vh,1.25rem)] flex items-center gap-4">
+              <div className="my-[clamp(0.9rem,2.6vh,1.6rem)] flex items-center gap-4">
                 <span className="h-px flex-1 bg-border/70" />
                 <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground/50">
                   {t("orEmail")}
@@ -265,13 +265,14 @@ export default function AuthPage() {
 
               <form
                 onSubmit={handleSubmit}
-                className="space-y-[clamp(0.7rem,2vh,1.25rem)]"
+                className="space-y-[clamp(0.85rem,2.5vh,1.5rem)]"
               >
                 <div
                   className={
                     mode === "register"
-                      ? "grid grid-cols-1 gap-x-4 gap-y-[clamp(0.6rem,1.6vh,1rem)] [@media(max-height:820px)]:grid-cols-2 sm:grid-cols-2 sm:gap-x-6"
-                      : "space-y-[clamp(0.7rem,2vh,1.25rem)]"
+                      ? "grid grid-cols-1 gap-x-4 gap-y-[clamp(0.75rem,2vh,1.25rem)] [@media(max-height:820px)]:grid-cols-2 sm:grid-cols-2 sm:gap-x-6"
+                      : "space-y-[clamp(0.85rem,2.5vh,1.5rem)]"
+
                   }
                 >
                 {mode === "register" && (
