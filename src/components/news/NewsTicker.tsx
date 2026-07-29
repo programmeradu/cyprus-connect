@@ -95,7 +95,7 @@ export function NewsTicker() {
                 "linear-gradient(to right, transparent 0, #000 5%, #000 92%, transparent 100%)",
             }}
           >
-            <div className="vuneli-ticker-track flex min-w-max items-baseline gap-12">
+            <div ref={trackRef} className="vuneli-ticker-track flex min-w-max items-baseline gap-12">
               {track.map((it, i) => {
                 const date = it.pubDate
                   ? new Date(it.pubDate).toLocaleDateString(locale, {
