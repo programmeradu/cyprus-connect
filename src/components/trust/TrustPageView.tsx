@@ -243,9 +243,8 @@ export function TrustPageView({ locale, page }: { locale: Locale; page: TrustPag
           </div>
         </div>
       </main>
-
-      <SiteFooter />
     </div>
+
   );
 }
 
