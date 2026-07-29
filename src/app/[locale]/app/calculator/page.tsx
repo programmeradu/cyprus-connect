@@ -14,6 +14,7 @@ import { useEmissionCalculator } from "@/hooks/useEmissionCalculator";
 import { DocumentUploader } from "@/components/DocumentUploader";
 import { useSession } from "@/lib/auth-client";
 import NextImage from "next/image";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 export default function CalculatorPage() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function CalculatorPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isSessionLoading && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isSessionLoading, router]);
 
@@ -236,7 +237,7 @@ Return ONLY valid JSON (no markdown, no explanations):
   const calculateEmissions = async () => {
     if (!session?.user?.id) {
       toast.error(t("toasts.loginRequired"));
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
       return;
     }
 

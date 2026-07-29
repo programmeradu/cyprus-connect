@@ -17,6 +17,7 @@ import { formatDate, formatRelativeTime } from "@/lib/timezone-formatter";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Sparkles, Crown, Zap as ZapIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface DashboardMetric {
   metricType: string;
@@ -105,7 +106,7 @@ export default function DashboardPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isPending, router]);
 
@@ -121,7 +122,7 @@ export default function DashboardPage() {
 
     if (!hasCheckedOnboarding) {
       if (!contextUser || !contextUser.onboardingCompleted) {
-        router.push("/app/onboarding");
+        if (!APP_OPEN_ACCESS) router.push("/app/onboarding");
         return;
       }
       

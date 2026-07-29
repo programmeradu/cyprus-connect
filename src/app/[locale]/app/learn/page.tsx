@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Search, Filter, X, Sparkles, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import NextImage from "next/image";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 // Custom Premium Icons
 const CustomBookIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -194,7 +195,7 @@ export default function LearnPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isPending, router]);
 

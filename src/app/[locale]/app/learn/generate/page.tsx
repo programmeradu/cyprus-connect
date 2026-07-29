@@ -15,6 +15,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import { toast } from "sonner";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 export default function GenerateCoursePage() {
   const { data: session, isPending } = useSession();
@@ -32,7 +33,7 @@ export default function GenerateCoursePage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isPending, router]);
 

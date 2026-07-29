@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import NextImage from "next/image";
 import { useTranslations } from "next-intl";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 // Custom SVG Icons
 const RecentIcon = () => (
@@ -94,7 +95,7 @@ export default function MediaStudioPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isPending, router]);
 
