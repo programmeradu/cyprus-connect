@@ -77,25 +77,11 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* POWER - Platform Capabilities */}
+      {/* POWER - Platform Capabilities (numbered editorial chapters) */}
       <div className="relative">
-        <EditorialSection
-          titleA={tL("powerTitleA")}
-          titleMid={tL("powerTitleMid")}
-          titleB={tL("powerTitleB")}
-          subtitle={tL("powerSubtitle")}
-          media={{ src: sectionPlatformImg.src, alt: "Scope 1, 2, and 3 emissions breakdown and year-over-year trend" }}
-        >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("powerEnergyTitle"), body: tL("powerEnergyDesc") },
-            { n: "02", title: tL("powerBenchmarkTitle"), body: tL("powerBenchmarkDesc") },
-            { n: "03", title: tL("powerComplianceTitle"), body: tL("powerComplianceDesc") },
-            { n: "04", title: tL("powerIntegrationsTitle"), body: tL("powerIntegrationsDesc") },
-          ]}
-        />
-        </EditorialSection>
+        <PowerChapters />
       </div>
+
 
 
       <SectionDivider />
