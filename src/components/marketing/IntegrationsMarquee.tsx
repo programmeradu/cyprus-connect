@@ -92,8 +92,9 @@ export function IntegrationsMarquee() {
             </h2>
           </div>
           <p className="max-w-sm text-[14px] leading-[1.5] text-foreground/60">
-            National utilities, tax portals and accounting stacks — synced without CSV exports.
+            National utilities, tax portals and accounting stacks, synced without CSV exports.
           </p>
+
         </div>
       </div>
 
