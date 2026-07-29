@@ -520,27 +520,61 @@ export function NewsPageClient() {
               <h2 className="mt-4 font-[family-name:var(--editorial-display)] text-[2rem] font-semibold leading-[1.06] tracking-[-0.025em] sm:text-[2.8rem]">
                 {t.takesSub}
               </h2>
+              <p className="mt-5 max-w-sm text-[14.5px] leading-[1.6] text-foreground/60">
+                {!takesMeta
+                  ? t.takesReading
+                  : takesMeta.fallback || takesMeta.sourceCount === 0
+                    ? t.takesBaseline
+                    : t.takesSourced.replace("{n}", String(takesMeta.sourceCount))}
+              </p>
             </div>
-            <ol className="md:col-span-7">
-              {(locale === "el" ? EDITORIAL_TAKES.el : EDITORIAL_TAKES.en).map((take, i) => (
-                <li key={i} className="border-t border-border/60 py-8 first:border-t-0 first:pt-0 sm:py-10">
-                  <div className="flex items-baseline gap-5 sm:gap-8">
-                    <span
-                      aria-hidden
-                      className="font-[family-name:var(--editorial-display)] text-[1.6rem] italic leading-none tracking-[-0.03em] text-foreground/25 sm:text-[2rem]"
+            <ol className="md:col-span-7" aria-busy={takes === null}>
+              {takes === null
+                ? [0, 1, 2].map((i) => (
+                    <li
+                      key={i}
+                      className="border-t border-border/60 py-8 first:border-t-0 first:pt-0 sm:py-10"
                     >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="font-[family-name:var(--editorial-display)] text-[1.3rem] font-semibold leading-[1.16] tracking-[-0.02em] sm:text-[1.65rem]">
-                        {take.title}
-                      </h3>
-                      <p className="mt-3 text-[15.5px] leading-[1.62] text-foreground/70">{take.body}</p>
-                    </div>
-                  </div>
-                </li>
-              ))}
+                      <div className="flex items-baseline gap-5 sm:gap-8">
+                        <span
+                          aria-hidden
+                          className="font-[family-name:var(--editorial-display)] text-[1.6rem] italic leading-none tracking-[-0.03em] text-foreground/20 sm:text-[2rem]"
+                        >
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div className="h-5 w-4/5 animate-pulse rounded-sm bg-foreground/10" />
+                          <div className="h-4 w-full animate-pulse rounded-sm bg-foreground/[0.07]" />
+                          <div className="h-4 w-2/3 animate-pulse rounded-sm bg-foreground/[0.07]" />
+                        </div>
+                      </div>
+                    </li>
+                  ))
+                : takes.map((take, i) => (
+                    <li
+                      key={`${i}-${take.title}`}
+                      className="border-t border-border/60 py-8 first:border-t-0 first:pt-0 sm:py-10"
+                    >
+                      <div className="flex items-baseline gap-5 sm:gap-8">
+                        <span
+                          aria-hidden
+                          className="font-[family-name:var(--editorial-display)] text-[1.6rem] italic leading-none tracking-[-0.03em] text-foreground/25 sm:text-[2rem]"
+                        >
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0">
+                          <h3 className="font-[family-name:var(--editorial-display)] text-[1.3rem] font-semibold leading-[1.16] tracking-[-0.02em] text-balance sm:text-[1.65rem]">
+                            {take.title}
+                          </h3>
+                          <p className="mt-3 text-[15.5px] leading-[1.62] text-foreground/70">
+                            {take.body}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
             </ol>
+
           </div>
         </div>
       </section>
