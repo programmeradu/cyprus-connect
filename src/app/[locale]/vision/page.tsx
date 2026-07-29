@@ -9,7 +9,6 @@ import heroPhoto from "@/assets/vision-hero-photography.png";
 import portPhoto from "@/assets/vision-limassol-port.png";
 import hotelPhoto from "@/assets/vision-boutique-hotel.png";
 import officePhoto from "@/assets/vision-cyprus-office.png";
-import bentoSolar from "@/assets/vision-bento-solar.png";
 import bentoShipping from "@/assets/vision-bento-shipping.png";
 import bentoAudit from "@/assets/vision-bento-audit.png";
 import bentoGrid from "@/assets/vision-bento-grid.png";
