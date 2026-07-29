@@ -40,9 +40,9 @@ const CYPRUS_MARKS: Mark[] = [
   {
     kind: "image",
     name: "Registrar of Companies Cyprus",
-    lightSrc: "/integrations/companies-light.png",
-    darkSrc: "/integrations/companies-dark.png",
-    className: "h-[2.3rem] sm:h-[2.7rem]",
+    lightSrc: "/integrations/companies-light.svg",
+    darkSrc: "/integrations/companies-dark.svg",
+    className: "h-[2.6rem] sm:h-[3rem]",
   },
   {
     kind: "image",
