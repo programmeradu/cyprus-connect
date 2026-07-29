@@ -17,6 +17,7 @@ export function MarketingHeader() {
   const tNav = useTranslations("nav");
   const tHero = useTranslations("hero");
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
