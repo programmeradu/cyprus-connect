@@ -223,7 +223,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* TESTIMONIAL */}
-      <section className="relative z-20 mx-auto max-w-5xl px-4 py-24 sm:px-6 sm:py-32">
+      <section className="relative z-20 mx-auto max-w-5xl overflow-hidden px-4 py-24 sm:px-6 sm:py-32">
         {/* Editorial impact-curve - transparent line art blending into the page,
             allowed to extend past the section into the CTA below */}
         <img
