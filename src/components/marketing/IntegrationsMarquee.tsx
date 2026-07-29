@@ -64,8 +64,6 @@ function Wordmark({ mark }: { mark: Mark }) {
 }
 
 export function IntegrationsMarquee() {
-  const tL = useTranslations("landing");
-
   const track = [...MARKS, ...MARKS];
 
   return (
@@ -86,8 +84,9 @@ export function IntegrationsMarquee() {
               id="integrations-heading"
               className="mt-4 max-w-2xl font-[family-name:var(--editorial-serif)] text-[2rem] leading-[1.05] tracking-[-0.02em] sm:text-[2.75rem]"
             >
-              {tL.has?.("integrationsTitle")
-                ? tL("integrationsTitle")
+              Connected to the systems Cyprus SMEs already run on.
+            </h2>
+
                 : "Connected to the systems Cyprus SMEs already run on."}
             </h2>
           </div>
