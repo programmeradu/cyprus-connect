@@ -19,6 +19,12 @@ import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentWindCurrents from "@/assets/accent-wind-currents.png";
+import {
+  GlyphDataSpine,
+  GlyphColleagues,
+  GlyphAssurance,
+} from "@/components/landing/AgentGlyphs";
+
 
 /**
  * Home - editorial redesign.
@@ -159,26 +165,32 @@ export default function Home() {
                   year: "2026",
                   title: "Cyprus data spine",
                   body: "EAC bill ingestion, JCC and accounting connectors, and a verified Cyprus emission factor set behind every number.",
+                  Glyph: GlyphDataSpine,
                 },
                 {
                   year: "2027",
                   title: "Digital ESG colleagues",
                   body: "Agents draft VSME and CSRD disclosures, flag gaps, and hand a reviewer a clear audit trail before filing.",
+                  Glyph: GlyphColleagues,
                 },
                 {
                   year: "2028",
                   title: "Continuous assurance",
                   body: "Live CBAM and Scope 3 monitoring across the supply chain, with grant matches and reduction plans that update themselves.",
+                  Glyph: GlyphAssurance,
                 },
               ].map((it) => (
                 <li
                   key={it.year}
-                  className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 py-7 sm:gap-x-10 sm:py-9"
+                  className="py-7 sm:grid sm:grid-cols-[auto_auto_1fr] sm:items-start sm:gap-x-8 sm:py-9"
                 >
-                  <span className="pt-1 text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-foreground/50">
-                    {it.year}
-                  </span>
-                  <div className="min-w-0">
+                  <div className="flex items-center gap-4 sm:contents">
+                    <span className="text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-foreground/50 sm:pt-1">
+                      {it.year}
+                    </span>
+                    <it.Glyph className="h-10 w-10 shrink-0 text-foreground/70 sm:mt-0.5 sm:h-14 sm:w-14" />
+                  </div>
+                  <div className="mt-4 min-w-0 sm:mt-0">
                     <h3 className="font-[family-name:var(--editorial-serif)] text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
                       {it.title}
                     </h3>
@@ -187,8 +199,10 @@ export default function Home() {
                     </p>
                   </div>
                 </li>
+
               ))}
             </ul>
+
           </div>
         </div>
       </section>

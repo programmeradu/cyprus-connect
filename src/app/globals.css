@@ -461,12 +461,22 @@ html:lang(el) body,
 :lang(el) [role="tab"],
 :lang(el) [data-slot="badge"] { font-size: 0.95em; }
 
-/* Safety net: allow long Greek compounds to wrap instead of clip. */
+/* Safety net: allow long Greek compounds to wrap instead of clip.
+   Hyphenation is enabled ONLY for Greek; English headlines must never
+   break mid-word (e.g. "au-tonomous"). */
 h1, h2, h3, h4, h5, h6, p, span, a, button, label, li {
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   word-break: normal;
+  hyphens: manual;
+}
+
+:lang(el) h1, :lang(el) h2, :lang(el) h3, :lang(el) h4,
+:lang(el) h5, :lang(el) h6, :lang(el) p, :lang(el) span,
+:lang(el) a, :lang(el) button, :lang(el) label, :lang(el) li {
+  overflow-wrap: anywhere;
   hyphens: auto;
 }
+
 
 /* Hide Next.js error overlay portal */
 nextjs-portal {
