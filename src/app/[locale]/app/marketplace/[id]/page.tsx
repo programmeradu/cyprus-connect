@@ -133,8 +133,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       const response = await fetch("/api/marketplace/recommendations", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
         }
       });
       
@@ -182,8 +182,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       const response = await fetch("/api/marketplace/purchase", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
         },
         body: JSON.stringify({
           projectId: project.id,
@@ -318,7 +318,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className="text-xl md:text-2xl font-bold gradient-text">${project.pricePerTon}</div>
+                    <div className="text-xl md:text-2xl font-bold text-primary">${project.pricePerTon}</div>
                     <div className="text-[9px] text-muted-foreground font-light">per ton CO₂</div>
                   </div>
                 </div>
@@ -338,7 +338,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       initial={{ width: 0 }}
                       animate={{ width: `${utilizationPercent}%` }}
                       transition={{ duration: 1, delay: 0.3 }}
-                      className="h-full bg-gradient-to-r from-primary to-primary/70 rounded-full"
+                      className="h-full bg-primary rounded-full"
                     />
                   </div>
                   <div className="flex items-center justify-between text-[9px] text-muted-foreground mt-1">
@@ -368,7 +368,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.2 + index * 0.05 }}
-                    className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg p-2.5 border border-border/30 hover:border-primary/30 transition-all"
+                    className="bg-muted/40 rounded-lg p-2.5 border border-border/30 hover:border-primary/30 transition-all"
                   >
                     <div className="text-sm font-bold text-foreground mb-0.5">
                       {typeof value === 'number' ? value.toLocaleString() : String(value ?? '')}
@@ -420,7 +420,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             animate={{ opacity: 1, x: 0 }}
             className="sticky top-4"
           >
-            <PremiumCard className="p-4 bg-gradient-to-br from-card to-card/50 backdrop-blur-xl border-primary/20">
+            <PremiumCard className="p-4 bg-card border-primary/20">
               <div className="flex items-center gap-1.5 mb-3">
                 <span className="w-1 h-1 rounded-full bg-primary animate-pulse" />
                 <h3 className="text-xs font-semibold">Purchase Offsets</h3>
@@ -467,7 +467,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 + index * 0.1 }}
-                        className="p-2.5 rounded-lg bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer group"
+                        className="p-2.5 rounded-lg bg-muted/25 border border-border/30 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer group"
                       >
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <div className="text-[11px] font-semibold break-words flex-1 group-hover:text-primary transition-colors">
@@ -510,7 +510,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md"
           >
-            <PremiumCard className="p-5 bg-gradient-to-br from-card to-card/95 backdrop-blur-xl border-primary/20">
+            <PremiumCard className="p-5 bg-card border-primary/20">
               <h3 className="text-sm font-bold mb-4 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 Purchase Carbon Offsets
@@ -531,7 +531,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   />
                 </div>
 
-                <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-lg p-3.5 space-y-2">
+                <div className="bg-muted/40 rounded-lg p-3.5 space-y-2">
                   <div className="flex justify-between text-[10px]">
                     <span className="text-muted-foreground font-light">Price per ton</span>
                     <span className="font-semibold">${project.pricePerTon}</span>
@@ -542,7 +542,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                   <div className="pt-2 border-t border-border/50 flex justify-between items-center">
                     <span className="text-xs font-semibold">Total Amount</span>
-                    <span className="text-lg font-bold gradient-text">${totalPrice}</span>
+                    <span className="text-lg font-bold text-primary">${totalPrice}</span>
                   </div>
                 </div>
               </div>
@@ -567,7 +567,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       Processing
                     </span>
                   ) : (
-                    "Proceed to Payment"
+ "Proceed to Payment"
                   )}
                 </PremiumButton>
               </div>

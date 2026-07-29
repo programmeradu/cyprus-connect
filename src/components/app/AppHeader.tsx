@@ -98,7 +98,7 @@ export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 mt-2 w-64 glass-strong rounded-lg shadow-premium overflow-hidden z-50"
+                className="absolute right-0 mt-2 w-64 app-overlay overflow-hidden z-50"
               >
                 {/* User Info */}
                 <div className="px-4 py-3 border-b border-border/50">

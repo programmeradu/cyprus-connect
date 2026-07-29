@@ -217,8 +217,8 @@ export default function CompliancePage() {
       const response = await fetch("/api/compliance/documents/generate", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
         },
         body: JSON.stringify({ framework })
       });
@@ -246,8 +246,8 @@ export default function CompliancePage() {
       const response = await fetch("/api/compliance/settings", {
         method: "PUT",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
         },
         body: JSON.stringify(newSettings)
       });
@@ -292,7 +292,7 @@ export default function CompliancePage() {
         <div className="flex items-start justify-between mb-4">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-              {t("title")} <span className="gradient-text">{t("titleAccent")}</span>
+              {t("title")} <span className="text-primary">{t("titleAccent")}</span>
             </h1>
             <p className="text-xs text-muted-foreground font-light">
               {t("subtitle")}
@@ -301,7 +301,7 @@ export default function CompliancePage() {
           
           {/* Compliance Score Badge */}
           <div className="flex items-center gap-2">
-            <PremiumCard className="px-3 py-2 bg-gradient-to-br from-card to-card/50">
+            <PremiumCard className="px-3 py-2 bg-card">
               <div className="text-[9px] text-muted-foreground mb-0.5 font-light">{t("healthLabel")}</div>
               <div className="flex items-center gap-1.5">
                 <div className={`text-xl font-bold ${complianceScore >= 80 ? 'text-primary' : complianceScore >= 60 ? 'text-yellow-500' : 'text-destructive'}`}>
@@ -581,7 +581,7 @@ function DocumentsTab({ documents, onGenerate, generating }: { documents: Docume
     <div className="space-y-4">
       {/* Generate New Document */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <PremiumCard className="p-4 bg-gradient-to-br from-primary/5 to-primary/10">
+        <PremiumCard className="p-4 bg-primary/8">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
               <SparkleIcon />
@@ -836,7 +836,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <PremiumCard className="p-4 bg-gradient-to-br from-primary/5 to-primary/10">
+        <PremiumCard className="p-4 bg-primary/8">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
               <SparkleIcon />

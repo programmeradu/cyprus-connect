@@ -168,8 +168,8 @@ export default function MediaStudioPage() {
       const response = await fetch("/api/studio/generations", {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
         },
         body: JSON.stringify({
           userId: session.user.id,
@@ -205,8 +205,8 @@ export default function MediaStudioPage() {
       const response = await fetch(`/api/studio/generations/${media.id}`, {
         method: "PATCH",
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Authorization": `Bearer ${token}`,
+ "Content-Type": "application/json"
         },
         body: JSON.stringify({ saved: newSavedState })
       });
@@ -337,8 +337,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       const response = await fetch("/api/gemini/analyze", {
         method: "POST",
         headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ prompt: systemPrompt })
       });
@@ -371,8 +371,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
         const response = await fetch("/api/generate-image", {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             prompt: sustainabilityPrompt,
@@ -417,8 +417,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
         const response = await fetch("/api/generate-video", {
           method: "POST",
           headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             prompt: sustainabilityPrompt,

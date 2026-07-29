@@ -152,8 +152,8 @@ function SettingsContent() {
       const userResponse = await fetch(`/api/users?id=${user.id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("bearer_token")}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${localStorage.getItem("bearer_token")}`
         },
         body: JSON.stringify({
           name,
@@ -174,8 +174,8 @@ function SettingsContent() {
       const preferencesResponse = await fetch(`/api/users/${user.id}/preferences`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("bearer_token")}`
+ "Content-Type": "application/json",
+ "Authorization": `Bearer ${localStorage.getItem("bearer_token")}`
         },
         body: JSON.stringify({
           countryCode: countryCode || null
@@ -214,7 +214,7 @@ function SettingsContent() {
       const response = await fetch("/api/notifications/preferences", {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
+ "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
         },
         body: JSON.stringify({
@@ -462,7 +462,7 @@ function SettingsContent() {
           >
             <div className="mb-4">
               <h2 className="text-xl font-bold mb-1">
-                {t("upgradeTitleA")} <span className="gradient-text">{t("upgradeTitleB")}</span>
+                {t("upgradeTitleA")} <span className="text-primary">{t("upgradeTitleB")}</span>
               </h2>
               <p className="text-xs text-muted-foreground">
                 {t("upgradeSubtitle")}

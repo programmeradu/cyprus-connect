@@ -40,14 +40,13 @@ export const ActionCard = ({
 
   return (
     <motion.div
-      className={`relative glass-strong rounded-xl p-4 overflow-hidden border border-border/50 hover:border-primary/30 transition-all-smooth ${className}`}
+      className={`relative app-card p-4 overflow-hidden border border-border/50 hover:border-primary/30 transition-all-smooth ${className}`}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.3 }}
     >
       {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
       
       {/* Content */}
       <div className="relative z-10 flex flex-col h-full">

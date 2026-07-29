@@ -16,11 +16,11 @@ interface Match {
 }
 
 const SOURCE_LABELS: Record<string, string> = {
-  "eu-funding-tenders": "EU Funding & Tenders Portal",
-  "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
-  "invest-cyprus": "Invest Cyprus",
-  "kebe-oeb": "OEB / KEBE",
-  "accelerators": "Accelerators",
+ "eu-funding-tenders": "EU Funding & Tenders Portal",
+ "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
+ "invest-cyprus": "Invest Cyprus",
+ "kebe-oeb": "OEB / KEBE",
+ "accelerators": "Accelerators",
 };
 
 export default function GrantAlertsPage() {

@@ -125,7 +125,7 @@ export default function AnalyticsPage() {
       const insightsResponse = await fetch("/api/analytics/insights", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+ "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId,

@@ -66,7 +66,7 @@ export const PlanUsageIndicator = () => {
         <h3 className="font-semibold text-sm">{t("yourPlan")}</h3>
         <div
           className={cn(
-            "inline-flex items-center px-2 py-0.5 rounded-[4px] border text-xs font-medium",
+ "inline-flex items-center px-2 py-0.5 rounded-[4px] border text-xs font-medium",
             planColor,
           )}
         >
@@ -96,7 +96,7 @@ export const PlanUsageIndicator = () => {
             <div className="w-full h-1.5 bg-muted rounded-[2px] overflow-hidden">
               <motion.div
                 className={cn(
-                  "h-full rounded-[2px] transition-all duration-500",
+ "h-full rounded-[2px] transition-all duration-500",
                   aiPct > 90 ? "bg-destructive" : aiPct > 75 ? "bg-orange-500" : "bg-primary",
                 )}
                 initial={{ width: 0 }}

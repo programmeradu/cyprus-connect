@@ -103,7 +103,7 @@ export default function BillingPage() {
           >
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold mb-3">
-                {t("chooseYour")} <span className="gradient-text">{t("plan")}</span>
+                {t("chooseYour")} <span className="text-primary">{t("plan")}</span>
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 {t("planSubtitle")}

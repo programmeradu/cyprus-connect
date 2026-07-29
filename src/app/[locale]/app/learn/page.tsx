@@ -326,7 +326,7 @@ export default function LearnPage() {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+ "Content-Type": "application/json"
         },
         body: JSON.stringify({ userId: session.user.id })
       });
@@ -523,7 +523,7 @@ export default function LearnPage() {
           className={`flex items-center justify-center px-3 py-2 rounded-lg text-sm font-medium transition-all ${
             isAutoGenerating
               ? "bg-primary text-primary-foreground opacity-70"
-              : "glass-strong hover:bg-primary hover:text-primary-foreground"
+              : "app-card hover:bg-primary hover:text-primary-foreground"
           }`}
           title="Smart Generate Courses"
         >
@@ -541,7 +541,7 @@ export default function LearnPage() {
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
               showSearch || searchQuery
                 ? "bg-primary text-primary-foreground"
-                : "glass-strong hover:bg-muted/50"
+                : "app-card hover:bg-muted/50"
             }`}
           >
             <Search className="w-4 h-4" />
@@ -554,7 +554,7 @@ export default function LearnPage() {
                 initial={{ opacity: 0, scale: 0.95, x: 20 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.95, x: 20 }}
-                className="absolute right-0 top-full mt-2 w-72 glass-strong rounded-lg shadow-premium z-50"
+                className="absolute right-0 top-full mt-2 w-72 app-overlay z-50"
               >
                 <div className="p-3">
                   <div className="relative">
@@ -581,7 +581,7 @@ export default function LearnPage() {
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
               showFilters || hasActiveFilters
                 ? "bg-primary text-primary-foreground"
-                : "glass-strong hover:bg-muted/50"
+                : "app-card hover:bg-muted/50"
             }`}
           >
             <Filter className="w-4 h-4" />
@@ -594,7 +594,7 @@ export default function LearnPage() {
                 initial={{ opacity: 0, scale: 0.95, x: 20 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.95, x: 20 }}
-                className="absolute right-0 top-full mt-2 w-72 glass-strong rounded-lg shadow-premium p-4 z-50"
+                className="absolute right-0 top-full mt-2 w-72 app-overlay p-4 z-50"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-sm">{tc("filters")}</h3>
@@ -780,7 +780,7 @@ function CourseCard({ course, isEnrolled, onEnroll, onViewCourse, index = 0 }: C
       onClick={onViewCourse}
     >
       {/* Thumbnail */}
-      <div className="relative h-40 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
+      <div className="relative h-40 bg-primary/10 flex items-center justify-center overflow-hidden">
         {thumbnailUrl ? (
           <img
             src={thumbnailUrl}

@@ -183,7 +183,7 @@ export default function ImpactPage() {
         className="mb-6"
       >
         <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-          Your <span className="gradient-text">Impact</span>
+          Your <span className="text-primary">Impact</span>
         </h1>
         <p className="text-xs text-muted-foreground font-light">
           Track your contribution to global carbon reduction

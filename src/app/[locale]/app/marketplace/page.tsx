@@ -165,7 +165,7 @@ export default function MarketplacePage() {
       >
         <div>
           <h1 className="text-xl md:text-2xl font-semibold mb-1.5 tracking-tight">
-            {t("titleA")} <span className="gradient-text">{t("titleB")}</span>
+            {t("titleA")} <span className="text-primary">{t("titleB")}</span>
           </h1>
           <p className="text-xs text-muted-foreground font-light">
             {t("subtitle")}

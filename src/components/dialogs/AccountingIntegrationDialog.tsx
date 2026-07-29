@@ -88,7 +88,7 @@ export function AccountingIntegrationDialog({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl z-50"
           >
-            <div className="glass-strong rounded-2xl p-6">
+            <div className="app-overlay p-6">
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div>

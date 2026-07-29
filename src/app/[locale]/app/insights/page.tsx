@@ -273,7 +273,7 @@ export default function InsightsPage() {
       const response = await fetch("/api/insights/ai-recommendations", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+ "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId,
@@ -445,7 +445,7 @@ export default function InsightsPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text mb-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-primary mb-1">
             {t("title")}
           </h1>
           <p className="text-sm text-muted-foreground flex items-center gap-2">

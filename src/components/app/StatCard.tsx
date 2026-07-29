@@ -31,7 +31,6 @@ export const StatCard = ({
       transition={{ duration: 0.3 }}
     >
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
       
       {/* Content */}
       <div className="relative z-10">

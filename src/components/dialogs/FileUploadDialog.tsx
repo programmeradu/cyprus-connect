@@ -108,7 +108,7 @@ export function FileUploadDialog({
       const response = await fetch("/api/documents/upload", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+ "Content-Type": "application/json",
         },
         body: JSON.stringify({
           file: base64.split(",")[1], // Remove data:... prefix
@@ -251,7 +251,7 @@ export function FileUploadDialog({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl z-50"
           >
-            <div className="glass-strong rounded-2xl p-6 max-h-[85vh] overflow-hidden flex flex-col">
+            <div className="app-overlay p-6 max-h-[85vh] overflow-hidden flex flex-col">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
