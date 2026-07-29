@@ -37,7 +37,7 @@ export function MarketingHeader() {
         href="/"
         className={[
           "pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 text-[20px] font-semibold tracking-[-0.03em] transition-colors duration-300 sm:left-8",
-          scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_12px_rgba(0,0,0,0.35)]",
+          scrolled ? "text-foreground" : "text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_2px_18px_rgba(0,0,0,0.35)]",
         ].join(" ")}
         style={{ fontFamily: "var(--editorial-display)" }}
       >
