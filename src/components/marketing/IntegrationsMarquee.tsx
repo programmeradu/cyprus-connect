@@ -15,7 +15,7 @@ function logoUrl(domain: string, theme: "light" | "dark") {
   // `theme=light` returns dark marks (for light backgrounds); `theme=dark`
   // returns light marks (for dark backgrounds). retina=true for crispness.
   const params = new URLSearchParams({
-    token: LOGO_TOKEN ?? "",
+    token: LOGO_TOKEN,
     theme,
     retina: "true",
     format: "png",
