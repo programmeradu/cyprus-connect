@@ -24,7 +24,10 @@ type NewsItem = {
   imageUrl?: string;
 };
 
+type Take = { title: string; body: string };
+
 type Topic = "all" | "cbam" | "csrd" | "energy" | "taxonomy" | "markets";
+
 
 const TOPIC_KEYWORDS: Record<Topic, string[]> = {
   all: [],
