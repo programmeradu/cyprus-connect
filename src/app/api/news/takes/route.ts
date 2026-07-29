@@ -112,7 +112,7 @@ Rules:
 - Do not invent figures, dates or company names that the headlines do not contain.
 - Do not repeat the same subject twice.
 
-Return JSON only.`;
+Return JSON only, in the form {"takes":[{"title":"...","body":"..."}]}.`;
 
     const client = new GoogleGenAI({ apiKey: key });
     const result = await client.models.generateContent({
@@ -121,27 +121,10 @@ Return JSON only.`;
       config: {
         temperature: 0.6,
         responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            takes: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  title: { type: "string" },
-                  body: { type: "string" },
-                },
-                required: ["title", "body"],
-              },
-            },
-          },
-          required: ["takes"],
-        },
       },
     });
 
-    const raw = result.text ?? "";
+    const raw = (result.text ?? "").replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
     const parsed = JSON.parse(raw) as { takes?: Take[] };
     const takes = (parsed.takes ?? [])
       .map((t) => ({ title: clean(t.title, 120), body: clean(t.body, 420) }))
