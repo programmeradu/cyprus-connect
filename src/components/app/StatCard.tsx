@@ -13,61 +13,47 @@ interface StatCardProps {
   className?: string;
 }
 
+/**
+ * Workspace metric plate. Flat surface, hairline rule, tabular figures.
+ * Hierarchy comes from type size and weight, never from a wash or a shadow.
+ */
 export const StatCard = ({
   title,
   value,
   change,
   changeType = "neutral",
-  icon,
   subtitle,
   className = ""
 }: StatCardProps) => {
   return (
     <motion.div
-      className={`relative surface-card p-4 overflow-hidden ${className}`}
-      initial={{ opacity: 0, y: 20 }}
+      className={`app-card p-4 ${className}`}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
     >
-      {/* Gradient overlay */}
-      
-      {/* Content */}
-      <div className="relative z-10">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex-1">
-            <p className="eyebrow mb-1">
-              {title}
-            </p>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl font-bold tracking-tight">{value}</h3>
-              {change && (
-                <span
-                  className={`text-xs font-medium ${
-                    changeType === "positive"
-                      ? "text-primary"
-                      : changeType === "negative"
-                      ? "text-destructive"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {change}
-                </span>
-              )}
-            </div>
-            {subtitle && (
-              <p className="text-[10px] text-muted-foreground mt-1">
-                {subtitle}
-              </p>
-            )}
-          </div>
-          {icon && (
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-              {icon}
-            </div>
-          )}
-        </div>
+      <p className="app-label mb-2">{title}</p>
+
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="app-metric text-[1.75rem] break-words">{value}</span>
+        {change && (
+          <span
+            className={`app-num text-sm font-medium ${
+              changeType === "positive"
+                ? "text-primary"
+                : changeType === "negative"
+                ? "text-destructive"
+                : "text-muted-foreground"
+            }`}
+          >
+            {change}
+          </span>
+        )}
       </div>
+
+      {subtitle && (
+        <p className="app-meta mt-2 text-[0.8125rem]">{subtitle}</p>
+      )}
     </motion.div>
   );
 };
