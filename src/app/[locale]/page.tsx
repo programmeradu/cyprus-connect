@@ -9,6 +9,7 @@ import { useSession } from "@/lib/auth-client";
 import { useTranslations } from "next-intl";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { WhyChooseGrid } from "@/components/landing/WhyChooseGrid";
 import { IntegrationsMarquee } from "@/components/marketing/IntegrationsMarquee";
 import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import sectionWhyImg from "@/assets/section-why-dashboard.jpg";
@@ -65,21 +66,9 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* BENEFITS - Why Vuneli */}
-      <EditorialSection
-        titleA={tL("whyTitleA")}
-        titleB={tL("whyTitleB")}
-        subtitle={tL("whySubtitle")}
-        media={{ src: sectionWhyImg.src, alt: "Vuneli emissions overview dashboard" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
-            { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
-            { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
-          ]}
-        />
-      </EditorialSection>
+      {/* BENEFITS - Why Vuneli (Direction B: editorial 4-tile grid) */}
+      <WhyChooseGrid />
+
       </div>
 
 

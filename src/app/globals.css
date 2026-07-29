@@ -210,7 +210,11 @@
   /* Chartreuse accent — reserved for hero CTA + tag chips only (Lifecycle-inspired) */
   --accent-lime: oklch(0.93 0.20 118);
   --accent-lime-foreground: oklch(0.18 0.03 150);
+
+  /* Oxidized red — editorial kicker/marker accent (Verified Nature) */
+  --accent-oxidized: oklch(0.48 0.13 33);
 }
+
 
 .dark {
   /* Premium Dark Mode with Verde Accents */
@@ -239,6 +243,10 @@
   --border: oklch(0.25 0.02 150);
   --input: oklch(0.22 0.02 150);
   --ring: oklch(0.65 0.16 160);
+
+  /* Oxidized red — dark mode variant, slightly brighter for legibility */
+  --accent-oxidized: oklch(0.62 0.15 32);
+
   
   /* Verde Dark Gradients */
   --gradient-primary: linear-gradient(135deg, oklch(0.65 0.16 165) 0%, oklch(0.55 0.14 145) 100%);
