@@ -2,62 +2,119 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Sparkles, FileCheck2, Activity, Recycle } from "lucide-react";
 import heroDashboard from "@/assets/section-why-dashboard.jpg";
-import heroOlive from "@/assets/hero-04-olive-grove.jpg";
+import lcaMaterials from "@/assets/section-lca-materials.jpg";
 
 /**
  * Why Choose Vuneli — Emitra-style bento.
- * Asymmetric 6-col grid: two large image feature tiles paired with two
- * compact text tiles anchored by rounded-square icon marks.
+ * Rules honoured: no eyebrow labels, no lucide icons, no muted grey body copy.
+ * Context-aware SVG glyphs anchor each text tile; the LCA feature carries a
+ * dedicated Cyprus product-lifecycle photograph.
  */
+
+/* — Context-aware glyphs — hand-drawn in oxidized-red ink — */
+
+function GlyphAnalytics() {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      className="h-14 w-14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {/* Neural constellation — signal converging into insight */}
+      <circle cx="10" cy="14" r="2.2" />
+      <circle cx="10" cy="42" r="2.2" />
+      <circle cx="46" cy="28" r="2.6" fill="currentColor" fillOpacity="0.15" />
+      <circle cx="28" cy="10" r="1.8" />
+      <circle cx="28" cy="46" r="1.8" />
+      <circle cx="28" cy="28" r="3" />
+      <path d="M12 14 L26 27 M12 42 L26 29 M29 11 L45 27 M29 45 L45 29" />
+      <path d="M28 25 L28 15 M28 31 L28 43" strokeOpacity="0.35" />
+    </svg>
+  );
+}
+
+function GlyphMonitoring() {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      className="h-14 w-14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {/* Live telemetry — ECG-style pulse across a sensor field */}
+      <path d="M4 30 L14 30 L18 20 L24 40 L30 24 L34 34 L40 30 L52 30" />
+      <circle cx="40" cy="30" r="1.6" fill="currentColor" />
+      <path d="M4 44 L52 44" strokeOpacity="0.35" strokeDasharray="1 3" />
+      <path d="M4 16 L52 16" strokeOpacity="0.35" strokeDasharray="1 3" />
+    </svg>
+  );
+}
+
+function GlyphCyprus() {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      className="h-14 w-14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      {/* Cyprus island silhouette with a compass mark */}
+      <path
+        d="M6 30 C 8 26, 14 24, 20 25 C 24 22, 30 22, 34 24 C 40 22, 46 24, 50 27 C 52 30, 50 33, 46 34 C 42 36, 36 35, 32 34 C 28 36, 22 36, 18 34 C 12 34, 8 33, 6 30 Z"
+        fill="currentColor"
+        fillOpacity="0.12"
+      />
+      <path d="M6 30 C 8 26, 14 24, 20 25 C 24 22, 30 22, 34 24 C 40 22, 46 24, 50 27 C 52 30, 50 33, 46 34 C 42 36, 36 35, 32 34 C 28 36, 22 36, 18 34 C 12 34, 8 33, 6 30 Z" />
+      <circle cx="30" cy="29" r="1.6" fill="currentColor" />
+      <path d="M30 22 L30 20 M30 38 L30 40 M23 30 L21 30 M37 30 L39 30" strokeOpacity="0.55" />
+    </svg>
+  );
+}
+
 export function WhyChooseGrid() {
   const t = useTranslations("landing");
 
   const iconTiles = [
-    {
-      icon: Sparkles,
-      kicker: t("benefitAiKicker"),
-      title: t("benefitAiTitle"),
-      body: t("benefitAiDesc"),
-    },
-    {
-      icon: Activity,
-      kicker: t("benefitMonitorKicker"),
-      title: t("benefitMonitorTitle"),
-      body: t("benefitMonitorDesc"),
-    },
+    { Glyph: GlyphAnalytics, title: t("benefitAiTitle"), body: t("benefitAiDesc") },
+    { Glyph: GlyphMonitoring, title: t("benefitMonitorTitle"), body: t("benefitMonitorDesc") },
   ];
+
+  const mono =
+    "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)";
+  const display = "var(--editorial-display)";
 
   return (
     <section className="relative w-full py-24 px-6 sm:px-10 lg:px-12">
       <div className="mx-auto w-full max-w-6xl">
-        {/* Header */}
+        {/* Header — no eyebrow, just editorial title */}
         <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div className="max-w-2xl">
-            <span
-              className="mb-4 block text-[11px] font-medium uppercase tracking-[0.22em]"
-              style={{
-                fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)",
-                color: "var(--accent-oxidized)",
-              }}
-            >
-              [ WHY VUNELI ]
-            </span>
-            <h2
-              className="text-5xl leading-[0.95] tracking-tight text-foreground md:text-6xl"
-              style={{ fontFamily: "var(--editorial-display)" }}
-            >
-              {t("whyTitleA")}{" "}
-              <em className="font-normal italic">{t("whyTitleB")}</em>.
-            </h2>
-          </div>
-          <p className="max-w-sm text-base leading-relaxed text-muted-foreground md:text-right">
+          <h2
+            className="max-w-2xl text-5xl leading-[0.95] tracking-tight text-foreground md:text-6xl"
+            style={{ fontFamily: display }}
+          >
+            {t("whyTitleA")}{" "}
+            <em className="font-normal italic">{t("whyTitleB")}</em>.
+          </h2>
+          <p className="max-w-sm text-base leading-relaxed text-foreground/80 md:text-right">
             {t("whySubtitle")}
           </p>
         </div>
 
-        {/* Bento — 6-col asymmetric */}
+        {/* Bento */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-6 md:auto-rows-[minmax(220px,auto)]">
           {/* A — big feature: dashboard image, spans 4 cols x 2 rows */}
           <article className="group relative overflow-hidden rounded-3xl border border-border md:col-span-4 md:row-span-2">
@@ -71,64 +128,45 @@ export function WhyChooseGrid() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
             <div className="relative flex h-full min-h-[460px] flex-col justify-end p-8 lg:p-10">
-              <span
-                className="mb-3 block text-[11px] font-medium uppercase tracking-[0.22em] text-white/85"
-                style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
-              >
-                {t("benefitReportKicker")}
-              </span>
               <h3
                 className="mb-3 max-w-md text-3xl leading-tight text-white md:text-4xl"
-                style={{ fontFamily: "var(--editorial-display)" }}
+                style={{ fontFamily: display }}
               >
                 {t("benefitReportTitle")}
               </h3>
-              <p className="max-w-md text-sm leading-relaxed text-white/80 md:text-base">
+              <p className="max-w-md text-base leading-relaxed text-white/90">
                 {t("benefitReportDesc")}
               </p>
             </div>
           </article>
 
-          {/* Icon tiles B & C — 2 cols each */}
-          {iconTiles.map(({ icon: Icon, kicker, title, body }) => (
+          {/* Icon tiles B & C */}
+          {iconTiles.map(({ Glyph, title, body }) => (
             <article
               key={title}
               className="relative flex flex-col justify-between rounded-3xl border border-border bg-card p-7 md:col-span-2"
             >
               <div>
-                <div
-                  className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl"
-                  style={{
-                    background:
-                      "color-mix(in oklab, var(--accent-oxidized) 12%, var(--card))",
-                    color: "var(--accent-oxidized)",
-                  }}
-                >
-                  <Icon className="h-5 w-5" strokeWidth={1.75} />
+                <div style={{ color: "var(--accent-oxidized)" }} className="mb-6">
+                  <Glyph />
                 </div>
-                <span
-                  className="mb-2 block text-[10.5px] font-medium uppercase tracking-[0.2em] text-muted-foreground"
-                  style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
-                >
-                  {kicker}
-                </span>
                 <h3
-                  className="mb-2 text-2xl leading-tight text-foreground"
-                  style={{ fontFamily: "var(--editorial-display)" }}
+                  className="mb-3 text-2xl leading-tight text-card-foreground"
+                  style={{ fontFamily: display }}
                 >
                   {title}
                 </h3>
               </div>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-2 text-base leading-relaxed text-card-foreground/85">
                 {body}
               </p>
             </article>
           ))}
 
-          {/* D — second image feature: olive grove, 4 cols */}
+          {/* D — Lifecycle LCA: dedicated materials photograph, 4 cols */}
           <article className="group relative overflow-hidden rounded-3xl border border-border md:col-span-4">
             <Image
-              src={heroOlive}
+              src={lcaMaterials}
               alt=""
               fill
               sizes="(min-width: 768px) 66vw, 100vw"
@@ -136,52 +174,33 @@ export function WhyChooseGrid() {
               placeholder="blur"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
-            <div className="relative flex h-full min-h-[240px] flex-col justify-center p-8 lg:p-10">
-              <span
-                className="mb-2 block text-[11px] font-medium uppercase tracking-[0.22em] text-white/85"
-                style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
-              >
-                {t("benefitLcaKicker")}
-              </span>
+            <div className="relative flex h-full min-h-[260px] flex-col justify-center p-8 lg:p-10">
               <h3
                 className="mb-2 max-w-md text-2xl leading-tight text-white md:text-3xl"
-                style={{ fontFamily: "var(--editorial-display)" }}
+                style={{ fontFamily: display }}
               >
                 {t("benefitLcaTitle")}
               </h3>
-              <p className="max-w-md text-sm leading-relaxed text-white/80">
+              <p className="max-w-md text-base leading-relaxed text-white/90">
                 {t("benefitLcaDesc")}
               </p>
             </div>
           </article>
 
-          {/* E — accent tile matching row height */}
+          {/* E — Cyprus Origin accent tile */}
           <article className="relative flex flex-col justify-between rounded-3xl border border-border bg-card p-7 md:col-span-2">
             <div>
-              <div
-                className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{
-                  background:
-                    "color-mix(in oklab, var(--accent-oxidized) 12%, var(--card))",
-                  color: "var(--accent-oxidized)",
-                }}
-              >
-                <Recycle className="h-5 w-5" strokeWidth={1.75} />
+              <div style={{ color: "var(--accent-oxidized)" }} className="mb-6">
+                <GlyphCyprus />
               </div>
-              <span
-                className="mb-2 block text-[10.5px] font-medium uppercase tracking-[0.2em] text-muted-foreground"
-                style={{ fontFamily: "var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" }}
-              >
-                [ CYPRUS ORIGIN ]
-              </span>
               <h3
-                className="mb-2 text-2xl leading-tight text-foreground"
-                style={{ fontFamily: "var(--editorial-display)" }}
+                className="mb-3 text-2xl leading-tight text-card-foreground"
+                style={{ fontFamily: display }}
               >
                 Built for the Mediterranean.
               </h3>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-base leading-relaxed text-card-foreground/85">
               Tuned to Cyprus grid data, EU CSRD wave 3, and local utility feeds. No US-first defaults, no bolt-on translations.
             </p>
           </article>
