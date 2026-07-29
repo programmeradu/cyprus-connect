@@ -57,12 +57,15 @@ export default function Home() {
       {/* BENEFITS - Why Vuneli */}
       <div className="relative">
 
-      {/* News ticker - replaces the old live dashboard preview */}
-      <section className="relative bg-background">
-        <div className="mx-auto max-w-6xl px-4 pb-8 sm:px-6 sm:pb-12">
+      {/* News ticker - sits inside the hero photo's dissolve so the image
+          oozes into this section instead of ending on a colour wash */}
+      <section className="relative z-10 -mt-28 bg-transparent">
+        <div className="mx-auto max-w-6xl px-4 pb-8 pt-28 sm:px-6 sm:pb-12 sm:pt-32">
           <NewsTicker />
         </div>
       </section>
+
+
 
       <SectionDivider />
 
