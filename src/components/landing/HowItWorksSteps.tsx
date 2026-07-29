@@ -64,9 +64,11 @@ export function HowItWorksSteps() {
             <p className="mt-6 text-[16px] leading-[1.55] text-foreground/65 sm:text-[16.5px]">
               {s.body}
             </p>
-          </li>
-        ))}
-      </ol>
+            </li>
+          ))}
+        </SnapRail>
+      </div>
+
     </section>
   );
 }
