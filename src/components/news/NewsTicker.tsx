@@ -59,7 +59,7 @@ export function NewsTicker() {
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background to-transparent" />
 
           <div
-            className="flex min-w-max animate-[ticker_60s_linear_infinite] gap-10 group-hover:[animation-play-state:paused]"
+            className="flex min-w-max animate-[ticker_120s_linear_infinite] gap-10 group-hover:[animation-play-state:paused]"
           >
             {track.map((it, i) => {
               const date = it.pubDate
@@ -78,13 +78,13 @@ export function NewsTicker() {
                   className="group/item flex shrink-0 items-baseline gap-3 text-sm"
                 >
                   {source && (
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                    <span className="text-[10px] uppercase tracking-[0.18em] text-foreground/80">
                       {source}
                     </span>
                   )}
-                  {date && <span className="text-xs text-muted-foreground/70">{date}</span>}
-                  <span className="text-border">/</span>
-                  <span className="max-w-[52ch] truncate text-foreground/90 transition-colors group-hover/item:text-foreground">
+                  {date && <span className="text-xs text-foreground/70">{date}</span>}
+                  <span className="text-foreground/40">/</span>
+                  <span className="max-w-[52ch] truncate text-foreground transition-colors group-hover/item:underline underline-offset-4">
                     {it.title}
                   </span>
                 </a>

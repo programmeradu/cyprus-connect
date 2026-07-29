@@ -61,6 +61,10 @@ function GlyphMonitoring() {
 }
 
 function GlyphCyprus() {
+  // Simplified but recognisable Cyprus outline: main body with the
+  // distinctive Karpas peninsula extending north-east.
+  const outline =
+    "M4 32 Q6 27 12 26 Q18 23 26 24 Q33 22 39 25 Q42 26 44 28 L52 20 L54 22 L46 30 Q42 33 36 34 Q28 36 20 34 Q12 33 8 33 Q5 33 4 32 Z";
   return (
     <svg
       viewBox="0 0 56 56"
@@ -72,15 +76,10 @@ function GlyphCyprus() {
       strokeLinejoin="round"
       aria-hidden
     >
-      {/* Cyprus island silhouette with a compass mark */}
-      <path
-        d="M6 30 C 8 26, 14 24, 20 25 C 24 22, 30 22, 34 24 C 40 22, 46 24, 50 27 C 52 30, 50 33, 46 34 C 42 36, 36 35, 32 34 C 28 36, 22 36, 18 34 C 12 34, 8 33, 6 30 Z"
-        fill="currentColor"
-        fillOpacity="0.12"
-      />
-      <path d="M6 30 C 8 26, 14 24, 20 25 C 24 22, 30 22, 34 24 C 40 22, 46 24, 50 27 C 52 30, 50 33, 46 34 C 42 36, 36 35, 32 34 C 28 36, 22 36, 18 34 C 12 34, 8 33, 6 30 Z" />
-      <circle cx="30" cy="29" r="1.6" fill="currentColor" />
-      <path d="M30 22 L30 20 M30 38 L30 40 M23 30 L21 30 M37 30 L39 30" strokeOpacity="0.55" />
+      <path d={outline} fill="currentColor" fillOpacity="0.14" />
+      <path d={outline} />
+      {/* Nicosia marker — capital, roughly centre-north */}
+      <circle cx="30" cy="28" r="1.6" fill="currentColor" />
     </svg>
   );
 }
