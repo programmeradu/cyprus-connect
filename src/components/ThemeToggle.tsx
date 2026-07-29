@@ -29,7 +29,7 @@ export function ThemeToggle() {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative w-11 h-11 rounded-full border border-foreground/15 bg-card hover:bg-muted flex items-center justify-center group transition-colors"
+      className="relative w-9 h-9 rounded-full bg-transparent hover:bg-foreground/5 text-foreground/80 hover:text-foreground flex items-center justify-center group transition-colors"
       whileTap={{ scale: 0.95 }}
       aria-label={theme === "dark" ? t("label") + " — switch to light" : t("label") + " — switch to dark"}
     >
@@ -46,9 +46,10 @@ export function ThemeToggle() {
       
       {/* Sun Icon */}
       <motion.svg
-        className="absolute w-5 h-5"
+        className="absolute w-[18px] h-[18px]"
         viewBox="0 0 24 24"
         fill="none"
+        stroke="currentColor"
         initial={false}
         animate={{
           scale: theme === "light" ? 1 : 0,
@@ -57,7 +58,7 @@ export function ThemeToggle() {
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <circle cx="12" cy="12" r="4" fill="oklch(0.55 0.15 155)" />
+        <circle cx="12" cy="12" r="4" fill="currentColor" />
         {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
           const rad = (angle * Math.PI) / 180
           const x1 = 12 + 7 * Math.cos(rad)
@@ -71,19 +72,19 @@ export function ThemeToggle() {
               y1={y1}
               x2={x2}
               y2={y2}
-              stroke="oklch(0.55 0.15 155)"
               strokeWidth="2"
               strokeLinecap="round"
             />
           )
         })}
       </motion.svg>
-      
+
       {/* Moon Icon */}
       <motion.svg
-        className="absolute w-5 h-5"
+        className="absolute w-[18px] h-[18px]"
         viewBox="0 0 24 24"
         fill="none"
+        stroke="currentColor"
         initial={false}
         animate={{
           scale: theme === "dark" ? 1 : 0,
@@ -94,14 +95,11 @@ export function ThemeToggle() {
       >
         <path
           d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-          fill="oklch(0.65 0.16 160)"
-          stroke="oklch(0.65 0.16 160)"
+          fill="currentColor"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        <circle cx="16" cy="8" r="1.5" fill="oklch(0.12 0.01 150)" opacity="0.3" />
-        <circle cx="18" cy="12" r="1" fill="oklch(0.12 0.01 150)" opacity="0.2" />
       </motion.svg>
     </motion.button>
   )
