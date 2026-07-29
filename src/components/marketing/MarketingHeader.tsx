@@ -69,34 +69,29 @@ export function MarketingHeader() {
         </div>
       )}
 
-      {/* Dynamic-island pill */}
+      {/* Envirogen-style solid dark pill — smooth, opaque, always-on */}
       <div className="flex justify-center">
-        <div
-          className={[
-            "pointer-events-auto flex items-center gap-1 rounded-full px-2 py-1.5 transition-colors duration-300",
-            scrolled ? "bg-background/60 [text-shadow:none]" : "bg-transparent",
-          ].join(" ")}
-        >
+        <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-[#1c1f1e]/95 px-3 py-2 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)] ring-1 ring-white/5 backdrop-blur-md">
           <nav className="hidden items-center md:flex">
-            <Link href="/tools" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
+            <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("tools")}
             </Link>
-            <Link href="/learn" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
+            <Link href="/learn" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("learn")}
             </Link>
-            <Link href="/news" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
+            <Link href="/news" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("news")}
             </Link>
-            <Link href="/pricing" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
+            <Link href="/pricing" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("pricing")}
             </Link>
           </nav>
 
-          <span aria-hidden className={["mx-1 hidden h-4 w-px md:block", scrolled ? "bg-foreground/10" : "bg-white/25"].join(" ")} />
+          <span aria-hidden className="mx-1 hidden h-4 w-px bg-white/15 md:block" />
 
           <div className="flex shrink-0 items-center gap-0.5">
-            <LanguageSwitcher overHero={!scrolled} />
-            <ThemeToggle overHero={!scrolled} />
+            <LanguageSwitcher overHero />
+            <ThemeToggle overHero />
           </div>
         </div>
       </div>
