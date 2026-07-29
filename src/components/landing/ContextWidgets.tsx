@@ -157,7 +157,7 @@ export function ContextWidgets() {
               </span>
               <div className="min-w-0">
                 <div className="mt-3 flex items-baseline gap-3">
-                  <span className="font-[family-name:var(--editorial-serif)] text-5xl tabular-nums leading-none tracking-tight sm:text-6xl">
+                  <span className="font-[family-name:var(--editorial-serif)] text-[2.5rem] tabular-nums leading-none tracking-tight sm:text-6xl">
                     {carbonValue ?? t.loading}
                   </span>
                   <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -190,7 +190,7 @@ export function ContextWidgets() {
               <div className="min-w-0">
                 
                 <div className="mt-3 flex items-baseline gap-3">
-                  <span className="font-[family-name:var(--editorial-serif)] text-5xl tabular-nums leading-none tracking-tight sm:text-6xl">
+                  <span className="font-[family-name:var(--editorial-serif)] text-[2.5rem] tabular-nums leading-none tracking-tight sm:text-6xl">
                     {daysAway ?? t.loading}
                   </span>
                   <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -284,10 +284,10 @@ function GridIntensityVisual({
 
   return (
     <div
-      className="hidden sm:grid h-[112px] w-[112px] place-items-center"
+      className="grid h-[88px] w-[88px] shrink-0 place-items-center sm:h-[112px] sm:w-[112px]"
       aria-hidden
     >
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="h-full w-full">
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor={stroke} stopOpacity={0.35} />
@@ -393,7 +393,7 @@ function DeadlineVisual({
   const year = d.getFullYear();
   return (
     <div
-      className="hidden sm:flex relative h-[112px] w-[96px] flex-col overflow-hidden rounded-[4px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset,0_1px_2px_rgba(0,0,0,0.04),0_14px_28px_-18px_rgba(0,0,0,0.35)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_14px_28px_-18px_rgba(0,0,0,0.6)]"
+      className="relative flex h-[88px] w-[74px] shrink-0 sm:h-[112px] sm:w-[96px] flex-col overflow-hidden rounded-[4px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset,0_1px_2px_rgba(0,0,0,0.04),0_14px_28px_-18px_rgba(0,0,0,0.35)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_14px_28px_-18px_rgba(0,0,0,0.6)]"
       aria-hidden
     >
       {/* Binding rings at top */}
@@ -455,10 +455,11 @@ function NewsPulseVisual() {
 
   return (
     <div
-      className="hidden sm:grid h-[112px] w-[112px] place-items-center"
+      className="grid h-[64px] w-[76px] shrink-0 place-items-center sm:h-[112px] sm:w-[112px]"
+
       aria-hidden
     >
-      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="h-full w-full">
         <defs>
           <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="currentColor" stopOpacity={0.22} />

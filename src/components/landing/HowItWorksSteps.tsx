@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import stepConnect from "@/assets/step-01-connect.jpg";
 import stepAnalyze from "@/assets/step-02-analyze.jpg";
 import stepAct from "@/assets/step-03-act.jpg";
+import { SnapRail } from "./SnapRail";
 
 /**
  * How It Works - staggered three-step sequence.
@@ -31,10 +32,19 @@ export function HowItWorksSteps() {
         </p>
       </div>
 
-      <ol className="mt-12 grid gap-12 sm:mt-16 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3 lg:gap-x-12">
-        {steps.map((s) => (
-          <li key={s.n} className={s.offset}>
-            <div className="flex items-end gap-4 border-b border-border/60 pb-4">
+      <div className="-mx-4 mt-12 sm:mx-0 sm:mt-16">
+        <SnapRail
+          as="ol"
+          count={steps.length}
+          gridClassName="sm:grid sm:grid-cols-2 sm:gap-x-10 sm:gap-y-12 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 lg:gap-x-12"
+        >
+          {steps.map((s) => (
+            <li
+              key={s.n}
+              className={`w-[80vw] max-w-[330px] shrink-0 snap-start sm:w-auto sm:max-w-none ${s.offset}`}
+            >
+              <div className="flex items-end gap-4 border-b border-border/60 pb-4">
+
               <span className="font-[family-name:var(--editorial-serif)] text-[52px] italic leading-[0.8] tabular-nums text-foreground/30 sm:text-[64px]">
                 {s.n}
               </span>
@@ -55,9 +65,11 @@ export function HowItWorksSteps() {
             <p className="mt-6 text-[16px] leading-[1.55] text-foreground/65 sm:text-[16.5px]">
               {s.body}
             </p>
-          </li>
-        ))}
-      </ol>
+            </li>
+          ))}
+        </SnapRail>
+      </div>
+
     </section>
   );
 }
