@@ -135,10 +135,8 @@ export default function Home() {
       <section className="relative overflow-hidden border-y border-border/50 bg-muted/25">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
-            <p className="text-[15px] font-semibold tracking-[-0.01em] text-foreground/60">
-              Strategic roadmap, 2026 to 2028
-            </p>
-            <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
+            <h2 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
+
               Discover the{" "}
               <span className="italic text-muted-foreground">autonomous ESG vision</span>
             </h2>
