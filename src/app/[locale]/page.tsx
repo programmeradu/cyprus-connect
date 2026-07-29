@@ -19,6 +19,12 @@ import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentWindCurrents from "@/assets/accent-wind-currents.png";
+import {
+  GlyphDataSpine,
+  GlyphColleagues,
+  GlyphAssurance,
+} from "@/components/landing/AgentGlyphs";
+
 
 /**
  * Home - editorial redesign.
