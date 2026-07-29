@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 
-export function ThemeToggle() {
+export function ThemeToggle({ overHero = false }: { overHero?: boolean }) {
   const t = useTranslations("themeToggle")
   const [theme, setTheme] = useState<"light" | "dark">("light")
 
