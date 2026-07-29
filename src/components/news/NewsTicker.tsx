@@ -111,21 +111,6 @@ export function NewsTicker() {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes ticker {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .group > div {
-            animation: none !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }
