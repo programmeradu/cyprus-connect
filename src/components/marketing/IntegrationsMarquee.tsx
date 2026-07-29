@@ -52,7 +52,8 @@ function LogoImage({ mark, dark }: { mark: Mark; dark?: boolean }) {
       <img
         src={mark.logo}
         alt={`${mark.name} logo`}
-        loading="lazy"
+        loading="eager"
+        fetchPriority="low"
         className={`object-contain ${mark.logoClassName ?? "h-8 w-28"}`}
       />
     );
@@ -64,8 +65,9 @@ function LogoImage({ mark, dark }: { mark: Mark; dark?: boolean }) {
       <img
         src={`https://cdn.simpleicons.org/${mark.simpleIcon}/${color}`}
         alt={`${mark.name} logo`}
-        loading="lazy"
-        className="h-7 w-auto object-contain opacity-80"
+        loading="eager"
+        fetchPriority="low"
+        className="h-8 w-20 object-contain opacity-80"
       />
     );
   }
@@ -77,19 +79,17 @@ function Entry({ mark, dark }: { mark: Mark; dark?: boolean }) {
   const hasOfficialLogo = Boolean(mark.logo);
 
   return (
-    <div className="flex shrink-0 items-center gap-3 px-6 sm:px-8">
+    <div className="flex shrink-0 items-center px-4 sm:px-5" title={mark.name}>
       <span
         className={
           hasOfficialLogo
-            ? "flex h-14 min-w-16 items-center justify-center rounded-md border border-border/50 bg-card/80 px-3 shadow-sm"
-            : "flex h-12 min-w-12 items-center justify-center"
+            ? "flex h-16 min-w-28 items-center justify-center rounded-md border border-border/50 bg-card/85 px-4 shadow-sm sm:min-w-36"
+            : "flex h-16 min-w-24 items-center justify-center rounded-md border border-border/40 bg-card/60 px-4 shadow-sm sm:min-w-28"
         }
       >
         <LogoImage mark={mark} dark={dark} />
       </span>
-      <span className="whitespace-nowrap text-[17px] font-medium tracking-[-0.01em] text-foreground/80 sm:text-[18px]">
-        {mark.name}
-      </span>
+      <span className="sr-only">{mark.name}</span>
     </div>
   );
 }
@@ -125,7 +125,7 @@ export function IntegrationsMarquee() {
         </div>
       </div>
 
-      {/* Marquee track — light mode */}
+      {/* Marquee track, light mode */}
       <div
         className="group relative overflow-hidden dark:hidden"
         style={{
@@ -143,7 +143,7 @@ export function IntegrationsMarquee() {
         </div>
       </div>
 
-      {/* Marquee track — dark mode (white-tinted Simple Icons) */}
+      {/* Marquee track, dark mode with white-tinted Simple Icons */}
       <div
         className="group relative hidden overflow-hidden dark:block"
         style={{
