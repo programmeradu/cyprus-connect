@@ -76,12 +76,13 @@ export default function VisionPage() {
   ];
 
   const plays = [
-    { n: "01", title: t("fusion1Title"), body: t("fusion1Desc"), meta: t("fusion1Meta"), media: bentoShipping, alt: "Container terminal at the port of Limassol" },
-    { n: "02", title: t("fusion2Title"), body: t("fusion2Desc"), meta: t("fusion2Meta"), media: bentoSolar, alt: "Rooftop solar panels above a Cyprus warehouse" },
-    { n: "03", title: t("fusion3Title"), body: t("fusion3Desc"), meta: t("fusion3Meta"), media: portPhoto, alt: "Fuel and freight paperwork at a Cyprus quayside" },
-    { n: "04", title: t("fusion4Title"), body: t("fusion4Desc"), meta: t("fusion4Meta"), media: officePhoto, alt: "A supplier ledger open beside a mobile phone" },
-    { n: "05", title: t("fusion5Title"), body: t("fusion5Desc"), meta: t("fusion5Meta"), media: bentoAudit, alt: "A training record filed with the audit documents" },
+    { n: "01", title: t("fusion1Title"), body: t("fusion1Desc"), meta: t("fusion1Meta") },
+    { n: "02", title: t("fusion2Title"), body: t("fusion2Desc"), meta: t("fusion2Meta") },
+    { n: "03", title: t("fusion3Title"), body: t("fusion3Desc"), meta: t("fusion3Meta") },
+    { n: "04", title: t("fusion4Title"), body: t("fusion4Desc"), meta: t("fusion4Meta") },
+    { n: "05", title: t("fusion5Title"), body: t("fusion5Desc"), meta: t("fusion5Meta") },
   ];
+
 
   return (
     <div className="relative min-h-screen bg-background text-foreground antialiased selection:bg-[var(--accent-lime)] selection:text-black">
