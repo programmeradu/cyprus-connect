@@ -1,429 +1,112 @@
-# Vuneli App - Developer Handoff Documentation
+# Vuneli Workspace (`/app`) - design doctrine
 
-## 🎉 Project Status: Complete
+The workspace is a separate visual system from the marketing site. It shares the
+brand typefaces and the "Verified Nature" temperament, but it is dense product
+UI: flat opaque surfaces, hairline rules, value-based depth, real numbers.
 
-All core features of the Vuneli sustainability dashboard have been successfully implemented with a premium, modern UI design.
-
----
-
-## 📁 Project Structure
-
-```
-src/app/app/
-├── layout.tsx                 # App layout with sidebar navigation
-├── page.tsx                   # Dashboard (main overview)
-├── calculator/
-│   └── page.tsx              # Carbon footprint calculator
-├── actions/
-│   └── page.tsx              # Green actions recommendations
-├── leaderboard/
-│   └── page.tsx              # Global rankings & gamification
-├── analytics/
-│   └── page.tsx              # Detailed emissions analytics
-└── settings/
-    └── page.tsx              # User profile & preferences
-
-src/components/
-├── app/
-│   ├── Sidebar.tsx           # Navigation sidebar (desktop & mobile)
-│   ├── AppHeader.tsx         # Page header component
-│   ├── StatCard.tsx          # Metric display cards
-│   ├── ActionCard.tsx        # Green action cards
-│   ├── ProgressBar.tsx       # Progress indicators
-│   └── Badge.tsx             # Status badges
-├── icons/
-│   └── CustomIcons.tsx       # Custom premium SVG icons
-└── ui/
-    ├── PremiumButton.tsx     # Premium button component
-    ├── PremiumCard.tsx       # Premium card component
-    └── ...                   # Other UI components
-```
+`src/app/[locale]/app/app.css` is the only stylesheet that governs `/app`. It is
+scoped under `.viq-app`, set by the app layout. Marketing CSS cannot reach in and
+workspace rules cannot leak out.
 
 ---
 
-## Design System (Verified Nature — workspace variant)
+## 1. Every page uses the same template
 
-All workspace styling lives in `src/app/[locale]/app/app.css`, scoped under the
-`.viq-app` class that `layout.tsx` sets on the root element. It is separate from
-the marketing stylesheet (`src/app/globals.css`) on purpose: the two surfaces
-share tokens and typefaces but not treatments. Do not add workspace rules to
-`globals.css`, and do not import marketing-only classes here.
+No exceptions. Import from one barrel:
 
-### Surfaces
-- Page `--app-surface-0`, card `--app-surface-1`, inset `--app-surface-2`, hover `--app-surface-3`.
-- Depth comes from surface value plus a 1px `--app-rule` hairline. Nothing else.
-- Dark mode is a true neutral grey ramp (zero chroma): `#171717` chrome,
-  `#212121` page, `#2a2a2a` card, `#303030` inset.
-
-### Primitives
-`.app-card`, `.app-card-inset`, `.app-ledger`, `.app-overlay`, `.app-label`,
-`.app-meta`, `.app-metric`, `.app-num`, `.app-tag`, `.app-btn`, `.app-btn-ghost`.
-
-### Typography
-- Display and figures: Fraunces (`--editorial-display`).
-- Body and UI: Instrument Sans (`--editorial-sans`).
-- Minimum readable size is 12px. All numerals are tabular.
-
-### Banned (do not reintroduce)
-- Glassmorphism: `.glass`, `.glass-strong`, any `backdrop-blur` on a content card.
-- Gradients: `bg-gradient-*` washes, `.gradient-text`, `.gradient-border`.
-- Neumorphism `.neomorph` and the stacked `.shadow-premium` shadow.
-- `rounded-full` pill chips, `rounded-2xl`/`rounded-3xl` on rectangles.
-- 9px/10px uppercase wide-tracking microtype.
-- Decorative icons. Functional icons only (close, chevron, search, external link).
-- `truncate` or `line-clamp` on any label that carries meaning.
-
-Shadows are permitted in exactly one place: `.app-overlay`, for true overlays
-(dropdowns, modals, drawers).
-
----
-
-## 🧭 Page Breakdown
-
-### 1. Dashboard (`/app`)
-**Purpose**: Main overview of sustainability metrics
-
-**Key Features**:
-- 4 stat cards: Carbon Footprint, Green Credits, Actions Completed, Leaderboard Rank
-- Sustainability goals progress bars
-- Recent activity timeline
-- Recommended green actions (3 featured)
-- AI-powered insights section
-
-**Mock Data**: All metrics are placeholder values. Ready for API integration.
-
----
-
-### 2. Calculator (`/app/calculator`)
-**Purpose**: Input data to calculate carbon footprint
-
-**Key Features**:
-- Input fields for: Electricity, Natural Gas, Water, Waste, Transportation
-- Real-time calculation summary (4 stat cards)
-- Formula: 
-  - Electricity: kWh × 0.5
-  - Gas: m³ × 2.0
-  - Water: L × 0.001
-  - Waste: kg × 0.5
-  - Transport: km × 0.2
-- AI recommendations based on inputs
-- Save draft functionality (placeholder)
-
-**Integration Points**: Ready for Climatiq API or Sustamize API connection
-
----
-
-### 3. Green Actions (`/app/actions`)
-**Purpose**: Display and track sustainability actions
-
-**Key Features**:
-- 8 pre-defined actions with difficulty levels (easy/medium/hard)
-- Filter by category: All, Energy, Waste, Water, Operations
-- Action completion tracking (local state)
-- Points system (50-500 points per action)
-- Impact indicators (High/Medium/Low)
-- Stats dashboard: Completed, In Progress, Credits Earned
-
-**State Management**: Uses React useState - ready for backend persistence
-
----
-
-### 4. Leaderboard (`/app/leaderboard`)
-**Purpose**: Gamification and competitive rankings
-
-**Key Features**:
-- User's current rank highlighted with special styling
-- Top 3 podium display with trophy icons
-- Full leaderboard (12 entries shown)
-- Rank changes with arrows (↑↓)
-- Country flags for each company
-- Credits displayed for each entry
-
-**Mock Data**: 12 companies with realistic names, credits, and rankings
-
----
-
-### 5. Analytics (`/app/analytics`)
-**Purpose**: Detailed emissions breakdown and trends
-
-**Key Features**:
-- 4 key metric cards with YoY comparisons
-- Emissions by category breakdown (electricity, gas, transport, other)
-- Monthly trend chart (6 months of data)
-- Industry benchmarking section
-- Visual progress bars for each category
-
-**Chart Integration**: Placeholder bars - ready for Recharts or Chart.js
-
----
-
-### 6. Settings (`/app/settings`)
-**Purpose**: User profile and preferences management
-
-**Key Features**:
-- Profile information form (company name, email, industry, size)
-- Notification toggles (4 types with switch controls)
-- Danger zone (account deletion)
-- Save changes functionality (placeholder)
-
-**Form Handling**: Ready for backend API integration
-
----
-
-## 🔧 Component Library
-
-### Custom Icons (18 unique designs)
-All icons are custom-designed SVG components with thin strokes (1.5px) for a premium look:
-
-- **LeafIcon** (animated): Brand identity
-- **DashboardIcon**: Grid layout
-- **CalculatorIcon**: Keypad design
-- **TrophyIcon**: Achievement symbol
-- **ChartIcon**: Line graph
-- **BulbIcon**: Ideas/actions
-- **SettingsIcon**: Gear with radial lines
-- **CarbonIcon**: Circular checkmark
-- **TargetIcon**: Concentric circles
-- **SparklesIcon**: Star clusters
-- **FireIcon**: Flame outline
-- **BoltIcon**: Lightning
-- **WaterIcon**: Droplet
-- **RecycleIcon**: Arrows
-- **MenuIcon**: Hamburger
-- **CloseIcon**: X mark
-- **BellIcon**: Notifications
-- **UserIcon**: Profile
-
-### Reusable Components
-
-**StatCard**: Display key metrics
 ```tsx
-<StatCard
-  title="Carbon Footprint"
-  value="12.4"
-  change="-8% vs last month"
-  changeType="positive"
-  subtitle="tons CO2e"
-  icon={<CarbonIcon className="w-4 h-4" />}
-/>
+import {
+  PageShell, PageHeader, PageToolbar, ToolbarTabs, Section,
+  DataTable, Metric, MetricRow, EmptyState, AiUnavailable,
+  SkeletonTable, SkeletonCards, SkeletonMetricRow
+} from "@/components/app/shell";
 ```
 
-**ActionCard**: Green action items
+Canonical page:
+
 ```tsx
-<ActionCard
-  title="Switch to Renewable Energy"
-  description="Transition to solar power..."
-  impact="High"
-  icon={<BoltIcon className="w-4 h-4" />}
-  difficulty="hard"
-  points={500}
-  onComplete={() => handleComplete()}
-/>
+<PageShell
+  loading={isLoading}
+  error={error}
+  onRetry={load}
+  header={
+    <PageHeader
+      title="Analytics"
+      purpose="See how your emissions moved, and what drove the change."
+      actions={<button className="app-btn">Export</button>}
+    />
+  }
+  toolbar={<PageToolbar meta="Updated 4 Jul 2026">{filters}</PageToolbar>}
+>
+  <Section title="Headline">{...}</Section>
+  <Section title="By source">{...}</Section>
+</PageShell>
 ```
 
-**ProgressBar**: Visual progress indicators
-```tsx
-<ProgressBar
-  label="Carbon Reduction"
-  value={65}
-  max={100}
-  color="success"
-/>
-```
+- `PageShell` owns the max width, the 32px rhythm between sections, and the
+  loading / error states. Do not hand-roll a spinner or a `<Loader2 />` block.
+- `PageHeader` owns the h1. A page never renders its own `<h1>`.
+- `Section` owns the h2. Sections never set outer margins.
+- One primary action per page. Everything else is `app-btn-ghost` or a text link.
 
-**Badge**: Status indicators
-```tsx
-<Badge variant="primary" size="sm">2025</Badge>
-```
+## 2. Type scale
 
----
+| Role          | Size            | Weight | Face                 |
+| ------------- | --------------- | ------ | -------------------- |
+| Page title    | 24px            | 600    | `--editorial-display`|
+| Section title | 17px            | 600    | `--editorial-display`|
+| Body          | 15px            | 400    | `--editorial-sans`   |
+| Meta          | 13px            | 500    | `--editorial-sans`   |
+| Label         | 12px (floor)    | 600    | `--editorial-sans`   |
+| Metric        | 28-40px         | 600    | `--editorial-display`|
 
-## 📱 Responsive Design
+Nothing below 12px. No uppercase with wide tracking. No `font-light`.
+Use `.app-label`, `.app-meta`, `.app-metric`, `.app-num` rather than re-deriving.
 
-All pages are fully responsive with breakpoints:
-- **Mobile**: < 640px (sm) - Hamburger menu, stacked cards
-- **Tablet**: 640px - 1024px (md-lg) - 2-column grids
-- **Desktop**: > 1024px (lg+) - Full sidebar, 3-4 column grids
+## 3. Surfaces and structure
 
-### Mobile Navigation
-- Hamburger menu button (top-left)
-- Slide-in sidebar with backdrop overlay
-- Touch-optimized tap targets (min 44px)
+- Page `--app-surface-0`, card `--app-surface-1`, inset `--app-surface-2`,
+  hover `--app-surface-3`. Never a raw `bg-white`, `bg-neutral-900`,
+  `bg-primary/10` wash, or a `dark:` colour tint on a card.
+- Rules: `border-[var(--app-rule)]`, strong variant for controls.
+- Classes: `.app-card`, `.app-card-inset`, `.app-ledger`, `.app-overlay`.
+- Radius: 4px tags, 6px controls, 8px cards, 12px overlays. Nothing larger.
+- Shadows only on `.app-overlay` (dropdowns, modals, popovers). Nowhere else.
+- No glassmorphism, no gradients, no neumorphic shadows.
 
----
+## 4. Content and data
 
-## 🎮 Gamification System
+- Text left, numbers right, always `tabular-nums`. Use `DataTable`.
+- Money in EUR. Units metric. Dates `d MMM yyyy`. Cyprus and EU context only.
+- Tables beat card grids for anything scannable.
+- Never `truncate` or `line-clamp` a label that carries meaning. Wrap it.
 
-### Green Credits
-- Points awarded for completing actions
-- Range: 50-500 points per action
-- Displayed in dashboard and leaderboard
+## 5. Three states, always
 
-### Difficulty Levels
-- **Easy**: 100-180 points (LED upgrades, water fixtures)
-- **Medium**: 200-300 points (recycling, procurement)
-- **Hard**: 500+ points (renewable energy, major projects)
+Every async surface ships all three:
 
-### Achievements (Planned)
-Ready for implementation:
-- Streak tracking (consecutive days active)
-- Milestone badges (100/500/1000 credits)
-- Category mastery (complete all actions in a category)
-- Leaderboard positions (Top 10, Top 5, #1)
+1. **Skeleton** matching the final layout (`SkeletonTable`, `SkeletonCards`,
+   `SkeletonMetricRow`). Never a centred spinner.
+2. **Empty** via `EmptyState`: headline, one sentence of guidance, one action.
+   Never a bare "No data".
+3. **Error** with a retry, through `PageShell`'s `error` / `onRetry` props.
 
----
+AI-backed surfaces additionally use `AiUnavailable` when the model key is
+missing or rejected, rather than failing silently.
 
-## 🔌 API Integration Points
+## 6. Banned in `/app`
 
-### Ready for Implementation
+- Decorative icons (Lucide or otherwise) used as accents. Functional icons only:
+  close, chevron, search, external link. Single stroke, monochrome.
+- `rounded-full` pill chips. Use `.app-tag` (rectangular, bordered).
+- Gradients, `glass`, `neomorph`, `shadow-premium`.
+- Emoji as UI.
+- Two equal-weight CTAs in one view.
+- Hard-coded colour utilities (`text-white`, `bg-black`, `bg-[#...]`).
 
-**1. Carbon Calculation APIs**
-- **Climatiq API**: `https://api.climatiq.io/v1/estimate`
-- **Sustamize API**: Product footprint engine
-- Integration location: `/app/calculator/page.tsx`
+## 7. Verification before shipping a page
 
-**2. AI Recommendations**
-- **OpenAI GPT-4**: Personalized insights
-- **Google Vertex AI**: Alternative
-- Integration locations:
-  - Dashboard AI insights section
-  - Calculator recommendations
-  - Actions page dynamic suggestions
-
-**3. Database Endpoints**
-Already available in `/src/app/api/`:
-- `/api/emissions-history` - Historical carbon data
-- `/api/green-actions` - Actions CRUD
-- `/api/leaderboard` - Rankings
-- `/api/sustainability-metrics` - KPIs
-- `/api/user-progress` - Tracking
-
-**4. Authentication**
-- Auth page ready at `/auth`
-- Protected routes: All `/app/*` pages
-- Session management needed
-
----
-
-## 🚀 Next Steps for Developers
-
-### Immediate Tasks
-1. **Connect APIs**:
-   - Integrate Climatiq/Sustamize for carbon calculations
-   - Add OpenAI for AI insights
-   - Hook up existing database endpoints
-
-2. **Add Authentication**:
-   - Protect `/app` routes
-   - Add session checks to components
-   - Implement logout functionality
-
-3. **Data Persistence**:
-   - Save calculator inputs
-   - Persist completed actions
-   - Store user settings
-
-4. **Real-time Updates**:
-   - WebSocket for leaderboard live updates
-   - Notifications system
-   - Achievement unlocks
-
-### Enhancement Opportunities
-- **Charts**: Add Recharts/Chart.js to Analytics page
-- **CSV Upload**: Allow bulk data import in Calculator
-- **Exporting**: Generate PDF reports
-- **Notifications**: Email/push for achievements
-- **Social Sharing**: Share leaderboard position
-- **Multi-language**: i18n support
-
----
-
-## 🎯 Key Files to Review
-
-1. **`src/app/globals.css`**: Full design system tokens
-2. **`src/components/icons/CustomIcons.tsx`**: All custom icons
-3. **`src/components/app/Sidebar.tsx`**: Navigation logic
-4. **`src/app/app/layout.tsx`**: App structure
-
----
-
-## 🐛 Known Limitations
-
-1. **Mock Data**: All pages use placeholder data
-2. **No Backend**: Forms don't persist to database
-3. **Static Charts**: Progress bars only, no advanced charts yet
-4. **Local State**: Actions completion tracked in component state
-5. **No Auth**: Routes are not protected yet
-
----
-
-## 💡 Design Philosophy
-
-### Why Small & Thin?
-- **Modern Premium**: Apple, Stripe, Linear aesthetic
-- **Information Density**: More content without clutter
-- **Performance**: Lightweight components, fast rendering
-- **Accessibility**: Still meets WCAG standards (12px+ for body text)
-
-### Why Custom Icons?
-- **Brand Consistency**: Unique visual identity
-- **Flexibility**: Full control over design
-- **Performance**: No icon library overhead
-- **Differentiation**: Not generic open-source look
-
----
-
-## 📚 Resources
-
-### Design System
-- Color Palette: See `globals.css` `:root` and `.dark`
-- Components: All in `/src/components/app/`
-- Icons: `/src/components/icons/CustomIcons.tsx`
-
-### External APIs
-- **Climatiq**: https://www.climatiq.io/docs
-- **Sustamize**: https://www.sustamize.com/integration-api
-- **OpenAI**: https://platform.openai.com/docs
-
-### Blueprint Reference
-- Full hackathon blueprint provided in project brief
-- 137 hours of planned features
-- All core features implemented
-
----
-
-## ✅ Completion Checklist
-
-- [x] Planning & Architecture
-- [x] Design System & Custom Icons
-- [x] App Layout with Sidebar
-- [x] Dashboard Page
-- [x] Carbon Calculator
-- [x] Green Actions
-- [x] Leaderboard
-- [x] Analytics
-- [x] Settings
-- [x] Responsive Design
-- [x] Glassmorphism & Premium UI
-- [ ] API Integration (Ready for implementation)
-- [ ] Authentication (Ready for implementation)
-- [ ] Database Persistence (Endpoints exist)
-
----
-
-## 🎊 Final Notes
-
-This is a **production-ready UI** with:
-- ✨ Premium, modern design at unicorn level
-- 📱 Fully responsive for all devices
-- 🎨 Consistent design system throughout
-- 🧩 Modular, reusable components
-- 🔧 Easy to extend and customize
-- 📖 Comprehensive documentation
-
-**The foundation is solid. Time to add the data layer!** 🚀
-
----
-
-*Built with ❤️ for the GEF2025 Hackathon*
-*Vuneli - Empowering SMEs to Lead on Sustainability*
+- 1280px and 390px, light and dark.
+- No horizontal scroll. No truncated label. Body contrast >= 4.5:1.
+- Focus rings visible on every interactive element.
+- Touch targets >= 44x44px.

@@ -18,7 +18,9 @@ import {
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Lightbulb, Plug, Wand2, GraduationCap } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
+import { useSession, authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useUser } from "@/lib/user-context";
 
 // Custom Marketplace Icon
@@ -62,6 +64,8 @@ const navItems: NavItem[] = [
 
 export const Sidebar = () => {
   const t = useTranslations("sidebar");
+  const tHeader = useTranslations("shared.header");
+  const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
@@ -101,6 +105,17 @@ export const Sidebar = () => {
       // Default values on error
       setComplianceScore(85);
       setUrgentItems(1);
+    }
+  };
+
+  const handleSignOut = async () => {
+    const { error } = await authClient.signOut();
+    if (error?.code) {
+      toast.error(tHeader("signOutError"));
+    } else {
+      localStorage.removeItem("bearer_token");
+      toast.success(tHeader("signOutSuccess"));
+      router.push("/");
     }
   };
 
@@ -168,34 +183,46 @@ export const Sidebar = () => {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border/50 space-y-3">
-        {/* Theme Toggle */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">{t("appearance")}</span>
-          <ThemeToggle />
+      <div className="p-4 border-t border-[var(--app-rule)] space-y-3">
+        {/* Theme + language + notifications */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="app-meta">{t("appearance")}</span>
+          <div className="flex items-center gap-1">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
         </div>
 
-        {/* Language Switcher */}
-        <div className="flex justify-center">
-          <LanguageSwitcher />
+        {/* Account */}
+        <div className="rounded-md border border-[var(--app-rule)]">
+          <Link href="/app/settings" className="block">
+            <div className="p-2.5 rounded-t-md hover:bg-[var(--app-surface-3)] transition-colors cursor-pointer">
+              {isUserLoading ? (
+                <div className="space-y-1.5">
+                  <div className="h-3 w-24 bg-muted animate-pulse rounded" />
+                  <div className="h-2.5 w-20 bg-muted animate-pulse rounded" />
+                </div>
+              ) : (
+                <>
+                  <p className="text-[0.8125rem] font-semibold text-foreground break-words leading-tight">
+                    {displayName}
+                  </p>
+                  <p className="app-meta break-all leading-tight mt-0.5">
+                    {displayEmail}
+                  </p>
+                </>
+              )}
+            </div>
+          </Link>
+
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="w-full border-t border-[var(--app-rule)] px-2.5 py-2 text-left text-[0.8125rem] font-medium text-muted-foreground hover:text-foreground hover:bg-[var(--app-surface-3)] transition-colors rounded-b-md"
+          >
+            {tHeader("signOut")}
+          </button>
         </div>
-        
-        {/* User Info */}
-        <Link href="/app/settings" className="block">
-          <div className="p-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer">
-            {isUserLoading ? (
-              <div className="space-y-1">
-                <div className="h-3 w-24 bg-muted animate-pulse rounded" />
-                <div className="h-2 w-20 bg-muted animate-pulse rounded" />
-              </div>
-            ) : (
-              <>
-                <p className="text-xs font-medium text-foreground break-words leading-tight">{displayName}</p>
-                <p className="text-[10px] text-muted-foreground break-all leading-tight mt-0.5">{displayEmail}</p>
-              </>
-            )}
-          </div>
-        </Link>
       </div>
     </>
   );

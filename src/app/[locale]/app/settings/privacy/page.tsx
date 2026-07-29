@@ -2,28 +2,27 @@
 
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useSession, authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
-import { PremiumButton } from "@/components/ui/PremiumButton";
-import { PremiumCard } from "@/components/ui/PremiumCard";
+import { PageShell, PageHeader, Section, EmptyState } from "@/components/app/shell";
 
 const COPY = {
   en: {
     title: "Privacy & data",
     subtitle:
- "Manage your personal data under the EU General Data Protection Regulation (GDPR) and the Cyprus Data Protection Law.",
+      "Manage your personal data under the EU General Data Protection Regulation (GDPR) and the Cyprus Data Protection Law.",
     exportTitle: "Export your data",
     exportBody:
- "Download a JSON file containing your Vuneli profile and preferences. Corresponds to your GDPR right of access (Art. 15) and portability (Art. 20).",
+      "Download a JSON file containing your Vuneli profile and preferences. Corresponds to your GDPR right of access (Art. 15) and portability (Art. 20).",
     exportCta: "Download my data",
     exporting: "Preparing export…",
     exportOk: "Export downloaded",
     exportErr: "Could not export data",
     deleteTitle: "Delete your account",
     deleteBody:
- "This permanently deletes your account and associated records. Invoices are retained for 7 years to meet Cyprus tax law; encrypted backups are pruned within 12 months. This action cannot be undone.",
+      "This permanently deletes your account and associated records. Invoices are retained for 7 years to meet Cyprus tax law; encrypted backups are pruned within 12 months. This action cannot be undone.",
     deleteCta: "Delete my account",
     deleting: "Deleting…",
     confirmTitle: "Type DELETE to confirm",
@@ -36,22 +35,22 @@ const COPY = {
     signIn: "Sign in",
     docs: "See our Privacy Policy for details on retention and your rights.",
     privacyLink: "Privacy Policy",
-    back: "Back to settings",
+    back: "Back to settings"
   },
   el: {
     title: "Απόρρητο & δεδομένα",
     subtitle:
- "Διαχειριστείτε τα προσωπικά σας δεδομένα βάσει του GDPR και του Κυπριακού Νόμου Προστασίας Δεδομένων.",
+      "Διαχειριστείτε τα προσωπικά σας δεδομένα βάσει του GDPR και του Κυπριακού Νόμου Προστασίας Δεδομένων.",
     exportTitle: "Εξαγωγή δεδομένων",
     exportBody:
- "Κατεβάστε ένα αρχείο JSON με το προφίλ και τις προτιμήσεις σας στο Vuneli. Αντιστοιχεί στο δικαίωμα πρόσβασης (Άρ. 15) και φορητότητας (Άρ. 20) του GDPR.",
+      "Κατεβάστε ένα αρχείο JSON με το προφίλ και τις προτιμήσεις σας στο Vuneli. Αντιστοιχεί στο δικαίωμα πρόσβασης (Άρ. 15) και φορητότητας (Άρ. 20) του GDPR.",
     exportCta: "Λήψη των δεδομένων μου",
     exporting: "Προετοιμασία εξαγωγής…",
     exportOk: "Η εξαγωγή κατέβηκε",
     exportErr: "Αποτυχία εξαγωγής",
     deleteTitle: "Διαγραφή λογαριασμού",
     deleteBody:
- "Διαγράφει οριστικά τον λογαριασμό και τα σχετικά αρχεία. Τα τιμολόγια διατηρούνται 7 έτη για φορολογικούς λόγους· τα κρυπτογραφημένα αντίγραφα εκκαθαρίζονται εντός 12 μηνών. Η ενέργεια είναι μη αναστρέψιμη.",
+      "Διαγράφει οριστικά τον λογαριασμό και τα σχετικά αρχεία. Τα τιμολόγια διατηρούνται 7 έτη για φορολογικούς λόγους· τα κρυπτογραφημένα αντίγραφα εκκαθαρίζονται εντός 12 μηνών. Η ενέργεια είναι μη αναστρέψιμη.",
     deleteCta: "Διαγραφή λογαριασμού",
     deleting: "Διαγραφή…",
     confirmTitle: "Πληκτρολογήστε DELETE για επιβεβαίωση",
@@ -64,9 +63,12 @@ const COPY = {
     signIn: "Σύνδεση",
     docs: "Δείτε την Πολιτική Απορρήτου για λεπτομέρειες.",
     privacyLink: "Πολιτική Απορρήτου",
-    back: "Πίσω στις ρυθμίσεις",
-  },
+    back: "Πίσω στις ρυθμίσεις"
+  }
 } as const;
+
+const inputClass =
+  "w-full max-w-xs h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-destructive/40";
 
 export default function PrivacySettingsPage() {
   const { data: session, isPending } = useSession();
@@ -79,18 +81,30 @@ export default function PrivacySettingsPage() {
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
 
+  const header = (
+    <PageHeader
+      title={t.title}
+      purpose={t.subtitle}
+      breadcrumb={[{ label: "Settings", href: "/app/settings" }, { label: t.title }]}
+    />
+  );
+
   if (isPending) {
-    return <div className="max-w-2xl mx-auto px-4 py-12 text-sm text-muted-foreground">Loading…</div>;
+    return (
+      <PageShell loading header={header}>
+        <div />
+      </PageShell>
+    );
   }
 
   if (!session?.user?.id) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-sm text-muted-foreground mb-4">{t.signInRequired}</p>
-        <Link href="/auth">
-          <PremiumButton size="sm">{t.signIn}</PremiumButton>
-        </Link>
-      </div>
+      <PageShell header={header}>
+        <EmptyState
+          title={t.signInRequired}
+          action={{ label: t.signIn, href: "/auth" }}
+        />
+      </PageShell>
     );
   }
 
@@ -101,7 +115,7 @@ export default function PrivacySettingsPage() {
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
       const res = await fetch(`/api/users/${userId}/export`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (!res.ok) throw new Error(String(res.status));
       const blob = await res.blob();
@@ -128,7 +142,7 @@ export default function PrivacySettingsPage() {
       const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
       const res = await fetch(`/api/users?id=${encodeURIComponent(userId)}`, {
         method: "DELETE",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       if (!res.ok) throw new Error(String(res.status));
       await authClient.signOut().catch(() => {});
@@ -145,57 +159,40 @@ export default function PrivacySettingsPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 md:py-14">
-      <div className="mb-8">
-        <Link
-          href="/app/settings"
-          className="text-xs text-muted-foreground hover:text-foreground"
-        >
-          ← {t.back}
-        </Link>
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mt-3">{t.title}</h1>
-        <p className="text-sm text-muted-foreground mt-2 max-w-2xl">{t.subtitle}</p>
-      </div>
-
-      <div className="space-y-4">
-        <PremiumCard className="p-6">
-          <h2 className="text-base font-semibold mb-2">{t.exportTitle}</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4">{t.exportBody}</p>
-          <PremiumButton size="sm" onClick={handleExport} disabled={exporting}>
+    <PageShell header={header}>
+      <Section title={t.exportTitle} description={t.exportBody}>
+        <div className="app-card p-4">
+          <button className="app-btn" onClick={handleExport} disabled={exporting}>
             {exporting ? t.exporting : t.exportCta}
-          </PremiumButton>
-        </PremiumCard>
+          </button>
+        </div>
+      </Section>
 
-        <PremiumCard className="p-6 border-destructive/40">
-          <h2 className="text-base font-semibold mb-2 text-destructive">{t.deleteTitle}</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4">{t.deleteBody}</p>
-
+      <Section title={t.deleteTitle} description={t.deleteBody}>
+        <div className="app-card p-4 border-[var(--destructive)]">
           {!confirming ? (
-            <PremiumButton
-              variant="outline"
-              size="sm"
+            <button
+              className="app-btn-ghost app-btn border-[var(--destructive)] text-[var(--destructive)]"
               onClick={() => setConfirming(true)}
-              className="border-destructive/60 text-destructive hover:bg-destructive/10"
             >
               {t.deleteCta}
-            </PremiumButton>
+            </button>
           ) : (
             <div className="space-y-3">
-              <label className="block text-xs font-medium text-muted-foreground">
-                {t.confirmTitle}
-              </label>
-              <input
-                type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                placeholder={t.confirmPlaceholder}
-                className="w-full max-w-xs px-3 py-2 rounded-md border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-destructive/40"
-                autoFocus
-              />
+              <div>
+                <label className="app-label block mb-1.5">{t.confirmTitle}</label>
+                <input
+                  type="text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={t.confirmPlaceholder}
+                  className={inputClass}
+                  autoFocus
+                />
+              </div>
               <div className="flex gap-2">
-                <PremiumButton
-                  variant="outline"
-                  size="sm"
+                <button
+                  className="app-btn-ghost app-btn"
                   onClick={() => {
                     setConfirming(false);
                     setConfirmText("");
@@ -203,28 +200,28 @@ export default function PrivacySettingsPage() {
                   disabled={deleting}
                 >
                   {t.cancel}
-                </PremiumButton>
-                <PremiumButton
-                  size="sm"
+                </button>
+                <button
+                  className="app-btn"
+                  style={{ background: "var(--destructive)" }}
                   onClick={handleDelete}
                   disabled={confirmText !== "DELETE" || deleting}
-                  className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 >
                   {deleting ? t.deleting : t.confirm}
-                </PremiumButton>
+                </button>
               </div>
             </div>
           )}
-        </PremiumCard>
+        </div>
+      </Section>
 
-        <p className="text-xs text-muted-foreground pt-2">
-          {t.docs}{" "}
-          <Link href="/privacy" className="underline hover:text-foreground">
-            {t.privacyLink}
-          </Link>
-          .
-        </p>
-      </div>
-    </div>
+      <p className="app-meta">
+        {t.docs}{" "}
+        <Link href="/privacy" className="underline hover:text-foreground">
+          {t.privacyLink}
+        </Link>
+        .
+      </p>
+    </PageShell>
   );
 }

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { UtilityBillData, OCRResult } from '@/lib/ocr/types';
 import { toast } from 'sonner';
-import { Upload, FileText, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { EmptyState } from "@/components/app/shell";
 
 interface UploadState {
   loading: boolean;
@@ -91,22 +91,16 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
         />
         <label
           htmlFor="file-upload"
-          className={`flex flex-col items-center justify-center w-full min-h-32 px-4 py-3 border-2 border-dashed rounded-xl transition-colors text-center ${
-            state.loading
-              ? 'border-muted bg-muted/20 cursor-not-allowed'
-              : 'border-border hover:border-primary bg-background cursor-pointer'
+          className={`app-card-inset flex flex-col items-center justify-center w-full min-h-32 px-4 py-4 border-dashed text-center ${
+            state.loading ? "cursor-not-allowed" : "cursor-pointer hover:border-[var(--app-rule-strong)]"
           }`}
         >
           {state.loading ? (
-            <>
-              <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
-              <p className="text-sm text-muted-foreground break-words">{t('processing')}</p>
-            </>
+            <p className="text-sm text-muted-foreground break-words">{t('processing')}</p>
           ) : (
             <>
-              <Upload className="w-8 h-8 text-muted-foreground mb-2" />
               <p className="text-sm font-medium text-foreground break-words">{t('uploadCta')}</p>
-              <p className="text-xs text-muted-foreground mt-1 break-words">{t('uploadHint')}</p>
+              <p className="app-meta mt-1 break-words">{t('uploadHint')}</p>
             </>
           )}
         </label>
@@ -114,49 +108,41 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
 
       {/* Error Message */}
       {state.error && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-          <XCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-destructive">{t('error')}</p>
-            <p className="text-xs text-destructive/80 break-words">{state.error}</p>
-          </div>
-        </div>
+        <EmptyState tone="critical" title={t('error')} description={state.error} />
       )}
 
       {/* Success - Extracted Data */}
       {state.billData && (
-        <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-          <div className="flex items-center gap-2 mb-3">
-            <CheckCircle2 className="w-5 h-5 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground break-words">{t('extracted')}</h3>
+        <div className="app-ledger">
+          <div className="px-3 py-2.5">
+            <p className="app-label">{t('extracted')}</p>
           </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground break-words">{t('accountNumber')}</p>
+          <div className="grid grid-cols-1 gap-y-2.5 px-3 py-2.5 sm:grid-cols-2 sm:gap-x-4">
+            <div>
+              <p className="app-meta break-words">{t('accountNumber')}</p>
               <p className="text-sm font-medium break-words">{state.billData.accountNumber || t('na')}</p>
             </div>
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground break-words">{t('utilityType')}</p>
+            <div>
+              <p className="app-meta break-words">{t('utilityType')}</p>
               <p className="text-sm font-medium capitalize break-words">{state.billData.usageType}</p>
             </div>
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground break-words">{t('usageAmount')}</p>
-              <p className="text-sm font-medium break-words">
+            <div>
+              <p className="app-meta break-words">{t('usageAmount')}</p>
+              <p className="app-num text-sm font-medium break-words">
                 {state.billData.usageAmount?.toFixed(2) || t('na')} {state.billData.usageUnit}
               </p>
             </div>
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground break-words">{t('totalAmount')}</p>
-              <p className="text-sm font-medium break-words">
+            <div>
+              <p className="app-meta break-words">{t('totalAmount')}</p>
+              <p className="app-num text-sm font-medium break-words">
                 {state.billData.currency} {state.billData.totalAmount?.toFixed(2) || t('na')}
               </p>
             </div>
           </div>
 
           {state.billData.billingPeriodStart && (
-            <div className="mt-3 pt-3 border-t border-border/50">
-              <p className="text-xs text-muted-foreground break-words">{t('billingPeriod')}</p>
+            <div className="px-3 py-2.5">
+              <p className="app-meta break-words">{t('billingPeriod')}</p>
               <p className="text-sm font-medium break-words">{state.billData.billingPeriodStart}</p>
             </div>
           )}
@@ -165,16 +151,17 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
 
       {/* OCR Result Details */}
       {state.ocrResult && state.ocrResult.text && (
-        <details className="group">
-          <summary className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
-            <FileText className="w-4 h-4 flex-shrink-0" />
+        <details className="app-card group">
+          <summary className="flex flex-wrap items-center gap-2 px-3 py-2.5 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
             <span className="break-words">{t('viewRaw')}</span>
-            <span className="ml-auto text-xs break-words">
-              {state.ocrResult.confidence && t('confidence', { pct: (state.ocrResult.confidence * 100).toFixed(0) })}
-            </span>
+            {state.ocrResult.confidence && (
+              <span className="app-meta ml-auto break-words">
+                {t('confidence', { pct: (state.ocrResult.confidence * 100).toFixed(0) })}
+              </span>
+            )}
           </summary>
-          <div className="mt-2 p-3 rounded-lg bg-muted/30 max-h-48 overflow-y-auto">
-            <p className="text-xs whitespace-pre-wrap font-mono text-foreground/80 break-words">
+          <div className="border-t border-[var(--app-rule)] px-3 py-2.5 max-h-48 overflow-y-auto">
+            <p className="text-xs whitespace-pre-wrap font-mono text-muted-foreground break-words">
               {state.ocrResult.text}
             </p>
           </div>

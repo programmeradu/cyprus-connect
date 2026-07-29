@@ -1,17 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { PremiumCard } from "@/components/ui/PremiumCard";
-import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useUser } from "@/lib/user-context";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Wifi, WifiOff, Lock } from "lucide-react";
 import { getEnergyZoneData } from "@/lib/energy-zones";
-
+import { Metric, MetricRow, EmptyState, SkeletonCards } from "@/components/app/shell";
 
 interface CarbonIntensityData {
   carbonIntensity: number;
@@ -78,6 +74,7 @@ export function EnergyCostCalculator() {
   // Fetch data when zone changes OR when currency changes
   useEffect(() => {
     fetchEnergyData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userZone, userBiddingZone, refreshTrigger]);
 
   // Recalculate savings when currency changes
@@ -85,11 +82,12 @@ export function EnergyCostCalculator() {
     if (spotPriceResponse) {
       calculateSavings();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [consumption, efficiencyGain, spotPriceResponse, selectedCurrency, refreshTrigger]);
 
   const fetchEnergyData = async () => {
     if (!hasRealtimeDataAccess) return; // Don't fetch if no access
-    
+
     setLoading(true);
     try {
       const [carbonRes, priceRes] = await Promise.all([
@@ -119,9 +117,9 @@ export function EnergyCostCalculator() {
     const reducedConsumption = consumption * (1 - efficiencyGain / 100);
     const projectedAnnualCost = reducedConsumption * pricePerKWh;
     const annualSavings = currentAnnualCost - projectedAnnualCost;
-    
+
     const consumptionReduction = consumption - reducedConsumption;
-    const co2Reduction = carbonData 
+    const co2Reduction = carbonData
       ? (consumptionReduction * carbonData.carbonIntensity) / 1000
       : (consumptionReduction * 0.35);
 
@@ -141,156 +139,54 @@ export function EnergyCostCalculator() {
   const isUsingFallback = carbonData?.fallback || spotPriceResponse?.fallback;
   const dataRegion = carbonData?.region || spotPriceResponse?.region || 'Unknown';
 
-  // Show loading state
-  if (isCustomerLoading) {
-    return (
-      <PremiumCard className="p-4">
-        <div className="flex items-center justify-center h-48">
-          <motion.div
-            className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-      </PremiumCard>
-    );
+  // Loading state
+  if (isCustomerLoading || loading) {
+    return <SkeletonCards count={2} />;
   }
 
-  // Show upgrade prompt if no access
+  // Upgrade prompt if no access
   if (!hasRealtimeDataAccess) {
     return (
-      <PremiumCard className="p-4 relative overflow-hidden">
-        {/* Blurred preview background */}
-        
-        <div className="relative z-10">
-          <div className="mb-4">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <h3 className="text-sm font-bold break-words min-w-0">{t("title")}</h3>
-              <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            </div>
-            <p className="text-[10px] text-muted-foreground break-words">
-              {t("subtitle")}
-            </p>
-          </div>
-
-          {/* Preview content (dimmed) */}
-          <div className="opacity-40 space-y-3 mb-6">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="p-2.5 rounded-lg bg-primary/8 border border-primary/20">
-                <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("spotPrice")}</p>
-                <p className="text-base font-bold">€••• <span className="text-[10px] font-normal">/MWh</span></p>
-              </div>
-              <div className="p-2.5 rounded-lg bg-primary/8 border border-green-500/20">
-                <p className="text-[9px] text-muted-foreground mb-1 break-words">{t("carbonIntensity")}</p>
-                <p className="text-base font-bold">••• <span className="text-[10px] font-normal">gCO₂/kWh</span></p>
-              </div>
-            </div>
-            <div className="h-20 rounded-lg bg-muted/50 border border-border" />
-            <div className="h-16 rounded-lg bg-muted/30 border border-border" />
-          </div>
-
-          {/* Upgrade prompt */}
-          <div className="text-center space-y-3">
-            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs font-semibold text-primary mb-1 break-words">
-                {t("proFeature")}
-              </p>
-              <p className="text-[10px] text-muted-foreground leading-relaxed break-words">
-                {t("proBlurb")}
-              </p>
-            </div>
-
-            <PremiumButton
-              onClick={() => router.push('/pricing')}
-              className="w-full"
-              size="sm"
-            >
-              <Lock className="w-3 h-3 mr-1.5 flex-shrink-0" />
-              <span className="text-[10px] break-words">{t("upgradeCta")}</span>
-            </PremiumButton>
-          </div>
-        </div>
-      </PremiumCard>
-
-    );
-  }
-
-  if (loading) {
-    return (
-      <PremiumCard className="p-4">
-        <div className="flex items-center justify-center h-48">
-          <motion.div
-            className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-      </PremiumCard>
+      <EmptyState
+        title={t("proFeature")}
+        description={t("proBlurb")}
+        action={{ label: t("upgradeCta"), onClick: () => router.push('/pricing') }}
+      />
     );
   }
 
   return (
-    <PremiumCard className="p-4">
+    <div className="app-card p-4">
       <div className="mb-4">
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <h3 className="text-sm font-bold break-words min-w-0">{t("title")}</h3>
-          {isUsingFallback ? (
-            <WifiOff className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
-          ) : (
-            <Wifi className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
-          )}
-        </div>
-        <p className="text-[10px] text-muted-foreground break-words">
-          {dataRegion} • {user?.countryCode || userZone}
+        <h3 className="text-[1.0625rem] font-semibold leading-snug break-words">{t("title")}</h3>
+        <p className="app-meta mt-1 break-words">
+          {dataRegion} &middot; {user?.countryCode || userZone}
         </p>
         {isUsingFallback && (
-          <div className="flex items-start gap-1.5 mt-2 p-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
-            <AlertCircle className="w-3 h-3 text-orange-600 flex-shrink-0 mt-0.5" />
-            <p className="text-[9px] text-orange-600 leading-tight break-words">
-              {t("fallbackNote", { region: dataRegion })}
-            </p>
+          <div className="app-card-inset mt-2 p-2.5">
+            <p className="app-meta break-words">{t("fallbackNote", { region: dataRegion })}</p>
           </div>
         )}
       </div>
 
       {/* Real-time Energy Data */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <motion.div
-          className="p-2.5 rounded-lg bg-primary/8 border border-primary/20"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <p className="text-[9px] text-muted-foreground mb-1 break-words">
-            {t("spotPriceZone", { zone: userBiddingZone })} {spotPriceResponse?.fallback && '~'}
-          </p>
-          <p className="text-base font-bold break-words">
-            {formatAmount(convertAmount(spotPriceResponse?.data?.[0]?.price || 0, 'EUR'))}{' '}
-            <span className="text-[10px] font-normal">/MWh</span>
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="p-2.5 rounded-lg bg-primary/8 border border-green-500/20"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <p className="text-[9px] text-muted-foreground mb-1 break-words">
-            {t("carbonIntensity")} {carbonData?.fallback && '~'}
-          </p>
-          <p className="text-base font-bold break-words">
-            {carbonData?.carbonIntensity || 0}{' '}
-            <span className="text-[10px] font-normal">gCO₂/kWh</span>
-          </p>
-        </motion.div>
-      </div>
-
+      <MetricRow columns={2}>
+        <Metric
+          label={t("spotPriceZone", { zone: userBiddingZone })}
+          value={formatAmount(convertAmount(spotPriceResponse?.data?.[0]?.price || 0, 'EUR'))}
+          unit="/MWh"
+        />
+        <Metric
+          label={t("carbonIntensity")}
+          value={carbonData?.carbonIntensity || 0}
+          unit="gCO₂/kWh"
+        />
+      </MetricRow>
 
       {/* Input Controls */}
-      <div className="space-y-3 mb-4">
+      <div className="space-y-4 my-4">
         <div>
-          <label className="block text-[10px] font-medium mb-1.5">
+          <label className="app-label mb-1.5 block">
             {t("annualConsumption")}
           </label>
           <input
@@ -300,17 +196,17 @@ export function EnergyCostCalculator() {
             step="5000"
             value={consumption}
             onChange={(e) => setConsumption(parseInt(e.target.value))}
-            className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full accent-primary"
           />
-          <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+          <div className="flex justify-between app-meta mt-1">
             <span>10k</span>
-            <span className="font-bold text-foreground">{(consumption / 1000).toFixed(0)}k</span>
+            <span className="app-num font-medium text-foreground">{(consumption / 1000).toFixed(0)}k</span>
             <span>200k</span>
           </div>
         </div>
 
         <div>
-          <label className="block text-[10px] font-medium mb-1.5">
+          <label className="app-label mb-1.5 block">
             {t("efficiencyGain")}
           </label>
           <input
@@ -320,11 +216,11 @@ export function EnergyCostCalculator() {
             step="5"
             value={efficiencyGain}
             onChange={(e) => setEfficiencyGain(parseInt(e.target.value))}
-            className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+            className="w-full accent-primary"
           />
-          <div className="flex justify-between text-[9px] text-muted-foreground mt-1">
+          <div className="flex justify-between app-meta mt-1">
             <span>5%</span>
-            <span className="font-bold text-foreground">{efficiencyGain}%</span>
+            <span className="app-num font-medium text-foreground">{efficiencyGain}%</span>
             <span>50%</span>
           </div>
         </div>
@@ -332,41 +228,27 @@ export function EnergyCostCalculator() {
 
       {/* Savings Results */}
       {savings && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-2"
-        >
-          <div className="p-3 rounded-lg bg-primary/8 border border-green-500/20">
-            <p className="text-[9px] text-muted-foreground mb-0.5">{t("annualSavings")}</p>
-            <p className="text-xl font-bold text-green-600">
-              {formatAmount(savings.annualSavings)}
-            </p>
-            <p className="text-[9px] text-muted-foreground mt-1">
-              {formatAmount(savings.currentCost)} → {formatAmount(savings.projectedCost)}
-            </p>
-          </div>
+        <div className="space-y-3">
+          <Metric
+            label={t("annualSavings")}
+            value={formatAmount(savings.annualSavings)}
+            note={`${formatAmount(savings.currentCost)} \u2192 ${formatAmount(savings.projectedCost)}`}
+          />
 
-          <div className="grid grid-cols-2 gap-2">
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-0.5">{t("co2Cut")}</p>
-              <p className="text-sm font-bold">{savings.co2Reduction.toFixed(1)} <span className="text-[9px] font-normal">{t("tPerYr")}</span></p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-card border border-border">
-              <p className="text-[9px] text-muted-foreground mb-0.5">{t("roi")}</p>
-              <p className="text-sm font-bold">{savings.roiMonths.toFixed(1)} <span className="text-[9px] font-normal">{t("mo")}</span></p>
-            </div>
-          </div>
-        </motion.div>
+          <MetricRow columns={2}>
+            <Metric label={t("co2Cut")} value={savings.co2Reduction.toFixed(1)} unit={t("tPerYr")} />
+            <Metric label={t("roi")} value={savings.roiMonths.toFixed(1)} unit={t("mo")} />
+          </MetricRow>
+        </div>
       )}
 
-      <PremiumButton 
-        onClick={fetchEnergyData} 
-        className="w-full mt-3"
-        size="sm"
+      <button
+        type="button"
+        onClick={fetchEnergyData}
+        className="app-btn-ghost app-btn w-full mt-4"
       >
-        <span className="text-[10px]">{t("refresh")}</span>
-      </PremiumButton>
-    </PremiumCard>
+        {t("refresh")}
+      </button>
+    </div>
   );
 }

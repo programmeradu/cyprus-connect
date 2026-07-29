@@ -1,48 +1,76 @@
-## Goal
+## The real problem
 
-Bring the authenticated `/app` surface onto the same "Verified Nature" editorial language as the marketing site, and give `/app` the same polished ChatGPT-grey dark mode already applied at the root.
+`/app` has 20 pages, each invented from scratch. There is no page template, no shared header contract, no empty/loading/error convention, and no data contract. `app.css` already defines a good token set (surfaces, rules, `app-card`, `app-label`, `app-metric`, `app-btn`), but most pages never use it — they use raw Tailwind, so the CSS is doing damage control with a "legacy microtype correction" override block instead of pages being written correctly.
 
-## 1. Dark mode for /app (the new ask)
+So the fix is not restyling 20 pages one by one. It is: build the template, then re-seat every page into it.
 
-The neutral grey ramp now lives on `:root.dark` in `globals.css`, but `/app` overrides it with its own tinted chrome, so it still reads coloured.
+## 1. The workspace page template
 
-- `src/app/[locale]/app/layout.tsx`: remove the fixed `bg-gradient-to-br from-primary/5 via-background to-accent/5` background wash. Replace with a flat `bg-background` plane so the grey ramp shows through unmodified.
-- Sidebar (`src/components/app/Sidebar.tsx`) and `AppHeader.tsx`: move to the stepped neutral surfaces — sidebar `oklch(0.20 0 0)`, content `oklch(0.24 0 0)`, cards `oklch(0.27 0 0)`, popovers `oklch(0.30 0 0)`, hairlines `oklch(0.32 0 0)`.
-- Remove per-component `dark:` colour tints (amber/red/emerald washes on cards) in favour of the shared semantic tokens.
-- Verify contrast: body text and muted text must clear 4.5:1 on `oklch(0.24 0 0)`.
+One primitive set, used by every route without exception.
 
-## 2. Retire the glass/gradient primitives
+```text
++------------------------------------------------------------+
+| PageHeader   Title (Fraunces 24px) ........ [ primary CTA ] |
+|              One-line purpose sentence      [ secondary   ] |
+| ---------------------------------------------------------- |  hairline
+| PageToolbar  [ filter ] [ range ] [ search ]     meta right |  optional
+| ---------------------------------------------------------- |
+|                                                             |
+|  Section  "Label"  ............................ [ action ]  |
+|  +-------------------------------------------------------+  |
+|  |  app-card / app-ledger / app-table                    |  |
+|  +-------------------------------------------------------+  |
+|                                                             |
+|  Section  "Label"                                           |
+|  ...                                                        |
++------------------------------------------------------------+
+```
 
-- `.glass-strong` on content cards -> `.surface-card` (flat fill, 1px hairline, 8px radius, no blur).
-- Keep `.glass-strong` only for true overlays: dropdowns, modals, drawers, the notification popover.
-- Delete `--gradient-primary`, `--gradient-secondary`, `--gradient-subtle`, `.neomorph`, `.shadow-premium`, `.gradient-text`, `.gradient-border` from `globals.css` once no call sites remain.
+New components in `src/components/app/shell/`:
 
-## 3. Strip the long tail (25 files)
+- `PageShell` — max width, vertical rhythm (32px between sections), owns the page's loading / error / empty state so no page hand-rolls a spinner again.
+- `PageHeader` — title, purpose line, actions slot, optional breadcrumb. Replaces the current `AppHeader` (which today also carries the avatar menu — that moves to the sidebar footer where it belongs).
+- `PageToolbar` — filters/range/search row on a hairline.
+- `Section` — label + optional action + children, consistent spacing.
+- `DataTable` — left-aligned text, right-aligned tabular numerals, sticky header, zebra off by default.
+- `MetricRow` / `Metric` — the only way a big number gets rendered.
+- `EmptyState` — headline + one sentence + one primary action. No "No data".
+- `Skeleton` variants that match the final layout (card, table row, metric).
 
-Shared components first, since they cover most screens:
+## 2. Written design rules for the workspace
 
-`StatCard`, `ActionCard`, `Badge`, `AppHeader`, `Sidebar`, `NotificationBell`, `ProgressBar`, `BenchmarkComparator`, `ComplianceChecker`, `EnergyCostCalculator`, `DocumentUpload`
+Codified in `src/app/[locale]/app/README.md` and enforced by lint where possible:
 
-Then the pages: `dashboard`, `analytics`, `insights`, `actions`, `compliance`, `calculator`, `learn` (+ lesson), `marketplace` (+ detail), `integrations`, `onboarding`, `billing`, `settings`, `leaderboard`, `studio`, `grant-alerts`.
+- Type scale inside `/app`: 24 page title, 17 section heading, 15 body, 13 meta, 12 label floor. Nothing smaller. No uppercase wide-tracking.
+- Surfaces only from tokens: page `--app-surface-0`, card `--app-surface-1`, inset `-2`, hover `-3`. Never a raw `bg-white`, `bg-neutral-900`, `bg-*/10` wash.
+- Radius 4 / 6 / 8 / 12. Shadows only on `app-overlay`.
+- One primary action per page. Buttons are `app-btn` / `app-btn-ghost`, 40px.
+- All numbers tabular. All money in EUR, all units metric, all dates `d MMM yyyy`.
+- No decorative icons, no pill chips, no gradients — already project law, now applied here.
+- Every async surface ships three states: skeleton, empty, error-with-retry.
 
-Per file: drop `bg-gradient-*` overlays, swap `rounded-xl/2xl` down to the 6/8/12px scale, replace pill badges with bordered rectangular labels, remove decorative icons, and put numerals on `tabular-nums`.
+Once pages are migrated, the "legacy microtype correction" and "legacy safety net" blocks in `app.css` get deleted — they exist only to paper over the mess.
 
-## 4. Typography alignment
+## 3. Re-seat the pages
 
-Apply the marketing type stack inside `/app`: Fraunces for headings and figures, Instrument Sans for body. Replace the `text-[9px]`/`text-[10px]` uppercase wide-tracking metadata with the `viq-*` label classes.
+Ordered by traffic, in batches:
 
-## 5. Correct the doctrine
+1. `dashboard`, `calculator`, `analytics`
+2. `compliance`, `actions`, `insights`
+3. `marketplace` (+ detail), `learn` (+ lesson), `studio`
+4. `integrations`, `leaderboard`, `billing`, `settings` (+ privacy), `grant-alerts`, `onboarding`
 
-`src/app/[locale]/app/README.md` lines 49 and 59 currently prescribe glassmorphism as intentional. Rewrite that section to state the editorial rules so the next contributor does not reintroduce it.  
-  
-ALSO SEPERATE /APP STYLING AND CSS FROM THE REST OF THE MARKETING  SITE AND PAGES.. 
+Each page is rewritten as `PageShell > PageHeader > Section[]`, with its bespoke cards replaced by `app-card` / `DataTable` / `Metric`. Presentation only — data fetching stays as-is in this pass.
 
-## 6. Verify
+## 4. "Almost nothing functioning"
 
-Screenshot every `/app` route in both light and dark at 1280 wide and 390 wide. Check no horizontal scroll, no truncated labels, no low-contrast text.
+Separate from styling, and worth naming: several pages are visibly dead because the Gemini key is revoked (studio, insights, OCR upload) and because open-access mode means there is no user row behind the fetches, so pages fall back to zeros or empty arrays.
+
+I will, in this pass, make that honest rather than broken: every widget with no data renders a real `EmptyState` telling you what to do, and AI surfaces render a clear "AI is unavailable — key missing" state instead of failing silently. Actually restoring the AI key and wiring real data is a follow-up I can start right after, if you want it in the same run.
 
 ## Technical notes
 
-- Token edits are confined to `src/app/globals.css`; component edits are presentation-only, no business logic touched.
-- `.surface-card` already exists in `globals.css` (line ~407) and is the migration target.
-- Sequenced so shared primitives land first — that alone fixes most screens, and the page sweep becomes mostly deletions.
+- New folder `src/components/app/shell/`, exported through one barrel so page files import a single line.
+- `AppHeader.tsx` becomes a thin re-export of `PageHeader` during migration, then is deleted.
+- Sidebar keeps its current `.app-chrome` treatment; the account menu moves into its footer.
+- Verification: screenshot every `/app` route at 1280 and 390, light and dark, checking no horizontal scroll, no truncated labels, contrast ≥ 4.5:1.
