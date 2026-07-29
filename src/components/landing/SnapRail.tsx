@@ -66,7 +66,7 @@ export function SnapRail({
         ref={ref as React.Ref<HTMLUListElement>}
         onScroll={onScroll}
         aria-labelledby={labelledBy}
-        className={`flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${gridClassName}`}
+        className={`flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth scroll-px-4 px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${gridClassName}`}
       >
         {children}
       </Tag>
