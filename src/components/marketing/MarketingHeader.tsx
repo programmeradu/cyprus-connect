@@ -60,7 +60,7 @@ export function MarketingHeader() {
           </Link>
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="relative flex shrink-0 items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
           {!isPending &&
@@ -75,10 +75,11 @@ export function MarketingHeader() {
                 </Link>
               </>
             ) : (
+              // Absolute so hover-reveal never shifts layout or covers the switchers.
               <Link
                 href="/auth"
                 aria-label={tNav("signIn")}
-                className="ml-1 inline-flex h-11 max-w-0 items-center overflow-hidden whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-0 text-[13.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] opacity-0 transition-all duration-300 ease-out focus-visible:max-w-[220px] focus-visible:px-5 focus-visible:opacity-100 group-hover/header:max-w-[220px] group-hover/header:px-5 group-hover/header:opacity-100"
+                className="pointer-events-none absolute right-0 top-1/2 z-10 inline-flex h-9 -translate-y-1/2 translate-x-[calc(100%+8px)] items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[12.5px] font-semibold uppercase tracking-[0.1em] text-[var(--accent-lime-foreground)] opacity-0 shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-opacity duration-300 ease-out focus-visible:pointer-events-auto focus-visible:opacity-100 group-hover/header:pointer-events-auto group-hover/header:opacity-100"
               >
                 {tNav("signIn")}
               </Link>

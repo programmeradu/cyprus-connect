@@ -51,14 +51,14 @@ export function HeroCinematic() {
           className="object-cover"
           style={{ objectPosition: shot.focus }}
         />
-        {/* Top scrim keeps the floating header readable */}
-        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/70 to-transparent" />
-        {/* Left readability wash for the hero text on desktop */}
-        <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/40 to-transparent md:block" />
+        {/* Top scrim keeps the floating header readable — dark tint in both modes */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/45 to-transparent" />
+        {/* Left readability wash for the hero text on desktop — dark tint, never white */}
+        <div className="absolute inset-0 hidden bg-gradient-to-r from-black/65 via-black/25 to-transparent md:block" />
         {/* Mobile: full darken to keep the giant type legible */}
-        <div className="absolute inset-0 bg-background/60 md:hidden" />
-        {/* Bottom fade into next section */}
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent via-background/70 to-background" />
+        <div className="absolute inset-0 bg-black/45 md:hidden" />
+        {/* Bottom fade into next section — stays in-theme so the seam disappears */}
+        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-transparent via-background/70 to-background" />
         {/* Grain */}
         <div
           aria-hidden
@@ -73,9 +73,8 @@ export function HeroCinematic() {
 
       {/* Content: flex column that fills the viewport height */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="max-w-[56rem]">
+        <div className="max-w-[56rem] [--hero-ink:theme(colors.white)]">
           <h1
-            className="text-foreground"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 600,
@@ -83,6 +82,7 @@ export function HeroCinematic() {
               lineHeight: 0.98,
               letterSpacing: "-0.03em",
               textWrap: "balance",
+              color: "var(--hero-ink)",
             }}
           >
             {t("titleLine1")}
@@ -98,7 +98,7 @@ export function HeroCinematic() {
                 fontOpticalSizing: "auto",
                 fontVariationSettings: "'opsz' 144",
                 letterSpacing: "-0.02em",
-                color: "color-mix(in oklab, var(--foreground) 88%, var(--accent-lime) 12%)",
+                color: "color-mix(in oklab, var(--hero-ink) 82%, var(--accent-lime) 18%)",
               }}
             >
               {t("titleLine3")}
@@ -107,12 +107,13 @@ export function HeroCinematic() {
           </h1>
 
           <p
-            className="mt-8 max-w-[34rem] leading-[1.55] text-foreground/70 sm:mt-10"
+            className="mt-8 max-w-[34rem] leading-[1.55] sm:mt-10"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 400,
               fontSize: "clamp(1rem, 1.25vw, 1.25rem)",
               letterSpacing: "-0.005em",
+              color: "color-mix(in oklab, var(--hero-ink) 78%, transparent)",
             }}
           >
             {t("subtitle")}
@@ -136,7 +137,7 @@ export function HeroCinematic() {
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-3 text-[15px] font-medium text-foreground/75 underline decoration-foreground/25 decoration-1 underline-offset-[8px] transition-colors hover:text-foreground hover:decoration-foreground"
+              className="inline-flex items-center gap-3 text-[15px] font-medium text-white/80 underline decoration-white/30 decoration-1 underline-offset-[8px] transition-colors hover:text-white hover:decoration-white"
               style={{ fontFamily: "var(--editorial-sans)" }}
             >
               See pricing

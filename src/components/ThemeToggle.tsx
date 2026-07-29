@@ -35,7 +35,7 @@ export function ThemeToggle() {
     >
       {/* Animated background glow */}
       <motion.div
-        className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 rounded-md opacity-0 group-hover:opacity-100"
         animate={{
           boxShadow: theme === "dark"
             ? "0 0 20px rgba(100, 255, 180, 0.15)"
