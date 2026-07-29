@@ -182,13 +182,15 @@ export default function Home() {
               ].map((it) => (
                 <li
                   key={it.year}
-                  className="grid grid-cols-[auto_1fr] items-start gap-x-5 gap-y-3 py-7 sm:grid-cols-[auto_auto_1fr] sm:gap-x-8 sm:py-9"
+                  className="py-7 sm:grid sm:grid-cols-[auto_auto_1fr] sm:items-start sm:gap-x-8 sm:py-9"
                 >
-                  <span className="pt-1 text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-foreground/50">
-                    {it.year}
-                  </span>
-                  <it.Glyph className="col-start-1 row-start-2 h-11 w-11 shrink-0 text-foreground/70 sm:col-start-2 sm:row-start-1 sm:mt-0.5 sm:h-14 sm:w-14" />
-                  <div className="col-start-2 row-start-1 min-w-0 sm:col-start-3 sm:row-span-2">
+                  <div className="flex items-center gap-4 sm:contents">
+                    <span className="text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-foreground/50 sm:pt-1">
+                      {it.year}
+                    </span>
+                    <it.Glyph className="h-10 w-10 shrink-0 text-foreground/70 sm:mt-0.5 sm:h-14 sm:w-14" />
+                  </div>
+                  <div className="mt-4 min-w-0 sm:mt-0">
                     <h3 className="font-[family-name:var(--editorial-serif)] text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
                       {it.title}
                     </h3>
@@ -197,6 +199,7 @@ export default function Home() {
                     </p>
                   </div>
                 </li>
+
               ))}
             </ul>
 
