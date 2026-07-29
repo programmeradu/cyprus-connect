@@ -333,13 +333,13 @@ function EditorialSection({
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
         <div className="sm:col-span-5">
-          <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2rem] leading-[1.05] tracking-[-0.02em] sm:text-[3rem]">
+          <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
             {titleA}
             {titleMid && <> <span className="italic text-muted-foreground">{titleMid}</span></>}
             {titleB && <> <span className="italic text-muted-foreground">{titleB}</span></>}
           </h2>
           {subtitle && (
-            <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-[17px]">
+            <p className="mt-6 max-w-md font-[family-name:var(--editorial-serif)] text-[19px] italic leading-[1.45] text-foreground/70 sm:text-[22px]">
               {subtitle}
             </p>
           )}
