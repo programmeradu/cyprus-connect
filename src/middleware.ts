@@ -31,11 +31,14 @@ export default async function middleware(request: NextRequest) {
   const localeMatch = pathname.match(/^\/(en|el)(\/.*)?$/);
   const pathWithoutLocale = localeMatch ? localeMatch[2] || "/" : pathname;
 
-  const isProtected = protectedSuffixes.some(
-    (route) => pathWithoutLocale === route || pathWithoutLocale.startsWith(route + "/")
-  );
+  const isProtected =
+    !APP_OPEN_ACCESS &&
+    protectedSuffixes.some(
+      (route) => pathWithoutLocale === route || pathWithoutLocale.startsWith(route + "/")
+    );
 
   if (isProtected) {
+
     const session = await betterFetch<{ user: { id: string } } | null>(
       "/api/auth/get-session",
       {
