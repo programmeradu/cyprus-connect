@@ -299,44 +299,47 @@ export default function VisionPage() {
               key={p.n}
               className={[
                 "flex flex-col bg-background p-6 sm:p-8",
-                i === 0 ? "md:col-span-2 md:flex-row md:items-stretch md:gap-10" : "",
+                i === 0 ? "md:col-span-2 md:flex-row md:items-center md:gap-10 lg:gap-14" : "",
               ].join(" ")}
             >
-              <div className={i === 0 ? "md:w-1/2" : ""}>
+              <div className={i === 0 ? "md:w-1/2" : "flex h-full flex-col"}>
                 <span
                   aria-hidden
                   className="block font-[family-name:var(--editorial-display)] text-[1.8rem] italic leading-none tracking-[-0.03em] text-foreground/25"
                 >
                   {p.n}
                 </span>
-                <h3 className="mt-3 font-[family-name:var(--editorial-display)] text-[22px] font-semibold leading-[1.16] tracking-[-0.02em] sm:text-[26px]">
+                <h3
+                  className={[
+                    "mt-3 font-[family-name:var(--editorial-display)] font-semibold leading-[1.14] tracking-[-0.02em]",
+                    i === 0 ? "text-[26px] sm:text-[34px]" : "text-[22px] sm:text-[25px]",
+                  ].join(" ")}
+                >
                   {p.title}
                 </h3>
-                <p className="mt-3 text-[16px] leading-[1.62] text-foreground/70">{p.body}</p>
+                <p className="mt-3 text-[16px] leading-[1.62] text-foreground/70 sm:text-[16.5px]">{p.body}</p>
                 <p className="mt-5 border-t border-border/60 pt-4 text-[14.5px] font-semibold leading-[1.5] text-foreground/60">
                   {p.meta}
                 </p>
               </div>
 
-              <div
-                className={[
-                  "mt-6 overflow-hidden rounded-md border border-border/50 bg-muted/30",
-                  i === 0 ? "md:mt-0 md:w-1/2" : "",
-                ].join(" ")}
-              >
-                <Image
-                  src={p.media as StaticImageData}
-                  alt={p.alt}
-                  width={1408}
-                  height={1008}
-                  loading="lazy"
-                  sizes="(min-width: 768px) 46vw, 100vw"
-                  className={i === 0 ? "h-full w-full object-cover" : "h-auto w-full object-cover"}
-                />
-              </div>
+              {i === 0 && (
+                <div className="mt-6 overflow-hidden rounded-md border border-border/50 bg-muted/30 md:mt-0 md:w-1/2">
+                  <Image
+                    src={bentoShipping}
+                    alt="Container ships and gantry cranes at the port of Limassol at sunrise"
+                    width={1408}
+                    height={1008}
+                    loading="lazy"
+                    sizes="(min-width: 768px) 46vw, 100vw"
+                    className="h-auto w-full object-cover"
+                  />
+                </div>
+              )}
             </li>
           ))}
         </ol>
+
       </section>
 
       {/* ---------------------------------------------------- Build register */}
