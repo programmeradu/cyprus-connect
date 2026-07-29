@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
@@ -29,9 +29,13 @@ const HERO_SET: { src: StaticImageData; alt: string; focus: string }[] = [
 export function HeroCinematic() {
   const t = useTranslations("hero");
 
-  // Rotate on every render/reload — client component, so this reshuffles
-  // per navigation to /en without needing a server-side signal.
-  const idx = useMemo(() => Math.floor(Math.random() * HERO_SET.length), []);
+  // Rotate on every mount/reload. Start with index 0 on the server so
+  // hydration matches, then swap to a random shot on the client so each
+  // reload gets a fresh photo.
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    setIdx(Math.floor(Math.random() * HERO_SET.length));
+  }, []);
   const shot = HERO_SET[idx];
 
   return (
@@ -118,7 +122,7 @@ export function HeroCinematic() {
                 className="inline-flex items-center gap-3 text-[15px] font-medium text-foreground/75 underline decoration-foreground/25 decoration-1 underline-offset-[8px] transition-colors hover:text-foreground hover:decoration-foreground"
                 style={{ fontFamily: "var(--editorial-sans)" }}
               >
-                {t("ctaPricing") ?? "See pricing"}
+                See pricing
               </Link>
             </div>
           </div>
