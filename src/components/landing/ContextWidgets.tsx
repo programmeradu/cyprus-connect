@@ -157,7 +157,7 @@ export function ContextWidgets() {
               </span>
               <div className="min-w-0">
                 <div className="mt-3 flex items-baseline gap-3">
-                  <span className="font-[family-name:var(--editorial-serif)] text-5xl tabular-nums leading-none tracking-tight sm:text-6xl">
+                  <span className="font-[family-name:var(--editorial-serif)] text-[2.5rem] tabular-nums leading-none tracking-tight sm:text-6xl">
                     {carbonValue ?? t.loading}
                   </span>
                   <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
@@ -190,7 +190,7 @@ export function ContextWidgets() {
               <div className="min-w-0">
                 
                 <div className="mt-3 flex items-baseline gap-3">
-                  <span className="font-[family-name:var(--editorial-serif)] text-5xl tabular-nums leading-none tracking-tight sm:text-6xl">
+                  <span className="font-[family-name:var(--editorial-serif)] text-[2.5rem] tabular-nums leading-none tracking-tight sm:text-6xl">
                     {daysAway ?? t.loading}
                   </span>
                   <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground">
