@@ -263,10 +263,14 @@ export default function AuthPage() {
                 <span className="h-px flex-1 bg-border/70" />
               </div>
 
-              <form
-                onSubmit={handleSubmit}
-                className={mode === "register" ? "space-y-4" : "space-y-5"}
-              >
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div
+                  className={
+                    mode === "register"
+                      ? "grid gap-x-6 gap-y-4 sm:grid-cols-2"
+                      : "space-y-5"
+                  }
+                >
                 {mode === "register" && (
                   <div>
                     <label className={LABEL} htmlFor="name">
@@ -340,6 +344,7 @@ export default function AuthPage() {
                     />
                   </div>
                 )}
+                </div>
 
                 {mode === "login" && (
                   <label className="flex cursor-pointer items-center gap-2.5">
@@ -409,19 +414,6 @@ export default function AuthPage() {
                 </button>
               </div>
 
-              {/* Mobile assurance ledger */}
-              <dl className="mt-8 grid grid-cols-1 gap-px border border-border/60 bg-border/60 sm:grid-cols-3 lg:hidden">
-                {assurances.map(([label, value]) => (
-                  <div key={label} className="bg-background px-4 py-4">
-                    <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-foreground/55">
-                      {label}
-                    </dt>
-                    <dd className="mt-1.5 text-[13.5px] font-semibold leading-snug text-foreground">
-                      {value}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
             </div>
           </div>
         </main>
