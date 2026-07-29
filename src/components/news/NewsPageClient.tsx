@@ -24,7 +24,10 @@ type NewsItem = {
   imageUrl?: string;
 };
 
+type Take = { title: string; body: string };
+
 type Topic = "all" | "cbam" | "csrd" | "energy" | "taxonomy" | "markets";
+
 
 const TOPIC_KEYWORDS: Record<Topic, string[]> = {
   all: [],
@@ -59,6 +62,9 @@ const COPY = {
     timelineSub: "The next EU compliance dates that apply to Cyprus SMEs.",
     takesTitle: "Vuneli takes",
     takesSub: "What the week actually means for a Cyprus SME",
+    takesReading: "Reading this week's stories.",
+    takesSourced: "Written from the {n} stories in the feed above, refreshed every hour.",
+    takesBaseline: "The feed is quiet right now, so these are the standing priorities for a Cyprus SME.",
     read: "Read the story",
     daysAway: "days away",
     today: "today",
@@ -95,6 +101,9 @@ const COPY = {
     timelineSub: "Οι επόμενες προθεσμίες ΕΕ που αφορούν κυπριακές ΜμΕ.",
     takesTitle: "Η άποψη της Vuneli",
     takesSub: "Τι σημαίνει η εβδομάδα για μια κυπριακή ΜμΕ",
+    takesReading: "Διαβάζουμε τις ειδήσεις της εβδομάδας.",
+    takesSourced: "Γραμμένο από τις {n} ειδήσεις της ροής, με ανανέωση κάθε ώρα.",
+    takesBaseline: "Η ροή είναι ήσυχη τώρα, οπότε αυτές είναι οι σταθερές προτεραιότητες για μια κυπριακή ΜμΕ.",
     read: "Διαβάστε το άρθρο",
     daysAway: "ημέρες",
     today: "σήμερα",
@@ -166,6 +175,10 @@ export function NewsPageClient() {
 
   const [items, setItems] = useState<NewsItem[] | null>(null);
   const [topic, setTopic] = useState<Topic>("all");
+  const [takes, setTakes] = useState<Take[] | null>(null);
+  const [takesMeta, setTakesMeta] = useState<{ sourceCount: number; fallback: boolean } | null>(
+    null,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -181,6 +194,33 @@ export function NewsPageClient() {
       cancelled = true;
     };
   }, []);
+
+  // Vuneli takes: three analyst notes written from the live feed. The route
+  // caches per locale for an hour and always answers with an editorial
+  // baseline, so this never leaves the section empty.
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/news/takes?locale=${locale}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((data) => {
+        if (cancelled || !Array.isArray(data.takes) || data.takes.length === 0) return;
+        setTakes(data.takes as Take[]);
+        setTakesMeta({
+          sourceCount: Number(data.sourceCount) || 0,
+          fallback: Boolean(data.fallback),
+        });
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTakes(EDITORIAL_TAKES[locale] ?? EDITORIAL_TAKES.en);
+          setTakesMeta({ sourceCount: 0, fallback: true });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [locale]);
+
 
   const filtered = useMemo(() => {
     if (!items) return [];
@@ -486,27 +526,61 @@ export function NewsPageClient() {
               <h2 className="mt-4 font-[family-name:var(--editorial-display)] text-[2rem] font-semibold leading-[1.06] tracking-[-0.025em] sm:text-[2.8rem]">
                 {t.takesSub}
               </h2>
+              <p className="mt-5 max-w-sm text-[14.5px] leading-[1.6] text-foreground/60">
+                {!takesMeta
+                  ? t.takesReading
+                  : takesMeta.fallback || takesMeta.sourceCount === 0
+                    ? t.takesBaseline
+                    : t.takesSourced.replace("{n}", String(takesMeta.sourceCount))}
+              </p>
             </div>
-            <ol className="md:col-span-7">
-              {(locale === "el" ? EDITORIAL_TAKES.el : EDITORIAL_TAKES.en).map((take, i) => (
-                <li key={i} className="border-t border-border/60 py-8 first:border-t-0 first:pt-0 sm:py-10">
-                  <div className="flex items-baseline gap-5 sm:gap-8">
-                    <span
-                      aria-hidden
-                      className="font-[family-name:var(--editorial-display)] text-[1.6rem] italic leading-none tracking-[-0.03em] text-foreground/25 sm:text-[2rem]"
+            <ol className="md:col-span-7" aria-busy={takes === null}>
+              {takes === null
+                ? [0, 1, 2].map((i) => (
+                    <li
+                      key={i}
+                      className="border-t border-border/60 py-8 first:border-t-0 first:pt-0 sm:py-10"
                     >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="font-[family-name:var(--editorial-display)] text-[1.3rem] font-semibold leading-[1.16] tracking-[-0.02em] sm:text-[1.65rem]">
-                        {take.title}
-                      </h3>
-                      <p className="mt-3 text-[15.5px] leading-[1.62] text-foreground/70">{take.body}</p>
-                    </div>
-                  </div>
-                </li>
-              ))}
+                      <div className="flex items-baseline gap-5 sm:gap-8">
+                        <span
+                          aria-hidden
+                          className="font-[family-name:var(--editorial-display)] text-[1.6rem] italic leading-none tracking-[-0.03em] text-foreground/20 sm:text-[2rem]"
+                        >
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <div className="h-5 w-4/5 animate-pulse rounded-sm bg-foreground/10" />
+                          <div className="h-4 w-full animate-pulse rounded-sm bg-foreground/[0.07]" />
+                          <div className="h-4 w-2/3 animate-pulse rounded-sm bg-foreground/[0.07]" />
+                        </div>
+                      </div>
+                    </li>
+                  ))
+                : takes.map((take, i) => (
+                    <li
+                      key={`${i}-${take.title}`}
+                      className="border-t border-border/60 py-8 first:border-t-0 first:pt-0 sm:py-10"
+                    >
+                      <div className="flex items-baseline gap-5 sm:gap-8">
+                        <span
+                          aria-hidden
+                          className="font-[family-name:var(--editorial-display)] text-[1.6rem] italic leading-none tracking-[-0.03em] text-foreground/25 sm:text-[2rem]"
+                        >
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0">
+                          <h3 className="font-[family-name:var(--editorial-display)] text-[1.3rem] font-semibold leading-[1.16] tracking-[-0.02em] text-balance sm:text-[1.65rem]">
+                            {take.title}
+                          </h3>
+                          <p className="mt-3 text-[15.5px] leading-[1.62] text-foreground/70">
+                            {take.body}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
             </ol>
+
           </div>
         </div>
       </section>
