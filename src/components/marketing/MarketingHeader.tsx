@@ -151,7 +151,7 @@ export function MarketingHeader() {
               </Link>
             ))}
           </nav>
-          {!isPending && (
+          {(
             <Link
               href={session?.user ? "/app" : "/auth"}
               onClick={() => setMenuOpen(false)}
