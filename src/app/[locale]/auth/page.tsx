@@ -124,10 +124,10 @@ export default function AuthPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-[var(--accent-lime)] selection:text-black">
-      <div className="lg:grid lg:min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+    <div className="h-[100svh] overflow-hidden bg-background text-foreground antialiased selection:bg-[var(--accent-lime)] selection:text-black">
+      <div className="h-full lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
         {/* ------------------------------------------------ Editorial plate */}
-        <aside className="relative isolate hidden overflow-hidden border-r border-border/60 lg:block">
+        <aside className="relative isolate hidden h-full overflow-hidden border-r border-border/60 lg:block">
           <Image
             src={authPhoto}
             alt="A Cyprus office desk with an electricity bill, a reporting ledger and an olive branch"
@@ -139,10 +139,10 @@ export default function AuthPage() {
           <div className="absolute inset-0 bg-black/45" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/45" />
 
-          <div className="relative flex h-full flex-col justify-between p-10 xl:p-14">
+          <div className="relative flex h-full flex-col justify-between overflow-hidden p-[clamp(1.5rem,4vh,3.5rem)]">
             <Link
               href="/"
-              className="font-[family-name:var(--editorial-display)] text-[22px] font-semibold tracking-[-0.02em] text-white"
+              className="font-[family-name:var(--editorial-display)] text-[clamp(18px,2.6vh,22px)] font-semibold tracking-[-0.02em] text-white"
             >
               Vuneli
             </Link>
@@ -152,14 +152,14 @@ export default function AuthPage() {
                 {el ? "Λογαριασμός" : "Account"}
               </p>
               <p
-                className="mt-5 font-[family-name:var(--editorial-display)] text-[2.1rem] font-semibold leading-[1.1] tracking-[-0.02em] text-white xl:text-[2.5rem]"
+                className="mt-[clamp(0.75rem,2vh,1.25rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.55rem,4.4vh,2.5rem)] font-semibold leading-[1.1] tracking-[-0.02em] text-white"
                 style={{ textWrap: "balance" }}
               >
                 {el
                   ? "Ένας λογαριασμός ρεύματος είναι αρκετός για να αρχίσετε."
                   : "One electricity bill is enough to begin."}
               </p>
-              <p className="mt-5 max-w-sm text-[16px] font-medium leading-[1.6] text-white/80">
+              <p className="mt-[clamp(0.75rem,2vh,1.25rem)] hidden max-w-sm text-[clamp(14px,1.9vh,16px)] font-medium leading-[1.55] text-white/80 [@media(min-height:620px)]:block">
                 {el
                   ? "Το Vuneli μετατρέπει τα δεδομένα της επιχείρησής σας σε αναφορές που δέχονται οι τράπεζες, οι πελάτες και οι ρυθμιστές."
                   : "Vuneli turns your business data into reports that banks, customers and regulators accept."}
@@ -168,11 +168,14 @@ export default function AuthPage() {
 
             <dl className="grid grid-cols-1 gap-px overflow-hidden border border-white/20 bg-white/20 sm:grid-cols-3">
               {assurances.map(([label, value]) => (
-                <div key={label} className="bg-black/45 px-4 py-4 backdrop-blur-sm">
+                <div
+                  key={label}
+                  className="bg-black/45 px-4 py-[clamp(0.6rem,1.6vh,1rem)] backdrop-blur-sm"
+                >
                   <dt className="text-[11.5px] font-semibold uppercase tracking-[0.1em] text-white/60">
                     {label}
                   </dt>
-                  <dd className="mt-1.5 text-[13.5px] font-semibold leading-snug text-white">
+                  <dd className="mt-1 text-[clamp(12.5px,1.7vh,13.5px)] font-semibold leading-snug text-white">
                     {value}
                   </dd>
                 </div>
@@ -182,8 +185,8 @@ export default function AuthPage() {
         </aside>
 
         {/* -------------------------------------------------------- Form side */}
-        <main className="flex min-h-[100svh] flex-col">
-          <header className="flex items-center justify-between gap-4 px-5 py-4 sm:px-10">
+        <main className="flex h-full min-h-0 flex-col">
+          <header className="flex shrink-0 items-center justify-between gap-4 px-5 py-[clamp(0.5rem,1.6vh,1rem)] sm:px-10">
             <Link
               href="/"
               className="font-[family-name:var(--editorial-display)] text-[20px] font-semibold tracking-[-0.02em] lg:invisible"
@@ -196,7 +199,7 @@ export default function AuthPage() {
             </div>
           </header>
 
-          <div className="flex flex-1 items-center justify-center px-5 pb-8 pt-2 sm:px-10 sm:pb-10">
+          <div className="flex min-h-0 flex-1 items-center justify-center px-5 pb-[clamp(0.75rem,2.5vh,2.5rem)] sm:px-10">
             <div className="w-full max-w-[27rem]">
               {/* Mode switch */}
               <div className="flex items-center gap-6 border-b border-border/60">
@@ -207,7 +210,7 @@ export default function AuthPage() {
                     onClick={() => setMode(m)}
                     aria-current={mode === m}
                     className={[
-                      "-mb-px border-b-2 pb-3 text-[14px] font-semibold tracking-[-0.01em] transition-colors",
+                      "-mb-px border-b-2 pb-[clamp(0.4rem,1.2vh,0.75rem)] text-[14px] font-semibold tracking-[-0.01em] transition-colors",
                       mode === m
                         ? "border-foreground text-foreground"
                         : "border-transparent text-foreground/50 hover:text-foreground/80",
@@ -219,12 +222,12 @@ export default function AuthPage() {
               </div>
 
               <h1
-                className="mt-6 font-[family-name:var(--editorial-display)] text-[1.8rem] font-semibold leading-[1.08] tracking-[-0.025em] sm:text-[2.05rem]"
+                className="mt-[clamp(0.85rem,2.4vh,1.5rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.45rem,3.4vh,2.05rem)] font-semibold leading-[1.08] tracking-[-0.025em]"
                 style={{ textWrap: "balance" }}
               >
                 {mode === "login" ? t("signInTitle") : t("createTitle")}
               </h1>
-              <p className="mt-2.5 text-[15px] font-medium leading-[1.55] text-foreground/65">
+              <p className="mt-[clamp(0.4rem,1vh,0.65rem)] hidden text-[clamp(14px,1.9vh,15px)] font-medium leading-[1.5] text-foreground/65 [@media(min-height:600px)]:block">
                 {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
               </p>
 
@@ -232,7 +235,7 @@ export default function AuthPage() {
               <button
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
-                className="mt-6 flex h-11 w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
+                className="mt-[clamp(0.85rem,2.4vh,1.5rem)] flex h-[clamp(2.4rem,5vh,2.75rem)] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
               >
                 <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                   <path
@@ -255,20 +258,23 @@ export default function AuthPage() {
                 <span className="min-w-0 truncate">{t("google")}</span>
               </button>
 
-              <div className="my-5 flex items-center gap-4">
+              <div className="my-[clamp(0.7rem,2vh,1.25rem)] flex items-center gap-4">
                 <span className="h-px flex-1 bg-border/70" />
-                <span className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-foreground/50">
+                <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground/50">
                   {t("orEmail")}
                 </span>
                 <span className="h-px flex-1 bg-border/70" />
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-[clamp(0.7rem,2vh,1.25rem)]"
+              >
                 <div
                   className={
                     mode === "register"
-                      ? "grid gap-x-6 gap-y-4 sm:grid-cols-2"
-                      : "space-y-5"
+                      ? "grid gap-x-6 gap-y-[clamp(0.6rem,1.6vh,1rem)] sm:grid-cols-2"
+                      : "space-y-[clamp(0.7rem,2vh,1.25rem)]"
                   }
                 >
                 {mode === "register" && (
@@ -281,7 +287,7 @@ export default function AuthPage() {
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className={`mt-2 ${FIELD}`}
+                      className={`mt-1.5 ${FIELD}`}
                       placeholder={t("namePh")}
                       autoComplete="name"
                       required
@@ -299,7 +305,7 @@ export default function AuthPage() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className={`mt-2 ${FIELD}`}
+                    className={`mt-1.5 ${FIELD}`}
                     placeholder={t("emailPh")}
                     autoComplete="email"
                     required
@@ -316,7 +322,7 @@ export default function AuthPage() {
                     type="password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className={`mt-2 ${FIELD}`}
+                    className={`mt-1.5 ${FIELD}`}
                     placeholder={t("passwordPh")}
                     required
                     disabled={isLoading}
@@ -336,7 +342,7 @@ export default function AuthPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, confirmPassword: e.target.value })
                       }
-                      className={`mt-2 ${FIELD}`}
+                      className={`mt-1.5 ${FIELD}`}
                       placeholder={t("passwordPh")}
                       required
                       disabled={isLoading}
@@ -366,7 +372,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+                  className="inline-flex h-[clamp(2.4rem,5vh,2.75rem)] w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                 >
                   <span className="min-w-0 truncate">
                     {isLoading ? t("processing") : mode === "login" ? t("signIn") : t("createAccount")}
@@ -390,7 +396,7 @@ export default function AuthPage() {
                 </button>
               </form>
 
-              <p className="mt-5 text-[14.5px] font-medium text-foreground/65">
+              <p className="mt-[clamp(0.7rem,2vh,1.25rem)] text-[14px] font-medium text-foreground/65">
                 {mode === "login" ? t("noAccount") : t("haveAccount")}{" "}
                 <button
                   type="button"
@@ -402,7 +408,7 @@ export default function AuthPage() {
                 </button>
               </p>
 
-              <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/60 pt-4 text-[14px]">
+              <div className="mt-[clamp(0.7rem,2vh,1.25rem)] hidden flex-wrap items-center gap-x-3 gap-y-1 border-t border-border/60 pt-[clamp(0.5rem,1.5vh,1rem)] text-[14px] [@media(min-height:640px)]:flex">
                 <span className="font-medium text-foreground/60">{t("demoQuestion")}</span>
                 <button
                   type="button"
@@ -420,4 +426,5 @@ export default function AuthPage() {
       </div>
     </div>
   );
+
 }
