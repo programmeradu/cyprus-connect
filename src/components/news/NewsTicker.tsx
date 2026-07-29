@@ -13,10 +13,10 @@ type NewsItem = {
 };
 
 /**
- * NewsTicker - auto-scrolling marquee of latest ESG/climate headlines.
- * - CSS-driven translateX loop, pauses on hover.
- * - Duplicates track so the loop is seamless.
- * - Silent fallback: if fetch fails, renders nothing (no broken chrome).
+ * NewsTicker - a single quiet line of ESG/climate headlines that drifts across
+ * the page. No box, no border, no background: it must read as part of the
+ * photograph above it, so the edge fade uses an alpha mask rather than a
+ * colour gradient (a colour gradient painted chalky blocks over the hero).
  */
 export function NewsTicker() {
   const locale = (useLocale() as "en" | "el") ?? "en";
@@ -39,66 +39,76 @@ export function NewsTicker() {
 
   if (items.length === 0) return null;
 
-  const eyebrow = locale === "el" ? "Ροή / ESG & κλίμα" : "Latest / ESG & climate wire";
-  const allLink = locale === "el" ? "Όλες οι ειδήσεις →" : "All news →";
+  const label = locale === "el" ? "Ροή ESG & κλίματος" : "ESG & climate wire";
+  const allLink = locale === "el" ? "Όλες οι ειδήσεις" : "All news";
 
-  // Duplicate for seamless loop
+  // Duplicate for a seamless loop
   const track = [...items, ...items];
 
   return (
-    <section
-      aria-label="News ticker"
-      className="relative border-y border-border/60 bg-background/40 backdrop-blur-sm"
-    >
-      <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3 sm:px-6">
-        <div className="eyebrow shrink-0 hidden sm:block">{eyebrow}</div>
-
-        <div className="group relative flex-1 overflow-hidden">
-          {/* left/right fade masks */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background to-transparent" />
+    <section aria-label="News ticker" className="relative">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex items-baseline gap-6">
+          <span
+            className="hidden shrink-0 text-[13px] font-semibold leading-none text-foreground/70 sm:block"
+            style={{ fontFamily: "var(--editorial-sans)" }}
+          >
+            {label}
+          </span>
 
           <div
-            className="flex min-w-max animate-[ticker_120s_linear_infinite] gap-10 group-hover:[animation-play-state:paused]"
+            className="group relative min-w-0 flex-1 overflow-hidden py-1"
+            style={{
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0, #000 5%, #000 92%, transparent 100%)",
+              maskImage:
+                "linear-gradient(to right, transparent 0, #000 5%, #000 92%, transparent 100%)",
+            }}
           >
-            {track.map((it, i) => {
-              const date = it.pubDate
-                ? new Date(it.pubDate).toLocaleDateString(locale, {
-                    month: "short",
-                    day: "numeric",
-                  })
-                : "";
-              const source = getSource(it.link);
-              return (
-                <a
-                  key={`${i}-${it.link}`}
-                  href={it.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group/item flex shrink-0 items-baseline gap-3 text-sm"
-                >
-                  {source && (
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-foreground/80">
-                      {source}
+            <div className="flex min-w-max animate-[ticker_150s_linear_infinite] items-baseline gap-12 group-hover:[animation-play-state:paused]">
+              {track.map((it, i) => {
+                const date = it.pubDate
+                  ? new Date(it.pubDate).toLocaleDateString(locale, {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : "";
+                return (
+                  <a
+                    key={`${i}-${it.link}`}
+                    href={it.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/item flex shrink-0 items-baseline gap-3 whitespace-nowrap"
+                  >
+                    {date && (
+                      <span
+                        className="text-[13px] font-medium tabular-nums text-foreground/60"
+                        style={{ fontFamily: "var(--editorial-sans)" }}
+                      >
+                        {date}
+                      </span>
+                    )}
+                    <span
+                      className="text-[15.5px] font-medium leading-tight text-foreground decoration-foreground/40 underline-offset-[6px] transition-colors group-hover/item:underline"
+                      style={{ fontFamily: "var(--editorial-sans)" }}
+                    >
+                      {it.title}
                     </span>
-                  )}
-                  {date && <span className="text-xs text-foreground/70">{date}</span>}
-                  <span className="text-foreground/40">/</span>
-                  <span className="max-w-[52ch] truncate text-foreground transition-colors group-hover/item:underline underline-offset-4">
-                    {it.title}
-                  </span>
-                </a>
-              );
-            })}
+                  </a>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        <Link
-          href={`/${locale}/news`}
-          className="shrink-0 text-xs font-medium tracking-tight text-foreground/80 underline-offset-4 hover:text-foreground hover:underline"
-        >
-          {allLink}
-        </Link>
+          <Link
+            href={`/${locale}/news`}
+            className="hidden shrink-0 text-[13px] font-semibold leading-none text-foreground/80 underline-offset-[6px] transition-colors hover:text-foreground hover:underline sm:block"
+            style={{ fontFamily: "var(--editorial-sans)" }}
+          >
+            {allLink}
+          </Link>
+        </div>
       </div>
 
       <style jsx>{`
@@ -110,18 +120,12 @@ export function NewsTicker() {
             transform: translateX(-50%);
           }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .group > div {
+            animation: none !important;
+          }
+        }
       `}</style>
     </section>
   );
-}
-
-function getSource(url: string): string {
-  try {
-    const host = new URL(url).hostname.replace(/^www\./, "");
-    // Google News wraps articles at news.google.com/rss/articles/... - strip that
-    if (host === "news.google.com") return "";
-    return host.split(".")[0];
-  } catch {
-    return "";
-  }
 }
