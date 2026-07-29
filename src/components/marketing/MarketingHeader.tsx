@@ -17,6 +17,7 @@ export function MarketingHeader() {
   const tNav = useTranslations("nav");
   const tHero = useTranslations("hero");
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -45,9 +46,9 @@ export function MarketingHeader() {
         Vuneli
       </Link>
 
-      {/* Top-right CTA — always visible, adapts to hero vs scrolled */}
+      {/* Top-right CTA — desktop only; on mobile it lives in the menu sheet */}
       {!isPending && (
-        <div className="pointer-events-auto absolute right-4 top-1/2 -translate-y-1/2 sm:right-8">
+        <div className="pointer-events-auto absolute right-4 top-1/2 hidden -translate-y-1/2 md:block sm:right-8">
           {session?.user ? (
             <div className="flex items-center gap-2">
               <SubscriptionBadge />
@@ -71,8 +72,36 @@ export function MarketingHeader() {
         </div>
       )}
 
-      {/* Envirogen-style solid dark pill — smooth, opaque, always-on */}
-      <div className="flex justify-center">
+      {/* Mobile controls — right-aligned glass pill, never overlaps the wordmark */}
+      <div className="pointer-events-auto absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-0.5 rounded-full bg-black/25 px-1.5 py-1.5 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 md:hidden">
+        <LanguageSwitcher overHero />
+        <ThemeToggle overHero />
+        <button
+          type="button"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          className="grid h-8 w-8 place-items-center rounded-full text-white/85 transition-colors hover:text-white"
+        >
+          <span className="relative block h-[10px] w-[16px]">
+            <span
+              className={[
+                "absolute left-0 block h-[1.5px] w-full bg-current transition-transform duration-300",
+                menuOpen ? "top-[4px] rotate-45" : "top-0",
+              ].join(" ")}
+            />
+            <span
+              className={[
+                "absolute left-0 block h-[1.5px] w-full bg-current transition-transform duration-300",
+                menuOpen ? "top-[4px] -rotate-45" : "top-[9px]",
+              ].join(" ")}
+            />
+          </span>
+        </button>
+      </div>
+
+      {/* Desktop nav pill */}
+      <div className="hidden justify-center md:flex">
         <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-black/25 px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
           <nav className="hidden items-center md:flex">
             <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
@@ -100,7 +129,42 @@ export function MarketingHeader() {
           </div>
         </div>
       </div>
+
+      {/* Mobile sheet */}
+      {menuOpen && (
+        <div className="pointer-events-auto absolute inset-x-4 top-[calc(100%+0.75rem)] overflow-hidden rounded-3xl bg-black/55 p-2 ring-1 ring-white/12 backdrop-blur-2xl backdrop-saturate-150 md:hidden">
+          <nav className="flex flex-col">
+            {[
+              { href: "/tools", label: tNav("tools") },
+              { href: "/learn", label: tNav("learn") },
+              { href: "/vision", label: tNav("vision") },
+              { href: "/news", label: tNav("news") },
+              { href: "/pricing", label: tNav("pricing") },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-2xl px-4 py-3 text-[16px] font-medium text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          {(
+            <Link
+              href={session?.user ? "/app" : "/auth"}
+              onClick={() => setMenuOpen(false)}
+              className="mt-2 flex h-11 w-full items-center justify-center rounded-2xl bg-[var(--accent-lime)] text-[16px] font-semibold text-[var(--accent-lime-foreground)]"
+              style={{ fontFamily: "var(--editorial-display)" }}
+            >
+              {session?.user ? tNav("dashboard") : tHero("ctaPrimary")}
+            </Link>
+          )}
+        </div>
+      )}
     </header>
+
   );
 }
 
