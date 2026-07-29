@@ -2,7 +2,6 @@ import Link from "next/link";
 import { routing, type Locale } from "@/i18n/routing";
 import { getTrustContent, type TrustPageKey } from "@/content/trust";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
-import { SiteFooter } from "@/components/legal/SiteFooter";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
