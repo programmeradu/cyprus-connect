@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import ecoLearning from "@/assets/eco-01-learning.jpg";
 import ecoMarketplace from "@/assets/eco-02-marketplace.jpg";
 import ecoVisuals from "@/assets/eco-03-visuals.jpg";
+import { SnapRail } from "./SnapRail";
 import ecoLeaderboard from "@/assets/eco-04-leaderboard.jpg";
 
 /**
@@ -70,7 +71,7 @@ export function EcosystemRail() {
               </p>
             </li>
           ))}
-        </ul>
+        </SnapRail>
       </div>
     </section>
   );
