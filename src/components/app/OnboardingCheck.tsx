@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/lib/user-context";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 export function OnboardingCheck() {
   const router = useRouter();
@@ -11,11 +12,15 @@ export function OnboardingCheck() {
   const hasChecked = useRef(false);
 
   useEffect(() => {
+    // TEMPORARY: open access mode skips the onboarding gate entirely.
+    if (APP_OPEN_ACCESS) return;
+
     // Skip check if already on onboarding page
     if (pathname === "/app/onboarding") return;
     
     // Skip check if we've already checked once
     if (hasChecked.current) return;
+
 
     // Skip check if still loading
     if (isLoading) return;
