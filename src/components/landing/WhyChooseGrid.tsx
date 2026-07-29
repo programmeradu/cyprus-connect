@@ -61,25 +61,27 @@ function GlyphMonitoring() {
 }
 
 function GlyphCyprus() {
-  // Simplified but recognisable Cyprus outline: main body with the
-  // distinctive Karpas peninsula extending north-east.
+  // Real Cyprus outline generated from Natural Earth 1:10m coastline data
+  // (Ramer-Douglas-Peucker simplified to 71 points, projected into a 56x56 box).
+  // Includes the distinctive Karpas peninsula extending north-east and Akrotiri
+  // / Akamas bulges to the south-west.
   const outline =
-    "M4 32 Q6 27 12 26 Q18 23 26 24 Q33 22 39 25 Q42 26 44 28 L52 20 L54 22 L46 30 Q42 33 36 34 Q28 36 20 34 Q12 33 8 33 Q5 33 4 32 Z";
+    "M53.00 25.14 L52.95 25.67 L51.29 26.65 L50.62 28.29 L50.54 29.87 L49.60 30.94 L47.45 31.18 L46.37 32.21 L43.77 33.01 L42.95 33.16 L42.42 32.63 L42.39 33.62 L37.53 35.18 L31.46 35.38 L28.99 37.49 L27.13 37.82 L26.84 37.19 L28.09 37.08 L28.01 36.13 L26.86 35.99 L26.21 36.68 L25.43 36.59 L23.75 35.94 L23.54 35.18 L22.58 35.17 L21.41 36.21 L20.29 36.03 L20.08 36.83 L18.22 37.11 L9.54 34.43 L7.95 33.33 L6.75 29.99 L5.02 28.69 L5.08 27.37 L4.41 26.46 L4.19 24.67 L3.00 22.17 L3.52 21.32 L5.85 23.04 L7.96 23.21 L10.26 21.82 L12.66 18.57 L13.94 18.69 L15.24 19.41 L16.09 19.09 L16.56 18.18 L17.67 18.30 L18.41 20.04 L21.30 21.13 L22.36 22.66 L23.59 22.44 L24.63 21.52 L26.18 22.19 L29.75 19.96 L32.74 20.15 L34.52 19.04 L36.43 19.36 L38.97 20.75 L40.60 19.31 L42.97 19.12 L43.27 20.18 L44.47 21.41 L44.03 24.68 L44.47 25.49 L45.43 25.36 L45.81 23.81 L46.59 23.18 L47.09 24.73 L47.52 24.89 L48.72 24.02 L53.00 25.14 Z";
   return (
     <svg
       viewBox="0 0 56 56"
       className="h-14 w-14"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.4"
+      strokeWidth="1.2"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden
     >
       <path d={outline} fill="currentColor" fillOpacity="0.14" />
       <path d={outline} />
-      {/* Nicosia marker — capital, roughly centre-north */}
-      <circle cx="30" cy="28" r="1.6" fill="currentColor" />
+      {/* Nicosia — capital, projected from 33.365E / 35.175N */}
+      <circle cx="26.6" cy="28.4" r="1.4" fill="currentColor" />
     </svg>
   );
 }
