@@ -137,7 +137,7 @@ export function SiteFooter() {
   const linkCls =
     "text-[15px] leading-[1.9] text-white/70 hover:text-white transition-colors";
   const labelCls =
-    "text-[11px] font-semibold uppercase tracking-[0.22em] text-white/45 mb-5";
+    "text-[11px] font-semibold uppercase tracking-[0.22em] text-white/45 mb-4 sm:mb-5";
 
   return (
     <footer
@@ -272,10 +272,10 @@ export function SiteFooter() {
       </div>
 
       {/* Sitemap + Contact rail */}
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-8 gap-y-14 px-6 py-16 sm:px-10 md:grid-cols-4 lg:grid-cols-5">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-6 py-12 sm:gap-x-8 sm:gap-y-14 sm:px-10 sm:py-16 md:grid-cols-4 lg:grid-cols-5">
         <div className="col-span-2 md:col-span-4 lg:col-span-1">
           <p className={labelCls}>{locale === "el" ? "Επικοινωνία" : "Contact"}</p>
-          <dl className="space-y-5 text-[15px]" style={{ fontFamily: "var(--editorial-sans)" }}>
+          <dl className="space-y-4 text-[15px] sm:space-y-5" style={{ fontFamily: "var(--editorial-sans)" }}>
             <div>
               <dt className="text-[11px] uppercase tracking-[0.18em] text-white/40">{t.officeLabel}</dt>
               <dd className="mt-1 text-white/85">{t.office}</dd>
@@ -283,7 +283,7 @@ export function SiteFooter() {
             <div>
               <dt className="text-[11px] uppercase tracking-[0.18em] text-white/40">{t.emailLabel}</dt>
               <dd className="mt-1">
-                <a href="mailto:samuel@stauniverse.tech" className="text-white/85 underline-offset-4 hover:text-white hover:underline">
+                <a href="mailto:samuel@stauniverse.tech" className="break-words text-white/85 underline-offset-4 hover:text-white hover:underline">
                   samuel@stauniverse.tech
                 </a>
               </dd>
