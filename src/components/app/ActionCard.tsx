@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { CheckIcon } from "@/components/icons/CustomIcons";
-
 
 interface ActionCardProps {
   title: string;
@@ -18,95 +16,72 @@ interface ActionCardProps {
   className?: string;
 }
 
+/**
+ * Workspace action plate. Bordered rectangular tag for impact level,
+ * no pill chips, no decorative icon, full label text (never truncated).
+ */
 export const ActionCard = ({
   title,
   description,
   impact,
-  icon,
   completed = false,
   onComplete,
   difficulty = "medium",
-  points,
   className = ""
 }: ActionCardProps) => {
   const t = useTranslations("dashboard.actions.card");
-  const impactLevelColors = {
-    low: "bg-primary/20 text-primary border-primary/30",
-    medium: "bg-amber-500/20 text-amber-600 dark:text-amber-500 border-amber-500/30",
-    high: "bg-red-500/20 text-red-600 dark:text-red-500 border-red-500/30"
-  };
-  const impactLabels = { low: t("impactLow"), medium: t("impactMedium"), high: t("impactHigh") };
 
+  const impactTone: Record<string, string> = {
+    low: "positive",
+    medium: "caution",
+    high: "critical"
+  };
+  const impactLabels = {
+    low: t("impactLow"),
+    medium: t("impactMedium"),
+    high: t("impactHigh")
+  };
 
   return (
     <motion.div
-      className={`relative app-card p-4 overflow-hidden border border-border/50 hover:border-primary/30 transition-all-smooth ${className}`}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.01 }}
-      transition={{ duration: 0.3 }}
+      className={`app-card flex h-full flex-col p-4 ${className}`}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
     >
-      {/* Subtle gradient overlay */}
-      
-      {/* Content */}
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Title */}
-        <h4 className="text-sm font-bold mb-2 leading-tight">{title}</h4>
+      <h4 className="text-[0.9375rem] font-semibold leading-snug break-words">
+        {title}
+      </h4>
 
-        {/* Description */}
-        <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{description}</p>
+      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground break-words">
+        {description}
+      </p>
 
-        {/* Impact Metric */}
-        {impact && (
-          <div className="flex items-center gap-1.5 mb-2">
-            <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-primary" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2v20M2 12h20" strokeLinecap="round" />
-                <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.5" />
-              </svg>
-            </div>
-            <span className="text-[10px] text-muted-foreground">
-              <span className="font-semibold text-foreground">{impact}</span>
-            </span>
-          </div>
-        )}
+      {impact && (
+        <p className="app-meta mt-3">
+          <span className="font-semibold text-foreground app-num">{impact}</span>
+        </p>
+      )}
 
-        {/* Impact Level Badge */}
-        <div className="mb-3">
-          <span className={`inline-flex items-center text-[9px] uppercase px-2 py-0.5 rounded-md font-bold tracking-wider border ${impactLevelColors[difficulty]}`}>
-            {impactLabels[difficulty]}
-          </span>
-        </div>
-
-
-        {/* Spacer to push button to bottom */}
-        <div className="flex-1" />
-
-        {/* Action Button */}
-        {onComplete && (
-          <button
-            onClick={onComplete}
-            disabled={completed}
-            className={`w-full py-2 px-3 rounded-lg text-xs font-semibold transition-all-smooth ${
-              completed
-                ? "bg-primary/20 text-primary cursor-not-allowed border border-primary/30"
-                : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30"
-            }`}
-          >
-            <span className="flex items-center justify-center gap-1.5 min-w-0 break-words">
-              {completed ? (
-                <>
-                  <CheckIcon className="w-3 h-3 flex-shrink-0" />
-                  <span className="break-words">{t("completed")}</span>
-                </>
-              ) : (
-                <span className="break-words">{t("markComplete")}</span>
-              )}
-            </span>
-
-          </button>
-        )}
+      <div className="mt-3">
+        <span className="app-tag" data-tone={impactTone[difficulty]}>
+          {impactLabels[difficulty]}
+        </span>
       </div>
+
+      <div className="flex-1" />
+
+      {onComplete && (
+        <button
+          onClick={onComplete}
+          disabled={completed}
+          className={`app-btn mt-4 w-full ${completed ? "app-btn-ghost" : ""}`}
+        >
+          <span className="break-words text-center">
+            {completed ? t("completed") : t("markComplete")}
+          </span>
+        </button>
+      )}
     </motion.div>
   );
 };
