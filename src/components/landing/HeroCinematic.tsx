@@ -57,9 +57,15 @@ export function HeroCinematic() {
         <div className="absolute inset-0 hidden bg-gradient-to-r from-black/65 via-black/25 to-transparent md:block" />
         {/* Mobile: full darken to keep the giant type legible */}
         <div className="absolute inset-0 bg-black/45 md:hidden" />
-        {/* Bottom seam into next section — short and subtle so light mode
-            never gets a chalky white wash across the photo */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-background" />
+        {/* Bottom seam into next section — taller, multi-stop easing so
+            neither dark nor light mode shows a hard cut against the photo */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-64"
+          style={{
+            backgroundImage:
+              "linear-gradient(to bottom, transparent 0%, color-mix(in oklab, var(--background) 25%, transparent) 35%, color-mix(in oklab, var(--background) 65%, transparent) 65%, var(--background) 100%)",
+          }}
+        />
 
         {/* Grain */}
         <div
