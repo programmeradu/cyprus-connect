@@ -224,7 +224,7 @@ export default function AuthPage() {
               >
                 {mode === "login" ? t("signInTitle") : t("createTitle")}
               </h1>
-              <p className="mt-[clamp(0.4rem,1vh,0.65rem)] hidden text-[clamp(14px,1.9vh,15px)] font-medium leading-[1.5] text-foreground/65 [@media(min-height:600px)]:block">
+              <p className="mt-[clamp(0.45rem,1.2vh,0.75rem)] hidden text-[clamp(14px,1.9vh,15.5px)] font-medium leading-[1.5] text-foreground/65 [@media(min-height:560px)]:block">
                 {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
               </p>
 
