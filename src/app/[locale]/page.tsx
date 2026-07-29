@@ -59,11 +59,12 @@ export default function Home() {
 
       {/* News ticker - sits inside the hero photo's dissolve so the image
           oozes into this section instead of ending on a colour wash */}
-      <section className="relative z-10 -mt-40 bg-transparent">
-        <div className="mx-auto max-w-6xl px-4 pb-8 pt-4 sm:px-6 sm:pb-12">
+      <section className="relative z-10 -mt-28 bg-transparent">
+        <div className="mx-auto max-w-6xl px-4 pb-8 pt-28 sm:px-6 sm:pb-12 sm:pt-32">
           <NewsTicker />
         </div>
       </section>
+
 
 
       <SectionDivider />
