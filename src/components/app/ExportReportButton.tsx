@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import { Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
@@ -56,21 +55,12 @@ export function ExportReportButton({ userId }: { userId?: string }) {
 
   return (
     <button
+      type="button"
       onClick={handleExport}
       disabled={isExporting}
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="app-btn"
     >
-      {isExporting ? (
-        <>
-          <Loader2 className="w-4 h-4 animate-spin" />
-          {t('loading')}
-        </>
-      ) : (
-        <>
-          <Download className="w-4 h-4" />
-          {t('idle')}
-        </>
-      )}
+      {isExporting ? t('loading') : t('idle')}
     </button>
   );
 }

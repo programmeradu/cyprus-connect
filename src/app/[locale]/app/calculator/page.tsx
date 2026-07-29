@@ -1,20 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { AppHeader } from "@/components/app/AppHeader";
-import { Badge } from "@/components/app/Badge";
-import { CarbonIcon, BoltIcon, FireIcon, WaterIcon, RecycleIcon, SparklesIcon, AIDocumentIcon } from "@/components/icons/CustomIcons";
-import { PremiumButton } from "@/components/ui/PremiumButton";
-import { Loader2, Upload, FileStack, Zap, TrendingUp, FileText, Image as ImageIcon, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEmissionCalculator } from "@/hooks/useEmissionCalculator";
 import { DocumentUploader } from "@/components/DocumentUploader";
 import { useSession } from "@/lib/auth-client";
-import NextImage from "next/image";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import {
+  PageShell,
+  PageHeader,
+  Section,
+  DataTable,
+  Metric,
+  MetricRow,
+  EmptyState,
+  AiUnavailable
+} from "@/components/app/shell";
 
 export default function CalculatorPage() {
   const router = useRouter();
@@ -26,6 +29,7 @@ export default function CalculatorPage() {
   const [useRealAPI, setUseRealAPI] = useState(true);
   const [showDocumentUploader, setShowDocumentUploader] = useState(false);
   const [userRegion, setUserRegion] = useState<string>("");
+  const [aiRecsFailed, setAiRecsFailed] = useState(false);
 
   const [formData, setFormData] = useState({
     electricity: "",
@@ -175,6 +179,7 @@ Return ONLY valid JSON (no markdown, no explanations):
         }
       } catch (parseError) {
         console.error('Failed to parse AI recommendations:', parseError);
+        setAiRecsFailed(true);
         return [];
       }
 
@@ -216,9 +221,11 @@ Return ONLY valid JSON (no markdown, no explanations):
         }
       }
 
+      setAiRecsFailed(false);
       return savedRecommendations;
     } catch (error) {
       console.error('AI recommendation generation failed:', error);
+      setAiRecsFailed(true);
       return [];
     }
   };
@@ -247,6 +254,7 @@ Return ONLY valid JSON (no markdown, no explanations):
     }
 
     setIsCalculating(true);
+    setAiRecsFailed(false);
 
     try {
       let totalEmissions = 0;
@@ -451,8 +459,6 @@ Return ONLY valid JSON (no markdown, no explanations):
           wasteDiversionRate: wasteDiversion
         })
       });
-      
-      console.log("✅ Dashboard metrics and historical data updated successfully");
     } catch (error) {
       console.error("Failed to update dashboard metrics:", error);
     }
@@ -529,6 +535,7 @@ Return ONLY valid JSON (no markdown, no explanations):
 
   const handleReset = () => {
     setResults(null);
+    setAiRecsFailed(false);
     setFormData({
       electricity: "",
       gas: "",
@@ -539,409 +546,240 @@ Return ONLY valid JSON (no markdown, no explanations):
     localStorage.removeItem("calculator_draft");
   };
 
-  // Show loading while checking session
-  if (isSessionLoading) {
-    return (
-      <>
-        <AppHeader
-          title={t("title")}
-          subtitle={t("subtitleShort")}
-        />
-        <div className="flex items-center justify-center min-h-[400px]">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </>
-    );
-  }
-
   // Don't render if no session
-  if (!session?.user) {
+  if (!isSessionLoading && !session?.user) {
     return null;
   }
 
   return (
-    <>
-      <AppHeader
-        title={t("title")}
-        subtitle={t("subtitle")}
-      />
-
+    <PageShell
+      loading={isSessionLoading}
+      header={<PageHeader title={t("title")} purpose={t("subtitle")} />}
+    >
       {!results ? (
-        <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-6">
-          {/* LEFT COLUMN - AI Document Analysis (70%) */}
-          <div className="surface-card p-8">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-primary">
-                    <AIDocumentIcon className="w-full h-full" />
-                  </div>
-                  <h2 className="text-xl font-bold">{t("ai.heading")}</h2>
-                </div>
-                <p className="text-sm text-muted-foreground ml-[52px]">
-                  {t("ai.description")}
-                </p>
-              </div>
-            </div>
-
-            {/* Document Upload Area */}
-            <div className="relative">
-              <div 
-                className="border-2 border-dashed border-primary/30 rounded-xl p-12 bg-primary/8 hover:from-primary/10 hover:to-primary/15 transition-all cursor-pointer group"
-                onClick={() => setShowDocumentUploader(true)}
-              >
-                <div className="flex flex-col items-center text-center gap-6">
-                  <div className="w-20 h-20 rounded-2xl bg-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Upload className="w-10 h-10 text-primary" />
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">{t("ai.uploadTitle")}</h3>
-                    <p className="text-sm text-muted-foreground mb-3 max-w-lg mx-auto">
-                      {t("ai.uploadDescription")}
-                    </p>
-                  </div>
-
-                  <PremiumButton size="lg" className="group-hover:scale-105 transition-transform">
-                    <FileStack className="w-4 h-4 mr-2" />
-                    {t("ai.uploadCta")}
-                  </PremiumButton>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-2xl mt-4">
-                    <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
-                      <FileText className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">{t("ai.types.pdf")}</p>
-                    </div>
-                    <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
-                      <FileSpreadsheet className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">{t("ai.types.excel")}</p>
-                    </div>
-                    <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
-                      <ImageIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">{t("ai.types.images")}</p>
-                    </div>
-                    <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
-                      <FireIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">{t("ai.types.gas")}</p>
-                    </div>
-                    <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
-                      <WaterIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">{t("ai.types.water")}</p>
-                    </div>
-                    <div className="bg-background/50 rounded-lg p-4 border border-border/50 flex flex-col items-center justify-center text-center">
-                      <CarbonIcon className="w-6 h-6 text-primary mb-2" />
-                      <p className="text-xs font-medium">{t("ai.types.transport")}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Features Grid */}
-              <div className="grid md:grid-cols-3 gap-4 mt-8">
-                <div className="p-4 rounded-lg bg-muted/30 border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Zap className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-sm">{t("ai.features.smartTitle")}</h4>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t("ai.features.smartDesc")}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-muted/30 border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <TrendingUp className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-sm">{t("ai.features.multiTitle")}</h4>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t("ai.features.multiDesc")}
-                  </p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-muted/30 border border-border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <SparklesIcon className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-sm">{t("ai.features.autoTitle")}</h4>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t("ai.features.autoDesc")}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN - Manual Form Entry (30%) */}
-          <div className="surface-card p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold">{t("manual.title")}</h2>
-              <Badge variant="primary" size="sm">{t("manual.monthly")}</Badge>
-            </div>
-
-            <div className="space-y-5 mb-6">
-              <div>
-                <label className="block text-xs font-medium mb-2 flex items-center gap-2">
-                  <BoltIcon className="w-3.5 h-3.5 text-primary" />
-                  {t("manual.electricity")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.electricity}
-                  onChange={(e) => setFormData({ ...formData, electricity: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium mb-2 flex items-center gap-2">
-                  <FireIcon className="w-3.5 h-3.5 text-primary" />
-                  {t("manual.gas")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.gas}
-                  onChange={(e) => setFormData({ ...formData, gas: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="100"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium mb-2 flex items-center gap-2">
-                  <WaterIcon className="w-3.5 h-3.5 text-primary" />
-                  {t("manual.water")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.water}
-                  onChange={(e) => setFormData({ ...formData, water: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="10000"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium mb-2 flex items-center gap-2">
-                  <RecycleIcon className="w-3.5 h-3.5 text-primary" />
-                  {t("manual.waste")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.waste}
-                  onChange={(e) => setFormData({ ...formData, waste: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="200"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium mb-2 flex items-center gap-2">
-                  <CarbonIcon className="w-3.5 h-3.5 text-primary" />
-                  {t("manual.transport")}
-                </label>
-                <input
-                  type="number"
-                  value={formData.transport}
-                  onChange={(e) => setFormData({ ...formData, transport: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  placeholder="1000"
-                />
-              </div>
-            </div>
-
-            {/* API Toggle */}
-            <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg mb-6">
-              <div className="flex items-center gap-2">
-                <SparklesIcon className="w-3.5 h-3.5 text-primary" />
-                <span className="text-xs font-medium">{t("manual.climatiq")}</span>
-              </div>
+        <>
+          <Section title={t("ai.heading")} description={t("ai.description")}>
+            <div className="app-card p-6">
               <button
                 type="button"
-                onClick={() => setUseRealAPI(!useRealAPI)}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                  useRealAPI ? "bg-primary" : "bg-muted"
-                }`}
+                onClick={() => setShowDocumentUploader(true)}
+                className="w-full border border-[var(--app-rule-strong)] rounded-md p-8 text-center hover:bg-[var(--app-surface-2)] transition-colors"
               >
-                <span
-                  className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-                    useRealAPI ? "translate-x-5" : "translate-x-1"
-                  }`}
-                />
+                <h3 className="text-[1.0625rem] font-semibold mb-2">{t("ai.uploadTitle")}</h3>
+                <p className="app-meta max-w-lg mx-auto mb-4 break-words">{t("ai.uploadDescription")}</p>
+                <span className="app-btn inline-flex">{t("ai.uploadCta")}</span>
               </button>
-            </div>
 
-            <PremiumButton
-              onClick={calculateEmissions}
-              disabled={isCalculating || !isFormValid()}
-              className="w-full"
-            >
-              {isCalculating ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {t("manual.calculating")}
-                </>
-              ) : (
-                <>
-                  {t("manual.calculate")}
-                  <SparklesIcon className="w-4 h-4 ml-2" />
-                </>
-              )}
-            </PremiumButton>
-
-            <p className="text-[10px] text-muted-foreground text-center mt-4">
-              {t("manual.hint")}
-            </p>
-          </div>
-        </div>
-      ) : (
-        /* Results Display */
-        <motion.div
-          className="surface-card p-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">{t("results.title")}</h2>
-              <p className="text-sm text-muted-foreground">{t("results.subtitle")}</p>
-            </div>
-            <Badge variant="primary" size="sm">{t("results.completed")}</Badge>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {/* Total Emissions */}
-            <div className="bg-primary/8 p-6 rounded-xl border border-primary/20">
-              <h3 className="font-medium mb-3 text-sm flex items-center gap-2">
-                <CarbonIcon className="w-4 h-4 text-primary" />
-                {t("results.totalTitle")}
-              </h3>
-              <div className="text-4xl font-bold text-primary mb-1">
-                {results.totalEmissions.toFixed(2)}
-              </div>
-              <p className="text-sm text-muted-foreground">{t("results.totalUnit")}</p>
-            </div>
-
-            {/* Breakdown Summary */}
-            <div className="bg-muted/30 p-6 rounded-xl border border-border">
-              <h3 className="font-medium mb-4 text-sm">{t("results.breakdownTitle")}</h3>
-              <div className="space-y-3">
-                {results.breakdown.filter(item => item.emissions > 0).slice(0, 3).map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">{item.category}</span>
-                    <span className="text-sm font-bold">{item.emissions.toFixed(3)} t</span>
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[
+                  t("ai.types.pdf"),
+                  t("ai.types.excel"),
+                  t("ai.types.images"),
+                  t("ai.types.gas"),
+                  t("ai.types.water"),
+                  t("ai.types.transport")
+                ].map((label) => (
+                  <div key={label} className="app-card-inset px-3 py-3 text-center">
+                    <p className="text-sm font-medium break-words">{label}</p>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
 
-          {/* Full Breakdown */}
-          <div className="bg-muted/30 p-6 rounded-xl mb-8">
-            <h3 className="font-medium mb-4">{t("results.detailTitle")}</h3>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {results.breakdown.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
-                  <div>
-                    <div className="text-sm font-medium">{item.category}</div>
-                    <div className="text-xs text-muted-foreground">{item.value} {item.unit}</div>
-                  </div>
-                  <div className="text-sm font-bold">{item.emissions.toFixed(3)} t CO2e</div>
+              <div className="mt-6 grid sm:grid-cols-3 gap-3">
+                <div className="app-card-inset p-4">
+                  <h4 className="text-sm font-semibold mb-1">{t("ai.features.smartTitle")}</h4>
+                  <p className="app-meta break-words">{t("ai.features.smartDesc")}</p>
                 </div>
-              ))}
+                <div className="app-card-inset p-4">
+                  <h4 className="text-sm font-semibold mb-1">{t("ai.features.multiTitle")}</h4>
+                  <p className="app-meta break-words">{t("ai.features.multiDesc")}</p>
+                </div>
+                <div className="app-card-inset p-4">
+                  <h4 className="text-sm font-semibold mb-1">{t("ai.features.autoTitle")}</h4>
+                  <p className="app-meta break-words">{t("ai.features.autoDesc")}</p>
+                </div>
+              </div>
             </div>
-          </div>
+          </Section>
 
-          {/* AI Recommendations */}
-          <div className="bg-muted/30 p-6 rounded-xl mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-medium flex items-center gap-2">
-                <SparklesIcon className="w-4 h-4 text-primary" />
-                {t("results.aiRecs")}
-              </h3>
-              {results.recommendations.length > 0 && (
-                <Badge className="bg-primary/20 text-primary border-primary/30">
-                  {t("results.addedToActions")}
-                </Badge>
-              )}
-            </div>
-            
-            {results.recommendations.length > 0 ? (
-              <>
-                <div className="space-y-3 mb-4">
-                  {results.recommendations.map((rec, index) => (
-                    <div key={index} className="p-4 bg-background rounded-lg border border-border hover:border-primary/30 transition-colors">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-sm font-medium">{rec.title}</p>
-                        {rec.isNew && (
-                          <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] px-1.5 py-0 flex-shrink-0">
-                            {t("results.new")}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-3">{rec.description}</p>
-                      <div className="flex items-center gap-2 text-[10px]">
-                        <Badge variant="outline" size="sm" className="capitalize">
-                          {rec.category}
-                        </Badge>
-                        <Badge variant="outline" size="sm" className="capitalize">
-                          {rec.impact} {t("results.impactSuffix")}
-                        </Badge>
-                        <Badge variant="primary" size="sm">
-                          +{rec.points} {t("results.creditsSuffix")}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <PremiumButton
-                  size="sm"
-                  variant="outline"
-                  className="w-full text-xs"
-                  onClick={() => router.push("/app/actions")}
+          <Section title={t("manual.title")} description={t("manual.hint")}>
+            <div className="app-card p-6 max-w-xl">
+              <div className="flex items-center justify-between mb-5">
+                <span className="app-tag">{t("manual.monthly")}</span>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <label className="block">
+                  <span className="app-label block mb-1.5">{t("manual.electricity")}</span>
+                  <input
+                    type="number"
+                    value={formData.electricity}
+                    onChange={(e) => setFormData({ ...formData, electricity: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-md text-sm"
+                    placeholder="500"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="app-label block mb-1.5">{t("manual.gas")}</span>
+                  <input
+                    type="number"
+                    value={formData.gas}
+                    onChange={(e) => setFormData({ ...formData, gas: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-md text-sm"
+                    placeholder="100"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="app-label block mb-1.5">{t("manual.water")}</span>
+                  <input
+                    type="number"
+                    value={formData.water}
+                    onChange={(e) => setFormData({ ...formData, water: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-md text-sm"
+                    placeholder="10000"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="app-label block mb-1.5">{t("manual.waste")}</span>
+                  <input
+                    type="number"
+                    value={formData.waste}
+                    onChange={(e) => setFormData({ ...formData, waste: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-md text-sm"
+                    placeholder="200"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="app-label block mb-1.5">{t("manual.transport")}</span>
+                  <input
+                    type="number"
+                    value={formData.transport}
+                    onChange={(e) => setFormData({ ...formData, transport: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-md text-sm"
+                    placeholder="1000"
+                  />
+                </label>
+              </div>
+
+              <div className="flex items-center justify-between app-card-inset px-3 py-3 mb-6">
+                <span className="text-sm font-medium">{t("manual.climatiq")}</span>
+                <button
+                  type="button"
+                  onClick={() => setUseRealAPI(!useRealAPI)}
+                  aria-pressed={useRealAPI}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-md transition-colors border border-[var(--app-rule-strong)] ${
+                    useRealAPI ? "bg-primary" : "bg-transparent"
+                  }`}
                 >
-                  <SparklesIcon className="w-3 h-3 mr-2" />
-                  {t("results.viewAllActions")}
-                </PremiumButton>
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-sm bg-[var(--primary-foreground)] transition-transform ${
+                      useRealAPI ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={calculateEmissions}
+                disabled={isCalculating || !isFormValid()}
+                className="app-btn w-full"
+              >
+                {isCalculating ? t("manual.calculating") : t("manual.calculate")}
+              </button>
+
+              <p className="app-meta text-center mt-4">{t("manual.hint")}</p>
+            </div>
+          </Section>
+        </>
+      ) : (
+        <>
+          <Section title={t("results.title")} description={t("results.subtitle")} action={<span className="app-tag">{t("results.completed")}</span>}>
+            <MetricRow columns={2}>
+              <Metric label={t("results.totalTitle")} value={results.totalEmissions.toFixed(2)} unit={t("results.totalUnit")} />
+              <Metric
+                label={t("results.breakdownTitle")}
+                value={results.breakdown.filter((item) => item.emissions > 0).length}
+                unit="categories"
+                note={results.breakdown
+                  .filter((item) => item.emissions > 0)
+                  .slice(0, 3)
+                  .map((item) => `${item.category}: ${item.emissions.toFixed(3)} t`)
+                  .join(" · ")}
+              />
+            </MetricRow>
+          </Section>
+
+          <Section title={t("results.detailTitle")}>
+            <DataTable
+              columns={[
+                { key: "category", header: "Category", render: (r) => r.category },
+                { key: "input", header: "Input", render: (r) => `${r.value} ${r.unit}` },
+                { key: "emissions", header: "Emissions", numeric: true, render: (r) => `${r.emissions.toFixed(3)} t CO2e` }
+              ]}
+              rows={results.breakdown}
+              rowKey={(r) => r.category}
+            />
+          </Section>
+
+          <Section title={t("results.aiRecs")} action={results.recommendations.length > 0 ? <span className="app-tag" data-tone="positive">{t("results.addedToActions")}</span> : undefined}>
+            {aiRecsFailed ? (
+              <AiUnavailable feature="generate personalized recommendations" />
+            ) : results.recommendations.length > 0 ? (
+              <>
+                <DataTable
+                  columns={[
+                    {
+                      key: "title",
+                      header: "Recommendation",
+                      render: (r) => (
+                        <div>
+                          <p className="text-sm font-medium break-words">
+                            {r.title} {r.isNew && <span className="app-tag ml-1.5">{t("results.new")}</span>}
+                          </p>
+                          <p className="app-meta mt-1 break-words">{r.description}</p>
+                        </div>
+                      )
+                    },
+                    { key: "category", header: "Category", hideOnMobile: true, render: (r) => r.category },
+                    { key: "impact", header: "Impact", hideOnMobile: true, render: (r) => `${r.impact} ${t("results.impactSuffix")}` },
+                    { key: "points", header: "Credits", numeric: true, render: (r) => `+${r.points}` }
+                  ]}
+                  rows={results.recommendations}
+                  rowKey={(r, i) => `${r.title}-${i}`}
+                />
+                <div className="mt-3">
+                  <button type="button" onClick={() => router.push("/app/actions")} className="app-btn-ghost app-btn w-full">
+                    {t("results.viewAllActions")}
+                  </button>
+                </div>
               </>
             ) : (
-              <div className="text-center py-6">
-                <p className="text-sm text-muted-foreground mb-2">
-                  {t("results.noRecs")}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {t("results.noRecsSub")}
-                </p>
-              </div>
+              <EmptyState title={t("results.noRecs")} description={t("results.noRecsSub")} />
             )}
-          </div>
+          </Section>
 
-          {/* Actions */}
           <div className="flex gap-3">
-            <PremiumButton 
-              variant="outline"
-              className="flex-1"
-              onClick={handleReset}
-            >
+            <button type="button" onClick={handleReset} className="app-btn-ghost app-btn flex-1">
               {t("results.calcAgain")}
-            </PremiumButton>
-            <PremiumButton 
-              className="flex-1"
-              onClick={() => router.push("/app")}
-            >
+            </button>
+            <button type="button" onClick={() => router.push("/app")} className="app-btn flex-1">
               {t("results.goDashboard")}
-            </PremiumButton>
+            </button>
           </div>
-        </motion.div>
+        </>
       )}
 
-      {/* Document Uploader Modal */}
       {showDocumentUploader && (
         <DocumentUploader
           onDataExtracted={handleDocumentDataExtracted}
           onClose={() => setShowDocumentUploader(false)}
         />
       )}
-    </>
+    </PageShell>
   );
 }

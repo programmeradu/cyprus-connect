@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { PageShell, PageHeader, Section, DataTable, EmptyState, Column } from "@/components/app/shell";
 
 interface Match {
   id: number;
@@ -16,11 +16,11 @@ interface Match {
 }
 
 const SOURCE_LABELS: Record<string, string> = {
- "eu-funding-tenders": "EU Funding & Tenders Portal",
- "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
- "invest-cyprus": "Invest Cyprus",
- "kebe-oeb": "OEB / KEBE",
- "accelerators": "Accelerators",
+  "eu-funding-tenders": "EU Funding & Tenders Portal",
+  "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
+  "invest-cyprus": "Invest Cyprus",
+  "kebe-oeb": "OEB / KEBE",
+  "accelerators": "Accelerators",
 };
 
 export default function GrantAlertsPage() {
@@ -28,12 +28,20 @@ export default function GrantAlertsPage() {
   const [status, setStatus] = useState<string | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = () => {
+    setLoading(true);
+    setError(null);
     fetch("/api/grant-alerts/subscribe")
       .then((r) => r.json())
       .then((j) => setMatches(j.matches ?? []))
+      .catch(() => setError("Could not load grant matches. Try again."))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    load();
   }, []);
 
   async function subscribe(e: React.FormEvent) {
@@ -55,62 +63,82 @@ export default function GrantAlertsPage() {
     setStatus(res.ok ? `Unsubscribed ${j.unsubscribed}.` : `Error: ${j.error}`);
   }
 
-  return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
-      <div className="mb-2 text-xs uppercase tracking-[0.14em] text-emerald-600">Grant Radar</div>
-      <h1 className="mb-3 font-serif text-3xl text-foreground">EU and Cyprus grant alerts</h1>
-      <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-        Get an email the moment a new call from the EU Funding &amp; Tenders Portal, the Cyprus
-        Research and Innovation Foundation, Invest Cyprus, OEB / KEBE, or a climate accelerator
-        matches Vuneli's Cyprus SME sustainability focus.
-      </p>
-
-      <form onSubmit={subscribe} className="mb-10 flex flex-col gap-3 rounded-lg border border-border bg-card p-6 sm:flex-row">
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@yourcompany.cy"
-          className="flex-1 rounded-md border border-border bg-background px-4 py-2 text-sm outline-none focus:border-emerald-500"
-        />
-        <button type="submit" className="rounded-md bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-          Subscribe
-        </button>
-        <button type="button" onClick={unsubscribe} className="rounded-md border border-border px-5 py-2 text-sm text-muted-foreground hover:text-foreground">
-          Unsubscribe
-        </button>
-      </form>
-
-      {status && <div className="mb-6 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">{status}</div>}
-
-      <h2 className="mb-4 font-serif text-xl text-foreground">Recent matches</h2>
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Loading...</div>
-      ) : matches.length === 0 ? (
-        <div className="rounded-md border border-dashed border-border p-6 text-sm text-muted-foreground">
-          No matches recorded yet. Once the hourly job runs, new calls appear here.
+  const columns: Column<Match>[] = [
+    {
+      key: "title",
+      header: "Call",
+      render: (m) => (
+        <div className="min-w-0">
+          <a href={m.url} target="_blank" rel="noreferrer" className="font-medium hover:underline break-words">
+            {m.title}
+          </a>
+          <p className="app-meta mt-0.5">
+            {SOURCE_LABELS[m.source] ?? m.source}
+            {m.program ? ` · ${m.program}` : ""}
+          </p>
         </div>
-      ) : (
-        <ul className="divide-y divide-border rounded-lg border border-border">
-          {matches.map((m) => (
-            <li key={m.id} className="p-4">
-              <div className="mb-1 flex items-center gap-3 text-[11px] uppercase tracking-wider text-muted-foreground">
-                <span>{SOURCE_LABELS[m.source] ?? m.source}</span>
-                {m.program && <span>&middot; {m.program}</span>}
-                {m.deadline && <span>&middot; Deadline: {m.deadline}</span>}
-              </div>
-              <a href={m.url} target="_blank" rel="noreferrer" className="text-sm font-medium text-foreground hover:text-emerald-600">
-                {m.title}
-              </a>
-              <div className="mt-1 text-xs text-muted-foreground">
-                First seen {new Date(m.first_seen_at).toLocaleString()} &middot; score {m.score.toFixed(2)}
-                {m.notified_at ? " &middot; notified" : ""}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+      )
+    },
+    {
+      key: "deadline",
+      header: "Deadline",
+      hideOnMobile: true,
+      render: (m) => <span>{m.deadline ?? "—"}</span>
+    },
+    {
+      key: "seen",
+      header: "First seen",
+      render: (m) => <span className="app-num">{new Date(m.first_seen_at).toLocaleDateString()}</span>
+    },
+    {
+      key: "score",
+      header: "Score",
+      numeric: true,
+      render: (m) => <span>{m.score.toFixed(2)}</span>
+    }
+  ];
+
+  return (
+    <PageShell
+      loading={loading}
+      error={error}
+      onRetry={load}
+      header={
+        <PageHeader
+          title="EU and Cyprus grant alerts"
+          purpose="Get an email the moment a new call from the EU Funding & Tenders Portal, the Cyprus Research and Innovation Foundation, Invest Cyprus, OEB / KEBE, or a climate accelerator matches Vuneli's Cyprus SME sustainability focus."
+        />
+      }
+    >
+      <Section title="Subscribe">
+        <form onSubmit={subscribe} className="app-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@yourcompany.cy"
+            className="h-11 flex-1 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <button type="submit" className="app-btn">Subscribe</button>
+          <button type="button" onClick={unsubscribe} className="app-btn-ghost app-btn">Unsubscribe</button>
+        </form>
+        {status && <p className="app-meta mt-3">{status}</p>}
+      </Section>
+
+      <Section title="Recent matches">
+        <DataTable
+          columns={columns}
+          rows={matches}
+          rowKey={(m) => String(m.id)}
+          empty={
+            <EmptyState
+              title="No matches recorded yet"
+              description="The hourly job checks EU and Cyprus funding sources for calls that match Vuneli's SME sustainability focus. New calls will appear here as soon as they're found."
+            />
+          }
+        />
+      </Section>
+    </PageShell>
   );
 }

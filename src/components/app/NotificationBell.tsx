@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { BellIcon } from "@/components/icons/CustomIcons";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { Check, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { EmptyState } from "@/components/app/shell";
 
 import {
   EmissionEntryIcon,
@@ -194,11 +193,11 @@ export const NotificationBell = () => {
       if (response.ok) {
         const deletedNotification = notifications.find((n) => n.id === notificationId);
         setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
-        
+
         if (deletedNotification && !deletedNotification.isRead) {
           setUnreadCount((prev) => Math.max(0, prev - 1));
         }
-        
+
         toast.success(t("toasts.deleted"));
       }
     } catch (error) {
@@ -209,8 +208,8 @@ export const NotificationBell = () => {
 
 
   const getNotificationIcon = (type: string) => {
-    const iconClassName = "w-5 h-5";
-    
+    const iconClassName = "w-5 h-5 text-muted-foreground";
+
     switch (type) {
       case "emission_entry":
         return <EmissionEntryIcon className={iconClassName} />;
@@ -257,132 +256,122 @@ export const NotificationBell = () => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={handleBellClick}
         aria-label={t("title")}
-        className="relative w-9 h-9 rounded-md border border-foreground/15 bg-card hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        className="app-btn-ghost app-btn relative h-11 w-11 px-0"
       >
         <BellIcon className="w-4 h-4" />
         {unreadCount > 0 && (
-          <motion.span
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-[4px] bg-primary text-primary-foreground text-[10px] font-semibold flex items-center justify-center"
-          >
+          <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-[4px] border border-[var(--app-rule-strong)] bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center app-num">
             {unreadCount > 9 ? "9+" : unreadCount}
-          </motion.span>
+          </span>
         )}
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] app-overlay overflow-hidden z-50"
-          >
-            {/* Header */}
-            <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold">{t("title")}</h3>
-                <p className="text-xs text-muted-foreground">
-                  {t("unread", { count: unreadCount })}
-                </p>
-              </div>
-              {unreadCount > 0 && (
-                <button
-                  onClick={handleMarkAllRead}
-                  className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1"
-                >
-                  <Check className="w-3 h-3" />
-                  {t("markAllRead")}
-                </button>
-
-              )}
+      {isOpen && (
+        <div
+          className="app-overlay absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] overflow-hidden z-50"
+        >
+          {/* Header */}
+          <div className="px-4 py-3 border-b border-[var(--app-rule)] flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold break-words">{t("title")}</h3>
+              <p className="app-meta break-words">
+                {t("unread", { count: unreadCount })}
+              </p>
             </div>
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                onClick={handleMarkAllRead}
+                className="app-btn-ghost app-btn shrink-0 h-9 px-2.5 text-xs"
+              >
+                {t("markAllRead")}
+              </button>
+            )}
+          </div>
 
-            {/* Notifications List */}
-            <div className="max-h-96 overflow-y-auto">
-              {loading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                </div>
-              ) : notifications.length === 0 ? (
-                <div className="py-10 px-6 text-center">
-                  <p className="text-sm font-medium text-foreground">
-                    {t("empty")}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {t("unread", { count: 0 })}
-                  </p>
-                </div>
-              ) : (
-                <div className="divide-y divide-border/50">
-                  {notifications.map((notification) => (
-                    <motion.div
-                      key={notification.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className={`px-4 py-3 hover:bg-accent/50 transition-colors cursor-pointer group relative ${
-                        !notification.isRead ? "bg-primary/5" : ""
-                      }`}
-                      onClick={() => handleNotificationClick(notification)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-0.5">
-                          {getNotificationIcon(notification.type)}
+          {/* Notifications List */}
+          <div className="max-h-96 overflow-y-auto">
+            {loading ? (
+              <div className="px-4 py-6 space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="h-3 w-full animate-pulse rounded bg-[color-mix(in_oklab,var(--foreground)_10%,transparent)]" />
+                ))}
+              </div>
+            ) : notifications.length === 0 ? (
+              <EmptyState
+                className="border-0"
+                title={t("empty")}
+                description={t("unread", { count: 0 })}
+              />
+            ) : (
+              <div>
+                {notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`px-4 py-3 border-b border-[var(--app-rule)] last:border-b-0 hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer group relative ${
+                      !notification.isRead ? "bg-[var(--app-surface-2)]" : ""
+                    }`}
+                    onClick={() => handleNotificationClick(notification)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {getNotificationIcon(notification.type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="text-sm font-medium break-words">
+                            {notification.title}
+                          </h4>
+                          {!notification.isRead && (
+                            <span className="app-tag shrink-0">{t("unread", { count: 1 })}</span>
+                          )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <h4 className="text-sm font-medium">
-                              {notification.title}
-                            </h4>
-                            {!notification.isRead && (
-                              <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                            {notification.message}
+                        <p className="app-meta mt-0.5 break-words">
+                          {notification.message}
+                        </p>
+                        <div className="flex items-center justify-between mt-2 gap-2">
+                          <p className="app-meta">
+                            {formatRelativeTime(notification.createdAt)}
                           </p>
-                          <div className="flex items-center justify-between mt-2">
-                            <p className="text-[10px] text-muted-foreground">
-                              {formatRelativeTime(notification.createdAt)}
-                            </p>
-                            <button
-                              onClick={(e) =>
-                                handleDeleteNotification(e, notification.id)
-                              }
-                              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) =>
+                              handleDeleteNotification(e, notification.id)
+                            }
+                            aria-label={t("toasts.deleted")}
+                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity app-btn-ghost app-btn h-8 px-2 text-xs"
+                          >
+                            ×
+                          </button>
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            {notifications.length > 0 && (
-              <div className="px-4 py-2 border-t border-border/50 text-center">
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    router.push("/app/settings#notifications");
-                  }}
-                  className="text-xs text-primary hover:text-primary/80 font-medium"
-                >
-                  {t("settings")}
-                </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+
+          {/* Footer */}
+          {notifications.length > 0 && (
+            <div className="px-4 py-2 border-t border-[var(--app-rule)] text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push("/app/settings#notifications");
+                }}
+                className="app-btn-ghost app-btn h-9 px-2.5 text-xs w-full"
+              >
+                {t("settings")}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

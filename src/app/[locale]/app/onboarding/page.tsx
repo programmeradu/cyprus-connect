@@ -11,7 +11,6 @@ import {
   BoltIcon,
   FireIcon
 } from "@/components/icons/CustomIcons";
-import { PremiumButton } from "@/components/ui/PremiumButton";
 import { Check, Cloud, Settings, FolderUp, Trophy, BarChart3, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
@@ -245,7 +244,7 @@ export default function OnboardingPage() {
   if (isLoadingUserData || isSessionLoading) {
     return (
       <div className="min-h-screen app-page flex items-center justify-center p-4">
-        <div className="surface-card p-8 text-center">
+        <div className="app-card p-8 text-center">
           <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
           <p className="text-sm text-muted-foreground">{t("loading")}</p>
         </div>
@@ -268,12 +267,12 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="surface-card p-8 md:p-12"
+              className="app-card p-8 md:p-12"
             >
               {/* Title at Top - Spans Full Width */}
               <div className="mb-8">
                 <div className="flex items-center justify-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center">
                     <LeafIcon className="w-5 h-5 text-primary" />
                   </div>
                   <h1 className="text-2xl md:text-3xl font-bold text-center">
@@ -288,7 +287,7 @@ export default function OnboardingPage() {
               <div className="flex flex-col md:flex-row items-center gap-8">
                 {/* Left Side - Illustration */}
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="relative w-full max-w-md aspect-square rounded-2xl overflow-hidden">
+                  <div className="relative w-full max-w-md aspect-square rounded-lg overflow-hidden">
                     <img 
                       src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/452e6a6c-dfb5-4b2f-890f-4242ef400721/generated_images/premium-isometric-illustration-of-a-sust-f36bea66-20251116234646.jpg"
                       alt={t("step1.imageAlt")}
@@ -312,7 +311,7 @@ export default function OnboardingPage() {
                         transition={{ delay: 0.1 * i }}
                         className="flex items-center gap-3"
                       >
-                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <div className="w-5 h-5 rounded-full border border-[var(--app-rule-strong)] flex items-center justify-center flex-shrink-0">
                           <Check className="w-3 h-3 text-primary" />
                         </div>
                         <span className="text-sm text-foreground">{feature}</span>
@@ -325,9 +324,9 @@ export default function OnboardingPage() {
                   </p>
 
                   <div className="flex items-center gap-4">
-                    <PremiumButton onClick={() => setStep(2)} size="sm">
+                    <button className="app-btn" onClick={() => setStep(2)}>
                       {t("step1.getStarted")}
-                    </PremiumButton>
+                    </button>
                     <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                       {t("step1.learnMore")}
                     </button>
@@ -344,15 +343,15 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="surface-card p-8 md:p-12"
+              className="app-card p-8 md:p-12"
             >
               {/* Progress bar */}
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="flex-1 h-1.5 rounded-full bg-primary" />
-                  <div className="flex-1 h-1.5 rounded-full bg-primary" />
-                  <div className="flex-1 h-1.5 rounded-full bg-muted/30" />
-                  <div className="flex-1 h-1.5 rounded-full bg-muted/30" />
+                  <div className="flex-1 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="flex-1 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="flex-1 h-1.5 rounded-[2px] bg-[var(--app-rule)]" />
+                  <div className="flex-1 h-1.5 rounded-[2px] bg-[var(--app-rule)]" />
                 </div>
                 <p className="text-center text-sm font-semibold text-foreground">2/4</p>
               </div>
@@ -365,7 +364,7 @@ export default function OnboardingPage() {
               </p>
 
               {/* Company Details Form */}
-              <div className="mb-8 p-6 rounded-xl bg-muted/20 border border-border/50">
+              <div className="mb-8 p-6 rounded-lg app-card-inset">
                 <h3 className="text-sm font-semibold mb-4">{t("step2.companyHeader")}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -375,7 +374,7 @@ export default function OnboardingPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder={t("step2.yourNamePlaceholder")}
-                      className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                   <div>
@@ -385,7 +384,7 @@ export default function OnboardingPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t("step2.emailPlaceholder")}
-                      className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                       disabled
                     />
                   </div>
@@ -396,7 +395,7 @@ export default function OnboardingPage() {
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder={t("step2.companyNamePlaceholder")}
-                      className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                   <div>
@@ -404,7 +403,7 @@ export default function OnboardingPage() {
                     <select
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     >
                       <option value="">{t("step2.selectIndustry")}</option>
                       <option value="technology">{t("step2.industries.technology")}</option>
@@ -420,7 +419,7 @@ export default function OnboardingPage() {
                     <select
                       value={teamSize}
                       onChange={(e) => setTeamSize(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     >
                       <option value="">{t("step2.selectTeamSize")}</option>
                       <option value="1-10">{t("step2.teamSizes.1-10")}</option>
@@ -436,8 +435,8 @@ export default function OnboardingPage() {
               {/* Data Source Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 {/* Utility Bills */}
-                <div className="p-5 rounded-xl bg-background border border-primary">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 mx-auto">
+                <div className="p-5 rounded-lg bg-background border border-[var(--app-rule-strong)]">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center mb-3 mx-auto">
                     <Cloud className="w-5 h-5 text-primary" />
                     <BoltIcon className="w-3 h-3 text-primary -ml-1.5 -mt-1.5" />
                   </div>
@@ -445,29 +444,23 @@ export default function OnboardingPage() {
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.utility.desc")}
                   </p>
-                  <PremiumButton 
-                    variant="primary" 
-                    size="sm" 
-                    className="w-full text-[10px] h-7"
+                  <button className="app-btn w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('utility')}
                   >
                     {t("step2.utility.cta")}
-                  </PremiumButton>
+                  </button>
                 </div>
 
                 {/* Accounting Software */}
-                <div className="p-5 rounded-xl bg-background border border-border hover:border-primary/50 transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center mb-3 mx-auto">
+                <div className="p-5 rounded-lg app-card hover:bg-[var(--app-surface-3)] transition-colors">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center mb-3 mx-auto">
                     <Settings className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.accounting.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.accounting.desc")}
                   </p>
-                  <PremiumButton 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-[10px] h-7"
+                  <button className="app-btn-ghost app-btn w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('accounting')}
                     disabled={qbConnecting}
                   >
@@ -482,32 +475,29 @@ export default function OnboardingPage() {
                         <ExternalLink className="w-3 h-3 ml-1" />
                       </>
                     )}
-                  </PremiumButton>
+                  </button>
                 </div>
 
                 {/* Manual Upload */}
-                <div className="p-5 rounded-xl bg-background border border-border hover:border-primary/50 transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-muted/40 flex items-center justify-center mb-3 mx-auto">
+                <div className="p-5 rounded-lg app-card hover:bg-[var(--app-surface-3)] transition-colors">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center mb-3 mx-auto">
                     <FolderUp className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.manual.title")}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.manual.desc")}
                   </p>
-                  <PremiumButton 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-[10px] h-7"
+                  <button className="app-btn-ghost app-btn w-full text-[10px] h-7"
                     onClick={() => handleUploadClick('manual')}
                   >
                     {t("step2.manual.cta")}
-                  </PremiumButton>
+                  </button>
                 </div>
               </div>
 
               {/* Security Notice */}
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border/50 mb-6">
-                <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="flex items-start gap-3 p-3 rounded-lg app-card-inset mb-6">
+                <div className="w-7 h-7 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
@@ -527,13 +517,12 @@ export default function OnboardingPage() {
                 >
                   {t("step2.back")}
                 </button>
-                <PremiumButton
+                <button className="app-btn"
                   onClick={() => setStep(3)}
                   disabled={!canProceed()}
-                  size="sm"
                 >
                   {t("step2.next")}
-                </PremiumButton>
+                </button>
               </div>
             </motion.div>
           )}
@@ -545,14 +534,14 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="surface-card p-8 md:p-12"
+              className="app-card p-8 md:p-12"
             >
               <div className="text-center mb-8">
                 <div className="inline-flex gap-1 mb-3">
-                  <div className="w-20 h-1.5 rounded-full bg-primary" />
-                  <div className="w-20 h-1.5 rounded-full bg-primary" />
-                  <div className="w-20 h-1.5 rounded-full bg-primary" />
-                  <div className="w-20 h-1.5 rounded-full bg-muted/30" />
+                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="w-20 h-1.5 rounded-[2px] bg-[var(--app-rule)]" />
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">
                   {t("step3.title")}
@@ -598,9 +587,9 @@ export default function OnboardingPage() {
                   {/* Preview Cards */}
                   <div className="grid grid-cols-2 gap-3">
                     {/* Green Credits */}
-                    <div className="p-3 rounded-lg bg-background border border-border">
+                    <div className="p-3 rounded-lg app-card">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-md border border-[var(--app-rule-strong)] flex items-center justify-center">
                           <LeafIcon className="w-3 h-3 text-primary" />
                         </div>
                         <h4 className="text-[10px] font-bold">{t("step3.greenCredits")}</h4>
@@ -613,9 +602,9 @@ export default function OnboardingPage() {
                     </div>
 
                     {/* Leaderboard */}
-                    <div className="p-3 rounded-lg bg-background border border-border">
+                    <div className="p-3 rounded-lg app-card">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-md border border-[var(--app-rule-strong)] flex items-center justify-center">
                           <Trophy className="w-3 h-3 text-primary" />
                         </div>
                         <div className="flex gap-0.5">
@@ -633,9 +622,9 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col items-center gap-3">
-                <PremiumButton onClick={() => setStep(4)} size="sm" className="w-full md:w-auto px-6">
+                <button className="app-btn w-full md:w-auto px-6" onClick={() => setStep(4)}>
                   {t("step3.explore")}
-                </PremiumButton>
+                </button>
                 <div className="flex items-center gap-6">
                   <button
                     onClick={() => setStep(2)}
@@ -661,14 +650,14 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="surface-card p-8 md:p-12"
+              className="app-card p-8 md:p-12"
             >
               <div className="text-center mb-8">
                 <div className="inline-flex gap-1 mb-3">
-                  <div className="w-16 h-1.5 rounded-full bg-primary" />
-                  <div className="w-16 h-1.5 rounded-full bg-primary" />
-                  <div className="w-16 h-1.5 rounded-full bg-primary" />
-                  <div className="w-16 h-1.5 rounded-full bg-primary" />
+                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
+                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
                   {t("step4.title")}
@@ -693,9 +682,9 @@ export default function OnboardingPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * i }}
-                      className="p-4 rounded-lg bg-background border border-border"
+                      className="p-4 rounded-lg app-card"
                     >
-                      <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-3">
+                      <div className="w-9 h-9 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center text-primary mb-3">
                         {icons[i]}
                       </div>
                       <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
@@ -706,14 +695,12 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col items-center gap-3">
-                <PremiumButton
+                <button className="app-btn w-full md:w-auto px-8"
                   onClick={handleComplete}
                   disabled={isSubmitting}
-                  size="sm"
-                  className="w-full md:w-auto px-8"
                 >
                   {isSubmitting ? t("step4.settingUp") : t("step4.cta")}
-                </PremiumButton>
+                </button>
                 <button
                   onClick={() => setStep(3)}
                   className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -738,7 +725,7 @@ export default function OnboardingPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="surface-card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="app-card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">

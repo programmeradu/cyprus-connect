@@ -3,7 +3,6 @@ import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { PremiumCard } from "@/components/ui/PremiumCard";
 import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
@@ -175,11 +174,11 @@ export const BillingDashboard = () => {
   if (isLoading || isSessionPending || loadingBillingData) {
     return (
       <div className="space-y-4">
-        <PremiumCard className="p-4 animate-pulse">
+        <div className="app-card p-4 animate-pulse">
           <div className="h-6 bg-muted rounded w-32 mb-3" />
           <div className="h-3 bg-muted rounded w-full mb-1.5" />
           <div className="h-3 bg-muted rounded w-3/4" />
-        </PremiumCard>
+        </div>
       </div>
     );
   }
@@ -187,9 +186,9 @@ export const BillingDashboard = () => {
   if (!session?.user) {
     return (
       <div className="space-y-4">
-        <PremiumCard className="p-4 text-center">
+        <div className="app-card p-4 text-center">
           <p className="text-muted-foreground text-sm">{t("signInRequired")}</p>
-        </PremiumCard>
+        </div>
       </div>
     );
   }
@@ -228,10 +227,10 @@ export const BillingDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
       >
         {loadingCredits ? (
-          <PremiumCard className="p-4 animate-pulse">
+          <div className="app-card p-4 animate-pulse">
             <div className="h-6 bg-muted rounded w-32 mb-3" />
             <div className="h-8 bg-muted rounded w-20" />
-          </PremiumCard>
+          </div>
         ) : (
           <CreditBalance
             balance={creditBalance}
@@ -247,7 +246,7 @@ export const BillingDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
       >
-        <PremiumCard className="p-4">
+        <div className="app-card p-4">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("currentPlan")}</h3>
@@ -271,8 +270,7 @@ export const BillingDashboard = () => {
                 <div className="mt-1 flex items-center gap-1.5">
                   <span className="text-[10px] text-muted-foreground">{t("via")}</span>
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted">
-                    {currentSubscription.gateway === 'stripe' ? '🔵 Stripe' :
-                     currentSubscription.gateway}
+                    {currentSubscription.gateway === 'stripe' ? 'Stripe' : currentSubscription.gateway}
                   </span>
                 </div>
               )}
@@ -326,7 +324,7 @@ export const BillingDashboard = () => {
               </div>
             ))}
           </div>
-        </PremiumCard>
+        </div>
       </motion.div>
 
       {/* Purchase Summary */}
@@ -336,7 +334,7 @@ export const BillingDashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <PremiumCard className="p-4">
+          <div className="app-card p-4">
             <h3 className="text-sm font-medium mb-3">{t("purchaseSummary")}</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
@@ -358,7 +356,7 @@ export const BillingDashboard = () => {
                 <div className="text-[10px] text-muted-foreground mt-0.5">{t("lastPurchase")}</div>
               </div>
             </div>
-          </PremiumCard>
+          </div>
         </motion.div>
       )}
 
@@ -368,25 +366,21 @@ export const BillingDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
       >
-        <PremiumCard className="p-4">
+        <div className="app-card p-4">
           <h3 className="text-sm font-medium mb-3">{t("paymentHistory")}</h3>
           
           {paymentHistory.length === 0 ? (
             <div className="text-center py-6 text-muted-foreground">
-              <div className="text-2xl mb-1">📜</div>
-              <div className="text-xs">{t("noPaymentHistory")}</div>
+              <div className="text-sm">{t("noPaymentHistory")}</div>
             </div>
           ) : (
             <div className="space-y-1.5">
               {paymentHistory.slice(0, 10).map((payment) => (
                 <div
                   key={payment.id}
-                  className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between px-3 py-3 border-b border-[var(--app-rule)] last:border-b-0"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-xs">
-                      {payment.paymentType === 'credits' ? '💳' : '📄'}
-                    </div>
                     <div>
                       <div className="font-medium text-xs">{payment.description}</div>
                       <div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
@@ -425,7 +419,7 @@ export const BillingDashboard = () => {
               ))}
             </div>
           )}
-        </PremiumCard>
+        </div>
       </motion.div>
 
       {/* Credit Purchase Dialog */}

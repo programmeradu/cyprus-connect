@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 interface ProgressBarProps {
   value: number;
   max?: number;
@@ -22,7 +20,7 @@ export const ProgressBar = ({
   className = ""
 }: ProgressBarProps) => {
   const percentage = Math.min((value / max) * 100, 100);
-  
+
   const colorClasses = {
     primary: "bg-primary",
     success: "bg-chart-2",
@@ -41,21 +39,19 @@ export const ProgressBar = ({
       {(label || showValue) && (
         <div className="flex items-center justify-between mb-1.5">
           {label && (
-            <span className="text-xs font-medium text-foreground">{label}</span>
+            <span className="app-label break-words">{label}</span>
           )}
           {showValue && (
-            <span className="text-xs text-muted-foreground">
+            <span className="app-num app-meta shrink-0">
               {value} / {max}
             </span>
           )}
         </div>
       )}
-      <div className={`relative w-full ${sizeClasses[size]} rounded-full bg-muted overflow-hidden`}>
-        <motion.div
-          className={`absolute inset-y-0 left-0 rounded-full ${colorClasses[color]}`}
-          initial={{ width: 0 }}
-          animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+      <div className={`relative w-full ${sizeClasses[size]} rounded-[2px] bg-[var(--app-surface-2)] overflow-hidden border border-[var(--app-rule)]`}>
+        <div
+          className={`absolute inset-y-0 left-0 rounded-[2px] ${colorClasses[color]} transition-[width] duration-500 ease-out`}
+          style={{ width: `${percentage}%` }}
         />
       </div>
     </div>
