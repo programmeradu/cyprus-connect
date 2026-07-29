@@ -73,17 +73,26 @@ export function HeroCinematic() {
 
       {/* Content: flex column that fills the viewport height */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="max-w-4xl">
+        <div className="max-w-[68rem]">
           <h1
-            className="font-[family-name:var(--editorial-display)] font-medium leading-[0.95] tracking-[-0.03em] text-foreground"
+            className="font-[family-name:var(--editorial-display)] font-medium text-foreground"
             style={{
               fontOpticalSizing: "auto",
-              fontSize: "clamp(2.6rem, 8.2vw, 6.8rem)",
+              fontVariationSettings: "'opsz' 144",
+              fontSize: "clamp(3rem, 9.4vw, 8.25rem)",
+              lineHeight: 0.92,
+              letterSpacing: "-0.035em",
             }}
           >
             {t("titleLine1")}
             <br />
-            <span className="italic font-normal text-foreground/60">
+            <span
+              className="italic font-normal text-foreground/55"
+              style={{
+                fontVariationSettings: "'opsz' 144, 'SOFT' 100",
+                letterSpacing: "-0.02em",
+              }}
+            >
               {t("titleLine2")}
             </span>
             <br />
@@ -92,11 +101,12 @@ export function HeroCinematic() {
           </h1>
 
           <p
-            className="mt-6 max-w-xl leading-[1.5] text-foreground/80 sm:mt-8"
+            className="mt-7 max-w-[36rem] leading-[1.5] text-foreground/75 sm:mt-9"
             style={{
               fontFamily: "var(--editorial-sans)",
               fontWeight: 400,
-              fontSize: "clamp(1rem, 1.35vw, 1.35rem)",
+              fontSize: "clamp(1.05rem, 1.4vw, 1.4rem)",
+              letterSpacing: "-0.005em",
             }}
           >
             {t("subtitle")}
