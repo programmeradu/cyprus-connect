@@ -67,8 +67,8 @@ export function HeroCinematic() {
           fill
           priority
           sizes="100vw"
-          className="object-cover"
-          style={{ objectPosition: shot.focus }}
+          className="object-cover [object-position:50%_45%] md:[object-position:var(--hero-focus)]"
+          style={{ "--hero-focus": shot.focus } as React.CSSProperties}
         />
 
         {/* Top scrim keeps the floating header readable — dark tint in both modes */}
