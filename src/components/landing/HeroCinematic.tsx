@@ -73,35 +73,36 @@ export function HeroCinematic() {
 
       {/* Content: flex column that fills the viewport height */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="max-w-[64rem]">
+        <div className="max-w-[56rem]">
           <h1
-            className="font-[family-name:var(--editorial-display)] text-foreground"
+            className="text-foreground"
             style={{
-              fontOpticalSizing: "auto",
-              fontVariationSettings: "'opsz' 144",
-              fontWeight: 420,
-              fontSize: "clamp(2.75rem, 8.2vw, 7.25rem)",
-              lineHeight: 0.95,
-              letterSpacing: "-0.038em",
+              fontFamily: "var(--editorial-sans)",
+              fontWeight: 600,
+              fontSize: "clamp(2.25rem, 5.8vw, 5.25rem)",
+              lineHeight: 0.98,
+              letterSpacing: "-0.03em",
               textWrap: "balance",
             }}
           >
             {t("titleLine1")}
             <br />
+            {t("titleLine2")}
+            <br />
             <em
               className="not-italic"
               style={{
+                fontFamily: "var(--editorial-display)",
                 fontStyle: "italic",
-                fontWeight: 340,
-                fontVariationSettings: "'opsz' 144, 'SOFT' 100",
-                letterSpacing: "-0.028em",
-                color: "color-mix(in oklab, var(--foreground) 82%, var(--accent-lime) 18%)",
+                fontWeight: 300,
+                fontOpticalSizing: "auto",
+                fontVariationSettings: "'opsz' 144",
+                letterSpacing: "-0.02em",
+                color: "color-mix(in oklab, var(--foreground) 88%, var(--accent-lime) 12%)",
               }}
             >
-              {t("titleLine2")}
+              {t("titleLine3")}
             </em>
-            <br />
-            <span style={{ fontWeight: 500 }}>{t("titleLine3")}</span>
             <span className="text-[var(--accent-lime)]">.</span>
           </h1>
 
