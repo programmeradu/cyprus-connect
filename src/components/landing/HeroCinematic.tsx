@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { type StaticImageData } from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { useTranslations } from "next-intl";
 import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
@@ -68,7 +68,7 @@ export function HeroCinematic() {
           priority
           sizes="100vw"
           className="object-cover [object-position:50%_45%] md:[object-position:var(--hero-focus)]"
-          style={{ "--hero-focus": shot.focus } as React.CSSProperties}
+          style={{ "--hero-focus": shot.focus } as CSSProperties}
         />
 
         {/* Top scrim keeps the floating header readable — dark tint in both modes */}
@@ -92,7 +92,7 @@ export function HeroCinematic() {
       </div>
 
       {/* Content: flex column that fills the viewport height */}
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-10 pt-24 sm:justify-end sm:pb-14 sm:pt-32 sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
         <div className="max-w-[56rem] [--hero-ink:theme(colors.white)]">
           <h1
             style={{
