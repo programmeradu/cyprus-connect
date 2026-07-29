@@ -137,7 +137,7 @@ export function HeroCinematic() {
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-3 text-[15px] font-medium text-foreground/75 underline decoration-foreground/25 decoration-1 underline-offset-[8px] transition-colors hover:text-foreground hover:decoration-foreground"
+              className="inline-flex items-center gap-3 text-[15px] font-medium text-white/80 underline decoration-white/30 decoration-1 underline-offset-[8px] transition-colors hover:text-white hover:decoration-white"
               style={{ fontFamily: "var(--editorial-sans)" }}
             >
               See pricing
