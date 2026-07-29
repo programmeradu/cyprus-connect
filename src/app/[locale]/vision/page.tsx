@@ -355,7 +355,7 @@ export default function VisionPage() {
           </div>
 
           {/* Controls */}
-          <div className="mt-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mt-10 flex flex-col gap-6">
             <div className="w-full max-w-sm">
               <label htmlFor="register-search" className="block text-[13px] font-semibold uppercase tracking-[0.1em] text-foreground/60">
                 {t("matrixSearchPh")}
@@ -370,8 +370,8 @@ export default function VisionPage() {
               />
             </div>
 
-            <div className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
-              <div className="flex min-w-max items-center gap-2 lg:min-w-0 lg:flex-wrap lg:justify-end">
+            <div className="-mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:overflow-visible sm:px-0">
+              <div className="flex min-w-max items-center gap-2 sm:min-w-0 sm:flex-wrap">
                 {CATEGORIES.map((c) => (
                   <button
                     key={c}
@@ -391,6 +391,7 @@ export default function VisionPage() {
               </div>
             </div>
           </div>
+
 
           {/* Register table */}
           <div className="mt-8 border-t border-border/60">
