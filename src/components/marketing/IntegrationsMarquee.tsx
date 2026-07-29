@@ -1,40 +1,63 @@
 "use client";
 
+import ariadniLogo from "@/assets/integrations/ariadni-logo.png.asset.json";
+import climateTraceLogo from "@/assets/integrations/climatetrace-logo.png.asset.json";
+import cyLoginCoat from "@/assets/integrations/cylogin-coat.png.asset.json";
+import cystatLogo from "@/assets/integrations/cystat-logo.png.asset.json";
+import eacLogo from "@/assets/integrations/eac-logo.png.asset.json";
+import electricityMapsLogo from "@/assets/integrations/electricitymaps-logo.svg.asset.json";
+import jccLogo from "@/assets/integrations/jcc-logo.svg.asset.json";
+import openeiLogo from "@/assets/integrations/openei-logo.svg.asset.json";
+import registrarLogo from "@/assets/integrations/registrar-logo.svg.asset.json";
+import softoneLogo from "@/assets/integrations/softone-logo.png.asset.json";
+import taxisnetLogo from "@/assets/integrations/taxisnet-title.gif.asset.json";
+import wikiRateLogo from "@/assets/integrations/wikirate-logo.svg.asset.json";
+
 /**
  * Continuous horizontal marquee of real integration logos.
- * Combines international brands (Simple Icons monochrome SVGs) with Cyprus
- * entities (official favicons via Google's public favicon service). Every
- * entry uses a real logo image — no typographic placeholders.
+ * Cyprus marks use official logo assets. No favicon service or text fallback.
  */
 type Mark = {
   name: string;
   /** Simple Icons slug for monochrome vector logos. */
   simpleIcon?: string;
-  /** Domain for entities without a Simple Icons entry — real favicon is fetched. */
-  domain?: string;
+  logo?: string;
+  logoClassName?: string;
 };
 
 const MARKS: Mark[] = [
-  // Cyprus institutions & partners
-  { name: "EAC",       domain: "eac.com.cy" },
-  { name: "JCC",       domain: "jcc.com.cy" },
-  { name: "SoftOne",   domain: "softone.com.cy" },
-  { name: "CY Login",  domain: "cge.cyprus.gov.cy" },
-  { name: "Registrar", domain: "companies.gov.cy" },
-  { name: "TAXISnet",  domain: "taxisnet.mof.gov.cy" },
-  { name: "CyStat",    domain: "cystat.gov.cy" },
+  // Cyprus institutions and partners
+  { name: "EAC", logo: eacLogo.url, logoClassName: "h-12 w-8" },
+  { name: "JCC", logo: jccLogo.url, logoClassName: "h-8 w-20" },
+  { name: "SoftOne", logo: softoneLogo.url, logoClassName: "h-7 w-28" },
+  { name: "CY Login", logo: cyLoginCoat.url, logoClassName: "h-9 w-9" },
+  { name: "Registrar", logo: registrarLogo.url, logoClassName: "h-9 w-40" },
+  { name: "TAXISnet", logo: taxisnetLogo.url, logoClassName: "h-7 w-40" },
+  { name: "Ariadni", logo: ariadniLogo.url, logoClassName: "h-8 w-28" },
+  { name: "CyStat", logo: cystatLogo.url, logoClassName: "h-8 w-28" },
   // International integrations
   { name: "QuickBooks",     simpleIcon: "quickbooks" },
   { name: "Xero",           simpleIcon: "xero" },
   { name: "Gemini",         simpleIcon: "googlegemini" },
   { name: "Google Cloud",   simpleIcon: "googlecloud" },
-  { name: "ClimateTRACE",   domain: "climatetrace.org" },
-  { name: "Electricity Maps", domain: "electricitymaps.com" },
-  { name: "OpenEI",         domain: "openei.org" },
-  { name: "WikiRate",       domain: "wikirate.org" },
+  { name: "Climate TRACE", logo: climateTraceLogo.url, logoClassName: "h-8 w-28" },
+  { name: "Electricity Maps", logo: electricityMapsLogo.url, logoClassName: "h-7 w-36" },
+  { name: "OpenEI", logo: openeiLogo.url, logoClassName: "h-8 w-28" },
+  { name: "WikiRate", logo: wikiRateLogo.url, logoClassName: "h-8 w-28" },
 ];
 
 function LogoImage({ mark, dark }: { mark: Mark; dark?: boolean }) {
+  if (mark.logo) {
+    return (
+      <img
+        src={mark.logo}
+        alt={`${mark.name} logo`}
+        loading="lazy"
+        className={`object-contain ${mark.logoClassName ?? "h-8 w-28"}`}
+      />
+    );
+  }
+
   if (mark.simpleIcon) {
     const color = dark ? "ffffff" : "000000";
     return (
@@ -46,20 +69,24 @@ function LogoImage({ mark, dark }: { mark: Mark; dark?: boolean }) {
       />
     );
   }
-  return (
-    <img
-      src={`https://www.google.com/s2/favicons?domain=${mark.domain}&sz=128`}
-      alt={`${mark.name} logo`}
-      loading="lazy"
-      className="h-7 w-7 rounded object-contain"
-    />
-  );
+
+  return null;
 }
 
 function Entry({ mark, dark }: { mark: Mark; dark?: boolean }) {
+  const hasOfficialLogo = Boolean(mark.logo);
+
   return (
-    <div className="flex shrink-0 items-center gap-3 px-8 sm:px-10">
-      <LogoImage mark={mark} dark={dark} />
+    <div className="flex shrink-0 items-center gap-3 px-6 sm:px-8">
+      <span
+        className={
+          hasOfficialLogo
+            ? "flex h-14 min-w-16 items-center justify-center rounded-md border border-border/50 bg-card/80 px-3 shadow-sm"
+            : "flex h-12 min-w-12 items-center justify-center"
+        }
+      >
+        <LogoImage mark={mark} dark={dark} />
+      </span>
       <span className="whitespace-nowrap text-[17px] font-medium tracking-[-0.01em] text-foreground/80 sm:text-[18px]">
         {mark.name}
       </span>
