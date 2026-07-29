@@ -243,6 +243,10 @@
   --border: oklch(0.25 0.02 150);
   --input: oklch(0.22 0.02 150);
   --ring: oklch(0.65 0.16 160);
+
+  /* Oxidized red — dark mode variant, slightly brighter for legibility */
+  --accent-oxidized: oklch(0.62 0.15 32);
+
   
   /* Verde Dark Gradients */
   --gradient-primary: linear-gradient(135deg, oklch(0.65 0.16 165) 0%, oklch(0.55 0.14 145) 100%);
