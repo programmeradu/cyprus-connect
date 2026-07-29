@@ -146,6 +146,35 @@ export default function Home() {
 
       <SectionDivider />
 
+      {/* VISION & ROADMAP BANNER */}
+      <section className="relative py-16 bg-muted/30 border-y border-border/40 overflow-hidden">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 rounded-3xl border border-border/80 bg-background/80 p-8 sm:p-10 backdrop-blur-xl shadow-sm">
+            <div className="max-w-2xl">
+              <span className="text-xs font-mono uppercase tracking-widest text-[var(--accent-lime-foreground)] bg-[var(--accent-lime)]/20 px-3 py-1 rounded-full font-semibold">
+                Strategic Roadmap 2026–2028
+              </span>
+              <h3 
+                className="text-2xl sm:text-4xl font-semibold mt-3 mb-2 text-foreground"
+                style={{ fontFamily: "var(--editorial-display)" }}
+              >
+                Discover the Autonomous ESG Vision
+              </h3>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                Learn how Vuneli is building an always-on fleet of digital FTEs to automate CBAM reporting, EAC bill ingestion, and Scope 3 supplier data across Cyprus.
+              </p>
+            </div>
+            <Link href="/vision" className="shrink-0">
+              <PremiumButton size="lg">
+                Explore Vision & Roadmap
+              </PremiumButton>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <SectionDivider />
+
 
 
       {/* INTEGRATIONS */}

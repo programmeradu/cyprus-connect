@@ -81,6 +81,9 @@ export function MarketingHeader() {
             <Link href="/learn" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("learn")}
             </Link>
+            <Link href="/vision" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
+              {tNav("vision")}
+            </Link>
             <Link href="/news" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("news")}
             </Link>
