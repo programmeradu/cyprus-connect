@@ -217,12 +217,13 @@
 
 
 .dark {
-  /* Premium Dark Mode with Verde Accents */
-  --background: oklch(0.12 0.01 150);
+  /* ChatGPT-inspired warm neutral grey */
+  --background: oklch(0.24 0.003 240);
   --foreground: oklch(0.97 0.005 140);
   
-  --card: oklch(0.17 0.015 150 / 0.95);
+  --card: oklch(0.28 0.004 240 / 0.95);
   --card-foreground: oklch(0.97 0.005 140);
+
   
   --popover: oklch(0.17 0.015 150);
   --popover-foreground: oklch(0.97 0.005 140);
