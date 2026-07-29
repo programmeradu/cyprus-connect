@@ -28,46 +28,55 @@ export function MarketingHeader() {
     <header
       className="group/header pointer-events-none fixed inset-x-0 top-4 z-50 px-4 sm:top-6 sm:px-6"
       style={{ fontFamily: "var(--editorial-sans)" }}
+      data-over-hero={!scrolled}
     >
-      {/* Wordmark — free-standing top-left */}
+      {/* Wordmark — free-standing top-left. Over the hero photo it stays white
+          (photo always carries a dark scrim). Once scrolled past the hero it
+          adopts the theme's foreground color. */}
       <Link
         href="/"
-        className="pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 text-[20px] font-semibold tracking-[-0.03em] text-foreground sm:left-8"
+        className={[
+          "pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 text-[20px] font-semibold tracking-[-0.03em] transition-colors duration-300 sm:left-8",
+          scrolled ? "text-foreground" : "text-white drop-shadow-[0_1px_12px_rgba(0,0,0,0.35)]",
+        ].join(" ")}
         style={{ fontFamily: "var(--editorial-display)" }}
       >
         Vuneli
       </Link>
 
-      {/* Dynamic-island pill — centered, fits its content */}
+      {/* Dynamic-island pill — centered, fits its content.
+          Over the hero: true frosted glass (no white wash), light text.
+          Scrolled: subtle tinted glass that respects the theme background. */}
       <div className="flex justify-center">
         <div
           className={[
             "pointer-events-auto flex items-center gap-1 rounded-full border px-2 py-1.5 transition-all duration-300",
             scrolled
-              ? "border-foreground/10 bg-background/85 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl"
-              : "border-foreground/10 bg-background/55 shadow-[0_8px_30px_-16px_rgba(0,0,0,0.35)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/40",
+              ? "border-foreground/10 bg-background/70 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-2xl backdrop-saturate-150 [text-shadow:none]"
+              : "border-white/25 bg-white/10 shadow-[0_8px_30px_-16px_rgba(0,0,0,0.45)] backdrop-blur-2xl backdrop-saturate-200 dark:border-white/15 dark:bg-white/[0.06]",
           ].join(" ")}
         >
           <nav className="hidden items-center md:flex">
-            <Link href="/tools" className="rounded-full px-3 py-1.5 text-[14px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+            <Link href="/tools" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
               {tNav("tools")}
             </Link>
-            <Link href="/learn" className="rounded-full px-3 py-1.5 text-[14px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+            <Link href="/learn" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
               {tNav("learn")}
             </Link>
-            <Link href="/news" className="rounded-full px-3 py-1.5 text-[14px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+            <Link href="/news" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
               {tNav("news")}
             </Link>
-            <Link href="/pricing" className="rounded-full px-3 py-1.5 text-[14px] font-medium text-foreground/80 transition-colors hover:text-foreground">
+            <Link href="/pricing" className={["rounded-full px-3 py-1.5 text-[14px] font-medium transition-colors", scrolled ? "text-foreground/80 hover:text-foreground" : "text-white/90 hover:text-white"].join(" ")}>
               {tNav("pricing")}
             </Link>
           </nav>
 
-          <span aria-hidden className="mx-1 hidden h-4 w-px bg-foreground/10 md:block" />
+          <span aria-hidden className={["mx-1 hidden h-4 w-px md:block", scrolled ? "bg-foreground/10" : "bg-white/25"].join(" ")} />
 
           <div className="relative flex shrink-0 items-center gap-0.5">
             <LanguageSwitcher />
             <ThemeToggle />
+
             {!isPending &&
               (session?.user ? (
                 <>
