@@ -117,8 +117,12 @@ export default function DashboardPage() {
     }
 
     if (!session?.user?.id) {
+      // TEMPORARY open access: no session, so stop the loading state and
+      // render the dashboard shell with empty data instead of spinning.
+      if (APP_OPEN_ACCESS) setIsLoading(false);
       return;
     }
+
 
     if (!hasCheckedOnboarding) {
       if (!contextUser || !contextUser.onboardingCompleted) {
