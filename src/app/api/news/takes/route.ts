@@ -86,6 +86,7 @@ export async function GET(request: Request) {
         generatedAt: Date.now(),
         sourceCount: items.length,
         fallback: true,
+        debug: `origin=${origin} feedOk=${feed.ok} hasKey=${Boolean(key)}`,
       });
     }
 
