@@ -65,7 +65,7 @@ export function NewsTicker() {
                 "linear-gradient(to right, transparent 0, #000 5%, #000 92%, transparent 100%)",
             }}
           >
-            <div className="flex min-w-max animate-[ticker_150s_linear_infinite] items-baseline gap-12 group-hover:[animation-play-state:paused]">
+            <div className="vuneli-ticker-track flex min-w-max items-baseline gap-12">
               {track.map((it, i) => {
                 const date = it.pubDate
                   ? new Date(it.pubDate).toLocaleDateString(locale, {
