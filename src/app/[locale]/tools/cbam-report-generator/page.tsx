@@ -6,7 +6,7 @@ import { getTool } from "@/data/tools";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import CbamReportGenerator from "@/components/tools/widgets/CbamReportGenerator";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "cbam-report-generator";
 
 export function generateStaticParams() {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1600, height: 900, alt: c.title }],
@@ -63,7 +63,7 @@ const COPY = {
       { label: "Indirect emissions", value: "In scope for cement, fertilisers, hydrogen and - from 2026 - some iron & steel goods per Annex III." },
       { label: "Effective carbon price", value: "Deducted per Article 9 - must be evidenced by a verified statement from the country of origin's carbon-pricing authority." },
       { label: "XML shape", value: "Aligns with the CBAM Transitional Registry quarterly report data model (v1). Draft namespace - do not submit directly; upload via the official Registry." },
-      { label: "Storage", value: "All values stay in your browser. Nothing is uploaded to VerdeIQ." },
+      { label: "Storage", value: "All values stay in your browser. Nothing is uploaded to Vuneli." },
     ] as MethodologyItem[],
     workedExampleHeading: "A Cyprus construction group importing rebar and cement",
     workedExampleBody:
@@ -77,12 +77,12 @@ const COPY = {
       { q: "Is the XML export a valid submission?", a: "No - it is a working draft that mirrors the Transitional Registry v1 data model to help you validate structure and completeness. Actual submission must be made via the official CBAM Transitional Registry portal." },
       { q: "Do indirect emissions count?", a: "For cement, fertilisers and hydrogen, yes. For iron & steel and aluminium, only direct emissions count during the transitional period. From 2026 onwards, indirect emissions are added for some iron & steel goods (Annex III)." },
       { q: "How do I get actual verified data from my supplier?", a: "Request the CBAM Communication Template (published by the European Commission) from every installation supplying you. It must be verified by an accredited verifier from 2026 - start collecting now: verifier capacity is already tight." },
-      { q: "How does this map to VerdeIQ?", a: "VerdeIQ automates the flow: supplier data collection with the CBAM Communication Template, verification workflows, quarterly aggregation, evidence trails and multi-installation consolidation. This tool is the manual version of one quarter." },
+      { q: "How does this map to Vuneli?", a: "Vuneli automates the flow: supplier data collection with the CBAM Communication Template, verification workflows, quarterly aggregation, evidence trails and multi-installation consolidation. This tool is the manual version of one quarter." },
     ] as FaqItem[],
     relatedHeading: "Related guides",
     ctaHeading: "Ready to manage CBAM at scale?",
-    ctaBody: "VerdeIQ collects verified supplier data, aggregates installations, produces audit-ready evidence trails and submits directly into the CBAM Transitional Registry.",
-    ctaAction: "Try VerdeIQ",
+    ctaBody: "Vuneli collects verified supplier data, aggregates installations, produces audit-ready evidence trails and submits directly into the CBAM Transitional Registry.",
+    ctaAction: "Try Vuneli",
   },
   el: {
     methodologyHeading: "Πώς κατασκευάζεται η αναφορά",
@@ -110,12 +110,12 @@ const COPY = {
       { q: "Είναι το XML έγκυρο για υποβολή;", a: "Όχι - είναι προσχέδιο εργασίας. Η επίσημη υποβολή γίνεται μέσω του CBAM Transitional Registry portal." },
       { q: "Μετρούν οι έμμεσες εκπομπές;", a: "Για τσιμέντο, λιπάσματα, υδρογόνο ναι. Για χάλυβα/αλουμίνιο μόνο άμεσες στη μεταβατική περίοδο." },
       { q: "Πώς παίρνω δεδομένα από προμηθευτή;", a: "Ζητήστε το CBAM Communication Template από κάθε εγκατάσταση. Θα πρέπει να επαληθεύεται από διαπιστευμένο επαληθευτή από το 2026 - ξεκινήστε τώρα." },
-      { q: "Πώς αντιστοιχεί στη VerdeIQ;", a: "Η VerdeIQ αυτοματοποιεί συλλογή δεδομένων προμηθευτών, ροές επαλήθευσης, τριμηνιαία συγκέντρωση και υποβολή στο Transitional Registry." },
+      { q: "Πώς αντιστοιχεί στη Vuneli;", a: "Η Vuneli αυτοματοποιεί συλλογή δεδομένων προμηθευτών, ροές επαλήθευσης, τριμηνιαία συγκέντρωση και υποβολή στο Transitional Registry." },
     ] as FaqItem[],
     relatedHeading: "Σχετικοί οδηγοί",
     ctaHeading: "Έτοιμοι για CBAM σε κλίμακα;",
-    ctaBody: "Η VerdeIQ συλλέγει επαληθευμένα δεδομένα προμηθευτών, συγκεντρώνει εγκαταστάσεις και υποβάλλει απευθείας στο CBAM Transitional Registry.",
-    ctaAction: "Δοκιμάστε το VerdeIQ",
+    ctaBody: "Η Vuneli συλλέγει επαληθευμένα δεδομένα προμηθευτών, συγκεντρώνει εγκαταστάσεις και υποβάλλει απευθείας στο CBAM Transitional Registry.",
+    ctaAction: "Δοκιμάστε το Vuneli",
   },
 } as const;
 
@@ -142,7 +142,7 @@ export default async function CbamReportGeneratorPage({ params }: { params: Prom
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-    publisher: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
   const howToLd = {
@@ -170,7 +170,7 @@ export default async function CbamReportGeneratorPage({ params }: { params: Prom
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
       { "@type": "ListItem", position: 3, name: c.title, item: url },
     ],

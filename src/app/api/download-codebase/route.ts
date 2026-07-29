@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(readable, {
       headers: {
         "Content-Type": "application/zip",
-        "Content-Disposition": `attachment; filename="verdeiq-codebase-${Date.now()}.zip"`
+        "Content-Disposition": `attachment; filename="vuneli-codebase-${Date.now()}.zip"`
       }
     });
   } catch (error) {

@@ -155,13 +155,13 @@ export function SiteFooter() {
             <Link
               href={`/${locale}`}
               className="inline-flex items-center gap-3"
-              aria-label="VerdeIQ home"
+              aria-label="Vuneli home"
             >
               <span
                 className="text-2xl tracking-tight text-white sm:text-[26px]"
                 style={{ fontFamily: "var(--editorial-serif)", fontWeight: 500 }}
               >
-                VerdeIQ
+                Vuneli
               </span>
             </Link>
             <h2
@@ -350,10 +350,10 @@ export function SiteFooter() {
           <div className="flex items-center gap-5">
             <span className="hidden sm:inline">{t.made}</span>
             <span aria-hidden className="hidden h-3 w-px bg-white/20 sm:inline-block" />
-            <a href="https://www.linkedin.com/company/verdeiq" target="_blank" rel="noopener noreferrer" className="hover:text-white" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/company/vuneli" target="_blank" rel="noopener noreferrer" className="hover:text-white" aria-label="LinkedIn">
               LinkedIn
             </a>
-            <a href="https://x.com/verdeiq" target="_blank" rel="noopener noreferrer" className="hover:text-white" aria-label="X">
+            <a href="https://x.com/vuneli" target="_blank" rel="noopener noreferrer" className="hover:text-white" aria-label="X">
               X
             </a>
           </div>

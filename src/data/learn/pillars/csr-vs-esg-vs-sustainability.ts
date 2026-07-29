@@ -45,7 +45,7 @@ export const csrVsEsgVsSustainability = makePillar({
       { q: "Should we still talk about CSR?", a: "Yes, but for the right audience - community, employees, culture. External regulators care about ESG data, not CSR reports." },
     ],
     ctaHeading: "Turn ESG data into a sustainability story",
-    ctaBody: "VerdeIQ combines defensible ESG metrics with narrative reporting so investors, customers, and employees each get what they need.",
+    ctaBody: "Vuneli combines defensible ESG metrics with narrative reporting so investors, customers, and employees each get what they need.",
   },
   el: {
     title: "CSR vs ESG vs Βιωσιμότητα: Οι Διαφορές",
@@ -71,6 +71,6 @@ export const csrVsEsgVsSustainability = makePillar({
       { q: "CSR ακόμα;", a: "Ναι, για κοινότητα/εργαζόμενους. Οι ρυθμιστές θέλουν ESG." },
     ],
     ctaHeading: "Από ESG δεδομένα σε αφήγηση βιωσιμότητας",
-    ctaBody: "Η VerdeIQ συνδυάζει μετρικές με αναφορά για επενδυτές και πελάτες.",
+    ctaBody: "Η Vuneli συνδυάζει μετρικές με αναφορά για επενδυτές και πελάτες.",
   },
 });

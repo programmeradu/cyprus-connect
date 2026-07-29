@@ -59,7 +59,7 @@ export const sustainabilityKpisForSmes = makePillar({
     }
   ],
   "ctaHeading": "Twelve KPIs, one dashboard, ready for every questionnaire",
-  "ctaBody": "VerdeIQ ships with an SME-tuned KPI dashboard mapped to VSME, bank ESG questionnaires, and CSRD cascades."
+  "ctaBody": "Vuneli ships with an SME-tuned KPI dashboard mapped to VSME, bank ESG questionnaires, and CSRD cascades."
 },
   el: {
   "title": "KPIs Βιωσιμότητας για ΜμΕ: Τι να Παρακολουθείτε",
@@ -113,6 +113,6 @@ export const sustainabilityKpisForSmes = makePillar({
     }
   ],
   "ctaHeading": "12 KPIs, ένα dashboard",
-  "ctaBody": "Η VerdeIQ έρχεται με SME dashboard."
+  "ctaBody": "Η Vuneli έρχεται με SME dashboard."
 },
 });

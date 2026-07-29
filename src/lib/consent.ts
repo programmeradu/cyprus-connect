@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-export const CONSENT_STORAGE_KEY = "verdeiq_cookie_consent_v1";
-export const CONSENT_CHANGED_EVENT = "verdeiq:consent-changed";
+export const CONSENT_STORAGE_KEY = "vuneli_cookie_consent_v1";
+export const CONSENT_CHANGED_EVENT = "vuneli:consent-changed";
 
 export type ConsentChoice = "accepted" | "necessary" | null;
 

@@ -1,4 +1,4 @@
-// Cyprus-only location profile. VerdeIQ is now localized for Cyprus SMEs.
+// Cyprus-only location profile. Vuneli is now localized for Cyprus SMEs.
 export interface GeolocationData {
   country: string;
   countryCode: string;

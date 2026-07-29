@@ -13,14 +13,14 @@ type Consent = "accepted" | "necessary";
 const COPY = {
   en: {
     title: "We value your privacy",
-    body: "VerdeIQ uses strictly-necessary cookies to keep you signed in and remember your language. With your consent we also use analytics cookies to improve the product. You can change your choice any time from the footer.",
+    body: "Vuneli uses strictly-necessary cookies to keep you signed in and remember your language. With your consent we also use analytics cookies to improve the product. You can change your choice any time from the footer.",
     accept: "Accept all",
     necessary: "Necessary only",
     manage: "Privacy Policy",
   },
   el: {
     title: "Σεβόμαστε την ιδιωτικότητά σας",
-    body: "Το VerdeIQ χρησιμοποιεί απολύτως απαραίτητα cookies για ταυτοποίηση και γλώσσα. Με τη συγκατάθεσή σας χρησιμοποιούμε επίσης analytics cookies για βελτίωση του προϊόντος. Μπορείτε να αλλάξετε την επιλογή σας οποτεδήποτε από το footer.",
+    body: "Το Vuneli χρησιμοποιεί απολύτως απαραίτητα cookies για ταυτοποίηση και γλώσσα. Με τη συγκατάθεσή σας χρησιμοποιούμε επίσης analytics cookies για βελτίωση του προϊόντος. Μπορείτε να αλλάξετε την επιλογή σας οποτεδήποτε από το footer.",
     accept: "Αποδοχή όλων",
     necessary: "Μόνο τα απαραίτητα",
     manage: "Πολιτική Απορρήτου",
@@ -39,8 +39,8 @@ export function CookieBanner() {
       /* storage unavailable */
     }
     const handler = () => setVisible(true);
-    window.addEventListener("verdeiq:open-cookie-banner", handler);
-    return () => window.removeEventListener("verdeiq:open-cookie-banner", handler);
+    window.addEventListener("vuneli:open-cookie-banner", handler);
+    return () => window.removeEventListener("vuneli:open-cookie-banner", handler);
   }, []);
 
   const choose = (c: Consent) => {
@@ -90,5 +90,5 @@ export function CookieBanner() {
 
 export function reopenCookieBanner() {
   clearConsentState();
-  window.dispatchEvent(new Event("verdeiq:open-cookie-banner"));
+  window.dispatchEvent(new Event("vuneli:open-cookie-banner"));
 }

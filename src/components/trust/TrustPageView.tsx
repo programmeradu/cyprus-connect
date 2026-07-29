@@ -2,7 +2,7 @@ import Link from "next/link";
 import { routing, type Locale } from "@/i18n/routing";
 import { getTrustContent, type TrustPageKey } from "@/content/trust";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 const NAV_LABELS: Record<Locale, { privacy: string; terms: string; security: string; dpa: string; back: string; updated: string }> = {
   en: { privacy: "Privacy", terms: "Terms", security: "Security", dpa: "DPA", back: "Back to home", updated: "Last updated" },
@@ -20,7 +20,7 @@ export function TrustPageView({ locale, page }: { locale: Locale; page: TrustPag
       <header className="border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
           <Link href={`/${locale}`} className="text-sm font-semibold tracking-tight" style={{ fontFamily: "var(--editorial-serif)" }}>
-            VerdeIQ
+            Vuneli
           </Link>
           <Link
             href={`/${locale}`}
@@ -100,7 +100,7 @@ export function trustMetadataFor(locale: Locale, page: TrustPageKey) {
     languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/${page}`;
   }
   languages["x-default"] = `${SITE_URL}/${routing.defaultLocale}/${page}`;
-  const title = `${c.title} - VerdeIQ`;
+  const title = `${c.title} - Vuneli`;
   return {
     title,
     description: c.intro.slice(0, 155),
@@ -112,7 +112,7 @@ export function trustMetadataFor(locale: Locale, page: TrustPageKey) {
       title,
       description: c.intro.slice(0, 155),
       url: `${SITE_URL}/${locale}/${page}`,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: locale === "el" ? "el_CY" : "en_US",
       alternateLocale: locale === "el" ? ["en_US"] : ["el_CY"],
       type: "article" as const,

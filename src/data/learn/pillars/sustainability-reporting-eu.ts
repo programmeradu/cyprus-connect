@@ -65,7 +65,7 @@ export const sustainabilityReportingEu = makePillar({
     }
   ],
   "ctaHeading": "One data model for every EU reporting framework",
-  "ctaBody": "VerdeIQ consolidates CSRD, SFDR, Taxonomy, CBAM, and CSDDD data flows so you enter each value once and export to any framework."
+  "ctaBody": "Vuneli consolidates CSRD, SFDR, Taxonomy, CBAM, and CSDDD data flows so you enter each value once and export to any framework."
 },
   el: {
   "title": "Αναφορά Βιωσιμότητας στην ΕΕ: Πλήρης Χάρτης Πλαισίων",
@@ -125,6 +125,6 @@ export const sustainabilityReportingEu = makePillar({
     }
   ],
   "ctaHeading": "Ένα μοντέλο δεδομένων για κάθε πλαίσιο ΕΕ",
-  "ctaBody": "Η VerdeIQ ενοποιεί CSRD, SFDR, Ταξινομία, CBAM, CSDDD."
+  "ctaBody": "Η Vuneli ενοποιεί CSRD, SFDR, Ταξινομία, CBAM, CSDDD."
 },
 });

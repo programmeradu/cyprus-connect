@@ -68,7 +68,7 @@ export function EnergyCostCalculator() {
   // Check if user has access to real-time climate data
   const hasRealtimeDataAccess = plan.id === 'pro' || plan.id === 'enterprise';
 
-  // VerdeIQ is Cyprus-only: use the Cyprus grid profile regardless of IP/user country.
+  // Vuneli is Cyprus-only: use the Cyprus grid profile regardless of IP/user country.
   useEffect(() => {
     const zoneData = getEnergyZoneData('CY');
     setUserZone(zoneData.zone);

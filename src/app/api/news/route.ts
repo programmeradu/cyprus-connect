@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 
     const response = await fetch(feedUrl, {
       headers: {
-        'User-Agent': 'VerdeIQ/1.0'
+        'User-Agent': 'Vuneli/1.0'
       }
     });
 
@@ -179,7 +179,7 @@ export async function GET(request: Request) {
           method: 'HEAD',
           redirect: 'follow',
           signal: ctrl.signal,
-          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VerdeIQ/1.0)' },
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Vuneli/1.0)' },
         });
         // Some CDNs reject HEAD — fall back to a tiny ranged GET
         if (!res.ok || res.status === 405) {
@@ -188,7 +188,7 @@ export async function GET(request: Request) {
             redirect: 'follow',
             signal: ctrl.signal,
             headers: {
-              'User-Agent': 'Mozilla/5.0 (compatible; VerdeIQ/1.0)',
+              'User-Agent': 'Mozilla/5.0 (compatible; Vuneli/1.0)',
               'Range': 'bytes=0-1023',
             },
           });
@@ -210,7 +210,7 @@ export async function GET(request: Request) {
           redirect: 'follow',
           signal: ctrl.signal,
           headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; VerdeIQ/1.0; +https://verdeiq.stauniverse.tech)',
+            'User-Agent': 'Mozilla/5.0 (compatible; Vuneli/1.0; +https://vuneli.com)',
             'Accept': 'text/html,application/xhtml+xml',
           },
         });

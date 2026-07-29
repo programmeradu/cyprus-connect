@@ -6,9 +6,9 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 // Shared secret gate. The GitHub Actions cron passes ?secret=... or the
-// x-cron-secret header. Defaults to the same VerdeIQ admin secret used by
+// x-cron-secret header. Defaults to the same Vuneli admin secret used by
 // the migration route for parity.
-const DEFAULT_SECRET = "verdeiq-cron-grant-alerts-2026-cy";
+const DEFAULT_SECRET = "vuneli-cron-grant-alerts-2026-cy";
 
 function authorized(req: NextRequest): boolean {
   const expected = process.env.CRON_SECRET || DEFAULT_SECRET;

@@ -73,7 +73,7 @@ export const esrsStandardsExplained = makePillar({
     }
   ],
   "ctaHeading": "ESRS-native reporting with datapoint-level coverage",
-  "ctaBody": "VerdeIQ maps every disclosure to its ESRS datapoint ID, tracks completeness, and exports XBRL — so your CSRD file assembles itself."
+  "ctaBody": "Vuneli maps every disclosure to its ESRS datapoint ID, tracks completeness, and exports XBRL — so your CSRD file assembles itself."
 },
   el: {
   "title": "Τα Πρότυπα ESRS: Οι Δώδεκα Δομικοί Λίθοι του CSRD",
@@ -134,6 +134,6 @@ export const esrsStandardsExplained = makePillar({
     }
   ],
   "ctaHeading": "Αναφορές ESRS με κάλυψη σε επίπεδο datapoint",
-  "ctaBody": "Η VerdeIQ αντιστοιχίζει κάθε γνωστοποίηση, παρακολουθεί πληρότητα, εξάγει XBRL."
+  "ctaBody": "Η Vuneli αντιστοιχίζει κάθε γνωστοποίηση, παρακολουθεί πληρότητα, εξάγει XBRL."
 },
 });

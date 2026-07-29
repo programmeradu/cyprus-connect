@@ -1,10 +1,10 @@
-# VerdeIQ - AI-Powered Sustainability Platform for SMEs
+# Vuneli - AI-Powered Sustainability Platform for SMEs
 
-![VerdeIQ](https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/Generated-Image-November-18-2025-9_00AM-1763475288118.png)
+![Vuneli](https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/Generated-Image-November-18-2025-9_00AM-1763475288118.png)
 
 ## 🌱 Overview
 
-VerdeIQ is a comprehensive AI-powered sustainability platform designed specifically for Small and Medium Enterprises (SMEs). We empower businesses to track, optimize, and report their environmental impact with cutting-edge technology and actionable insights.
+Vuneli is a comprehensive AI-powered sustainability platform designed specifically for Small and Medium Enterprises (SMEs). We empower businesses to track, optimize, and report their environmental impact with cutting-edge technology and actionable insights.
 
 ### Key Features
 
@@ -30,8 +30,8 @@ VerdeIQ is a comprehensive AI-powered sustainability platform designed specifica
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/verdeiq.git
-cd verdeiq
+git clone https://github.com/yourusername/vuneli.git
+cd vuneli
 ```
 
 2. **Install dependencies**
@@ -65,12 +65,12 @@ npm run dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see VerdeIQ in action! 🎉
+Open [http://localhost:3000](http://localhost:3000) to see Vuneli in action! 🎉
 
 ## 📁 Project Structure
 
 ```
-verdeiq/
+vuneli/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   │   ├── page.tsx           # Landing page
@@ -197,7 +197,7 @@ verdeiq/
 
 ## 🎓 Learning Resources
 
-VerdeIQ includes a comprehensive AI-powered learning management system (LMS) that generates personalized sustainability courses:
+Vuneli includes a comprehensive AI-powered learning management system (LMS) that generates personalized sustainability courses:
 
 - Industry-specific content
 - Video lessons with AI generation
@@ -207,7 +207,7 @@ VerdeIQ includes a comprehensive AI-powered learning management system (LMS) tha
 
 ## 🏆 Gamification
 
-Motivate your team with VerdeIQ's gamification features:
+Motivate your team with Vuneli's gamification features:
 
 - **Credits System** - Earn credits for sustainable actions
 - **Leaderboard** - Compete with other users and companies
@@ -234,8 +234,8 @@ Motivate your team with VerdeIQ's gamification features:
 ### Docker
 
 ```bash
-docker build -t verdeiq .
-docker run -p 3000:3000 verdeiq
+docker build -t vuneli .
+docker run -p 3000:3000 vuneli
 ```
 
 
@@ -255,6 +255,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Built with ❤️ by the VerdeIQ Team**
+**Built with ❤️ by the Vuneli Team**
 
 *Empowering SMEs to lead on sustainability*

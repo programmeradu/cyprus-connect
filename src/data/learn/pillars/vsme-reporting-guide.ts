@@ -87,7 +87,7 @@ export const vsmeReportingGuide = makePillar({
     ],
     ctaHeading: "Publish a VSME report in weeks, not months",
     ctaBody:
-      "VerdeIQ generates a compliant VSME Basic or Comprehensive report from your energy bills and HR data — no consultants, no spreadsheets. Share it with every customer and bank in one link.",
+      "Vuneli generates a compliant VSME Basic or Comprehensive report from your energy bills and HR data — no consultants, no spreadsheets. Share it with every customer and bank in one link.",
   },
   el: {
     title: "Πρότυπο VSME: Ο Οδηγός ΜμΕ για Αναλογική ESG Αναφορά",
@@ -169,6 +169,6 @@ export const vsmeReportingGuide = makePillar({
     ],
     ctaHeading: "Δημοσιεύστε αναφορά VSME σε εβδομάδες",
     ctaBody:
-      "Η VerdeIQ παράγει συμμορφούμενη αναφορά VSME (Βασική ή Περιεκτική) από τους λογαριασμούς ενέργειας και τα HR δεδομένα σας — χωρίς συμβούλους.",
+      "Η Vuneli παράγει συμμορφούμενη αναφορά VSME (Βασική ή Περιεκτική) από τους λογαριασμούς ενέργειας και τα HR δεδομένα σας — χωρίς συμβούλους.",
   },
 });

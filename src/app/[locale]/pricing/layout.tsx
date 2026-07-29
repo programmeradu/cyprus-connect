@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export async function generateMetadata({
@@ -37,7 +37,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${SITE_URL}/${safeLocale}/pricing`,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       alternateLocale: safeLocale === "el" ? ["en_US"] : ["el_CY"],
       type: "website",

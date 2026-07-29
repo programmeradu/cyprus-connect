@@ -1,8 +1,8 @@
-# VerdeIQ App - Developer Handoff Documentation
+# Vuneli App - Developer Handoff Documentation
 
 ## 🎉 Project Status: Complete
 
-All core features of the VerdeIQ sustainability dashboard have been successfully implemented with a premium, modern UI design.
+All core features of the Vuneli sustainability dashboard have been successfully implemented with a premium, modern UI design.
 
 ---
 
@@ -410,4 +410,4 @@ This is a **production-ready UI** with:
 ---
 
 *Built with ❤️ for the GEF2025 Hackathon*
-*VerdeIQ - Empowering SMEs to Lead on Sustainability*
+*Vuneli - Empowering SMEs to Lead on Sustainability*

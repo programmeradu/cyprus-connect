@@ -7,7 +7,7 @@ import path from "path";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const MIGRATION_SECRET = "verdeiq-migrate-cy-2026-a91f";
+const MIGRATION_SECRET = "vuneli-migrate-cy-2026-a91f";
 
 async function runMigrations() {
   const url = process.env.SUPABASE_DATABASE_URL;

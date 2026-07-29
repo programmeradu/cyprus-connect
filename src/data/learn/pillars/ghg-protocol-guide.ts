@@ -61,7 +61,7 @@ export const ghgProtocolGuide = makePillar({
     }
   ],
   "ctaHeading": "GHG Protocol-compliant carbon accounting out of the box",
-  "ctaBody": "VerdeIQ applies the Corporate Standard automatically — including base-year handling, recalculation logic, and Scope 2 dual reporting."
+  "ctaBody": "Vuneli applies the Corporate Standard automatically — including base-year handling, recalculation logic, and Scope 2 dual reporting."
 },
   el: {
   "title": "GHG Protocol: Πρακτικός Οδηγός",
@@ -117,6 +117,6 @@ export const ghgProtocolGuide = makePillar({
     }
   ],
   "ctaHeading": "Λογιστική συμβατή με GHG Protocol",
-  "ctaBody": "Η VerdeIQ εφαρμόζει αυτόματα το πρότυπο."
+  "ctaBody": "Η Vuneli εφαρμόζει αυτόματα το πρότυπο."
 },
 });

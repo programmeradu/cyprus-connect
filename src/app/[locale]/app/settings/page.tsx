@@ -408,7 +408,7 @@ function SettingsContent() {
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">EUR €</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-2">
-                  VerdeIQ is Cyprus-native. Jurisdiction, currency, timezone and emission factors are fixed to Cyprus.
+                  Vuneli is Cyprus-native. Jurisdiction, currency, timezone and emission factors are fixed to Cyprus.
                 </p>
               </div>
             </div>

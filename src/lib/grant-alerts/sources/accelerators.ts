@@ -30,7 +30,7 @@ export async function fetchAcceleratorOpportunities(): Promise<RawOpportunity[]>
   for (const feed of FEEDS) {
     try {
       const res = await fetch(feed.url, {
-        headers: { "User-Agent": "VerdeIQ-GrantAlerts/1.0" },
+        headers: { "User-Agent": "Vuneli-GrantAlerts/1.0" },
         cache: "no-store",
       });
       if (!res.ok) continue;

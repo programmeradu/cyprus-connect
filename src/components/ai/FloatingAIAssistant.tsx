@@ -8,7 +8,7 @@ type Message = { role: "user" | "assistant"; text: string };
 
 const COPY = {
   en: {
-    open: "Ask VerdeIQ",
+    open: "Ask Vuneli",
     title: "Verde",
     subtitle: "Sustainability co-pilot",
     placeholder: "Ask about CBAM, CSRD, VSME, energy…",
@@ -20,7 +20,7 @@ const COPY = {
     error: "Something went wrong. Try again.",
   },
   el: {
-    open: "Ρωτήστε τη VerdeIQ",
+    open: "Ρωτήστε τη Vuneli",
     title: "Verde",
     subtitle: "Σύμβουλος βιωσιμότητας",
     placeholder: "Ρωτήστε για CBAM, CSRD, VSME, ενέργεια…",
@@ -34,7 +34,7 @@ const COPY = {
 } as const;
 
 const SYSTEM_CONTEXT =
-  "You are Verde, VerdeIQ's sustainability co-pilot. Help SMEs — especially Cyprus and EU businesses — with CBAM, CSRD, VSME, EU Taxonomy, GHG Protocol scopes, and carbon reduction. Be concise, editorial, and specific. Never invent regulations. Answer in the same language as the user's message.";
+  "You are Verde, Vuneli's sustainability co-pilot. Help SMEs — especially Cyprus and EU businesses — with CBAM, CSRD, VSME, EU Taxonomy, GHG Protocol scopes, and carbon reduction. Be concise, editorial, and specific. Never invent regulations. Answer in the same language as the user's message.";
 
 /**
  * FloatingAIAssistant — bottom-right chat on marketing pages.

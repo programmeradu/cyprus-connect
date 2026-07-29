@@ -37,7 +37,7 @@ const TARGETS: ScrapeConfig[] = [
 async function scrapeOne(cfg: ScrapeConfig): Promise<RawOpportunity[]> {
   try {
     const res = await fetch(cfg.url, {
-      headers: { "User-Agent": "VerdeIQ-GrantAlerts/1.0 (+https://verdeiq.stauniverse.tech)" },
+      headers: { "User-Agent": "Vuneli-GrantAlerts/1.0 (+https://vuneli.com)" },
       cache: "no-store",
     });
     if (!res.ok) return [];

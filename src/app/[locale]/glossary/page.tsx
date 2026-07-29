@@ -6,7 +6,7 @@ import { routing } from "@/i18n/routing";
 import { GLOSSARY, type GlossaryEntry } from "@/data/learn/glossary";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { locale } = await params;
   const isEl = locale === "el";
   const title = isEl
-    ? "Γλωσσάρι Βιωσιμότητας & ESG | VerdeIQ"
-    : "Sustainability & ESG Glossary | VerdeIQ";
+    ? "Γλωσσάρι Βιωσιμότητας & ESG | Vuneli"
+    : "Sustainability & ESG Glossary | Vuneli";
   const description = isEl
     ? "Ορισμοί όρων για CSRD, CBAM, Scope 1/2/3, EU Taxonomy και άλλα - γραμμένοι για ΜμΕ."
     : "Plain-English definitions for CSRD, CBAM, Scope 1/2/3, EU Taxonomy and more - written for SMEs.";
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title, description,
     alternates: { canonical: url, languages },
-    openGraph: { title, description, url, siteName: "VerdeIQ", type: "website",
+    openGraph: { title, description, url, siteName: "Vuneli", type: "website",
       locale: isEl ? "el_CY" : "en_US" },
   };
 }

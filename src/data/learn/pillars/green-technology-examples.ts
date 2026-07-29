@@ -37,7 +37,7 @@ export const greenTechnologyExamples = makePillar({
         "Precision agriculture and variable-rate fertiliser - cutting N₂O and input costs simultaneously.",
         "Green steel via hydrogen DRI - SSAB and H2 Green Steel shipping first tonnes to European automakers."] },
       { heading: "Software and data", body: [
-        "Carbon accounting and ESG reporting software - including VerdeIQ - turning compliance into measurable reduction.",
+        "Carbon accounting and ESG reporting software - including Vuneli - turning compliance into measurable reduction.",
         "Grid-optimisation software - shifting industrial load to renewable hours."] },
     ],
     keyTakeaways: [
@@ -52,7 +52,7 @@ export const greenTechnologyExamples = makePillar({
       { q: "Does 'green' technology actually reduce emissions?", a: "The examples above have measurable, third-party-verified lifecycle emissions well below the fossil incumbents they replace." },
     ],
     ctaHeading: "Track the impact of every green tech deployment",
-    ctaBody: "VerdeIQ measures emission reductions from your green tech investments in real time so you can prove ROI and reduce financing cost.",
+    ctaBody: "Vuneli measures emission reductions from your green tech investments in real time so you can prove ROI and reduce financing cost.",
   },
   el: {
     title: "Πράσινη Τεχνολογία: 12 Πραγματικά Παραδείγματα",
@@ -70,7 +70,7 @@ export const greenTechnologyExamples = makePillar({
       { heading: "Κτίρια & θέρμανση", body: ["Αντλίες θερμότητας (3-5× πιο αποδοτικές).", "Έξυπνοι έλεγχοι BMS (-15-30%).", "Ανακαινίσεις passive-house."] },
       { heading: "Μεταφορές", body: ["EV - φθηνότερα σε TCO.", "eBikes για last-mile.", "SAF στις πτήσεις."] },
       { heading: "Βιομηχανία & γεωργία", body: ["DAC (Climeworks).", "Ακριβής γεωργία.", "Πράσινος χάλυβας με H₂."] },
-      { heading: "Λογισμικό", body: ["Carbon accounting/ESG (VerdeIQ).", "Grid optimisation."] },
+      { heading: "Λογισμικό", body: ["Carbon accounting/ESG (Vuneli).", "Grid optimisation."] },
     ],
     keyTakeaways: ["Εμπορικές σήμερα.", "ΜμΕ: αντλίες, ΦΒ, EV.", "Το λογισμικό ξεκλειδώνει μειώσεις.", "Η₂/DAC από πιλότο σε εμπορικό."],
     faq: [
@@ -79,6 +79,6 @@ export const greenTechnologyExamples = makePillar({
       { q: "Μειώνουν πράγματι;", a: "Ναι - επαληθευμένος κύκλος ζωής." },
     ],
     ctaHeading: "Μετρήστε τον αντίκτυπο κάθε επένδυσης",
-    ctaBody: "Η VerdeIQ αποδεικνύει ROI για πράσινες επενδύσεις.",
+    ctaBody: "Η Vuneli αποδεικνύει ROI για πράσινες επενδύσεις.",
   },
 });

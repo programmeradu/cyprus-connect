@@ -1,5 +1,5 @@
 ---
-name: VerdeIQ typography — pending replacement
+name: Vuneli typography — pending replacement
 description: Current locked pairing (Fraunces + Instrument Sans) plus the open action item to replace Fraunces with a licensed/self-hosted display face
 type: design
 ---

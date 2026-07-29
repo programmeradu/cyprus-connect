@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         emailBody = generateReportEmail(recipientName, data);
         break;
       default:
-        emailBody = `Hello ${recipientName},\n\n${data.message || 'You have a new notification from VerdeIQ.'}\n\nBest regards,\nThe VerdeIQ Team`;
+        emailBody = `Hello ${recipientName},\n\n${data.message || 'You have a new notification from Vuneli.'}\n\nBest regards,\nThe Vuneli Team`;
     }
 
     // In production, integrate with email service (SendGrid, AWS SES, Resend, etc.)
@@ -127,13 +127,13 @@ ${data.message || 'Keep up the excellent work in making your business more susta
 
 Your dedication to sustainability is making a real impact. Continue tracking your progress and exploring new ways to reduce your carbon footprint.
 
-View your full dashboard: https://verdeiq.com/app
+View your full dashboard: https://vuneli.com/app
 
 Best regards,
-The VerdeIQ Team
+The Vuneli Team
 
 ---
-This is an automated notification from VerdeIQ. To manage your notification preferences, visit your account settings.
+This is an automated notification from Vuneli. To manage your notification preferences, visit your account settings.
   `.trim();
 }
 
@@ -152,10 +152,10 @@ Total Credits: ${data.currentCredits || 0}
 
 Keep pushing forward and continue making a difference!
 
-View your achievements: https://verdeiq.com/app/actions
+View your achievements: https://vuneli.com/app/actions
 
 Best regards,
-The VerdeIQ Team
+The Vuneli Team
   `.trim();
 }
 
@@ -163,7 +163,7 @@ function generateReminderEmail(name: string, data: any): string {
   return `
 Hi ${name},
 
-⏰ Friendly Reminder from VerdeIQ
+⏰ Friendly Reminder from Vuneli
 
 ${data.message || 'This is a reminder about your sustainability tracking.'}
 
@@ -174,10 +174,10 @@ Don't forget to:
 
 Stay on track with your sustainability goals!
 
-Go to Dashboard: https://verdeiq.com/app
+Go to Dashboard: https://vuneli.com/app
 
 Best regards,
-The VerdeIQ Team
+The Vuneli Team
   `.trim();
 }
 
@@ -195,9 +195,9 @@ Credits Earned: ${data.creditsEarned || 'N/A'}
 
 Download your report or view it in your dashboard.
 
-View Report: https://verdeiq.com/app/analytics
+View Report: https://vuneli.com/app/analytics
 
 Best regards,
-The VerdeIQ Team
+The Vuneli Team
   `.trim();
 }

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ SBTi Target Setter - bilingual guided form producing an
+ * Vuneli SBTi Target Setter - bilingual guided form producing an
  * SBTi Near-Term Target draft, exportable as PDF (window.print), JSON, CSV.
  *
  * Method: SBTi Corporate Net-Zero Standard v1.2 + Near-Term Criteria v5.1.
@@ -197,7 +197,7 @@ const TOTAL_STEPS = 4;
 
 export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
   const l = T[locale];
-  const [inputs, setInputs] = usePersistedState<Inputs>("verdeiq.tool.sbti", DEFAULT_INPUTS);
+  const [inputs, setInputs] = usePersistedState<Inputs>("vuneli.tool.sbti", DEFAULT_INPUTS);
   const [step, setStep] = useState(0);
 
   const set = <K extends keyof Inputs>(k: K, v: Inputs[K]) => setInputs((p) => ({ ...p, [k]: v }));
@@ -233,7 +233,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
     const blob = new Blob([JSON.stringify({ tool: "sbti-target-setter", generatedAt: new Date().toISOString(), inputs, result }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "verdeiq-sbti-target.json"; a.click();
+    a.href = url; a.download = "vuneli-sbti-target.json"; a.click();
     URL.revokeObjectURL(url);
   };
   const downloadCsv = () => {
@@ -244,7 +244,7 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
     const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "verdeiq-sbti-pathway.csv"; a.click();
+    a.href = url; a.download = "vuneli-sbti-pathway.csv"; a.click();
     URL.revokeObjectURL(url);
   };
 

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Build comprehensive context from user data
     const dataContext = `
-You are a sustainability advisor for VerdeIQ, providing personalized insights for SMEs.
+You are a sustainability advisor for Vuneli, providing personalized insights for SMEs.
 
 USER PROFILE:
 - Company: ${userProfile?.companyName || "SME"}

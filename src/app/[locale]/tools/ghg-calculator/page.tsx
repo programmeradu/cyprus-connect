@@ -8,7 +8,7 @@ import { COUNTRIES } from "@/data/tools/countries";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import GhgCalculator from "@/components/tools/widgets/GhgCalculator";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "ghg-calculator";
 
 export function generateStaticParams() {
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1600, height: 900, alt: c.title }],
@@ -108,8 +108,8 @@ const COPY = {
     relatedHeading: "Related guides",
     ctaHeading: "Ready to move beyond a calculator?",
     ctaBody:
-      "VerdeIQ centralises your GHG inventory, CBAM filings and CSRD disclosures in one audit-ready platform - with supplier data collection, evidence trails and role-based permissions.",
-    ctaAction: "Try VerdeIQ",
+      "Vuneli centralises your GHG inventory, CBAM filings and CSRD disclosures in one audit-ready platform - with supplier data collection, evidence trails and role-based permissions.",
+    ctaAction: "Try Vuneli",
   },
   el: {
     methodologyHeading: "Πώς υπολογίζονται οι αριθμοί",
@@ -162,8 +162,8 @@ const COPY = {
     relatedHeading: "Σχετικοί οδηγοί",
     ctaHeading: "Έτοιμοι για κάτι περισσότερο από έναν υπολογιστή;",
     ctaBody:
-      "Η VerdeIQ ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε μία πλατφόρμα έτοιμη για έλεγχο - με συλλογή δεδομένων προμηθευτών, αποδεικτικά και δικαιώματα ρόλων.",
-    ctaAction: "Δοκιμάστε το VerdeIQ",
+      "Η Vuneli ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε μία πλατφόρμα έτοιμη για έλεγχο - με συλλογή δεδομένων προμηθευτών, αποδεικτικά και δικαιώματα ρόλων.",
+    ctaAction: "Δοκιμάστε το Vuneli",
   },
 } as const;
 
@@ -190,7 +190,7 @@ export default async function GhgCalculatorPage({ params }: { params: Promise<{ 
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-    publisher: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
   const howToLd = {
@@ -218,7 +218,7 @@ export default async function GhgCalculatorPage({ params }: { params: Promise<{ 
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
       { "@type": "ListItem", position: 3, name: c.title, item: url },
     ],

@@ -1,5 +1,5 @@
 {
-    "name": "verdeiq",
+    "name": "vuneli",
     "version": "1.0.0",
     "description": "AI-Powered Sustainability Platform for SMEs - Track, optimize, and report your environmental impact effortlessly",
     "private": true,
@@ -156,15 +156,15 @@
         "CSRD",
         "climate-tech",
         "green-tech",
-        "verdeiq"
+        "vuneli"
     ],
-    "author": "VerdeIQ Team",
+    "author": "Vuneli Team",
     "repository": {
         "type": "git",
-        "url": "https://github.com/yourusername/verdeiq.git"
+        "url": "https://github.com/yourusername/vuneli.git"
     },
     "bugs": {
-        "url": "https://github.com/yourusername/verdeiq/issues"
+        "url": "https://github.com/yourusername/vuneli/issues"
     },
-    "homepage": "https://verdeiq.com"
+    "homepage": "https://vuneli.com"
 }

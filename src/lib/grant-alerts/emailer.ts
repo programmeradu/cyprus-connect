@@ -34,7 +34,7 @@ function renderHtml(op: RawOpportunity, reasons: string[]): string {
       </p>
       <p style="margin:20px 0 0;color:#6b7280;font-size:12px">Matched signals: ${esc(reasons.slice(0, 6).join(", "))}</p>
       <hr style="border:none;border-top:1px solid #e5e7eb;margin:28px 0" />
-      <p style="margin:0;color:#9ca3af;font-size:12px">VerdeIQ Grant Radar &middot; Cyprus SME sustainability funding</p>
+      <p style="margin:0;color:#9ca3af;font-size:12px">Vuneli Grant Radar &middot; Cyprus SME sustainability funding</p>
     </div>
   </body></html>`;
 }
@@ -47,7 +47,7 @@ export async function sendGrantAlertEmail(params: {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return { sent: false, skipped: "RESEND_API_KEY not configured" };
 
-  const from = process.env.GRANT_ALERTS_FROM || "VerdeIQ Grant Radar <alerts@verdeiq.stauniverse.tech>";
+  const from = process.env.GRANT_ALERTS_FROM || "Vuneli Grant Radar <alerts@vuneli.com>";
   const subject = `[Grant match] ${params.op.title}`.slice(0, 180);
 
   try {

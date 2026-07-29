@@ -43,7 +43,7 @@ export const whatIsCarbonFootprint = makePillar({
       { q: "Do I need software?", a: "Small firms can start in a spreadsheet. Beyond 20-30 emission sources or annual re-reporting, software pays back quickly." },
     ],
     ctaHeading: "Measure your footprint in a weekend",
-    ctaBody: "VerdeIQ automates Scope 1, 2, and material Scope 3 for Cyprus SMEs with pre-mapped emission factors and one-click reports.",
+    ctaBody: "Vuneli automates Scope 1, 2, and material Scope 3 for Cyprus SMEs with pre-mapped emission factors and one-click reports.",
   },
   el: {
     title: "Τι Είναι το Αποτύπωμα Άνθρακα; Απλός Οδηγός",
@@ -75,6 +75,6 @@ export const whatIsCarbonFootprint = makePillar({
       { q: "Χρειάζομαι λογισμικό;", a: "Μικρές: excel. Πέραν 20-30 πηγών: λογισμικό." },
     ],
     ctaHeading: "Μετρήστε το αποτύπωμα σε ένα ΣΚ",
-    ctaBody: "Η VerdeIQ αυτοματοποιεί Scope 1/2/3 για ΜμΕ Κύπρου.",
+    ctaBody: "Η Vuneli αυτοματοποιεί Scope 1/2/3 για ΜμΕ Κύπρου.",
   },
 });

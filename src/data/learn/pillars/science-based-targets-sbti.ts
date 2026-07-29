@@ -60,7 +60,7 @@ export const scienceBasedTargetsSbti = makePillar({
     }
   ],
   "ctaHeading": "SBTi-ready targets from day one",
-  "ctaBody": "VerdeIQ builds SBTi-compatible baselines and target proposals with the correct base-year handling and scope coverage."
+  "ctaBody": "Vuneli builds SBTi-compatible baselines and target proposals with the correct base-year handling and scope coverage."
 },
   el: {
   "title": "Science Based Targets (SBTi): Πώς Επικυρώνονται οι Εταιρικοί Κλιματικοί Στόχοι",
@@ -115,6 +115,6 @@ export const scienceBasedTargetsSbti = makePillar({
     }
   ],
   "ctaHeading": "Στόχοι SBTi-ready από την πρώτη μέρα",
-  "ctaBody": "Η VerdeIQ χτίζει βάσεις SBTi-συμβατές."
+  "ctaBody": "Η Vuneli χτίζει βάσεις SBTi-συμβατές."
 },
 });

@@ -1,5 +1,5 @@
 /**
- * VerdeIQ interactive tools registry.
+ * Vuneli interactive tools registry.
  *
  * Each tool ships as a full-page route under /[locale]/tools/{slug}.
  * `available: false` tools appear on the hub as "coming soon" and are
@@ -50,7 +50,7 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/ghg-calculator/hero.jpg",
     updatedAt: "2026-07-01",
     en: {
-      metaTitle: "GHG Calculator — Free Scope 1, 2 & 3 Emissions Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Free Scope 1, 2 & 3 Emissions Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator for Scope 1, 2 and 3 emissions. Country-specific grid factors, PDF export, no signup. Built for SME sustainability leads and CFOs.",
       eyebrow: "GHG Protocol · Free · No signup",
@@ -61,7 +61,7 @@ export const TOOLS: ToolEntry[] = [
         "Scope 1, 2 and 3 estimator with country grid factors, per-category breakdown and one-click PDF export.",
     },
     el: {
-      metaTitle: "Υπολογιστής GHG — Δωρεάν εργαλείο Scope 1, 2 & 3 | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Δωρεάν εργαλείο Scope 1, 2 & 3 | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol για εκπομπές Scope 1, 2 και 3. Συντελεστές δικτύου ανά χώρα, εξαγωγή PDF, χωρίς εγγραφή.",
       eyebrow: "GHG Protocol · Δωρεάν · Χωρίς εγγραφή",
@@ -81,7 +81,7 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/cbam-report-generator/hero.jpg",
     updatedAt: "2026-07-09",
     en: {
-      metaTitle: "CBAM Report Generator — Free Quarterly Report Tool | VerdeIQ",
+      metaTitle: "CBAM Report Generator — Free Quarterly Report Tool | Vuneli",
       metaDescription:
         "Free CBAM quarterly report generator. Aggregate CN-code goods, embedded emissions and country data into a compliant draft. No signup.",
       eyebrow: "CBAM · Definitive phase ready",
@@ -92,7 +92,7 @@ export const TOOLS: ToolEntry[] = [
         "Aggregate CN-code imports and embedded emissions into a compliant CBAM quarterly report draft.",
     },
     el: {
-      metaTitle: "Δημιουργός Αναφοράς CBAM — Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Δημιουργός Αναφοράς CBAM — Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν δημιουργός τριμηνιαίας αναφοράς CBAM. Συγκέντρωση CN-κωδικών, ενσωματωμένων εκπομπών και δεδομένων ανά χώρα.",
       eyebrow: "CBAM · Έτοιμο για οριστική φάση",
@@ -112,7 +112,7 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/double-materiality/hero.jpg",
     updatedAt: "2026-07-09",
     en: {
-      metaTitle: "Double Materiality Matrix — Free CSRD Assessment Tool | VerdeIQ",
+      metaTitle: "Double Materiality Matrix — Free CSRD Assessment Tool | Vuneli",
       metaDescription:
         "Interactive double materiality assessment tool for CSRD. Score IROs, plot the matrix, export ESRS-ready results. Free, no signup.",
       eyebrow: "CSRD · ESRS-ready",
@@ -123,7 +123,7 @@ export const TOOLS: ToolEntry[] = [
         "Score IROs, plot the 2×2 matrix and export an ESRS-ready CSRD assessment.",
     },
     el: {
-      metaTitle: "Μήτρα Διπλής Ουσιαστικότητας — Δωρεάν εργαλείο CSRD | VerdeIQ",
+      metaTitle: "Μήτρα Διπλής Ουσιαστικότητας — Δωρεάν εργαλείο CSRD | Vuneli",
       metaDescription:
         "Διαδραστικό εργαλείο διπλής ουσιαστικότητας για CSRD. Βαθμολόγηση IROs, χάραξη μήτρας, εξαγωγή αποτελεσμάτων.",
       eyebrow: "CSRD · Έτοιμο για ESRS",
@@ -143,7 +143,7 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/vsme-template/hero.jpg",
     updatedAt: "2026-07-09",
     en: {
-      metaTitle: "VSME Reporting Template — Free EFRAG Basic Module Tool | VerdeIQ",
+      metaTitle: "VSME Reporting Template — Free EFRAG Basic Module Tool | Vuneli",
       metaDescription:
         "Free VSME reporting template matching the EFRAG Voluntary SME standard. Guided form, branded PDF export. No signup.",
       eyebrow: "EFRAG VSME · Basic Module",
@@ -154,7 +154,7 @@ export const TOOLS: ToolEntry[] = [
         "Guided EFRAG VSME Basic Module walkthrough with branded PDF export.",
     },
     el: {
-      metaTitle: "Πρότυπο Αναφοράς VSME — Δωρεάν εργαλείο EFRAG | VerdeIQ",
+      metaTitle: "Πρότυπο Αναφοράς VSME — Δωρεάν εργαλείο EFRAG | Vuneli",
       metaDescription:
         "Δωρεάν πρότυπο αναφοράς VSME σύμφωνα με το EFRAG. Καθοδηγούμενη φόρμα, εξαγωγή PDF. Χωρίς εγγραφή.",
       eyebrow: "EFRAG VSME · Βασική Ενότητα",
@@ -174,7 +174,7 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/eu-taxonomy-checker/hero.jpg",
     updatedAt: "2026-07-09",
     en: {
-      metaTitle: "EU Taxonomy Eligibility Checker — Free NACE Tool | VerdeIQ",
+      metaTitle: "EU Taxonomy Eligibility Checker — Free NACE Tool | Vuneli",
       metaDescription:
         "Check EU Taxonomy eligibility by NACE code. Substantial contribution, DNSH and minimum safeguards checklist. Free.",
       eyebrow: "EU Taxonomy · NACE-based",
@@ -185,7 +185,7 @@ export const TOOLS: ToolEntry[] = [
         "NACE-based eligibility, DNSH checklist and minimum safeguards guidance.",
     },
     el: {
-      metaTitle: "Έλεγχος Επιλεξιμότητας EU Taxonomy — Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Έλεγχος Επιλεξιμότητας EU Taxonomy — Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Έλεγχος επιλεξιμότητας EU Taxonomy ανά κωδικό NACE. Ουσιαστική συμβολή, DNSH και ελάχιστες εγγυήσεις.",
       eyebrow: "EU Taxonomy · Βάσει NACE",
@@ -209,7 +209,7 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/sbti-target-setter/hero.jpg",
     updatedAt: "2026-07-09",
     en: {
-      metaTitle: "SBTi Target Setter — Free Science-Based Target Tool | VerdeIQ",
+      metaTitle: "SBTi Target Setter — Free Science-Based Target Tool | Vuneli",
       metaDescription:
         "Free SBTi target-setting tool. Enter base-year Scope 1, 2 and 3 emissions, pick ambition, get a 1.5°C-aligned near-term target and net-zero pathway. No signup.",
       eyebrow: "SBTi · Net-Zero Standard v1.2",
@@ -220,7 +220,7 @@ export const TOOLS: ToolEntry[] = [
         "1.5°C-aligned near-term target and 2050 net-zero pathway from your base-year Scope 1, 2 and 3 emissions.",
     },
     el: {
-      metaTitle: "Εργαλείο SBTi — Δωρεάν επιστημονικός στόχος | VerdeIQ",
+      metaTitle: "Εργαλείο SBTi — Δωρεάν επιστημονικός στόχος | Vuneli",
       metaDescription:
         "Δωρεάν εργαλείο SBTi. Εισαγάγετε Scope 1, 2, 3 έτους βάσης, επιλέξτε φιλοδοξία, λάβετε στόχο 1,5°C και τροχιά net-zero. Χωρίς εγγραφή.",
       eyebrow: "SBTi · Net-Zero Standard v1.2",
@@ -244,24 +244,24 @@ export const TOOLS: ToolEntry[] = [
     heroImage: "/assets/tools/report-visuals/hero.jpg",
     updatedAt: "2026-07-09",
     en: {
-      metaTitle: "Demo Report Visuals — AI Sustainability Report Generator | VerdeIQ",
+      metaTitle: "Demo Report Visuals — AI Sustainability Report Generator | Vuneli",
       metaDescription:
-        "Interactive demo of VerdeIQ's AI sustainability report generator. Enter company details and generate a full narrative sustainability report with charts, KPIs and CSRD-ready structure.",
+        "Interactive demo of Vuneli's AI sustainability report generator. Enter company details and generate a full narrative sustainability report with charts, KPIs and CSRD-ready structure.",
       eyebrow: "AI · CSRD-ready · Interactive demo",
       title: "Demo report visuals — AI-generated sustainability report",
       subtitle:
-        "Try the report engine that powers VerdeIQ: enter your company, sector and reporting period and receive a full narrative sustainability report with KPIs, charts and CSRD/VSME-aligned structure — in seconds.",
+        "Try the report engine that powers Vuneli: enter your company, sector and reporting period and receive a full narrative sustainability report with KPIs, charts and CSRD/VSME-aligned structure — in seconds.",
       cardDescription:
         "Interactive demo of the AI sustainability report generator — narrative, KPIs, charts and CSRD-ready structure from a short intake form.",
     },
     el: {
-      metaTitle: "Demo Report Visuals — Δημιουργός αναφορών βιωσιμότητας AI | VerdeIQ",
+      metaTitle: "Demo Report Visuals — Δημιουργός αναφορών βιωσιμότητας AI | Vuneli",
       metaDescription:
-        "Διαδραστικό demo της γεννήτριας αναφορών βιωσιμότητας VerdeIQ. Εισαγάγετε στοιχεία εταιρείας και λάβετε πλήρη αναφορά με γραφήματα, KPIs και δομή έτοιμη για CSRD.",
+        "Διαδραστικό demo της γεννήτριας αναφορών βιωσιμότητας Vuneli. Εισαγάγετε στοιχεία εταιρείας και λάβετε πλήρη αναφορά με γραφήματα, KPIs και δομή έτοιμη για CSRD.",
       eyebrow: "AI · Έτοιμο για CSRD · Διαδραστικό demo",
       title: "Demo report visuals — αναφορά βιωσιμότητας με AI",
       subtitle:
-        "Δοκιμάστε τη μηχανή αναφορών της VerdeIQ: εισαγάγετε εταιρεία, κλάδο και περίοδο και λάβετε πλήρη αναφορά βιωσιμότητας με KPIs, γραφήματα και δομή CSRD/VSME — σε δευτερόλεπτα.",
+        "Δοκιμάστε τη μηχανή αναφορών της Vuneli: εισαγάγετε εταιρεία, κλάδο και περίοδο και λάβετε πλήρη αναφορά βιωσιμότητας με KPIs, γραφήματα και δομή CSRD/VSME — σε δευτερόλεπτα.",
       cardDescription:
         "Διαδραστικό demo της AI γεννήτριας αναφορών βιωσιμότητας — αφήγηση, KPIs, γραφήματα και δομή CSRD από μία σύντομη φόρμα.",
     },

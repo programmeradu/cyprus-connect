@@ -39,7 +39,7 @@ export function ExportReportButton({ userId }: { userId?: string }) {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `verdeiq-analytics-report-${Date.now()}.pdf`;
+      a.download = `vuneli-analytics-report-${Date.now()}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);

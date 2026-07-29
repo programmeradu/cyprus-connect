@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import ToolsHubClient from "@/components/tools/ToolsHubClient";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   const title =
     safeLocale === "el"
-      ? "Δωρεάν εργαλεία ESG - CBAM, CSRD, VSME & Υπολογιστές GHG | VerdeIQ"
-      : "Free ESG Reporting Tools - CBAM, CSRD, VSME & GHG Calculators | VerdeIQ";
+      ? "Δωρεάν εργαλεία ESG - CBAM, CSRD, VSME & Υπολογιστές GHG | Vuneli"
+      : "Free ESG Reporting Tools - CBAM, CSRD, VSME & GHG Calculators | Vuneli";
   const description =
     safeLocale === "el"
       ? "Δωρεάν διαδραστικά εργαλεία για CSRD, VSME, CBAM, EU Taxonomy και GHG - χωρίς εγγραφή, με ανοιχτή μεθοδολογία και εξαγωγή PDF."
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title,
       description,
       url: `${SITE_URL}/${safeLocale}/tools`,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: `${SITE_URL}/assets/tools/hub/hero.jpg`, width: 1600, height: 900, alt: title }],
@@ -64,13 +64,13 @@ export default async function ToolsHub({ params }: { params: Promise<{ locale: s
     name: safeLocale === "el" ? "Δωρεάν εργαλεία ESG" : "Free ESG reporting tools",
     url: `${SITE_URL}/${safeLocale}/tools`,
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
-    isPartOf: { "@type": "WebSite", name: "VerdeIQ", url: SITE_URL },
+    isPartOf: { "@type": "WebSite", name: "Vuneli", url: SITE_URL },
   };
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
     ],
   };
@@ -82,7 +82,7 @@ export default async function ToolsHub({ params }: { params: Promise<{ locale: s
 
       <ToolsHubClient
         locale={safeLocale}
-        eyebrow={safeLocale === "el" ? "VerdeIQ Tools" : "VerdeIQ Tools"}
+        eyebrow={safeLocale === "el" ? "Vuneli Tools" : "Vuneli Tools"}
         heading={safeLocale === "el" ? "Εργαλεία ESG" : "ESG reporting tools"}
         subheading={
           safeLocale === "el"
@@ -103,10 +103,10 @@ export default async function ToolsHub({ params }: { params: Promise<{ locale: s
         }
         ctaBody={
           safeLocale === "el"
-            ? "Η πλατφόρμα VerdeIQ συνδέει λογιστική άνθρακα, CSRD, CBAM και VSME σε μία πηγή αλήθειας - με ελεγμένα δεδομένα, δικαιώματα ρόλων και ετοιμότητα ελέγχου."
-            : "The VerdeIQ platform connects carbon accounting, CSRD, CBAM and VSME in one source of truth - with audited data, role permissions and audit-ready trails."
+            ? "Η πλατφόρμα Vuneli συνδέει λογιστική άνθρακα, CSRD, CBAM και VSME σε μία πηγή αλήθειας - με ελεγμένα δεδομένα, δικαιώματα ρόλων και ετοιμότητα ελέγχου."
+            : "The Vuneli platform connects carbon accounting, CSRD, CBAM and VSME in one source of truth - with audited data, role permissions and audit-ready trails."
         }
-        ctaAction={safeLocale === "el" ? "Δοκιμάστε το VerdeIQ" : "Try VerdeIQ"}
+        ctaAction={safeLocale === "el" ? "Δοκιμάστε το Vuneli" : "Try Vuneli"}
       />
     </>
   );

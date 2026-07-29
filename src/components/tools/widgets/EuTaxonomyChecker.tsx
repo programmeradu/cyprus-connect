@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ EU Taxonomy Eligibility Checker.
+ * Vuneli EU Taxonomy Eligibility Checker.
  *
  * 1. User searches / picks a NACE activity from the curated eligible list.
  * 2. Tool shows which of the six environmental objectives it can substantially
@@ -114,7 +114,7 @@ const T = {
 
 export default function EuTaxonomyChecker({ locale }: Props) {
   const l = T[locale];
-  const [state, setState] = usePersistedState<State>("verdeiq.tool.taxonomy", DEFAULT_STATE);
+  const [state, setState] = usePersistedState<State>("vuneli.tool.taxonomy", DEFAULT_STATE);
   const [query, setQuery] = useState("");
 
   const activity: TaxonomyActivity | null = useMemo(
@@ -183,7 +183,7 @@ export default function EuTaxonomyChecker({ locale }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "verdeiq-taxonomy-screening.csv";
+    a.download = "vuneli-taxonomy-screening.csv";
     a.click();
     URL.revokeObjectURL(url);
   };

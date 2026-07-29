@@ -51,7 +51,7 @@ const t = {
 export default function CbamEstimator({ locale }: Props) {
   const l = t[locale];
   const [state, setState] = usePersistedState<{ product: ProductKey; tonnes: number; ets: number; phaseOut: number }>(
-    "verdeiq.calc.cbam",
+    "vuneli.calc.cbam",
     { product: "steel", tonnes: 500, ets: 85, phaseOut: 50 }
   );
   const { product, tonnes, ets, phaseOut } = state;
@@ -133,7 +133,7 @@ export default function CbamEstimator({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="verdeiq-range"
+                className="vuneli-range"
               />
             </div>
           ))}

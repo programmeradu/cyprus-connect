@@ -6,7 +6,7 @@ import { getTool } from "@/data/tools";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import VsmeTemplateBuilder from "@/components/tools/widgets/VsmeTemplateBuilder";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "vsme-template";
 
 export function generateStaticParams() {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1600, height: 900, alt: c.title }],
@@ -79,8 +79,8 @@ const COPY = {
     ] as FaqItem[],
     relatedHeading: "Related guides",
     ctaHeading: "Need help completing the disclosures?",
-    ctaBody: "VerdeIQ walks your team through the full VSME workflow - evidence capture, energy and GHG factor lookups, workforce data pipelines, and audit-ready export.",
-    ctaAction: "Try VerdeIQ",
+    ctaBody: "Vuneli walks your team through the full VSME workflow - evidence capture, energy and GHG factor lookups, workforce data pipelines, and audit-ready export.",
+    ctaAction: "Try Vuneli",
   },
   el: {
     methodologyHeading: "Πώς λειτουργεί το πρότυπο",
@@ -110,8 +110,8 @@ const COPY = {
     ] as FaqItem[],
     relatedHeading: "Σχετικοί οδηγοί",
     ctaHeading: "Χρειάζεστε βοήθεια στη συμπλήρωση;",
-    ctaBody: "Η VerdeIQ καθοδηγεί την ομάδα σας στη ροή VSME - τεκμηρίωση, συντελεστές GHG, δεδομένα εργαζομένων, εξαγωγή έτοιμη για ελεγκτή.",
-    ctaAction: "Δοκιμάστε το VerdeIQ",
+    ctaBody: "Η Vuneli καθοδηγεί την ομάδα σας στη ροή VSME - τεκμηρίωση, συντελεστές GHG, δεδομένα εργαζομένων, εξαγωγή έτοιμη για ελεγκτή.",
+    ctaAction: "Δοκιμάστε το Vuneli",
   },
 } as const;
 
@@ -138,7 +138,7 @@ export default async function VsmeTemplatePage({ params }: { params: Promise<{ l
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-    publisher: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
   const howToLd = {
@@ -167,7 +167,7 @@ export default async function VsmeTemplatePage({ params }: { params: Promise<{ l
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
       { "@type": "ListItem", position: 3, name: c.title, item: url },
     ],

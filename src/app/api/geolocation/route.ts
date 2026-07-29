@@ -6,7 +6,7 @@ export async function GET() {
     const location = await getUserLocationFromIP();
     
     if (!location) {
-      // VerdeIQ is Cyprus-only: always fall back to EUR / Cyprus.
+      // Vuneli is Cyprus-only: always fall back to EUR / Cyprus.
       return NextResponse.json(
         { 
           currency: "EUR", 

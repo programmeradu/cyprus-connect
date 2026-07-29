@@ -54,7 +54,7 @@ const MILESTONE_COPY: Record<EmailLocale, {
     totalPrefix: 'Total Credits:',
     body: `Your commitment to sustainability is making a real difference. Keep up the great work and continue your journey toward a greener future!`,
     cta: 'View Your Dashboard',
-    footerRights: (y) => `© ${y} VerdeIQ. All rights reserved.`,
+    footerRights: (y) => `© ${y} Vuneli. All rights reserved.`,
     footerReason: `You're receiving this email because you're a valued member of our sustainability community.`,
   },
   el: {
@@ -65,7 +65,7 @@ const MILESTONE_COPY: Record<EmailLocale, {
     totalPrefix: 'Σύνολο Credits:',
     body: `Η δέσμευσή σου στη βιωσιμότητα κάνει πραγματική διαφορά. Συνέχισε την εξαιρετική δουλειά και το ταξίδι σου προς ένα πιο πράσινο μέλλον!`,
     cta: 'Πίνακας Ελέγχου',
-    footerRights: (y) => `© ${y} VerdeIQ. Με επιφύλαξη κάθε δικαιώματος.`,
+    footerRights: (y) => `© ${y} Vuneli. Με επιφύλαξη κάθε δικαιώματος.`,
     footerReason: `Λαμβάνεις αυτό το email γιατί είσαι μέλος της κοινότητας βιωσιμότητάς μας.`,
   },
 };
@@ -79,10 +79,10 @@ const WELCOME_COPY: Record<EmailLocale, {
   cta: string;
 }> = {
   en: {
-    subject: '🌿 Welcome to VerdeIQ',
-    title: (n) => `Welcome to VerdeIQ, ${n}!`,
+    subject: '🌿 Welcome to Vuneli',
+    title: (n) => `Welcome to Vuneli, ${n}!`,
     intro: `Thank you for joining our mission to create a more sustainable future.`,
-    featuresHeading: 'With VerdeIQ, you can:',
+    featuresHeading: 'With Vuneli, you can:',
     features: [
       'Track your carbon footprint in real-time',
       'Get AI-powered reduction recommendations',
@@ -92,10 +92,10 @@ const WELCOME_COPY: Record<EmailLocale, {
     cta: 'Get Started',
   },
   el: {
-    subject: '🌿 Καλωσόρισες στο VerdeIQ',
-    title: (n) => `Καλωσόρισες στο VerdeIQ, ${n}!`,
+    subject: '🌿 Καλωσόρισες στο Vuneli',
+    title: (n) => `Καλωσόρισες στο Vuneli, ${n}!`,
     intro: `Ευχαριστούμε που συμμετέχεις στην αποστολή μας για ένα πιο βιώσιμο μέλλον.`,
-    featuresHeading: 'Με το VerdeIQ μπορείς να:',
+    featuresHeading: 'Με το Vuneli μπορείς να:',
     features: [
       'Παρακολουθείς το αποτύπωμα άνθρακά σου σε πραγματικό χρόνο',
       'Λαμβάνεις προτάσεις μείωσης με χρήση AI',
@@ -150,7 +150,7 @@ export async function sendMilestoneEmail(data: MilestoneEmailData): Promise<bool
         </head>
         <body>
           <div class="container">
-            <div class="logo">🌿 VerdeIQ</div>
+            <div class="logo">🌿 Vuneli</div>
             <div class="title">${t.congrats(data.userName)}</div>
             <div class="content"><p>${t.intro}</p></div>
             <div class="milestone-card">
@@ -174,7 +174,7 @@ export async function sendMilestoneEmail(data: MilestoneEmailData): Promise<bool
     `;
 
     await transporter.sendMail({
-      from: `"VerdeIQ" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      from: `"Vuneli" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
       to: data.userEmail,
       subject: t.subject(data.milestoneName),
       html: htmlContent,
@@ -222,7 +222,7 @@ export async function sendWelcomeEmail(
         </head>
         <body>
           <div class="container">
-            <div class="logo">🌿 VerdeIQ</div>
+            <div class="logo">🌿 Vuneli</div>
             <div class="title">${t.title(userName)}</div>
             <div class="content">
               <p>${t.intro}</p>
@@ -240,7 +240,7 @@ export async function sendWelcomeEmail(
     `;
 
     await transporter.sendMail({
-      from: `"VerdeIQ" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      from: `"Vuneli" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
       to: userEmail,
       subject: t.subject,
       html: htmlContent,

@@ -74,7 +74,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const initializeCurrency = useCallback(async () => {
     setIsLoading(true);
     try {
-      // VerdeIQ is Cyprus-only: EUR is the product currency.
+      // Vuneli is Cyprus-only: EUR is the product currency.
       const savedCurrency = await loadCurrencyFromDatabase();
       setUserCurrency("EUR");
       setSelectedCurrency(savedCurrency || "EUR");

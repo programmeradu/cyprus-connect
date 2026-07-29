@@ -62,7 +62,7 @@ export function BenchmarkComparator() {
   const [comparison, setComparison] = useState<BenchmarkComparison | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // VerdeIQ is Cyprus-locked: benchmarks are always against Cypriot peers.
+  // Vuneli is Cyprus-locked: benchmarks are always against Cypriot peers.
   const userCountry = 'CY';
   const loadingLocation = false;
 

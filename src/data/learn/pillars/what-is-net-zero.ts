@@ -42,7 +42,7 @@ export const whatIsNetZero = makePillar({
       { q: "Do SMEs need a net-zero target?", a: "Not legally, but major customers, banks, and public tenders increasingly require one. SBTi's SME route validates targets for under $1,000." },
     ],
     ctaHeading: "Set a credible net-zero target",
-    ctaBody: "VerdeIQ walks Cyprus SMEs from baseline to SBTi-validated commitment with pre-built templates and annual tracking.",
+    ctaBody: "Vuneli walks Cyprus SMEs from baseline to SBTi-validated commitment with pre-built templates and annual tracking.",
   },
   el: {
     title: "Τι Είναι το Net Zero; Σαφής Ορισμός",
@@ -67,6 +67,6 @@ export const whatIsNetZero = makePillar({
       { q: "Χρειάζονται οι ΜμΕ;", a: "Όχι νομικά, αλλά ζητείται από πελάτες/τράπεζες." },
     ],
     ctaHeading: "Ορίστε αξιόπιστο στόχο net zero",
-    ctaBody: "Η VerdeIQ οδηγεί ΜμΕ Κύπρου σε επικυρωμένη δέσμευση.",
+    ctaBody: "Η Vuneli οδηγεί ΜμΕ Κύπρου σε επικυρωμένη δέσμευση.",
   },
 });

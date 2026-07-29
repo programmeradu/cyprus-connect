@@ -5,7 +5,7 @@ import { GLOSSARY_SLUGS } from "@/data/learn/glossary";
 import { AVAILABLE_TOOL_SLUGS } from "@/data/tools";
 import { COUNTRY_SLUGS } from "@/data/tools/countries";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 const STATIC_PATHS = ["", "/pricing", "/privacy", "/terms", "/security", "/dpa", "/learn", "/tools", "/glossary"] as const;
 const LEARN_PATHS = PILLAR_SLUGS.map((slug) => `/learn/${slug}` as const);

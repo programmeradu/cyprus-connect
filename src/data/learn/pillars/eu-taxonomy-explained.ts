@@ -59,7 +59,7 @@ export const euTaxonomyExplained = makePillar({
     }
   ],
   "ctaHeading": "Automate EU Taxonomy KPIs alongside your CSRD data",
-  "ctaBody": "VerdeIQ tags capex and opex against Taxonomy activities, applies DNSH checks, and outputs the ratios auditors expect."
+  "ctaBody": "Vuneli tags capex and opex against Taxonomy activities, applies DNSH checks, and outputs the ratios auditors expect."
 },
   el: {
   "title": "Η EU Ταξινομία: Σύστημα Ταξινόμησης Βιώσιμων Δραστηριοτήτων",
@@ -113,6 +113,6 @@ export const euTaxonomyExplained = makePillar({
     }
   ],
   "ctaHeading": "Αυτοματοποιήστε τους EU Taxonomy KPIs",
-  "ctaBody": "Η VerdeIQ ετικετοποιεί capex/opex έναντι Ταξινομίας."
+  "ctaBody": "Η Vuneli ετικετοποιεί capex/opex έναντι Ταξινομίας."
 },
 });

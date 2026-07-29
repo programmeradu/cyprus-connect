@@ -63,7 +63,7 @@ export const esgSoftwareCyprus = makePillar({
     }
   ],
   "ctaHeading": "Cyprus-native ESG reporting, in Greek and English",
-  "ctaBody": "VerdeIQ ships with EAC grid factors, bilingual output, and support for Cyprus shipping/hospitality/financial services data flows out of the box."
+  "ctaBody": "Vuneli ships with EAC grid factors, bilingual output, and support for Cyprus shipping/hospitality/financial services data flows out of the box."
 },
   el: {
   "title": "Λογισμικό ESG στην Κύπρο: Οδηγός 2026",
@@ -121,6 +121,6 @@ export const esgSoftwareCyprus = makePillar({
     }
   ],
   "ctaHeading": "ESG αναφορά για Κύπρο, στα ελληνικά και αγγλικά",
-  "ctaBody": "Η VerdeIQ έρχεται με συντελεστές ΑΗΚ, δίγλωσσο output, και υποστήριξη κυπριακών ροών δεδομένων."
+  "ctaBody": "Η Vuneli έρχεται με συντελεστές ΑΗΚ, δίγλωσσο output, και υποστήριξη κυπριακών ροών δεδομένων."
 },
 });

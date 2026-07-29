@@ -90,7 +90,7 @@ function determine(listed: boolean, employees: number, turnover: number, balance
 
 export default function CsrdVsmeChecker({ locale }: Props) {
   const l = t[locale];
-  const [state, setState] = usePersistedState("verdeiq.calc.csrd", {
+  const [state, setState] = usePersistedState("vuneli.calc.csrd", {
     listed: false,
     employees: 75,
     turnover: 12,
@@ -165,7 +165,7 @@ export default function CsrdVsmeChecker({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="verdeiq-range"
+                className="vuneli-range"
               />
             </div>
           ))}

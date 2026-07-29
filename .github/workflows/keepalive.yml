@@ -15,7 +15,7 @@ jobs:
       - name: Ping keep-alive endpoint
         run: |
           set -e
-          URL="https://verdeiq.stauniverse.tech/api/keep-alive"
+          URL="https://vuneli.com/api/keep-alive"
           echo "Pinging $URL"
           RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" "$URL")
           STATUS=$(echo "$RESPONSE" | grep -oE 'HTTP_STATUS:[0-9]+' | cut -d: -f2)
