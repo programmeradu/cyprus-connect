@@ -127,30 +127,6 @@ export function HeroCinematic() {
             {t("subtitle")}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4 sm:mt-10">
-            <Link
-              href="/auth"
-              className="group inline-flex items-center gap-4 rounded-md bg-[var(--accent-lime)] px-6 py-4 text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--accent-lime-foreground)] shadow-[0_20px_50px_-20px_color-mix(in_oklab,var(--accent-lime)_60%,transparent)] transition-all hover:translate-y-[-2px] sm:px-7 sm:py-5 sm:text-[14px]"
-              style={{ fontFamily: "var(--editorial-sans)" }}
-            >
-              <span>{t("ctaPrimary")}</span>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M3 10h13M11 5l5 5-5 5"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="square"
-                />
-              </svg>
-            </Link>
-            <Link
-              href="/pricing"
-              className="inline-flex items-center gap-3 text-[15px] font-medium text-white/80 underline decoration-white/30 decoration-1 underline-offset-[8px] transition-colors hover:text-white hover:decoration-white"
-              style={{ fontFamily: "var(--editorial-sans)" }}
-            >
-              See pricing
-            </Link>
-          </div>
         </div>
 
         {/* Advisor chip - absolute positioned so it never affects hero height,
