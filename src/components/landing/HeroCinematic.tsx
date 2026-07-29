@@ -20,10 +20,10 @@ import avatar2 from "@/assets/avatar-advisor-2.jpg";
  * a long scrim fade rather than a hard cut.
  */
 const HERO_SET: { src: StaticImageData; alt: string; focus: string }[] = [
-  { src: hero01, alt: "Oreites wind turbines at Cyprus golden hour", focus: "60% 55%" },
-  { src: hero02, alt: "Troodos mountain ridges at dawn with morning mist", focus: "50% 55%" },
-  { src: hero03, alt: "Limassol port cranes at blue hour", focus: "40% 50%" },
-  { src: hero04, alt: "Ancient Cypriot olive grove at first light", focus: "55% 55%" },
+  { src: hero01, alt: "Oreites wind turbines at Cyprus golden hour", focus: "60% 68%" },
+  { src: hero02, alt: "Troodos mountain ridges at dawn with morning mist", focus: "50% 70%" },
+  { src: hero03, alt: "Limassol port cranes at blue hour", focus: "40% 64%" },
+  { src: hero04, alt: "Ancient Cypriot olive grove at first light", focus: "55% 68%" },
 ];
 
 export function HeroCinematic() {
