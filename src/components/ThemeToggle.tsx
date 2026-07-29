@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 
-export function ThemeToggle() {
+export function ThemeToggle({ overHero = false }: { overHero?: boolean }) {
   const t = useTranslations("themeToggle")
   const [theme, setTheme] = useState<"light" | "dark">("light")
 
@@ -29,7 +29,12 @@ export function ThemeToggle() {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative w-9 h-9 rounded-full bg-transparent hover:bg-foreground/5 text-foreground/80 hover:text-foreground flex items-center justify-center group transition-colors"
+      className={[
+        "relative w-9 h-9 rounded-full bg-transparent flex items-center justify-center group transition-colors",
+        overHero
+          ? "text-white/90 hover:text-white hover:bg-white/10 [text-shadow:0_1px_2px_rgba(0,0,0,0.55)]"
+          : "text-foreground/80 hover:text-foreground hover:bg-foreground/5",
+      ].join(" ")}
       whileTap={{ scale: 0.95 }}
       aria-label={theme === "dark" ? t("label") + " — switch to light" : t("label") + " — switch to dark"}
     >
