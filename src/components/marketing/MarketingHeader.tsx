@@ -26,7 +26,7 @@ export function MarketingHeader() {
 
   return (
     <header
-      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-6 sm:px-6"
+      className="group/header fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:top-6 sm:px-6"
       style={{ fontFamily: "var(--editorial-sans)" }}
     >
       <div
