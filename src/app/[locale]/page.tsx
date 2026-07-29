@@ -125,32 +125,74 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* VISION & ROADMAP BANNER */}
-      <section className="relative py-16 bg-muted/30 border-y border-border/40 overflow-hidden">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 rounded-3xl border border-border/80 bg-background/80 p-8 sm:p-10 backdrop-blur-xl shadow-sm">
-            <div className="max-w-2xl">
-              <span className="text-xs font-mono uppercase tracking-widest text-[var(--accent-lime-foreground)] bg-[var(--accent-lime)]/20 px-3 py-1 rounded-full font-semibold">
-                Strategic Roadmap 2026–2028
-              </span>
-              <h3 
-                className="text-2xl sm:text-4xl font-semibold mt-3 mb-2 text-foreground"
+      {/* VISION & ROADMAP - editorial ledger */}
+      <section className="relative overflow-hidden border-y border-border/50 bg-muted/25">
+        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-5">
+            <p className="text-[15px] font-semibold tracking-[-0.01em] text-foreground/60">
+              Strategic roadmap, 2026 to 2028
+            </p>
+            <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
+              Discover the{" "}
+              <span className="italic text-muted-foreground">autonomous ESG vision</span>
+            </h2>
+            <p className="mt-6 max-w-md text-[16.5px] leading-[1.6] text-foreground/70 sm:text-[17.5px]">
+              Vuneli is building an always-on fleet of digital colleagues. They read EAC bills,
+              prepare CBAM reports, and chase Scope 3 supplier data across Cyprus, without a
+              spreadsheet in the loop.
+            </p>
+            <div className="mt-10">
+              <Link
+                href="/vision"
+                className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-6 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
                 style={{ fontFamily: "var(--editorial-display)" }}
               >
-                Discover the Autonomous ESG Vision
-              </h3>
-              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Learn how Vuneli is building an always-on fleet of digital FTEs to automate CBAM reporting, EAC bill ingestion, and Scope 3 supplier data across Cyprus.
-              </p>
+                Explore vision and roadmap
+              </Link>
             </div>
-            <Link href="/vision" className="shrink-0">
-              <PremiumButton size="lg">
-                Explore Vision & Roadmap
-              </PremiumButton>
-            </Link>
+          </div>
+
+          <div className="lg:col-span-7 lg:pt-4">
+            <ul className="divide-y divide-border/60 border-y border-border/60">
+              {[
+                {
+                  year: "2026",
+                  title: "Cyprus data spine",
+                  body: "EAC bill ingestion, JCC and accounting connectors, and a verified Cyprus emission factor set behind every number.",
+                },
+                {
+                  year: "2027",
+                  title: "Digital ESG colleagues",
+                  body: "Agents draft VSME and CSRD disclosures, flag gaps, and hand a reviewer a clear audit trail before filing.",
+                },
+                {
+                  year: "2028",
+                  title: "Continuous assurance",
+                  body: "Live CBAM and Scope 3 monitoring across the supply chain, with grant matches and reduction plans that update themselves.",
+                },
+              ].map((it) => (
+                <li
+                  key={it.year}
+                  className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 py-7 sm:gap-x-10 sm:py-9"
+                >
+                  <span className="pt-1 text-[15px] font-semibold tabular-nums tracking-[-0.01em] text-foreground/50">
+                    {it.year}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-[family-name:var(--editorial-serif)] text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
+                      {it.title}
+                    </h3>
+                    <p className="mt-3 text-[16px] leading-[1.55] text-foreground/65 sm:text-[17px]">
+                      {it.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
+
 
       <SectionDivider />
 
