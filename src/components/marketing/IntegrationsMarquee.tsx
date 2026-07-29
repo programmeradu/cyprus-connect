@@ -88,8 +88,8 @@ export function IntegrationsMarquee() {
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:gap-16 sm:px-6">
-        <Row marks={CYPRUS_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
-        <Row marks={GLOBAL_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" />
+        <Row marks={CYPRUS_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" />
+        <Row marks={GLOBAL_MARKS} layoutClass="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" />
       </div>
     </section>
   );
