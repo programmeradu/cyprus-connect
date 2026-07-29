@@ -1,77 +1,48 @@
+## Goal
 
-# Four-site audit + Vuneli composition plan
+Bring the authenticated `/app` surface onto the same "Verified Nature" editorial language as the marketing site, and give `/app` the same polished ChatGPT-grey dark mode already applied at the root.
 
-## Audit findings (54-layer distilled)
+## 1. Dark mode for /app (the new ask)
 
-### 1. Lifecycle — the "classy one" you noticed
-- **Vibe:** Editorial, cinematic, confident. Wide-angle wind-turbine video/photo behind hero; glass card floats over it.
-- **Fonts:** Neue Haas / Söhne-style geometric sans for display (weight 500, tight tracking). Uppercase mono micro-labels `[LIFECYCLE SOLUTIONS]` — square brackets, letter-spaced, ~11px.
-- **Header:** Transparent over hero. Small wordmark left, minimal nav center, sharp neon-lime rectangular CTA `BUY LIFECYCLE`.
-- **Hero card:** Frosted glass panel (backdrop-blur, subtle white/10 fill), bracketed eyebrow, 3-line stacked headline `Future-proof / Your / Operations.` with period. Lime CTA rectangle full-width inside card.
-- **Secondary CTA:** Pill with two overlapping avatars → "SPEAK WITH OUR TEAM" + circular arrow icon. Human, not corporate.
-- **Logos strip:** Continuous horizontal marquee, monochrome logos, "Helping 100+ leading companies…"
-- **Verdict:** THIS is the target aesthetic for Vuneli — cinematic photo hero + floating glass panel + bracketed micro-labels + accent CTA color.
+The neutral grey ramp now lives on `:root.dark` in `globals.css`, but `/app` overrides it with its own tinted chrome, so it still reads coloured.
 
-### 2. Emitra — clean SaaS
-- **Vibe:** Bright, minimal, dashboard-forward.
-- **Fonts:** Rounded geometric sans (Satoshi/General Sans-family). Dark forest green primary (#1a4d2e ish).
-- **Hero:** Centered stack. Small pill badge "🌿 30% fewer reporting errors" → giant 2-line headline → subhead → primary+ghost CTA pair → **tilted 3D product screenshot** with green line-chart dashboard.
-- **Key steal:** The tilted dashboard mockup below hero. Extremely effective for a real product.
+- `src/app/[locale]/app/layout.tsx`: remove the fixed `bg-gradient-to-br from-primary/5 via-background to-accent/5` background wash. Replace with a flat `bg-background` plane so the grey ramp shows through unmodified.
+- Sidebar (`src/components/app/Sidebar.tsx`) and `AppHeader.tsx`: move to the stepped neutral surfaces — sidebar `oklch(0.20 0 0)`, content `oklch(0.24 0 0)`, cards `oklch(0.27 0 0)`, popovers `oklch(0.30 0 0)`, hairlines `oklch(0.32 0 0)`.
+- Remove per-component `dark:` colour tints (amber/red/emerald washes on cards) in favour of the shared semantic tokens.
+- Verify contrast: body text and muted text must clear 4.5:1 on `oklch(0.24 0 0)`.
 
-### 3. Solaric — dark cinematic
-- **Vibe:** Premium dark, orange accent, image-forward.
-- **Fonts:** Sharp display sans (Aeonik/Neue Machina-family), all lowercase micro-labels with tiny icon.
-- **Header:** **Floating rounded-full nav pill** (glass, dark), centered. Orange CTA rectangle far right.
-- **Hero:** Split — text left, edge-bleed hero photo right (wind turbine detail). Star row + "1200+ user ratings" with 4 avatar circles.
-- **Key steal:** Floating pill nav + edge-bleed photo hero + avatar/rating trust cluster.
+## 2. Retire the glass/gradient primitives
 
-### 4. GreenX — atmospheric
-- **Vibe:** Airy, sky-forward, big centered type.
-- **Fonts:** Modern grotesk, huge display weight 500 with an italic-serif accent line ("for a greener future" in lighter italic).
-- **Hero:** Full-bleed sky photo, centered mega-headline with **mixed weight** (bold first line, thin italic second line), rounded white pill CTA with dark circular arrow.
-- **Key steal:** Mixed-weight headline treatment + rounded arrow-pill CTA + full-bleed atmospheric photo.
+- `.glass-strong` on content cards -> `.surface-card` (flat fill, 1px hairline, 8px radius, no blur).
+- Keep `.glass-strong` only for true overlays: dropdowns, modals, drawers, the notification popover.
+- Delete `--gradient-primary`, `--gradient-secondary`, `--gradient-subtle`, `.neomorph`, `.shadow-premium`, `.gradient-text`, `.gradient-border` from `globals.css` once no call sites remain.
 
-## The composition — Vuneli landing v3
+## 3. Strip the long tail (25 files)
 
-Blend the four top moves into one coherent identity:
+Shared components first, since they cover most screens:
 
-| Element | Source | Adaptation for Vuneli |
-|---|---|---|
-| Full-bleed cinematic hero photo | Lifecycle + GreenX | Cyprus-specific: Mediterranean coastline w/ solar array, or Troodos wind farm at dawn |
-| Floating pill nav (glass) | Solaric | Transparent-to-glass on scroll, Vuneli wordmark left, EN/EL switch right |
-| Bracketed mono eyebrow `[CYPRUS SUSTAINABILITY OS]` | Lifecycle | Keep our editorial identity |
-| Frosted glass hero card | Lifecycle | Contains headline + subhead + primary CTA |
-| Mixed-weight headline | GreenX | `Cyprus SMEs, /` (bold) + `built for CBAM & CSRD.` (thin italic Fraunces) |
-| Accent CTA color | Lifecycle lime → **Vuneli emerald/lime** | Sharp rectangle, no rounding |
-| Human trust cluster (avatars + "SPEAK WITH TEAM") | Lifecycle + Solaric | Real CY partner logos + "Talk to a Cyprus advisor" |
-| Tilted dashboard mockup below hero | Emitra | Real Vuneli dashboard screenshot, tilted, w/ EAC widget, CBAM tracker |
-| Marquee integration logos | Lifecycle | EAC, JCC, SoftOne, CY Login, Registrar |
+`StatCard`, `ActionCard`, `Badge`, `AppHeader`, `Sidebar`, `NotificationBell`, `ProgressBar`, `BenchmarkComparator`, `ComplianceChecker`, `EnergyCostCalculator`, `DocumentUpload`
 
-## Scope of build
+Then the pages: `dashboard`, `analytics`, `insights`, `actions`, `compliance`, `calculator`, `learn` (+ lesson), `marketplace` (+ detail), `integrations`, `onboarding`, `billing`, `settings`, `leaderboard`, `studio`, `grant-alerts`.
 
-1. **Fonts:** Add `Neue Haas Grotesk Text` substitute via Google (`Manrope` or `General Sans` free alt) + keep `Fraunces` for italic serif accent + `JetBrains Mono` for bracketed labels.
-2. **Assets to generate (~8, not 200):**
-   - Hero cinematic photo (Cyprus dawn coastline w/ turbines or Troodos)
-   - Tilted dashboard mockup (product-shot skill on real screenshot)
-   - 3 avatar portraits for trust cluster
-   - 6 monochrome partner-logo SVGs (EAC, JCC, SoftOne, CY Login, Registrar, TAXISnet — stylized wordmarks, not real logos)
-   - 1 secondary section photo
-3. **Components to rebuild:**
-   - `MarketingHeader.tsx` → floating glass pill
-   - New `HeroCinematic.tsx` (photo + glass card + bracketed eyebrow + mixed-weight headline + trust cluster)
-   - New `DashboardMockup.tsx` (tilted, shadowed product shot)
-   - `IntegrationsMarquee.tsx` (mono logos, infinite scroll)
-4. **Keep:** ContextWidgets, LearnLinksSection, NewsTicker, editorial sections below the fold.
-5. **Do NOT touch:** business logic, auth, tools, /learn, /app.
+Per file: drop `bg-gradient-*` overlays, swap `rounded-xl/2xl` down to the 6/8/12px scale, replace pill badges with bordered rectangular labels, remove decorative icons, and put numerals on `tabular-nums`.
 
-## What I will NOT do
-- Generate 100–1000 assets. That's waste. 8 well-crafted assets beat 1000 slop.
-- Blindly copy Framer template code (they're paid templates; and it'd violate our anti-slop rules). I re-interpret the moves in our stack.
-- Add pill badges or Lucide icons — banned by memory.
+## 4. Typography alignment
 
-## Ask before I build
-Two calls I need you to make:
-1. **Accent color for CTA:** Lifecycle-style neon lime (`#DFFF3D`), or stay with Vuneli emerald? Lime is more distinctive but louder.
-2. **Hero photo subject:** (a) Cyprus dawn coastline with distant turbines, (b) Troodos ridgeline solar array, (c) Limassol port at golden hour (CBAM/shipping angle). Pick one and I generate it premium-tier.
+Apply the marketing type stack inside `/app`: Fraunces for headings and figures, Instrument Sans for body. Replace the `text-[9px]`/`text-[10px]` uppercase wide-tracking metadata with the `viq-*` label classes.
 
-Answer those two, I execute the full rebuild in one pass.
+## 5. Correct the doctrine
+
+`src/app/[locale]/app/README.md` lines 49 and 59 currently prescribe glassmorphism as intentional. Rewrite that section to state the editorial rules so the next contributor does not reintroduce it.  
+  
+ALSO SEPERATE /APP STYLING AND CSS FROM THE REST OF THE MARKETING  SITE AND PAGES.. 
+
+## 6. Verify
+
+Screenshot every `/app` route in both light and dark at 1280 wide and 390 wide. Check no horizontal scroll, no truncated labels, no low-contrast text.
+
+## Technical notes
+
+- Token edits are confined to `src/app/globals.css`; component edits are presentation-only, no business logic touched.
+- `.surface-card` already exists in `globals.css` (line ~407) and is the migration target.
+- Sequenced so shared primitives land first — that alone fixes most screens, and the page sweep becomes mostly deletions.
