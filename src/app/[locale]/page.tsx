@@ -13,8 +13,9 @@ import { WhyChooseGrid } from "@/components/landing/WhyChooseGrid";
 import { IntegrationsMarquee } from "@/components/marketing/IntegrationsMarquee";
 import { HeroCinematic } from "@/components/landing/HeroCinematic";
 import { PowerChapters } from "@/components/landing/PowerChapters";
-import sectionHowImg from "@/assets/section-how-steps.jpg";
-import sectionEcosystemImg from "@/assets/section-ecosystem.jpg";
+import { EcosystemRail } from "@/components/landing/EcosystemRail";
+import { HowItWorksSteps } from "@/components/landing/HowItWorksSteps";
+
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
 import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
@@ -95,22 +96,9 @@ export default function Home() {
 
       {/* ECOSYSTEM */}
       <div className="relative">
-        <EditorialSection
-          titleA={tL("beyondTitleA")}
-          titleB={tL("beyondTitleB")}
-          subtitle={tL("beyondSubtitle")}
-          media={{ src: sectionEcosystemImg.src, alt: "ESG ecosystem: marketplace, leaderboard, and learning modules" }}
-        >
-          <NumberedList
-            items={[
-              { n: "01", title: tL("ecoLearningTitle"), body: tL("ecoLearningDesc") },
-              { n: "02", title: tL("ecoMarketplaceTitle"), body: tL("ecoMarketplaceDesc") },
-              { n: "03", title: tL("ecoStudioTitle"), body: tL("ecoStudioDesc") },
-              { n: "04", title: tL("ecoLeaderboardTitle"), body: tL("ecoLeaderboardDesc") },
-            ]}
-          />
-        </EditorialSection>
+        <EcosystemRail />
       </div>
+
 
       <SectionDivider />
 
@@ -229,20 +217,8 @@ export default function Home() {
           loading="lazy"
           className="pointer-events-none absolute -bottom-16 -left-10 z-10 hidden w-[320px] max-w-none rotate-[4deg] select-none opacity-55 mix-blend-multiply dark:opacity-75 dark:mix-blend-screen md:block lg:-bottom-24 lg:-left-20 lg:w-[440px]"
         />
-        <EditorialSection
-          titleA={tL("howTitleA")}
-          titleB={tL("howTitleB")}
-          subtitle={tL("howSubtitle")}
-          media={{ src: sectionHowImg.src, alt: "Ingest, analyze, act - three-step data flow diagram" }}
-        >
-          <NumberedList
-            items={[
-              { n: "01", title: tL("stepConnectTitle"), body: tL("stepConnectDesc") },
-              { n: "02", title: tL("stepAnalyzeTitle"), body: tL("stepAnalyzeDesc") },
-              { n: "03", title: tL("stepActionTitle"), body: tL("stepActionDesc") },
-            ]}
-          />
-        </EditorialSection>
+        <HowItWorksSteps />
+
       </div>
 
       <SectionDivider />
