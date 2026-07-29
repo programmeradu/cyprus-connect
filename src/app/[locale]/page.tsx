@@ -65,21 +65,9 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* BENEFITS - Why Vuneli */}
-      <EditorialSection
-        titleA={tL("whyTitleA")}
-        titleB={tL("whyTitleB")}
-        subtitle={tL("whySubtitle")}
-        media={{ src: sectionWhyImg.src, alt: "Vuneli emissions overview dashboard" }}
-      >
-        <NumberedList
-          items={[
-            { n: "01", title: tL("benefitAiTitle"), body: tL("benefitAiDesc") },
-            { n: "02", title: tL("benefitReportTitle"), body: tL("benefitReportDesc") },
-            { n: "03", title: tL("benefitMonitorTitle"), body: tL("benefitMonitorDesc") },
-          ]}
-        />
-      </EditorialSection>
+      {/* BENEFITS - Why Vuneli (Direction B: editorial 4-tile grid) */}
+      <WhyChooseGrid />
+
       </div>
 
 
