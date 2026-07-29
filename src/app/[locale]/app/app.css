@@ -279,3 +279,10 @@
 .viq-app .rounded-3xl {
   border-radius: 0.75rem;
 }
+
+/* Sidebar / header chrome: recedes from the content plane by value. */
+.app-chrome {
+  background: var(--app-chrome);
+  border-color: var(--app-rule);
+  color: var(--foreground);
+}

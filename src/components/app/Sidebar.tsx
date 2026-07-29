@@ -211,7 +211,7 @@ export const Sidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 bg-card border-r border-border/50 z-40">
+      <aside className="app-chrome hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 border-r z-40">
         <SidebarContent />
       </aside>
 
@@ -230,7 +230,7 @@ export const Sidebar = () => {
 
             {/* Sidebar */}
             <motion.aside
-              className="fixed left-0 top-0 h-screen w-64 bg-card border-r border-border/50 z-50 lg:hidden flex flex-col"
+              className="app-chrome fixed left-0 top-0 h-screen w-64 border-r z-50 lg:hidden flex flex-col"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}
