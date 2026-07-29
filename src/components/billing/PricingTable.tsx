@@ -1,7 +1,7 @@
 "use client";
 import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
-import { PremiumButton } from "@/components/ui/PremiumButton";
+
 import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
 import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
