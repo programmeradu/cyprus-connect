@@ -284,7 +284,7 @@ function GridIntensityVisual({
 
   return (
     <div
-      className="hidden sm:grid h-[112px] w-[112px] place-items-center"
+      className="grid h-[72px] w-[72px] shrink-0 place-items-center sm:h-[112px] sm:w-[112px]"
       aria-hidden
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -393,7 +393,7 @@ function DeadlineVisual({
   const year = d.getFullYear();
   return (
     <div
-      className="hidden sm:flex relative h-[112px] w-[96px] flex-col overflow-hidden rounded-[4px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset,0_1px_2px_rgba(0,0,0,0.04),0_14px_28px_-18px_rgba(0,0,0,0.35)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_14px_28px_-18px_rgba(0,0,0,0.6)]"
+      className="relative flex h-[72px] w-[62px] shrink-0 sm:h-[112px] sm:w-[96px] flex-col overflow-hidden rounded-[4px] border border-border/70 bg-background shadow-[0_1px_0_0_rgba(255,255,255,0.6)_inset,0_1px_2px_rgba(0,0,0,0.04),0_14px_28px_-18px_rgba(0,0,0,0.35)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.04)_inset,0_14px_28px_-18px_rgba(0,0,0,0.6)]"
       aria-hidden
     >
       {/* Binding rings at top */}
@@ -455,7 +455,7 @@ function NewsPulseVisual() {
 
   return (
     <div
-      className="hidden sm:grid h-[112px] w-[112px] place-items-center"
+      className="grid h-[72px] w-[72px] shrink-0 place-items-center sm:h-[112px] sm:w-[112px]"
       aria-hidden
     >
       <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
