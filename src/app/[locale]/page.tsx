@@ -234,15 +234,15 @@ export default function Home() {
         />
 
         <div className="relative max-w-3xl">
-          <blockquote className="font-[family-name:var(--editorial-serif)] text-2xl italic leading-snug tracking-tight text-foreground sm:text-4xl sm:leading-[1.15]">
+          <blockquote className="font-[family-name:var(--editorial-serif)] text-[28px] italic leading-[1.18] tracking-[-0.015em] text-foreground sm:text-[46px] sm:leading-[1.1]">
             &ldquo;{tL("testimonialQuoteA")}{" "}
             <span className="not-italic">{tL("testimonialQuoteB")}</span>&rdquo;
           </blockquote>
-          <div className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
-            <span className="font-medium">{tL("testimonialAuthor")}</span>
-            <span className="text-muted-foreground">{tL("testimonialRole")}</span>
+          <div className="mt-10 flex flex-wrap items-baseline gap-x-5 gap-y-1 text-[15px]">
+            <span className="font-semibold tracking-[-0.01em] text-foreground">{tL("testimonialAuthor")}</span>
+            <span className="text-foreground/60">{tL("testimonialRole")}</span>
             <span className="hidden text-border sm:inline">/</span>
-            <span className="text-muted-foreground">{tL("testimonialImpact")}</span>
+            <span className="text-foreground/60">{tL("testimonialImpact")}</span>
           </div>
         </div>
       </section>
@@ -277,21 +277,21 @@ export default function Home() {
         </div>
 
         <div className="relative mx-auto max-w-4xl px-4 py-24 sm:px-6 sm:py-36">
-          <h2 className="font-[family-name:var(--editorial-serif)] text-4xl leading-[1.05] tracking-[-0.02em] sm:text-6xl">
+          <h2 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.025em] sm:text-[4.2rem]">
             {tL("ctaTitleA")} <span className="italic text-muted-foreground">{tL("ctaTitleB")}</span>
           </h2>
-          <p className="mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
+          <p className="mt-7 max-w-xl font-[family-name:var(--editorial-serif)] text-[20px] italic leading-[1.45] text-foreground/75 sm:text-[24px]">
             {tL("ctaSubtitle")}
           </p>
-          <div className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-3">
+          <div className="mt-12 flex flex-wrap items-baseline gap-x-7 gap-y-3">
             <Link href="/auth">
-              <PremiumButton size="sm" className="text-sm">
+              <PremiumButton size="sm" className="text-[13.5px]">
                 {tL("ctaStart")}
               </PremiumButton>
             </Link>
             <Link
               href="/pricing"
-              className="text-sm text-foreground/70 underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:text-foreground hover:decoration-foreground/70"
+              className="text-[15px] font-medium text-foreground/75 underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:text-foreground hover:decoration-foreground/70"
             >
               {tL("ctaPricing")}
             </Link>
@@ -333,13 +333,13 @@ function EditorialSection({
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid gap-10 sm:grid-cols-12 sm:gap-12">
         <div className="sm:col-span-5">
-          <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2rem] leading-[1.05] tracking-[-0.02em] sm:text-[3rem]">
+          <h2 className="mt-5 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
             {titleA}
             {titleMid && <> <span className="italic text-muted-foreground">{titleMid}</span></>}
             {titleB && <> <span className="italic text-muted-foreground">{titleB}</span></>}
           </h2>
           {subtitle && (
-            <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-[17px]">
+            <p className="mt-6 max-w-md font-[family-name:var(--editorial-serif)] text-[19px] italic leading-[1.45] text-foreground/70 sm:text-[22px]">
               {subtitle}
             </p>
           )}
@@ -368,15 +368,15 @@ function NumberedList({ items }: { items: { n: string; title: string; body: stri
   return (
     <ul className="divide-y divide-border/60 border-y border-border/60">
       {items.map((it) => (
-        <li key={it.n} className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 py-6 sm:gap-x-8 sm:py-8">
-          <span className="pt-1 text-xs tabular-nums tracking-[0.15em] text-muted-foreground">
+        <li key={it.n} className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 py-7 sm:gap-x-10 sm:py-9">
+          <span className="pt-2 text-[11px] font-medium tabular-nums tracking-[0.22em] text-foreground/50">
             {it.n}
           </span>
           <div className="min-w-0">
-            <h3 className="font-[family-name:var(--editorial-serif)] text-xl tracking-tight sm:text-2xl">
+            <h3 className="font-[family-name:var(--editorial-serif)] text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
               {it.title}
             </h3>
-            <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+            <p className="mt-3 text-[16px] font-normal leading-[1.55] text-foreground/65 sm:text-[17.5px]">
               {it.body}
             </p>
           </div>

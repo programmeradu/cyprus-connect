@@ -39,13 +39,9 @@ export function MarketingHeader() {
       >
         <Link
           href="/"
-          className="flex items-center gap-2.5 pl-1.5 text-[18px] font-semibold tracking-[-0.02em] text-foreground"
+          className="flex items-center pl-1.5 text-[19px] font-semibold tracking-[-0.025em] text-foreground"
           style={{ fontFamily: "var(--editorial-display)" }}
         >
-          <span
-            aria-hidden
-            className="inline-block h-2.5 w-2.5 rounded-full bg-[var(--accent-lime)]"
-          />
           VerdeIQ
         </Link>
 
