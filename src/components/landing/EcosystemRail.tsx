@@ -37,9 +37,11 @@ export function EcosystemRail() {
       </div>
 
       <div className="mt-12 sm:mt-16">
-        <ul
-          className="flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-auto sm:max-w-6xl sm:grid sm:grid-cols-4 sm:gap-x-8 sm:overflow-visible sm:px-6 sm:pb-0"
+        <SnapRail
+          count={items.length}
+          gridClassName="sm:mx-auto sm:max-w-6xl sm:grid sm:grid-cols-4 sm:gap-x-8 sm:gap-y-0 sm:overflow-visible sm:px-6 sm:pb-0"
         >
+
           {items.map((it) => (
             <li
               key={it.n}
