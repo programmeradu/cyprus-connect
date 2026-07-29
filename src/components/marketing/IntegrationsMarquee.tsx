@@ -1,21 +1,9 @@
 "use client";
 
-import ariadniLogo from "@/assets/integrations/ariadni-logo.png.asset.json";
-import climateTraceLogo from "@/assets/integrations/climatetrace-logo.png.asset.json";
-import cyLoginCoat from "@/assets/integrations/cylogin-coat.png.asset.json";
-import cystatLogo from "@/assets/integrations/cystat-logo.png.asset.json";
-import eacLogo from "@/assets/integrations/eac-logo.png.asset.json";
-import electricityMapsLogo from "@/assets/integrations/electricitymaps-logo.svg.asset.json";
-import jccLogo from "@/assets/integrations/jcc-logo.svg.asset.json";
-import openeiLogo from "@/assets/integrations/openei-logo.svg.asset.json";
-import registrarLogo from "@/assets/integrations/registrar-logo.svg.asset.json";
-import softoneLogo from "@/assets/integrations/softone-logo.png.asset.json";
-import taxisnetLogo from "@/assets/integrations/taxisnet-title.gif.asset.json";
-import wikiRateLogo from "@/assets/integrations/wikirate-logo.svg.asset.json";
-
 /**
  * Continuous horizontal marquee of real integration logos.
- * Cyprus marks use official logo assets. No favicon service or text fallback.
+ * Cyprus marks use official logo assets served from /public/integrations
+ * so they render identically on localhost, preview, and published domains.
  */
 type Mark = {
   name: string;
@@ -26,14 +14,14 @@ type Mark = {
 };
 
 const CYPRUS_MARKS: Mark[] = [
-  { name: "EAC", logo: eacLogo.url, logoClassName: "h-12 w-8" },
-  { name: "JCC", logo: jccLogo.url, logoClassName: "h-8 w-20" },
-  { name: "SoftOne", logo: softoneLogo.url, logoClassName: "h-7 w-28" },
-  { name: "CY Login", logo: cyLoginCoat.url, logoClassName: "h-9 w-9" },
-  { name: "Registrar", logo: registrarLogo.url, logoClassName: "h-9 w-40" },
-  { name: "TAXISnet", logo: taxisnetLogo.url, logoClassName: "h-7 w-40" },
-  { name: "Ariadni", logo: ariadniLogo.url, logoClassName: "h-8 w-28" },
-  { name: "CyStat", logo: cystatLogo.url, logoClassName: "h-8 w-28" },
+  { name: "EAC", logo: "/integrations/eac-logo.png", logoClassName: "h-12 w-8" },
+  { name: "JCC", logo: "/integrations/jcc-logo.svg", logoClassName: "h-8 w-20" },
+  { name: "SoftOne", logo: "/integrations/softone-logo.png", logoClassName: "h-7 w-28" },
+  { name: "CY Login", logo: "/integrations/cylogin-coat.png", logoClassName: "h-9 w-9" },
+  { name: "Registrar", logo: "/integrations/registrar-logo.svg", logoClassName: "h-9 w-40" },
+  { name: "TAXISnet", logo: "/integrations/taxisnet-title.gif", logoClassName: "h-7 w-40" },
+  { name: "Ariadni", logo: "/integrations/ariadni-logo.png", logoClassName: "h-8 w-28" },
+  { name: "CyStat", logo: "/integrations/cystat-logo.png", logoClassName: "h-8 w-28" },
 ];
 
 const GLOBAL_MARKS: Mark[] = [
@@ -41,10 +29,10 @@ const GLOBAL_MARKS: Mark[] = [
   { name: "Xero",           simpleIcon: "xero" },
   { name: "Gemini",         simpleIcon: "googlegemini" },
   { name: "Google Cloud",   simpleIcon: "googlecloud" },
-  { name: "Climate TRACE", logo: climateTraceLogo.url, logoClassName: "h-8 w-28" },
-  { name: "Electricity Maps", logo: electricityMapsLogo.url, logoClassName: "h-7 w-36" },
-  { name: "OpenEI", logo: openeiLogo.url, logoClassName: "h-8 w-28" },
-  { name: "WikiRate", logo: wikiRateLogo.url, logoClassName: "h-8 w-28" },
+  { name: "Climate TRACE", logo: "/integrations/climatetrace-logo.png", logoClassName: "h-8 w-28" },
+  { name: "Electricity Maps", logo: "/integrations/electricitymaps-logo.svg", logoClassName: "h-7 w-36" },
+  { name: "OpenEI", logo: "/integrations/openei-logo.svg", logoClassName: "h-8 w-28" },
+  { name: "WikiRate", logo: "/integrations/wikirate-logo.svg", logoClassName: "h-8 w-28" },
 ];
 
 function LogoImage({ mark, dark }: { mark: Mark; dark?: boolean }) {
