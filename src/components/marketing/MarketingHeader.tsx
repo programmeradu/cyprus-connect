@@ -71,7 +71,7 @@ export function MarketingHeader() {
 
       {/* Envirogen-style solid dark pill — smooth, opaque, always-on */}
       <div className="flex justify-center">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-[#1c1f1e]/95 px-3 py-2 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)] ring-1 ring-white/5 backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-[#111413] px-3 py-2 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.45)] ring-1 ring-white/5">
           <nav className="hidden items-center md:flex">
             <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("tools")}
