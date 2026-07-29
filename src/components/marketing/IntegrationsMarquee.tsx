@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+
 
 /**
  * Continuous horizontal marquee of Cyprus integration wordmarks.
