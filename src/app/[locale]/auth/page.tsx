@@ -196,7 +196,7 @@ export default function AuthPage() {
             </div>
           </header>
 
-          <div className="flex flex-1 items-center justify-center px-5 pb-10 pt-2 sm:px-10">
+          <div className="flex flex-1 items-center justify-center px-5 pb-8 pt-2 sm:px-10 sm:pb-10">
             <div className="w-full max-w-[27rem]">
               {/* Mode switch */}
               <div className="flex items-center gap-6 border-b border-border/60">
