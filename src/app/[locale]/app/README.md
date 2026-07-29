@@ -41,24 +41,40 @@ src/components/
 
 ---
 
-## 🎨 Design System
+## Design System (Verified Nature — workspace variant)
 
-### Color Palette
-- **Primary (Verde Green)**: `oklch(0.55 0.15 155)` - Main brand color
-- **Chart Colors**: chart-1 through chart-5 for data visualization
-- **Glassmorphism**: `.glass` and `.glass-strong` utility classes
-- **Premium Shadows**: `.shadow-premium` for elevated components
+All workspace styling lives in `src/app/[locale]/app/app.css`, scoped under the
+`.viq-app` class that `layout.tsx` sets on the root element. It is separate from
+the marketing stylesheet (`src/app/globals.css`) on purpose: the two surfaces
+share tokens and typefaces but not treatments. Do not add workspace rules to
+`globals.css`, and do not import marketing-only classes here.
+
+### Surfaces
+- Page `--app-surface-0`, card `--app-surface-1`, inset `--app-surface-2`, hover `--app-surface-3`.
+- Depth comes from surface value plus a 1px `--app-rule` hairline. Nothing else.
+- Dark mode is a true neutral grey ramp (zero chroma): `#171717` chrome,
+  `#212121` page, `#2a2a2a` card, `#303030` inset.
+
+### Primitives
+`.app-card`, `.app-card-inset`, `.app-ledger`, `.app-overlay`, `.app-label`,
+`.app-meta`, `.app-metric`, `.app-num`, `.app-tag`, `.app-btn`, `.app-btn-ghost`.
 
 ### Typography
-- **Headings**: Space Grotesk font family
-- **Body**: Inter font family
-- **Sizes**: Ultra-thin (text-xs, text-[10px]) for modern premium feel
+- Display and figures: Fraunces (`--editorial-display`).
+- Body and UI: Instrument Sans (`--editorial-sans`).
+- Minimum readable size is 12px. All numerals are tabular.
 
-### Design Principles
-- **Small & Thin**: All elements kept compact and lightweight
-- **Premium Feel**: Glassmorphism, subtle animations, gradient accents
-- **Custom Icons**: No stock icon libraries - all custom SVG designs
-- **Responsive**: Mobile-first with breakpoints at sm, md, lg, xl
+### Banned (do not reintroduce)
+- Glassmorphism: `.glass`, `.glass-strong`, any `backdrop-blur` on a content card.
+- Gradients: `bg-gradient-*` washes, `.gradient-text`, `.gradient-border`.
+- Neumorphism `.neomorph` and the stacked `.shadow-premium` shadow.
+- `rounded-full` pill chips, `rounded-2xl`/`rounded-3xl` on rectangles.
+- 9px/10px uppercase wide-tracking microtype.
+- Decorative icons. Functional icons only (close, chevron, search, external link).
+- `truncate` or `line-clamp` on any label that carries meaning.
+
+Shadows are permitted in exactly one place: `.app-overlay`, for true overlays
+(dropdowns, modals, drawers).
 
 ---
 
