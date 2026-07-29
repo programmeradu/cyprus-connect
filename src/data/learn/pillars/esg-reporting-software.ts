@@ -65,7 +65,7 @@ export const esgReportingSoftware = makePillar({
     }
   ],
   "ctaHeading": "ESG reporting software built for EU SMEs and mid-caps",
-  "ctaBody": "VerdeIQ maps directly to ESRS, tags to XBRL, and prices in the SME band — with methodology your auditor recognizes."
+  "ctaBody": "Vuneli maps directly to ESRS, tags to XBRL, and prices in the SME band — with methodology your auditor recognizes."
 },
   el: {
   "title": "Λογισμικό Αναφοράς ESG: Τι να Ψάξετε το 2026",
@@ -125,6 +125,6 @@ export const esgReportingSoftware = makePillar({
     }
   ],
   "ctaHeading": "Λογισμικό ESG για ΜμΕ και mid-caps της ΕΕ",
-  "ctaBody": "Η VerdeIQ αντιστοιχίζεται σε ESRS, εξάγει σε XBRL, τιμολογείται στη ζώνη ΜμΕ."
+  "ctaBody": "Η Vuneli αντιστοιχίζεται σε ESRS, εξάγει σε XBRL, τιμολογείται στη ζώνη ΜμΕ."
 },
 });

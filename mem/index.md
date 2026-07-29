@@ -1,7 +1,7 @@
 # Project Memory
 
 ## Core
-Production domain: https://verdeiq.stauniverse.tech (set in .env as NEXT_PUBLIC_SITE_URL).
+Production domain: https://vuneli.com (set in .env as NEXT_PUBLIC_SITE_URL).
 Bilingual EN + EL (el-CY for Cyprus). All new pages must ship in both locales with hreflang.
 Every marketing/learn/pillar page ships with REAL context-aware generated hero + inline assets — no generic abstracts, no stock clichés. See mem://design/context-aware-assets.
 Never ship lazy/mediocre UI: verify full content fits, no truncation, no overflow, mobile checked.

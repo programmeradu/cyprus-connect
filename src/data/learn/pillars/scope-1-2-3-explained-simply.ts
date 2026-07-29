@@ -44,7 +44,7 @@ export const scope123ExplainedSimply = makePillar({
       { q: "How do I start with Scope 3?", a: "Estimate using spend-based factors first, then refine the biggest categories with supplier-specific data. Perfection is not the goal in year one." },
     ],
     ctaHeading: "Get Scope 1, 2, and 3 in one place",
-    ctaBody: "VerdeIQ pre-maps common activity data to GHG Protocol categories so you get a defensible scope split without a consultant.",
+    ctaBody: "Vuneli pre-maps common activity data to GHG Protocol categories so you get a defensible scope split without a consultant.",
   },
   el: {
     title: "Scope 1, 2, 3: Απλή Επεξήγηση",
@@ -70,6 +70,6 @@ export const scope123ExplainedSimply = makePillar({
       { q: "Πώς ξεκινώ Scope 3;", a: "Ξεκινήστε από spend-based, βελτιώστε τις μεγάλες κατηγορίες με στοιχεία προμηθευτών." },
     ],
     ctaHeading: "Όλα τα Scopes σε ένα μέρος",
-    ctaBody: "Η VerdeIQ αντιστοιχίζει δραστηριότητες σε κατηγορίες GHG Protocol.",
+    ctaBody: "Η Vuneli αντιστοιχίζει δραστηριότητες σε κατηγορίες GHG Protocol.",
   },
 });

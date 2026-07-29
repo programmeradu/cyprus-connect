@@ -65,7 +65,7 @@ export const carbonFootprintSoftwareSmes = makePillar({
     }
   ],
   "ctaHeading": "SME-native carbon accounting, priced like software should be",
-  "ctaBody": "VerdeIQ delivers audited-grade Scope 1, 2, and 3 reporting for SMEs — with published methodology, EU-specific factors, and pricing that doesn't punish you for growing."
+  "ctaBody": "Vuneli delivers audited-grade Scope 1, 2, and 3 reporting for SMEs — with published methodology, EU-specific factors, and pricing that doesn't punish you for growing."
 },
   el: {
   "title": "Λογισμικό Ανθρακικού Αποτυπώματος για ΜμΕ: Οδηγός Αγοράς 2026",
@@ -125,6 +125,6 @@ export const carbonFootprintSoftwareSmes = makePillar({
     }
   ],
   "ctaHeading": "Ανθρακική λογιστική για ΜμΕ, με τιμή λογισμικού",
-  "ctaBody": "Η VerdeIQ παρέχει αναφορές Scope 1, 2, 3 ελεγκτικής ποιότητας για ΜμΕ — με δημοσιευμένη μεθοδολογία και EU συντελεστές."
+  "ctaBody": "Η Vuneli παρέχει αναφορές Scope 1, 2, 3 ελεγκτικής ποιότητας για ΜμΕ — με δημοσιευμένη μεθοδολογία και EU συντελεστές."
 },
 });

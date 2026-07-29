@@ -90,7 +90,7 @@ export const cbamExplained = makePillar({
     }
   ],
   "ctaHeading": "Automate CBAM emissions collection from your suppliers",
-  "ctaBody": "VerdeIQ collects verified embedded-emissions data directly from your non-EU suppliers and generates the CBAM declaration your customs broker needs."
+  "ctaBody": "Vuneli collects verified embedded-emissions data directly from your non-EU suppliers and generates the CBAM declaration your customs broker needs."
 },
   el: {
   "title": "Ο Μηχανισμός CBAM: Πρακτικός Οδηγός για τον Ευρωπαϊκό Συνοριακό Ρύθμιση Άνθρακα",
@@ -151,6 +151,6 @@ export const cbamExplained = makePillar({
     }
   ],
   "ctaHeading": "Αυτοματοποιήστε τη συλλογή εκπομπών CBAM",
-  "ctaBody": "Η VerdeIQ συλλέγει επαληθευμένα δεδομένα από τους μη-ΕΕ προμηθευτές σας και παράγει τη δήλωση CBAM."
+  "ctaBody": "Η Vuneli συλλέγει επαληθευμένα δεδομένα από τους μη-ΕΕ προμηθευτές σας και παράγει τη δήλωση CBAM."
 },
 });

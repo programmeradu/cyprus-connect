@@ -167,7 +167,7 @@ export default function AuthPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              VerdeIQ
+              Vuneli
             </motion.h1>
           </Link>
           

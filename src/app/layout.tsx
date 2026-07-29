@@ -9,14 +9,14 @@ import { Toaster } from "@/components/ui/sonner";
 
 import { routing } from "@/i18n/routing";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 // Root metadata holds only sitewide defaults. Canonical, hreflang alternates,
 // per-page titles, descriptions, and og:* tags live in the [locale] layout and
 // leaf routes so each page gets unique, self-referencing metadata.
 export const metadata: Metadata = {
   title: {
-    default: "VerdeIQ — AI-Powered Sustainability for SMEs in Cyprus & the EU",
+    default: "Vuneli — AI-Powered Sustainability for SMEs in Cyprus & the EU",
     template: "%s",
   },
   description:
@@ -61,7 +61,7 @@ export default async function RootLayout({
             data-include-search-params="true"
             data-only-in-iframe="true"
             data-debug="false"
-            data-custom-data='{"appName": "VerdeIQ", "version": "1.0.0", "feature": "sustainability-platform"}'
+            data-custom-data='{"appName": "Vuneli", "version": "1.0.0", "feature": "sustainability-platform"}'
           />
           {children}
 

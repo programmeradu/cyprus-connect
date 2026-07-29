@@ -8,7 +8,7 @@ import { COUNTRIES, COUNTRY_NEIGHBOURS, COUNTRY_SLUGS, getCountry } from "@/data
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import GhgCalculator from "@/components/tools/widgets/GhgCalculator";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "ghg-calculator";
 
 export function generateStaticParams() {
@@ -48,7 +48,7 @@ export async function generateMetadata({
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1600, height: 900, alt: c.title }],
@@ -106,8 +106,8 @@ const COPY = {
       "Same calculator, pre-loaded with each country's grid factor and a domestic worked example. Handy when a multi-country group needs consistent per-site numbers.",
     ctaHeading: "Ready to go beyond a country calculator?",
     ctaBody:
-      "VerdeIQ centralises your GHG inventory, CBAM filings and CSRD disclosures across every site - with supplier data collection, evidence trails and role-based permissions.",
-    ctaAction: "Try VerdeIQ",
+      "Vuneli centralises your GHG inventory, CBAM filings and CSRD disclosures across every site - with supplier data collection, evidence trails and role-based permissions.",
+    ctaAction: "Try Vuneli",
   },
   el: {
     methodologyHeading: "Πώς προκύπτει ο συντελεστής της χώρας",
@@ -121,8 +121,8 @@ const COPY = {
       "Ο ίδιος υπολογιστής, με προεπιλεγμένο τον συντελεστή δικτύου κάθε χώρας και τοπικό παράδειγμα. Χρήσιμο όταν πολυεθνικός όμιλος χρειάζεται συνεπείς μετρήσεις ανά εγκατάσταση.",
     ctaHeading: "Έτοιμοι για κάτι περισσότερο από έναν υπολογιστή χώρας;",
     ctaBody:
-      "Η VerdeIQ ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε όλες τις εγκαταστάσεις - με συλλογή δεδομένων προμηθευτών και δικαιώματα ρόλων.",
-    ctaAction: "Δοκιμάστε το VerdeIQ",
+      "Η Vuneli ενοποιεί απογραφή GHG, αναφορές CBAM και αποκαλύψεις CSRD σε όλες τις εγκαταστάσεις - με συλλογή δεδομένων προμηθευτών και δικαιώματα ρόλων.",
+    ctaAction: "Δοκιμάστε το Vuneli",
   },
 } as const;
 
@@ -175,7 +175,7 @@ export default async function GhgCalculatorCountryPage({
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-    publisher: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
     countryOfOrigin: { "@type": "Country", name: c.name },
   };
@@ -192,7 +192,7 @@ export default async function GhgCalculatorCountryPage({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
       { "@type": "ListItem", position: 3, name: tool[safeLocale].title, item: `${SITE_URL}/${safeLocale}/tools/${SLUG}` },
       { "@type": "ListItem", position: 4, name: c.name, item: url },
@@ -290,7 +290,7 @@ export default async function GhgCalculatorCountryPage({
           locale={safeLocale}
           initialRegion={entry.region}
           lockRegion
-          storageKey={`verdeiq.tool.ghg.${entry.slug}`}
+          storageKey={`vuneli.tool.ghg.${entry.slug}`}
         />
       </ToolShell>
     </>

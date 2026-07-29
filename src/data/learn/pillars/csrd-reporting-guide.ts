@@ -94,7 +94,7 @@ export const csrdReportingGuide: Pillar = {
     ],
     ctaHeading: "Get audit-ready without the spreadsheet chaos",
     ctaBody:
-      "VerdeIQ maps your data directly to ESRS datapoints, runs your double materiality assessment, and produces XBRL-tagged disclosures your auditor can actually sign off on. Purpose-built for EU SMEs and mid-caps.",
+      "Vuneli maps your data directly to ESRS datapoints, runs your double materiality assessment, and produces XBRL-tagged disclosures your auditor can actually sign off on. Purpose-built for EU SMEs and mid-caps.",
   },
   el: {
     title: "Αναφορά CSRD: Ο Πλήρης Οδηγός 2026 για Ευρωπαϊκές Εταιρείες",
@@ -180,6 +180,6 @@ export const csrdReportingGuide: Pillar = {
     ],
     ctaHeading: "Ετοιμαστείτε για έλεγχο χωρίς το χάος των spreadsheets",
     ctaBody:
-      "Η VerdeIQ αντιστοιχίζει τα δεδομένα σας απευθείας σε ESRS datapoints, εκτελεί τη διπλή ουσιαστικότητα και παράγει γνωστοποιήσεις XBRL έτοιμες για ελεγκτή. Ειδικά σχεδιασμένη για ΜμΕ και mid-caps της ΕΕ.",
+      "Η Vuneli αντιστοιχίζει τα δεδομένα σας απευθείας σε ESRS datapoints, εκτελεί τη διπλή ουσιαστικότητα και παράγει γνωστοποιήσεις XBRL έτοιμες για ελεγκτή. Ειδικά σχεδιασμένη για ΜμΕ και mid-caps της ΕΕ.",
   },
 };

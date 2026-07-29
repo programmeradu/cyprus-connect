@@ -45,7 +45,7 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="verdeiq-data-export-${id}.json"`,
+        "Content-Disposition": `attachment; filename="vuneli-data-export-${id}.json"`,
       },
     });
   } catch (error) {

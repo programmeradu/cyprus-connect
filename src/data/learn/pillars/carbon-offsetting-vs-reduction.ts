@@ -61,7 +61,7 @@ export const carbonOffsettingVsReduction = makePillar({
     }
   ],
   "ctaHeading": "Track reductions, removals, and offsets separately",
-  "ctaBody": "VerdeIQ separates reductions, removals, and offsets in every report — so your claims survive the CSRD assurance conversation."
+  "ctaBody": "Vuneli separates reductions, removals, and offsets in every report — so your claims survive the CSRD assurance conversation."
 },
   el: {
   "title": "Αντιστάθμιση vs Μείωση Άνθρακα: Τι Πραγματικά Μετράει",
@@ -117,6 +117,6 @@ export const carbonOffsettingVsReduction = makePillar({
     }
   ],
   "ctaHeading": "Παρακολουθήστε μειώσεις, απομακρύνσεις, offsets χωριστά",
-  "ctaBody": "Η VerdeIQ διαχωρίζει σε κάθε αναφορά."
+  "ctaBody": "Η Vuneli διαχωρίζει σε κάθε αναφορά."
 },
 });

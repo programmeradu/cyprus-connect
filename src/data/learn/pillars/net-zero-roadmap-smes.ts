@@ -60,7 +60,7 @@ export const netZeroRoadmapSmes = makePillar({
     }
   ],
   "ctaHeading": "Build a defensible net-zero roadmap in one quarter",
-  "ctaBody": "VerdeIQ walks SMEs from baseline to public commitment, with SBTi SME-route templates and progress tracking built in."
+  "ctaBody": "Vuneli walks SMEs from baseline to public commitment, with SBTi SME-route templates and progress tracking built in."
 },
   el: {
   "title": "Οδικός Χάρτης Net Zero για ΜμΕ (Χωρίς Εταιρικό Bloat)",
@@ -115,6 +115,6 @@ export const netZeroRoadmapSmes = makePillar({
     }
   ],
   "ctaHeading": "Χτίστε net-zero roadmap σε τρίμηνο",
-  "ctaBody": "Η VerdeIQ οδηγεί τις ΜμΕ από βάση σε δέσμευση."
+  "ctaBody": "Η Vuneli οδηγεί τις ΜμΕ από βάση σε δέσμευση."
 },
 });

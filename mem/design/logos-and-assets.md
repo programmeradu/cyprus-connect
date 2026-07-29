@@ -14,7 +14,7 @@ Synthesized from the same 30-layer UI/UX + anti-vibecode research (Refactoring U
 4. **Screenshots > illustrations for product proof.** Real UI screenshots of the tool/dashboard beat any illustration. If the feature exists, show it.
 5. **Consistent treatment.** All logos same optical height (~24px in rows, ~32px in grids), grayscale or monochrome on light bg unless brand requires color, never squished, never on gradient chips.
 
-## Applied rules (enforced across VerdeIQ)
+## Applied rules (enforced across Vuneli)
 
 - **No `<Avatar>` initials fallback as final UI.** If we don't have a real headshot/logo, remove the element — no "AB" circles in testimonials, team, customer rows, comments.
 - **No `bg-gradient-to-br from-primary` circles** as logo/avatar substitutes.

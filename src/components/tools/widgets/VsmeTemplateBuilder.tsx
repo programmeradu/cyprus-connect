@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ VSME Template Builder - EFRAG Voluntary SME Standard, Basic Module.
+ * Vuneli VSME Template Builder - EFRAG Voluntary SME Standard, Basic Module.
  *
  * Guides the user through B1–B12 disclosures. All data stays client-side.
  * Exports: printable PDF (window.print), JSON snapshot, CSV.
@@ -72,7 +72,7 @@ const T = {
 
 export default function VsmeTemplateBuilder({ locale }: Props) {
   const l = T[locale];
-  const [values, setValues] = usePersistedState<Values>("verdeiq.tool.vsme", DEFAULT_VALUES);
+  const [values, setValues] = usePersistedState<Values>("vuneli.tool.vsme", DEFAULT_VALUES);
   const [step, setStep] = useState(0); // 0 = overview, 1..12 = disclosures, 13 = review
 
   const totalSteps = VSME_BASIC.length + 2;
@@ -114,7 +114,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "verdeiq-vsme-basic.json";
+    a.download = "vuneli-vsme-basic.json";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -131,7 +131,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "verdeiq-vsme-basic.csv";
+    a.download = "vuneli-vsme-basic.csv";
     a.click();
     URL.revokeObjectURL(url);
   };

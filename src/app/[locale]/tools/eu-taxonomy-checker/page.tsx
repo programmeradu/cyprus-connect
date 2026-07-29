@@ -6,7 +6,7 @@ import { getTool } from "@/data/tools";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import EuTaxonomyChecker from "@/components/tools/widgets/EuTaxonomyChecker";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "eu-taxonomy-checker";
 
 export function generateStaticParams() {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1600, height: 900, alt: c.title }],
@@ -80,8 +80,8 @@ const COPY = {
     ] as FaqItem[],
     relatedHeading: "Related guides",
     ctaHeading: "Need to go beyond screening?",
-    ctaBody: "VerdeIQ helps you gather the technical evidence for substantial contribution, run activity-specific DNSH assessments and produce the Art. 8 KPI split across turnover, CapEx and OpEx.",
-    ctaAction: "Try VerdeIQ",
+    ctaBody: "Vuneli helps you gather the technical evidence for substantial contribution, run activity-specific DNSH assessments and produce the Art. 8 KPI split across turnover, CapEx and OpEx.",
+    ctaAction: "Try Vuneli",
   },
   el: {
     methodologyHeading: "Πώς αξιολογείται η επιλεξιμότητα",
@@ -112,8 +112,8 @@ const COPY = {
     ] as FaqItem[],
     relatedHeading: "Σχετικοί οδηγοί",
     ctaHeading: "Πέρα από τον προκαταρκτικό έλεγχο;",
-    ctaBody: "Η VerdeIQ βοηθά στη συλλογή τεχνικών στοιχείων SC, στους ελέγχους DNSH ανά δραστηριότητα και στο split KPI Άρθρου 8.",
-    ctaAction: "Δοκιμάστε το VerdeIQ",
+    ctaBody: "Η Vuneli βοηθά στη συλλογή τεχνικών στοιχείων SC, στους ελέγχους DNSH ανά δραστηριότητα και στο split KPI Άρθρου 8.",
+    ctaAction: "Δοκιμάστε το Vuneli",
   },
 } as const;
 
@@ -140,7 +140,7 @@ export default async function EuTaxonomyCheckerPage({ params }: { params: Promis
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-    publisher: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
   const howToLd = {
@@ -168,7 +168,7 @@ export default async function EuTaxonomyCheckerPage({ params }: { params: Promis
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
       { "@type": "ListItem", position: 3, name: c.title, item: url },
     ],

@@ -10,7 +10,7 @@ import GlossaryText from "@/components/learn/GlossaryText";
 import RelatedSuggestions from "@/components/learn/RelatedSuggestions";
 import type { Metadata } from "next";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 export function generateStaticParams() {
   const params: Array<{ locale: string; slug: string }> = [];
@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       alternateLocale: safeLocale === "el" ? ["en_US"] : ["el_CY"],
       type: "article",
@@ -111,10 +111,10 @@ export default async function PillarPage({ params }: { params: Params }) {
     dateModified: pillar.updatedAt,
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    author: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    author: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     publisher: {
       "@type": "Organization",
-      name: "VerdeIQ",
+      name: "Vuneli",
       logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.png` },
     },
   };
@@ -131,7 +131,7 @@ export default async function PillarPage({ params }: { params: Params }) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Learn", item: `${SITE_URL}/${safeLocale}/learn` },
       { "@type": "ListItem", position: 3, name: c.title, item: url },
     ],

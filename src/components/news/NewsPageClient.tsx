@@ -40,7 +40,7 @@ const COPY = {
     loading: "Loading feed…",
     timelineTitle: "Regulatory timeline",
     timelineSub: "Upcoming EU compliance milestones.",
-    takesTitle: "VerdeIQ takes",
+    takesTitle: "Vuneli takes",
     takesSub: "Short analysis of the biggest stories this week.",
     read: "Read →",
   },
@@ -59,7 +59,7 @@ const COPY = {
     loading: "Φόρτωση…",
     timelineTitle: "Ρυθμιστικό χρονοδιάγραμμα",
     timelineSub: "Επερχόμενες προθεσμίες συμμόρφωσης ΕΕ.",
-    takesTitle: "Η άποψη της VerdeIQ",
+    takesTitle: "Η άποψη της Vuneli",
     takesSub: "Σύντομη ανάλυση της εβδομάδας.",
     read: "Ανάγνωση →",
   },
@@ -271,7 +271,7 @@ export function NewsPageClient() {
         </div>
       </section>
 
-      {/* VerdeIQ takes */}
+      {/* Vuneli takes */}
       <section className="border-t border-border/60">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="grid gap-10 sm:grid-cols-12">

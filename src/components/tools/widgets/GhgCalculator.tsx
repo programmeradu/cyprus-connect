@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ GHG Calculator - Scope 1 / 2 / 3 emissions estimator.
+ * Vuneli GHG Calculator - Scope 1 / 2 / 3 emissions estimator.
  *
  * Not audit-grade. Uses published 2024 factors from DEFRA, IEA and EEA
  * (see /tools/ghg-calculator methodology block). All calculations are
@@ -194,7 +194,7 @@ const DEFAULT_STATE: State = {
 export default function GhgCalculator({ locale, initialRegion, lockRegion, storageKey }: Props) {
   const l = t[locale];
   const seed: State = initialRegion ? { ...DEFAULT_STATE, region: initialRegion } : DEFAULT_STATE;
-  const [state, setState] = usePersistedState<State>(storageKey ?? "verdeiq.tool.ghg", seed);
+  const [state, setState] = usePersistedState<State>(storageKey ?? "vuneli.tool.ghg", seed);
   const [tab, setTab] = useState<"scope1" | "scope2" | "scope3">("scope1");
 
   const set = <K extends keyof State>(key: K, val: State[K]) =>
@@ -284,7 +284,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `verdeiq-ghg-report-${state.year}.csv`;
+    a.download = `vuneli-ghg-report-${state.year}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -434,7 +434,7 @@ export default function GhgCalculator({ locale, initialRegion, lockRegion, stora
                     step={f.step}
                     value={value}
                     onChange={(e) => set(f.key, Number(e.target.value) as State[typeof f.key])}
-                    className="verdeiq-range"
+                    className="vuneli-range"
                   />
                 </div>
               );

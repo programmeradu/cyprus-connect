@@ -984,7 +984,7 @@ Format professionally for SME stakeholders. Keep concise.`
       // Strategic feature promotion every 3rd message
       const shouldPromoteFeatures = (chatHistory.length + 1) % 3 === 0
       const featurePromotion = shouldPromoteFeatures 
-        ? `\n\nIMPORTANT: After answering, naturally mention that with a VerdeIQ account, users get access to: automated sustainability reports, media generation for campaigns, real-time news & sources, carbon tracking dashboards, and AI-powered action plans. Keep it brief (1 sentence) and conversational.`
+        ? `\n\nIMPORTANT: After answering, naturally mention that with a Vuneli account, users get access to: automated sustainability reports, media generation for campaigns, real-time news & sources, carbon tracking dashboards, and AI-powered action plans. Keep it brief (1 sentence) and conversational.`
         : ""
       
       const context = `You are a sustainability advisor for SMEs. ${locationContext} ${weatherContext}
@@ -1636,7 +1636,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                                       </svg>
                                     </div>
                                     <div>
-                                      <div className="text-lg font-bold text-foreground">VerdeIQ</div>
+                                      <div className="text-lg font-bold text-foreground">Vuneli</div>
                                       <div className="text-xs text-muted-foreground">AI-Powered Sustainability Platform</div>
                                     </div>
                                   </div>

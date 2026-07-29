@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * localStorage-backed state, shared across pages & locales.
- * Key is a stable string (e.g. "verdeiq.calc.scope").
+ * Key is a stable string (e.g. "vuneli.calc.scope").
  */
 export function usePersistedState<T>(key: string, initial: T): [T, (v: T | ((prev: T) => T)) => void] {
   const [value, setValue] = useState<T>(initial);

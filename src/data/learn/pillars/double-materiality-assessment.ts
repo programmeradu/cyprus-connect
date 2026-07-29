@@ -59,7 +59,7 @@ export const doubleMaterialityAssessment = makePillar({
     }
   ],
   "ctaHeading": "Run your double materiality assessment inside one platform",
-  "ctaBody": "VerdeIQ digitizes the full process — long-list, stakeholder surveys, IRO scoring, thresholds, and audit trail — mapped to ESRS topics."
+  "ctaBody": "Vuneli digitizes the full process — long-list, stakeholder surveys, IRO scoring, thresholds, and audit trail — mapped to ESRS topics."
 },
   el: {
   "title": "Διπλή Ουσιαστικότητα: Ο Ακρογωνιαίος Λίθος του CSRD",
@@ -113,6 +113,6 @@ export const doubleMaterialityAssessment = makePillar({
     }
   ],
   "ctaHeading": "Εκτελέστε τη διπλή ουσιαστικότητα σε μία πλατφόρμα",
-  "ctaBody": "Η VerdeIQ ψηφιοποιεί όλη τη διαδικασία."
+  "ctaBody": "Η Vuneli ψηφιοποιεί όλη τη διαδικασία."
 },
 });

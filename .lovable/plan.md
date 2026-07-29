@@ -1,5 +1,5 @@
 
-# Four-site audit + VerdeIQ composition plan
+# Four-site audit + Vuneli composition plan
 
 ## Audit findings (54-layer distilled)
 
@@ -10,7 +10,7 @@
 - **Hero card:** Frosted glass panel (backdrop-blur, subtle white/10 fill), bracketed eyebrow, 3-line stacked headline `Future-proof / Your / Operations.` with period. Lime CTA rectangle full-width inside card.
 - **Secondary CTA:** Pill with two overlapping avatars → "SPEAK WITH OUR TEAM" + circular arrow icon. Human, not corporate.
 - **Logos strip:** Continuous horizontal marquee, monochrome logos, "Helping 100+ leading companies…"
-- **Verdict:** THIS is the target aesthetic for VerdeIQ — cinematic photo hero + floating glass panel + bracketed micro-labels + accent CTA color.
+- **Verdict:** THIS is the target aesthetic for Vuneli — cinematic photo hero + floating glass panel + bracketed micro-labels + accent CTA color.
 
 ### 2. Emitra — clean SaaS
 - **Vibe:** Bright, minimal, dashboard-forward.
@@ -31,20 +31,20 @@
 - **Hero:** Full-bleed sky photo, centered mega-headline with **mixed weight** (bold first line, thin italic second line), rounded white pill CTA with dark circular arrow.
 - **Key steal:** Mixed-weight headline treatment + rounded arrow-pill CTA + full-bleed atmospheric photo.
 
-## The composition — VerdeIQ landing v3
+## The composition — Vuneli landing v3
 
 Blend the four top moves into one coherent identity:
 
-| Element | Source | Adaptation for VerdeIQ |
+| Element | Source | Adaptation for Vuneli |
 |---|---|---|
 | Full-bleed cinematic hero photo | Lifecycle + GreenX | Cyprus-specific: Mediterranean coastline w/ solar array, or Troodos wind farm at dawn |
-| Floating pill nav (glass) | Solaric | Transparent-to-glass on scroll, VerdeIQ wordmark left, EN/EL switch right |
+| Floating pill nav (glass) | Solaric | Transparent-to-glass on scroll, Vuneli wordmark left, EN/EL switch right |
 | Bracketed mono eyebrow `[CYPRUS SUSTAINABILITY OS]` | Lifecycle | Keep our editorial identity |
 | Frosted glass hero card | Lifecycle | Contains headline + subhead + primary CTA |
 | Mixed-weight headline | GreenX | `Cyprus SMEs, /` (bold) + `built for CBAM & CSRD.` (thin italic Fraunces) |
-| Accent CTA color | Lifecycle lime → **VerdeIQ emerald/lime** | Sharp rectangle, no rounding |
+| Accent CTA color | Lifecycle lime → **Vuneli emerald/lime** | Sharp rectangle, no rounding |
 | Human trust cluster (avatars + "SPEAK WITH TEAM") | Lifecycle + Solaric | Real CY partner logos + "Talk to a Cyprus advisor" |
-| Tilted dashboard mockup below hero | Emitra | Real VerdeIQ dashboard screenshot, tilted, w/ EAC widget, CBAM tracker |
+| Tilted dashboard mockup below hero | Emitra | Real Vuneli dashboard screenshot, tilted, w/ EAC widget, CBAM tracker |
 | Marquee integration logos | Lifecycle | EAC, JCC, SoftOne, CY Login, Registrar |
 
 ## Scope of build
@@ -71,7 +71,7 @@ Blend the four top moves into one coherent identity:
 
 ## Ask before I build
 Two calls I need you to make:
-1. **Accent color for CTA:** Lifecycle-style neon lime (`#DFFF3D`), or stay with VerdeIQ emerald? Lime is more distinctive but louder.
+1. **Accent color for CTA:** Lifecycle-style neon lime (`#DFFF3D`), or stay with Vuneli emerald? Lime is more distinctive but louder.
 2. **Hero photo subject:** (a) Cyprus dawn coastline with distant turbines, (b) Troodos ridgeline solar array, (c) Limassol port at golden hour (CBAM/shipping angle). Pick one and I generate it premium-tier.
 
 Answer those two, I execute the full rebuild in one pass.

@@ -26,7 +26,7 @@
     "titleA": "Simple, Transparent",
     "titleB": "Pricing",
     "subtitle": "Choose the perfect plan for your sustainability journey. All plans include our core features with no hidden fees.",
-    "vatNoticeCY": "Prices shown include Cyprus VAT (19%). Invoices are issued by VerdeIQ in EUR.",
+    "vatNoticeCY": "Prices shown include Cyprus VAT (19%). Invoices are issued by Vuneli in EUR.",
     "eurNotice": "Cyprus-only checkout in EUR.",
     "faqTitleA": "Frequently Asked",
     "faqTitleB": "Questions",
@@ -52,7 +52,7 @@
     "rights": "All rights reserved."
   },
   "auth": {
-    "welcome": "Welcome to VerdeIQ",
+    "welcome": "Welcome to Vuneli",
     "signInTitle": "Sign in to your account",
     "createTitle": "Create your account",
     "signInSubtitle": "Continue your sustainability journey",
@@ -885,7 +885,7 @@
       "noSession": "Session not found. Please log in again.",
       "updateFail": "Failed to update profile",
       "createFail": "Failed to create account",
-      "welcome": "Welcome to VerdeIQ! 🌿",
+      "welcome": "Welcome to Vuneli! 🌿",
       "genericError": "Something went wrong. Please try again.",
       "extracted": "{type} bill data extracted successfully!"
     },
@@ -1392,7 +1392,7 @@
       "defaultLocation": "Global",
       "defaultEmployees": "N/A",
       "defaultTargetYear": "2050",
-      "brand": "VerdeIQ",
+      "brand": "Vuneli",
       "brandTag": "AI-Powered Sustainability Platform",
       "brandMotto": "Empowering SMEs to Lead on Sustainability",
       "reportGenerated": "Report Generated",
@@ -1649,17 +1649,17 @@
   },
   "seo": {
     "home": {
-      "title": "VerdeIQ - AI-Powered Sustainability for SMEs in Cyprus & the EU",
+      "title": "Vuneli - AI-Powered Sustainability for SMEs in Cyprus & the EU",
       "description": "Track, optimize, and report your environmental impact with AI. Built for SMEs in Cyprus and across the EU - GDPR-compliant, EUR pricing, EN & EL."
     },
     "pricing": {
-      "title": "Pricing - VerdeIQ Sustainability Plans (EUR, incl. Cyprus VAT)",
+      "title": "Pricing - Vuneli Sustainability Plans (EUR, incl. Cyprus VAT)",
       "description": "Simple, transparent pricing in EUR for SMEs in Cyprus and the EU. Includes 19% Cyprus VAT. Choose Free, Pro, or Enterprise."
     }
   },
   "landing": {
     "whyTitleA": "Why Choose",
-    "whyTitleB": "VerdeIQ",
+    "whyTitleB": "Vuneli",
     "whySubtitle": "Everything you need to lead sustainability in your industry",
     "powerTitleA": "Power Your",
     "powerTitleMid": "Sustainability",
@@ -1712,7 +1712,7 @@
     "stepAnalyzeDesc": "Our AI engine processes your data, identifies patterns, and provides actionable sustainability insights.",
     "stepActionTitle": "Take Action & Report",
     "stepActionDesc": "Implement recommendations, track progress, and generate professional reports for stakeholders.",
-    "testimonialQuoteA": "VerdeIQ transformed how we approach sustainability. The AI insights helped us",
+    "testimonialQuoteA": "Vuneli transformed how we approach sustainability. The AI insights helped us",
     "testimonialImpact": "reduce our carbon footprint by 40%",
     "testimonialQuoteB": "in just six months.",
     "testimonialAuthor": "CEO",

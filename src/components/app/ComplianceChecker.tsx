@@ -28,7 +28,7 @@ interface SMEData {
   industry: string;
 }
 
-// VerdeIQ is Cyprus-focused. The compliance checker covers Cyprus and the
+// Vuneli is Cyprus-focused. The compliance checker covers Cyprus and the
 // wider EU/EEA where CSRD, VSME, EU Taxonomy, and CBAM apply.
 const WORLD_COUNTRIES = {
   "Cyprus": [

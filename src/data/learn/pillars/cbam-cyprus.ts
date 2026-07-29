@@ -61,7 +61,7 @@ export const cbamCyprus = makePillar({
     }
   ],
   "ctaHeading": "Automate CBAM declarations for Cyprus importers",
-  "ctaBody": "VerdeIQ integrates with Cyprus Customs data flows, collects verified supplier emissions, and generates the CBAM declaration your broker can file directly."
+  "ctaBody": "Vuneli integrates with Cyprus Customs data flows, collects verified supplier emissions, and generates the CBAM declaration your broker can file directly."
 },
   el: {
   "title": "CBAM στην Κύπρο: Τι Πρέπει να Κάνουν οι Εισαγωγείς",
@@ -117,6 +117,6 @@ export const cbamCyprus = makePillar({
     }
   ],
   "ctaHeading": "Αυτοματοποιήστε τις δηλώσεις CBAM",
-  "ctaBody": "Η VerdeIQ συνδέεται με ροές Τελωνείων, συλλέγει δεδομένα προμηθευτών, και παράγει τη δήλωση."
+  "ctaBody": "Η Vuneli συνδέεται με ροές Τελωνείων, συλλέγει δεδομένα προμηθευτών, και παράγει τη δήλωση."
 },
 });

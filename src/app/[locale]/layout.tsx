@@ -8,7 +8,7 @@ import { CookieBanner } from "@/components/legal/CookieBanner";
 import { ConsentedAnalytics } from "@/components/legal/ConsentedAnalytics";
 import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 export function generateStaticParams() {
@@ -47,7 +47,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${SITE_URL}/${safeLocale}`,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       alternateLocale: safeLocale === "el" ? ["en_US"] : ["el_CY"],
       type: "website",
@@ -83,7 +83,7 @@ export default async function LocaleLayout({
   const organizationLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "VerdeIQ",
+    name: "Vuneli",
     url: `${SITE_URL}/${locale}`,
     logo: `${SITE_URL}/icon.png`,
     description: t("description"),
@@ -98,17 +98,17 @@ export default async function LocaleLayout({
   const websiteLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "VerdeIQ",
+    name: "Vuneli",
     url: `${SITE_URL}/${locale}`,
     inLanguage,
-    publisher: { "@type": "Organization", name: "VerdeIQ" },
+    publisher: { "@type": "Organization", name: "Vuneli" },
   };
 
   const serviceLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "VerdeIQ Sustainability Platform",
-    provider: { "@type": "Organization", name: "VerdeIQ" },
+    name: "Vuneli Sustainability Platform",
+    provider: { "@type": "Organization", name: "Vuneli" },
     areaServed: ["CY", "EU"],
     serviceType: "AI-powered ESG, carbon accounting and CSRD/VSME reporting for SMEs",
     description: t("description"),

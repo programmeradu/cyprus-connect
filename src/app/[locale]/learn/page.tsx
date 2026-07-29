@@ -5,7 +5,7 @@ import { routing } from "@/i18n/routing";
 import { getAllPillars } from "@/data/learn/pillars";
 import LearnHubClient from "@/components/learn/LearnHubClient";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 // Slugs that ship with an interactive widget (mirrors WIDGET_MAP in [slug]/page.tsx)
 const WIDGET_SLUGS = new Set([
@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     : routing.defaultLocale;
 
   const title = safeLocale === "el"
-    ? "Κόμβος Γνώσης VerdeIQ - Οδηγοί CSRD, VSME, CBAM & Λογιστικής Άνθρακα"
-    : "VerdeIQ Learn - CSRD, VSME, CBAM & Carbon Accounting Guides";
+    ? "Κόμβος Γνώσης Vuneli - Οδηγοί CSRD, VSME, CBAM & Λογιστικής Άνθρακα"
+    : "Vuneli Learn - CSRD, VSME, CBAM & Carbon Accounting Guides";
   const description = safeLocale === "el"
     ? "Πρακτικοί, διαδραστικοί οδηγοί για CSRD, VSME, CBAM, ESRS και βιωσιμότητα ΜμΕ - με ελεύθερα εργαλεία υπολογισμού για CFOs και υπεύθυνους βιωσιμότητας."
     : "Practical, interactive guides on CSRD, VSME, CBAM, ESRS and SME sustainability - with free built-in calculators for CFOs and sustainability leads.";
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     openGraph: {
       title, description,
       url: `${SITE_URL}/${safeLocale}/learn`,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: title }],

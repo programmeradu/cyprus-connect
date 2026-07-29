@@ -92,7 +92,7 @@ export const carbonAccountingForSmes = makePillar({
     }
   ],
   "ctaHeading": "Your first carbon inventory in weeks, not months",
-  "ctaBody": "VerdeIQ walks SMEs through data collection, applies EU-region-specific factors, and produces a shareable report you can hand to any customer, bank, or auditor."
+  "ctaBody": "Vuneli walks SMEs through data collection, applies EU-region-specific factors, and produces a shareable report you can hand to any customer, bank, or auditor."
 },
   el: {
   "title": "Λογιστική Άνθρακα για ΜμΕ: Πρακτικός Οδηγός Έναρξης",
@@ -157,6 +157,6 @@ export const carbonAccountingForSmes = makePillar({
     }
   ],
   "ctaHeading": "Πρώτη απογραφή σε εβδομάδες",
-  "ctaBody": "Η VerdeIQ καθοδηγεί τις ΜμΕ στη συλλογή δεδομένων, εφαρμόζει EU συντελεστές, και παράγει διαμοιραζόμενη αναφορά."
+  "ctaBody": "Η Vuneli καθοδηγεί τις ΜμΕ στη συλλογή δεδομένων, εφαρμόζει EU συντελεστές, και παράγει διαμοιραζόμενη αναφορά."
 },
 });

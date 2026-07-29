@@ -64,7 +64,7 @@ export const csrdReportingCyprus = makePillar({
     }
   ],
   "ctaHeading": "CSRD-ready reporting for Cyprus entities",
-  "ctaBody": "VerdeIQ handles EAC grid factors, bilingual Greek/English output, Registrar-ready formats, and XBRL tagging out of the box."
+  "ctaBody": "Vuneli handles EAC grid factors, bilingual Greek/English output, Registrar-ready formats, and XBRL tagging out of the box."
 },
   el: {
   "title": "Αναφορά CSRD στην Κύπρο: Πεδίο, Χρονοδιάγραμμα, Πρακτικά",
@@ -123,6 +123,6 @@ export const csrdReportingCyprus = makePillar({
     }
   ],
   "ctaHeading": "CSRD αναφορές για κυπριακές οντότητες",
-  "ctaBody": "Η VerdeIQ χειρίζεται EAC συντελεστές, δίγλωσσο output, μορφή Εφόρου, και XBRL."
+  "ctaBody": "Η Vuneli χειρίζεται EAC συντελεστές, δίγλωσσο output, μορφή Εφόρου, και XBRL."
 },
 });

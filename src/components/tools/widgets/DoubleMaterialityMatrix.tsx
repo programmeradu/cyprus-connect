@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * VerdeIQ Double Materiality Matrix - CSRD / ESRS 1 §3.
+ * Vuneli Double Materiality Matrix - CSRD / ESRS 1 §3.
  *
  * Score each topic on:
  *   Impact materiality  = f(severity, scope, irremediability, likelihood)
@@ -143,7 +143,7 @@ const T = {
 
 export default function DoubleMaterialityMatrix({ locale }: Props) {
   const l = T[locale];
-  const [state, setState] = usePersistedState<State>("verdeiq.tool.dma", DEFAULT_STATE);
+  const [state, setState] = usePersistedState<State>("vuneli.tool.dma", DEFAULT_STATE);
   const [selected, setSelected] = useState<string | null>(state.topics[0]?.id ?? null);
 
   const numLocale = locale === "el" ? "el-CY" : "en-GB";
@@ -204,7 +204,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `verdeiq-double-materiality.csv`;
+    a.download = `vuneli-double-materiality.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -239,7 +239,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
               onChange={(e) =>
                 setState((s) => ({ ...s, threshold: Number(e.target.value) }))
               }
-              className="verdeiq-range mt-3 w-full max-w-md"
+              className="vuneli-range mt-3 w-full max-w-md"
             />
             <p className="mt-2 max-w-md text-[12px] text-foreground/55">{l.thresholdHint}</p>
           </div>
@@ -388,7 +388,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                           step={1}
                           value={active[k]}
                           onChange={(e) => setTopic(active.id, { [k]: Number(e.target.value) } as Partial<Topic>)}
-                          className="verdeiq-range"
+                          className="vuneli-range"
                         />
                       </div>
                     ))}
@@ -415,7 +415,7 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
                           step={1}
                           value={active[k]}
                           onChange={(e) => setTopic(active.id, { [k]: Number(e.target.value) } as Partial<Topic>)}
-                          className="verdeiq-range"
+                          className="vuneli-range"
                         />
                       </div>
                     ))}

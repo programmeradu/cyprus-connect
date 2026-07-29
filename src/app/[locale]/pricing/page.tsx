@@ -20,12 +20,12 @@ export default function PricingPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3 sm:px-8">
-          <Link href="/" aria-label="VerdeIQ home" className="min-w-0">
+          <Link href="/" aria-label="Vuneli home" className="min-w-0">
             <span
               className="text-base font-semibold tracking-tight sm:text-lg"
               style={{ fontFamily: "var(--editorial-serif)" }}
             >
-              VerdeIQ
+              Vuneli
             </span>
           </Link>
           <div className="flex shrink-0 items-center gap-1.5">

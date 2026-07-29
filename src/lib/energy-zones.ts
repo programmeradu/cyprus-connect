@@ -1,5 +1,5 @@
 /**
- * Cyprus-only electricity profile for VerdeIQ.
+ * Cyprus-only electricity profile for Vuneli.
  *
  * Research anchors for the first Cyprus localization pass:
  * - Cyprus has an isolated electricity system with regulated supply tariffs.

@@ -544,7 +544,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       // Create download link
       const link = document.createElement("a");
       link.href = objectUrl;
-      link.download = `verdeiq-${media.type}-${media.id}.${media.type === "image" ? "png" : "mp4"}`;
+      link.download = `vuneli-${media.type}-${media.id}.${media.type === "image" ? "png" : "mp4"}`;
       document.body.appendChild(link);
       link.click();
       

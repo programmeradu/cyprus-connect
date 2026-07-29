@@ -83,7 +83,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for Cyprus — 2024 grid factor 0.622 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the Cyprus grid factor pre-loaded. Free, no signup, built for Cypriot SMEs preparing for VSME, CSRD or bank-driven ESG questionnaires.",
-      metaTitle: "GHG Calculator — Cyprus | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Cyprus | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with Cyprus's 0.622 kg/kWh grid factor pre-loaded. Scope 1, 2 and 3, PDF export, no signup. For Cypriot SMEs and CFOs.",
       cardBlurb: "Cyprus grid 0.622 kg/kWh — fuel-oil heavy, still Europe's most carbon-intensive grid.",
@@ -113,7 +113,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για την Κύπρο — συντελεστής δικτύου 2024: 0,622 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε τις εκπομπές Scope 1, 2 και 3 του οργανισμού σας με προεπιλεγμένο τον κυπριακό συντελεστή δικτύου. Δωρεάν, χωρίς εγγραφή, για κυπριακές ΜμΕ που προετοιμάζονται για VSME, CSRD ή τραπεζικά ερωτηματολόγια ESG.",
-      metaTitle: "Υπολογιστής GHG — Κύπρος | Δωρεάν εργαλείο Scope 1, 2 & 3 | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Κύπρος | Δωρεάν εργαλείο Scope 1, 2 & 3 | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο τον κυπριακό συντελεστή 0,622 kg/kWh. Scope 1, 2 και 3, εξαγωγή PDF, χωρίς εγγραφή.",
       cardBlurb: "Κυπριακό δίκτυο 0,622 kg/kWh — υψηλότερος συντελεστής στην ΕΕ, κυριαρχία μαζούτ.",
@@ -153,7 +153,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for Greece — 2024 grid factor 0.371 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the Greek grid factor pre-loaded. Free, no signup, built for Greek businesses preparing CSRD or VSME reports.",
-      metaTitle: "GHG Calculator — Greece | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Greece | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with Greece's 0.371 kg/kWh grid factor pre-loaded. Scope 1, 2 and 3, PDF export, no signup.",
       cardBlurb: "Greek grid 0.371 kg/kWh — lignite phase-out under way, solar and wind scaling.",
@@ -183,7 +183,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για την Ελλάδα — συντελεστής δικτύου 2024: 0,371 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε τις εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον ελληνικό συντελεστή δικτύου. Δωρεάν, χωρίς εγγραφή, για ελληνικές επιχειρήσεις που ετοιμάζουν αναφορές CSRD ή VSME.",
-      metaTitle: "Υπολογιστής GHG — Ελλάδα | Δωρεάν εργαλείο Scope 1, 2 & 3 | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Ελλάδα | Δωρεάν εργαλείο Scope 1, 2 & 3 | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο τον ελληνικό συντελεστή 0,371 kg/kWh. Scope 1, 2 και 3, εξαγωγή PDF, χωρίς εγγραφή.",
       cardBlurb: "Ελληνικό δίκτυο 0,371 kg/kWh — απολιγνιτοποίηση σε εξέλιξη, ήλιος και άνεμος σε άνοδο.",
@@ -223,7 +223,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for Germany — 2024 grid factor 0.381 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the German grid factor pre-loaded. Free, no signup, built for the Mittelstand preparing CSRD and CBAM disclosures.",
-      metaTitle: "GHG Calculator — Germany | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Germany | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with Germany's 0.381 kg/kWh grid factor pre-loaded. Scope 1, 2 and 3, PDF export, no signup.",
       cardBlurb: "German grid 0.381 kg/kWh — coal exit accelerating, gas transition, wind at record share.",
@@ -253,7 +253,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για τη Γερμανία — συντελεστής δικτύου 2024: 0,381 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον γερμανικό συντελεστή. Δωρεάν, χωρίς εγγραφή, για γερμανικές επιχειρήσεις που ετοιμάζουν CSRD και CBAM.",
-      metaTitle: "Υπολογιστής GHG — Γερμανία | Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Γερμανία | Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο γερμανικό συντελεστή 0,381 kg/kWh. Scope 1, 2, 3, εξαγωγή PDF.",
       cardBlurb: "Γερμανικό δίκτυο 0,381 kg/kWh — απολιγνιτοποίηση, ρεκόρ αιολικής παραγωγής.",
@@ -293,7 +293,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for France — 2024 grid factor 0.056 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the French grid factor pre-loaded. Free, no signup, aligned with ADEME Base Empreinte factors.",
-      metaTitle: "GHG Calculator — France | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — France | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with France's 0.056 kg/kWh grid factor pre-loaded. Aligned with ADEME. Scope 1, 2, 3.",
       cardBlurb: "French grid 0.056 kg/kWh — one of the lowest in the world, nuclear-heavy baseload.",
@@ -323,7 +323,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για τη Γαλλία — συντελεστής δικτύου 2024: 0,056 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον γαλλικό συντελεστή. Δωρεάν, χωρίς εγγραφή, ευθυγραμμισμένο με ADEME Base Empreinte.",
-      metaTitle: "Υπολογιστής GHG — Γαλλία | Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Γαλλία | Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο γαλλικό συντελεστή 0,056 kg/kWh. Scope 1, 2, 3, εξαγωγή PDF.",
       cardBlurb: "Γαλλικό δίκτυο 0,056 kg/kWh — από τα χαμηλότερα παγκοσμίως, κυριαρχία πυρηνικής.",
@@ -363,7 +363,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for Spain — 2024 grid factor 0.174 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the Spanish grid factor pre-loaded. Free, no signup, aligned with MITECO's national inventory.",
-      metaTitle: "GHG Calculator — Spain | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Spain | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with Spain's 0.174 kg/kWh grid factor pre-loaded. Aligned with MITECO. Scope 1, 2 and 3.",
       cardBlurb: "Spanish grid 0.174 kg/kWh — wind and solar leader, coal exit essentially complete.",
@@ -393,7 +393,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για την Ισπανία — συντελεστής δικτύου 2024: 0,174 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον ισπανικό συντελεστή. Δωρεάν, χωρίς εγγραφή.",
-      metaTitle: "Υπολογιστής GHG — Ισπανία | Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Ισπανία | Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο ισπανικό συντελεστή 0,174 kg/kWh. Scope 1, 2, 3.",
       cardBlurb: "Ισπανικό δίκτυο 0,174 kg/kWh — ηγέτης σε αιολικά/φωτοβολταϊκά, έξοδος από τον άνθρακα.",
@@ -433,7 +433,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for Italy — 2024 grid factor 0.257 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the Italian grid factor pre-loaded. Free, no signup, aligned with ISPRA's national inventory.",
-      metaTitle: "GHG Calculator — Italy | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Italy | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with Italy's 0.257 kg/kWh grid factor pre-loaded. Aligned with ISPRA. Scope 1, 2, 3.",
       cardBlurb: "Italian grid 0.257 kg/kWh — gas-dominant, renewables growing, no nuclear domestically.",
@@ -463,7 +463,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για την Ιταλία — συντελεστής δικτύου 2024: 0,257 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον ιταλικό συντελεστή. Δωρεάν, χωρίς εγγραφή.",
-      metaTitle: "Υπολογιστής GHG — Ιταλία | Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Ιταλία | Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο ιταλικό συντελεστή 0,257 kg/kWh. Scope 1, 2, 3.",
       cardBlurb: "Ιταλικό δίκτυο 0,257 kg/kWh — κυριαρχία αερίου, ανάπτυξη ΑΠΕ, χωρίς πυρηνικά εγχώρια.",
@@ -503,7 +503,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for the Netherlands — 2024 grid factor 0.328 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the Dutch grid factor pre-loaded. Free, no signup, aligned with CBS statistics.",
-      metaTitle: "GHG Calculator — Netherlands | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Netherlands | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with the Netherlands's 0.328 kg/kWh grid factor pre-loaded. Aligned with CBS. Scope 1, 2, 3.",
       cardBlurb: "Dutch grid 0.328 kg/kWh — gas-dominant historically, offshore wind ramping fast.",
@@ -533,7 +533,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για την Ολλανδία — συντελεστής δικτύου 2024: 0,328 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον ολλανδικό συντελεστή. Δωρεάν, χωρίς εγγραφή.",
-      metaTitle: "Υπολογιστής GHG — Ολλανδία | Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Ολλανδία | Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο ολλανδικό συντελεστή 0,328 kg/kWh. Scope 1, 2, 3.",
       cardBlurb: "Ολλανδικό δίκτυο 0,328 kg/kWh — ιστορική κυριαρχία αερίου, ταχεία άνοδος υπεράκτιου αιολικού.",
@@ -573,7 +573,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "GHG emissions calculator for Poland — 2024 grid factor 0.657 kg CO₂e/kWh",
       subtitle:
         "Estimate your organisation's Scope 1, 2 and 3 emissions with the Polish grid factor pre-loaded. Free, no signup, aligned with KOBiZE.",
-      metaTitle: "GHG Calculator — Poland | Free Scope 1, 2 & 3 Tool | VerdeIQ",
+      metaTitle: "GHG Calculator — Poland | Free Scope 1, 2 & 3 Tool | Vuneli",
       metaDescription:
         "Free GHG Protocol calculator with Poland's 0.657 kg/kWh grid factor pre-loaded. Aligned with KOBiZE. Scope 1, 2, 3.",
       cardBlurb: "Polish grid 0.657 kg/kWh — highest in the EU, hard-coal dominant, transition underway.",
@@ -603,7 +603,7 @@ export const COUNTRIES: CountryEntry[] = [
       title: "Υπολογιστής εκπομπών GHG για την Πολωνία — συντελεστής δικτύου 2024: 0,657 kg CO₂e/kWh",
       subtitle:
         "Εκτιμήστε εκπομπές Scope 1, 2 και 3 με προεπιλεγμένο τον πολωνικό συντελεστή. Δωρεάν, χωρίς εγγραφή.",
-      metaTitle: "Υπολογιστής GHG — Πολωνία | Δωρεάν εργαλείο | VerdeIQ",
+      metaTitle: "Υπολογιστής GHG — Πολωνία | Δωρεάν εργαλείο | Vuneli",
       metaDescription:
         "Δωρεάν υπολογιστής GHG Protocol με προεπιλεγμένο πολωνικό συντελεστή 0,657 kg/kWh. Scope 1, 2, 3.",
       cardBlurb: "Πολωνικό δίκτυο 0,657 kg/kWh — υψηλότερο στην ΕΕ, κυριαρχία λιθάνθρακα.",

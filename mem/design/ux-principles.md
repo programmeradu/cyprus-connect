@@ -1,6 +1,6 @@
 ---
 name: 30-layer premium UI/UX rulebook
-description: Consolidated UI/UX principles from top designers (Rauch, Ive, Frost, Wathan, Rams, NN/g, Refactoring UI) applied to VerdeIQ across marketing, app, tools, learn
+description: Consolidated UI/UX principles from top designers (Rauch, Ive, Frost, Wathan, Rams, NN/g, Refactoring UI) applied to Vuneli across marketing, app, tools, learn
 type: design
 ---
 

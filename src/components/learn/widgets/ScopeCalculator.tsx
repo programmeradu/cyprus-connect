@@ -57,7 +57,7 @@ const t = {
 
 export default function ScopeCalculator({ locale }: Props) {
   const l = t[locale];
-  const [state, setState] = usePersistedState("verdeiq.calc.scope", {
+  const [state, setState] = usePersistedState("vuneli.calc.scope", {
     gas: 80000, diesel: 4000, elec: 120000, travel: 25000, supply: 400000,
   });
   const { gas, diesel, elec, travel, supply } = state;
@@ -124,7 +124,7 @@ export default function ScopeCalculator({ locale }: Props) {
                 step={f.step}
                 value={f.value}
                 onChange={(e) => f.set(Number(e.target.value))}
-                className="verdeiq-range"
+                className="vuneli-range"
               />
             </div>
           ))}

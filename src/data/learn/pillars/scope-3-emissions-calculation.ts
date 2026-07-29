@@ -90,7 +90,7 @@ export const scope3EmissionsCalculation = makePillar({
     }
   ],
   "ctaHeading": "From spend-based to supplier-specific, in one platform",
-  "ctaBody": "VerdeIQ collects AP data for spend-based, activity data for hybrid, and runs supplier data-collection surveys — all in one Scope 3 workflow."
+  "ctaBody": "Vuneli collects AP data for spend-based, activity data for hybrid, and runs supplier data-collection surveys — all in one Scope 3 workflow."
 },
   el: {
   "title": "Πώς να Υπολογίσετε Scope 3: Οδηγός ανά Κατηγορία",
@@ -144,6 +144,6 @@ export const scope3EmissionsCalculation = makePillar({
     }
   ],
   "ctaHeading": "Από spend-based σε supplier-specific σε μία πλατφόρμα",
-  "ctaBody": "Η VerdeIQ συλλέγει και τα δύο σε ένα workflow."
+  "ctaBody": "Η Vuneli συλλέγει και τα δύο σε ένα workflow."
 },
 });

@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="verdeiq-analytics-report-${Date.now()}.pdf"`,
+        'Content-Disposition': `attachment; filename="vuneli-analytics-report-${Date.now()}.pdf"`,
       },
     });
   } catch (error) {

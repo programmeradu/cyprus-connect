@@ -16,7 +16,7 @@ const COPY = {
       "Manage your personal data under the EU General Data Protection Regulation (GDPR) and the Cyprus Data Protection Law.",
     exportTitle: "Export your data",
     exportBody:
-      "Download a JSON file containing your VerdeIQ profile and preferences. Corresponds to your GDPR right of access (Art. 15) and portability (Art. 20).",
+      "Download a JSON file containing your Vuneli profile and preferences. Corresponds to your GDPR right of access (Art. 15) and portability (Art. 20).",
     exportCta: "Download my data",
     exporting: "Preparing export…",
     exportOk: "Export downloaded",
@@ -44,7 +44,7 @@ const COPY = {
       "Διαχειριστείτε τα προσωπικά σας δεδομένα βάσει του GDPR και του Κυπριακού Νόμου Προστασίας Δεδομένων.",
     exportTitle: "Εξαγωγή δεδομένων",
     exportBody:
-      "Κατεβάστε ένα αρχείο JSON με το προφίλ και τις προτιμήσεις σας στο VerdeIQ. Αντιστοιχεί στο δικαίωμα πρόσβασης (Άρ. 15) και φορητότητας (Άρ. 20) του GDPR.",
+      "Κατεβάστε ένα αρχείο JSON με το προφίλ και τις προτιμήσεις σας στο Vuneli. Αντιστοιχεί στο δικαίωμα πρόσβασης (Άρ. 15) και φορητότητας (Άρ. 20) του GDPR.",
     exportCta: "Λήψη των δεδομένων μου",
     exporting: "Προετοιμασία εξαγωγής…",
     exportOk: "Η εξαγωγή κατέβηκε",
@@ -108,7 +108,7 @@ export default function PrivacySettingsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `verdeiq-data-export-${userId}.json`;
+      a.download = `vuneli-data-export-${userId}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();

@@ -6,7 +6,7 @@ import { getTool } from "@/data/tools";
 import ToolShell, { type FaqItem, type MethodologyItem } from "@/components/tools/ToolShell";
 import SbtiTargetSetter from "@/components/tools/widgets/SbtiTargetSetter";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "sbti-target-setter";
 
 export function generateStaticParams() {
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       title: c.metaTitle,
       description: c.metaDescription,
       url,
-      siteName: "VerdeIQ",
+      siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
       type: "website",
       images: [{ url: ogImage, width: 1600, height: 900, alt: c.title }],
@@ -79,8 +79,8 @@ const COPY = {
     ] as FaqItem[],
     relatedHeading: "Related guides",
     ctaHeading: "Ready to move from draft to validated target?",
-    ctaBody: "VerdeIQ helps your team finalise SBTi submissions - inventory review, base-year recalculation, Scope 3 screening and target committee materials.",
-    ctaAction: "Try VerdeIQ",
+    ctaBody: "Vuneli helps your team finalise SBTi submissions - inventory review, base-year recalculation, Scope 3 screening and target committee materials.",
+    ctaAction: "Try Vuneli",
   },
   el: {
     methodologyHeading: "Πώς λειτουργεί το εργαλείο στόχων",
@@ -110,8 +110,8 @@ const COPY = {
     ] as FaqItem[],
     relatedHeading: "Σχετικοί οδηγοί",
     ctaHeading: "Έτοιμοι για επικυρωμένο στόχο;",
-    ctaBody: "Η VerdeIQ βοηθά την ομάδα σας να ολοκληρώσει την υποβολή SBTi - απόθεμα, ανασύνθεση βάσης, screening Scope 3 και υλικό επιτροπής.",
-    ctaAction: "Δοκιμάστε το VerdeIQ",
+    ctaBody: "Η Vuneli βοηθά την ομάδα σας να ολοκληρώσει την υποβολή SBTi - απόθεμα, ανασύνθεση βάσης, screening Scope 3 και υλικό επιτροπής.",
+    ctaAction: "Δοκιμάστε το Vuneli",
   },
 } as const;
 
@@ -138,7 +138,7 @@ export default async function SbtiTargetSetterPage({ params }: { params: Promise
     inLanguage: safeLocale === "el" ? "el-CY" : "en",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-    publisher: { "@type": "Organization", name: "VerdeIQ", url: SITE_URL },
+    publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
   const howToLd = {
@@ -165,7 +165,7 @@ export default async function SbtiTargetSetterPage({ params }: { params: Promise
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE_URL}/${safeLocale}/tools` },
       { "@type": "ListItem", position: 3, name: c.title, item: url },
     ],

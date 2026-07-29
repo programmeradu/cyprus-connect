@@ -214,7 +214,7 @@ export default function PillarShell({
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <li>
               <Link href={`/${locale}`} className="hover:text-foreground">
-                VerdeIQ
+                Vuneli
               </Link>
             </li>
             <li aria-hidden className="text-foreground/25">/</li>
@@ -340,8 +340,8 @@ export default function PillarShell({
             </aside>
 
             {/* Article prose - professional editorial formatting */}
-            <div className="verdeiq-article max-w-[68ch]">
-              <div className="verdeiq-lead">{introduction}</div>
+            <div className="vuneli-article max-w-[68ch]">
+              <div className="vuneli-lead">{introduction}</div>
               <div className="mt-4">{sectionsContent}</div>
             </div>
 
@@ -412,7 +412,7 @@ export default function PillarShell({
             <div className="sticky top-24 space-y-6">
               <div className="rounded-[4px] border border-foreground/10 p-5">
                 <p className="eyebrow text-primary">
-                  VerdeIQ
+                  Vuneli
                 </p>
                 <p className="mt-3 text-[13.5px] leading-[1.55] text-foreground/70">
                   {locale === "el"

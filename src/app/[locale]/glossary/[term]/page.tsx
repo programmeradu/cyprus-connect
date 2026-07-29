@@ -7,7 +7,7 @@ import { GLOSSARY, GLOSSARY_SLUGS, getGlossaryEntry, type GlossaryEntry } from "
 import { getPillar } from "@/data/learn/pillars";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://verdeiq.stauniverse.tech").replace(/\/$/, "");
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
 export function generateStaticParams() {
   const out: Array<{ locale: string; term: string }> = [];
@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const isEl = safeLocale === "el";
   const definition = isEl ? entry.el : entry.en;
   const title = isEl
-    ? `${entry.term} - Ορισμός | VerdeIQ Γλωσσάρι`
-    : `${entry.term} - Definition & Meaning | VerdeIQ Glossary`;
+    ? `${entry.term} - Ορισμός | Vuneli Γλωσσάρι`
+    : `${entry.term} - Definition & Meaning | Vuneli Glossary`;
   const description = definition.length > 158 ? definition.slice(0, 155) + "..." : definition;
   const url = `${SITE_URL}/${safeLocale}/glossary/${term}`;
   const languages: Record<string, string> = {};
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title, description,
     alternates: { canonical: url, languages },
-    openGraph: { title, description, url, siteName: "VerdeIQ", type: "article",
+    openGraph: { title, description, url, siteName: "Vuneli", type: "article",
       locale: isEl ? "el_CY" : "en_US" },
     twitter: { card: "summary", title, description },
   };
@@ -68,7 +68,7 @@ export default async function GlossaryTermPage({ params }: { params: Params }) {
   const breadcrumbLd = {
     "@context": "https://schema.org", "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "VerdeIQ", item: `${SITE_URL}/${safeLocale}` },
+      { "@type": "ListItem", position: 1, name: "Vuneli", item: `${SITE_URL}/${safeLocale}` },
       { "@type": "ListItem", position: 2, name: isEl ? "Γλωσσάρι" : "Glossary", item: `${SITE_URL}/${safeLocale}/glossary` },
       { "@type": "ListItem", position: 3, name: entry.term, item: url },
     ],

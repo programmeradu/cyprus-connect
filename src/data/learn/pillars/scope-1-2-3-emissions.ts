@@ -67,7 +67,7 @@ export const scope123Emissions = makePillar({
     }
   ],
   "ctaHeading": "Automate your Scope 1, 2, and 3 inventory",
-  "ctaBody": "VerdeIQ pulls fuel receipts, utility bills, and spend data into a GHG Protocol-compliant inventory — with Scope 2 dual reporting and Scope 3 by all 15 categories."
+  "ctaBody": "Vuneli pulls fuel receipts, utility bills, and spend data into a GHG Protocol-compliant inventory — with Scope 2 dual reporting and Scope 3 by all 15 categories."
 },
   el: {
   "title": "Εκπομπές Scope 1, 2 και 3: Τι Είναι και Πώς Μετρώνται",
@@ -128,6 +128,6 @@ export const scope123Emissions = makePillar({
     }
   ],
   "ctaHeading": "Αυτοματοποιήστε την απογραφή Scope 1, 2, 3",
-  "ctaBody": "Η VerdeIQ αντλεί καύσιμα, λογαριασμούς και spend data σε απογραφή GHG Protocol — με Scope 2 διπλή αναφορά."
+  "ctaBody": "Η Vuneli αντλεί καύσιμα, λογαριασμούς και spend data σε απογραφή GHG Protocol — με Scope 2 διπλή αναφορά."
 },
 });

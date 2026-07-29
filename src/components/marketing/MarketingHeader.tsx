@@ -10,7 +10,7 @@ import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
 
 /**
  * MarketingHeader — floating glass pill (Solaric-inspired), transparent over hero,
- * gains subtle glass on scroll. VerdeIQ wordmark left, centered nav, lime CTA right.
+ * gains subtle glass on scroll. Vuneli wordmark left, centered nav, lime CTA right.
  */
 export function MarketingHeader() {
   const { data: session, isPending } = useSession();
@@ -42,7 +42,7 @@ export function MarketingHeader() {
           className="flex items-center pl-1.5 text-[19px] font-semibold tracking-[-0.025em] text-foreground"
           style={{ fontFamily: "var(--editorial-display)" }}
         >
-          VerdeIQ
+          Vuneli
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

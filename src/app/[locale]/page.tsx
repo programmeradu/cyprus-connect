@@ -52,7 +52,7 @@ export default function Home() {
       <HeroCinematic />
 
 
-      {/* BENEFITS - Why VerdeIQ */}
+      {/* BENEFITS - Why Vuneli */}
       <div className="relative">
 
       {/* News ticker - replaces the old live dashboard preview */}
@@ -64,12 +64,12 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* BENEFITS - Why VerdeIQ */}
+      {/* BENEFITS - Why Vuneli */}
       <EditorialSection
         titleA={tL("whyTitleA")}
         titleB={tL("whyTitleB")}
         subtitle={tL("whySubtitle")}
-        media={{ src: sectionWhyImg.src, alt: "VerdeIQ emissions overview dashboard" }}
+        media={{ src: sectionWhyImg.src, alt: "Vuneli emissions overview dashboard" }}
       >
         <NumberedList
           items={[

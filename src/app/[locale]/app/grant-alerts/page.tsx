@@ -62,7 +62,7 @@ export default function GrantAlertsPage() {
       <p className="mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground">
         Get an email the moment a new call from the EU Funding &amp; Tenders Portal, the Cyprus
         Research and Innovation Foundation, Invest Cyprus, OEB / KEBE, or a climate accelerator
-        matches VerdeIQ's Cyprus SME sustainability focus.
+        matches Vuneli's Cyprus SME sustainability focus.
       </p>
 
       <form onSubmit={subscribe} className="mb-10 flex flex-col gap-3 rounded-lg border border-border bg-card p-6 sm:flex-row">

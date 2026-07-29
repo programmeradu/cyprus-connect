@@ -28,7 +28,7 @@ export function ConsentedAnalytics() {
 
         <Script
           defer
-          data-domain="verdeiq.lovable.app"
+          data-domain="vuneli.lovable.app"
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
@@ -41,8 +41,8 @@ export function ConsentedAnalytics() {
         </Script>
       */}
       {/* Explicit placeholder so the file compiles with no providers wired. */}
-      <Script id="verdeiq-analytics-noop" strategy="afterInteractive">
-        {`window.__verdeiqAnalyticsReady=true;`}
+      <Script id="vuneli-analytics-noop" strategy="afterInteractive">
+        {`window.__vuneliAnalyticsReady=true;`}
       </Script>
     </>
   );

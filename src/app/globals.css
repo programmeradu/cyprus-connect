@@ -88,7 +88,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root {
-  /* VerdeIQ typography system — editorial display + neutral workhorse body.
+  /* Vuneli typography system — editorial display + neutral workhorse body.
      No Inter/Space Grotesk/Geist/Poppins defaults. Fraunces variable with
      optical sizing carries all display type; Instrument Sans (500/600 UI,
      400 body) is the workhorse. */
@@ -464,38 +464,38 @@ nextjs-portal {
   display: none !important;
 }
 
-/* ---------- VerdeIQ article typography (Learn / Pillar pages) ---------- */
-.verdeiq-article {
+/* ---------- Vuneli article typography (Learn / Pillar pages) ---------- */
+.vuneli-article {
   font-family: var(--editorial-sans);
   color: var(--foreground);
   font-size: 17px;
   line-height: 1.72;
   font-feature-settings: "ss01", "ss02", "cv11";
 }
-.verdeiq-article p {
+.vuneli-article p {
   margin: 0 0 1.4em;
   color: color-mix(in oklab, var(--foreground) 85%, transparent);
   overflow-wrap: break-word;
 }
-.verdeiq-article p:has(+ p) + p,
-.verdeiq-article p + p {
+.vuneli-article p:has(+ p) + p,
+.vuneli-article p + p {
   margin-top: -0.2em;
 }
-.verdeiq-lead > p:first-child {
+.vuneli-lead > p:first-child {
   font-size: 20px;
   line-height: 1.55;
   color: color-mix(in oklab, var(--foreground) 92%, transparent);
   letter-spacing: -0.005em;
   margin-bottom: 1.5em;
 }
-.verdeiq-article section {
+.vuneli-article section {
   margin-top: 3.5em;
   scroll-margin-top: 6rem;
 }
-.verdeiq-article section:first-child {
+.vuneli-article section:first-child {
   margin-top: 2.5em;
 }
-.verdeiq-article h2 {
+.vuneli-article h2 {
   font-family: var(--editorial-sans);
   font-size: 30px;
   font-weight: 600;
@@ -507,7 +507,7 @@ nextjs-portal {
   border-top: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
   padding-top: 1.5em;
 }
-.verdeiq-article h3 {
+.vuneli-article h3 {
   font-family: var(--editorial-sans);
   font-size: 21px;
   font-weight: 600;
@@ -516,7 +516,7 @@ nextjs-portal {
   color: var(--foreground);
   margin: 2em 0 0.75em;
 }
-.verdeiq-article h4 {
+.vuneli-article h4 {
   font-family: var(--editorial-sans);
   font-size: 17px;
   font-weight: 600;
@@ -524,37 +524,37 @@ nextjs-portal {
   color: var(--foreground);
   margin: 1.75em 0 0.5em;
 }
-.verdeiq-article a {
+.vuneli-article a {
   color: var(--primary);
   text-decoration: underline;
   text-decoration-color: color-mix(in oklab, var(--primary) 35%, transparent);
   text-underline-offset: 3px;
   transition: text-decoration-color .15s ease;
 }
-.verdeiq-article a:hover {
+.vuneli-article a:hover {
   text-decoration-color: var(--primary);
 }
-.verdeiq-article strong {
+.vuneli-article strong {
   font-weight: 600;
   color: var(--foreground);
 }
-.verdeiq-article em {
+.vuneli-article em {
   font-style: italic;
 }
-.verdeiq-article ul,
-.verdeiq-article ol {
+.vuneli-article ul,
+.vuneli-article ol {
   margin: 0.5em 0 1.6em;
   padding-left: 1.4em;
   color: color-mix(in oklab, var(--foreground) 85%, transparent);
 }
-.verdeiq-article ul { list-style: none; padding-left: 0; }
-.verdeiq-article ul > li {
+.vuneli-article ul { list-style: none; padding-left: 0; }
+.vuneli-article ul > li {
   position: relative;
   padding-left: 1.4em;
   margin: 0.55em 0;
   line-height: 1.65;
 }
-.verdeiq-article ul > li::before {
+.vuneli-article ul > li::before {
   content: "";
   position: absolute;
   left: 0.15em;
@@ -563,20 +563,20 @@ nextjs-portal {
   height: 1px;
   background: color-mix(in oklab, var(--primary) 65%, transparent);
 }
-.verdeiq-article ol {
+.vuneli-article ol {
   list-style: none;
-  counter-reset: verdeiq-ol;
+  counter-reset: vuneli-ol;
   padding-left: 0;
 }
-.verdeiq-article ol > li {
-  counter-increment: verdeiq-ol;
+.vuneli-article ol > li {
+  counter-increment: vuneli-ol;
   position: relative;
   padding-left: 2.4em;
   margin: 0.6em 0;
   line-height: 1.65;
 }
-.verdeiq-article ol > li::before {
-  content: counter(verdeiq-ol, decimal-leading-zero);
+.vuneli-article ol > li::before {
+  content: counter(vuneli-ol, decimal-leading-zero);
   position: absolute;
   left: 0;
   top: 0.15em;
@@ -586,7 +586,7 @@ nextjs-portal {
   color: color-mix(in oklab, var(--primary) 75%, transparent);
   letter-spacing: 0.05em;
 }
-.verdeiq-article blockquote {
+.vuneli-article blockquote {
   margin: 2em 0;
   padding: 0.25em 0 0.25em 1.5em;
   border-left: 2px solid var(--primary);
@@ -596,33 +596,33 @@ nextjs-portal {
   color: var(--foreground);
   font-style: normal;
 }
-.verdeiq-article blockquote p { margin: 0.3em 0; }
-.verdeiq-article code {
+.vuneli-article blockquote p { margin: 0.3em 0; }
+.vuneli-article code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.88em;
   padding: 0.15em 0.4em;
   border-radius: 3px;
   background: color-mix(in oklab, var(--foreground) 6%, transparent);
 }
-.verdeiq-article hr {
+.vuneli-article hr {
   border: 0;
   border-top: 1px solid color-mix(in oklab, var(--foreground) 12%, transparent);
   margin: 3em 0;
 }
-.verdeiq-article table {
+.vuneli-article table {
   width: 100%;
   border-collapse: collapse;
   margin: 2em 0;
   font-size: 15px;
 }
-.verdeiq-article th,
-.verdeiq-article td {
+.vuneli-article th,
+.vuneli-article td {
   padding: 0.75em 1em;
   border-bottom: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
   text-align: left;
   vertical-align: top;
 }
-.verdeiq-article th {
+.vuneli-article th {
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -631,17 +631,17 @@ nextjs-portal {
   border-bottom-width: 2px;
 }
 @media (min-width: 640px) {
-  .verdeiq-article { font-size: 18px; line-height: 1.7; }
-  .verdeiq-lead > p:first-child { font-size: 22px; }
-  .verdeiq-article h2 { font-size: 34px; }
-  .verdeiq-article h3 { font-size: 23px; }
+  .vuneli-article { font-size: 18px; line-height: 1.7; }
+  .vuneli-lead > p:first-child { font-size: 22px; }
+  .vuneli-article h2 { font-size: 34px; }
+  .vuneli-article h3 { font-size: 23px; }
 }
 
 /* ================================================================
    Editorial range slider (used by learn/widgets/*).
    Native track + visible circular thumb — no vibecoded pills.
    ================================================================ */
-.verdeiq-range {
+.vuneli-range {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -650,17 +650,17 @@ nextjs-portal {
   cursor: pointer;
   outline: none;
 }
-.verdeiq-range::-webkit-slider-runnable-track {
+.vuneli-range::-webkit-slider-runnable-track {
   height: 2px;
   background: color-mix(in oklab, var(--foreground) 15%, transparent);
   border-radius: 0;
 }
-.verdeiq-range::-moz-range-track {
+.vuneli-range::-moz-range-track {
   height: 2px;
   background: color-mix(in oklab, var(--foreground) 15%, transparent);
   border-radius: 0;
 }
-.verdeiq-range::-webkit-slider-thumb {
+.vuneli-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -672,11 +672,11 @@ nextjs-portal {
   margin-top: -7px;
   transition: transform 0.15s ease;
 }
-.verdeiq-range::-webkit-slider-thumb:hover,
-.verdeiq-range:focus-visible::-webkit-slider-thumb {
+.vuneli-range::-webkit-slider-thumb:hover,
+.vuneli-range:focus-visible::-webkit-slider-thumb {
   transform: scale(1.15);
 }
-.verdeiq-range::-moz-range-thumb {
+.vuneli-range::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 999px;
@@ -685,13 +685,13 @@ nextjs-portal {
   box-shadow: 0 0 0 1px var(--foreground);
   transition: transform 0.15s ease;
 }
-.verdeiq-range::-moz-range-thumb:hover,
-.verdeiq-range:focus-visible::-moz-range-thumb {
+.vuneli-range::-moz-range-thumb:hover,
+.vuneli-range:focus-visible::-moz-range-thumb {
   transform: scale(1.15);
 }
 
 /* ================================================================
-   VerdeIQ tool typography — anti-generic small text system.
+   Vuneli tool typography — anti-generic small text system.
    Replaces tiny all-caps/tracked metadata with deliberate B2B UI type.
    ================================================================ */
 .viq-tool {
