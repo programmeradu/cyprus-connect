@@ -33,8 +33,8 @@ export function MarketingHeader() {
         className={[
           "flex w-full max-w-6xl items-center justify-between gap-3 rounded-full border px-4 py-2.5 transition-all duration-300 sm:px-5 sm:py-3",
           scrolled
-            ? "border-foreground/10 bg-background/75 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl"
-            : "border-white/20 bg-white/10 backdrop-blur-lg dark:border-white/10 dark:bg-white/[0.06]",
+            ? "border-foreground/10 bg-background/85 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.22)] backdrop-blur-xl"
+            : "border-foreground/10 bg-background/55 shadow-[0_8px_30px_-16px_rgba(0,0,0,0.35)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/10 dark:bg-background/40",
         ].join(" ")}
       >
         <Link
