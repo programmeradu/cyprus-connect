@@ -490,8 +490,10 @@ export default function ConsolePage() {
         </div>
 
         <div className="vc-deck" role="tabpanel" aria-label={`${section} records`}>
+         <div className="vc-slab">
           {section === "overview" && (
             <>
+
               <div className="vc-plate-grid">
                 <section className="vc-plate">
                   <header>
@@ -797,7 +799,9 @@ export default function ConsolePage() {
               </section>
             </div>
           )}
+         </div>
         </div>
+
 
         <p className="vc-foot-note">
           {workspace.name} · {workspace.framework} · baseline {workspace.baselineYear} · read{" "}
