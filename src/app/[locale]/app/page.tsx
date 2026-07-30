@@ -14,7 +14,6 @@ import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
-  AgentGlyph,
   IcoAlert,
   IcoCheck,
   IcoClock,
@@ -26,7 +25,6 @@ import {
 } from "@/components/app/console/icons";
 import { ArcGauge, BarRow, Rule, Spark } from "@/components/app/console/charts";
 import {
-  AUTONOMY_LABEL,
   daysUntil,
   fmtNumber,
   fmtSigned,
@@ -86,7 +84,20 @@ function PlateOpen({ href, label }: { href: string; label: string }) {
 const greetingFor = (hour: number) =>
   hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
-type SectionKey = "overview" | "agents" | "evidence" | "obligations" | "connections" | "audit";
+type SectionKey = "overview" | "evidence" | "obligations" | "connections" | "audit";
+
+type Insight = {
+  id: string;
+  tone: "bad" | "warn" | "good" | "info";
+  label: string;
+  headline: string;
+  detail: string;
+  href: string;
+  linkLabel: string;
+};
+
+const TONE_RANK: Record<Insight["tone"], number> = { bad: 0, warn: 1, info: 2, good: 3 };
+
 
 export default function ConsolePage() {
   /* The workspace read lives in the layout, so the top bar, the palette
@@ -196,9 +207,105 @@ export default function ConsolePage() {
   const nextObligation = dueObligations[0];
   const focusTone = toneFor(focus.delta, focus.goodDirection);
 
+  /**
+   * The overview no longer repeats the agent roster, which the Agents page owns.
+   * It reads the same records and states what changed, what is short and what
+   * needs a decision. Every line is derived, never written by hand.
+   */
+  const insights: Insight[] = [];
+
+  const mover = [...metrics]
+    .filter((metric) => Number.isFinite(metric.delta) && Math.abs(metric.delta) >= 1)
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))[0];
+  if (mover) {
+    const tone = toneFor(mover.delta, mover.goodDirection);
+    insights.push({
+      id: "mover",
+      tone: tone === "good" ? "good" : tone === "bad" ? "warn" : "info",
+      label: "Largest move",
+      headline: `${mover.shortLabel ?? mover.label} ${fmtSigned(mover.delta)}`,
+      detail: `Now ${fmtNumber(mover.current, mover.precision)} ${mover.unit} against the last period.`,
+      href: "/app/analytics",
+      linkLabel: `Open ${mover.label}`,
+    });
+  }
+
+  const failedRuns = runs.filter((run) => run.status === "needs_review");
+  if (failedRuns.length) {
+    insights.push({
+      id: "runs",
+      tone: "bad",
+      label: "Agent run",
+      headline: `${failedRuns.length} run${failedRuns.length === 1 ? "" : "s"} need a review`,
+      detail: failedRuns[0].summary ?? "Open the workforce to read the run log.",
+      href: "/app/insights",
+      linkLabel: "Open the agent workforce",
+    });
+  }
+
+  const highTasks = tasks.filter((task) => task.severity === "high");
+  if (tasks.length) {
+    insights.push({
+      id: "tasks",
+      tone: highTasks.length ? "warn" : "info",
+      label: "Decision",
+      headline: `${tasks.length} item${tasks.length === 1 ? "" : "s"} wait for a person`,
+      detail: highTasks.length
+        ? `${highTasks.length} of them are marked high. ${highTasks[0].title}.`
+        : tasks[0].title,
+      href: "/app/actions",
+      linkLabel: "Open the approval queue",
+    });
+  }
+
+  const weakConnection = [...connections]
+    .filter((connection) => connection.status !== "available")
+    .sort((a, b) => a.coveragePct - b.coveragePct)[0];
+  if (weakConnection && weakConnection.coveragePct < 85) {
+    insights.push({
+      id: "coverage",
+      tone: weakConnection.coveragePct < 60 ? "warn" : "info",
+      label: "Evidence gap",
+      headline: `${weakConnection.provider} covers ${Math.round(weakConnection.coveragePct)}%`,
+      detail: `${titleCase(weakConnection.category)} records, synced ${relativeTime(weakConnection.lastSyncAt)}.`,
+      href: "/app/integrations",
+      linkLabel: "Open connections",
+    });
+  }
+
+  const pressing = dueObligations.find(
+    (obligation) => obligation.status === "at_risk" || daysUntil(obligation.dueDate) <= 45
+  );
+  if (pressing) {
+    insights.push({
+      id: "obligation",
+      tone: pressing.status === "at_risk" ? "bad" : "warn",
+      label: "Deadline",
+      headline: `${pressing.title} in ${daysUntil(pressing.dueDate)} days`,
+      detail: `${pressing.framework} · ${Math.round(pressing.progressPct)}% prepared by ${pressing.ownerName}.`,
+      href: "/app/compliance",
+      linkLabel: "Open obligations",
+    });
+  }
+
+  if (!insights.length) {
+    insights.push({
+      id: "steady",
+      tone: "good",
+      label: "Steady",
+      headline: "Nothing needs a decision today",
+      detail: `Evidence coverage sits at ${Math.round(coverage?.current ?? 0)}% and ${Math.round(
+        automation?.current ?? 0
+      )}% of the work is automated.`,
+      href: "/app/analytics",
+      linkLabel: "Open the record",
+    });
+  }
+
+  const topInsights = [...insights].sort((a, b) => TONE_RANK[a.tone] - TONE_RANK[b.tone]).slice(0, 4);
+
   const SECTIONS: { key: SectionKey; label: string; count: number }[] = [
     { key: "overview", label: "Overview", count: metrics.length },
-    { key: "agents", label: "Agents", count: agents.length },
     { key: "evidence", label: "Evidence", count: connections.length },
     { key: "obligations", label: "Obligations", count: obligations.length },
     { key: "connections", label: "Connections", count: connections.length },
@@ -232,14 +339,14 @@ export default function ConsolePage() {
               </div>
 
 
-              <button
-                type="button"
+              <Link
+                href={"/app/insights" as never}
                 className="vc-add-agent"
-                onClick={() => setSection("agents")}
-                aria-label="Show the agent workforce"
+                aria-label="Open the agent workforce"
               >
                 Agent workforce
-              </button>
+              </Link>
+
 
               {/* The rail switches the hero series. It is not decoration. */}
               <div className="vc-side-icons" role="tablist" aria-label="Metric category">
@@ -388,33 +495,37 @@ export default function ConsolePage() {
               <div className="vc-plate-grid">
                 <section className="vc-plate">
                   <header>
-                    <span>Agent workforce</span>
-                    <strong>{activeAgents.length} running</strong>
-                    <PlateOpen href="/app/insights" label="Open the agent workforce" />
+                    <span>What changed</span>
+                    <strong>
+                      {topInsights.length} signal{topInsights.length === 1 ? "" : "s"}
+                    </strong>
+                    <PlateOpen href="/app/analytics" label="Open the analysis record" />
                   </header>
-                  <div className="vc-agent-table">
-                    <div className="vc-table-head">
-                      <span>Agent and last run</span>
-                      <span>Health</span>
-                    </div>
-                    {agents.slice(0, 4).map((agent) => {
-                      const lastRun = runs.find((run) => run.agentKey === agent.key);
-                      return (
-                        <article key={agent.key}>
-                          <span className="vc-agent-icon">
-                            <AgentGlyph glyph={agent.glyph} size={20} />
-                          </span>
-                          <span className="vc-agent-copy">
-                            <strong>{agent.name}</strong>
-                            <small>{lastRun?.summary ?? agent.role}</small>
-                            <em>{AUTONOMY_LABEL[agent.autonomy]}</em>
-                          </span>
-                          <span className="vc-health">{Math.round(agent.healthScore)}%</span>
-                        </article>
-                      );
-                    })}
+                  <div className="vc-insight-list">
+                    {topInsights.map((insight) => (
+                      <article key={insight.id} data-tone={insight.tone}>
+                        <i className="vc-dot" data-tone={insight.tone === "good" ? "good" : insight.tone} />
+                        <span className="vc-insight-copy">
+                          <em>{insight.label}</em>
+                          <strong>{insight.headline}</strong>
+                          <small>{insight.detail}</small>
+                        </span>
+                        <Link
+                          href={insight.href as never}
+                          className="vc-plate-open"
+                          aria-label={insight.linkLabel}
+                        >
+                          Open
+                        </Link>
+                      </article>
+                    ))}
                   </div>
+                  <p className="vc-insight-foot">
+                    {activeAgents.length} of {agents.length} agents active · {runsToday.length} runs closed
+                    today
+                  </p>
                 </section>
+
 
                 <section className="vc-plate vc-plate-tight">
                   <header>
@@ -563,49 +674,8 @@ export default function ConsolePage() {
             </>
           )}
 
-          {section === "agents" && (
-            <div className="vc-plate-grid vc-plate-grid-3">
-              {agents.map((agent) => {
-                const agentRuns = runs.filter((run) => run.agentKey === agent.key);
-                const last = agentRuns[0];
-                return (
-                  <section className="vc-plate" key={agent.key}>
-                    <header>
-                      <span>{AUTONOMY_LABEL[agent.autonomy]}</span>
-                      <strong>{Math.round(agent.healthScore)}%</strong>
-                    </header>
-                    <div className="vc-agent-lead">
-                      <span className="vc-agent-icon">
-                        <AgentGlyph glyph={agent.glyph} size={22} />
-                      </span>
-                      <span>
-                        <strong>{agent.name}</strong>
-                        <small>{agent.role}</small>
-                      </span>
-                      <i className="vc-dot" data-tone={STATUS_TONE[agent.status] ?? "idle"} />
-                    </div>
-                    <p className="vc-agent-mission">{agent.mission}</p>
-                    <dl className="vc-kv">
-                      <div>
-                        <dt>Cadence</dt>
-                        <dd>{agent.cadence}</dd>
-                      </div>
-                      <div>
-                        <dt>Runs held</dt>
-                        <dd>{agentRuns.length}</dd>
-                      </div>
-                      <div>
-                        <dt>Last run</dt>
-                        <dd>{last ? relativeTime(last.startedAt) : "not yet"}</dd>
-                      </div>
-                    </dl>
-                    {last && <p className="vc-agent-mission vc-agent-note">{last.summary}</p>}
-                    <Rule pct={agent.healthScore} tone={agent.status === "active" ? "accent" : "muted"} />
-                  </section>
-                );
-              })}
-            </div>
-          )}
+
+
 
           {section === "evidence" && (
             <div className="vc-plate-grid vc-plate-grid-2">
