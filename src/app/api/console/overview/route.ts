@@ -69,6 +69,26 @@ export async function GET() {
       );
     }
 
+    // The workspace row has a foreign key on the user table, so the QA
+    // identity needs a row of its own before it can own a workspace.
+    if (qa) {
+      await db
+        .insert(userTable)
+        .values({
+          id: QA_ACCOUNT.id,
+          name: QA_ACCOUNT.name,
+          email: QA_ACCOUNT.email,
+          emailVerified: true,
+          companyName: "QA Workspace",
+          companyIndustry: "General",
+          countryCode: "CY",
+          onboardingCompleted: true,
+        })
+        .onConflictDoNothing();
+    }
+
+
+
     let [workspace] = await db
       .select()
       .from(workspaces)
