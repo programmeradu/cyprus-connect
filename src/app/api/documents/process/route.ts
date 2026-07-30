@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
+import { aiChatRaw, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 
 export const maxDuration = 60;
 

@@ -118,6 +118,26 @@ export async function aiChat(options: ChatOptions): Promise<string> {
   return data.choices?.[0]?.message?.content ?? "";
 }
 
+/**
+ * A call with content blocks, for a question that carries a picture or a
+ * document with it.
+ */
+export async function aiChatRaw(
+  messages: Array<{ role: string; content: unknown }>,
+  temperature?: number,
+  model: string = CHAT_MODEL,
+): Promise<string> {
+  const res = await post({
+    model,
+    messages,
+    ...(temperature !== undefined ? { temperature } : {}),
+  });
+  const data = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  return data.choices?.[0]?.message?.content ?? "";
+}
+
 /** Same call, but the text arrives in pieces. */
 export async function* aiChatStream(options: ChatOptions): AsyncGenerator<string> {
   const res = await post(
