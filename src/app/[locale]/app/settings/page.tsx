@@ -310,8 +310,8 @@ function SettingsContent() {
                       onClick={() => setAvatarStyle(key as AvatarStyleKey)}
                       className={`flex flex-col items-center gap-1.5 rounded-[0.625rem] border p-2.5 text-center transition-colors ${
                         selected
-                          ? "border-[var(--app-rule-strong)] bg-[var(--app-surface-2)]"
-                          : "border-[var(--app-rule)] hover:bg-[var(--app-surface-2)]"
+                          ? "border-[var(--app-rule-strong)] ring-2 ring-[var(--app-rule-strong)]"
+                          : "border-[var(--app-rule)] hover:border-[var(--app-rule-strong)]"
                       }`}
                     >
                       <ConsoleAvatar
