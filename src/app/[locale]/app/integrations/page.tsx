@@ -1,12 +1,29 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { PremiumButton } from "@/components/ui/PremiumButton";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { PageShell, PageHeader, Section, EmptyState } from "@/components/app/shell";
+import { useTranslations, useLocale } from "next-intl";
+import {
+  ConsolePage,
+  ConsoleTabs,
+  Plate,
+  PlateGrid,
+  Reading,
+  ReadingRail,
+  Btn,
+  Empty,
+  Bar,
+} from "@/components/app/console/kit";
+import { ConnectorTile } from "@/components/app/integrations/ConnectorTile";
+import {
+  CONNECTORS,
+  CATEGORY_LABEL,
+  CATEGORY_NOTE,
+  CATEGORY_ORDER,
+  type Connector,
+} from "@/components/app/integrations/catalog";
 
 interface EnergyPricingData {
   zone: string;
@@ -27,7 +44,7 @@ interface BenchmarkComparison {
   global_percentile_rank: number;
   vs_average_percent: number;
   vs_global_percent: number;
-  interpretation: 'EXCELLENT' | 'GOOD' | 'AVERAGE' | 'ABOVE_AVERAGE' | 'NEEDS_IMPROVEMENT';
+  interpretation: "EXCELLENT" | "GOOD" | "AVERAGE" | "ABOVE_AVERAGE" | "NEEDS_IMPROVEMENT";
   emissions_per_employee: number;
   industry_emissions_per_employee: number;
   emissions_per_revenue: number;
@@ -50,14 +67,34 @@ interface UserData {
   revenue: number;
 }
 
-const inputClass =
-  "w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+const ZONES: { group: string; options: { value: string; label: string }[] }[] = [
+  { group: "Cyprus", options: [{ value: "CY", label: "Cyprus (EAC grid)" }] },
+  {
+    group: "EU / EEA",
+    options: [
+      { value: "GR", label: "Greece" },
+      { value: "DE", label: "Germany" },
+      { value: "FR", label: "France" },
+      { value: "ES", label: "Spain" },
+      { value: "IT", label: "Italy" },
+      { value: "NL", label: "Netherlands" },
+      { value: "SE", label: "Sweden" },
+      { value: "NO", label: "Norway" },
+      { value: "DK-DK1", label: "Denmark (West)" },
+      { value: "DK-DK2", label: "Denmark (East)" },
+      { value: "EU", label: "EU (continental average)" },
+    ],
+  },
+];
 
 function IntegrationsContent() {
   const t = useTranslations("dashboard.integrations");
+  const locale = (useLocale() === "el" ? "el" : "en") as "en" | "el";
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const [tab, setTab] = useState<"directory" | "energy" | "benchmarks">("directory");
 
   const [energyData, setEnergyData] = useState<EnergyPricingData | null>(null);
   const [benchmarkComparison, setBenchmarkComparison] = useState<BenchmarkComparison | null>(null);
@@ -86,17 +123,17 @@ function IntegrationsContent() {
 
     setLoadingUserData(true);
     try {
-      const token = localStorage.getItem('bearer_token');
+      const token = localStorage.getItem("bearer_token");
 
       const userRes = await fetch(`/api/users/${session.user.id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!userRes.ok) throw new Error('Failed to fetch user data');
+      if (!userRes.ok) throw new Error("Failed to fetch user data");
       const user = await userRes.json();
 
       const emissionsRes = await fetch(`/api/emissions?userId=${session.user.id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       let totalEmissions = 0;
@@ -107,7 +144,7 @@ function IntegrationsContent() {
         }
       }
 
-      const employees = user.teamSize ? parseInt(user.teamSize.split('-')[0]) || 50 : 50;
+      const employees = user.teamSize ? parseInt(user.teamSize.split("-")[0]) || 50 : 50;
 
       setUserData({
         id: user.id,
@@ -116,10 +153,10 @@ function IntegrationsContent() {
         teamSize: user.teamSize || "1-50",
         totalEmissions,
         employees,
-        revenue: 5000000
+        revenue: 5000000,
       });
     } catch (error) {
-      console.error('Failed to fetch user data:', error);
+      console.error("Failed to fetch user data:", error);
       toast.error(t("toasts.companyLoadFail"));
     } finally {
       setLoadingUserData(false);
@@ -128,24 +165,24 @@ function IntegrationsContent() {
 
   const autoDetectLocation = async () => {
     try {
-      const res = await fetch('/api/geolocation');
+      const res = await fetch("/api/geolocation");
       if (res.ok) {
         const data = await res.json();
         setUserLocation(data.country_iso3 || "CYP");
       }
     } catch (error) {
-      console.error('Failed to detect location:', error);
+      console.error("Failed to detect location:", error);
     }
   };
 
   useEffect(() => {
-    const qbSuccess = searchParams.get('qb_success');
-    const qbError = searchParams.get('qb_error');
+    const qbSuccess = searchParams.get("qb_success");
+    const qbError = searchParams.get("qb_error");
 
-    if (qbSuccess === 'true') {
+    if (qbSuccess === "true") {
       toast.success(t("toasts.qbConnected"));
       checkQbConnection();
-      router.replace('/app/integrations');
+      router.replace("/app/integrations");
     }
 
     if (qbError) {
@@ -158,7 +195,7 @@ function IntegrationsContent() {
         callback_failed: t("toasts.qbErrors.callback_failed"),
       };
       toast.error(messageMap[qbError] || t("toasts.qbErrors.default"));
-      router.replace('/app/integrations');
+      router.replace("/app/integrations");
     }
   }, [searchParams]);
 
@@ -166,9 +203,9 @@ function IntegrationsContent() {
     if (!session?.user?.id) return;
 
     try {
-      const token = localStorage.getItem('bearer_token');
+      const token = localStorage.getItem("bearer_token");
       const response = await fetch(`/api/oauth/quickbooks/tokens?userId=${session.user.id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
@@ -177,7 +214,7 @@ function IntegrationsContent() {
         setQbStatus(data);
       }
     } catch (error) {
-      console.error('Failed to check QB connection:', error);
+      console.error("Failed to check QB connection:", error);
     }
   };
 
@@ -190,16 +227,16 @@ function IntegrationsContent() {
     setQbLoading(true);
 
     try {
-      const response = await fetch('/api/oauth/quickbooks/authorize', {
-        headers: { 'x-user-id': session.user.id }
+      const response = await fetch("/api/oauth/quickbooks/authorize", {
+        headers: { "x-user-id": session.user.id },
       });
 
-      if (!response.ok) throw new Error('Failed to get authorization URL');
+      if (!response.ok) throw new Error("Failed to get authorization URL");
 
       const data = await response.json();
       window.location.href = data.authUrl;
     } catch (error) {
-      console.error('QB connect error:', error);
+      console.error("QB connect error:", error);
       toast.error(t("toasts.qbConnectFail"));
       setQbLoading(false);
     }
@@ -211,10 +248,10 @@ function IntegrationsContent() {
     setQbLoading(true);
 
     try {
-      const token = localStorage.getItem('bearer_token');
+      const token = localStorage.getItem("bearer_token");
       const response = await fetch(`/api/oauth/quickbooks/tokens?userId=${session.user.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
@@ -222,10 +259,10 @@ function IntegrationsContent() {
         setQbStatus(null);
         toast.success(t("toasts.qbDisconnected"));
       } else {
-        throw new Error('Failed to disconnect');
+        throw new Error("Failed to disconnect");
       }
     } catch (error) {
-      console.error('QB disconnect error:', error);
+      console.error("QB disconnect error:", error);
       toast.error(t("toasts.qbDisconnectFail"));
     } finally {
       setQbLoading(false);
@@ -262,12 +299,12 @@ function IntegrationsContent() {
 
     setLoadingBenchmark(true);
     try {
-      const token = localStorage.getItem('bearer_token');
-      const response = await fetch('/api/benchmarks/compare', {
-        method: 'POST',
+      const token = localStorage.getItem("bearer_token");
+      const response = await fetch("/api/benchmarks/compare", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           sector: userData.companyIndustry,
@@ -275,11 +312,11 @@ function IntegrationsContent() {
           employees: userData.employees,
           annual_revenue: userData.revenue,
           country: userLocation,
-          userId: userData.id
-        })
+          userId: userData.id,
+        }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch benchmark comparison');
+      if (!response.ok) throw new Error("Failed to fetch benchmark comparison");
 
       const data = await response.json();
       setBenchmarkComparison(data.comparison);
@@ -292,296 +329,391 @@ function IntegrationsContent() {
     }
   };
 
+  /* ---- derived counts. Read from the catalogue and the live link. ---- */
+  const liveCount = CONNECTORS.filter((c) => c.state === "live").length;
+  const linkedCount = qbConnected ? 1 : 0;
+  const readyCount = CONNECTORS.filter((c) => c.state === "oauth").length - linkedCount;
+  const coverage = Math.round(((liveCount + linkedCount) / CONNECTORS.length) * 100);
+
+  const actionFor = (c: Connector) => {
+    if (c.id === "quickbooks") {
+      return qbConnected ? (
+        <Btn onClick={handleQbDisconnect} disabled={qbLoading}>
+          {qbLoading ? t("quickbooks.disconnecting") : t("quickbooks.disconnect")}
+        </Btn>
+      ) : (
+        <Btn variant="primary" onClick={handleQbConnect} disabled={qbLoading}>
+          {qbLoading ? t("quickbooks.connecting") : t("quickbooks.connect")}
+        </Btn>
+      );
+    }
+    if (c.state === "live") {
+      return (
+        <Btn onClick={() => { setTab(c.category === "grid" ? "energy" : "benchmarks"); }}>
+          {locale === "el" ? "Δείτε τα δεδομένα" : "See the data"}
+        </Btn>
+      );
+    }
+    return null;
+  };
+
+  const detailFor = (c: Connector) => {
+    if (c.id !== "quickbooks" || !qbConnected || !qbStatus) return null;
+    return (
+      <div className="vci-tile-detail">
+        <div>
+          <span>{t("quickbooks.environment")}</span>
+          <strong className="capitalize">{qbStatus.environment}</strong>
+        </div>
+        {qbStatus.lastSyncedAt && (
+          <div>
+            <span>{t("quickbooks.lastSync")}</span>
+            <strong className="vck-num">
+              {new Date(qbStatus.lastSyncedAt).toLocaleDateString()}
+            </strong>
+          </div>
+        )}
+        {qbStatus.isExpired && <div>{t("quickbooks.tokenExpired")}</div>}
+      </div>
+    );
+  };
+
+  const statusFor = (c: Connector) => {
+    if (c.id === "quickbooks" && qbConnected) {
+      return { word: t("quickbooks.connected"), tone: "good" as const };
+    }
+    return undefined;
+  };
+
   return (
-    <PageShell
-      header={
-        <PageHeader title={t("title")} purpose={t("subtitle")} />
+    <ConsolePage
+      title={t("title")}
+      purpose={
+        locale === "el"
+          ? "Κάθε αριθμός στην πλατφόρμα προέρχεται από μία από αυτές τις πηγές."
+          : "Every figure in the workspace comes from one of these sources."
+      }
+      toolbar={
+        <ConsoleTabs
+          items={[
+            {
+              key: "directory",
+              label: locale === "el" ? "Κατάλογος" : "Directory",
+              count: CONNECTORS.length,
+            },
+            { key: "energy", label: locale === "el" ? "Δίκτυο" : "Grid and tariffs" },
+            { key: "benchmarks", label: t("benchmarks.title") },
+          ]}
+          value={tab}
+          onChange={(k) => setTab(k as typeof tab)}
+        />
       }
     >
-      <Section title={t("quickbooks.name")} description={t("quickbooks.desc")}>
-        <div className="app-card p-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-            <span className="app-tag" data-tone={qbConnected ? "positive" : undefined}>
-              {qbConnected ? t("quickbooks.connected") : t("quickbooks.inactive")}
-            </span>
-            {qbConnected ? (
-              <PremiumButton onClick={handleQbDisconnect} disabled={qbLoading} variant="outline" size="sm">
-                {qbLoading ? t("quickbooks.disconnecting") : t("quickbooks.disconnect")}
-              </PremiumButton>
-            ) : (
-              <PremiumButton onClick={handleQbConnect} disabled={qbLoading} size="sm">
-                {qbLoading ? t("quickbooks.connecting") : t("quickbooks.connect")}
-              </PremiumButton>
+      <ReadingRail>
+        <Reading
+          label={locale === "el" ? "Ενεργές ροές" : "Live feeds"}
+          value={liveCount}
+          note={locale === "el" ? "χωρίς σύνδεση λογαριασμού" : "no account needed"}
+        />
+        <Reading
+          label={locale === "el" ? "Συνδεδεμένοι λογαριασμοί" : "Linked accounts"}
+          value={linkedCount}
+          note={
+            readyCount > 0
+              ? locale === "el"
+                ? `${readyCount} έτοιμος για σύνδεση`
+                : `${readyCount} ready to link`
+              : locale === "el"
+                ? "όλοι συνδεδεμένοι"
+                : "all linked"
+          }
+        />
+        <Reading
+          label={locale === "el" ? "Στον κατάλογο" : "In the catalogue"}
+          value={CONNECTORS.length}
+          note={locale === "el" ? "σε 4 κατηγορίες" : "across 4 categories"}
+        />
+        <Reading
+          label={locale === "el" ? "Κάλυψη πηγών" : "Source coverage"}
+          value={`${coverage}%`}
+          note={<Bar pct={coverage} />}
+        />
+      </ReadingRail>
+
+      {tab === "directory" &&
+        CATEGORY_ORDER.map((cat) => {
+          const items = CONNECTORS.filter((c) => c.category === cat);
+          if (items.length === 0) return null;
+          return (
+            <Plate key={cat} label={CATEGORY_LABEL[cat][locale]} meta={`${items.length}`}>
+              <p className="vci-group-note">{CATEGORY_NOTE[cat][locale]}</p>
+              <div className="vci-grid">
+                {items.map((c) => (
+                  <ConnectorTile
+                    key={c.id}
+                    connector={c}
+                    locale={locale}
+                    status={statusFor(c)}
+                    action={actionFor(c)}
+                    detail={detailFor(c)}
+                  />
+                ))}
+              </div>
+            </Plate>
+          );
+        })}
+
+      {tab === "energy" && (
+        <>
+          <Plate label={t("energy.title")} meta={locationType === "zone" ? location : "US ZIP"}>
+            <p className="vci-group-note">{t("energy.subtitle")}</p>
+
+            <div className="flex flex-wrap gap-2 mb-3">
+              <Btn
+                variant={locationType === "zone" ? "primary" : "quiet"}
+                onClick={() => { setLocationType("zone"); setLocation("CY"); }}
+              >
+                {t("energy.globalZone")}
+              </Btn>
+              <Btn
+                variant={locationType === "zip" ? "primary" : "quiet"}
+                onClick={() => { setLocationType("zip"); setLocation("94105"); }}
+              >
+                {t("energy.usZip")}
+              </Btn>
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+              {locationType === "zone" ? (
+                <select
+                  className="vck-input"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  aria-label={t("energy.globalZone")}
+                >
+                  {ZONES.map((g) => (
+                    <optgroup key={g.group} label={g.group}>
+                      {g.options.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  className="vck-input"
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder={t("energy.zipPlaceholder")}
+                  aria-label={t("energy.usZip")}
+                />
+              )}
+              <Btn variant="primary" onClick={fetchEnergyData} disabled={loadingEnergy}>
+                {loadingEnergy ? t("energy.loading") : t("energy.fetchData")}
+              </Btn>
+            </div>
+
+            {locationType === "zone" && (
+              <p className="vci-group-note" style={{ margin: "12px 0 0" }}>
+                {t("energy.globalCoverage")} {t("energy.globalCoverageDesc")}
+              </p>
             )}
-          </div>
+          </Plate>
 
-          {qbConnected && qbStatus && (
-            <div className="app-card-inset p-3 mb-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="app-meta">{t("quickbooks.environment")}</span>
-                <span className="font-medium capitalize">{qbStatus.environment}</span>
-              </div>
-              {qbStatus.lastSyncedAt && (
-                <div className="flex justify-between text-sm">
-                  <span className="app-meta">{t("quickbooks.lastSync")}</span>
-                  <span className="app-num font-medium">
-                    {new Date(qbStatus.lastSyncedAt).toLocaleDateString()}
-                  </span>
-                </div>
+          {energyData ? (
+            <PlateGrid>
+              {energyData.carbonIntensity && !energyData.carbonIntensity.error && (
+                <Plate
+                  label={t("energy.carbonIntensity")}
+                  foot={`Electricity Maps · ${energyData.zone}`}
+                >
+                  <ReadingRail>
+                    <Reading
+                      label={t("energy.carbonIntensity")}
+                      value={energyData.carbonIntensity.current}
+                      unit="gCO₂/kWh"
+                    />
+                    <Reading
+                      label={locale === "el" ? "Ανανεώσιμα" : "Renewable share"}
+                      value={`${energyData.carbonIntensity.renewablePercentage?.toFixed(1) ?? "—"}%`}
+                      note={<Bar pct={energyData.carbonIntensity.renewablePercentage ?? 0} />}
+                    />
+                  </ReadingRail>
+                </Plate>
               )}
-              {qbStatus.isExpired && (
-                <p className="app-meta text-destructive">{t("quickbooks.tokenExpired")}</p>
+
+              {energyData.utilityRates && !energyData.utilityRates.error && (
+                <Plate label={t("energy.rate")} foot={`OpenEI · ${energyData.utilityRates.utility}`}>
+                  <ReadingRail>
+                    <Reading
+                      label={t("energy.rate")}
+                      value={`$${energyData.utilityRates.averageRatePerKwh?.toFixed(4)}`}
+                      note={t("energy.perKwh")}
+                    />
+                    <Reading
+                      label={t("energy.monthlyCost")}
+                      value={`$${energyData.utilityRates.monthlyCost?.totalCost?.toFixed(2)}`}
+                      note={t("energy.forUsage")}
+                    />
+                  </ReadingRail>
+                </Plate>
               )}
-            </div>
+            </PlateGrid>
+          ) : (
+            <Empty
+              title={locale === "el" ? "Καμία μέτρηση ακόμη" : "No reading yet"}
+              body={
+                locale === "el"
+                  ? "Επιλέξτε ζώνη δικτύου και πάρτε την τρέχουσα ένταση άνθρακα και το τιμολόγιο."
+                  : "Pick a grid zone, then pull the current carbon intensity and tariff."
+              }
+              action={{ label: t("energy.fetchData"), onClick: fetchEnergyData }}
+            />
           )}
+        </>
+      )}
 
-          <ul className="space-y-1.5 text-sm text-muted-foreground">
-            <li>{t("quickbooks.feature1")}</li>
-            <li>{t("quickbooks.feature2")}</li>
-            <li>{t("quickbooks.feature3")}</li>
-          </ul>
-        </div>
-      </Section>
-
-      <Section title={t("apiStatus.title")} description={t("apiStatus.subtitle")}>
-        <div className="app-ledger">
-          {[
-            { name: "OpenEI", desc: t("apiStatus.openEIDesc") },
-            { name: "WikiRate", desc: t("apiStatus.wikiRateDesc") },
-            { name: "Climate TRACE", desc: t("apiStatus.climateTraceDesc") },
-            { name: "Electricity Maps", desc: t("apiStatus.electricityMapsDesc") }
-          ].map((api, i) => (
-            <div key={i} className="flex items-center justify-between px-4 py-3">
-              <div>
-                <p className="text-sm font-medium">{api.name}</p>
-                <p className="app-meta">{api.desc}</p>
-              </div>
-              <span className="app-tag" data-tone="positive">{t("apiStatus.live")}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section title={t("energy.title")} description={t("energy.subtitle")}>
-        <div className="app-card p-4 space-y-4">
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setLocationType("zone")}
-              className={`app-btn-ghost app-btn ${locationType === "zone" ? "bg-[var(--app-surface-3)]" : ""}`}
-            >
-              {t("energy.globalZone")}
-            </button>
-            <button
-              onClick={() => { setLocationType("zip"); setLocation("94105"); }}
-              className={`app-btn-ghost app-btn ${locationType === "zip" ? "bg-[var(--app-surface-3)]" : ""}`}
-            >
-              {t("energy.usZip")}
-            </button>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-            {locationType === "zone" ? (
-              <select value={location} onChange={(e) => setLocation(e.target.value)} className={inputClass}>
-                <optgroup label="Cyprus">
-                  <option value="CY">Cyprus (EAC grid)</option>
-                </optgroup>
-                <optgroup label="EU / EEA">
-                  <option value="GR">Greece</option>
-                  <option value="DE">Germany</option>
-                  <option value="FR">France</option>
-                  <option value="ES">Spain</option>
-                  <option value="IT">Italy</option>
-                  <option value="NL">Netherlands</option>
-                  <option value="SE">Sweden</option>
-                  <option value="NO">Norway</option>
-                  <option value="DK-DK1">Denmark (West)</option>
-                  <option value="DK-DK2">Denmark (East)</option>
-                  <option value="EU">EU (continental average)</option>
-                </optgroup>
-              </select>
+      {tab === "benchmarks" && (
+        <>
+          <Plate
+            label={t("benchmarks.title")}
+            action={
+              <Btn variant="primary" onClick={fetchBenchmarkComparison} disabled={loadingBenchmark || !userData}>
+                {loadingBenchmark ? t("benchmarks.analyzing") : t("benchmarks.analyze")}
+              </Btn>
+            }
+            foot="WikiRate · Climate TRACE"
+          >
+            {loadingUserData ? (
+              <p className="vck-quiet">{t("benchmarks.loadingCompany")}</p>
+            ) : userData ? (
+              <ReadingRail>
+                <Reading label={t("benchmarks.company")} value={userData.companyName} />
+                <Reading
+                  label={t("benchmarks.industry")}
+                  value={<span className="capitalize">{userData.companyIndustry}</span>}
+                  note={`${t("benchmarks.location")} ${userLocation}`}
+                />
+                <Reading
+                  label={t("benchmarks.emissions")}
+                  value={userData.totalEmissions.toFixed(2)}
+                  unit="tCO₂e"
+                />
+                <Reading
+                  label={t("benchmarks.perEmployee")}
+                  value={(userData.totalEmissions / userData.employees).toFixed(2)}
+                  unit="tCO₂e"
+                  note={`${t("benchmarks.teamSize")} ${userData.teamSize}`}
+                />
+              </ReadingRail>
             ) : (
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder={t("energy.zipPlaceholder")}
-                className={inputClass}
+              <Empty
+                title={t("benchmarks.incompleteProfile")}
+                body={
+                  locale === "el"
+                    ? "Η σύγκριση χρειάζεται κλάδο, μέγεθος ομάδας και ετήσιες εκπομπές."
+                    : "The comparison needs a sector, a team size and an annual emissions figure."
+                }
+                action={{ label: locale === "el" ? "Άνοιγμα ρυθμίσεων" : "Open settings", href: "/app/settings" }}
               />
             )}
-            <PremiumButton onClick={fetchEnergyData} disabled={loadingEnergy} size="sm">
-              {loadingEnergy ? t("energy.loading") : t("energy.fetchData")}
-            </PremiumButton>
-          </div>
-
-          {locationType === "zone" && (
-            <p className="app-meta">{t("energy.globalCoverage")} {t("energy.globalCoverageDesc")}</p>
-          )}
-
-          {energyData && (
-            <div className="space-y-3">
-              {energyData.utilityRates && !energyData.utilityRates.error && (
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="app-card-inset p-3">
-                    <p className="app-label mb-1">{t("energy.rate")}</p>
-                    <p className="app-metric text-xl">${energyData.utilityRates.averageRatePerKwh?.toFixed(4)}</p>
-                    <p className="app-meta">{t("energy.perKwh")} · {energyData.utilityRates.utility}</p>
-                  </div>
-                  <div className="app-card-inset p-3">
-                    <p className="app-label mb-1">{t("energy.monthlyCost")}</p>
-                    <p className="app-metric text-xl">${energyData.utilityRates.monthlyCost?.totalCost?.toFixed(2)}</p>
-                    <p className="app-meta">{t("energy.forUsage")}</p>
-                  </div>
-                </div>
-              )}
-
-              {energyData.carbonIntensity && !energyData.carbonIntensity.error && (
-                <div className="app-card-inset p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="app-label">{t("energy.carbonIntensity")}</p>
-                    <p className="app-meta">
-                      {t("energy.renewable", { pct: energyData.carbonIntensity.renewablePercentage?.toFixed(1) })}
-                    </p>
-                  </div>
-                  <p className="app-metric text-xl">{energyData.carbonIntensity.current} gCO₂/kWh</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Section>
-
-      <Section title={t("benchmarks.title")} description={t("benchmarks.subtitle")}>
-        <div className="app-card p-4 space-y-4">
-          {loadingUserData ? (
-            <p className="app-meta">{t("benchmarks.loadingCompany")}</p>
-          ) : userData ? (
-            <div className="app-card-inset p-3 space-y-3">
-              <div className="grid gap-3 md:grid-cols-3 text-sm">
-                <div>
-                  <span className="app-label block mb-0.5">{t("benchmarks.company")}</span>
-                  <p className="font-medium break-words">{userData.companyName}</p>
-                </div>
-                <div>
-                  <span className="app-label block mb-0.5">{t("benchmarks.industry")}</span>
-                  <p className="font-medium capitalize">{userData.companyIndustry}</p>
-                </div>
-                <div>
-                  <span className="app-label block mb-0.5">{t("benchmarks.location")}</span>
-                  <p className="font-medium">{userLocation}</p>
-                </div>
-              </div>
-              <div className="grid gap-3 md:grid-cols-3 text-sm">
-                <div>
-                  <span className="app-label block mb-0.5">{t("benchmarks.teamSize")}</span>
-                  <p className="font-medium">{userData.teamSize}</p>
-                </div>
-                <div>
-                  <span className="app-label block mb-0.5">{t("benchmarks.emissions")}</span>
-                  <p className="app-num font-medium">{userData.totalEmissions.toFixed(2)} tCO₂e</p>
-                </div>
-                <div>
-                  <span className="app-label block mb-0.5">{t("benchmarks.perEmployee")}</span>
-                  <p className="app-num font-medium">{(userData.totalEmissions / userData.employees).toFixed(2)} tCO₂e</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <p className="app-meta">{t("benchmarks.incompleteProfile")}</p>
-          )}
-
-          <PremiumButton onClick={fetchBenchmarkComparison} disabled={loadingBenchmark || !userData} size="sm">
-            {loadingBenchmark ? t("benchmarks.analyzing") : t("benchmarks.analyze")}
-          </PremiumButton>
+          </Plate>
 
           {benchmarkComparison && (
-            <div className="space-y-3">
-              <div className="app-card-inset p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="app-label">{t("benchmarks.performanceRating")}</p>
-                  <span className="app-tag" data-tone={benchmarkComparison.interpretation === "NEEDS_IMPROVEMENT" ? "critical" : benchmarkComparison.interpretation === "ABOVE_AVERAGE" ? "caution" : "positive"}>
-                    {t(`benchmarks.ratings.${benchmarkComparison.interpretation}` as any)}
-                  </span>
-                </div>
-                <div className="grid gap-3 mt-3 md:grid-cols-2">
-                  <div>
-                    <p className="app-meta mb-1">{t("benchmarks.vsRegional", { country: benchmarkComparison.location_context.country })}</p>
-                    <p className="app-metric text-lg">
-                      {benchmarkComparison.vs_average_percent > 0 ? '+' : ''}
-                      {benchmarkComparison.vs_average_percent.toFixed(1)}%
-                    </p>
-                  </div>
-                  <div>
-                    <p className="app-meta mb-1">{t("benchmarks.vsGlobal")}</p>
-                    <p className="app-metric text-lg">
-                      {benchmarkComparison.vs_global_percent > 0 ? '+' : ''}
-                      {benchmarkComparison.vs_global_percent.toFixed(1)}%
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <>
+              <Plate
+                label={t("benchmarks.performanceRating")}
+                meta={t(`benchmarks.ratings.${benchmarkComparison.interpretation}` as any)}
+                metaTone={
+                  benchmarkComparison.interpretation === "NEEDS_IMPROVEMENT"
+                    ? "bad"
+                    : benchmarkComparison.interpretation === "ABOVE_AVERAGE"
+                      ? "warn"
+                      : "good"
+                }
+              >
+                <ReadingRail>
+                  <Reading
+                    label={t("benchmarks.vsRegional", {
+                      country: benchmarkComparison.location_context.country,
+                    })}
+                    value={`${benchmarkComparison.vs_average_percent > 0 ? "+" : ""}${benchmarkComparison.vs_average_percent.toFixed(1)}%`}
+                    tone={benchmarkComparison.vs_average_percent > 0 ? "bad" : "good"}
+                  />
+                  <Reading
+                    label={t("benchmarks.vsGlobal")}
+                    value={`${benchmarkComparison.vs_global_percent > 0 ? "+" : ""}${benchmarkComparison.vs_global_percent.toFixed(1)}%`}
+                    tone={benchmarkComparison.vs_global_percent > 0 ? "bad" : "good"}
+                  />
+                  <Reading
+                    label={t("benchmarks.regionalPercentile")}
+                    value={`${benchmarkComparison.percentile_rank}th`}
+                    note={t("benchmarks.inCountry", {
+                      country: benchmarkComparison.location_context.country,
+                    })}
+                  />
+                  <Reading
+                    label={t("benchmarks.globalPercentile")}
+                    value={`${benchmarkComparison.global_percentile_rank}th`}
+                    note={t("benchmarks.worldwide")}
+                  />
+                </ReadingRail>
+              </Plate>
 
-              <div className="grid gap-3 md:grid-cols-3">
-                <div className="app-card-inset p-3">
-                  <p className="app-label mb-1">{t("benchmarks.regionalPercentile")}</p>
-                  <p className="app-metric text-xl">{benchmarkComparison.percentile_rank}th</p>
-                  <p className="app-meta">{t("benchmarks.inCountry", { country: benchmarkComparison.location_context.country })}</p>
-                </div>
-                <div className="app-card-inset p-3">
-                  <p className="app-label mb-1">{t("benchmarks.globalPercentile")}</p>
-                  <p className="app-metric text-xl">{benchmarkComparison.global_percentile_rank}th</p>
-                  <p className="app-meta">{t("benchmarks.worldwide")}</p>
-                </div>
-                <div className="app-card-inset p-3">
-                  <p className="app-label mb-1">{t("benchmarks.countryContext")}</p>
-                  <p className="app-metric text-xl">{benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%</p>
-                  <p className="app-meta">{t("benchmarks.ofCountryTotal", { country: benchmarkComparison.location_context.country })}</p>
-                </div>
-              </div>
+              <PlateGrid>
+                <Plate label={t("benchmarks.perEmployeeMetric")}>
+                  <Reading
+                    label={t("benchmarks.perEmployeeMetric")}
+                    value={benchmarkComparison.emissions_per_employee.toFixed(2)}
+                    unit="tCO₂e"
+                    note={t("benchmarks.vsIndustryAvg", {
+                      value: benchmarkComparison.industry_emissions_per_employee.toFixed(2),
+                    })}
+                  />
+                </Plate>
+                <Plate label={t("benchmarks.perRevenue")}>
+                  <Reading
+                    label={t("benchmarks.perRevenue")}
+                    value={benchmarkComparison.emissions_per_revenue.toFixed(2)}
+                    unit="tCO₂e"
+                    note={t("benchmarks.vsIndustryAvg", {
+                      value: benchmarkComparison.industry_emissions_per_revenue.toFixed(2),
+                    })}
+                  />
+                </Plate>
+                <Plate
+                  label={t("benchmarks.locationContext", {
+                    country: benchmarkComparison.location_context.country,
+                  })}
+                >
+                  <Reading
+                    label={t("benchmarks.totalCountryEmissions")}
+                    value={(
+                      benchmarkComparison.location_context.country_total_emissions / 1000000
+                    ).toFixed(2)}
+                    unit="Mt CO₂e"
+                    note={`${t("benchmarks.yourContribution")} ${benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%`}
+                  />
+                </Plate>
+              </PlateGrid>
 
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="app-card-inset p-3">
-                  <p className="app-label mb-2">{t("benchmarks.perEmployeeMetric")}</p>
-                  <p className="app-num text-base font-semibold">{benchmarkComparison.emissions_per_employee.toFixed(2)}</p>
-                  <p className="app-meta">{t("benchmarks.vsIndustryAvg", { value: benchmarkComparison.industry_emissions_per_employee.toFixed(2) })}</p>
-                </div>
-                <div className="app-card-inset p-3">
-                  <p className="app-label mb-2">{t("benchmarks.perRevenue")}</p>
-                  <p className="app-num text-base font-semibold">{benchmarkComparison.emissions_per_revenue.toFixed(2)}</p>
-                  <p className="app-meta">{t("benchmarks.vsIndustryAvg", { value: benchmarkComparison.industry_emissions_per_revenue.toFixed(2) })}</p>
-                </div>
-              </div>
-
-              <div className="app-card-inset p-3">
-                <p className="text-sm font-medium mb-2">{t("benchmarks.locationContext", { country: benchmarkComparison.location_context.country })}</p>
-                <div className="space-y-1.5 text-sm">
-                  <div className="flex justify-between">
-                    <span className="app-meta">{t("benchmarks.totalCountryEmissions")}</span>
-                    <span className="app-num font-medium">
-                      {(benchmarkComparison.location_context.country_total_emissions / 1000000).toFixed(2)} Mt CO₂e
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="app-meta">{t("benchmarks.yourContribution")}</span>
-                    <span className="app-num font-medium">{benchmarkComparison.location_context.user_percentage_of_country.toFixed(6)}%</span>
-                  </div>
-                </div>
-              </div>
-
-              {benchmarkComparison.recommendations && benchmarkComparison.recommendations.length > 0 && (
-                <div className="app-card-inset p-3">
-                  <p className="text-sm font-medium mb-2">{t("benchmarks.recommendationsTitle")}</p>
-                  <ul className="space-y-2 text-sm">
-                    {benchmarkComparison.recommendations.map((rec: string, i: number) => (
+              {benchmarkComparison.recommendations?.length > 0 && (
+                <Plate label={t("benchmarks.recommendationsTitle")}>
+                  <ul className="vck-list">
+                    {benchmarkComparison.recommendations.map((rec, i) => (
                       <li key={i}>{rec}</li>
                     ))}
                   </ul>
-                </div>
+                </Plate>
               )}
-            </div>
+            </>
           )}
-        </div>
-      </Section>
-    </PageShell>
+        </>
+      )}
+    </ConsolePage>
   );
 }
 
@@ -589,9 +721,9 @@ export default function IntegrationsPage() {
   return (
     <Suspense
       fallback={
-        <PageShell loading header={<PageHeader title="Integrations" />}>
+        <ConsolePage title="Integrations" loading>
           <div />
-        </PageShell>
+        </ConsolePage>
       }
     >
       <IntegrationsContent />
