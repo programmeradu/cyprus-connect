@@ -1007,10 +1007,11 @@
 .vc .vc-add-agent {
   margin-top: auto;
   align-self: flex-start;
-  height: 38px;
-  padding: 0 20px;
+  height: 36px;
+  padding: 0 12px 0 13px;
   order: 9;
 }
+
 
 /* ---------- plate content that must never clip ----------------------- */
 

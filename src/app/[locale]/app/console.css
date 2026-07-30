@@ -408,16 +408,74 @@
   letter-spacing: -0.15px;
 }
 
+/* The workforce link is a quiet instrument control, not a marketing CTA.
+   Glass, hairline, ink type; the lime is held back to one live dot. */
 .vc-add-agent {
-  height: 34px;
-  padding: 0 16px;
-  border-radius: 17px;
-  background: var(--vc-lime);
-  color: var(--vc-lime-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 36px;
+  padding: 0 12px 0 13px;
+  border-radius: 999px;
+  border: 1px solid var(--vc-rule);
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--vc-ink);
   font-size: 13px;
-  font-weight: 900;
-  box-shadow: 0 6px 14px -6px rgba(160, 190, 40, 0.65);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: none;
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
+
+.vc-add-agent-label {
+  white-space: nowrap;
+}
+
+.vc-add-agent-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--vc-lime);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--vc-lime) 22%, transparent);
+}
+
+.vc-add-agent-arrow {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: var(--vc-ink-3);
+  transition: transform 160ms ease, color 160ms ease;
+}
+
+.vc-add-agent:hover {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: color-mix(in oklab, var(--vc-ink) 22%, transparent);
+}
+
+.vc-add-agent:hover .vc-add-agent-arrow {
+  transform: translateX(2px);
+  color: var(--vc-ink);
+}
+
+.vc-add-agent:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--vc-lime) 70%, var(--vc-ink));
+  outline-offset: 2px;
+}
+
+.dark .vc-add-agent {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.dark .vc-add-agent:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
 
 .vc-side-icons {
   position: absolute;
