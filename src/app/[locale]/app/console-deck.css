@@ -990,3 +990,57 @@
   align-self: start;
   padding-top: 1px;
 }
+
+/* ---------- narrow screens: the hero unstacks ------------------------ */
+
+@media (max-width: 1100px) {
+  .vc .vc-top-tabs,
+  .vc .vc-focus-row {
+    position: static;
+    inset: auto;
+  }
+
+  .vc .vc-top-tabs {
+    margin-top: 18px;
+    flex-wrap: wrap;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .vc .vc-focus-row {
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .vc .vc-focus-row > span { margin-bottom: 0; }
+}
+
+@media (max-width: 760px) {
+  .vc .vc-nav {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "brand actions" "nav nav";
+    gap: 10px;
+    padding-block: 12px;
+  }
+
+  .vc .vc-brand { grid-area: brand; }
+
+  .vc .vc-actions {
+    grid-area: actions;
+    flex-wrap: nowrap;
+  }
+
+  .vc .vc-mainnav {
+    grid-area: nav;
+    overflow-x: auto;
+    scrollbar-width: none;
+    justify-content: flex-start;
+  }
+
+  .vc .vc-mainnav::-webkit-scrollbar { display: none; }
+
+  .vc-deck { padding-inline: 16px; }
+
+  .vc-plate { border-radius: 22px; }
+}
