@@ -1046,3 +1046,91 @@
 
   .vc-plate { border-radius: 22px; }
 }
+
+/* =====================================================================
+   Narrow screens — the hero reads top to bottom in the right order.
+
+   On desktop the identity column sits left of the signal, so source
+   order puts it first. Once the grid collapses that pushed the greeting
+   below the rail, the big number and the legend, so the page appeared to
+   open in its own middle. Below 1100px the greeting leads, the signal
+   follows, and the identity column drops to the foot of the hero.
+   ===================================================================== */
+
+@media (max-width: 1100px) {
+  .vc .vc-hero-grid {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(20px, 4vw, 32px);
+    min-height: 0;
+    height: auto;
+  }
+
+  .vc .vc-chart-zone {
+    order: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .vc .vc-team-card {
+    order: 2;
+    min-height: 0;
+    padding-top: clamp(18px, 3vw, 24px);
+    border-top: 1px solid var(--vc-rule);
+  }
+
+  /* the greeting keeps its clock, the tabs and the reading follow in flow */
+  .vc .vc-greeting { gap: 12px; }
+
+  .vc .vc-top-tabs {
+    margin-top: 0;
+    align-self: flex-start;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .vc .vc-top-tabs::-webkit-scrollbar { display: none; }
+
+  .vc .vc-focus-row {
+    margin-top: 0;
+    align-items: flex-end;
+  }
+
+  .vc .vc-signal {
+    order: 4;
+    margin-top: 0;
+    height: clamp(200px, 30vw, 250px);
+  }
+
+  /* the identity column no longer needs to fill a tall grid cell */
+  .vc .vc-add-agent {
+    order: 0;
+    margin-top: 0;
+  }
+
+  .vc .vc-legend { max-width: none; }
+}
+
+@media (max-width: 640px) {
+  .vc .vc-greeting {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .vc .vc-greeting h1 { font-size: 26px; }
+  .vc .vc-greeting p { font-size: 16px; }
+
+  .vc .vc-focus-row {
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+
+  .vc .vc-focus-row > span { margin-bottom: 0; }
+
+  .vc .vc-side-series button {
+    grid-template-columns: minmax(0, 1fr) 44px auto;
+  }
+}
