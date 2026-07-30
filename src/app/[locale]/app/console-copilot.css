@@ -602,57 +602,93 @@
 /* ---- Composer --------------------------------------------------------- */
 
 .vc-copilot-foot {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--vc-rail-rule);
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--vc-rail) 78%, transparent),
+    transparent
+  );
+}
+
+.vc-copilot-field {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  padding: 11px;
-  border-top: 1px solid var(--vc-rail-rule);
-  background: color-mix(in oklab, var(--vc-rail) 60%, transparent);
-}
-
-.vc-copilot-foot textarea {
-  flex: 1;
-  min-width: 0;
-  min-height: 40px;
-  max-height: 132px;
-  padding: 10px 12px;
-  resize: none;
-  border-radius: 16px;
+  padding: 6px 6px 6px 6px;
+  border-radius: 20px;
   border: 1px solid var(--vc-rail-rule);
   background: var(--vc-pill-bg);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.vc-copilot-field:focus-within {
+  border-color: color-mix(in oklab, var(--vc-lime) 62%, var(--vc-rail-rule));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--vc-lime) 18%, transparent);
+}
+
+.vc-copilot-field textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 34px;
+  max-height: 148px;
+  padding: 9px 4px 9px 10px;
+  resize: none;
+  border: 0;
+  background: transparent;
   color: var(--vc-ink);
   font: inherit;
-  font-size: 13.5px;
-  line-height: 1.45;
+  font-size: 13.8px;
+  line-height: 1.5;
   outline: none;
 }
 
-.vc-copilot-foot textarea::placeholder {
+.vc-copilot-field textarea::placeholder {
   color: var(--vc-ink-3);
 }
 
-.vc-copilot-foot textarea:focus {
-  border-color: color-mix(in oklab, var(--vc-lime) 60%, var(--vc-rail-rule));
-}
-
-.vc-copilot-foot button {
+.vc-copilot-field button {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
   border-radius: 50%;
   border: 0;
   background: var(--vc-lime);
   color: var(--vc-lime-ink);
   cursor: pointer;
-  transition: opacity 140ms ease;
+  transition: opacity 140ms ease, transform 140ms ease;
 }
 
-.vc-copilot-foot button:disabled {
-  opacity: 0.4;
+.vc-copilot-field button:hover:not(:disabled) {
+  transform: translateX(1px);
+}
+
+.vc-copilot-field button:disabled {
+  opacity: 0.38;
   cursor: default;
 }
+
+.vc-copilot-hint {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+  font-size: 11.4px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--vc-ink-3);
+}
+
+@media (max-width: 460px) {
+  .vc-copilot-hint span:last-child {
+    display: none;
+  }
+}
+
 
 /* ---- Phone ------------------------------------------------------------ */
 
