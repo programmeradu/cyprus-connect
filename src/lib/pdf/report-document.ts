@@ -33,6 +33,25 @@ export interface PdfReport {
   sections: PdfSection[];
 }
 
+/**
+ * The built-in PDF fonts hold Latin-1 only. A subscript or a dash outside
+ * that set prints as a comma or a box, so "tCO2e" must arrive as plain text.
+ */
+const SWAP: Record<string, string> = {
+  "\u2080": "0", "\u2081": "1", "\u2082": "2", "\u2083": "3", "\u2084": "4",
+  "\u2085": "5", "\u2086": "6", "\u2087": "7", "\u2088": "8", "\u2089": "9",
+  "\u2070": "0", "\u00b9": "1", "\u00b2": "2", "\u00b3": "3", "\u2074": "4",
+  "\u2013": "-", "\u2014": "-", "\u2212": "-", "\u2011": "-",
+  "\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"',
+  "\u2026": "...", "\u00a0": " ", "\u2192": "->", "\u00b7": "-",
+};
+
+function plain(value: string): string {
+  return value
+    .replace(/[\u2080-\u2089\u2070\u00b9\u00b2\u00b3\u2074\u2013\u2014\u2212\u2011\u2018\u2019\u201c\u201d\u2026\u00a0\u2192\u00b7]/g, (ch) => SWAP[ch] ?? " ")
+    .replace(/[^\x20-\x7E\u00A1-\u00FF\n]/g, "");
+}
+
 const INK: [number, number, number] = [26, 31, 27];
 const QUIET: [number, number, number] = [104, 114, 105];
 const RULE: [number, number, number] = [206, 214, 205];
@@ -62,7 +81,7 @@ export function buildReportPdf(report: PdfReport): jsPDF {
     doc.setFont("helvetica", style);
     doc.setFontSize(size);
     doc.setTextColor(...colour);
-    for (const line of doc.splitTextToSize(value, width) as string[]) {
+    for (const line of doc.splitTextToSize(plain(value), width) as string[]) {
       room(lead);
       doc.text(line, margin, y);
       y += lead;

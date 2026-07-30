@@ -63,7 +63,8 @@ function round(value: number, precision: number): string {
 function skeleton(): ReportSection[] {
   return VSME_BASIC.map((disclosure) => ({
     code: disclosure.code,
-    title: disclosure.title.en,
+    // House style keeps technical English free of em dashes.
+    title: disclosure.title.en.replace(/\s*[\u2014\u2013]\s*/g, ": "),
     body: "",
     figures: [],
     gaps: [],
@@ -181,7 +182,8 @@ export async function draftVsmeReport(input: {
   ].join("\n");
 
   const outline = VSME_BASIC.map(
-    (disclosure) => `${disclosure.code} | ${disclosure.title.en} | ${disclosure.purpose.en}`,
+    (disclosure) =>
+      `${disclosure.code} | ${disclosure.title.en.replace(/\s*[\u2014\u2013]\s*/g, ": ")} | ${disclosure.purpose.en}`,
   ).join("\n");
 
   const sections = skeleton();
