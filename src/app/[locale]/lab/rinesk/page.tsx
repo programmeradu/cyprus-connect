@@ -187,6 +187,23 @@ function A({
 
 /* ------------------------------------------------------------------ */
 
+function WaveHand() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden>
+      <g transform="rotate(18 16 16)">
+        <path
+          d="M10.4 18.6V8.9a1.75 1.75 0 0 1 3.5 0v6.6m0-1.1V7.2a1.75 1.75 0 0 1 3.5 0v6.9m0-.9V8.4a1.75 1.75 0 0 1 3.5 0v7.1m0-3.1a1.75 1.75 0 0 1 3.5 0v6.2c0 4.6-3.2 8.1-7.8 8.1-4.3 0-6.5-2.1-7.9-5.2l-2-4.4a1.8 1.8 0 0 1 3-1.9l1.7 2.3"
+          stroke="#e8b23a"
+          strokeWidth="2.1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="#f8d07a"
+        />
+      </g>
+    </svg>
+  );
+}
+
 export default function RineskPage() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -325,7 +342,7 @@ export default function RineskPage() {
             {/* greeting */}
             <A l={462} t={91} style={{ fontSize: 19.5, fontWeight: 700, letterSpacing: -0.35, color: "#1c2827", whiteSpace: "nowrap" }}>
               Hey, Matthew!{" "}
-              <span style={{ fontSize: 17 }}>👋</span>
+              <WaveHand />
             </A>
             <A l={462} t={116} style={{ fontSize: 18.5, fontWeight: 500, letterSpacing: -0.3, color: "rgba(35,46,46,.45)", whiteSpace: "nowrap" }}>
               Explore your team`s records history
