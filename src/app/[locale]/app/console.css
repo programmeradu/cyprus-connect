@@ -110,58 +110,74 @@
   box-shadow: var(--vc-shadow-pill);
 }
 
+/* The concept background IS the application background. There is no
+   floating window: the page fills the viewport, scrolls normally and the
+   sections are laid out on that background. */
 .vc-fit {
   min-height: 100vh;
   min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: radial-gradient(120% 80% at 50% 55%, var(--vc-page-glow), transparent 62%),
-    linear-gradient(180deg, var(--vc-page) 0%, color-mix(in oklab, var(--vc-page) 92%, white) 100%);
+  display: block;
+  padding: 0;
+  background: var(--vc-window);
 }
 
 .dark .vc-fit {
-  background: radial-gradient(120% 80% at 52% 52%, var(--vc-page-glow), transparent 62%),
-    linear-gradient(180deg, #171717 0%, #212121 100%);
+  background: var(--vc-window);
 }
 
 .vc-window {
   position: relative;
-  width: min(1180px, calc(100vw - 36px));
-  height: min(760px, calc(100svh - 36px));
-  min-height: 650px;
-  border-radius: 26px;
-  overflow: hidden;
-  background: var(--vc-window);
-  box-shadow: var(--vc-shadow-window);
+  width: 100%;
+  min-height: 100svh;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
   display: grid;
-  grid-template-rows: minmax(342px, 1fr) 44px 210px 116px;
+  grid-auto-rows: auto;
+  align-content: start;
 }
 
 .vc-window::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 26px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  pointer-events: none;
+  content: none;
+}
+
+/* Shared page gutter so every band lines up on one editorial grid. */
+.vc-nav,
+.vc-hero-grid,
+.vc-tab-strip,
+.vc-bottom-panel,
+.vc-dock-row {
+  width: 100%;
+  max-width: 1640px;
+  margin-inline: auto;
 }
 
 .vc-top-panel {
   position: relative;
   background: var(--vc-hero-grad);
-  border-radius: 26px 26px 0 0;
-  overflow: hidden;
+  border-radius: 0;
+  padding-bottom: 8px;
 }
 
+
 .vc-nav {
-  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 68px;
   display: grid;
-  grid-template-columns: 180px 1fr auto;
+  grid-template-columns: 200px 1fr auto;
   align-items: center;
   gap: 18px;
-  padding: 0 22px;
+  padding: 0 clamp(16px, 3.2vw, 44px);
+  background: color-mix(in oklab, var(--vc-window) 76%, transparent);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid var(--vc-rule-soft);
+  max-width: none;
 }
+
 
 .vc-brand,
 .vc-mainnav a,
@@ -304,10 +320,10 @@
 
 .vc-hero-grid {
   display: grid;
-  grid-template-columns: 330px 1fr;
-  gap: 26px;
-  height: calc(100% - 64px);
-  padding: 22px 22px 24px;
+  grid-template-columns: minmax(280px, 24vw) 1fr;
+  gap: clamp(24px, 3vw, 48px);
+  min-height: min(560px, calc(100svh - 190px));
+  padding: clamp(22px, 3vw, 40px) clamp(16px, 3.2vw, 44px) clamp(28px, 3.4vw, 46px);
 }
 
 .vc-team-card {
@@ -575,7 +591,7 @@
   left: min(38%, 292px);
   right: 0;
   bottom: 2px;
-  height: 210px;
+  height: clamp(190px, 24vh, 250px);
   color: var(--vc-lime);
 }
 
@@ -641,11 +657,16 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  gap: 10px;
-  padding: 0 28px;
+  justify-content: flex-start;
+  gap: clamp(16px, 2.4vw, 34px);
+  height: 52px;
+  padding: 0 clamp(16px, 3.2vw, 44px);
+  overflow-x: auto;
+  scrollbar-width: none;
   color: var(--vc-ink-3);
 }
+
+.vc-tab-strip::-webkit-scrollbar { display: none; }
 
 .vc-tab-strip span {
   position: relative;
@@ -671,15 +692,21 @@
 .vc-bottom-panel {
   position: relative;
   display: grid;
-  grid-template-columns: 34% 17% 32% 17%;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   background: var(--vc-deck);
-  border-radius: 24px 24px 0 0;
-  overflow: hidden;
+  border-top: 1px solid var(--vc-rule);
+  border-radius: 0;
+}
+
+@media (min-width: 1280px) {
+  .vc-bottom-panel {
+    grid-template-columns: 32% 18% 30% 20%;
+  }
 }
 
 .vc-bottom-col {
   min-width: 0;
-  padding: 18px 18px 14px;
+  padding: clamp(20px, 2.2vw, 30px) clamp(18px, 2vw, 28px);
   border-right: 1px solid var(--vc-rule);
 }
 
@@ -720,7 +747,7 @@
 .vc-table-head,
 .vc-agent-table article {
   display: grid;
-  grid-template-columns: 1fr 76px 52px;
+  grid-template-columns: minmax(0, 1fr) 72px 44px;
   align-items: center;
   column-gap: 10px;
 }
@@ -758,18 +785,20 @@
 }
 
 .vc-agent-copy strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font-size: 12px;
   line-height: 1.2;
   font-weight: 900;
 }
 
 .vc-agent-copy small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
   margin-top: 2px;
   font-size: 10.5px;
   color: var(--vc-ink-3);
@@ -822,9 +851,7 @@
 }
 
 .vc-live-list span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .vc-live-list strong {
@@ -885,14 +912,15 @@
 
 .vc-dock-row {
   display: grid;
-  grid-template-columns: 44% 56%;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  padding-bottom: 40px;
   border-top: 1px solid var(--vc-rule);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02));
 }
 
 .vc-dock-row section {
   min-width: 0;
-  padding: 14px 18px;
+  padding: clamp(18px, 2vw, 26px) clamp(18px, 2vw, 28px);
   border-right: 1px solid var(--vc-rule);
 }
 
@@ -936,9 +964,12 @@
 
 .vc-task-row strong,
 .vc-task-row small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .vc-task-row strong {
@@ -959,9 +990,8 @@
 }
 
 .vc-event-row p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
   margin: 0;
   font-size: 10.8px;
   font-weight: 700;
@@ -1026,7 +1056,7 @@
 }
 
 .vc-loading {
-  grid-template-rows: 64px 1fr 44px 210px;
+  grid-auto-rows: auto;
   color: var(--vc-ink);
 }
 
@@ -1083,7 +1113,7 @@
   background: var(--vc-hero-grad);
 }
 
-.vc-loading-hero aside { min-height: 220px; border-radius: 22px; }
+.vc-loading-hero aside { min-height: 300px; border-radius: 22px; }
 
 .vc-loading-hero main {
   display: grid;
@@ -1100,7 +1130,7 @@
 
 .vc-loading-deck {
   display: grid;
-  grid-template-columns: 2fr 1.08fr 1.9fr 1.35fr;
+  grid-template-columns: 2.35fr 1fr 1.85fr 1.35fr;
   min-height: 210px;
   border-top: 1px solid var(--vc-rule);
 }
@@ -1120,21 +1150,14 @@
 .vc-scroll::-webkit-scrollbar-track { background: transparent; }
 
 @media (max-width: 1100px) {
-  .vc-window {
-    height: auto;
-    min-height: calc(100svh - 24px);
-    overflow: visible;
-    grid-template-rows: auto auto auto auto;
-  }
-
   .vc-top-panel {
-    border-radius: 26px 26px 0 0;
+    border-radius: 0;
   }
 
   .vc-nav {
     grid-template-columns: 1fr auto;
     height: auto;
-    padding: 16px;
+    padding: 12px 16px;
   }
 
   .vc-mainnav {
@@ -1190,15 +1213,6 @@
 }
 
 @media (max-width: 640px) {
-  .vc-fit {
-    padding: 10px;
-    place-items: start center;
-  }
-
-  .vc-window {
-    width: calc(100vw - 20px);
-    border-radius: 22px;
-  }
 
   .vc-actions {
     gap: 4px;

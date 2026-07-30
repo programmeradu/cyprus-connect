@@ -260,37 +260,38 @@ export default function ConsolePage() {
   return (
     <div className="vc vc-fit">
       <section className="vc-window" aria-label="Vuneli autonomous ESG console">
+        <header className="vc-nav">
+          <Link href={"/app" as never} className="vc-brand" aria-label="Vuneli console home">
+            <span className="vc-brand-mark"><IcoLeaf size={16} /></span>
+            <span>Vuneli</span>
+          </Link>
+
+          <nav className="vc-mainnav" aria-label="Workspace navigation">
+            <span className="vc-nav-pill" />
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const active = item.href === "/app";
+              return (
+                <Link key={item.href} href={item.href as never} data-active={active}>
+                  <Icon size={13} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="vc-actions">
+            <ThemeToggle />
+            <LanguageSwitcher />
+            <button type="button" className="vc-iconbtn" aria-label="Search workspace"><IcoSearch size={14} /></button>
+            <button type="button" className="vc-iconbtn vc-notify" aria-label="Open approval queue"><IcoBell size={14} /><span>{tasks.length}</span></button>
+            <span className="vc-avatar">{(workspace.ownerName ?? "V").slice(0, 1).toUpperCase()}</span>
+          </div>
+        </header>
+
         <div className="vc-top-panel">
-          <header className="vc-nav">
-            <Link href={"/app" as never} className="vc-brand" aria-label="Vuneli console home">
-              <span className="vc-brand-mark"><IcoLeaf size={16} /></span>
-              <span>Vuneli</span>
-            </Link>
-
-            <nav className="vc-mainnav" aria-label="Workspace navigation">
-              <span className="vc-nav-pill" />
-              {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const active = item.href === "/app";
-                return (
-                  <Link key={item.href} href={item.href as never} data-active={active}>
-                    <Icon size={13} />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="vc-actions">
-              <ThemeToggle />
-              <LanguageSwitcher />
-              <button type="button" className="vc-iconbtn" aria-label="Search workspace"><IcoSearch size={14} /></button>
-              <button type="button" className="vc-iconbtn vc-notify" aria-label="Open approval queue"><IcoBell size={14} /><span>{tasks.length}</span></button>
-              <span className="vc-avatar">{(workspace.ownerName ?? "V").slice(0, 1).toUpperCase()}</span>
-            </div>
-          </header>
-
           <div className="vc-hero-grid">
+
             <aside className="vc-team-card">
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">{(workspace.ownerName ?? "V").slice(0, 1).toUpperCase()}</span>
