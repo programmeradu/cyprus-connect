@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
+import { usePathname } from "next/navigation";
 import {
   CONSENT_STORAGE_KEY,
   clearConsent as clearConsentState,
@@ -29,10 +30,18 @@ const COPY = {
 
 export function CookieBanner() {
   const locale = (useLocale() as "en" | "el") ?? "en";
+  const pathname = usePathname();
   const t = COPY[locale] ?? COPY.en;
   const [visible, setVisible] = useState(false);
+  const appPath = pathname?.replace(/^\/(en|el)(?=\/|$)/, "") ?? pathname ?? "";
+  const isAppRoute = appPath === "/app" || appPath.startsWith("/app/");
 
   useEffect(() => {
+    if (isAppRoute) {
+      setVisible(false);
+      return;
+    }
+
     try {
       if (!localStorage.getItem(CONSENT_STORAGE_KEY)) setVisible(true);
     } catch {
@@ -41,14 +50,14 @@ export function CookieBanner() {
     const handler = () => setVisible(true);
     window.addEventListener("vuneli:open-cookie-banner", handler);
     return () => window.removeEventListener("vuneli:open-cookie-banner", handler);
-  }, []);
+  }, [isAppRoute]);
 
   const choose = (c: Consent) => {
     setConsent(c);
     setVisible(false);
   };
 
-  if (!visible) return null;
+  if (isAppRoute || !visible) return null;
 
   return (
     <div

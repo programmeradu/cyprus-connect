@@ -217,7 +217,29 @@ export default function ConsolePage() {
   if (!data || !focus) {
     return (
       <div className="vc vc-fit">
-        <div className="vc-window vc-loading" />
+        <div className="vc-window vc-loading" aria-label="Loading Vuneli console">
+          <div className="vc-loading-top">
+            <span />
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="vc-loading-hero">
+            <aside />
+            <main>
+              <span />
+              <strong />
+              <em />
+            </main>
+          </div>
+          <div className="vc-loading-tabs" />
+          <div className="vc-loading-deck">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
       </div>
     );
   }

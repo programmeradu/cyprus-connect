@@ -1026,7 +1026,93 @@
 }
 
 .vc-loading {
-  animation: vc-breathe 1.6s ease-in-out infinite;
+  grid-template-rows: 64px 1fr 44px 210px;
+  color: var(--vc-ink);
+}
+
+.vc-loading-top,
+.vc-loading-hero,
+.vc-loading-tabs,
+.vc-loading-deck {
+  position: relative;
+  z-index: 1;
+}
+
+.vc-loading-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 22px;
+}
+
+.vc-loading-top span,
+.vc-loading-top i,
+.vc-loading-hero aside,
+.vc-loading-hero main span,
+.vc-loading-hero main strong,
+.vc-loading-hero main em,
+.vc-loading-tabs,
+.vc-loading-deck span {
+  display: block;
+  border-radius: 14px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.16), rgba(255,255,255,0.34), rgba(255,255,255,0.16));
+  background-size: 220% 100%;
+  animation: vc-shimmer 1.65s ease-in-out infinite;
+}
+
+.dark .vc-loading-top span,
+.dark .vc-loading-top i,
+.dark .vc-loading-hero aside,
+.dark .vc-loading-hero main span,
+.dark .vc-loading-hero main strong,
+.dark .vc-loading-hero main em,
+.dark .vc-loading-tabs,
+.dark .vc-loading-deck span {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.13), rgba(255,255,255,0.06));
+  background-size: 220% 100%;
+}
+
+.vc-loading-top span { width: 112px; height: 30px; }
+.vc-loading-top i { width: 72px; height: 26px; }
+
+.vc-loading-hero {
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  gap: 26px;
+  padding: 22px;
+  background: var(--vc-hero-grad);
+}
+
+.vc-loading-hero aside { min-height: 220px; border-radius: 22px; }
+
+.vc-loading-hero main {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  padding-top: 24px;
+}
+
+.vc-loading-hero main span { width: min(420px, 76%); height: 42px; }
+.vc-loading-hero main strong { width: min(560px, 88%); height: 24px; }
+.vc-loading-hero main em { width: min(620px, 94%); height: 116px; margin-top: 18px; }
+
+.vc-loading-tabs { height: 1px; margin: 21px 72px; }
+
+.vc-loading-deck {
+  display: grid;
+  grid-template-columns: 2fr 1.08fr 1.9fr 1.35fr;
+  min-height: 210px;
+  border-top: 1px solid var(--vc-rule);
+}
+
+.vc-loading-deck span {
+  margin: 22px;
+  border-radius: 18px;
+}
+
+@keyframes vc-shimmer {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
 }
 
 .vc-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
