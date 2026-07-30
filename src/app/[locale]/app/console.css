@@ -1,0 +1,292 @@
+/* =====================================================================
+   Vuneli console — the /app design language.
+
+   Two independently authored themes. Light is a limestone room with a
+   sage-glass instrument card. Dark is ChatGPT grey with a glossy graphite
+   card. Neither is a filter over the other: every value below is chosen
+   twice.
+
+   Scope: everything lives under `.vc`.
+   ===================================================================== */
+
+.vc {
+  /* ---- light theme ------------------------------------------------ */
+  --vc-page: #e6e9e3;
+  --vc-page-2: #dfe4dd;
+  --vc-ink: #1d2726;
+  --vc-ink-2: rgba(29, 39, 38, 0.62);
+  --vc-ink-3: rgba(29, 39, 38, 0.44);
+
+  --vc-hero-grad: radial-gradient(90% 130% at 74% 18%, rgba(231, 241, 214, 0.62), transparent 58%),
+    radial-gradient(72% 96% at 20% 6%, rgba(228, 240, 238, 0.44), transparent 62%),
+    linear-gradient(112deg, #a3bbbc 0%, #aac2bf 38%, #b4c9bd 66%, #a7bfb7 100%);
+  --vc-hero-ink: #1c2726;
+  --vc-hero-ink-2: rgba(28, 39, 38, 0.56);
+  --vc-hero-ink-3: rgba(28, 39, 38, 0.4);
+  --vc-hero-rule: rgba(31, 46, 45, 0.14);
+  --vc-hero-well: rgba(255, 255, 255, 0.22);
+  --vc-hero-well-line: rgba(255, 255, 255, 0.45);
+
+  --vc-deck: linear-gradient(180deg, #99b1b1 0%, #93adad 100%);
+  --vc-deck-ink: #1b2625;
+  --vc-deck-ink-2: rgba(27, 38, 37, 0.56);
+  --vc-deck-rule: rgba(28, 42, 42, 0.16);
+  --vc-deck-col: rgba(255, 255, 255, 0.07);
+
+  --vc-surface: #f4f6f1;
+  --vc-surface-2: #eceff0;
+  --vc-rule: rgba(29, 39, 38, 0.11);
+  --vc-rule-strong: rgba(29, 39, 38, 0.2);
+
+  --vc-lime: #e8f94a;
+  --vc-lime-ink: #1c2726;
+  --vc-lime-soft: rgba(232, 249, 74, 0.34);
+  --vc-good: #2f7d5c;
+  --vc-warn: #b8862b;
+  --vc-bad: #b4442f;
+
+  --vc-rail: #f2f4ef;
+  --vc-rail-rule: rgba(29, 39, 38, 0.1);
+  --vc-rail-active: rgba(29, 39, 38, 0.07);
+
+  --vc-shadow-card: 0 1px 1px rgba(28, 42, 42, 0.05), 0 18px 40px -22px rgba(24, 38, 38, 0.4);
+  --vc-shadow-pill: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 1px 1.5px rgba(30, 45, 45, 0.07),
+    0 5px 12px -4px rgba(30, 45, 45, 0.18);
+  --vc-pill-bg: rgba(253, 254, 251, 0.94);
+
+  background: var(--vc-page);
+  color: var(--vc-ink);
+  font-family: var(--vc-font), "Nunito", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- dark theme: authored on its own terms ------------------------ */
+.dark .vc {
+  --vc-page: #171717;
+  --vc-page-2: #1c1c1c;
+  --vc-ink: #ededed;
+  --vc-ink-2: rgba(237, 237, 237, 0.62);
+  --vc-ink-3: rgba(237, 237, 237, 0.42);
+
+  /* graphite glass with the faintest sage cast, so the card reads as the
+     same object as in light mode without turning green */
+  --vc-hero-grad: radial-gradient(88% 128% at 74% 14%, rgba(150, 176, 150, 0.14), transparent 60%),
+    radial-gradient(70% 96% at 18% 4%, rgba(255, 255, 255, 0.07), transparent 62%),
+    linear-gradient(112deg, #2b2d2c 0%, #303332 42%, #343837 68%, #2c2f2e 100%);
+  --vc-hero-ink: #f2f3f1;
+  --vc-hero-ink-2: rgba(242, 243, 241, 0.6);
+  --vc-hero-ink-3: rgba(242, 243, 241, 0.4);
+  --vc-hero-rule: rgba(255, 255, 255, 0.1);
+  --vc-hero-well: rgba(255, 255, 255, 0.045);
+  --vc-hero-well-line: rgba(255, 255, 255, 0.09);
+
+  --vc-deck: linear-gradient(180deg, #232525 0%, #1e2020 100%);
+  --vc-deck-ink: #ededed;
+  --vc-deck-ink-2: rgba(237, 237, 237, 0.56);
+  --vc-deck-rule: rgba(255, 255, 255, 0.09);
+  --vc-deck-col: rgba(255, 255, 255, 0.025);
+
+  --vc-surface: #212121;
+  --vc-surface-2: #262626;
+  --vc-rule: rgba(255, 255, 255, 0.09);
+  --vc-rule-strong: rgba(255, 255, 255, 0.16);
+
+  --vc-lime: #d9ea3f;
+  --vc-lime-ink: #1a1c19;
+  --vc-lime-soft: rgba(217, 234, 63, 0.2);
+  --vc-good: #6ec49b;
+  --vc-warn: #e0b25c;
+  --vc-bad: #e08069;
+
+  --vc-rail: #1c1c1c;
+  --vc-rail-rule: rgba(255, 255, 255, 0.08);
+  --vc-rail-active: rgba(255, 255, 255, 0.07);
+
+  --vc-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 20px 44px -26px rgba(0, 0, 0, 0.8);
+  --vc-shadow-pill: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 6px 14px -6px rgba(0, 0, 0, 0.6);
+  --vc-pill-bg: rgba(255, 255, 255, 0.13);
+}
+
+/* ---------------------------------------------------------------- */
+/* structure                                                          */
+/* ---------------------------------------------------------------- */
+
+.vc-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  background: var(--vc-page);
+}
+
+.vc-rail {
+  background: var(--vc-rail);
+  border-right: 1px solid var(--vc-rail-rule);
+}
+
+.vc-railitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: -0.05px;
+  color: var(--vc-ink-2);
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.vc-railitem:hover {
+  background: var(--vc-rail-active);
+  color: var(--vc-ink);
+}
+.vc-railitem[data-active="true"] {
+  background: var(--vc-pill-bg);
+  color: var(--vc-ink);
+  box-shadow: var(--vc-shadow-pill);
+}
+
+/* ---- the instrument card ---------------------------------------- */
+
+.vc-hero {
+  position: relative;
+  border-radius: 26px;
+  background: var(--vc-hero-grad);
+  color: var(--vc-hero-ink);
+  overflow: hidden;
+  box-shadow: var(--vc-shadow-card);
+}
+.vc-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+.dark .vc-hero::after {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+/* the recessed analysis plane, rounded at the top the way the concept is */
+.vc-deck {
+  position: relative;
+  margin-top: -26px;
+  padding-top: 26px;
+  border-radius: 0 0 26px 26px;
+  background: var(--vc-deck);
+  color: var(--vc-deck-ink);
+  box-shadow: var(--vc-shadow-card);
+}
+
+.vc-card {
+  border-radius: 18px;
+  background: var(--vc-surface);
+  border: 1px solid var(--vc-rule);
+}
+
+.vc-well {
+  border-radius: 14px;
+  background: var(--vc-hero-well);
+  box-shadow: inset 0 0 0 1px var(--vc-hero-well-line);
+}
+
+.vc-pill {
+  border-radius: 10px;
+  background: var(--vc-pill-bg);
+  box-shadow: var(--vc-shadow-pill);
+}
+
+.vc-iconbtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--vc-hero-ink-2);
+  transition: background 0.14s ease, color 0.14s ease;
+}
+.vc-iconbtn:hover {
+  background: rgba(255, 255, 255, 0.34);
+  color: var(--vc-hero-ink);
+}
+.dark .vc-iconbtn {
+  background: rgba(255, 255, 255, 0.07);
+}
+.dark .vc-iconbtn:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.vc-cta {
+  border-radius: 11px;
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: -0.1px;
+  padding: 8px 14px;
+  box-shadow: 0 1px 1px rgba(30, 45, 45, 0.12), 0 8px 18px -10px rgba(90, 110, 20, 0.6);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.vc-cta:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+.vc-cta:active {
+  transform: translateY(0);
+}
+
+/* ---- type scale -------------------------------------------------- */
+
+.vc-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.36px;
+  text-transform: uppercase;
+  color: var(--vc-hero-ink-3);
+}
+.vc-deck .vc-kicker {
+  color: var(--vc-deck-ink-2);
+}
+.vc-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.6px;
+  font-weight: 800;
+}
+.vc-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--vc-hero-ink-2);
+}
+.vc-deck .vc-label {
+  color: var(--vc-deck-ink-2);
+}
+
+/* status dots */
+.vc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  flex: none;
+  display: inline-block;
+}
+.vc-dot[data-tone="live"] { background: var(--vc-lime); box-shadow: 0 0 0 3px var(--vc-lime-soft); }
+.vc-dot[data-tone="good"] { background: var(--vc-good); }
+.vc-dot[data-tone="warn"] { background: var(--vc-warn); }
+.vc-dot[data-tone="bad"] { background: var(--vc-bad); }
+.vc-dot[data-tone="idle"] { background: var(--vc-ink-3); }
+
+@keyframes vc-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.42; }
+}
+.vc-live { animation: vc-breathe 2.4s ease-in-out infinite; }
+
+.vc-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.vc-scroll::-webkit-scrollbar-thumb {
+  background: var(--vc-rule-strong);
+  border-radius: 999px;
+}
+.vc-scroll::-webkit-scrollbar-track { background: transparent; }
