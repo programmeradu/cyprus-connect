@@ -1,10 +1,10 @@
 "use client";
 
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/lib/user-context";
 import {
-import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
   PageShell,
   PageHeader,
   Section,

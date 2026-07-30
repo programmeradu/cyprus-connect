@@ -1,5 +1,6 @@
 "use client";
 
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
@@ -16,7 +17,6 @@ import {
   type Column
 } from "@/components/app/shell";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
-import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 
 interface Project {
   id: number;

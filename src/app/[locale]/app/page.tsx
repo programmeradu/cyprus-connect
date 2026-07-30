@@ -8,6 +8,7 @@
  * /api/console/overview. Nothing on this page is written by hand.
  */
 
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
@@ -25,7 +26,6 @@ import {
 } from "@/components/app/console/icons";
 import { ArcGauge, BarRow, Rule, Spark } from "@/components/app/console/charts";
 import {
-import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
   AUTONOMY_LABEL,
   daysUntil,
   fmtNumber,
