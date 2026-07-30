@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import { useEmissionCalculator } from "@/hooks/useEmissionCalculator";
 import { DocumentUploader } from "@/components/DocumentUploader";
 import { useSession } from "@/lib/auth-client";
+import {
+  calculateFromReferenceFactors,
+  usedSources,
+} from "@/lib/emissions/reference-factors";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import {
   PageShell,
