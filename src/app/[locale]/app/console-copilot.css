@@ -350,55 +350,79 @@
   color: var(--vc-ink-3);
 }
 
-.vc-copilot-empty p {
-  font-size: 13.5px;
-  line-height: 1.6;
+.vc-copilot-empty > p {
+  font-size: 13.8px;
+  line-height: 1.62;
   color: var(--vc-ink-2);
 }
 
+.vc-copilot-empty-label {
+  margin: 16px 0 8px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vc-ink-3);
+}
+
 .vc-copilot-empty ul {
-  margin: 13px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 1px;
+  gap: 8px;
 }
 
 .vc-copilot-empty li button {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 11px 0;
-  border: 0;
-  border-top: 1px solid var(--vc-rail-rule);
-  background: transparent;
+  gap: 11px;
+  padding: 12px 13px;
+  border-radius: 14px;
+  border: 1px solid var(--vc-rail-rule);
+  background: color-mix(in oklab, var(--vc-well) 70%, transparent);
   text-align: left;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.4;
+  font-size: 13.4px;
+  font-weight: 650;
+  line-height: 1.45;
   color: var(--vc-ink-2);
   cursor: pointer;
-}
-
-.vc-copilot-empty li:last-child button {
-  border-bottom: 1px solid var(--vc-rail-rule);
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
 }
 
 .vc-copilot-empty li button:hover {
   color: var(--vc-ink);
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--vc-lime) 52%, var(--vc-rail-rule));
+  background: color-mix(in oklab, var(--vc-lime) 9%, var(--vc-well));
 }
 
-.vc-copilot-empty li button em {
+.vc-copilot-empty li button:focus-visible {
+  outline: 2px solid var(--vc-lime);
+  outline-offset: 2px;
+}
+
+.vc-copilot-starter-no {
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--vc-ink-3);
+}
+
+.vc-copilot-starter-go {
   font-style: normal;
   color: var(--vc-ink-3);
-  transition: transform 140ms ease;
+  transition: transform 150ms ease;
 }
 
-.vc-copilot-empty li button:hover em {
-  transform: translateX(2px);
+.vc-copilot-empty li button:hover .vc-copilot-starter-go {
+  transform: translateX(3px);
+  color: var(--vc-ink);
 }
+
 
 .vc-copilot-turn {
   display: grid;
