@@ -32,6 +32,23 @@ export const NAV_ITEMS = [
   { href: "/app/integrations", label: "Connect", icon: IcoPlug },
 ];
 
+/**
+ * The rest of the workspace. These routes exist and read live records, but
+ * six items is the most the bar can hold without wrapping, so they open from
+ * one menu instead of disappearing from the product.
+ */
+export const MORE_ITEMS = [
+  { href: "/app/studio", label: "Studio", detail: "Draft disclosures and briefs" },
+  { href: "/app/learn", label: "Learn", detail: "Courses and guidance" },
+  { href: "/app/marketplace", label: "Marketplace", detail: "Consultants, providers and offsets" },
+  { href: "/app/calculator", label: "Calculator", detail: "Manual emission entries" },
+  { href: "/app/grant-alerts", label: "Grant alerts", detail: "EU and Cyprus funding" },
+  { href: "/app/leaderboard", label: "Benchmarks", detail: "Sector comparison" },
+  { href: "/app/billing", label: "Plan and usage", detail: "Subscription and credits" },
+  { href: "/app/settings", label: "Settings", detail: "Workspace and profile" },
+];
+
+
 interface Entry {
   href: string;
   group: string;
