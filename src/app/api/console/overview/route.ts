@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { db } from "@/db";
 import {
   workspaces,
@@ -10,34 +11,99 @@ import {
   dataConnections,
   obligations,
   activityEvents,
+  user as userTable,
 } from "@/db/schema";
 import { and, asc, desc, eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-const DEMO_WORKSPACE = "ws_demo_cy";
+/**
+ * Maps the free-text industry from onboarding onto a console sector.
+ * An unknown value stays as written, so nothing is lost.
+ */
+function sectorFrom(industry: string | null): string {
+  return industry && industry.trim().length > 0 ? industry.trim() : "General";
+}
+
+function employeesFrom(teamSize: string | null): number {
+  if (!teamSize) return 0;
+  const first = teamSize.match(/\d+/);
+  return first ? Number(first[0]) : 0;
+}
 
 /**
  * The single read the console makes. Everything the dashboard draws comes
- * from here, so demo data and live data are the same code path.
+ * from here. The workspace is the one owned by the signed-in account: there
+ * is no shared or demo fallback, so one account never sees another's data.
  */
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const workspaceId = url.searchParams.get("workspace") ?? DEMO_WORKSPACE;
-
+export async function GET() {
   try {
-    const [workspace] = await db
+    const session = await auth.api.getSession({ headers: await headers() });
+    const account = session?.user;
+
+    if (!account) {
+      return NextResponse.json(
+        {
+          error: "not_authenticated",
+          message: "Please sign in to open your workspace.",
+        },
+        { status: 401 },
+      );
+    }
+
+    let [workspace] = await db
       .select()
       .from(workspaces)
-      .where(eq(workspaces.id, workspaceId))
+      .where(eq(workspaces.ownerUserId, account.id))
       .limit(1);
+
+    /** First visit after sign-up: give the account its own empty workspace. */
+    if (!workspace) {
+      const [profile] = await db
+        .select()
+        .from(userTable)
+        .where(eq(userTable.id, account.id))
+        .limit(1);
+
+      const created = await db
+        .insert(workspaces)
+        .values({
+          id: `ws_${account.id}`,
+          ownerUserId: account.id,
+          name: profile?.companyName?.trim() || account.name || "My workspace",
+          legalName: profile?.companyName?.trim() || null,
+          sector: sectorFrom(profile?.companyIndustry ?? null),
+          employees: employeesFrom(profile?.teamSize ?? null),
+          sites: 1,
+          country: profile?.countryCode?.toUpperCase() || "CY",
+          ownerName: account.name || null,
+          ownerRole: "Owner",
+          isDemo: false,
+        })
+        .onConflictDoNothing()
+        .returning();
+
+      workspace =
+        created[0] ??
+        (
+          await db
+            .select()
+            .from(workspaces)
+            .where(eq(workspaces.ownerUserId, account.id))
+            .limit(1)
+        )[0];
+    }
 
     if (!workspace) {
       return NextResponse.json(
-        { error: "workspace_not_found", workspaceId },
-        { status: 404 },
+        { error: "workspace_unavailable", message: "Your workspace could not be opened." },
+        { status: 503 },
       );
     }
+
+    const workspaceId = workspace.id;
+
 
     const [defs, readings, roster, runs, tasks, connections, obs, events] =
       await Promise.all([
