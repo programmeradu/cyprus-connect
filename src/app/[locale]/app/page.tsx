@@ -8,6 +8,7 @@
  * /api/console/overview. Nothing on this page is written by hand.
  */
 
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
@@ -191,7 +192,7 @@ export default function ConsolePage() {
                   The greeting and the account menu already carry the person. */}
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">
-                  {(workspace.name ?? "V").slice(0, 1).toUpperCase()}
+                  <ConsoleAvatar seed={workspace.name ?? "Vuneli"} size={30} styleKey="shapes" alt="" />
                 </span>
                 <span>
                   <small>

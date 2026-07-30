@@ -21,6 +21,7 @@ import {
   IcoSearch,
   IcoSpark,
 } from "./icons";
+import { ConsoleAvatar } from "./ConsoleAvatar";
 import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
 export const NAV_ITEMS = [
@@ -164,7 +165,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
 
   const tasks = data?.tasks ?? [];
   const workspace = data?.workspace ?? null;
-  const initial = (workspace?.ownerName ?? "V").slice(0, 1).toUpperCase();
+  const avatarSeed = workspace?.ownerName ?? workspace?.name ?? "Vuneli";
   const open = (href: string) => {
     setPalette(false);
     router.push(href as never);
@@ -300,12 +301,13 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
               setQueue(false);
             }}
           >
-            {initial}
+            <ConsoleAvatar seed={avatarSeed} size={26} alt="" />
           </button>
 
           {account && (
             <div className="vc-pop vc-pop-narrow" role="menu" aria-label="Account">
-              <header>
+              <header className="vc-pop-identity">
+                <ConsoleAvatar seed={avatarSeed} size={30} alt="" />
                 <strong>{workspace?.ownerName ?? "Signed in"}</strong>
               </header>
               <p className="vc-pop-empty">

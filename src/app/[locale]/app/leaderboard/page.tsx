@@ -1,5 +1,6 @@
 "use client";
 
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/lib/user-context";
@@ -67,11 +68,14 @@ export default function LeaderboardPage() {
       key: "name",
       header: "Company",
       render: (row) => (
-        <div className="min-w-0">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <ConsoleAvatar seed={row.companyName || row.name || "vuneli"} size={28} styleKey="shapes" alt="" />
+          <div className="min-w-0">
           <p className="font-medium break-words">{row.companyName || row.name}</p>
           {user && row.userId === user.id && (
             <span className="app-tag mt-1" data-tone="positive">{t("you")}</span>
           )}
+          </div>
         </div>
       )
     },
@@ -115,7 +119,10 @@ export default function LeaderboardPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {topThree.map((entry) => (
               <div key={entry.userId} className="app-card p-4">
-                <p className="app-label mb-1">#{entry.rank}</p>
+                <div className="mb-2 flex items-center gap-2.5">
+                  <ConsoleAvatar seed={entry.companyName || entry.name || "vuneli"} size={32} styleKey="shapes" alt="" />
+                  <p className="app-label">#{entry.rank}</p>
+                </div>
                 <p className="text-sm font-medium break-words mb-1">{entry.companyName || entry.name}</p>
                 <p className="app-meta">{t("podiumCredits", { credits: entry.totalCredits })}</p>
                 <p className="app-meta">{t("podiumActions", { actions: entry.actionsCompleted })}</p>
