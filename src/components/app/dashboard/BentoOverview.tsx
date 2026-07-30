@@ -113,7 +113,7 @@ export const BentoOverview = ({
         </div>
 
         {stats.length > 0 && (
-          <dl className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-md border border-[var(--app-rule)] bg-[var(--app-rule)] sm:grid-cols-3">
+          <dl className="mt-6 sm:mt-auto sm:pt-6 grid grid-cols-1 gap-px overflow-hidden rounded-md border border-[var(--app-rule)] bg-[var(--app-rule)] sm:grid-cols-3">
             {stats.map((stat) => (
               <div key={stat.label} className="bg-[var(--app-surface-1)] p-3.5">
                 <dt className="app-label mb-1 break-words">{stat.label}</dt>
