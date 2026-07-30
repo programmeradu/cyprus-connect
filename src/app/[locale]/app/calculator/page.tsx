@@ -60,6 +60,8 @@ export default function CalculatorPage() {
       actionId?: number;
       isNew?: boolean;
     }>;
+    method: "climatiq" | "reference-factors";
+    sources: string[];
   } | null>(null);
 
   // Redirect if not authenticated
