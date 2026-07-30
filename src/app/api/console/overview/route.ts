@@ -15,6 +15,7 @@ import {
 } from "@/db/schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { QA_ACCOUNT, QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 
 export const dynamic = "force-dynamic";
 
@@ -39,8 +40,24 @@ function employeesFrom(teamSize: string | null): number {
  */
 export async function GET() {
   try {
-    const session = await auth.api.getSession({ headers: await headers() });
-    const account = session?.user;
+    const requestHeaders = await headers();
+    const cookieHeader = requestHeaders.get("cookie") || "";
+    const qaCookie =
+      cookieHeader
+        .split(";")
+        .map((part) => part.trim())
+        .find((part) => part.startsWith(`${QA_COOKIE}=`))
+        ?.slice(QA_COOKIE.length + 1) ?? null;
+
+    // Preview-only QA identity. It owns its own empty workspace, so it can
+    // never read or write an account's data. Disabled in production builds.
+    const qa = isQaRequest({
+      cookie: qaCookie,
+      header: requestHeaders.get(QA_HEADER),
+    });
+
+    const session = qa ? null : await auth.api.getSession({ headers: requestHeaders });
+    const account = qa ? { ...QA_ACCOUNT } : session?.user;
 
     if (!account) {
       return NextResponse.json(
@@ -51,6 +68,26 @@ export async function GET() {
         { status: 401 },
       );
     }
+
+    // The workspace row has a foreign key on the user table, so the QA
+    // identity needs a row of its own before it can own a workspace.
+    if (qa) {
+      await db
+        .insert(userTable)
+        .values({
+          id: QA_ACCOUNT.id,
+          name: QA_ACCOUNT.name,
+          email: QA_ACCOUNT.email,
+          emailVerified: true,
+          companyName: "QA Workspace",
+          companyIndustry: "General",
+          countryCode: "CY",
+          onboardingCompleted: true,
+        })
+        .onConflictDoNothing();
+    }
+
+
 
     let [workspace] = await db
       .select()
