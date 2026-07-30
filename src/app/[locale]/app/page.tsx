@@ -304,7 +304,7 @@ export default function DashboardPage() {
   const renewableTrend = getMetricTrend('renewable_share');
 
   // Console series: monthly readings, oldest to newest.
-  const overviewHistory = historicalData
+  const realHistory = historicalData
     .slice(0, 12)
     .reverse()
     .map((record) => ({
@@ -315,10 +315,7 @@ export default function DashboardPage() {
       efficiency: Number(record.efficiencyScore) || 0
     }));
 
-
-
-
-  const peerRows = comparisonData
+  const realPeers = comparisonData
     ? [
         { label: t("totalCarbonFootprint"), percentile: comparisonData.user_metrics.carbon_footprint?.percentile },
         { label: t("renewableShare"), percentile: comparisonData.user_metrics.renewable_share?.percentile },
@@ -326,6 +323,38 @@ export default function DashboardPage() {
         { label: t("peerComparison"), percentile: comparisonData.overall_percentile }
       ]
     : [];
+
+  /**
+   * With no readings the console reads as a field of empty boxes. Until the
+   * account logs a bill, show a representative Cyprus SME year, clearly
+   * marked as sample data.
+   */
+  const useSample = realHistory.length < 2 && carbonFootprint === 0;
+
+  const overviewHistory = useSample ? SAMPLE_HISTORY : realHistory;
+
+  const peerRows = useSample
+    ? samplePeers({
+        carbon: t("totalCarbonFootprint"),
+        renewables: t("renewableShare"),
+        waste: t("wasteDiversion"),
+        overall: t("peerComparison")
+      })
+    : realPeers;
+
+  const currentReadings = useSample
+    ? SAMPLE_CURRENT
+    : {
+        carbon: carbonFootprint,
+        carbonTrend,
+        electricity: realHistory.at(-1)?.electricity ?? 0,
+        renewable: renewableShare,
+        renewableTrend,
+        efficiency: resourceEfficiency,
+        efficiencyTrend,
+        waste: wasteDiversion
+      };
+
 
   return (
     <PageShell
