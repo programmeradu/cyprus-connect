@@ -830,3 +830,16 @@
   background: var(--vc-well);
   color: var(--vc-ink);
 }
+
+.vc .bg-white { background: var(--vc-well); }
+
+.vc input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.vc select,
+.vc textarea {
+  background: var(--vc-well);
+  color: var(--vc-ink);
+  border-color: var(--vc-rule);
+}
+
+.vc input::placeholder,
+.vc textarea::placeholder { color: var(--vc-ink-3); }
