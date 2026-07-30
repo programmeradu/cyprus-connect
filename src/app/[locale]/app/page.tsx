@@ -332,42 +332,64 @@ export default function DashboardPage() {
         />
       }
     >
-      <Section title={t("title")}>
-        <MetricRow>
-          <Metric
-            label={t("totalCarbonFootprint")}
-            value={carbonFootprint > 0 ? carbonFootprint.toFixed(1) : '0'}
-            unit="tCO₂e"
-            delta={t("sinceLastPeriod", { value: Math.abs(carbonTrend).toFixed(1) })}
-            deltaTone={carbonTrend < 0 ? "positive" : "negative"}
-          />
-          <Metric
-            label={t("resourceEfficiency")}
-            value={resourceEfficiency > 0 ? resourceEfficiency.toFixed(0) : '0'}
-            unit="%"
-            delta={t("change", { value: Math.abs(efficiencyTrend).toFixed(1) })}
-            deltaTone={efficiencyTrend > 0 ? "positive" : "negative"}
-          />
-          <Metric
-            label={t("renewableShare")}
-            value={renewableShare.toFixed(0)}
-            unit="%"
-            delta={renewableTrend > 0 ? `+${renewableTrend.toFixed(1)}%` : undefined}
-            deltaTone="positive"
-            note={renewableTrend > 0 ? undefined : t("renewableGoal")}
-          />
-          <Metric
-            label={t("wasteDiversion")}
-            value={wasteDiversion.toFixed(0)}
-            unit="%"
-            note={
-              comparisonData?.user_metrics.waste_diversion
-                ? t("industryAvgPercentile", { percentile: comparisonData.user_metrics.waste_diversion.percentile.toFixed(0) })
-                : t("trackIndustry")
-            }
-          />
-        </MetricRow>
-      </Section>
+      <BentoOverview
+        summary={
+          contextUser?.name
+            ? `${contextUser.name.split(" ")[0]}, here is where your footprint stands today.`
+            : "Here is where your footprint stands today."
+        }
+        heroLabel={t("totalCarbonFootprint")}
+        heroValue={carbonFootprint > 0 ? carbonFootprint.toFixed(1) : "0"}
+        heroUnit="tCO₂e"
+        heroDelta={carbonTrend !== 0 ? `${carbonTrend > 0 ? "+" : "-"}${Math.abs(carbonTrend).toFixed(1)}%` : undefined}
+        heroDeltaTone={carbonTrend < 0 ? "positive" : "negative"}
+        heroNote={
+          series.length > 1
+            ? t("sinceLastPeriod", { value: Math.abs(carbonTrend).toFixed(1) })
+            : "Log one electricity bill in the calculator to start the series."
+        }
+        series={series}
+        seriesLabel="Monthly carbon footprint, oldest to newest"
+        stats={[
+          {
+            label: t("resourceEfficiency"),
+            value: resourceEfficiency > 0 ? resourceEfficiency.toFixed(0) : "0",
+            unit: "%",
+            note: t("change", { value: Math.abs(efficiencyTrend).toFixed(1) })
+          },
+          {
+            label: t("renewableShare"),
+            value: renewableShare.toFixed(0),
+            unit: "%",
+            note: renewableTrend > 0 ? `+${renewableTrend.toFixed(1)}%` : t("renewableGoal")
+          },
+          {
+            label: t("wasteDiversion"),
+            value: wasteDiversion.toFixed(0),
+            unit: "%",
+            note: comparisonData?.user_metrics.waste_diversion
+              ? t("industryAvgPercentile", {
+                  percentile: comparisonData.user_metrics.waste_diversion.percentile.toFixed(0)
+                })
+              : t("trackIndustry")
+          }
+        ]}
+        gridIntensity={{
+          value: 610,
+          unit: "gCO₂/kWh",
+          renewables: 24,
+          source: "Cyprus grid mix, EAC transmission data."
+        }}
+        deadlines={EU_DEADLINES}
+        labels={{
+          grid: "Cyprus grid intensity",
+          renewables: "Renewables share",
+          deadlines: "Regulatory horizon",
+          noDeadlines: "No obligation falls inside the next 18 months.",
+          daysLeft: (days) => (days === 0 ? "Due today" : `${days} days`)
+        }}
+      />
+
 
       <Section title={t("renewableProgress")}>
         <DataTable
