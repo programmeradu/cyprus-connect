@@ -747,7 +747,7 @@
 .vc-table-head,
 .vc-agent-table article {
   display: grid;
-  grid-template-columns: 1fr 76px 52px;
+  grid-template-columns: minmax(0, 1fr) 72px 44px;
   align-items: center;
   column-gap: 10px;
 }
@@ -1130,7 +1130,7 @@
 
 .vc-loading-deck {
   display: grid;
-  grid-template-columns: 2fr 1.08fr 1.9fr 1.35fr;
+  grid-template-columns: 2.35fr 1fr 1.85fr 1.35fr;
   min-height: 210px;
   border-top: 1px solid var(--vc-rule);
 }
