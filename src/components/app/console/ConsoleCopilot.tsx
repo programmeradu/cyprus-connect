@@ -394,37 +394,44 @@ export function ConsoleCopilot() {
           </div>
 
           <footer className="vc-copilot-foot">
-            <textarea
-              ref={inputRef}
-              value={draft}
-              rows={1}
-              disabled={streaming}
-              placeholder="Ask about this workspace"
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  void send();
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => void send()}
-              disabled={streaming || draft.trim().length === 0}
-              aria-label="Send the question"
-            >
-              <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden>
-                <path
-                  d="M2.6 8h9.4M8.4 4.2 12.4 8l-4 3.8"
-                  stroke="currentColor"
-                  strokeWidth="1.7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            <div className="vc-copilot-field">
+              <textarea
+                ref={inputRef}
+                value={draft}
+                rows={1}
+                disabled={streaming}
+                placeholder="Ask about this workspace"
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    void send();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => void send()}
+                disabled={streaming || draft.trim().length === 0}
+                aria-label="Send the question"
+              >
+                <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden>
+                  <path
+                    d="M2.6 8h9.4M8.4 4.2 12.4 8l-4 3.8"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p className="vc-copilot-hint">
+              <span>Enter sends. Shift and Enter make a new line.</span>
+              <span>Every act waits for your approval.</span>
+            </p>
           </footer>
+
         </section>
       )}
     </>
