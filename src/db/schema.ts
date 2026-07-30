@@ -523,6 +523,8 @@ export const complianceSettings = pgTable('compliance_settings', {
 
 export const workspaces = pgTable('workspaces', {
   id: text('id').primaryKey(),
+  /** The signed-in account this workspace belongs to. Null for demo rows. */
+  ownerUserId: text('owner_user_id').unique().references(() => user.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   legalName: text('legal_name'),
   sector: text('sector').notNull(),

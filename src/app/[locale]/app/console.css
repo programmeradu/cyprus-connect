@@ -1072,6 +1072,13 @@
   font-weight: 900;
 }
 
+.vc-state a.vc-add-agent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .vc-state span {
   max-width: 48ch;
   font-size: 13px;

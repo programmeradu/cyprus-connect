@@ -131,7 +131,7 @@ export default function ConsolePage() {
     );
   }
 
-  if (!data || !focus) {
+  if (!data) {
     return (
       <div className="vc vc-fit">
         <div className="vc-window vc-loading" aria-label="Loading the Vuneli console">
@@ -160,6 +160,26 @@ export default function ConsolePage() {
       </div>
     );
   }
+
+  /* A new account owns a workspace with no readings yet. Show the first step
+     instead of an endless skeleton. */
+  if (!focus) {
+    return (
+      <div className="vc vc-fit">
+        <div className="vc-window vc-state">
+          <p>Welcome, {data.workspace.ownerName ?? "there"}</p>
+          <span>
+            {data.workspace.name} has no readings yet. Connect a data source, or enter your
+            first figures, and the console fills in.
+          </span>
+          <Link className="vc-add-agent" href="/app/integrations">
+            Connect a data source
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
 
   const { workspace, agents, runs, tasks, connections, obligations, events, metrics } = data;
   const hour = new Date().getHours();
