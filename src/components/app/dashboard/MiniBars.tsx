@@ -11,8 +11,6 @@ interface MiniBarsProps {
   unit?: string;
   precision?: number;
   height?: number;
-  /** How many axis captions to print. The rest stay unlabelled. */
-  maxLabels?: number;
   className?: string;
 }
 
@@ -27,7 +25,6 @@ export const MiniBars = ({
   unit,
   precision = 0,
   height = 88,
-  maxLabels = 4,
   className = ""
 }: MiniBarsProps) => {
   if (!points.length) {
@@ -39,7 +36,6 @@ export const MiniBars = ({
   }
 
   const max = Math.max(...points.map((p) => p.value)) || 1;
-  const stride = Math.max(1, Math.ceil(points.length / maxLabels));
 
   return (
     <div className={className}>
@@ -57,16 +53,14 @@ export const MiniBars = ({
           </div>
         ))}
       </div>
-      <div className="mt-2 flex gap-[3px]">
-        {points.map((p, i) => (
-          <span
-            key={`cap-${p.label}-${i}`}
-            className="app-meta min-w-0 flex-1 truncate text-center text-[0.6875rem]"
-            aria-hidden={i % stride !== 0}
-          >
-            {i % stride === 0 ? p.label : "\u00A0"}
+      <div className="mt-2 flex items-baseline justify-between gap-2">
+        <span className="app-meta text-[0.6875rem]">{points[0].label}</span>
+        {points.length > 2 && (
+          <span className="app-meta text-[0.6875rem]">
+            {points[Math.floor((points.length - 1) / 2)].label}
           </span>
-        ))}
+        )}
+        <span className="app-meta text-[0.6875rem]">{points[points.length - 1].label}</span>
       </div>
     </div>
   );

@@ -91,6 +91,26 @@ export const TickSeries = ({
   const line = smoothPath(ridge);
   const area = `${line} L${ridge[ridge.length - 1][0].toFixed(2)} ${ridgeBand} L${ridge[0][0].toFixed(2)} ${ridgeBand} Z`;
 
+  // Interpolated comb. Four teeth per reading keeps the band dense at any
+  // series length without inventing data points on the ridge.
+  const TEETH = 4;
+  const toothHeight = (value: number) =>
+    Math.max(3, ((value - min) / span) * combSpan * 0.82 + combSpan * 0.18);
+  const comb: { x: number; h: number; anchor: boolean; active: boolean }[] = [];
+  points.forEach((p, i) => {
+    const next = points[i + 1];
+    for (let k = 0; k < (next ? TEETH : 1); k += 1) {
+      const t = k / TEETH;
+      const value = next ? p.value + (next.value - p.value) * t : p.value;
+      comb.push({
+        x: x(i) + (next ? (x(i + 1) - x(i)) * t : 0),
+        h: toothHeight(value),
+        anchor: k === 0,
+        active: active === i && k === 0
+      });
+    }
+  });
+
   const activePoint = active != null ? points[active] : null;
 
   return (
@@ -120,24 +140,22 @@ export const TickSeries = ({
           vectorEffect="non-scaling-stroke"
         />
 
-        {/* Value comb */}
-        {points.map((p, i) => {
-          const h = Math.max(3, ((p.value - min) / span) * combSpan * 0.86 + combSpan * 0.14);
-          const isActive = active === i;
-          return (
-            <line
-              key={`${p.label}-${i}`}
-              x1={x(i)}
-              x2={x(i)}
-              y1={combBottom}
-              y2={combBottom - h}
-              stroke={isActive ? "var(--primary)" : "var(--app-rule-strong)"}
-              strokeWidth={isActive ? 2 : 1.25}
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-            />
-          );
-        })}
+        {/* Value comb: each reading plus interpolated teeth between them,
+            so the band reads as a dense instrument scale. */}
+        {comb.map((tooth, i) => (
+          <line
+            key={`tooth-${i}`}
+            x1={tooth.x}
+            x2={tooth.x}
+            y1={combBottom}
+            y2={combBottom - tooth.h}
+            stroke={tooth.active ? "var(--primary)" : "var(--app-rule-strong)"}
+            strokeWidth={tooth.active ? 2 : tooth.anchor ? 1.5 : 1}
+            strokeOpacity={tooth.active ? 1 : tooth.anchor ? 0.95 : 0.55}
+            vectorEffect="non-scaling-stroke"
+            strokeLinecap="round"
+          />
+        ))}
 
         {active != null && (
           <line
