@@ -6,9 +6,15 @@
  */
 
 import { ConsoleTopbar } from "./ConsoleTopbar";
+import { ConsoleDock } from "./ConsoleDock";
 import { useConsole } from "./ConsoleData";
 
 export function ConsoleChrome() {
   const { data } = useConsole();
-  return <ConsoleTopbar data={data} />;
+  return (
+    <>
+      <ConsoleTopbar data={data} />
+      <ConsoleDock />
+    </>
+  );
 }
