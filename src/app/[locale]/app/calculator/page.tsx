@@ -464,56 +464,14 @@ Return ONLY valid JSON (no markdown, no explanations):
     }
   };
 
-  const calculateMockEmissions = (): number => {
-    const electricityFactor = 0.0005;
-    const gasFactor = 0.0053;
-    const waterFactor = 0.0003;
-    const wasteFactor = 0.00047;
-    const transportFactor = 0.00024;
+  const categoryLabels = () => ({
+    electricity: t("categories.electricity"),
+    gas: t("categories.gas"),
+    water: t("categories.water"),
+    waste: t("categories.waste"),
+    transport: t("categories.transport"),
+  });
 
-    const electricityEmissions = (parseFloat(formData.electricity) || 0) * electricityFactor;
-    const gasEmissions = (parseFloat(formData.gas) || 0) * gasFactor;
-    const waterEmissions = (parseFloat(formData.water) || 0) * waterFactor;
-    const wasteEmissions = (parseFloat(formData.waste) || 0) * wasteFactor;
-    const transportEmissions = (parseFloat(formData.transport) || 0) * transportFactor;
-
-    return electricityEmissions + gasEmissions + waterEmissions + wasteEmissions + transportEmissions;
-  };
-
-  const getMockBreakdown = () => {
-    return [
-      {
-        category: t("categories.electricity"),
-        value: parseFloat(formData.electricity) || 0,
-        unit: "kWh",
-        emissions: (parseFloat(formData.electricity) || 0) * 0.0005,
-      },
-      {
-        category: t("categories.gas"),
-        value: parseFloat(formData.gas) || 0,
-        unit: "m³",
-        emissions: (parseFloat(formData.gas) || 0) * 0.0053,
-      },
-      {
-        category: t("categories.water"),
-        value: parseFloat(formData.water) || 0,
-        unit: "liters",
-        emissions: (parseFloat(formData.water) || 0) * 0.0003,
-      },
-      {
-        category: t("categories.waste"),
-        value: parseFloat(formData.waste) || 0,
-        unit: "kg",
-        emissions: (parseFloat(formData.waste) || 0) * 0.00047,
-      },
-      {
-        category: t("categories.transport"),
-        value: parseFloat(formData.transport) || 0,
-        unit: "km",
-        emissions: (parseFloat(formData.transport) || 0) * 0.00024,
-      },
-    ];
-  };
 
   const handleDocumentDataExtracted = (data: {
     electricity?: number;
