@@ -6,7 +6,6 @@ export interface GenerationResult {
   model: string;
   modelReason?: string;
   aspectRatio?: string;
-  durationSeconds?: number;
   message?: string;
 }
 
