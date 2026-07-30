@@ -3,19 +3,16 @@ import { createAuthClient } from "better-auth/react"
 import { useEffect, useState, useCallback } from "react"
 
 export const authClient = createAuthClient({
-   baseURL: typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_SITE_URL,
+  baseURL: typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_SITE_URL,
   fetchOptions: {
-      headers: {
-        Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem("bearer_token") : ""}`,
-      },
       onSuccess: (ctx) => {
-          const authToken = ctx.response.headers.get("set-auth-token")
-          // Store the token securely (e.g., in localStorage)
-          if(authToken){
-            // Split token at "." and take only the first part
-            const tokenPart = authToken.includes('.') ? authToken.split('.')[0] : authToken;
-            localStorage.setItem("bearer_token", tokenPart);
-          }
+        const authToken = ctx.response.headers.get("set-auth-token")
+        // Better Auth bearer tokens include a signature after the dot. Keep
+        // the complete value: removing the signature makes every API request
+        // unauthenticated even while the browser session cookie is valid.
+        if (authToken) {
+          localStorage.setItem("bearer_token", authToken);
+        }
       }
   }
 });
@@ -30,14 +27,9 @@ export function useSession(): SessionData {
 
    const fetchSession = useCallback(async () => {
       try {
-         const res = await authClient.getSession({
-            fetchOptions: {
-               auth: {
-                  type: "Bearer",
-                  token: typeof window !== 'undefined' ? localStorage.getItem("bearer_token") || "" : "",
-               },
-            },
-         });
+         // The browser session cookie is authoritative. An old or stale
+         // local bearer token must never override a valid signed-in session.
+         const res = await authClient.getSession();
          setSession(res.data);
          setError(null);
       } catch (err) {
