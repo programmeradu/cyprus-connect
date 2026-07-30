@@ -21,6 +21,7 @@ import {
 } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { draftVsmeReport } from "@/lib/reports/vsme";
 
 export const dynamic = "force-dynamic";
 
@@ -103,9 +104,46 @@ export async function POST(req: Request) {
   }
 
   let note = "";
+  let deliverableHref: string | null = null;
+  let deliverableTitle: string | null = null;
 
   try {
-    if (proposal.kind === "create_task") {
+    if (proposal.kind === "draft_report") {
+      // Two acts, one approval: the review task that carries accountability,
+      // and the draft itself, so the person gets a document and not a to-do.
+      const agentKey = asString(payload.agentKey) ?? "vsme";
+      let resolvedAgent = "copilot";
+      const [agentRow] = await db.select().from(agents).where(eq(agents.key, agentKey)).limit(1);
+      if (agentRow) resolvedAgent = agentRow.key;
+
+      const periodLabel = asString(payload.periodLabel);
+      const [task] = await db
+        .insert(agentTasks)
+        .values({
+          workspaceId: workspace.id,
+          agentKey: resolvedAgent,
+          kind: "review",
+          title: proposal.title.slice(0, 200),
+          detail: asString(payload.detail) ?? proposal.summary,
+          severity: "normal",
+          status: "open",
+          dueAt: asString(payload.dueAt),
+        })
+        .returning();
+
+      const report = await draftVsmeReport({
+        workspace,
+        periodLabel,
+        agentKey: resolvedAgent,
+        taskId: task?.id ?? null,
+        proposalId: proposal.id,
+        createdBy: actor,
+      });
+
+      deliverableHref = `/app/reports/${report.id}`;
+      deliverableTitle = report.title;
+      note = `Draft ready: ${report.title}`;
+    } else if (proposal.kind === "create_task") {
       const title = asString(payload.title) ?? proposal.title;
       const agentKey = asString(payload.agentKey);
       let resolvedAgent = "copilot";
@@ -125,6 +163,8 @@ export async function POST(req: Request) {
         dueAt: asString(payload.dueAt),
       });
       note = `Task created: ${title}`;
+      deliverableHref = "/app#review-queue";
+      deliverableTitle = "Open the review queue";
     } else if (proposal.kind === "update_obligation") {
       const obligationId = asString(payload.obligationId);
       if (!obligationId) throw new Error("The proposal has no obligation id.");
@@ -200,9 +240,16 @@ export async function POST(req: Request) {
 
   const [approved] = await db
     .update(copilotProposals)
-    .set({ status: "approved", decidedBy: actor, decidedAt: new Date(), resultNote: note })
+    .set({
+      status: "approved",
+      decidedBy: actor,
+      decidedAt: new Date(),
+      resultNote: note,
+      deliverableHref,
+      deliverableTitle,
+    })
     .where(eq(copilotProposals.id, proposal.id))
     .returning();
 
-  return NextResponse.json({ proposal: approved, note });
+  return NextResponse.json({ proposal: approved, note, deliverableHref, deliverableTitle });
 }
