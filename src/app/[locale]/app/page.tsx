@@ -23,6 +23,11 @@ import {
   ConsoleOverview,
   type OverviewDeadline
 } from "@/components/app/dashboard/ConsoleOverview";
+import {
+  SAMPLE_HISTORY,
+  SAMPLE_CURRENT,
+  samplePeers
+} from "@/components/app/dashboard/sampleConsoleData";
 
 /** EU obligations that apply to a Cyprus SME. Past dates are filtered out. */
 const EU_DEADLINES: OverviewDeadline[] = [
