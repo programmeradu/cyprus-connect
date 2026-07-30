@@ -86,7 +86,20 @@ function PlateOpen({ href, label }: { href: string; label: string }) {
 const greetingFor = (hour: number) =>
   hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
-type SectionKey = "overview" | "agents" | "evidence" | "obligations" | "connections" | "audit";
+type SectionKey = "overview" | "evidence" | "obligations" | "connections" | "audit";
+
+type Insight = {
+  id: string;
+  tone: "bad" | "warn" | "good" | "info";
+  label: string;
+  headline: string;
+  detail: string;
+  href: string;
+  linkLabel: string;
+};
+
+const TONE_RANK: Record<Insight["tone"], number> = { bad: 0, warn: 1, info: 2, good: 3 };
+
 
 export default function ConsolePage() {
   /* The workspace read lives in the layout, so the top bar, the palette
