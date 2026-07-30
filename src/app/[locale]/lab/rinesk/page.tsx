@@ -269,7 +269,7 @@ export default function RineskPage() {
             </A>
 
             {/* nav */}
-            <A l={292} t={20} w={60} h={30} className="rk-pill" />
+            <A l={295} t={25} w={55} h={24} className="rk-pill" />
             {navItems.map(([label, x]) => (
               <A
                 key={label}
@@ -278,13 +278,14 @@ export default function RineskPage() {
                 className="rk-nav"
                 style={
                   label === "Statistics"
-                    ? { color: "#1f2b2b", fontWeight: 800 }
+                    ? { color: "#1e2a2a", fontWeight: 700, letterSpacing: 0.15 }
                     : undefined
                 }
               >
                 {label}
               </A>
             ))}
+
 
             {/* header right controls */}
             <A l={759} t={20} w={31} h={30} className="rk-iconbtn">
@@ -665,20 +666,29 @@ export default function RineskPage() {
               98
               <span style={{ fontSize: 13, fontWeight: 500 }}>%</span>
             </A>
-            <svg width="122" height="60" viewBox="0 0 122 60" style={{ position: "absolute", left: 300, top: 74 }} fill="none">
+            <svg width="128" height="66" viewBox="0 0 128 66" style={{ position: "absolute", left: 298, top: 72 }} fill="none">
               <defs>
-                <linearGradient id="rkCsatArc" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-                  <stop offset="42%" stopColor="#E8F94A" />
+                <linearGradient id="rkCsatArc" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.92" />
+                  <stop offset="38%" stopColor="#F2FB8E" />
+                  <stop offset="72%" stopColor="#E8F94A" />
                   <stop offset="100%" stopColor="#E8F94A" />
                 </linearGradient>
               </defs>
-              <path d="M2 58 C 14 6, 108 6, 120 58" stroke="rgba(255,255,255,.22)" strokeWidth="1" />
-              <path d="M2 58 C 14 8, 102 6, 118 48" stroke="url(#rkCsatArc)" strokeWidth="2.1" strokeLinecap="round" />
+              <path d="M5 58 A 63 41 0 0 1 123 58" stroke="rgba(255,255,255,.18)" strokeWidth="1.1" strokeLinecap="round" />
+              <path
+                d="M5 58 A 63 41 0 0 1 123 58"
+                stroke="url(#rkCsatArc)"
+                strokeWidth="2.3"
+                strokeLinecap="round"
+                pathLength={100}
+                strokeDasharray="97 100"
+              />
             </svg>
-            <A l={334} t={124} className="rk-kicker" style={{ fontSize: 7.4, color: "rgba(35,46,46,.55)" }}>
+            <A l={298} t={124} w={128} className="rk-kicker" style={{ fontSize: 7.4, color: "rgba(35,46,46,.55)", textAlign: "center" }}>
               Satisfied
             </A>
+
             <div className="rk-hr" style={{ left: 300, top: 143, width: 130 }} />
             <A l={309} t={152} className="rk-kicker" style={{ fontSize: 8 }}>
               Response Rate
@@ -757,13 +767,28 @@ export default function RineskPage() {
                 </A>
               </div>
             ))}
-            <svg width="130" height="52" viewBox="0 0 130 52" style={{ position: "absolute", left: 736, top: 118 }} fill="none">
-              <path d="M4 50 C 20 4, 110 4, 126 50" stroke="rgba(255,255,255,.26)" strokeWidth="1" />
-              <path d="M22 40 C 40 8, 92 8, 112 38" stroke="rgba(255,255,255,.95)" strokeWidth="2.6" strokeLinecap="round" />
+            <svg width="132" height="56" viewBox="0 0 132 56" style={{ position: "absolute", left: 735, top: 110 }} fill="none">
+              <defs>
+                <linearGradient id="rkPredArc" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
+                  <stop offset="45%" stopColor="#ffffff" stopOpacity="0.98" />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0.72" />
+                </linearGradient>
+              </defs>
+              <path d="M6 60 A 66 46 0 0 1 126 60" stroke="rgba(255,255,255,.2)" strokeWidth="1.1" strokeLinecap="round" />
+              <path
+                d="M15 56 A 60 42 0 0 1 117 56"
+                stroke="url(#rkPredArc)"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+                pathLength={100}
+                strokeDasharray="94 100"
+              />
             </svg>
-            <A l={766} t={158} style={{ fontSize: 8, fontWeight: 600, color: "rgba(35,46,46,.55)" }}>
+            <A l={735} t={158} w={132} style={{ fontSize: 8, fontWeight: 600, color: "rgba(35,46,46,.58)", textAlign: "center", whiteSpace: "nowrap" }}>
               + 2% vs. last month
             </A>
+
           </div>
         </div>
       </div>
