@@ -14,7 +14,13 @@ export async function GET(request: NextRequest) {
 
   const leave = request.nextUrl.searchParams.get("leave") === "1";
   const to = request.nextUrl.searchParams.get("to") || "/en/app";
-  const response = NextResponse.redirect(new URL(leave ? "/" : to, request.url));
+  // Relative Location keeps the browser on the host it already uses, so the
+  // cookie set below is sent on the next request.
+  const target = leave ? "/" : to.startsWith("/") ? to : `/${to}`;
+  const response = new NextResponse(null, {
+    status: 307,
+    headers: { Location: target },
+  });
 
   if (leave) {
     response.cookies.delete(QA_COOKIE);
