@@ -1,30 +1,20 @@
 "use client";
 
 /**
- * The Vuneli console.
+ * Vuneli console overview.
  *
- * Every figure on this page is read from the database through
- * /api/console/overview. Nothing here is written by hand: replace the demo
- * workspace rows and the same components draw live data.
- *
- * The layout is built for the agentic roadmap. The instrument card holds the
- * measurement, the deck holds the autonomy readouts, and the lower grid holds
- * the queue, the roster, the ledger and the connections. New agents and new
- * obligations appear as rows, never as new code.
+ * This page intentionally follows the supplied Rinesk concept as the whole
+ * dashboard, not as one section. The sidebar is removed on this route. Every
+ * visible figure still comes from /api/console/overview, so the mock data can
+ * be replaced by live rows without changing the UI.
  */
 
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { ArcGauge, BarRow, Spark, WaveChart, Rule } from "@/components/app/console/charts";
-import {
-  AgentGlyph,
-  IcoAlert,
-  IcoArrowUpRight,
-  IcoBell,
-  IcoCheck,
-  IcoClock,
-  IcoSearch,
-} from "@/components/app/console/icons";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AgentGlyph, IcoAlert, IcoBell, IcoCheck, IcoClock, IcoDoc, IcoGrid, IcoLeaf, IcoPlug, IcoPulse, IcoSearch, IcoSpark } from "@/components/app/console/icons";
+import { ArcGauge, BarRow, Rule } from "@/components/app/console/charts";
 import {
   AUTONOMY_LABEL,
   daysUntil,
@@ -32,18 +22,25 @@ import {
   fmtSigned,
   relativeTime,
   toneFor,
+  type ConsoleMetric,
   type ConsoleOverviewData,
 } from "@/components/app/console/types";
 
-const CATEGORIES: { key: string; label: string }[] = [
+const CATEGORIES = [
   { key: "emissions", label: "Emissions" },
   { key: "energy", label: "Energy" },
   { key: "assurance", label: "Assurance" },
   { key: "finance", label: "Cost" },
 ];
 
-const greetingFor = (hour: number) =>
-  hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+const NAV_ITEMS = [
+  { href: "/app", label: "Home", icon: IcoGrid },
+  { href: "/app/analytics", label: "Measure", icon: IcoPulse },
+  { href: "/app/compliance", label: "Report", icon: IcoDoc },
+  { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
+  { href: "/app/insights", label: "Agents", icon: IcoSpark },
+  { href: "/app/integrations", label: "Connect", icon: IcoPlug },
+];
 
 const STATUS_TONE: Record<string, string> = {
   live: "live",
@@ -61,6 +58,116 @@ const STATUS_TONE: Record<string, string> = {
   active: "live",
 };
 
+const greetingFor = (hour: number) =>
+  hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+const smoothPath = (pts: [number, number][]) => {
+  if (pts.length < 2) return "";
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i += 1) {
+    const p0 = pts[i - 1] ?? pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] ?? p2;
+    d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(2)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(2)}, ${(
+      p2[0] -
+      (p3[0] - p1[0]) / 6
+    ).toFixed(2)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(2)}, ${p2[0]} ${p2[1]}`;
+  }
+  return d;
+};
+
+const metricSeries = (metric: ConsoleMetric, width: number, top: number, bottom: number) => {
+  const values = metric.points.map((p) => p.value);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const pad = (maxValue - minValue) * 0.34 || Math.abs(maxValue) * 0.2 || 1;
+  const min = minValue - pad;
+  const max = maxValue + pad;
+  const step = metric.points.length > 1 ? width / (metric.points.length - 1) : width;
+  return metric.points.map((point, index) => {
+    const x = index * step;
+    const y = bottom - ((point.value - min) / (max - min || 1)) * (bottom - top);
+    return { x, y, label: point.label, value: point.value };
+  });
+};
+
+function SignalChart({ metric }: { metric: ConsoleMetric }) {
+  const width = 520;
+  const height = 192;
+  const series = metricSeries(metric, width, 30, 114);
+  const path = smoothPath(series.map((p) => [p.x, p.y]));
+  const last = series[series.length - 1];
+  const points = metric.points.map((p) => p.value);
+  const peak = Math.max(...points, 1);
+
+  return (
+    <div className="vc-signal">
+      <div className="vc-signal-head">
+        <span>{metric.points[0]?.label}</span>
+        <span>{metric.points.at(-1)?.label}</span>
+      </div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="vc-signal-svg" fill="none" aria-hidden>
+        <defs>
+          <linearGradient id="vcSignalGlow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="currentColor" stopOpacity="0.32" />
+            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+          </linearGradient>
+          <filter id="vcSignalSoft" x="-20%" y="-50%" width="140%" height="210%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+        </defs>
+        <line x1="0" x2={width} y1="24" y2="24" stroke="currentColor" strokeOpacity="0.2" strokeDasharray="3 5" />
+        <path d={`${path} L ${width} 132 L 0 132 Z`} fill="url(#vcSignalGlow)" filter="url(#vcSignalSoft)" />
+        {metric.points.map((p, index) => {
+          const share = p.value / peak;
+          const x = 8 + index * ((width - 16) / metric.points.length);
+          const top = 140 - share * 44;
+          return (
+            <g key={`${p.label}-${index}`}>
+              <line x1={x} x2={x} y1={top} y2="146" stroke="currentColor" strokeOpacity={index === metric.points.length - 1 ? 0.95 : 0.52} strokeWidth="2.2" strokeLinecap="round" />
+              <line x1={x} x2={x} y1="155" y2="168" stroke="currentColor" strokeOpacity="0.34" strokeWidth="1.3" strokeLinecap="round" />
+            </g>
+          );
+        })}
+        <path d={path} stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" />
+        {last && (
+          <>
+            <line x1={last.x} x2={last.x} y1={last.y + 1} y2="146" stroke="var(--vc-lime)" strokeWidth="2.4" strokeLinecap="round" />
+            <circle cx={last.x} cy={last.y} r="4.4" fill="var(--vc-lime)" stroke="var(--vc-hero-ink)" strokeWidth="1.6" />
+          </>
+        )}
+      </svg>
+      {last && (
+        <div className="vc-tooltip" style={{ left: `${Math.min(82, Math.max(12, (last.x / width) * 100))}%`, top: last.y + 10 }}>
+          <span>{last.label}</span>
+          <strong>
+            {fmtNumber(last.value, metric.precision)} <small>{metric.unit}</small>
+          </strong>
+          <em>{fmtSigned(metric.delta)} this month</em>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MiniTabs({ category, setCategory }: { category: string; setCategory: (category: string) => void }) {
+  return (
+    <div className="vc-top-tabs" aria-label="Metric category">
+      {CATEGORIES.map((item) => (
+        <button
+          key={item.key}
+          type="button"
+          data-active={item.key === category}
+          onClick={() => setCategory(item.key)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function ConsolePage() {
   const [data, setData] = useState<ConsoleOverviewData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -75,8 +182,12 @@ export default function ConsolePage() {
         if (!res.ok) throw new Error(body?.message ?? body?.error ?? "Console unavailable");
         return body as ConsoleOverviewData;
       })
-      .then((body) => alive && setData(body))
-      .catch((err) => alive && setError(err.message));
+      .then((body) => {
+        if (alive) setData(body);
+      })
+      .catch((err) => {
+        if (alive) setError(err.message);
+      });
     return () => {
       alive = false;
     };
@@ -92,18 +203,12 @@ export default function ConsolePage() {
     [inCategory, focusKey],
   );
 
-  const findMetric = (key: string) => data?.metrics.find((m) => m.key === key);
-
   if (error) {
     return (
-      <div className="vc vc-shell grid min-h-[60vh] place-items-center px-6">
-        <div className="vc-card max-w-md p-6 text-center">
-          <p className="text-[13px] font-extrabold">The console cannot reach your data</p>
-          <p className="mt-2 text-[12px] leading-relaxed opacity-65">{error}</p>
-          <p className="mt-3 text-[11px] opacity-50">
-            The dashboard reads every figure from the database, so it shows nothing rather than a
-            guess.
-          </p>
+      <div className="vc vc-fit">
+        <div className="vc-window vc-state">
+          <p>The console cannot reach your data</p>
+          <span>{error}</span>
         </div>
       </div>
     );
@@ -111,13 +216,28 @@ export default function ConsolePage() {
 
   if (!data || !focus) {
     return (
-      <div className="vc vc-shell px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-[1320px] space-y-4">
-          <div className="vc-hero h-[430px] animate-pulse opacity-70" />
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="vc-card h-56 animate-pulse opacity-60" />
-            ))}
+      <div className="vc vc-fit">
+        <div className="vc-window vc-loading" aria-label="Loading Vuneli console">
+          <div className="vc-loading-top">
+            <span />
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="vc-loading-hero">
+            <aside />
+            <main>
+              <span />
+              <strong />
+              <em />
+            </main>
+          </div>
+          <div className="vc-loading-tabs" />
+          <div className="vc-loading-deck">
+            <span />
+            <span />
+            <span />
+            <span />
           </div>
         </div>
       </div>
@@ -126,639 +246,215 @@ export default function ConsolePage() {
 
   const { workspace, agents, runs, tasks, connections, obligations, events } = data;
   const hour = new Date().getHours();
-  const activeAgents = agents.filter((a) => a.status === "active");
-  const runsToday = runs.filter(
-    (r) => Date.now() - new Date(r.startedAt).getTime() < 24 * 3600 * 1000,
-  );
-  const coverage = findMetric("data_coverage");
-  const automation = findMetric("automation_rate");
-  const footprint = findMetric("co2e_total");
-  const gridIntensity = findMetric("grid_intensity");
+  const activeAgents = agents.filter((agent) => agent.status === "active");
+  const runsToday = runs.filter((run) => Date.now() - new Date(run.startedAt).getTime() < 86_400_000);
+  const coverage = data.metrics.find((metric) => metric.key === "data_coverage");
+  const automation = data.metrics.find((metric) => metric.key === "automation_rate");
+  const footprint = data.metrics.find((metric) => metric.key === "co2e_total");
+  const gridIntensity = data.metrics.find((metric) => metric.key === "grid_intensity");
   const nextObligation = [...obligations]
-    .filter((o) => daysUntil(o.dueDate) >= 0)
+    .filter((obligation) => daysUntil(obligation.dueDate) >= 0)
     .sort((a, b) => daysUntil(a.dueDate) - daysUntil(b.dueDate))[0];
-
   const focusTone = toneFor(focus.delta, focus.goodDirection);
 
   return (
-    <div className="vc vc-shell px-3 pb-8 pt-3 sm:px-5 lg:px-7 lg:pt-5">
-      <div className="mx-auto max-w-[1360px]">
-        {/* ================= instrument card ================= */}
-        <section className="vc-hero">
-          {/* top bar */}
-          <div
-            className="flex items-center gap-3 px-4 py-3 sm:px-6"
-            style={{ borderBottom: "1px solid var(--vc-hero-rule)" }}
-          >
-            <div className="min-w-0 flex-none">
-              <p className="truncate text-[12.5px] font-extrabold leading-tight tracking-[-0.2px]">
-                {workspace.name}
-              </p>
-              <p className="truncate text-[10px] font-semibold" style={{ color: "var(--vc-hero-ink-3)" }}>
-                {workspace.sector} · {workspace.employees} staff · {workspace.sites} sites
-              </p>
-            </div>
+    <div className="vc vc-fit">
+      <section className="vc-window" aria-label="Vuneli autonomous ESG console">
+        <div className="vc-top-panel">
+          <header className="vc-nav">
+            <Link href={"/app" as never} className="vc-brand" aria-label="Vuneli console home">
+              <span className="vc-brand-mark"><IcoLeaf size={16} /></span>
+              <span>Vuneli</span>
+            </Link>
 
-            <div className="relative mx-auto hidden items-center gap-1 rounded-[13px] p-1 sm:flex"
-              style={{ background: "rgba(255,255,255,.12)" }}>
-              {CATEGORIES.map((c) => {
-                const active = c.key === category;
+            <nav className="vc-mainnav" aria-label="Workspace navigation">
+              <span className="vc-nav-pill" />
+              {NAV_ITEMS.map((item) => {
+                const Icon = item.icon;
+                const active = item.href === "/app";
                 return (
-                  <button
-                    key={c.key}
-                    type="button"
-                    onClick={() => {
-                      setCategory(c.key);
-                      setFocusKey(null);
-                    }}
-                    className={`rounded-[10px] px-3.5 py-1.5 text-[11.5px] transition-all ${
-                      active ? "vc-pill font-extrabold" : "font-semibold"
-                    }`}
-                    style={{ color: active ? "var(--vc-ink)" : "var(--vc-hero-ink-2)" }}
-                  >
-                    {c.label}
-                  </button>
+                  <Link key={item.href} href={item.href as never} data-active={active}>
+                    <Icon size={13} />
+                    <span>{item.label}</span>
+                  </Link>
                 );
               })}
-            </div>
+            </nav>
 
-            <div className="ml-auto flex flex-none items-center gap-1.5">
-              <button type="button" className="vc-iconbtn" aria-label="Search the workspace">
-                <IcoSearch size={15} />
-              </button>
-              <span className="relative">
-                <button type="button" className="vc-iconbtn" aria-label="Open the approval queue">
-                  <IcoBell size={15} />
-                </button>
-                {tasks.length > 0 && (
-                  <span
-                    className="vc-num absolute -right-1 -top-1 grid h-[15px] min-w-[15px] place-items-center rounded-full px-[3px] text-[9px]"
-                    style={{ background: "var(--vc-lime)", color: "var(--vc-lime-ink)" }}
-                  >
-                    {tasks.length}
-                  </span>
-                )}
-              </span>
-              <span
-                className="grid h-[28px] w-[28px] place-items-center rounded-full text-[11px] font-extrabold"
-                style={{ background: "rgba(255,255,255,.28)", color: "var(--vc-hero-ink)" }}
-              >
-                {(workspace.ownerName ?? "V").slice(0, 1)}
-              </span>
+            <div className="vc-actions">
+              <ThemeToggle />
+              <LanguageSwitcher />
+              <button type="button" className="vc-iconbtn" aria-label="Search workspace"><IcoSearch size={14} /></button>
+              <button type="button" className="vc-iconbtn vc-notify" aria-label="Open approval queue"><IcoBell size={14} /><span>{tasks.length}</span></button>
+              <span className="vc-avatar">{(workspace.ownerName ?? "V").slice(0, 1).toUpperCase()}</span>
             </div>
-          </div>
+          </header>
 
-          {/* greeting */}
-          <div className="flex flex-wrap items-end justify-between gap-4 px-4 pb-4 pt-5 sm:px-6">
-            <div className="min-w-0">
-              <h1 className="text-[clamp(1.4rem,2.6vw,1.95rem)] font-extrabold leading-[1.08] tracking-[-0.6px]">
-                {greetingFor(hour)}, {workspace.ownerName ?? "there"}
-              </h1>
-              <p
-                className="mt-1.5 max-w-[62ch] text-[12.5px] font-semibold leading-relaxed"
-                style={{ color: "var(--vc-hero-ink-2)" }}
-              >
-                {activeAgents.length} agents are on duty. They closed {runsToday.length} runs in the
-                last day.{" "}
-                {tasks.length > 0 && (
-                  <span style={{ color: "var(--vc-hero-ink)" }}>
-                    {tasks.length} items wait for your decision.
-                  </span>
-                )}
-              </p>
-              {workspace.isDemo && (
-                <p className="mt-2.5 inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.4px]"
-                  style={{ color: "var(--vc-hero-ink-3)" }}>
-                  <span className="vc-dot vc-live" data-tone="live" />
-                  Demo workspace · seeded data
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-none items-center gap-2.5">
-              <div className="hidden text-right sm:block">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.4px]"
-                  style={{ color: "var(--vc-hero-ink-3)" }}>
-                  Reporting period
-                </p>
-                <p className="text-[12px] font-bold">
-                  {focus.points.at(-1)?.label} · baseline {workspace.baselineYear}
-                </p>
+          <div className="vc-hero-grid">
+            <aside className="vc-team-card">
+              <div className="vc-owner-row">
+                <span className="vc-owner-avatar">{(workspace.ownerName ?? "V").slice(0, 1).toUpperCase()}</span>
+                <span>
+                  <small>{workspace.ownerRole ?? "Workspace lead"}</small>
+                  <strong>{workspace.ownerName ?? "Signed in"}</strong>
+                </span>
               </div>
-              <button type="button" className="vc-cta">
-                Run agents now
-              </button>
-            </div>
-          </div>
+              <button type="button" className="vc-add-agent">Run agents</button>
+              <button type="button" className="vc-iconbtn" aria-label="Find an agent"><IcoSearch size={13} /></button>
 
-          {/* measurement body */}
-          <div className="grid grid-cols-1 gap-5 px-4 pb-5 sm:px-6 lg:grid-cols-12 lg:gap-7 lg:pb-6">
-            {/* metric stack */}
-            <div className="lg:col-span-4">
-              <div className="space-y-1.5">
-                {inCategory.map((m) => {
-                  const active = m.key === focus.key;
-                  const tone = toneFor(m.delta, m.goodDirection);
-                  return (
-                    <button
-                      key={m.key}
-                      type="button"
-                      onClick={() => setFocusKey(m.key)}
-                      className={`flex w-full items-center gap-3 rounded-[13px] px-3 py-2.5 text-left transition-all ${
-                        active ? "vc-well" : "hover:bg-white/10"
-                      }`}
-                    >
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[11.5px] font-bold"
-                          style={{ color: "var(--vc-hero-ink-2)" }}>
-                          {m.label}
-                        </span>
-                        <span className="vc-num block text-[19px] leading-tight">
-                          {fmtNumber(m.current, m.precision)}
-                          <span className="ml-1 text-[10px] font-bold opacity-55">{m.unit}</span>
-                        </span>
-                      </span>
-                      <span className="h-7 w-[78px] flex-none" style={{ color: "var(--vc-hero-ink-2)" }}>
-                        <Spark points={m.points.map((p) => ({ label: p.label, value: p.value }))} />
-                      </span>
-                      <span
-                        className="vc-num w-[52px] flex-none text-right text-[11px]"
-                        style={{
-                          color:
-                            tone === "good"
-                              ? "var(--vc-good)"
-                              : tone === "bad"
-                                ? "var(--vc-bad)"
-                                : "var(--vc-hero-ink-3)",
-                        }}
-                      >
-                        {fmtSigned(m.delta)}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* focus chart */}
-            <div className="lg:col-span-8">
-              <div className="mb-1 flex flex-wrap items-end justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="vc-kicker">{focus.label}</p>
-                  <p className="vc-num text-[clamp(2rem,4.4vw,2.9rem)] leading-[0.95]">
-                    {fmtNumber(focus.current, focus.precision)}
-                    <span className="ml-1.5 text-[13px] font-bold opacity-55">{focus.unit}</span>
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p
-                    className="vc-num text-[12.5px]"
-                    style={{
-                      color:
-                        focusTone === "good"
-                          ? "var(--vc-good)"
-                          : focusTone === "bad"
-                            ? "var(--vc-bad)"
-                            : "var(--vc-hero-ink-3)",
-                    }}
-                  >
-                    {fmtSigned(focus.delta)} on last month
-                  </p>
-                  <p className="text-[11px] font-semibold" style={{ color: "var(--vc-hero-ink-3)" }}>
-                    {fmtSigned(focus.sinceStart)} since {focus.points[0]?.label}
-                  </p>
-                </div>
-              </div>
-              <div style={{ color: "var(--vc-hero-ink)" }}>
-                <WaveChart
-                  points={focus.points.map((p) => ({ label: p.label, value: p.value }))}
-                  unit={focus.unit}
-                  precision={focus.precision}
-                  height={236}
-                />
-              </div>
-              {focus.description && (
-                <p className="mt-3 text-[11px] font-semibold" style={{ color: "var(--vc-hero-ink-3)" }}>
-                  {focus.description}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* ================= deck: autonomy readouts ================= */}
-          <div className="vc-deck grid grid-cols-2 lg:grid-cols-4"
-            style={{ marginTop: 0, paddingTop: 0, borderRadius: "26px 26px 26px 26px" }}>
-            {/* 1 — autonomy */}
-            <div className="p-4 sm:p-5" style={{ borderRight: "1px solid var(--vc-deck-rule)" }}>
-              <p className="vc-kicker">Autonomy</p>
-              <p className="vc-num mt-2 text-[30px] leading-none">
-                {automation ? Math.round(automation.current) : 0}
-                <span className="ml-0.5 text-[13px] font-bold opacity-55">%</span>
-              </p>
-              <p className="mt-1 text-[11px] font-semibold" style={{ color: "var(--vc-deck-ink-2)" }}>
-                of the reporting workload closed without a human step
-              </p>
-              <div className="mt-4">
-                <Rule pct={automation?.current ?? 0} />
-              </div>
-              <div className="mt-4 space-y-1.5">
-                {agents.slice(0, 3).map((a) => (
-                  <div key={a.key} className="flex items-center gap-2 text-[11px] font-bold">
-                    <span
-                      className={`vc-dot ${a.status === "active" ? "vc-live" : ""}`}
-                      data-tone={STATUS_TONE[a.status] ?? "idle"}
-                    />
-                    <span className="truncate">{a.name}</span>
-                    <span className="ml-auto flex-none text-[10px] font-semibold opacity-55">
-                      {AUTONOMY_LABEL[a.autonomy]}
-                    </span>
-                  </div>
+              <div className="vc-side-icons" aria-label="Console sections">
+                {[IcoPulse, IcoDoc, IcoLeaf, IcoSpark].map((Icon, index) => (
+                  <span key={index} data-active={index === 0}><Icon size={14} /></span>
                 ))}
               </div>
-            </div>
 
-            {/* 2 — assurance gauge */}
-            <div className="p-4 sm:p-5" style={{ borderRight: "1px solid var(--vc-deck-rule)" }}>
-              <p className="vc-kicker">Evidence coverage</p>
-              <div className="mt-4 flex justify-center pb-1">
-                <ArcGauge
-                  value={coverage?.current ?? 0}
-                  caption="backed by primary evidence"
-                  gradientId="vcCoverage"
-                />
+              <div className="vc-big-number">
+                <span>{activeAgents.length}</span>
+                <small>agents active</small>
               </div>
-              <p className="mt-3 text-[11px] font-semibold" style={{ color: "var(--vc-deck-ink-2)" }}>
-                {fmtSigned(coverage?.delta ?? 0)} on last month. An auditor can trace every figure
-                inside this share.
-              </p>
-            </div>
 
-            {/* 3 — footprint bars */}
-            <div className="p-4 sm:p-5" style={{ borderRight: "1px solid var(--vc-deck-rule)" }}>
-              <p className="vc-kicker">Footprint by month</p>
-              <p className="vc-num mt-2 text-[24px] leading-none">
-                {fmtNumber(
-                  (footprint?.points ?? []).reduce((sum, p) => sum + p.value, 0),
-                  1,
-                )}
-                <span className="ml-1 text-[11px] font-bold opacity-55">tCO₂e in 12 months</span>
-              </p>
-              <div className="mt-4">
-                <BarRow
-                  points={(footprint?.points ?? []).map((p) => ({ label: p.label, value: p.value }))}
-                  height={58}
-                />
+              <div className="vc-legend">
+                <p><i data-tone="lime" /> Automated <strong>{Math.round(automation?.current ?? 0)}%</strong></p>
+                <p><i /> Evidence <strong>{Math.round(coverage?.current ?? 0)}%</strong></p>
+                <p><i data-tone="soft" /> Human tasks <strong>{tasks.length}</strong></p>
               </div>
-            </div>
+            </aside>
 
-            {/* 4 — next obligation */}
-            <div className="p-4 sm:p-5" style={{ background: "var(--vc-deck-col)" }}>
-              <p className="vc-kicker">Next obligation</p>
-              {nextObligation ? (
-                <>
-                  <p className="vc-num mt-2 text-[30px] leading-none">
-                    {daysUntil(nextObligation.dueDate)}
-                    <span className="ml-1 text-[11px] font-bold opacity-55">days</span>
-                  </p>
-                  <p className="mt-1.5 text-[12px] font-extrabold leading-snug">
-                    {nextObligation.framework} · {nextObligation.title}
-                  </p>
-                  <p className="mt-1 text-[11px] font-semibold leading-relaxed"
-                    style={{ color: "var(--vc-deck-ink-2)" }}>
-                    {nextObligation.detail}
-                  </p>
-                  <div className="mt-3">
-                    <Rule
-                      pct={nextObligation.progressPct}
-                      tone={nextObligation.status === "at_risk" ? "warn" : "accent"}
-                    />
-                    <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.4px]"
-                      style={{ color: "var(--vc-deck-ink-2)" }}>
-                      {Math.round(nextObligation.progressPct)}% prepared by {nextObligation.ownerName}
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <p className="mt-2 text-[12px] font-semibold" style={{ color: "var(--vc-deck-ink-2)" }}>
-                  Nothing is due.
-                </p>
-              )}
-            </div>
+            <main className="vc-chart-zone">
+              <div className="vc-greeting">
+                <div>
+                  <h1>{greetingFor(hour)}, {workspace.ownerName ?? "there"}</h1>
+                  <p>{runsToday.length} agent runs closed today. {tasks.length} items need a human decision.</p>
+                </div>
+                <span className="vc-history"><IcoClock size={16} /></span>
+              </div>
+
+              <MiniTabs category={category} setCategory={(next) => { setCategory(next); setFocusKey(null); }} />
+
+              <div className="vc-focus-row">
+                <div>
+                  <small>{focus.label}</small>
+                  <strong>
+                    {fmtNumber(focus.current, focus.precision)} <em>{focus.unit}</em>
+                  </strong>
+                </div>
+                <span data-tone={focusTone}>{fmtSigned(focus.delta)} on last month</span>
+              </div>
+
+              <SignalChart metric={focus} />
+            </main>
           </div>
-        </section>
+        </div>
 
-        {/* ================= lower grid ================= */}
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-12">
-          {/* approvals */}
-          <section className="vc-card lg:col-span-5">
-            <header className="flex items-center justify-between px-5 py-4"
-              style={{ borderBottom: "1px solid var(--vc-rule)" }}>
-              <div>
-                <p className="vc-kicker" style={{ color: "var(--vc-ink-3)" }}>
-                  Human in the loop
-                </p>
-                <p className="text-[13.5px] font-extrabold">Waiting on you</p>
-              </div>
-              <span className="vc-num rounded-[9px] px-2 py-1 text-[11px]"
-                style={{ background: "var(--vc-lime)", color: "var(--vc-lime-ink)" }}>
-                {tasks.length}
-              </span>
+        <div className="vc-tab-strip" aria-label="Workspace sections">
+          {["Overview", "Evidence", "Agents", "Obligations", "Audit trail", "Connections", "Forecast", "Exports"].map((item) => (
+            <span key={item} data-active={item === "Agents"}>{item}</span>
+          ))}
+        </div>
+
+        <div className="vc-bottom-panel">
+          <section className="vc-bottom-col vc-agents-col">
+            <header>
+              <span>Agent workforce</span>
+              <strong>Autonomous work in progress</strong>
             </header>
-            <ul className="vc-scroll max-h-[420px] overflow-y-auto">
-              {tasks.map((task) => {
-                const agent = agents.find((a) => a.key === task.agentKey);
-                const due = task.dueAt ? daysUntil(task.dueAt) : null;
+            <div className="vc-agent-table">
+              <div className="vc-table-head"><span>Agent</span><span>Mode</span><span>Health</span></div>
+              {agents.slice(0, 4).map((agent) => {
+                const lastRun = runs.find((run) => run.agentKey === agent.key);
                 return (
-                  <li
-                    key={task.id}
-                    className="flex gap-3 px-5 py-3.5"
-                    style={{ borderBottom: "1px solid var(--vc-rule)" }}
-                  >
-                    <span
-                      className="mt-0.5 grid h-9 w-9 flex-none place-items-center rounded-[12px]"
-                      style={{
-                        background: "var(--vc-surface-2)",
-                        color: task.severity === "high" ? "var(--vc-bad)" : "var(--vc-ink-2)",
-                      }}
-                    >
-                      <AgentGlyph glyph={agent?.glyph ?? "spine"} size={19} />
+                  <article key={agent.key}>
+                    <span className="vc-agent-icon"><AgentGlyph glyph={agent.glyph} size={20} /></span>
+                    <span className="vc-agent-copy">
+                      <strong>{agent.name}</strong>
+                      <small>{lastRun?.summary ?? agent.role}</small>
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                        <span className="text-[12.5px] font-extrabold leading-snug">{task.title}</span>
-                        {task.severity === "high" && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[0.3px]"
-                            style={{ color: "var(--vc-bad)" }}>
-                            <IcoAlert size={11} /> urgent
-                          </span>
-                        )}
-                      </span>
-                      <span className="mt-1 block text-[11.5px] font-semibold leading-relaxed"
-                        style={{ color: "var(--vc-ink-2)" }}>
-                        {task.detail}
-                      </span>
-                      <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10.5px] font-bold"
-                        style={{ color: "var(--vc-ink-3)" }}>
-                        <span>{agent?.name ?? task.agentKey}</span>
-                        <span className="capitalize">{task.kind}</span>
-                        {due != null && (
-                          <span className="inline-flex items-center gap-1">
-                            <IcoClock size={11} /> due in {due} days
-                          </span>
-                        )}
-                      </span>
-                    </span>
-                    <span className="flex flex-none items-start">
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-1 rounded-[9px] px-2.5 py-1.5 text-[11px] font-extrabold"
-                        style={{ background: "var(--vc-lime)", color: "var(--vc-lime-ink)" }}
-                      >
-                        <IcoCheck size={12} /> Review
-                      </button>
-                    </span>
-                  </li>
-                );
-              })}
-              {tasks.length === 0 && (
-                <li className="px-5 py-8 text-center text-[12px] font-semibold" style={{ color: "var(--vc-ink-2)" }}>
-                  The queue is clear. The agents will tell you when that changes.
-                </li>
-              )}
-            </ul>
-          </section>
-
-          {/* agent roster */}
-          <section className="vc-card lg:col-span-4">
-            <header className="flex items-center justify-between px-5 py-4"
-              style={{ borderBottom: "1px solid var(--vc-rule)" }}>
-              <div>
-                <p className="vc-kicker" style={{ color: "var(--vc-ink-3)" }}>
-                  Workforce
-                </p>
-                <p className="text-[13.5px] font-extrabold">Agents on duty</p>
-              </div>
-              <Link
-                href={"/app/insights" as never}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold"
-                style={{ color: "var(--vc-ink-2)" }}
-              >
-                Manage <IcoArrowUpRight size={12} />
-              </Link>
-            </header>
-            <ul className="vc-scroll max-h-[420px] overflow-y-auto">
-              {agents.map((agent) => {
-                const lastRun = runs.find((r) => r.agentKey === agent.key);
-                return (
-                  <li
-                    key={agent.key}
-                    className="flex items-start gap-3 px-5 py-3"
-                    style={{ borderBottom: "1px solid var(--vc-rule)" }}
-                  >
-                    <span
-                      className="mt-0.5 grid h-9 w-9 flex-none place-items-center rounded-[12px]"
-                      style={{ background: "var(--vc-surface-2)", color: "var(--vc-ink-2)" }}
-                    >
-                      <AgentGlyph glyph={agent.glyph} size={19} />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2">
-                        <span className="truncate text-[12.5px] font-extrabold">{agent.name}</span>
-                        <span
-                          className={`vc-dot ${agent.status === "active" ? "vc-live" : ""}`}
-                          data-tone={STATUS_TONE[agent.status] ?? "idle"}
-                        />
-                        <span className="ml-auto flex-none text-[10px] font-extrabold uppercase tracking-[0.3px]"
-                          style={{ color: "var(--vc-ink-3)" }}>
-                          {AUTONOMY_LABEL[agent.autonomy]}
-                        </span>
-                      </span>
-                      <span className="block text-[11px] font-bold" style={{ color: "var(--vc-ink-2)" }}>
-                        {agent.role} · {agent.cadence}
-                      </span>
-                      {lastRun && (
-                        <span className="mt-1 block truncate text-[11px] font-semibold"
-                          style={{
-                            color:
-                              lastRun.status === "failed"
-                                ? "var(--vc-bad)"
-                                : lastRun.status === "needs_review"
-                                  ? "var(--vc-warn)"
-                                  : "var(--vc-ink-3)",
-                          }}>
-                          {lastRun.summary}
-                        </span>
-                      )}
-                      <span className="mt-1 block text-[10px] font-bold" style={{ color: "var(--vc-ink-3)" }}>
-                        {lastRun ? relativeTime(lastRun.startedAt) : "no runs yet"} · health{" "}
-                        {Math.round(agent.healthScore)}%
-                      </span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-
-          {/* ledger */}
-          <section className="vc-card lg:col-span-3">
-            <header className="px-5 py-4" style={{ borderBottom: "1px solid var(--vc-rule)" }}>
-              <p className="vc-kicker" style={{ color: "var(--vc-ink-3)" }}>
-                Audit ledger
-              </p>
-              <p className="text-[13.5px] font-extrabold">What just happened</p>
-            </header>
-            <ol className="vc-scroll max-h-[420px] overflow-y-auto px-5 py-4">
-              {events.map((event) => (
-                <li key={event.id} className="relative pb-4 pl-4 last:pb-0">
-                  <span
-                    className="absolute left-0 top-[5px] h-[7px] w-[7px] rounded-full"
-                    style={{
-                      background:
-                        event.actorType === "human"
-                          ? "var(--vc-lime)"
-                          : event.actorType === "system"
-                            ? "var(--vc-ink-3)"
-                            : "var(--vc-good)",
-                    }}
-                  />
-                  <span
-                    className="absolute bottom-0 left-[3px] top-[14px] w-px"
-                    style={{ background: "var(--vc-rule)" }}
-                  />
-                  <p className="text-[11.5px] font-bold leading-snug">
-                    <span className="font-extrabold">{event.actorName}</span> {event.verb}{" "}
-                    {event.object}
-                  </p>
-                  {event.detail && (
-                    <p className="mt-0.5 text-[10.5px] font-semibold leading-relaxed"
-                      style={{ color: "var(--vc-ink-3)" }}>
-                      {event.detail}
-                    </p>
-                  )}
-                  <p className="mt-0.5 text-[10px] font-bold" style={{ color: "var(--vc-ink-3)" }}>
-                    {relativeTime(event.createdAt)}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          {/* obligations */}
-          <section className="vc-card lg:col-span-7">
-            <header className="flex items-center justify-between px-5 py-4"
-              style={{ borderBottom: "1px solid var(--vc-rule)" }}>
-              <div>
-                <p className="vc-kicker" style={{ color: "var(--vc-ink-3)" }}>
-                  Compliance
-                </p>
-                <p className="text-[13.5px] font-extrabold">Obligations and who holds them</p>
-              </div>
-              <Link
-                href={"/app/compliance" as never}
-                className="inline-flex items-center gap-1 text-[11px] font-extrabold"
-                style={{ color: "var(--vc-ink-2)" }}
-              >
-                Open <IcoArrowUpRight size={12} />
-              </Link>
-            </header>
-            <div className="divide-y" style={{ borderColor: "var(--vc-rule)" }}>
-              {obligations.map((o) => {
-                const days = daysUntil(o.dueDate);
-                return (
-                  <div key={o.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3.5"
-                    style={{ borderTop: "1px solid var(--vc-rule)" }}>
-                    <span className="w-[64px] flex-none text-[10px] font-extrabold uppercase tracking-[0.4px]"
-                      style={{ color: "var(--vc-ink-3)" }}>
-                      {o.framework}
-                    </span>
-                    <span className="min-w-[180px] flex-1">
-                      <span className="block text-[12.5px] font-extrabold leading-snug">{o.title}</span>
-                      <span className="block text-[11px] font-semibold" style={{ color: "var(--vc-ink-2)" }}>
-                        {o.detail}
-                      </span>
-                    </span>
-                    <span className="w-[132px] flex-none">
-                      <Rule pct={o.progressPct} tone={o.status === "at_risk" ? "warn" : "accent"} />
-                      <span className="mt-1 block text-[10px] font-bold" style={{ color: "var(--vc-ink-3)" }}>
-                        {Math.round(o.progressPct)}% · {o.ownerName}
-                      </span>
-                    </span>
-                    <span
-                      className="vc-num w-[86px] flex-none text-right text-[12px]"
-                      style={{
-                        color:
-                          days <= 45
-                            ? "var(--vc-bad)"
-                            : o.status === "at_risk"
-                              ? "var(--vc-warn)"
-                              : "var(--vc-ink-2)",
-                      }}
-                    >
-                      {days} days
-                    </span>
-                  </div>
+                    <span className="vc-mode">{AUTONOMY_LABEL[agent.autonomy]}</span>
+                    <span className="vc-health">{Math.round(agent.healthScore)}%</span>
+                  </article>
                 );
               })}
             </div>
           </section>
 
-          {/* connections */}
-          <section className="vc-card lg:col-span-5">
-            <header className="flex items-center justify-between px-5 py-4"
-              style={{ borderBottom: "1px solid var(--vc-rule)" }}>
-              <div>
-                <p className="vc-kicker" style={{ color: "var(--vc-ink-3)" }}>
-                  Data spine
-                </p>
-                <p className="text-[13.5px] font-extrabold">Where the numbers come from</p>
-              </div>
-              <span className="text-[11px] font-extrabold" style={{ color: "var(--vc-ink-2)" }}>
-                {connections.filter((c) => c.status === "live").length}/{connections.length} live
-              </span>
+          <section className="vc-bottom-col vc-gauge-col">
+            <header>
+              <span>Evidence</span>
+              <strong>{Math.round(coverage?.current ?? 0)}% covered</strong>
             </header>
-            <ul>
-              {connections.map((c) => (
-                <li
-                  key={c.id}
-                  className="flex items-center gap-3 px-5 py-2.5"
-                  style={{ borderBottom: "1px solid var(--vc-rule)" }}
-                >
-                  <span
-                    className={`vc-dot ${c.status === "live" ? "vc-live" : ""}`}
-                    data-tone={STATUS_TONE[c.status] ?? "idle"}
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[12px] font-extrabold">{c.provider}</span>
-                    <span className="block truncate text-[10.5px] font-semibold"
-                      style={{ color: "var(--vc-ink-3)" }}>
-                      {c.category} · {c.note}
-                    </span>
-                  </span>
-                  <span className="w-[68px] flex-none">
-                    <Rule pct={c.coveragePct} tone={c.status === "error" ? "warn" : "accent"} />
-                  </span>
-                  <span className="w-[62px] flex-none text-right text-[10.5px] font-bold"
-                    style={{ color: "var(--vc-ink-3)" }}>
-                    {relativeTime(c.lastSyncAt)}
-                  </span>
-                </li>
+            <div className="vc-gauge-wrap">
+              <ArcGauge value={coverage?.current ?? 0} caption="primary records" gradientId="vcCoverageConsole" />
+            </div>
+            <div className="vc-mini-rule">
+              <span>Automation rate</span>
+              <Rule pct={automation?.current ?? 0} />
+            </div>
+          </section>
+
+          <section className="vc-bottom-col vc-bars-col">
+            <header>
+              <span>Footprint over time</span>
+              <strong>{fmtNumber((footprint?.points ?? []).reduce((sum, point) => sum + point.value, 0), 1)} tCO₂e</strong>
+            </header>
+            <BarRow points={(footprint?.points ?? []).map((point) => ({ label: point.label, value: point.value }))} height={68} />
+            <div className="vc-live-list">
+              {connections.slice(0, 3).map((connection) => (
+                <p key={connection.id}>
+                  <i className={`vc-dot ${connection.status === "live" ? "vc-live" : ""}`} data-tone={STATUS_TONE[connection.status] ?? "idle"} />
+                  <span>{connection.provider}</span>
+                  <strong>{Math.round(connection.coveragePct)}%</strong>
+                </p>
               ))}
-            </ul>
+            </div>
+          </section>
+
+          <section className="vc-bottom-col vc-obligation-col">
+            <header>
+              <span>Next obligation</span>
+              <strong>{nextObligation ? `${daysUntil(nextObligation.dueDate)} days` : "Clear"}</strong>
+            </header>
+            {nextObligation ? (
+              <div className="vc-obligation">
+                <p>{nextObligation.framework}</p>
+                <strong>{nextObligation.title}</strong>
+                <span>{nextObligation.detail}</span>
+                <Rule pct={nextObligation.progressPct} tone={nextObligation.status === "at_risk" ? "warn" : "accent"} />
+                <small>{Math.round(nextObligation.progressPct)}% prepared by {nextObligation.ownerName}</small>
+              </div>
+            ) : (
+              <div className="vc-obligation"><span>No regulatory date is open.</span></div>
+            )}
             {gridIntensity && (
-              <div className="flex items-center justify-between px-5 py-3.5">
-                <span className="text-[11px] font-bold" style={{ color: "var(--vc-ink-2)" }}>
-                  Cyprus grid right now
-                </span>
-                <span className="vc-num text-[13px]">
-                  {Math.round(gridIntensity.current)}
-                  <span className="ml-1 text-[10px] font-bold opacity-55">gCO₂/kWh</span>
-                </span>
+              <div className="vc-grid-chip">
+                <span>Cyprus grid</span>
+                <strong>{Math.round(gridIntensity.current)} <small>gCO₂/kWh</small></strong>
               </div>
             )}
           </section>
         </div>
-      </div>
+
+        <div className="vc-dock-row">
+          <section>
+            <header><span>Human in the loop</span><strong>{tasks.length} waiting</strong></header>
+            <div className="vc-task-row">
+              {tasks.slice(0, 3).map((task) => (
+                <article key={task.id}>
+                  <i>{task.severity === "high" ? <IcoAlert size={14} /> : <IcoCheck size={14} />}</i>
+                  <span><strong>{task.title}</strong><small>{task.detail}</small></span>
+                </article>
+              ))}
+            </div>
+          </section>
+          <section>
+            <header><span>Audit trail</span><strong>{events.length} records</strong></header>
+            <div className="vc-event-row">
+              {events.slice(0, 4).map((event) => (
+                <p key={event.id}><strong>{event.actorName}</strong> {event.verb} {event.object} <span>{relativeTime(event.createdAt)}</span></p>
+              ))}
+            </div>
+          </section>
+        </div>
+      </section>
     </div>
   );
 }

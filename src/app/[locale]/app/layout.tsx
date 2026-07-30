@@ -8,12 +8,17 @@ import { OnboardingCheck } from "@/components/app/OnboardingCheck";
 import { UserProvider } from "@/lib/user-context";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { Toaster } from "@/components/ui/sonner";
+import { usePathname } from "@/i18n/navigation";
 
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const normalizedPath = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
+  const isConsoleOverview = normalizedPath === "/app";
+
   return (
     <UserProvider>
       <CurrencyProvider>
@@ -22,9 +27,9 @@ export default function AppLayout({
         <div className="viq-app vc vc-shell relative min-h-screen">
           <OnboardingCheck />
 
-          <ConsoleRail />
+          {!isConsoleOverview && <ConsoleRail />}
 
-          <main className="lg:pl-[212px]">{children}</main>
+          <main className={isConsoleOverview ? undefined : "lg:pl-[212px]"}>{children}</main>
 
           <Toaster />
         </div>
