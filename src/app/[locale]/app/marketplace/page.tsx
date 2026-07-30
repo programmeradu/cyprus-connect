@@ -135,7 +135,8 @@ export default function MarketplacePage() {
 
   return (
     <PageShell
-      loading={isPending || loading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && loading)}
       error={error}
       onRetry={fetchProjects}
       header={

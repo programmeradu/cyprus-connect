@@ -339,7 +339,8 @@ export default function InsightsPage() {
 
   return (
     <PageShell
-      loading={isPending || loading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && loading)}
       error={error}
       onRetry={handleRefresh}
       header={

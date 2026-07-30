@@ -9,6 +9,11 @@ interface PageShellProps {
   loading?: boolean;
   error?: string | null;
   onRetry?: () => void;
+  /**
+   * No account is behind this view. The page has nothing to read, so it
+   * says so and offers the way in rather than holding a skeleton open.
+   */
+  signedOut?: boolean;
   header?: ReactNode;
   toolbar?: ReactNode;
   className?: string;
@@ -26,6 +31,7 @@ export const PageShell = ({
   loading = false,
   error = null,
   onRetry,
+  signedOut = false,
   header,
   toolbar,
   className = ""
@@ -35,7 +41,13 @@ export const PageShell = ({
       {header}
       {toolbar}
 
-      {loading ? (
+      {signedOut ? (
+        <Empty
+          title="No workspace is signed in"
+          body="This page reads the figures held against your account. Sign in, or open the console overview to see the demo workspace."
+          action={{ label: "Sign in", href: "/auth" }}
+        />
+      ) : loading ? (
         <DeckSkeleton />
       ) : error ? (
         <Empty

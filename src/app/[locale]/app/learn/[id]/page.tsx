@@ -131,7 +131,8 @@ export default function CourseDetailsPage() {
 
   return (
     <PageShell
-      loading={isPending || isLoading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && isLoading)}
       error={error}
       onRetry={loadCourseDetails}
       header={

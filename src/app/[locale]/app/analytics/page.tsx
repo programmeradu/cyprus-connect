@@ -174,7 +174,8 @@ export default function AnalyticsPage() {
 
   return (
     <PageShell
-      loading={loading || isPending}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && isPending)}
       error={!loading && !isPending ? error : null}
       onRetry={handleRefresh}
       header={

@@ -254,7 +254,8 @@ export default function LearnPage() {
 
   return (
     <PageShell
-      loading={isPending || isLoading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && isLoading)}
       error={error}
       onRetry={loadCourses}
       header={

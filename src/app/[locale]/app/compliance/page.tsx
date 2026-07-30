@@ -211,7 +211,8 @@ export default function CompliancePage() {
 
   return (
     <PageShell
-      loading={isPending || loading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && loading)}
       error={pageError}
       onRetry={initializeCompliance}
       header={
