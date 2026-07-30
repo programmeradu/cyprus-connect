@@ -56,10 +56,16 @@ export function ConsoleDataProvider({ children }: { children: ReactNode }) {
      * which tells the user nothing. We turn those cases into a real message.
      */
     async function read(): Promise<ConsoleOverviewData> {
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
       const res = await fetch("/api/console/overview", {
         signal: controller.signal,
-        headers: { Accept: "application/json" },
+        headers: {
+          Accept: "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         cache: "no-store",
+        credentials: "include",
       });
       const text = await res.text();
 
@@ -73,6 +79,14 @@ export function ConsoleDataProvider({ children }: { children: ReactNode }) {
       }
 
       const record = (body ?? {}) as { message?: string; error?: string };
+
+      // No session: the workspace belongs to an account, so send them to sign in.
+      if (res.status === 401 && typeof window !== "undefined") {
+        const back = window.location.pathname + window.location.search;
+        const locale = window.location.pathname.split("/")[1] || "en";
+        window.location.replace(`/${locale}/auth?redirect=${encodeURIComponent(back)}`);
+        throw new Error(record.message ?? "Please sign in to open your workspace.");
+      }
 
       if (!res.ok) {
         throw new Error(
@@ -88,6 +102,7 @@ export function ConsoleDataProvider({ children }: { children: ReactNode }) {
       }
       return body as ConsoleOverviewData;
     }
+
 
     (async () => {
       try {
