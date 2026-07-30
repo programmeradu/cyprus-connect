@@ -508,13 +508,34 @@
 }
 
 .vc-history {
-  width: 42px;
-  height: 42px;
+  flex: none;
+  height: 30px;
+  padding: 0 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.32);
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--vc-ink-2);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.vc-history em {
+  font-style: normal;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 560px) {
+  .vc-history em {
+    display: none;
+  }
+  .vc-history {
+    width: 30px;
+    padding: 0;
+    justify-content: center;
+  }
 }
 
 .vc-top-tabs {
