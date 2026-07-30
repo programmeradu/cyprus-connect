@@ -1,0 +1,298 @@
+"use client";
+
+/**
+ * Console top bar. Every control here does work: the navigation marks the
+ * open route, the search opens a palette over live workspace records, the
+ * bell opens the real approval queue and the avatar opens an account menu.
+ */
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import {
+  IcoBell,
+  IcoClose,
+  IcoDoc,
+  IcoGrid,
+  IcoLeaf,
+  IcoPlug,
+  IcoPulse,
+  IcoSearch,
+  IcoSpark,
+} from "./icons";
+import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
+
+export const NAV_ITEMS = [
+  { href: "/app", label: "Home", icon: IcoGrid },
+  { href: "/app/analytics", label: "Measure", icon: IcoPulse },
+  { href: "/app/compliance", label: "Report", icon: IcoDoc },
+  { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
+  { href: "/app/insights", label: "Agents", icon: IcoSpark },
+  { href: "/app/integrations", label: "Connect", icon: IcoPlug },
+];
+
+interface Entry {
+  href: string;
+  group: string;
+  title: string;
+  detail: string;
+}
+
+export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const path = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
+
+  const [palette, setPalette] = useState(false);
+  const [queue, setQueue] = useState(false);
+  const [account, setAccount] = useState(false);
+  const [query, setQuery] = useState("");
+  const field = useRef<HTMLInputElement>(null);
+  const bar = useRef<HTMLElement>(null);
+
+  /** Everything searchable is built from the loaded workspace records. */
+  const entries = useMemo<Entry[]>(() => {
+    const list: Entry[] = NAV_ITEMS.map((item) => ({
+      href: item.href,
+      group: "Go to",
+      title: item.label,
+      detail: item.href,
+    }));
+    for (const agent of data.agents) {
+      list.push({ href: "/app/insights", group: "Agents", title: agent.name, detail: agent.role });
+    }
+    for (const obligation of data.obligations) {
+      list.push({
+        href: "/app/compliance",
+        group: "Obligations",
+        title: obligation.title,
+        detail: `${obligation.framework} · due in ${daysUntil(obligation.dueDate)} days`,
+      });
+    }
+    for (const connection of data.connections) {
+      list.push({
+        href: "/app/integrations",
+        group: "Connections",
+        title: connection.provider,
+        detail: `${connection.category} · ${connection.status}`,
+      });
+    }
+    for (const metric of data.metrics) {
+      list.push({
+        href: "/app/analytics",
+        group: "Metrics",
+        title: metric.label,
+        detail: `${metric.category} · ${metric.unit}`,
+      });
+    }
+    return list;
+  }, [data]);
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return entries.slice(0, 8);
+    return entries
+      .filter((e) => `${e.title} ${e.detail} ${e.group}`.toLowerCase().includes(q))
+      .slice(0, 10);
+  }, [entries, query]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPalette((open) => !open);
+      }
+      if (event.key === "Escape") {
+        setPalette(false);
+        setQueue(false);
+        setAccount(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    if (palette) window.setTimeout(() => field.current?.focus(), 20);
+  }, [palette]);
+
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      if (bar.current && !bar.current.contains(event.target as Node)) {
+        setQueue(false);
+        setAccount(false);
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
+
+  const initial = (data.workspace.ownerName ?? "V").slice(0, 1).toUpperCase();
+  const open = (href: string) => {
+    setPalette(false);
+    router.push(href as never);
+  };
+
+  return (
+    <header className="vc-nav" ref={bar}>
+      <Link href={"/app" as never} className="vc-brand" aria-label="Vuneli console home">
+        Vuneli
+      </Link>
+
+      <nav className="vc-mainnav" aria-label="Workspace navigation">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const active = item.href === "/app" ? path === "/app" : path.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href as never}
+              data-active={active}
+              aria-current={active ? "page" : undefined}
+            >
+              <Icon size={13} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="vc-actions">
+        <ThemeToggle />
+        <LanguageSwitcher />
+
+        <button
+          type="button"
+          className="vc-iconbtn"
+          aria-label="Search the workspace"
+          aria-expanded={palette}
+          onClick={() => setPalette(true)}
+        >
+          <IcoSearch size={14} />
+        </button>
+
+        <div className="vc-pop-anchor">
+          <button
+            type="button"
+            className="vc-iconbtn vc-notify"
+            aria-label={`Approval queue, ${data.tasks.length} open`}
+            aria-expanded={queue}
+            onClick={() => {
+              setQueue((v) => !v);
+              setAccount(false);
+            }}
+          >
+            <IcoBell size={14} />
+            {data.tasks.length > 0 && <span>{data.tasks.length}</span>}
+          </button>
+
+          {queue && (
+            <div className="vc-pop" role="dialog" aria-label="Approval queue">
+              <header>
+                <strong>Waiting on a person</strong>
+                <button type="button" onClick={() => setQueue(false)} aria-label="Close queue">
+                  <IcoClose size={13} />
+                </button>
+              </header>
+              {data.tasks.length === 0 ? (
+                <p className="vc-pop-empty">The queue is clear. Agents have nothing to escalate.</p>
+              ) : (
+                <ul>
+                  {data.tasks.slice(0, 6).map((task) => (
+                    <li key={task.id} data-severity={task.severity}>
+                      <strong>{task.title}</strong>
+                      <span>{task.detail}</span>
+                      <em>
+                        {task.kind} · raised {relativeTime(task.createdAt)}
+                      </em>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link href={"/app/compliance" as never} className="vc-pop-cta" onClick={() => setQueue(false)}>
+                Open the full queue
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="vc-pop-anchor">
+          <button
+            type="button"
+            className="vc-avatar"
+            aria-label="Account menu"
+            aria-expanded={account}
+            onClick={() => {
+              setAccount((v) => !v);
+              setQueue(false);
+            }}
+          >
+            {initial}
+          </button>
+
+          {account && (
+            <div className="vc-pop vc-pop-narrow" role="menu" aria-label="Account">
+              <header>
+                <strong>{data.workspace.ownerName ?? "Signed in"}</strong>
+              </header>
+              <p className="vc-pop-empty">
+                {data.workspace.name} · {data.workspace.sector} · {data.workspace.sites} sites
+              </p>
+              <Link href={"/app/settings" as never} role="menuitem" onClick={() => setAccount(false)}>
+                Workspace settings
+              </Link>
+              <Link href={"/app/billing" as never} role="menuitem" onClick={() => setAccount(false)}>
+                Plan and usage
+              </Link>
+              <Link href={"/" as never} role="menuitem" onClick={() => setAccount(false)}>
+                Leave the console
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {palette && (
+        <div className="vc-palette-scrim" role="presentation" onClick={() => setPalette(false)}>
+          <div
+            className="vc-palette"
+            role="dialog"
+            aria-label="Search the workspace"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="vc-palette-field">
+              <IcoSearch size={15} />
+              <input
+                ref={field}
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search agents, obligations, connections, metrics"
+                aria-label="Search the workspace"
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && results[0]) open(results[0].href);
+                }}
+              />
+              <kbd>esc</kbd>
+            </div>
+            {results.length === 0 ? (
+              <p className="vc-pop-empty">No record matches that text.</p>
+            ) : (
+              <ul>
+                {results.map((entry, index) => (
+                  <li key={`${entry.href}-${entry.title}-${index}`}>
+                    <button type="button" onClick={() => open(entry.href)}>
+                      <span>{entry.group}</span>
+                      <strong>{entry.title}</strong>
+                      <em>{entry.detail}</em>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
