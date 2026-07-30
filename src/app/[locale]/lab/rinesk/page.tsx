@@ -269,7 +269,7 @@ export default function RineskPage() {
             </A>
 
             {/* nav */}
-            <A l={294} t={22} w={57} h={26} className="rk-pill" />
+            <A l={295} t={23} w={55} h={24} className="rk-pill" />
             {navItems.map(([label, x]) => (
               <A
                 key={label}
@@ -675,9 +675,9 @@ export default function RineskPage() {
                   <stop offset="100%" stopColor="#E8F94A" />
                 </linearGradient>
               </defs>
-              <path d="M6 60 A 58 58 0 0 1 122 60" stroke="rgba(255,255,255,.18)" strokeWidth="1.1" strokeLinecap="round" />
+              <path d="M5 58 A 63 41 0 0 1 123 58" stroke="rgba(255,255,255,.18)" strokeWidth="1.1" strokeLinecap="round" />
               <path
-                d="M6 60 A 58 58 0 0 1 122 60"
+                d="M5 58 A 63 41 0 0 1 123 58"
                 stroke="url(#rkCsatArc)"
                 strokeWidth="2.3"
                 strokeLinecap="round"
@@ -775,9 +775,9 @@ export default function RineskPage() {
                   <stop offset="100%" stopColor="#ffffff" stopOpacity="0.72" />
                 </linearGradient>
               </defs>
-              <path d="M4 56 A 62 62 0 0 1 128 56" stroke="rgba(255,255,255,.2)" strokeWidth="1.1" strokeLinecap="round" />
+              <path d="M6 54 A 66 40 0 0 1 126 54" stroke="rgba(255,255,255,.2)" strokeWidth="1.1" strokeLinecap="round" />
               <path
-                d="M14 46 A 52 52 0 0 1 118 46"
+                d="M16 50 A 58 36 0 0 1 116 50"
                 stroke="url(#rkPredArc)"
                 strokeWidth="2.6"
                 strokeLinecap="round"
