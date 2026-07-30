@@ -296,6 +296,13 @@ export async function POST(req: Request) {
     briefing,
   );
 
+  if (!process.env.GOOGLE_GEMINI_API_KEY) {
+    return NextResponse.json(
+      { error: "No AI key is configured for this workspace. Set GOOGLE_GEMINI_API_KEY." },
+      { status: 503 },
+    );
+  }
+
   const [userRow] = await db
     .insert(copilotMessages)
     .values({ workspaceId: workspace.id, role: "user", content: prompt })
