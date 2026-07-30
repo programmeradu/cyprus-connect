@@ -4,7 +4,7 @@ import * as schema from '@/db/schema';
 
 // Create PostgreSQL connection for Supabase
 const createDbClient = () => {
-  return postgres(process.env.SUPABASE_DATABASE_URL!, {
+  return postgres((process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!, {
     max: 10, // Maximum number of connections in the pool
     idle_timeout: 20,
     connect_timeout: 10,

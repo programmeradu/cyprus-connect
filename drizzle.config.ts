@@ -6,7 +6,7 @@ const dbConfig: Config = defineConfig({
   out: './drizzle',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.SUPABASE_DATABASE_URL!,
+    url: (process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!,
   },
 });
 

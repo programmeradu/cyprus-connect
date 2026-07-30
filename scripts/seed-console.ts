@@ -9,7 +9,7 @@
  */
 import postgres from "postgres";
 
-const sql = postgres(process.env.SUPABASE_DATABASE_URL!, { max: 4 });
+const sql = postgres((process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!, { max: 4 });
 
 const WS = "ws_demo_cy";
 
