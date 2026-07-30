@@ -1143,3 +1143,15 @@
     gap: 8px;
   }
 }
+
+@media (max-width: 1100px) {
+  /* dot, label, then the value pinned right — no gap between mark and word */
+  .vc .vc-legend p {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .vc .vc-legend p strong { margin-left: auto; }
+
+  .vc .vc-big-number small { max-width: none; }
+}
