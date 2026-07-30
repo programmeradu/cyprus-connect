@@ -396,7 +396,19 @@ export default function ConsolePage() {
                     <span>Automation rate</span>
                     <Rule pct={automation?.current ?? 0} />
                   </div>
+                  <div className="vc-reading-list">
+                    {runs.slice(0, 3).map((run) => (
+                      <p key={run.id}>
+                        <strong>{agents.find((a) => a.key === run.agentKey)?.name ?? run.agentKey}</strong>
+                        <span>
+                          {titleCase(run.status)} · {relativeTime(run.startedAt)}
+                        </span>
+                        <em>{run.itemsProcessed} items</em>
+                      </p>
+                    ))}
+                  </div>
                 </section>
+
 
                 <section className="vc-plate">
                   <header>
