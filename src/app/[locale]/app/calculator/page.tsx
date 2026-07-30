@@ -662,7 +662,30 @@ Return ONLY valid JSON (no markdown, no explanations):
                   .join(" · ")}
               />
             </MetricRow>
+
+            <div className="app-card-inset mt-4 px-4 py-3">
+              <p className="app-label mb-1">
+                {results.method === "climatiq"
+                  ? "Calculation basis: Climatiq emission factors"
+                  : "Calculation basis: published reference factors"}
+              </p>
+              <p className="app-meta break-words">
+                {results.method === "climatiq"
+                  ? "Factors were resolved live from the Climatiq database for your region."
+                  : "The live factor service was not available. The result uses published factors with the sources below. Recalculate later for a factor-resolved figure."}
+              </p>
+              {results.sources.length > 0 && (
+                <ul className="app-meta mt-2 space-y-1">
+                  {results.sources.map((source) => (
+                    <li key={source} className="break-words">
+                      {source}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </Section>
+
 
           <Section title={t("results.detailTitle")}>
             <DataTable
