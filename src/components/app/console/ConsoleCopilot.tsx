@@ -101,11 +101,17 @@ export function ConsoleCopilot() {
     if (node) node.scrollTop = node.scrollHeight;
   }, [turns, proposals, streaming, open]);
 
-  /* Escape closes. The panel must never trap the keyboard. */
+  /* Escape closes, Cmd/Ctrl+J toggles. The panel must never trap the keyboard. */
   useEffect(() => {
-    if (!open) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (open && event.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "j") {
+        event.preventDefault();
+        setOpen((prev) => !prev);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
