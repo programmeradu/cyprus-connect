@@ -9,6 +9,7 @@
  */
 
 import { useMemo, useState } from "react";
+import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
