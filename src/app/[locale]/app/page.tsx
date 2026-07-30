@@ -91,7 +91,7 @@ type SectionKey = "overview" | "agents" | "evidence" | "obligations" | "connecti
 export default function ConsolePage() {
   /* The workspace read lives in the layout, so the top bar, the palette
      and every page share one set of records. */
-  const { data, error } = useConsole();
+  const { data, error, refresh } = useConsole();
   const [category, setCategory] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [section, setSection] = useState<SectionKey>("overview");
