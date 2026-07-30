@@ -14,7 +14,6 @@ import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
-  AgentGlyph,
   IcoAlert,
   IcoCheck,
   IcoClock,
@@ -26,7 +25,6 @@ import {
 } from "@/components/app/console/icons";
 import { ArcGauge, BarRow, Rule, Spark } from "@/components/app/console/charts";
 import {
-  AUTONOMY_LABEL,
   daysUntil,
   fmtNumber,
   fmtSigned,
