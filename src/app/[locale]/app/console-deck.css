@@ -798,3 +798,155 @@
     margin-top: 18px;
   }
 }
+
+/* =====================================================================
+   Hero aside — re-authored as an ordered column.
+
+   The first build inherited absolute placement from the study and the
+   blocks collided. The column now stacks: who you are, what you are
+   looking at, the headline count, the legend, then the rest of the
+   category. The call to action sits at the foot where nothing overlaps.
+   ===================================================================== */
+
+.vc .vc-team-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  grid-template-columns: none;
+  grid-template-rows: none;
+}
+
+.vc .vc-team-card > .vc-owner-row {
+  gap: 11px;
+}
+
+.vc .vc-owner-row strong {
+  max-width: none;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+
+.vc .vc-side-icons {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  width: fit-content;
+}
+
+.dark .vc .vc-side-icons {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.vc .vc-big-number {
+  position: static;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.vc .vc-big-number span {
+  font-size: clamp(44px, 5vw, 62px);
+}
+
+.vc .vc-big-number small {
+  margin-top: 0;
+  max-width: 12ch;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.vc .vc-legend {
+  position: static;
+  width: 100%;
+  max-width: 260px;
+  padding-top: 12px;
+  border-top: 1px solid var(--vc-rule);
+}
+
+.vc .vc-side-series {
+  margin-top: 0;
+}
+
+.vc .vc-add-agent {
+  margin-top: auto;
+  align-self: flex-start;
+  height: 38px;
+  padding: 0 20px;
+  order: 9;
+}
+
+/* ---------- plate content that must never clip ----------------------- */
+
+.vc .vc-agent-copy small {
+  display: block;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+  overflow: visible;
+}
+
+.vc .vc-agent-table article {
+  align-items: start;
+}
+
+.vc .vc-live-list {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.vc .vc-live-list p {
+  gap: 8px;
+}
+
+.vc .vc-task-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.vc .vc-task-row article {
+  align-items: start;
+  gap: 11px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--vc-rule);
+}
+
+.vc .vc-task-row article:last-child { border-bottom: 0; }
+
+.vc .vc-task-row small {
+  display: block;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+  overflow: visible;
+  line-height: 1.45;
+}
+
+.vc .vc-event-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.vc .vc-event-row p {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--vc-rule);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.vc .vc-event-row p:last-child { border-bottom: 0; }
+
+.vc .vc-gauge-wrap {
+  flex: 1;
+  align-content: center;
+  padding: 6px 0 2px;
+}
+
+.vc .vc-gauge-wrap > div { max-width: 220px; }
+
+.vc .vc-mini-rule { margin-top: 0; }
