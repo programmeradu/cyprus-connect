@@ -784,3 +784,49 @@
 .vc .app-tag[data-tone="positive"] { color: var(--vc-good); }
 .vc .app-tag[data-tone="caution"] { color: var(--vc-warn); }
 .vc .app-tag[data-tone="critical"] { color: var(--vc-bad); }
+
+/* Bridge, part two: pages still holding shadcn and raw Tailwind classes.
+   These rules pull their colour, radius and contrast onto the console
+   palette so no route reads as a different product. They are scoped to
+   `.vc`, so nothing outside the workspace is touched. */
+
+.vc .text-muted-foreground { color: var(--vc-ink-3); }
+.vc .text-foreground { color: var(--vc-ink); }
+.vc .border,
+.vc .border-b,
+.vc .border-t,
+.vc .border-l,
+.vc .border-r { border-color: var(--vc-rule); }
+
+.vc .bg-card,
+.vc .bg-background,
+.vc .bg-muted,
+.vc .bg-secondary { background: var(--vc-well); }
+
+.vc .bg-primary,
+.vc button.bg-primary,
+.vc .bg-green-600,
+.vc .bg-emerald-600 {
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  border-color: transparent;
+}
+
+.vc .text-primary { color: var(--vc-ink); }
+.vc .text-primary-foreground { color: var(--vc-lime-ink); }
+
+/* Pill chips are not part of the language. Badges take the console tag
+   radius wherever a page still asks for a full round. */
+.vc span.rounded-full,
+.vc .badge.rounded-full { border-radius: 7px; }
+
+.vc select,
+.vc input[type="text"],
+.vc input[type="number"],
+.vc input[type="email"],
+.vc textarea {
+  border-radius: 10px;
+  border: 1px solid var(--vc-rule);
+  background: var(--vc-well);
+  color: var(--vc-ink);
+}
