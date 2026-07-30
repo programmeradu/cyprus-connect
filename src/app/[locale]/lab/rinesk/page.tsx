@@ -767,7 +767,7 @@ export default function RineskPage() {
                 </A>
               </div>
             ))}
-            <svg width="132" height="56" viewBox="0 0 132 56" style={{ position: "absolute", left: 735, top: 116 }} fill="none">
+            <svg width="132" height="56" viewBox="0 0 132 56" style={{ position: "absolute", left: 735, top: 110 }} fill="none">
               <defs>
                 <linearGradient id="rkPredArc" x1="0" y1="1" x2="1" y2="0">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
@@ -775,9 +775,9 @@ export default function RineskPage() {
                   <stop offset="100%" stopColor="#ffffff" stopOpacity="0.72" />
                 </linearGradient>
               </defs>
-              <path d="M6 54 A 66 40 0 0 1 126 54" stroke="rgba(255,255,255,.2)" strokeWidth="1.1" strokeLinecap="round" />
+              <path d="M6 60 A 66 46 0 0 1 126 60" stroke="rgba(255,255,255,.2)" strokeWidth="1.1" strokeLinecap="round" />
               <path
-                d="M16 50 A 58 36 0 0 1 116 50"
+                d="M15 56 A 60 42 0 0 1 117 56"
                 stroke="url(#rkPredArc)"
                 strokeWidth="2.6"
                 strokeLinecap="round"
