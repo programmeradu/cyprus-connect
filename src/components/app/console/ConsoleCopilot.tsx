@@ -272,16 +272,33 @@ export function ConsoleCopilot() {
       )}
 
       {open && (
+        <div
+          className="vc-copilot-scrim"
+          onClick={() => setOpen(false)}
+          aria-hidden
+        />
+      )}
+
+      {open && (
         <section className="vc-copilot" role="dialog" aria-label="Workspace copilot">
+          <span className="vc-copilot-grip" aria-hidden />
           <header className="vc-copilot-head">
             <span className="vc-copilot-badge">
               <CopilotMark small />
             </span>
             <div className="vc-copilot-title">
               <strong>Copilot</strong>
-              <span>Reads {workspaceName}. Acts only with your approval.</span>
+              <span>
+                <i className="vc-copilot-live" aria-hidden />
+                Reading {workspaceName}
+              </span>
             </div>
             <div className="vc-copilot-head-tools">
+              {pending.length > 0 && (
+                <span className="vc-copilot-head-pending">
+                  {pending.length} awaiting you
+                </span>
+              )}
               {turns.length > 0 && (
                 <button type="button" onClick={clear} className="vc-copilot-text-btn">
                   Clear
@@ -297,6 +314,7 @@ export function ConsoleCopilot() {
               </button>
             </div>
           </header>
+
 
           <div className="vc-copilot-body" ref={scrollRef}>
             {!loaded && <p className="vc-copilot-muted">Reading this workspace...</p>}
