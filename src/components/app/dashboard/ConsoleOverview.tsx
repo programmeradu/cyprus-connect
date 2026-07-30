@@ -96,6 +96,8 @@ export const ConsoleOverview = ({
   peers,
   peerNote,
   deadlines,
+  sample = false,
+  sampleNote,
   labels
 }: ConsoleOverviewProps) => {
   const [tab, setTab] = useState<SeriesKey>("carbon");
