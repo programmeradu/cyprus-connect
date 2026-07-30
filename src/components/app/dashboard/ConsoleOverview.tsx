@@ -46,6 +46,9 @@ interface ConsoleOverviewProps {
   peers: PeerRow[];
   peerNote?: string;
   deadlines: OverviewDeadline[];
+  /** Marks the figures as a representative example, not the account's own data. */
+  sample?: boolean;
+  sampleNote?: ReactNode;
   labels: {
     carbon: string;
     electricity: string;
