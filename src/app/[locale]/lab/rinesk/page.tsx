@@ -191,7 +191,7 @@ function WaveHand() {
   // Small waving-hand mark drawn as vector art: emoji fonts are not present
   // in the render target, so a literal glyph would fall back to tofu.
   return (
-    <svg width="19" height="19" viewBox="0 0 40 40" fill="none" aria-hidden>
+    <svg width="22" height="22" viewBox="0 0 40 40" fill="none" aria-hidden>
       <g transform="rotate(20 20 20)" stroke="#d99b1f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path
           d="M13 26V11.5a2.2 2.2 0 0 1 4.4 0V22M17.4 21V9.2a2.2 2.2 0 0 1 4.4 0V21M21.8 21V10.6a2.2 2.2 0 0 1 4.4 0V22M26.2 16.4a2.2 2.2 0 0 1 4.4 0v6.9c0 5.6-4 9.3-9.4 9.3-4.6 0-7.2-2-9-5.7l-2.6-5.3a2.2 2.2 0 0 1 3.7-2.3l2.7 3.4"
@@ -341,10 +341,10 @@ export default function RineskPage() {
             </A>
 
             {/* greeting */}
-            <A l={462} t={91} style={{ fontSize: 19.5, fontWeight: 700, letterSpacing: -0.35, color: "#1c2827", whiteSpace: "nowrap" }}>
+            <A l={462} t={91} style={{ fontSize: 19.5, fontWeight: 600, letterSpacing: -0.3, color: "#1c2827", whiteSpace: "nowrap" }}>
               Hey, Matthew!
             </A>
-            <A l={590} t={94} w={20} h={20}>
+            <A l={592} t={92} w={22} h={22}>
               <WaveHand />
             </A>
             <A l={462} t={116} style={{ fontSize: 18.5, fontWeight: 500, letterSpacing: -0.3, color: "rgba(35,46,46,.45)", whiteSpace: "nowrap" }}>
