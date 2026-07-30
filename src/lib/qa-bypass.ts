@@ -45,3 +45,11 @@ export function isQaRequest(input: {
   const token = qaToken();
   return input.cookie === token || input.header === token;
 }
+
+/** Non-httpOnly marker so client code can tell it is in QA mode. */
+export const QA_UI_COOKIE = "vq_qa_ui";
+
+export function isQaClient(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split(";").some((part) => part.trim() === `${QA_UI_COOKIE}=1`);
+}

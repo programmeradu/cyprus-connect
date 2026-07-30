@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { isQaClient } from "@/lib/qa-bypass";
 
 export function OnboardingCheck() {
   const router = useRouter();
@@ -14,6 +15,9 @@ export function OnboardingCheck() {
   useEffect(() => {
     // TEMPORARY: open access mode skips the onboarding gate entirely.
     if (APP_OPEN_ACCESS) return;
+
+    // Preview-only QA back door: no account, so no onboarding gate.
+    if (isQaClient()) return;
 
     // Skip check if already on onboarding page
     if (pathname === "/app/onboarding") return;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { QA_COOKIE, qaBypassEnabled, qaToken } from "@/lib/qa-bypass";
+import { QA_COOKIE, QA_UI_COOKIE, qaBypassEnabled, qaToken } from "@/lib/qa-bypass";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +24,16 @@ export async function GET(request: NextRequest) {
 
   if (leave) {
     response.cookies.delete(QA_COOKIE);
+    response.cookies.delete(QA_UI_COOKIE);
   } else {
     response.cookies.set(QA_COOKIE, qaToken(), {
       httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 12,
+    });
+    response.cookies.set(QA_UI_COOKIE, "1", {
+      httpOnly: false,
       sameSite: "lax",
       path: "/",
       maxAge: 60 * 60 * 12,
