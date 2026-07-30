@@ -188,17 +188,18 @@ function A({
 /* ------------------------------------------------------------------ */
 
 function WaveHand() {
+  // Small waving-hand mark drawn as vector art: emoji fonts are not present
+  // in the render target, so a literal glyph would fall back to tofu.
   return (
-    <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden>
-      <g transform="rotate(18 16 16)">
+    <svg width="19" height="19" viewBox="0 0 40 40" fill="none" aria-hidden>
+      <g transform="rotate(20 20 20)" stroke="#d99b1f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path
-          d="M10.4 18.6V8.9a1.75 1.75 0 0 1 3.5 0v6.6m0-1.1V7.2a1.75 1.75 0 0 1 3.5 0v6.9m0-.9V8.4a1.75 1.75 0 0 1 3.5 0v7.1m0-3.1a1.75 1.75 0 0 1 3.5 0v6.2c0 4.6-3.2 8.1-7.8 8.1-4.3 0-6.5-2.1-7.9-5.2l-2-4.4a1.8 1.8 0 0 1 3-1.9l1.7 2.3"
-          stroke="#e8b23a"
-          strokeWidth="2.1"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="#f8d07a"
+          d="M13 26V11.5a2.2 2.2 0 0 1 4.4 0V22M17.4 21V9.2a2.2 2.2 0 0 1 4.4 0V21M21.8 21V10.6a2.2 2.2 0 0 1 4.4 0V22M26.2 16.4a2.2 2.2 0 0 1 4.4 0v6.9c0 5.6-4 9.3-9.4 9.3-4.6 0-7.2-2-9-5.7l-2.6-5.3a2.2 2.2 0 0 1 3.7-2.3l2.7 3.4"
+          fill="#f7cd63"
         />
+      </g>
+      <g stroke="#d99b1f" strokeWidth="1.9" strokeLinecap="round">
+        <path d="M32.5 8.5 34.6 6.4M35.4 13.2h3M30.2 5.6l1-2.8" />
       </g>
     </svg>
   );
