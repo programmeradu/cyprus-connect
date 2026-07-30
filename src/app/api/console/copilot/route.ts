@@ -30,6 +30,30 @@ export const dynamic = "force-dynamic";
 const MODEL = "gemini-2.5-flash";
 const HISTORY_LIMIT = 40;
 
+/**
+ * Turn a provider failure into a sentence an operator can act on. A generic
+ * "try again" hides a revoked key or an exhausted quota, and the person then
+ * retries forever against a wall.
+ */
+function providerMessage(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error ?? "");
+  const text = raw.toLowerCase();
+
+  if (text.includes("leaked") || text.includes("api key not valid") || text.includes("api_key_invalid")) {
+    return "The AI key for this workspace is no longer accepted by the provider. An administrator must set a new GOOGLE_GEMINI_API_KEY.";
+  }
+  if (text.includes("permission_denied") || text.includes("403")) {
+    return "The AI service refused this request. Check that the workspace AI key is active and has access to the model.";
+  }
+  if (text.includes("quota") || text.includes("resource_exhausted") || text.includes("429")) {
+    return "The AI service is over its quota for now. Please try again in a few minutes.";
+  }
+  if (text.includes("deadline") || text.includes("timeout") || text.includes("etimedout")) {
+    return "The answer took too long and stopped. Please ask again, or make the question smaller.";
+  }
+  return "The copilot could not finish that answer. Please try again.";
+}
+
 /* ------------------------------------------------------------------ */
 /* Read                                                                 */
 /* ------------------------------------------------------------------ */
