@@ -1174,14 +1174,13 @@
 .vc .vcr-figs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 1px;
+  gap: 10px;
   margin: 16px 0 0;
-  background: color-mix(in srgb, var(--vc-ink, #1a1f1b) 9%, transparent);
-  border-radius: 14px;
-  overflow: hidden;
 }
 .vc .vcr-figs > div {
   background: color-mix(in srgb, var(--vc-sage, #e8efe4) 40%, transparent);
+  border: 1px solid color-mix(in srgb, var(--vc-ink, #1a1f1b) 9%, transparent);
+  border-radius: 13px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
@@ -1231,9 +1230,13 @@
 .vc .vcr-gaps ul {
   margin: 0;
   padding-left: 18px;
+  list-style: disc;
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+.vc .vcr-gaps li::marker {
+  color: color-mix(in srgb, var(--vc-ink, #1a1f1b) 40%, transparent);
 }
 .vc .vcr-gaps li {
   font-size: 13.5px;
