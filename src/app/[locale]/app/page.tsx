@@ -799,7 +799,9 @@ export default function ConsolePage() {
               </section>
             </div>
           )}
+         </div>
         </div>
+
 
         <p className="vc-foot-note">
           {workspace.name} · {workspace.framework} · baseline {workspace.baselineYear} · read{" "}
