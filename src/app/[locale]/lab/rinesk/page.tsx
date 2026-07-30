@@ -269,7 +269,7 @@ export default function RineskPage() {
             </A>
 
             {/* nav */}
-            <A l={292} t={20} w={60} h={30} className="rk-pill" />
+            <A l={294} t={22} w={57} h={26} className="rk-pill" />
             {navItems.map(([label, x]) => (
               <A
                 key={label}
@@ -278,13 +278,14 @@ export default function RineskPage() {
                 className="rk-nav"
                 style={
                   label === "Statistics"
-                    ? { color: "#1f2b2b", fontWeight: 800 }
+                    ? { color: "#1e2a2a", fontWeight: 700, letterSpacing: 0.15 }
                     : undefined
                 }
               >
                 {label}
               </A>
             ))}
+
 
             {/* header right controls */}
             <A l={759} t={20} w={31} h={30} className="rk-iconbtn">
