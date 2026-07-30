@@ -1,112 +1,99 @@
-# Vuneli Workspace (`/app`) - design doctrine
+# The Vuneli console contract
 
-The workspace is a separate visual system from the marketing site. It shares the
-brand typefaces and the "Verified Nature" temperament, but it is dense product
-UI: flat opaque surfaces, hairline rules, value-based depth, real numbers.
+Every route under `/app` obeys this file. It is short on purpose. If a rule
+here blocks something the product needs, change the rule in this file first,
+then change the code.
 
-`src/app/[locale]/app/app.css` is the only stylesheet that governs `/app`. It is
-scoped under `.viq-app`, set by the app layout. Marketing CSS cannot reach in and
-workspace rules cannot leak out.
-
----
-
-## 1. Every page uses the same template
-
-No exceptions. Import from one barrel:
+## 1. One frame per page
 
 ```tsx
-import {
-  PageShell, PageHeader, PageToolbar, ToolbarTabs, Section,
-  DataTable, Metric, MetricRow, EmptyState, AiUnavailable,
-  SkeletonTable, SkeletonCards, SkeletonMetricRow
-} from "@/components/app/shell";
+import { ConsolePage, Plate, PlateGrid, Ledger, Reading, ReadingRail } from "@/components/app/console/kit";
+import { useConsole } from "@/components/app/console/ConsoleData";
+
+export default function MeasurePage() {
+  const { data, error, loading, refresh } = useConsole();
+
+  return (
+    <ConsolePage
+      title="Measure"
+      purpose="Every figure that enters a disclosure, with the source behind it."
+      actions={<Btn variant="primary">Add a reading</Btn>}
+      loading={loading}
+      error={error}
+      onRetry={refresh}
+    >
+      ...
+    </ConsolePage>
+  );
+}
 ```
 
-Canonical page:
+A page renders one `ConsolePage`. The top bar, the navigation, the palette and
+the approval queue come from the layout. No page draws its own chrome.
 
-```tsx
-<PageShell
-  loading={isLoading}
-  error={error}
-  onRetry={load}
-  header={
-    <PageHeader
-      title="Analytics"
-      purpose="See how your emissions moved, and what drove the change."
-      actions={<button className="app-btn">Export</button>}
-    />
-  }
-  toolbar={<PageToolbar meta="Updated 4 Jul 2026">{filters}</PageToolbar>}
->
-  <Section title="Headline">{...}</Section>
-  <Section title="By source">{...}</Section>
-</PageShell>
-```
+## 2. One read per session
 
-- `PageShell` owns the max width, the 32px rhythm between sections, and the
-  loading / error states. Do not hand-roll a spinner or a `<Loader2 />` block.
-- `PageHeader` owns the h1. A page never renders its own `<h1>`.
-- `Section` owns the h2. Sections never set outer margins.
-- One primary action per page. Everything else is `app-btn-ghost` or a text link.
+`ConsoleDataProvider` in `src/app/[locale]/app/layout.tsx` calls
+`/api/console/overview` once and hands the records to every page through
+`useConsole()`. A page never fetches the workspace again. A page that writes
+calls `refresh()` when the write returns.
 
-## 2. Type scale
+## 3. The primitives
 
-| Role          | Size            | Weight | Face                 |
-| ------------- | --------------- | ------ | -------------------- |
-| Page title    | 24px            | 600    | `--editorial-display`|
-| Section title | 17px            | 600    | `--editorial-display`|
-| Body          | 15px            | 400    | `--editorial-sans`   |
-| Meta          | 13px            | 500    | `--editorial-sans`   |
-| Label         | 12px (floor)    | 600    | `--editorial-sans`   |
-| Metric        | 28-40px         | 600    | `--editorial-display`|
+| Need | Use |
+| --- | --- |
+| Page frame, three states | `ConsolePage` |
+| Section strip | `ConsoleTabs` |
+| A surface | `Plate`, laid out by `PlateGrid` |
+| A list of records | `Ledger` |
+| Rows and columns | `ConsoleTable` |
+| A headline figure | `Reading` inside `ReadingRail` |
+| Share, coverage, progress | `Bar` |
+| A state word | `State` |
+| An action | `Btn` |
+| Nothing to show | `Empty` |
+| No model key | `AiUnavailable` |
+| Waiting | `DeckSkeleton`, `PlateSkeleton`, `ReadingSkeleton` |
 
-Nothing below 12px. No uppercase with wide tracking. No `font-light`.
-Use `.app-label`, `.app-meta`, `.app-metric`, `.app-num` rather than re-deriving.
+Nothing else. If a page needs a shape the kit does not have, add it to the kit
+with a comment saying why, then use it.
 
-## 3. Surfaces and structure
+## 4. Surfaces
 
-- Page `--app-surface-0`, card `--app-surface-1`, inset `--app-surface-2`,
-  hover `--app-surface-3`. Never a raw `bg-white`, `bg-neutral-900`,
-  `bg-primary/10` wash, or a `dark:` colour tint on a card.
-- Rules: `border-[var(--app-rule)]`, strong variant for controls.
-- Classes: `.app-card`, `.app-card-inset`, `.app-ledger`, `.app-overlay`.
-- Radius: 4px tags, 6px controls, 8px cards, 12px overlays. Nothing larger.
-- Shadows only on `.app-overlay` (dropdowns, modals, popovers). Nowhere else.
-- No glassmorphism, no gradients, no neumorphic shadows.
+- The field is the page background. Plates are sage glass veils on it.
+- No white cards. No drop shadows. Radius 18 for plates, 10 for controls.
+- Hairlines carry structure: `--vc-rule` between blocks, `--vc-rule-soft`
+  between rows.
+- Light and dark are authored separately, never inverted.
 
-## 4. Content and data
+## 5. Type
 
-- Text left, numbers right, always `tabular-nums`. Use `DataTable`.
-- Money in EUR. Units metric. Dates `d MMM yyyy`. Cyprus and EU context only.
-- Tables beat card grids for anything scannable.
-- Never `truncate` or `line-clamp` a label that carries meaning. Wrap it.
+- Page title 25, section heading 16.5, body 14.5, meta 12.5. Nothing smaller
+  than 12. No uppercase tracking.
+- All numbers use tabular figures. Money in EUR, units metric, dates
+  `d MMM yyyy`.
 
-## 5. Three states, always
+## 6. Behaviour
 
-Every async surface ships all three:
+- One primary action per page. Everything else is quiet.
+- Every asynchronous surface ships three states: skeleton, empty, error with a
+  retry. "No data" alone is a defect.
+- No control that does nothing. A button, a tab or a count that leads nowhere
+  does not ship.
+- No figure is written by hand. Every value comes from the database through an
+  API route.
+- Text wraps. `truncate` and `line-clamp` are not used on anything a person
+  needs to read.
+- Every interactive element keeps a visible focus ring and a target of at
+  least 44px on touch.
 
-1. **Skeleton** matching the final layout (`SkeletonTable`, `SkeletonCards`,
-   `SkeletonMetricRow`). Never a centred spinner.
-2. **Empty** via `EmptyState`: headline, one sentence of guidance, one action.
-   Never a bare "No data".
-3. **Error** with a retry, through `PageShell`'s `error` / `onRetry` props.
+## 7. The bridge
 
-AI-backed surfaces additionally use `AiUnavailable` when the model key is
-missing or rejected, rather than failing silently.
+Routes written before the kit import `@/components/app/shell`. Those files are
+adapters: they take the earlier props and draw kit markup, so no page looks
+like a different product. `console-kit.css` also holds a bridge block that
+restyles the raw `app-*` classes still in page bodies.
 
-## 6. Banned in `/app`
-
-- Decorative icons (Lucide or otherwise) used as accents. Functional icons only:
-  close, chevron, search, external link. Single stroke, monochrome.
-- `rounded-full` pill chips. Use `.app-tag` (rectangular, bordered).
-- Gradients, `glass`, `neomorph`, `shadow-premium`.
-- Emoji as UI.
-- Two equal-weight CTAs in one view.
-- Hard-coded colour utilities (`text-white`, `bg-black`, `bg-[#...]`).
-
-## 7. Verification before shipping a page
-
-- 1280px and 390px, light and dark.
-- No horizontal scroll. No truncated label. Body contrast >= 4.5:1.
-- Focus rings visible on every interactive element.
-- Touch targets >= 44x44px.
+Both are temporary. When a page is rewritten against the kit, drop its
+`shell` import. When the last `app-*` class is gone from `/app`, delete the
+bridge block and `app.css`.

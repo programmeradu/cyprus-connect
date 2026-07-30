@@ -12,8 +12,8 @@ interface EmptyStateProps {
 }
 
 /**
- * Designed empty / error state. Headline, one sentence of guidance, and at
- * most one primary action. Never a bare "No data".
+ * Designed empty and error state: what is missing, why, and one thing to
+ * do about it. A bare "No data" is not allowed in the console.
  */
 export const EmptyState = ({
   title,
@@ -25,33 +25,23 @@ export const EmptyState = ({
 }: EmptyStateProps) => {
   return (
     <div
-      className={`app-card flex flex-col items-start gap-3 px-5 py-8 ${className}`}
+      className={`vck-empty ${className}`}
+      data-tone={tone === "critical" ? "bad" : "quiet"}
+      role={tone === "critical" ? "alert" : undefined}
     >
-      <h3
-        className={`text-[1.0625rem] font-semibold leading-snug ${
-          tone === "critical" ? "text-destructive" : "text-foreground"
-        }`}
-      >
-        {title}
-      </h3>
+      <strong>{title}</strong>
+      {description && <p>{description}</p>}
 
-      {description && (
-        <p className="max-w-[60ch] text-sm leading-relaxed text-muted-foreground">
-          {description}
-        </p>
-      )}
-
-      {action && (
-        action.href ? (
-          <a href={action.href} className="app-btn mt-1">
+      {action &&
+        (action.href ? (
+          <a href={action.href} className="vck-btn">
             {action.label}
           </a>
         ) : (
-          <button type="button" onClick={action.onClick} className="app-btn mt-1">
+          <button type="button" onClick={action.onClick} className="vck-btn">
             {action.label}
           </button>
-        )
-      )}
+        ))}
 
       {secondary}
     </div>

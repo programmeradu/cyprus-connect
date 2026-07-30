@@ -1,26 +1,25 @@
 "use client";
 
 import { ReactNode } from "react";
-import { EmptyState } from "./EmptyState";
-import { PageSkeleton } from "./Skeletons";
+import { DeckSkeleton } from "@/components/app/console/kit/Skeleton";
+import { Empty } from "@/components/app/console/kit/Empty";
 
 interface PageShellProps {
   children: ReactNode;
-  /** Shows the skeleton scaffold instead of children. */
   loading?: boolean;
-  /** Shows a retryable error plate instead of children. */
   error?: string | null;
   onRetry?: () => void;
-  /** Rendered above the sections, outside the vertical rhythm reset. */
   header?: ReactNode;
   toolbar?: ReactNode;
   className?: string;
 }
 
 /**
- * The workspace page container. Every /app route renders exactly one of
- * these. It owns the max width, the vertical rhythm between sections and
- * the three async states, so no page hand-rolls a spinner again.
+ * The workspace page container.
+ *
+ * This is the console kit's ConsolePage with a slot-shaped signature, kept
+ * so the routes written before the kit landed hold their contract. New
+ * pages import ConsolePage from @/components/app/console/kit instead.
  */
 export const PageShell = ({
   children,
@@ -32,25 +31,21 @@ export const PageShell = ({
   className = ""
 }: PageShellProps) => {
   return (
-    <div className={`mx-auto w-full max-w-6xl ${className}`}>
+    <div className={`vck-page ${className}`}>
       {header}
       {toolbar}
 
       {loading ? (
-        <PageSkeleton />
+        <DeckSkeleton />
       ) : error ? (
-        <EmptyState
+        <Empty
+          tone="bad"
           title="This page could not load"
-          description={error}
-          action={
-            onRetry
-              ? { label: "Try again", onClick: onRetry }
-              : undefined
-          }
-          tone="critical"
+          body={error}
+          action={onRetry ? { label: "Try again", onClick: onRetry } : undefined}
         />
       ) : (
-        <div className="space-y-8">{children}</div>
+        <div className="vck-deck">{children}</div>
       )}
     </div>
   );

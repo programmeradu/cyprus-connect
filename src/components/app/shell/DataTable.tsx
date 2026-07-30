@@ -7,7 +7,7 @@ export interface Column<Row> {
   header: string;
   /** Right-aligns and applies tabular figures. Use for all numbers. */
   numeric?: boolean;
-  /** Hide below the sm breakpoint when the column is secondary. */
+  /** Hides the column below 640px when it is secondary. */
   hideOnMobile?: boolean;
   width?: string;
   render: (row: Row) => ReactNode;
@@ -18,16 +18,15 @@ interface DataTableProps<Row> {
   rows: Row[];
   rowKey: (row: Row, index: number) => string;
   onRowClick?: (row: Row) => void;
-  /** Rendered inside the table frame when there are no rows. */
+  /** Rendered in place of the table when there are no rows. */
   empty?: ReactNode;
   caption?: string;
   className?: string;
 }
 
 /**
- * The workspace table. Text left, numbers right on tabular figures,
- * hairline rows, sticky header. Scrollable in x only when the content
- * genuinely exceeds the frame, and never clipping a label.
+ * The workspace table, drawn on a console plate. Text left, numbers right
+ * on tabular figures, hairline rows, a sticky head, wrapping cells.
  */
 export function DataTable<Row>({
   columns,
@@ -38,60 +37,52 @@ export function DataTable<Row>({
   caption,
   className = ""
 }: DataTableProps<Row>) {
-  if (rows.length === 0 && empty) {
-    return <>{empty}</>;
+  if (rows.length === 0) {
+    return <>{empty ?? <p className="vck-quiet">Nothing matches this view yet.</p>}</>;
   }
 
   return (
-    <div
-      className={`app-card overflow-hidden ${className}`}
-    >
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left">
-          {caption && <caption className="sr-only">{caption}</caption>}
-          <thead>
-            <tr className="border-b border-[var(--app-rule)] bg-[var(--app-surface-2)]">
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  scope="col"
-                  style={column.width ? { width: column.width } : undefined}
-                  className={`px-4 py-2.5 text-xs font-semibold text-muted-foreground ${
-                    column.numeric ? "text-right" : "text-left"
-                  } ${column.hideOnMobile ? "hidden sm:table-cell" : ""}`}
-                >
-                  {column.header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => (
-              <tr
-                key={rowKey(row, index)}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-                className={`border-b border-[var(--app-rule)] last:border-b-0 ${
-                  onRowClick
-                    ? "cursor-pointer hover:bg-[var(--app-surface-2)] transition-colors"
-                    : ""
-                }`}
-              >
+    <div className={`vck-plate vck-plate-flush ${className}`}>
+      <div className="vck-plate-body">
+        <div className="vck-table-wrap">
+          <table className="vck-table">
+            {caption && <caption className="sr-only">{caption}</caption>}
+            <thead>
+              <tr>
                 {columns.map((column) => (
-                  <td
+                  <th
                     key={column.key}
-                    className={`px-4 py-3 align-middle text-sm ${
-                      column.numeric
-                        ? "app-num text-right whitespace-nowrap"
-                        : "text-left"
-                    } ${column.hideOnMobile ? "hidden sm:table-cell" : ""}`}
+                    scope="col"
+                    data-numeric={column.numeric ? "true" : undefined}
+                    data-hide-sm={column.hideOnMobile ? "true" : undefined}
+                    style={column.width ? { width: column.width } : undefined}
                   >
-                    {column.render(row)}
-                  </td>
+                    {column.header}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, index) => (
+                <tr
+                  key={rowKey(row, index)}
+                  onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  data-clickable={onRowClick ? "true" : undefined}
+                >
+                  {columns.map((column) => (
+                    <td
+                      key={column.key}
+                      data-numeric={column.numeric ? "true" : undefined}
+                      data-hide-sm={column.hideOnMobile ? "true" : undefined}
+                    >
+                      {column.render(row)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -6,16 +6,22 @@ interface MetricProps {
   label: string;
   value: ReactNode;
   unit?: string;
-  /** Signed delta, e.g. "-8.4%". Tone is derived, not decorative. */
+  /** Signed change, e.g. "-8.4%". The tone is derived, not decorative. */
   delta?: string;
   deltaTone?: "positive" | "negative" | "neutral";
   note?: string;
   action?: ReactNode;
 }
 
+const TONE = {
+  positive: "good",
+  negative: "bad",
+  neutral: "flat"
+} as const;
+
 /**
- * The only way a headline number is rendered inside /app. Tabular figures,
- * editorial display face, label above, note below. No icon, no wash.
+ * The only way a headline number is rendered inside /app. It draws the
+ * console reading, so a figure looks the same on every page.
  */
 export const Metric = ({
   label,
@@ -27,50 +33,29 @@ export const Metric = ({
   action
 }: MetricProps) => {
   return (
-    <div className="app-card flex h-full flex-col p-4">
-      <p className="app-label mb-2 break-words">{label}</p>
-
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="app-metric text-[1.75rem] break-words">{value}</span>
-        {unit && (
-          <span className="text-sm font-medium text-muted-foreground break-words">
-            {unit}
-          </span>
-        )}
-        {delta && (
-          <span
-            className={`app-num text-sm font-medium ${
-              deltaTone === "positive"
-                ? "text-primary"
-                : deltaTone === "negative"
-                  ? "text-destructive"
-                  : "text-muted-foreground"
-            }`}
-          >
-            {delta}
-          </span>
-        )}
-      </div>
-
-      {note && <p className="app-meta mt-2 break-words">{note}</p>}
-
-      {action && <div className="mt-3">{action}</div>}
+    <div className="vck-reading">
+      <small>{label}</small>
+      <strong>
+        {value}
+        {unit && <em>{unit}</em>}
+      </strong>
+      {(delta || note) && (
+        <span className="vck-reading-foot">
+          {delta && <b data-tone={TONE[deltaTone]}>{delta}</b>}
+          {note}
+        </span>
+      )}
+      {action && <div className="vck-reading-action">{action}</div>}
     </div>
   );
 };
 
 interface MetricRowProps {
   children: ReactNode;
-  /** Column count at lg. Defaults to 4. */
+  /** Kept for the earlier call sites. The rail fits its own columns. */
   columns?: 2 | 3 | 4;
 }
 
-export const MetricRow = ({ children, columns = 4 }: MetricRowProps) => {
-  const grid = {
-    2: "sm:grid-cols-2",
-    3: "sm:grid-cols-2 lg:grid-cols-3",
-    4: "sm:grid-cols-2 lg:grid-cols-4"
-  }[columns];
-
-  return <div className={`grid grid-cols-1 gap-4 ${grid}`}>{children}</div>;
-};
+export const MetricRow = ({ children }: MetricRowProps) => (
+  <div className="vck-reading-rail">{children}</div>
+);
