@@ -249,21 +249,35 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
           <button
             type="button"
             className="vc-iconbtn vc-notify"
-            aria-label={`Approval queue, ${tasks.length} open`}
+            data-alert={tasks.length > 0}
+            aria-label={
+              tasks.length === 0
+                ? "Approval queue, nothing waiting"
+                : `Approval queue, ${tasks.length} waiting`
+            }
             aria-expanded={queue}
             onClick={() => {
               setQueue((v) => !v);
               setAccount(false);
             }}
           >
-            <IcoBell size={14} />
-            {tasks.length > 0 && <span>{tasks.length}</span>}
+            <IcoBell size={15} />
+            {tasks.length > 0 && (
+              <span aria-hidden="true" data-wide={tasks.length > 9}>
+                {tasks.length > 9 ? "9+" : tasks.length}
+              </span>
+            )}
           </button>
 
           {queue && (
-            <div className="vc-pop" role="dialog" aria-label="Approval queue">
+            <div className="vc-pop vc-pop-queue" role="dialog" aria-label="Approval queue">
               <header>
-                <strong>Waiting on a person</strong>
+                <span className="vc-pop-title">
+                  <strong>Waiting on a person</strong>
+                  <b className="vc-pop-count" data-empty={tasks.length === 0}>
+                    {tasks.length}
+                  </b>
+                </span>
                 <button type="button" onClick={() => setQueue(false)} aria-label="Close queue">
                   <IcoClose size={13} />
                 </button>
@@ -271,17 +285,23 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
               {tasks.length === 0 ? (
                 <p className="vc-pop-empty">The queue is clear. Agents have nothing to escalate.</p>
               ) : (
-                <ul>
-                  {tasks.slice(0, 6).map((task) => (
-                    <li key={task.id} data-severity={task.severity}>
-                      <strong>{task.title}</strong>
-                      <span>{task.detail}</span>
-                      <em>
-                        {task.kind} · raised {relativeTime(task.createdAt)}
-                      </em>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <ul>
+                    {tasks.slice(0, 6).map((task) => (
+                      <li key={task.id} data-severity={task.severity}>
+                        <i aria-hidden="true" className="vc-pop-dot" />
+                        <strong>{task.title}</strong>
+                        <span>{task.detail}</span>
+                        <em>
+                          {task.kind} · raised {relativeTime(task.createdAt)}
+                        </em>
+                      </li>
+                    ))}
+                  </ul>
+                  {tasks.length > 6 && (
+                    <p className="vc-pop-more">{tasks.length - 6} more in the queue</p>
+                  )}
+                </>
               )}
               <Link href={"/app/compliance" as never} className="vc-pop-cta" onClick={() => setQueue(false)}>
                 Open the full queue
@@ -289,6 +309,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
             </div>
           )}
         </div>
+
 
         <div className="vc-pop-anchor">
           <button
