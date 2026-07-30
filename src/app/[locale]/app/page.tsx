@@ -397,21 +397,18 @@ export default function DashboardPage() {
             : "Hello."
         }
         subline={
-          overviewHistory.length > 1
-            ? "This is where your footprint stands today, month by month."
-            : "Log one electricity bill in the calculator and this console fills in."
+          useSample
+            ? "A representative Cyprus SME year, so you can see what the console does."
+            : "This is where your footprint stands today, month by month."
+        }
+        sample={useSample}
+        sampleNote={
+          <Link href="/app/calculator" className="underline underline-offset-2 hover:text-foreground">
+            Log one electricity bill to replace it with your own figures.
+          </Link>
         }
         history={overviewHistory}
-        current={{
-          carbon: carbonFootprint,
-          carbonTrend,
-          electricity: overviewHistory.at(-1)?.electricity ?? 0,
-          renewable: renewableShare,
-          renewableTrend,
-          efficiency: resourceEfficiency,
-          efficiencyTrend,
-          waste: wasteDiversion
-        }}
+        current={currentReadings}
         grid={{
           value: 610,
           unit: "gCO₂/kWh",
