@@ -9,6 +9,7 @@
  * approves it. The command palette navigates, this reasons.
  */
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useConsole } from "./ConsoleData";
 import { IcoClose, IcoCheck, IcoSpark } from "./icons";
@@ -30,18 +31,27 @@ interface Proposal {
   status: "pending" | "approved" | "rejected" | "failed";
   resultNote: string | null;
   decidedBy: string | null;
+  deliverableHref?: string | null;
+  deliverableTitle?: string | null;
 }
 
 const KIND_LABEL: Record<string, string> = {
   create_task: "Create a review task",
   update_obligation: "Update an obligation",
   log_reading: "Log a metric reading",
+  draft_report: "Draft a report",
+};
+
+/** Only a draft takes real time, so only a draft says what it is doing. */
+const BUSY_LABEL: Record<string, string> = {
+  draft_report: "Drafting",
 };
 
 const STARTERS = [
   "What changed in my emissions this period?",
   "Which obligation is closest to its deadline?",
   "Draft a review task for the largest data gap.",
+  "Draft the VSME report for this reporting period.",
 ];
 
 function authHeaders(): Record<string, string> {
@@ -449,6 +459,8 @@ function ProposalCard({
 }) {
   const label = KIND_LABEL[proposal.kind] ?? "Proposed change";
   const settled = proposal.status !== "pending";
+  const busyLabel = BUSY_LABEL[proposal.kind] ?? "Working";
+  const href = proposal.deliverableHref;
 
   return (
     <div className="vc-copilot-prop" data-status={proposal.status}>
@@ -459,10 +471,26 @@ function ProposalCard({
       <strong>{proposal.title}</strong>
       <p>{proposal.summary}</p>
       {settled ? (
-        <p className="vc-copilot-prop-note">
-          {proposal.resultNote ?? "No further detail."}
-          {proposal.decidedBy ? ` (${proposal.decidedBy})` : ""}
-        </p>
+        <>
+          <p className="vc-copilot-prop-note">
+            {proposal.resultNote ?? "No further detail."}
+            {proposal.decidedBy ? ` (${proposal.decidedBy})` : ""}
+          </p>
+          {proposal.status === "approved" && href && (
+            <Link href={href as never} className="vc-copilot-prop-open">
+              <span>{proposal.deliverableTitle ?? "Open the result"}</span>
+              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden>
+                <path
+                  d="M3 8h9.2M8.8 4.4 12.4 8l-3.6 3.6"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          )}
+        </>
       ) : (
         <div className="vc-copilot-prop-actions">
           <button
@@ -472,7 +500,7 @@ function ProposalCard({
             onClick={() => onDecide(proposal.id, "approve")}
           >
             <IcoCheck size={12} />
-            {busy ? "Working" : "Approve"}
+            {busy ? busyLabel : "Approve"}
           </button>
           <button
             type="button"

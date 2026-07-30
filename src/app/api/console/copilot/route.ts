@@ -194,6 +194,8 @@ Allowed kinds and payloads:
 - create_task: {"agentKey":"<agent key or null>","title":"...","detail":"...","severity":"high|normal|low","dueAt":"YYYY-MM-DD or null"}
 - update_obligation: {"obligationId":"<id from the list>","status":"on_track|at_risk|late|complete","progressPct":0-100}
 - log_reading: {"metricKey":"<key from the list>","periodLabel":"...","periodStart":"YYYY-MM-DD","value":<number>}
+- draft_report: {"agentKey":"<agent key or null>","periodLabel":"the reporting period, for example 2026","detail":"what the draft must cover"}
+Use draft_report when the person asks for a report, a VSME report or a report draft. On approval the agent writes the full draft and the person receives the document, so your summary must say that a draft will be written for review. Do not use create_task for a report request.
 Use ids and keys exactly as they appear in the records. Write the "summary" as one sentence that tells the approver what will change. Do not mention the block itself in your prose; say what you propose in normal words.
 
 WORKSPACE RECORDS
@@ -222,7 +224,8 @@ function parseAction(raw: string): ParsedProposal | null {
   try {
     const parsed = JSON.parse(body) as ParsedProposal;
     if (!parsed || typeof parsed.kind !== "string") return null;
-    if (!["create_task", "update_obligation", "log_reading"].includes(parsed.kind)) return null;
+    if (!["create_task", "update_obligation", "log_reading", "draft_report"].includes(parsed.kind))
+      return null;
     if (typeof parsed.title !== "string" || typeof parsed.summary !== "string") return null;
     if (!parsed.payload || typeof parsed.payload !== "object") return null;
     return parsed;

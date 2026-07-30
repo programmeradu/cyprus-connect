@@ -39,6 +39,7 @@ export const NAV_ITEMS = [
  * one menu instead of disappearing from the product.
  */
 export const MORE_ITEMS = [
+  { href: "/app/reports", label: "Deliverables", detail: "Drafted reports and exports" },
   { href: "/app/studio", label: "Studio", detail: "Draft disclosures and briefs" },
   { href: "/app/learn", label: "Learn", detail: "Courses and guidance" },
   { href: "/app/marketplace", label: "Marketplace", detail: "Consultants, providers and offsets" },
