@@ -1,5 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
-import { uploadBase64Image, uploadVideo } from "./supabase";
+import { uploadBase64Image } from "./supabase";
 import { aiImage, hasLovableAi } from "./lovable-ai";
 
 export interface GenerationResult {
