@@ -10,7 +10,11 @@ import { FloatingAIAssistant } from "@/components/ai/FloatingAIAssistant";
  */
 export function GlobalChrome() {
   const pathname = usePathname() || "";
-  const isFocusedScreen = /^\/(en|el)\/auth(\/|$)/.test(pathname) || pathname === "/auth";
+  const isFocusedScreen =
+    /^\/(en|el)\/auth(\/|$)/.test(pathname) ||
+    pathname === "/auth" ||
+    /^\/(en|el)\/lab(\/|$)/.test(pathname) ||
+    pathname.startsWith("/lab");
   // The authenticated workspace has its own chrome; the marketing footer
   // must never appear inside /app.
   const isWorkspace = /^\/(en|el)\/app(\/|$)/.test(pathname) || pathname === "/app" || pathname.startsWith("/app/");
