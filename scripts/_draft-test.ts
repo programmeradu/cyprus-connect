@@ -1,6 +1,6 @@
-import { db } from './src/db';
-import { workspaces } from './src/db/schema';
-import { draftVsmeReport } from './src/lib/reports/vsme';
+import { db } from '../src/db';
+import { workspaces } from '../src/db/schema';
+import { draftVsmeReport } from '../src/lib/reports/vsme';
 async function main() {
   const [ws] = await db.select().from(workspaces).limit(1);
   console.log('workspace', ws?.id, ws?.name);
