@@ -643,3 +643,38 @@ export const activityEvents = pgTable('activity_events', {
   detail: text('detail'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+/* ------------------------------------------------------------------ */
+/* Copilot: one conversation per workspace, plus the actions it wants   */
+/* a human to approve. Nothing here executes without an approval row.   */
+/* ------------------------------------------------------------------ */
+
+/** One turn of the workspace conversation. There is one thread per workspace. */
+export const copilotMessages = pgTable('copilot_messages', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  role: text('role').notNull(),
+  content: text('content').notNull(),
+  /** Which records the answer read, so the reply can be audited. */
+  citations: text('citations'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/** An act the copilot proposes. It stays pending until a person decides. */
+export const copilotProposals = pgTable('copilot_proposals', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  messageId: integer('message_id'),
+  /** create_task | update_obligation | log_reading */
+  kind: text('kind').notNull(),
+  title: text('title').notNull(),
+  summary: text('summary').notNull(),
+  /** JSON arguments for the act. Validated again before it runs. */
+  payload: text('payload').notNull(),
+  /** pending | approved | rejected | failed */
+  status: text('status').notNull().default('pending'),
+  resultNote: text('result_note'),
+  decidedBy: text('decided_by'),
+  decidedAt: timestamp('decided_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
