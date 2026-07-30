@@ -326,7 +326,12 @@ export default function DashboardPage() {
 
   return (
     <PageShell
-      loading={isPending || isUserLoading || isLoading}
+      loading={
+        APP_OPEN_ACCESS && !session?.user
+          ? false
+          : isPending || isUserLoading || isLoading
+      }
+
       error={loadError}
       onRetry={() => session?.user?.id && loadDashboardData(session.user.id)}
       header={
