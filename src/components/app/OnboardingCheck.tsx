@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useUser } from "@/lib/user-context";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { isQaClient } from "@/lib/qa-bypass";
@@ -20,7 +21,7 @@ export function OnboardingCheck() {
     if (isQaClient()) return;
 
     // Skip check if already on onboarding page
-    if (pathname === "/app/onboarding") return;
+    if (pathname === "/app/onboarding" || pathname.endsWith("/app/onboarding")) return;
     
     // Skip check if we've already checked once
     if (hasChecked.current) return;
