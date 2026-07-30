@@ -310,8 +310,8 @@
   place-items: center;
   flex: none;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.26);
+  background: transparent;
+  box-shadow: none;
   font-weight: 900;
 }
 
