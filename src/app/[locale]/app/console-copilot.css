@@ -1,0 +1,513 @@
+/* =====================================================================
+   Console copilot.
+
+   A floating instrument in the bottom-right corner of the workspace, on the
+   same sage-glass language as the dock and the plates. Light and dark are
+   authored separately, never inverted. On a phone it becomes a full sheet
+   that clears the dock.
+   ===================================================================== */
+
+.vc-copilot-fab {
+  position: fixed;
+  right: clamp(14px, 2.4vw, 28px);
+  bottom: clamp(14px, 2.4vw, 28px);
+  z-index: 65;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 1px solid var(--vc-rule);
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--vc-rail) 92%, white 8%),
+    color-mix(in oklab, var(--vc-rail) 78%, var(--vc-window) 22%)
+  );
+  color: var(--vc-ink);
+  cursor: pointer;
+  box-shadow: 0 16px 34px -16px rgba(20, 34, 26, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.dark .vc-copilot-fab {
+  box-shadow: 0 18px 38px -18px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.vc-copilot-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 42px -18px rgba(20, 34, 26, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.vc-copilot-fab:focus-visible {
+  outline: 2px solid var(--vc-lime);
+  outline-offset: 3px;
+}
+
+.vc-copilot-fab-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 2px 6px -2px rgba(20, 34, 26, 0.5);
+}
+
+.vc-copilot-fab-tip {
+  position: absolute;
+  right: calc(100% + 10px);
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--vc-rule);
+  background: var(--vc-rail);
+  color: var(--vc-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+
+.vc-copilot-fab:hover .vc-copilot-fab-tip {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------- */
+
+.vc-copilot {
+  position: fixed;
+  right: clamp(14px, 2.4vw, 28px);
+  bottom: clamp(14px, 2.4vw, 28px);
+  z-index: 66;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, calc(100vw - 28px));
+  max-height: min(680px, calc(100svh - 96px));
+  border-radius: 26px;
+  overflow: hidden;
+  border: 1px solid var(--vc-rule);
+  background: color-mix(in oklab, var(--vc-rail) 88%, transparent);
+  backdrop-filter: blur(22px) saturate(1.2);
+  box-shadow: 0 34px 70px -28px rgba(20, 34, 26, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .vc-copilot {
+  box-shadow: 0 34px 76px -28px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.vc-copilot-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 14px 13px;
+  border-bottom: 1px solid var(--vc-rail-rule);
+  background: linear-gradient(
+    140deg,
+    color-mix(in oklab, var(--vc-lime) 8%, transparent),
+    transparent 62%
+  );
+}
+
+.vc-copilot-badge {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid var(--vc-rail-rule);
+  background: var(--vc-icon-bg);
+  color: var(--vc-ink);
+}
+
+.vc-copilot-title {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 2px;
+}
+
+.vc-copilot-title strong {
+  font-size: 14.5px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--vc-ink);
+}
+
+.vc-copilot-title span {
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--vc-ink-3);
+}
+
+.vc-copilot-head-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vc-copilot-text-btn {
+  border: 0;
+  background: transparent;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vc-ink-3);
+  cursor: pointer;
+}
+
+.vc-copilot-text-btn:hover {
+  color: var(--vc-ink);
+  background: var(--vc-rail-active);
+}
+
+.vc-copilot-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--vc-rail-rule);
+  background: transparent;
+  color: var(--vc-ink-2);
+  cursor: pointer;
+}
+
+.vc-copilot-close:hover {
+  background: var(--vc-rail-active);
+  color: var(--vc-ink);
+}
+
+/* --------------------------------------------------------------------- */
+
+.vc-copilot-body {
+  flex: 1;
+  min-height: 220px;
+  overflow-y: auto;
+  padding: 16px 15px;
+  display: grid;
+  align-content: start;
+  gap: 15px;
+}
+
+.vc-copilot-muted {
+  font-size: 13px;
+  color: var(--vc-ink-3);
+}
+
+.vc-copilot-empty p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--vc-ink-2);
+}
+
+.vc-copilot-empty ul {
+  margin: 13px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1px;
+}
+
+.vc-copilot-empty li button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border: 0;
+  border-top: 1px solid var(--vc-rail-rule);
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--vc-ink-2);
+  cursor: pointer;
+}
+
+.vc-copilot-empty li:last-child button {
+  border-bottom: 1px solid var(--vc-rail-rule);
+}
+
+.vc-copilot-empty li button:hover {
+  color: var(--vc-ink);
+}
+
+.vc-copilot-empty li button em {
+  font-style: normal;
+  color: var(--vc-ink-3);
+  transition: transform 140ms ease;
+}
+
+.vc-copilot-empty li button:hover em {
+  transform: translateX(2px);
+}
+
+.vc-copilot-turn {
+  display: grid;
+  gap: 10px;
+}
+
+.vc-copilot-said {
+  justify-self: end;
+  max-width: 88%;
+  padding: 9px 12px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.vc-copilot-answer {
+  font-size: 13.8px;
+  line-height: 1.62;
+  color: var(--vc-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vc-copilot-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--vc-ink-3);
+  font-size: 13px;
+  animation: vc-copilot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes vc-copilot-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-copilot-thinking {
+    animation: none;
+  }
+}
+
+.vc-copilot-notice {
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--vc-bad) 40%, transparent);
+  background: color-mix(in oklab, var(--vc-bad) 12%, transparent);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--vc-ink);
+}
+
+/* ---- The approval card ------------------------------------------------ */
+
+.vc-copilot-prop {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--vc-rail-rule);
+  background: var(--vc-well);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.dark .vc-copilot-prop {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.vc-copilot-prop[data-status="pending"] {
+  border-color: color-mix(in oklab, var(--vc-lime) 55%, var(--vc-rail-rule));
+}
+
+.vc-copilot-prop header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vc-copilot-prop-kind {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vc-ink-3);
+}
+
+.vc-copilot-prop-state {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--vc-ink-3);
+}
+
+.vc-copilot-prop[data-status="approved"] .vc-copilot-prop-state {
+  color: var(--vc-good);
+}
+
+.vc-copilot-prop[data-status="failed"] .vc-copilot-prop-state {
+  color: var(--vc-bad);
+}
+
+.vc-copilot-prop strong {
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--vc-ink);
+  overflow-wrap: anywhere;
+}
+
+.vc-copilot-prop p {
+  font-size: 12.8px;
+  line-height: 1.5;
+  color: var(--vc-ink-2);
+  overflow-wrap: anywhere;
+}
+
+.vc-copilot-prop-note {
+  color: var(--vc-ink-3);
+  font-size: 12.2px;
+}
+
+.vc-copilot-prop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.vc-copilot-approve,
+.vc-copilot-reject {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid var(--vc-rail-rule);
+}
+
+.vc-copilot-approve {
+  background: var(--vc-lime);
+  border-color: transparent;
+  color: var(--vc-lime-ink);
+}
+
+.vc-copilot-reject {
+  background: transparent;
+  color: var(--vc-ink-2);
+}
+
+.vc-copilot-reject:hover {
+  background: var(--vc-rail-active);
+  color: var(--vc-ink);
+}
+
+.vc-copilot-approve:disabled,
+.vc-copilot-reject:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* ---- Composer --------------------------------------------------------- */
+
+.vc-copilot-foot {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 11px;
+  border-top: 1px solid var(--vc-rail-rule);
+  background: color-mix(in oklab, var(--vc-rail) 60%, transparent);
+}
+
+.vc-copilot-foot textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  max-height: 132px;
+  padding: 10px 12px;
+  resize: none;
+  border-radius: 16px;
+  border: 1px solid var(--vc-rail-rule);
+  background: var(--vc-pill-bg);
+  color: var(--vc-ink);
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.45;
+  outline: none;
+}
+
+.vc-copilot-foot textarea::placeholder {
+  color: var(--vc-ink-3);
+}
+
+.vc-copilot-foot textarea:focus {
+  border-color: color-mix(in oklab, var(--vc-lime) 60%, var(--vc-rail-rule));
+}
+
+.vc-copilot-foot button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  cursor: pointer;
+  transition: opacity 140ms ease;
+}
+
+.vc-copilot-foot button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---- Phone ------------------------------------------------------------ */
+
+@media (max-width: 760px) {
+  /* The dock owns the bottom-right corner, so the trigger sits above it. */
+  .vc-copilot-fab {
+    right: 14px;
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    width: 48px;
+    height: 48px;
+  }
+
+  .vc-copilot-fab-tip {
+    display: none;
+  }
+
+  .vc-copilot {
+    inset: auto 0 0 0;
+    width: 100%;
+    max-height: 88svh;
+    border-radius: 26px 26px 0 0;
+    border-bottom: 0;
+  }
+
+  .vc-copilot-foot {
+    padding-bottom: calc(11px + env(safe-area-inset-bottom, 0px));
+  }
+}

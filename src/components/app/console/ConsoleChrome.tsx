@@ -7,6 +7,7 @@
 
 import { ConsoleTopbar } from "./ConsoleTopbar";
 import { ConsoleDock } from "./ConsoleDock";
+import { ConsoleCopilot } from "./ConsoleCopilot";
 import { useConsole } from "./ConsoleData";
 
 export function ConsoleChrome() {
@@ -15,6 +16,7 @@ export function ConsoleChrome() {
     <>
       <ConsoleTopbar data={data} />
       <ConsoleDock />
+      <ConsoleCopilot />
     </>
   );
 }

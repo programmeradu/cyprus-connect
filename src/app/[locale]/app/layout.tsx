@@ -4,6 +4,7 @@ import "./app.css";
 import "./console.css";
 import "./console-deck.css";
 import "./console-kit.css";
+import "./console-copilot.css";
 
 import { ConsoleChrome } from "@/components/app/console/ConsoleChrome";
 import { ConsoleDataProvider } from "@/components/app/console/ConsoleData";
