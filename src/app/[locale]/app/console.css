@@ -21,6 +21,9 @@
   --vc-ink-3: rgba(35, 46, 46, 0.46);
   --vc-rule: rgba(40, 58, 58, 0.14);
   --vc-rule-soft: rgba(255, 255, 255, 0.18);
+  --vc-rail: #f2f4ef;
+  --vc-rail-rule: rgba(29, 39, 38, 0.1);
+  --vc-rail-active: rgba(29, 39, 38, 0.07);
   --vc-pill-bg: rgba(253, 254, 251, 0.94);
   --vc-icon-bg: rgba(255, 255, 255, 0.2);
   --vc-well: rgba(255, 255, 255, 0.24);
@@ -55,6 +58,9 @@
   --vc-ink-3: rgba(242, 243, 241, 0.44);
   --vc-rule: rgba(255, 255, 255, 0.1);
   --vc-rule-soft: rgba(255, 255, 255, 0.11);
+  --vc-rail: #1c1c1c;
+  --vc-rail-rule: rgba(255, 255, 255, 0.08);
+  --vc-rail-active: rgba(255, 255, 255, 0.07);
   --vc-pill-bg: rgba(255, 255, 255, 0.13);
   --vc-icon-bg: rgba(255, 255, 255, 0.07);
   --vc-well: rgba(255, 255, 255, 0.055);
@@ -74,6 +80,34 @@
   min-height: 100vh;
   min-height: 100svh;
   background: var(--vc-page);
+}
+
+.vc-rail {
+  background: var(--vc-rail);
+  border-right: 1px solid var(--vc-rail-rule);
+}
+
+.vc-railitem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vc-ink-2);
+  transition: background 0.14s ease, color 0.14s ease;
+}
+
+.vc-railitem:hover {
+  background: var(--vc-rail-active);
+  color: var(--vc-ink);
+}
+
+.vc-railitem[data-active="true"] {
+  background: var(--vc-pill-bg);
+  color: var(--vc-ink);
+  box-shadow: var(--vc-shadow-pill);
 }
 
 .vc-fit {

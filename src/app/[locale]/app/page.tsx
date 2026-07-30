@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { AgentGlyph, IcoAlert, IcoBell, IcoCheck, IcoClock, IcoDoc, IcoGear, IcoGrid, IcoLeaf, IcoPlug, IcoPulse, IcoSearch, IcoSpark } from "@/components/app/console/icons";
+import { AgentGlyph, IcoAlert, IcoBell, IcoCheck, IcoClock, IcoDoc, IcoGrid, IcoLeaf, IcoPlug, IcoPulse, IcoSearch, IcoSpark } from "@/components/app/console/icons";
 import { ArcGauge, BarRow, Rule } from "@/components/app/console/charts";
 import {
   AUTONOMY_LABEL,
