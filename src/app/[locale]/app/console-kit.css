@@ -984,3 +984,49 @@
   .vci-grid { grid-template-columns: minmax(0, 1fr); }
   .vci-tile-meta > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
+
+/* Form controls and lists used by kit pages. */
+.vc .vck-input {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--vc-rule);
+  background: var(--vc-well);
+  color: var(--vc-ink);
+  font-size: 14px;
+}
+
+.vc .vck-input:focus-visible {
+  outline: 2px solid var(--vc-lime);
+  outline-offset: 2px;
+}
+
+.vc .vck-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--vc-ink-2);
+}
+
+.vc .vck-list li {
+  padding-left: 14px;
+  position: relative;
+  overflow-wrap: anywhere;
+}
+
+.vc .vck-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 5px;
+  height: 1px;
+  background: var(--vc-ink-3);
+}
+
+.vc .vck-num { font-variant-numeric: tabular-nums; }

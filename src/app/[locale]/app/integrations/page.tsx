@@ -90,7 +90,7 @@ const ZONES: { group: string; options: { value: string; label: string }[] }[] = 
 function IntegrationsContent() {
   const t = useTranslations("dashboard.integrations");
   const locale = (useLocale() === "el" ? "el" : "en") as "en" | "el";
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
