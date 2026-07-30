@@ -232,7 +232,7 @@ export default function ConsolePage() {
     });
   }
 
-  const failedRuns = runs.filter((run) => run.status === "failed" || run.status === "error");
+  const failedRuns = runs.filter((run) => run.status === "needs_review");
   if (failedRuns.length) {
     insights.push({
       id: "runs",
