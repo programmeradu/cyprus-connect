@@ -272,16 +272,33 @@ export function ConsoleCopilot() {
       )}
 
       {open && (
+        <div
+          className="vc-copilot-scrim"
+          onClick={() => setOpen(false)}
+          aria-hidden
+        />
+      )}
+
+      {open && (
         <section className="vc-copilot" role="dialog" aria-label="Workspace copilot">
+          <span className="vc-copilot-grip" aria-hidden />
           <header className="vc-copilot-head">
             <span className="vc-copilot-badge">
               <CopilotMark small />
             </span>
             <div className="vc-copilot-title">
               <strong>Copilot</strong>
-              <span>Reads {workspaceName}. Acts only with your approval.</span>
+              <span>
+                <i className="vc-copilot-live" aria-hidden />
+                Reading {workspaceName}
+              </span>
             </div>
             <div className="vc-copilot-head-tools">
+              {pending.length > 0 && (
+                <span className="vc-copilot-head-pending">
+                  {pending.length} awaiting you
+                </span>
+              )}
               {turns.length > 0 && (
                 <button type="button" onClick={clear} className="vc-copilot-text-btn">
                   Clear
@@ -298,6 +315,7 @@ export function ConsoleCopilot() {
             </div>
           </header>
 
+
           <div className="vc-copilot-body" ref={scrollRef}>
             {!loaded && <p className="vc-copilot-muted">Reading this workspace...</p>}
 
@@ -307,18 +325,25 @@ export function ConsoleCopilot() {
                   Ask about the records in this workspace. I quote the metric, obligation or run
                   the answer comes from, and I never change anything without your approval.
                 </p>
+                <p className="vc-copilot-empty-label">Start with</p>
                 <ul>
-                  {STARTERS.map((starter) => (
+                  {STARTERS.map((starter, index) => (
                     <li key={starter}>
                       <button type="button" onClick={() => send(starter)}>
+                        <em className="vc-copilot-starter-no" aria-hidden>
+                          {String(index + 1).padStart(2, "0")}
+                        </em>
                         <span>{starter}</span>
-                        <em aria-hidden>&rarr;</em>
+                        <em className="vc-copilot-starter-go" aria-hidden>
+                          &rarr;
+                        </em>
                       </button>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
+
 
             {turns.map((turn, index) => (
               <article key={turn.id} data-role={turn.role} className="vc-copilot-turn">
@@ -369,37 +394,44 @@ export function ConsoleCopilot() {
           </div>
 
           <footer className="vc-copilot-foot">
-            <textarea
-              ref={inputRef}
-              value={draft}
-              rows={1}
-              disabled={streaming}
-              placeholder="Ask about this workspace"
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
-                  event.preventDefault();
-                  void send();
-                }
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => void send()}
-              disabled={streaming || draft.trim().length === 0}
-              aria-label="Send the question"
-            >
-              <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden>
-                <path
-                  d="M2.6 8h9.4M8.4 4.2 12.4 8l-4 3.8"
-                  stroke="currentColor"
-                  strokeWidth="1.7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+            <div className="vc-copilot-field">
+              <textarea
+                ref={inputRef}
+                value={draft}
+                rows={1}
+                disabled={streaming}
+                placeholder="Ask about this workspace"
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    void send();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => void send()}
+                disabled={streaming || draft.trim().length === 0}
+                aria-label="Send the question"
+              >
+                <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden>
+                  <path
+                    d="M2.6 8h9.4M8.4 4.2 12.4 8l-4 3.8"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p className="vc-copilot-hint">
+              <span>Enter sends. Shift and Enter make a new line.</span>
+              <span>Every act waits for your approval.</span>
+            </p>
           </footer>
+
         </section>
       )}
     </>
