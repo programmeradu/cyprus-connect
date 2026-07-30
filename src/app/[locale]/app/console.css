@@ -17,14 +17,15 @@
   --vc-deck: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.05));
   --vc-deck-col: rgba(255, 255, 255, 0.035);
   --vc-ink: #1c2827;
-  --vc-ink-2: rgba(35, 46, 46, 0.62);
-  --vc-ink-3: rgba(35, 46, 46, 0.46);
-  --vc-rule: rgba(40, 58, 58, 0.14);
-  --vc-rule-soft: rgba(255, 255, 255, 0.18);
-  --vc-rail: #f2f4ef;
-  --vc-rail-rule: rgba(29, 39, 38, 0.1);
-  --vc-rail-active: rgba(29, 39, 38, 0.07);
-  --vc-pill-bg: rgba(253, 254, 251, 0.94);
+  --vc-ink-2: rgba(28, 40, 39, 0.84);
+  --vc-ink-3: rgba(28, 40, 39, 0.7);
+  --vc-rule: rgba(40, 58, 58, 0.18);
+  --vc-rule-soft: rgba(255, 255, 255, 0.2);
+  /* Navigation surfaces are sage, never white paper. */
+  --vc-rail: #dfe8e2;
+  --vc-rail-rule: rgba(29, 39, 38, 0.14);
+  --vc-rail-active: rgba(29, 39, 38, 0.09);
+  --vc-pill-bg: rgba(233, 241, 233, 0.92);
   --vc-icon-bg: rgba(255, 255, 255, 0.2);
   --vc-well: rgba(255, 255, 255, 0.24);
   --vc-lime: #e8f94a;
