@@ -19,10 +19,13 @@ import {
   DataTable,
   EmptyState
 } from "@/components/app/shell";
-import { BentoOverview, type BentoDeadline } from "@/components/app/dashboard/BentoOverview";
+import {
+  ConsoleOverview,
+  type OverviewDeadline
+} from "@/components/app/dashboard/ConsoleOverview";
 
 /** EU obligations that apply to a Cyprus SME. Past dates are filtered out. */
-const EU_DEADLINES: BentoDeadline[] = [
+const EU_DEADLINES: OverviewDeadline[] = [
   { label: "CBAM definitive declaration (FY2026)", date: "2027-05-31", detail: "Importers of steel, cement, aluminium and fertiliser." },
   { label: "CSRD wave 3 first report", date: "2027-01-01", detail: "Listed SMEs report on financial year 2026." },
   { label: "VSME voluntary disclosure", date: "2026-12-31", detail: "Requested by banks and large customers." }
@@ -300,18 +303,18 @@ export default function DashboardPage() {
   const efficiencyTrend = getMetricTrend('resource_efficiency');
   const renewableTrend = getMetricTrend('renewable_share');
 
-  // Transform historical data for the trend table (oldest to newest)
-  const chartData = historicalData.slice(0, 6).reverse().map(record => ({
-    period: record.monthLabel,
-    renewable: record.renewablePercentage
-  }));
-
-  // Hero series: monthly footprint, oldest to newest.
-  const series = historicalData
+  // Console series: monthly readings, oldest to newest.
+  const overviewHistory = historicalData
     .slice(0, 12)
     .reverse()
-    .map((record) => record.totalCo2e)
-    .filter((value) => typeof value === "number" && Number.isFinite(value));
+    .map((record) => ({
+      label: record.monthLabel,
+      carbon: Number(record.totalCo2e) || 0,
+      electricity: Number(record.electricityKwh) || 0,
+      renewable: Number(record.renewablePercentage) || 0,
+      efficiency: Number(record.efficiencyScore) || 0
+    }));
+
 
 
 
@@ -353,99 +356,62 @@ export default function DashboardPage() {
         />
       }
     >
-      <BentoOverview
-        summary={
+      <ConsoleOverview
+        greeting={
           contextUser?.name
-            ? `${contextUser.name.split(" ")[0]}, here is where your footprint stands today.`
-            : "Here is where your footprint stands today."
+            ? `Hello, ${contextUser.name.split(" ")[0]}.`
+            : "Hello."
         }
-        heroLabel={t("totalCarbonFootprint")}
-        heroValue={carbonFootprint > 0 ? carbonFootprint.toFixed(1) : "0"}
-        heroUnit="tCO₂e"
-        heroDelta={carbonTrend !== 0 ? `${carbonTrend > 0 ? "+" : "-"}${Math.abs(carbonTrend).toFixed(1)}%` : undefined}
-        heroDeltaTone={carbonTrend < 0 ? "positive" : "negative"}
-        heroNote={
-          series.length > 1
-            ? t("sinceLastPeriod", { value: Math.abs(carbonTrend).toFixed(1) })
-            : "Log one electricity bill in the calculator to start the series."
+        subline={
+          overviewHistory.length > 1
+            ? "This is where your footprint stands today, month by month."
+            : "Log one electricity bill in the calculator and this console fills in."
         }
-        series={series}
-        seriesLabel="Monthly carbon footprint, oldest to newest"
-        stats={[
-          {
-            label: t("resourceEfficiency"),
-            value: resourceEfficiency > 0 ? resourceEfficiency.toFixed(0) : "0",
-            unit: "%",
-            note: t("change", { value: Math.abs(efficiencyTrend).toFixed(1) })
-          },
-          {
-            label: t("renewableShare"),
-            value: renewableShare.toFixed(0),
-            unit: "%",
-            note: renewableTrend > 0 ? `+${renewableTrend.toFixed(1)}%` : t("renewableGoal")
-          },
-          {
-            label: t("wasteDiversion"),
-            value: wasteDiversion.toFixed(0),
-            unit: "%",
-            note: comparisonData?.user_metrics.waste_diversion
-              ? t("industryAvgPercentile", {
-                  percentile: comparisonData.user_metrics.waste_diversion.percentile.toFixed(0)
-                })
-              : t("trackIndustry")
-          }
-        ]}
-        gridIntensity={{
+        history={overviewHistory}
+        current={{
+          carbon: carbonFootprint,
+          carbonTrend,
+          electricity: overviewHistory.at(-1)?.electricity ?? 0,
+          renewable: renewableShare,
+          renewableTrend,
+          efficiency: resourceEfficiency,
+          efficiencyTrend,
+          waste: wasteDiversion
+        }}
+        grid={{
           value: 610,
           unit: "gCO₂/kWh",
           renewables: 24,
           source: "Cyprus grid mix, EAC transmission data."
         }}
+        peers={peerRows}
+        peerNote={
+          leaderboardData
+            ? t("rankLine", {
+                rank: leaderboardData.rank ?? "-",
+                total: leaderboardData.total_users ?? "-"
+              })
+            : undefined
+        }
         deadlines={EU_DEADLINES}
         labels={{
+          carbon: t("totalCarbonFootprint"),
+          electricity: "Electricity used",
+          renewables: t("renewableShare"),
+          efficiency: t("resourceEfficiency"),
+          waste: t("wasteDiversion"),
           grid: "Cyprus grid intensity",
-          renewables: "Renewables share",
-          deadlines: "Regulatory horizon",
+          peers: t("peerComparison"),
+          horizon: "Regulatory horizon",
+          monthly: "Footprint by month",
           noDeadlines: "No obligation falls inside the next 18 months.",
-          daysLeft: (days) => (days === 0 ? "Due today" : `${days} days`)
+          noSeries: "Log a second month of data to draw the series.",
+          noPeers:
+            "Run the calculator for a couple of months to compare against similar Cyprus SMEs.",
+          daysLeft: (days: number) => (days === 0 ? "Due today" : `${days} days`)
         }}
       />
 
-
-      <Section title={t("renewableProgress")}>
-        <DataTable
-          columns={[
-            { key: "period", header: "Period", render: (r) => r.period },
-            { key: "renewable", header: t("renewableAdoption"), numeric: true, render: (r) => `${r.renewable.toFixed(0)}%` }
-          ]}
-          rows={chartData}
-          rowKey={(r) => r.period}
-          empty={
-            <EmptyState
-              title="No renewable energy history yet"
-              description={t("noHistorical")}
-            />
-          }
-        />
-      </Section>
-
-      <Section title={t("peerComparison")} description={t("rankLine", { rank: leaderboardData?.rank ?? "-", total: leaderboardData?.total_users ?? "-" })}>
-        {comparisonData ? (
-          <DataTable
-            columns={[
-              { key: "label", header: "Metric", render: (r) => r.label },
-              { key: "percentile", header: t("percentile", { value: "" }).replace("th Percentile", "").trim() || "Percentile", numeric: true, render: (r) => r.percentile != null ? `${r.percentile.toFixed(0)}` : "-" }
-            ]}
-            rows={peerRows}
-            rowKey={(r) => r.label}
-          />
-        ) : (
-          <EmptyState
-            title="Not enough data to compare yet"
-            description="Run the calculator for a couple of months to unlock a peer comparison against similar Cyprus SMEs."
-          />
-        )}
-      </Section>
 
       <Section title={t("advancedAnalytics")} description={t("advancedAnalyticsSub")}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
