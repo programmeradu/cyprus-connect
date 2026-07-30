@@ -18,7 +18,6 @@ import {
   Section,
   DataTable,
   Metric,
-  MetricRow,
   EmptyState
 } from "@/components/app/shell";
 import { BentoOverview, type BentoDeadline } from "@/components/app/dashboard/BentoOverview";
