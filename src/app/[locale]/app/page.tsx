@@ -422,7 +422,9 @@ export default function DashboardPage() {
                 rank: leaderboardData.rank ?? "-",
                 total: leaderboardData.total_users ?? "-"
               })
-            : undefined
+            : useSample
+              ? "Percentile against Cyprus service SMEs of a comparable size."
+              : undefined
         }
         deadlines={EU_DEADLINES}
         labels={{
