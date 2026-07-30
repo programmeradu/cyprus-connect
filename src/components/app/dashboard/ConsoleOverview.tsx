@@ -46,6 +46,9 @@ interface ConsoleOverviewProps {
   peers: PeerRow[];
   peerNote?: string;
   deadlines: OverviewDeadline[];
+  /** Marks the figures as a representative example, not the account's own data. */
+  sample?: boolean;
+  sampleNote?: ReactNode;
   labels: {
     carbon: string;
     electricity: string;
@@ -93,6 +96,8 @@ export const ConsoleOverview = ({
   peers,
   peerNote,
   deadlines,
+  sample = false,
+  sampleNote,
   labels
 }: ConsoleOverviewProps) => {
   const [tab, setTab] = useState<SeriesKey>("carbon");
@@ -176,6 +181,15 @@ export const ConsoleOverview = ({
               {greeting}
             </h2>
             <p className="app-meta mt-1.5 max-w-[58ch] break-words">{subline}</p>
+            {sample && (
+              <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="inline-flex items-center gap-1.5 border border-[var(--app-rule-strong)] px-2 py-0.5 text-[0.6875rem] font-medium tracking-[0.08em] uppercase text-muted-foreground">
+                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary" />
+                  Sample data
+                </span>
+                {sampleNote && <span className="app-meta break-words">{sampleNote}</span>}
+              </p>
+            )}
           </div>
 
           <dl className="shrink-0 rounded-md border border-[var(--app-rule)] px-3.5 py-2.5 sm:min-w-[13.5rem]">

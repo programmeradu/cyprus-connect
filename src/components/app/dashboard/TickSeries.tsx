@@ -204,6 +204,21 @@ export const TickSeries = ({
           />
         ))}
       </div>
+
+      {/* Axis captions: first, middle and last reading only, so the row never
+          crowds or truncates on a narrow screen. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -bottom-5 flex items-baseline justify-between"
+      >
+        {[0, Math.floor((points.length - 1) / 2), points.length - 1]
+          .filter((v, i, arr) => arr.indexOf(v) === i)
+          .map((i) => (
+            <span key={i} className="app-meta text-[0.6875rem] whitespace-nowrap">
+              {points[i].label}
+            </span>
+          ))}
+      </div>
     </div>
   );
 };

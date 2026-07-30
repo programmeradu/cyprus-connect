@@ -23,6 +23,11 @@ import {
   ConsoleOverview,
   type OverviewDeadline
 } from "@/components/app/dashboard/ConsoleOverview";
+import {
+  SAMPLE_HISTORY,
+  SAMPLE_CURRENT,
+  samplePeers
+} from "@/components/app/dashboard/sampleConsoleData";
 
 /** EU obligations that apply to a Cyprus SME. Past dates are filtered out. */
 const EU_DEADLINES: OverviewDeadline[] = [
@@ -304,7 +309,7 @@ export default function DashboardPage() {
   const renewableTrend = getMetricTrend('renewable_share');
 
   // Console series: monthly readings, oldest to newest.
-  const overviewHistory = historicalData
+  const realHistory = historicalData
     .slice(0, 12)
     .reverse()
     .map((record) => ({
@@ -315,10 +320,7 @@ export default function DashboardPage() {
       efficiency: Number(record.efficiencyScore) || 0
     }));
 
-
-
-
-  const peerRows = comparisonData
+  const realPeers = comparisonData
     ? [
         { label: t("totalCarbonFootprint"), percentile: comparisonData.user_metrics.carbon_footprint?.percentile },
         { label: t("renewableShare"), percentile: comparisonData.user_metrics.renewable_share?.percentile },
@@ -326,6 +328,38 @@ export default function DashboardPage() {
         { label: t("peerComparison"), percentile: comparisonData.overall_percentile }
       ]
     : [];
+
+  /**
+   * With no readings the console reads as a field of empty boxes. Until the
+   * account logs a bill, show a representative Cyprus SME year, clearly
+   * marked as sample data.
+   */
+  const useSample = realHistory.length < 2 && carbonFootprint === 0;
+
+  const overviewHistory = useSample ? SAMPLE_HISTORY : realHistory;
+
+  const peerRows = useSample
+    ? samplePeers({
+        carbon: t("totalCarbonFootprint"),
+        renewables: t("renewableShare"),
+        waste: t("wasteDiversion"),
+        overall: t("peerComparison")
+      })
+    : realPeers;
+
+  const currentReadings = useSample
+    ? SAMPLE_CURRENT
+    : {
+        carbon: carbonFootprint,
+        carbonTrend,
+        electricity: realHistory.at(-1)?.electricity ?? 0,
+        renewable: renewableShare,
+        renewableTrend,
+        efficiency: resourceEfficiency,
+        efficiencyTrend,
+        waste: wasteDiversion
+      };
+
 
   return (
     <PageShell
@@ -363,21 +397,18 @@ export default function DashboardPage() {
             : "Hello."
         }
         subline={
-          overviewHistory.length > 1
-            ? "This is where your footprint stands today, month by month."
-            : "Log one electricity bill in the calculator and this console fills in."
+          useSample
+            ? "A representative Cyprus SME year, so you can see what the console does."
+            : "This is where your footprint stands today, month by month."
+        }
+        sample={useSample}
+        sampleNote={
+          <Link href="/app/calculator" className="underline underline-offset-2 hover:text-foreground">
+            Log one electricity bill to replace it with your own figures.
+          </Link>
         }
         history={overviewHistory}
-        current={{
-          carbon: carbonFootprint,
-          carbonTrend,
-          electricity: overviewHistory.at(-1)?.electricity ?? 0,
-          renewable: renewableShare,
-          renewableTrend,
-          efficiency: resourceEfficiency,
-          efficiencyTrend,
-          waste: wasteDiversion
-        }}
+        current={currentReadings}
         grid={{
           value: 610,
           unit: "gCO₂/kWh",
@@ -391,7 +422,9 @@ export default function DashboardPage() {
                 rank: leaderboardData.rank ?? "-",
                 total: leaderboardData.total_users ?? "-"
               })
-            : undefined
+            : useSample
+              ? "Percentile against Cyprus service SMEs of a comparable size."
+              : undefined
         }
         deadlines={EU_DEADLINES}
         labels={{
