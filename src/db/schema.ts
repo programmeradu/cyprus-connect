@@ -514,3 +514,130 @@ export const complianceSettings = pgTable('compliance_settings', {
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
 });
+
+/* ------------------------------------------------------------------ */
+/* Console: the agentic workspace model behind /app                     */
+/* Nothing on the dashboard is hardcoded. Every figure below is read    */
+/* from these tables through /api/console/overview.                     */
+/* ------------------------------------------------------------------ */
+
+export const workspaces = pgTable('workspaces', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  legalName: text('legal_name'),
+  sector: text('sector').notNull(),
+  employees: integer('employees').notNull().default(0),
+  sites: integer('sites').notNull().default(1),
+  country: text('country').notNull().default('CY'),
+  baselineYear: integer('baseline_year').notNull().default(2025),
+  framework: text('framework').notNull().default('VSME'),
+  ownerName: text('owner_name'),
+  ownerRole: text('owner_role'),
+  ownerAvatar: text('owner_avatar'),
+  isDemo: boolean('is_demo').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/** What a metric means. Keeps units and direction out of the components. */
+export const metricDefinitions = pgTable('metric_definitions', {
+  key: text('key').primaryKey(),
+  label: text('label').notNull(),
+  shortLabel: text('short_label'),
+  unit: text('unit').notNull(),
+  precision: integer('precision').notNull().default(1),
+  category: text('category').notNull().default('emissions'),
+  goodDirection: text('good_direction').notNull().default('down'),
+  description: text('description'),
+  sortOrder: integer('sort_order').notNull().default(0),
+});
+
+/** One reading of one metric for one period. The series behind every chart. */
+export const metricReadings = pgTable('metric_readings', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  metricKey: text('metric_key').notNull(),
+  periodStart: text('period_start').notNull(),
+  periodLabel: text('period_label').notNull(),
+  value: real('value').notNull(),
+  source: text('source').notNull().default('agent'),
+  confidence: real('confidence').notNull().default(1),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/** The agent registry. Autonomy is a property of the agent, not the code. */
+export const agents = pgTable('agents', {
+  key: text('key').primaryKey(),
+  name: text('name').notNull(),
+  role: text('role').notNull(),
+  mission: text('mission').notNull(),
+  cadence: text('cadence').notNull().default('daily'),
+  autonomy: text('autonomy').notNull().default('suggest'),
+  status: text('status').notNull().default('active'),
+  healthScore: real('health_score').notNull().default(100),
+  glyph: text('glyph').notNull().default('spine'),
+  sortOrder: integer('sort_order').notNull().default(0),
+});
+
+export const agentRuns = pgTable('agent_runs', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  agentKey: text('agent_key').notNull(),
+  startedAt: timestamp('started_at').notNull().defaultNow(),
+  finishedAt: timestamp('finished_at'),
+  status: text('status').notNull().default('succeeded'),
+  summary: text('summary').notNull(),
+  itemsProcessed: integer('items_processed').notNull().default(0),
+  confidence: real('confidence').notNull().default(1),
+  durationMs: integer('duration_ms').notNull().default(0),
+});
+
+/** Human in the loop. Anything an agent may not do alone lands here. */
+export const agentTasks = pgTable('agent_tasks', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  agentKey: text('agent_key').notNull(),
+  kind: text('kind').notNull().default('approval'),
+  title: text('title').notNull(),
+  detail: text('detail'),
+  severity: text('severity').notNull().default('normal'),
+  status: text('status').notNull().default('open'),
+  dueAt: text('due_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export const dataConnections = pgTable('data_connections', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  provider: text('provider').notNull(),
+  category: text('category').notNull(),
+  status: text('status').notNull().default('available'),
+  coveragePct: real('coverage_pct').notNull().default(0),
+  lastSyncAt: timestamp('last_sync_at'),
+  note: text('note'),
+  sortOrder: integer('sort_order').notNull().default(0),
+});
+
+export const obligations = pgTable('obligations', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  framework: text('framework').notNull(),
+  title: text('title').notNull(),
+  detail: text('detail'),
+  dueDate: text('due_date').notNull(),
+  status: text('status').notNull().default('on_track'),
+  progressPct: real('progress_pct').notNull().default(0),
+  ownerName: text('owner_name'),
+  agentKey: text('agent_key'),
+});
+
+/** The audit ledger. Every agent and human act is written here. */
+export const activityEvents = pgTable('activity_events', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  actorType: text('actor_type').notNull().default('agent'),
+  actorName: text('actor_name').notNull(),
+  verb: text('verb').notNull(),
+  object: text('object').notNull(),
+  detail: text('detail'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
