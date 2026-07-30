@@ -3,6 +3,7 @@ import { getSessionCookie } from "better-auth/cookies";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 
 
 const intlMiddleware = createIntlMiddleware(routing);
@@ -33,8 +34,15 @@ export default async function middleware(request: NextRequest) {
   const localeMatch = pathname.match(/^\/(en|el)(\/.*)?$/);
   const pathWithoutLocale = localeMatch ? localeMatch[2] || "/" : pathname;
 
+  // Preview-only QA back door: never active in a production build.
+  const qa = isQaRequest({
+    cookie: request.cookies.get(QA_COOKIE)?.value ?? null,
+    header: request.headers.get(QA_HEADER),
+  });
+
   const isProtected =
     !APP_OPEN_ACCESS &&
+    !qa &&
     protectedSuffixes.some(
       (route) => pathWithoutLocale === route || pathWithoutLocale.startsWith(route + "/")
     );
