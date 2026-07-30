@@ -110,49 +110,56 @@
   box-shadow: var(--vc-shadow-pill);
 }
 
+/* The concept background IS the application background. There is no
+   floating window: the page fills the viewport, scrolls normally and the
+   sections are laid out on that background. */
 .vc-fit {
   min-height: 100vh;
   min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: radial-gradient(120% 80% at 50% 55%, var(--vc-page-glow), transparent 62%),
-    linear-gradient(180deg, var(--vc-page) 0%, color-mix(in oklab, var(--vc-page) 92%, white) 100%);
+  display: block;
+  padding: 0;
+  background: var(--vc-window);
 }
 
 .dark .vc-fit {
-  background: radial-gradient(120% 80% at 52% 52%, var(--vc-page-glow), transparent 62%),
-    linear-gradient(180deg, #171717 0%, #212121 100%);
+  background: var(--vc-window);
 }
 
 .vc-window {
   position: relative;
-  width: min(1180px, calc(100vw - 36px));
-  height: min(760px, calc(100svh - 36px));
-  min-height: 650px;
-  border-radius: 26px;
-  overflow: hidden;
-  background: var(--vc-window);
-  box-shadow: var(--vc-shadow-window);
+  width: 100%;
+  min-height: 100svh;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
   display: grid;
-  grid-template-rows: minmax(342px, 1fr) 44px 210px 116px;
+  grid-template-rows: auto auto auto auto;
+  align-content: start;
 }
 
 .vc-window::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 26px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  pointer-events: none;
+  content: none;
+}
+
+/* Shared page gutter so every band lines up on one editorial grid. */
+.vc-nav,
+.vc-hero-grid,
+.vc-tab-strip,
+.vc-bottom-panel,
+.vc-dock-row {
+  width: 100%;
+  max-width: 1640px;
+  margin-inline: auto;
 }
 
 .vc-top-panel {
   position: relative;
   background: var(--vc-hero-grad);
-  border-radius: 26px 26px 0 0;
-  overflow: hidden;
+  border-radius: 0;
+  padding-bottom: 8px;
 }
+
 
 .vc-nav {
   height: 64px;
