@@ -2,6 +2,7 @@
 
 import "./app.css";
 import "./console.css";
+import "./console-deck.css";
 
 import { ConsoleRail } from "@/components/app/console/ConsoleRail";
 import { OnboardingCheck } from "@/components/app/OnboardingCheck";
