@@ -341,7 +341,9 @@ export default function RineskPage() {
 
             {/* greeting */}
             <A l={462} t={91} style={{ fontSize: 19.5, fontWeight: 700, letterSpacing: -0.35, color: "#1c2827", whiteSpace: "nowrap" }}>
-              Hey, Matthew!{" "}
+              Hey, Matthew!
+            </A>
+            <A l={590} t={94} w={20} h={20}>
               <WaveHand />
             </A>
             <A l={462} t={116} style={{ fontSize: 18.5, fontWeight: 500, letterSpacing: -0.3, color: "rgba(35,46,46,.45)", whiteSpace: "nowrap" }}>
