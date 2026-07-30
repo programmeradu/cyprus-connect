@@ -1,6 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
+import { aiChat, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 
 export async function POST(req: Request) {
   try {
@@ -15,25 +15,19 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = authHeader.split(' ')[1];
-
     // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
     const creditGate = await checkAndDeductAiCredits(req, 1, 'gemini');
     if (!creditGate.ok) {
       return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
-    
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
+
+    if (!hasLovableAi()) {
       return NextResponse.json(
-        { error: "Gemini API key not configured" },
-        { status: 500 }
+        { error: "AI is not configured on this deployment." },
+        { status: 503 }
       );
     }
-    
-    const client = new GoogleGenAI({
-      apiKey: process.env.GOOGLE_GEMINI_API_KEY,
-    });
-    
+
     // Handle report generation format
     if (body.companyName) {
       const { companyName, industry, reportingPeriod, location, employees, netZeroYear } = body;
@@ -62,44 +56,22 @@ Please create a detailed sustainability report with the following sections:
 
 Format the report professionally with clear headings and bullet points where appropriate. Include specific, actionable recommendations and industry benchmarks where relevant.`;
 
-      const response = await client.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: reportPrompt }],
-          },
-        ],
-      });
-      
-      const text = response.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-      
-      
+      const text = await aiChat({ messages: [{ role: "user", content: reportPrompt }] });
+
       return NextResponse.json({ text });
     }
     
     // Handle generic prompt format
     const { prompt, context } = body;
     const fullPrompt = context ? `${context}\n\n${prompt}` : prompt;
-    
-    const response = await client.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: fullPrompt }],
-        },
-      ],
-    });
-    
-    const text = response.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-    
-    
+
+    const text = await aiChat({ messages: [{ role: "user", content: fullPrompt }] });
+
     return NextResponse.json({ text });
   } catch (error: any) {
-    console.error("Gemini API error:", error);
+    console.error("AI analyze error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to generate content" },
+      { error: aiErrorMessage(error) },
       { status: 500 }
     );
   }
