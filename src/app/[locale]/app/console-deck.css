@@ -296,6 +296,9 @@
   .vc-plate-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* The plates are veils on the field, not white cards floating over it.
+   No drop shadow, no inset gloss: they lie flat and read as part of the
+   sage plane, tinted just enough to separate content from background. */
 .vc-plate {
   min-width: 0;
   display: flex;
@@ -303,16 +306,18 @@
   gap: 12px;
   padding: clamp(18px, 1.8vw, 24px);
   border-radius: 26px;
-  background: var(--vc-pill-bg);
-  border: 1px solid var(--vc-rule-soft);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 18px 34px -24px rgba(28, 42, 42, 0.5);
+  background: linear-gradient(180deg, rgba(246, 251, 242, 0.3), rgba(236, 245, 238, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  box-shadow: none;
+  backdrop-filter: blur(16px) saturate(135%);
 }
 
 .dark .vc-plate {
-  background: rgba(255, 255, 255, 0.045);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.032));
   border-color: rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 22px 40px -28px rgba(0, 0, 0, 0.9);
+  box-shadow: none;
 }
+
 
 .vc-plate > header {
   display: flex;
