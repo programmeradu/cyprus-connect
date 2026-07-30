@@ -259,16 +259,34 @@ Return ONLY valid JSON (no markdown, no explanations):
     try {
       let totalEmissions = 0;
       let emissionsBreakdown: any[] = [];
+      let method: "climatiq" | "reference-factors" = "climatiq";
+      let sources: string[] = [];
+
+      const inputs = {
+        electricity: parseFloat(formData.electricity) || 0,
+        gas: parseFloat(formData.gas) || 0,
+        water: parseFloat(formData.water) || 0,
+        waste: parseFloat(formData.waste) || 0,
+        transport: parseFloat(formData.transport) || 0,
+      };
+
+      const useReferenceFactors = () => {
+        const reference = calculateFromReferenceFactors(inputs, categoryLabels());
+        totalEmissions = reference.totalTonnes;
+        emissionsBreakdown = reference.breakdown;
+        method = "reference-factors";
+        sources = usedSources(reference.breakdown);
+      };
 
       if (useRealAPI) {
         try {
           const result = await calculateBatch({
-            electricity_kwh: parseFloat(formData.electricity) || 0,
-            gas_m3: parseFloat(formData.gas) || 0,
-            water_liters: parseFloat(formData.water) || 0,
-            waste_kg: parseFloat(formData.waste) || 0,
-            transport_km: parseFloat(formData.transport) || 0,
-            region: userRegion || "GLOBAL",
+            electricity_kwh: inputs.electricity,
+            gas_m3: inputs.gas,
+            water_liters: inputs.water,
+            waste_kg: inputs.waste,
+            transport_km: inputs.transport,
+            region: userRegion || "CY",
           });
 
           totalEmissions = result.total_co2e_tonnes;
@@ -278,18 +296,18 @@ Return ONLY valid JSON (no markdown, no explanations):
             unit: item.input_unit,
             emissions: item.co2e_tonnes,
           }));
+          sources = ["Climatiq emission factor database"];
 
           toast.success(t("toasts.calcOk"));
         } catch (error) {
-          console.error("Climatiq API error, falling back to estimates:", error);
-          toast.error(t("toasts.calcFallback"));
-          totalEmissions = calculateMockEmissions();
-          emissionsBreakdown = getMockBreakdown();
+          console.error("Climatiq API error, using published reference factors:", error);
+          toast.warning(t("toasts.calcFallback"));
+          useReferenceFactors();
         }
       } else {
-        totalEmissions = calculateMockEmissions();
-        emissionsBreakdown = getMockBreakdown();
+        useReferenceFactors();
       }
+
 
       const now = new Date();
       const currentMonth = now.getMonth() + 1;
