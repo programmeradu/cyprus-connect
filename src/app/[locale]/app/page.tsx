@@ -194,15 +194,26 @@ export default function ConsolePage() {
         <div className="vc-top-panel">
           <div className="vc-hero-grid">
             <aside className="vc-team-card">
+              {/* The card names the entity under measurement, not the person.
+                  The greeting and the account menu already carry the person. */}
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">
-                  {(workspace.ownerName ?? "V").slice(0, 1).toUpperCase()}
+                  {(workspace.name ?? "V").slice(0, 1).toUpperCase()}
                 </span>
                 <span>
-                  <small>{workspace.ownerRole ?? "Workspace lead"}</small>
-                  <strong>{workspace.ownerName ?? "Signed in"}</strong>
+                  <small>
+                    {[
+                      workspace.sector,
+                      workspace.country,
+                      `${workspace.sites} site${workspace.sites === 1 ? "" : "s"}`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </small>
+                  <strong>{workspace.legalName ?? workspace.name}</strong>
                 </span>
               </div>
+
 
               <button
                 type="button"
