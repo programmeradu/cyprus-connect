@@ -69,7 +69,7 @@ export default function LeaderboardPage() {
       header: "Company",
       render: (row) => (
         <div className="flex min-w-0 items-center gap-2.5">
-          <ConsoleAvatar seed={row.companyName || row.name} size={28} styleKey="shapes" alt="" />
+          <ConsoleAvatar seed={row.companyName || row.name || "vuneli"} size={28} styleKey="shapes" alt="" />
           <div className="min-w-0">
           <p className="font-medium break-words">{row.companyName || row.name}</p>
           {user && row.userId === user.id && (
@@ -120,7 +120,7 @@ export default function LeaderboardPage() {
             {topThree.map((entry) => (
               <div key={entry.userId} className="app-card p-4">
                 <div className="mb-2 flex items-center gap-2.5">
-                  <ConsoleAvatar seed={entry.companyName || entry.name} size={32} styleKey="shapes" alt="" />
+                  <ConsoleAvatar seed={entry.companyName || entry.name || "vuneli"} size={32} styleKey="shapes" alt="" />
                   <p className="app-label">#{entry.rank}</p>
                 </div>
                 <p className="text-sm font-medium break-words mb-1">{entry.companyName || entry.name}</p>
