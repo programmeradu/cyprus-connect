@@ -665,7 +665,7 @@ export const copilotProposals = pgTable('copilot_proposals', {
   id: serial('id').primaryKey(),
   workspaceId: text('workspace_id').notNull(),
   messageId: integer('message_id'),
-  /** create_task | update_obligation | log_reading */
+  /** create_task | update_obligation | log_reading | draft_report */
   kind: text('kind').notNull(),
   title: text('title').notNull(),
   summary: text('summary').notNull(),
@@ -674,6 +674,9 @@ export const copilotProposals = pgTable('copilot_proposals', {
   /** pending | approved | rejected | failed */
   status: text('status').notNull().default('pending'),
   resultNote: text('result_note'),
+  /** Where the approved act landed, so the chat can link to the deliverable. */
+  deliverableHref: text('deliverable_href'),
+  deliverableTitle: text('deliverable_title'),
   decidedBy: text('decided_by'),
   decidedAt: timestamp('decided_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
