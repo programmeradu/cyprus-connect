@@ -785,18 +785,20 @@
 }
 
 .vc-agent-copy strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
   font-size: 12px;
   line-height: 1.2;
   font-weight: 900;
 }
 
 .vc-agent-copy small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
   margin-top: 2px;
   font-size: 10.5px;
   color: var(--vc-ink-3);
@@ -849,9 +851,7 @@
 }
 
 .vc-live-list span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .vc-live-list strong {
@@ -964,9 +964,12 @@
 
 .vc-task-row strong,
 .vc-task-row small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .vc-task-row strong {
@@ -987,9 +990,8 @@
 }
 
 .vc-event-row p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
   margin: 0;
   font-size: 10.8px;
   font-weight: 700;
