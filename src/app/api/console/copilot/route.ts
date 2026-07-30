@@ -279,6 +279,7 @@ export async function POST(req: Request) {
 
   const client = new GoogleGenAI({ apiKey: process.env.GOOGLE_GEMINI_API_KEY });
 
+
   const contents = [
     { role: "user" as const, parts: [{ text: instructions }] },
     {
