@@ -18,6 +18,12 @@ import {
   Section,
   SkeletonMetricRow
 } from "@/components/app/shell";
+import {
+  AVATAR_STYLES,
+  ConsoleAvatar,
+  useAvatarStyle,
+  type AvatarStyleKey,
+} from "@/components/app/console/ConsoleAvatar";
 
 const inputClass =
   "w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
@@ -38,6 +44,7 @@ function SettingsContent() {
   const [teamSize, setTeamSize] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [avatarStyle, setAvatarStyle] = useAvatarStyle();
 
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -271,6 +278,52 @@ function SettingsContent() {
                     <option value="500+">{t("teamSizes.500+")}</option>
                   </select>
                 </div>
+              </div>
+            </div>
+          </Section>
+
+          <Section
+            title="Avatar character"
+            description="Your avatar is drawn from your name. Pick the character family you like."
+          >
+            <div className="app-card p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <ConsoleAvatar seed={name || user?.name || "vuneli"} size={48} styleKey={avatarStyle} alt="" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium break-words">{name || user?.name || "Your avatar"}</p>
+                  <p className="app-meta mt-0.5">{AVATAR_STYLES[avatarStyle]?.label ?? "Sketch people"}</p>
+                </div>
+              </div>
+              <div
+                className="grid gap-2.5 grid-cols-3 sm:grid-cols-5"
+                role="radiogroup"
+                aria-label="Avatar character family"
+              >
+                {Object.entries(AVATAR_STYLES).map(([key, entry]) => {
+                  const selected = key === avatarStyle;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => setAvatarStyle(key as AvatarStyleKey)}
+                      className={`flex flex-col items-center gap-1.5 rounded-[0.625rem] border p-2.5 text-center transition-colors ${
+                        selected
+                          ? "border-[var(--app-rule-strong)] bg-[var(--app-surface-2)]"
+                          : "border-[var(--app-rule)] hover:bg-[var(--app-surface-2)]"
+                      }`}
+                    >
+                      <ConsoleAvatar
+                        seed={name || user?.name || "vuneli"}
+                        size={40}
+                        styleKey={key as AvatarStyleKey}
+                        alt=""
+                      />
+                      <span className="app-meta leading-tight break-words">{entry.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </Section>
