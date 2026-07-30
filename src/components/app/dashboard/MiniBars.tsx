@@ -47,7 +47,10 @@ export const MiniBars = ({
             style={{ height: "100%" }}
             title={`${p.label}: ${p.value.toFixed(precision)}${unit ? ` ${unit}` : ""}`}
           >
-            <div className="absolute inset-x-0 bottom-0 bg-[var(--app-rule-strong)] transition-colors group-hover:bg-primary"
+            <div
+              className={`absolute inset-x-0 bottom-0 transition-colors group-hover:bg-primary ${
+                i === points.length - 1 ? "bg-primary" : "bg-[var(--app-rule-strong)]"
+              }`}
               style={{ height: `${Math.max(2, (p.value / max) * 100)}%` }}
             />
           </div>
