@@ -16,6 +16,7 @@ import {
   type Column
 } from "@/components/app/shell";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 
 interface Project {
   id: number;
@@ -101,9 +102,12 @@ export default function MarketplacePage() {
       key: "name",
       header: "Project",
       render: (p) => (
-        <div>
-          <p className="font-medium break-words">{p.name}</p>
-          <p className="app-meta mt-0.5 break-words">{p.location}</p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <ConsoleAvatar seed={p.name} size={30} styleKey="shapes" alt="" />
+          <div className="min-w-0">
+            <p className="font-medium break-words">{p.name}</p>
+            <p className="app-meta mt-0.5 break-words">{p.location}</p>
+          </div>
         </div>
       )
     },

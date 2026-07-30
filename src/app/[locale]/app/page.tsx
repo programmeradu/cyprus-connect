@@ -25,6 +25,7 @@ import {
 } from "@/components/app/console/icons";
 import { ArcGauge, BarRow, Rule, Spark } from "@/components/app/console/charts";
 import {
+import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
   AUTONOMY_LABEL,
   daysUntil,
   fmtNumber,
@@ -191,7 +192,7 @@ export default function ConsolePage() {
                   The greeting and the account menu already carry the person. */}
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">
-                  {(workspace.name ?? "V").slice(0, 1).toUpperCase()}
+                  <ConsoleAvatar seed={workspace.name ?? "Vuneli"} size={30} styleKey="shapes" alt="" />
                 </span>
                 <span>
                   <small>
