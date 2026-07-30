@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
+import { aiChatRaw, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 
 export const maxDuration = 60;
 
@@ -61,42 +62,16 @@ Return format (only include fields with valid data):
 
 If you cannot find data for a category, omit that field entirely.`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${process.env.GOOGLE_GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: prompt },
-                {
-                  inline_data: {
-                    mime_type: mimeType,
-                    data: base64,
-                  },
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.1,
-            topK: 1,
-            topP: 0.95,
-            maxOutputTokens: 1024,
-          },
-        }),
-      }
+    // A picture goes in as an image block. A PDF goes in as a file block.
+    const dataUrl = `data:${mimeType};base64,${base64}`;
+    const attachment = mimeType.startsWith("image/")
+      ? { type: "image_url", image_url: { url: dataUrl } }
+      : { type: "file", file: { filename: "document.pdf", file_data: dataUrl } };
+
+    const text = await aiChatRaw(
+      [{ role: "user", content: [{ type: "text", text: prompt }, attachment] }],
+      0.1,
     );
-
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    const text =
-      result.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
     // Parse JSON from response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -256,10 +231,10 @@ async function processExcel(file: File): Promise<ExtractedData> {
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
+    if (!hasLovableAi()) {
       return NextResponse.json(
-        { error: "Gemini API key not configured" },
-        { status: 500 }
+        { error: "AI is not configured on this deployment." },
+        { status: 503 }
       );
     }
 

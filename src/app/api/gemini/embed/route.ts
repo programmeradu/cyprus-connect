@@ -1,5 +1,5 @@
-import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
+import { aiEmbed, aiErrorMessage, EMBEDDING_MODEL, hasLovableAi } from "@/lib/lovable-ai";
 
 export async function POST(req: Request) {
   try {
@@ -12,43 +12,37 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
+    if (!hasLovableAi()) {
       return NextResponse.json(
-        { error: "Gemini API key not configured" },
-        { status: 500 }
+        { error: "AI is not configured on this deployment." },
+        { status: 503 }
       );
     }
 
-    const client = new GoogleGenAI({
-      apiKey: process.env.GOOGLE_GEMINI_API_KEY,
-    });
+    const input: string[] = Array.isArray(contents)
+      ? contents.map((c: unknown) => String(c))
+      : [String(content)];
 
-    const requestParams: any = {
-      model: "gemini-embedding-001",
-      contents: contents || content,
-    };
+    // The gateway embedding model tops out at 1536 dimensions. A larger ask
+    // is reduced instead of refused, so callers keep working.
+    const dimensions =
+      typeof outputDimensionality === "number"
+        ? Math.min(outputDimensionality, 1536)
+        : undefined;
 
-    // Add optional parameters if provided
-    if (taskType) {
-      requestParams.taskType = taskType;
-    }
-    if (outputDimensionality) {
-      requestParams.outputDimensionality = outputDimensionality;
-    }
+    const vectors = await aiEmbed(input, dimensions);
 
-    const response = await client.models.embedContent(requestParams);
-
-    // Return embeddings with metadata
+    // Keep the response shape the existing callers read.
     return NextResponse.json({
-      embeddings: response.embeddings,
-      model: "gemini-embedding-001",
+      embeddings: vectors.map((values) => ({ values })),
+      model: EMBEDDING_MODEL,
       taskType: taskType || "RETRIEVAL_DOCUMENT",
-      dimensions: outputDimensionality || 3072,
+      dimensions: vectors[0]?.length ?? dimensions ?? 1536,
     });
   } catch (error: any) {
-    console.error("Gemini embedding error:", error);
+    console.error("Embedding error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to generate embeddings" },
+      { error: aiErrorMessage(error) },
       { status: 500 }
     );
   }

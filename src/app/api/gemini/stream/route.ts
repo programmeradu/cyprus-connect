@@ -1,49 +1,39 @@
-import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
+import { aiChatStream, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 
 export async function POST(req: Request) {
   try {
     const { prompt, context } = await req.json();
 
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
+    if (!hasLovableAi()) {
       return NextResponse.json(
-        { error: "Gemini API key not configured" },
-        { status: 500 }
+        { error: "AI is not configured on this deployment." },
+        { status: 503 }
       );
     }
-
-    const client = new GoogleGenAI({
-      apiKey: process.env.GOOGLE_GEMINI_API_KEY,
-    });
 
     const fullPrompt = context ? `${context}\n\n${prompt}` : prompt;
 
     const stream = new ReadableStream({
       async start(controller) {
+        const encoder = new TextEncoder();
         try {
-          const result = await client.models.generateContentStream({
-            model: "gemini-2.5-flash",
-            contents: [
-              {
-                role: "user",
-                parts: [{ text: fullPrompt }],
-              },
-            ],
-          });
-
-          for await (const chunk of result) {
-            const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text) {
-              controller.enqueue(
-                new TextEncoder().encode(`data: ${JSON.stringify({ text })}\n\n`)
-              );
-            }
+          for await (const text of aiChatStream({
+            messages: [{ role: "user", content: fullPrompt }],
+          })) {
+            controller.enqueue(
+              encoder.encode(`data: ${JSON.stringify({ text })}\n\n`)
+            );
           }
-
           controller.close();
         } catch (error) {
           console.error("Stream error:", error);
-          controller.error(error);
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ error: aiErrorMessage(error) })}\n\n`
+            )
+          );
+          controller.close();
         }
       },
     });
@@ -56,9 +46,9 @@ export async function POST(req: Request) {
       },
     });
   } catch (error: any) {
-    console.error("Gemini stream error:", error);
+    console.error("AI stream error:", error);
     return NextResponse.json(
-      { error: error.message || "Stream failed" },
+      { error: aiErrorMessage(error) },
       { status: 500 }
     );
   }

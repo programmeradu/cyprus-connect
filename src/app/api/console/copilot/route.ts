@@ -8,7 +8,7 @@
  * in /api/console/copilot/proposal.
  */
 
-import { GoogleGenAI } from "@google/genai";
+import { aiChatStream, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
@@ -27,31 +27,15 @@ import { resolveConsoleSession } from "@/lib/console-session";
 
 export const dynamic = "force-dynamic";
 
-const MODEL = "gemini-2.5-flash";
 const HISTORY_LIMIT = 40;
 
 /**
  * Turn a provider failure into a sentence an operator can act on. A generic
- * "try again" hides a revoked key or an exhausted quota, and the person then
- * retries forever against a wall.
+ * "try again" hides an exhausted balance, and the person then retries
+ * forever against a wall.
  */
 function providerMessage(error: unknown): string {
-  const raw = error instanceof Error ? error.message : String(error ?? "");
-  const text = raw.toLowerCase();
-
-  if (text.includes("leaked") || text.includes("api key not valid") || text.includes("api_key_invalid")) {
-    return "The AI key for this workspace is no longer accepted by the provider. An administrator must set a new GOOGLE_GEMINI_API_KEY.";
-  }
-  if (text.includes("permission_denied") || text.includes("403")) {
-    return "The AI service refused this request. Check that the workspace AI key is active and has access to the model.";
-  }
-  if (text.includes("quota") || text.includes("resource_exhausted") || text.includes("429")) {
-    return "The AI service is over its quota for now. Please try again in a few minutes.";
-  }
-  if (text.includes("deadline") || text.includes("timeout") || text.includes("etimedout")) {
-    return "The answer took too long and stopped. Please ask again, or make the question smaller.";
-  }
-  return "The copilot could not finish that answer. Please try again.";
+  return aiErrorMessage(error);
 }
 
 /* ------------------------------------------------------------------ */
@@ -273,7 +257,7 @@ export async function POST(req: Request) {
   }
   if (prompt.length > 4000) prompt = prompt.slice(0, 4000);
 
-  if (!process.env.GOOGLE_GEMINI_API_KEY) {
+  if (!hasLovableAi()) {
     return NextResponse.json(
       { error: "ai_unavailable", message: "The copilot is not configured on this deployment." },
       { status: 503 },
@@ -296,32 +280,18 @@ export async function POST(req: Request) {
     briefing,
   );
 
-  if (!process.env.GOOGLE_GEMINI_API_KEY) {
-    return NextResponse.json(
-      { error: "No AI key is configured for this workspace. Set GOOGLE_GEMINI_API_KEY." },
-      { status: 503 },
-    );
-  }
-
   const [userRow] = await db
     .insert(copilotMessages)
     .values({ workspaceId: workspace.id, role: "user", content: prompt })
     .returning();
 
-  const client = new GoogleGenAI({ apiKey: process.env.GOOGLE_GEMINI_API_KEY });
-
-
-  const contents = [
-    { role: "user" as const, parts: [{ text: instructions }] },
-    {
-      role: "model" as const,
-      parts: [{ text: "Understood. I will answer only from these records." }],
-    },
+  const messages = [
+    { role: "system" as const, content: instructions },
     ...history.map((m) => ({
-      role: m.role === "user" ? ("user" as const) : ("model" as const),
-      parts: [{ text: m.content }],
+      role: m.role === "user" ? ("user" as const) : ("assistant" as const),
+      content: m.content,
     })),
-    { role: "user" as const, parts: [{ text: prompt }] },
+    { role: "user" as const, content: prompt },
   ];
 
   const encoder = new TextEncoder();
@@ -349,14 +319,7 @@ export async function POST(req: Request) {
       };
 
       try {
-        const result = await client.models.generateContentStream({
-          model: MODEL,
-          contents,
-        });
-
-        for await (const chunk of result) {
-          const text = chunk.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (!text) continue;
+        for await (const text of aiChatStream({ messages })) {
           full += text;
           flush(false);
         }

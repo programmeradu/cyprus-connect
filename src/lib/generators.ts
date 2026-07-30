@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { uploadBase64Image, uploadVideo } from "./supabase";
+import { aiImage, hasLovableAi } from "./lovable-ai";
 
 export interface GenerationResult {
   url: string;
@@ -10,132 +11,88 @@ export interface GenerationResult {
   message?: string;
 }
 
-// Intelligent model selection: Gemini for text/infographics, Imagen for realistic/creative
-export function selectImageModel(prompt: string): "imagen-4.0-generate-001" | "gemini-2.5-flash-image" {
-  const geminiIndicators = [
+/** The fast image model, best for text, icons and flat illustration. */
+const FLASH_IMAGE = "google/gemini-2.5-flash-image";
+/** The slower image model, best for photographic and detailed work. */
+const PRO_IMAGE = "google/gemini-3-pro-image";
+
+/**
+ * Choose the image model from the words in the prompt. Flat, typographic or
+ * diagram work goes to the fast model. Photographic work goes to the pro
+ * model, which holds detail better.
+ */
+export function selectImageModel(prompt: string): string {
+  const flatIndicators = [
     "text", "typography", "infographic", "diagram", "chart", "graph",
     "illustration", "vector", "flat design", "icon", "logo", "badge",
     "data visualization", "statistics", "numbers", "label", "caption",
-    "quote", "headline", "poster", "flyer", "banner", "card design"
+    "quote", "headline", "poster", "flyer", "banner", "card design",
   ];
-  
-  const imagenIndicators = [
-    "photorealistic", "realistic", "photo", "detailed", "high quality", 
+
+  const photoIndicators = [
+    "photorealistic", "realistic", "photo", "detailed", "high quality",
     "professional photo", "4k", "hd", "cinematic", "creative", "artistic",
     "landscape", "portrait", "scene", "environment", "nature", "people",
-    "product photography", "studio", "lighting", "texture", "real"
+    "product photography", "studio", "lighting", "texture", "real",
   ];
-  
+
   const promptLower = prompt.toLowerCase();
-  
-  // Count indicators
-  const geminiScore = geminiIndicators.filter(ind => promptLower.includes(ind)).length;
-  const imagenScore = imagenIndicators.filter(ind => promptLower.includes(ind)).length;
-  
-  // If clear text/infographic indicators, use Gemini
-  if (geminiScore > imagenScore) {
-    return "gemini-2.5-flash-image";
-  }
-  
-  // If realistic/creative indicators, use Imagen
-  if (imagenScore > 0) {
-    return "imagen-4.0-generate-001";
-  }
-  
-  // For long, detailed prompts, use Imagen 4 for quality
-  if (prompt.length > 300) {
-    return "imagen-4.0-generate-001";
-  }
-  
-  // Default to Imagen 4 for creative content
-  return "imagen-4.0-generate-001";
+  const flatScore = flatIndicators.filter((ind) => promptLower.includes(ind)).length;
+  const photoScore = photoIndicators.filter((ind) => promptLower.includes(ind)).length;
+
+  if (flatScore > photoScore) return FLASH_IMAGE;
+  if (photoScore > 0) return PRO_IMAGE;
+  if (prompt.length > 300) return PRO_IMAGE;
+  return PRO_IMAGE;
 }
 
-async function generateImageWithModel(
-  client: GoogleGenAI,
-  model: string,
-  prompt: string,
-  aspectRatio: string
-): Promise<string | null> {
-  const response = await client.models.generateImages({
-    model: model,
-    prompt: prompt,
-    config: {
-      numberOfImages: 1,
-      aspectRatio: aspectRatio,
-    },
-  });
-
-  // Extract image from response
-  if (response.generatedImages && response.generatedImages.length > 0) {
-    const generatedImage = response.generatedImages[0];
-    
-    // Handle inline data (base64)
-    if (generatedImage.image?.imageBytes) {
-      const imageData = generatedImage.image.imageBytes;
-      const base64Data = `data:image/png;base64,${imageData}`;
-      
-      // Upload to Supabase and get HTTPS URL
-      const fileName = `generated-${model.split('-')[0]}-${Date.now()}`;
-      const httpsUrl = await uploadBase64Image(base64Data, fileName);
-      
-      // Return HTTPS URL if upload succeeded, otherwise return base64 as fallback
-      return httpsUrl || base64Data;
-    }
-    
-    // Handle URL (if returned)
-    const imageUrl = (generatedImage as any).image?.url as string | undefined;
-    if (imageUrl) {
-      return imageUrl;
-    }
-  }
-
-  return null;
+/**
+ * The gateway image models read the frame from the instruction, not from a
+ * separate field, so the ratio is written into the prompt.
+ */
+function withAspect(prompt: string, aspectRatio: string): string {
+  return `${prompt}\n\nFrame the image with a ${aspectRatio} aspect ratio.`;
 }
 
 export async function generateImage(
-  prompt: string, 
+  prompt: string,
   aspectRatio: string = "1:1"
 ): Promise<GenerationResult> {
-  if (!process.env.GOOGLE_GEMINI_API_KEY) {
-    throw new Error("Gemini API key not configured");
+  if (!hasLovableAi()) {
+    throw new Error("AI is not configured on this deployment.");
   }
 
-  const client = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GEMINI_API_KEY,
-  });
-
-  // Intelligently select model
   let selectedModel = selectImageModel(prompt);
-  let imageUrl: string | null = null;
   let fallbackUsed = false;
+  let dataUrl: string;
 
   try {
-    // Try with the selected model
-    imageUrl = await generateImageWithModel(client, selectedModel, prompt, aspectRatio);
-  } catch (error: any) {
-    // If Gemini Flash Image fails (404 or not available), fallback to Imagen 4
-    if (selectedModel === "gemini-2.5-flash-image" && (error.status === 404 || error.message?.includes("not found"))) {
-      console.log("Gemini 2.5 Flash Image not available, falling back to Imagen 4");
-      selectedModel = "imagen-4.0-generate-001";
+    dataUrl = await aiImage(withAspect(prompt, aspectRatio), [], selectedModel);
+  } catch (error) {
+    // The pro model can be busy. The fast model still returns a usable image.
+    if (selectedModel === PRO_IMAGE) {
+      selectedModel = FLASH_IMAGE;
       fallbackUsed = true;
-      imageUrl = await generateImageWithModel(client, selectedModel, prompt, aspectRatio);
+      dataUrl = await aiImage(withAspect(prompt, aspectRatio), [], selectedModel);
     } else {
       throw error;
     }
   }
 
-  if (!imageUrl) {
-    throw new Error("No image generated in response");
-  }
+  // Store the bytes so the caller gets a stable HTTPS address.
+  const fileName = `generated-${Date.now()}`;
+  const hostedUrl = await uploadBase64Image(dataUrl, fileName);
 
   return {
-    url: imageUrl,
+    url: hostedUrl || dataUrl,
     model: selectedModel,
-    modelReason: selectedModel === "imagen-4.0-generate-001" 
-      ? (fallbackUsed ? "Imagen 4 (fallback - Gemini not available)" : "Realistic & creative image generation")
-      : "Text, infographics & illustrations",
-    aspectRatio
+    modelReason:
+      selectedModel === PRO_IMAGE
+        ? "Realistic and detailed image generation"
+        : fallbackUsed
+          ? "Fast image model (the pro model was not available)"
+          : "Text, infographics and illustrations",
+    aspectRatio,
   };
 }
 
@@ -145,7 +102,9 @@ export async function generateVideo(
   durationSeconds: number = 8
 ): Promise<GenerationResult> {
   if (!process.env.GOOGLE_GEMINI_API_KEY) {
-    throw new Error("Gemini API key not configured");
+    throw new Error(
+      "Video generation needs a Google Veo key. Set GOOGLE_GEMINI_API_KEY to switch it on.",
+    );
   }
 
   const client = new GoogleGenAI({

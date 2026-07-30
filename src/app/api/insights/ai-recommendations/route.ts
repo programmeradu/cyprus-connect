@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { aiChat, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { convertCurrency } from "@/lib/exchange-rates";
 
@@ -14,16 +14,12 @@ export async function POST(request: NextRequest) {
       userLocation,
     } = body;
 
-    if (!process.env.GOOGLE_GEMINI_API_KEY) {
+    if (!hasLovableAi()) {
       return NextResponse.json(
-        { error: "Gemini API key not configured" },
-        { status: 500 }
+        { error: "AI is not configured on this deployment." },
+        { status: 503 }
       );
     }
-
-    const client = new GoogleGenAI({
-      apiKey: process.env.GOOGLE_GEMINI_API_KEY,
-    });
 
     // Get user's preferred currency from userProfile
     const userCurrency = userProfile?.preferredCurrency || "GHS";
@@ -115,22 +111,10 @@ FORMAT YOUR RESPONSE AS JSON:
 
 Keep each item concise (1-2 sentences), actionable, and personalized to their specific data. Avoid generic advice. Use ${currencySymbol} for all monetary amounts.`;
 
-    const response = await client.models.generateContent({
-      model: "gemini-2.0-flash-exp",
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: dataContext + "\n\n" + prompt }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.8,
-        topK: 40,
-      },
-    } as any);
-
-    const text = response.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    const text = await aiChat({
+      messages: [{ role: "user", content: dataContext + "\n\n" + prompt }],
+      temperature: 0.7,
+    });
     
     // Extract JSON from markdown code blocks if present
     let jsonText = text;
