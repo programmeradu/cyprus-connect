@@ -354,7 +354,10 @@ Return ONLY valid JSON (no markdown, no explanations):
         totalEmissions: totalEmissions,
         breakdown: emissionsBreakdown,
         recommendations: aiRecommendations,
+        method,
+        sources,
       });
+
 
       if (aiRecommendations.length > 0) {
         toast.success(t("toasts.doneWithRecs", { count: aiRecommendations.length }));
