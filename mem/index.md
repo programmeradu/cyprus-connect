@@ -8,8 +8,11 @@ Never ship lazy/mediocre UI: verify full content fits, no truncation, no overflo
 All articles, pillars, glossary, learn, and documentation MUST use ASD-STE100 Simplified Technical English. See mem://preferences/asd-ste100.
 Strategic direction (AI/agents, integrations, funding, vision) is anchored in docs/research/. See mem://reference/strategic-research before proposing architecture or new features.
 
+/app dashboard data is NEVER hardcoded - it is DB-seeded and read through /api/console/overview. See mem://design/app-console.
+
 ## Memories
 - [Context-aware assets](mem://design/context-aware-assets) — Asset generation rules for all marketing/pillar/learn pages
 - [ASD-STE100](mem://preferences/asd-ste100) — Simplified Technical English rules for all long-form content
 - [Strategic research](mem://reference/strategic-research) — Agentic AI strategy, Cyprus integrations, funding, vision docs in docs/research/
+- [App console](mem://design/app-console) — /app console design language, separate dark mode (ChatGPT grey), agentic layout foundation, no-hardcoded-data rule
 
