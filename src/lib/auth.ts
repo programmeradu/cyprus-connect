@@ -9,12 +9,18 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 	}),
-	baseURL: process.env.BETTER_AUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+	// No fixed baseURL: better-auth infers the origin from the incoming request,
+	// so the same build works on localhost, the Lovable preview and production.
 	trustedOrigins: [
 		"http://localhost:3000",
+		"http://localhost:8080",
+		process.env.NEXT_PUBLIC_SITE_URL || "",
+		process.env.BETTER_AUTH_URL || "",
 		process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
-		"*.orchids.page",
-		"*.vercel.app",
+		"https://*.lovable.app",
+		"https://*.lovableproject.com",
+		"https://*.vercel.app",
+		"https://*.orchids.page",
 	].filter(Boolean),
 	emailAndPassword: {    
 		enabled: true

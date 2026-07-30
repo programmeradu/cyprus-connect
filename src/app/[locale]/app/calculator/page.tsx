@@ -7,6 +7,10 @@ import { useRouter } from "next/navigation";
 import { useEmissionCalculator } from "@/hooks/useEmissionCalculator";
 import { DocumentUploader } from "@/components/DocumentUploader";
 import { useSession } from "@/lib/auth-client";
+import {
+  calculateFromReferenceFactors,
+  usedSources,
+} from "@/lib/emissions/reference-factors";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import {
   PageShell,
@@ -56,6 +60,8 @@ export default function CalculatorPage() {
       actionId?: number;
       isNew?: boolean;
     }>;
+    method: "climatiq" | "reference-factors";
+    sources: string[];
   } | null>(null);
 
   // Redirect if not authenticated
@@ -259,16 +265,34 @@ Return ONLY valid JSON (no markdown, no explanations):
     try {
       let totalEmissions = 0;
       let emissionsBreakdown: any[] = [];
+      let method: "climatiq" | "reference-factors" = "climatiq";
+      let sources: string[] = [];
+
+      const inputs = {
+        electricity: parseFloat(formData.electricity) || 0,
+        gas: parseFloat(formData.gas) || 0,
+        water: parseFloat(formData.water) || 0,
+        waste: parseFloat(formData.waste) || 0,
+        transport: parseFloat(formData.transport) || 0,
+      };
+
+      const useReferenceFactors = () => {
+        const reference = calculateFromReferenceFactors(inputs, categoryLabels());
+        totalEmissions = reference.totalTonnes;
+        emissionsBreakdown = reference.breakdown;
+        method = "reference-factors";
+        sources = usedSources(reference.breakdown);
+      };
 
       if (useRealAPI) {
         try {
           const result = await calculateBatch({
-            electricity_kwh: parseFloat(formData.electricity) || 0,
-            gas_m3: parseFloat(formData.gas) || 0,
-            water_liters: parseFloat(formData.water) || 0,
-            waste_kg: parseFloat(formData.waste) || 0,
-            transport_km: parseFloat(formData.transport) || 0,
-            region: userRegion || "GLOBAL",
+            electricity_kwh: inputs.electricity,
+            gas_m3: inputs.gas,
+            water_liters: inputs.water,
+            waste_kg: inputs.waste,
+            transport_km: inputs.transport,
+            region: userRegion || "CY",
           });
 
           totalEmissions = result.total_co2e_tonnes;
@@ -278,18 +302,18 @@ Return ONLY valid JSON (no markdown, no explanations):
             unit: item.input_unit,
             emissions: item.co2e_tonnes,
           }));
+          sources = ["Climatiq emission factor database"];
 
           toast.success(t("toasts.calcOk"));
         } catch (error) {
-          console.error("Climatiq API error, falling back to estimates:", error);
-          toast.error(t("toasts.calcFallback"));
-          totalEmissions = calculateMockEmissions();
-          emissionsBreakdown = getMockBreakdown();
+          console.error("Climatiq API error, using published reference factors:", error);
+          toast.warning(t("toasts.calcFallback"));
+          useReferenceFactors();
         }
       } else {
-        totalEmissions = calculateMockEmissions();
-        emissionsBreakdown = getMockBreakdown();
+        useReferenceFactors();
       }
+
 
       const now = new Date();
       const currentMonth = now.getMonth() + 1;
@@ -336,7 +360,10 @@ Return ONLY valid JSON (no markdown, no explanations):
         totalEmissions: totalEmissions,
         breakdown: emissionsBreakdown,
         recommendations: aiRecommendations,
+        method,
+        sources,
       });
+
 
       if (aiRecommendations.length > 0) {
         toast.success(t("toasts.doneWithRecs", { count: aiRecommendations.length }));
@@ -362,87 +389,54 @@ Return ONLY valid JSON (no markdown, no explanations):
   ) => {
     try {
       const token = localStorage.getItem("bearer_token");
-      
-      const totalResources = parseFloat(formData.electricity) + parseFloat(formData.gas) + 
-                            parseFloat(formData.water) + parseFloat(formData.waste) + 
-                            parseFloat(formData.transport);
-      const resourceEfficiency = Math.max(0, Math.min(100, 100 - (totalResources / 100)));
-      
-      const electricityItem = breakdown.find(b => b.category.toLowerCase().includes('electricity'));
-      const renewableShare = electricityItem ? 
-        Math.random() * 30 + 20 :
-        25;
-      
-      const wasteValue = parseFloat(formData.waste) || 0;
-      const wasteDiversion = wasteValue > 0 ? 
-        Math.min(100, (wasteValue * 0.6)) :
-        0;
-      
+
       const periodStart = new Date(year, month - 1, 1).toISOString();
       const periodEnd = new Date(year, month, 0, 23, 59, 59, 999).toISOString();
-      
+
       const prevMonth = month === 1 ? 12 : month - 1;
       const prevYear = month === 1 ? year - 1 : year;
-      
-      const prevEmissionsResponse = await fetch(
-        `/api/emissions?userId=${userId}&year=${prevYear}&month=${prevMonth}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      let prevTotalCo2e = totalCo2e * 1.05;
-      if (prevEmissionsResponse.ok) {
-        const prevData = await prevEmissionsResponse.json();
-        if (prevData.length > 0) {
-          prevTotalCo2e = prevData[0].totalCo2e;
+
+      // Trend needs a real earlier reading. Without one the trend is zero.
+      let prevTotalCo2e = totalCo2e;
+      try {
+        const prevEmissionsResponse = await fetch(
+          `/api/emissions?userId=${userId}&year=${prevYear}&month=${prevMonth}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (prevEmissionsResponse.ok) {
+          const prevData = await prevEmissionsResponse.json();
+          if (Array.isArray(prevData) && prevData.length > 0 && typeof prevData[0].totalCo2e === "number") {
+            prevTotalCo2e = prevData[0].totalCo2e;
+          }
         }
+      } catch (error) {
+        console.error("Failed to read the previous period:", error);
       }
-      
-      const metricsToUpdate = [
-        {
+
+      // Only the carbon footprint is measured here. Renewable share, resource
+      // efficiency and waste diversion need data this form does not collect,
+      // so they are not written.
+      await fetch("/api/dashboard/metrics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId,
           metricType: "carbon_footprint",
           currentValue: totalCo2e,
-          previousValue: prevTotalCo2e
-        },
-        {
-          metricType: "resource_efficiency",
-          currentValue: resourceEfficiency,
-          previousValue: resourceEfficiency * 0.95
-        },
-        {
-          metricType: "renewable_share",
-          currentValue: renewableShare,
-          previousValue: renewableShare * 0.9
-        },
-        {
-          metricType: "waste_diversion",
-          currentValue: wasteDiversion,
-          previousValue: wasteDiversion * 0.9
-        }
-      ];
-      
-      for (const metric of metricsToUpdate) {
-        await fetch("/api/dashboard/metrics", {
-          method: "POST",
-          headers: {
- "Content-Type": "application/json",
- "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            userId,
-            metricType: metric.metricType,
-            currentValue: metric.currentValue,
-            previousValue: metric.previousValue,
-            periodStart,
-            periodEnd
-          })
-        });
-      }
-      
+          previousValue: prevTotalCo2e,
+          periodStart,
+          periodEnd,
+        }),
+      });
+
       await fetch("/api/dashboard/historical", {
         method: "POST",
         headers: {
- "Content-Type": "application/json",
- "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId,
@@ -454,66 +448,22 @@ Return ONLY valid JSON (no markdown, no explanations):
           wasteKg: parseFloat(formData.waste) || 0,
           transportKm: parseFloat(formData.transport) || 0,
           totalCo2e,
-          renewablePercentage: renewableShare,
-          efficiencyScore: resourceEfficiency,
-          wasteDiversionRate: wasteDiversion
-        })
+        }),
       });
     } catch (error) {
       console.error("Failed to update dashboard metrics:", error);
     }
   };
 
-  const calculateMockEmissions = (): number => {
-    const electricityFactor = 0.0005;
-    const gasFactor = 0.0053;
-    const waterFactor = 0.0003;
-    const wasteFactor = 0.00047;
-    const transportFactor = 0.00024;
 
-    const electricityEmissions = (parseFloat(formData.electricity) || 0) * electricityFactor;
-    const gasEmissions = (parseFloat(formData.gas) || 0) * gasFactor;
-    const waterEmissions = (parseFloat(formData.water) || 0) * waterFactor;
-    const wasteEmissions = (parseFloat(formData.waste) || 0) * wasteFactor;
-    const transportEmissions = (parseFloat(formData.transport) || 0) * transportFactor;
+  const categoryLabels = () => ({
+    electricity: t("categories.electricity"),
+    gas: t("categories.gas"),
+    water: t("categories.water"),
+    waste: t("categories.waste"),
+    transport: t("categories.transport"),
+  });
 
-    return electricityEmissions + gasEmissions + waterEmissions + wasteEmissions + transportEmissions;
-  };
-
-  const getMockBreakdown = () => {
-    return [
-      {
-        category: t("categories.electricity"),
-        value: parseFloat(formData.electricity) || 0,
-        unit: "kWh",
-        emissions: (parseFloat(formData.electricity) || 0) * 0.0005,
-      },
-      {
-        category: t("categories.gas"),
-        value: parseFloat(formData.gas) || 0,
-        unit: "m³",
-        emissions: (parseFloat(formData.gas) || 0) * 0.0053,
-      },
-      {
-        category: t("categories.water"),
-        value: parseFloat(formData.water) || 0,
-        unit: "liters",
-        emissions: (parseFloat(formData.water) || 0) * 0.0003,
-      },
-      {
-        category: t("categories.waste"),
-        value: parseFloat(formData.waste) || 0,
-        unit: "kg",
-        emissions: (parseFloat(formData.waste) || 0) * 0.00047,
-      },
-      {
-        category: t("categories.transport"),
-        value: parseFloat(formData.transport) || 0,
-        unit: "km",
-        emissions: (parseFloat(formData.transport) || 0) * 0.00024,
-      },
-    ];
-  };
 
   const handleDocumentDataExtracted = (data: {
     electricity?: number;
@@ -712,7 +662,30 @@ Return ONLY valid JSON (no markdown, no explanations):
                   .join(" · ")}
               />
             </MetricRow>
+
+            <div className="app-card-inset mt-4 px-4 py-3">
+              <p className="app-label mb-1">
+                {results.method === "climatiq"
+                  ? "Calculation basis: Climatiq emission factors"
+                  : "Calculation basis: published reference factors"}
+              </p>
+              <p className="app-meta break-words">
+                {results.method === "climatiq"
+                  ? "Factors were resolved live from the Climatiq database for your region."
+                  : "The live factor service was not available. The result uses published factors with the sources below. Recalculate later for a factor-resolved figure."}
+              </p>
+              {results.sources.length > 0 && (
+                <ul className="app-meta mt-2 space-y-1">
+                  {results.sources.map((source) => (
+                    <li key={source} className="break-words">
+                      {source}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </Section>
+
 
           <Section title={t("results.detailTitle")}>
             <DataTable
