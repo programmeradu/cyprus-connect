@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { betterFetch } from "@better-fetch/fetch";
+import { getSessionCookie } from "better-auth/cookies";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
@@ -40,16 +40,12 @@ export default async function middleware(request: NextRequest) {
     );
 
   if (isProtected) {
+    // Cookie-only check: middleware runs on the edge and cannot self-fetch
+    // the app origin reliably. Full session validation happens in the route
+    // handlers / server components behind this gate.
+    const sessionCookie = getSessionCookie(request);
 
-    const session = await betterFetch<{ user: { id: string } } | null>(
-      "/api/auth/get-session",
-      {
-        baseURL: request.nextUrl.origin,
-        headers: { cookie: request.headers.get("cookie") || "" },
-      }
-    );
-
-    if (!session.data?.user) {
+    if (!sessionCookie) {
       const locale = localeMatch?.[1] || routing.defaultLocale;
       const url = new URL(`/${locale}/auth`, request.url);
       url.searchParams.set("redirect", pathname);
