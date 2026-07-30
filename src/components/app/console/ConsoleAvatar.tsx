@@ -34,7 +34,8 @@ export const AVATAR_STYLES = {
   botttsNeutral: { label: "Robots", style: botttsNeutral },
   shapes: { label: "Shapes", style: shapes },
   initials: { label: "Initials", style: initials },
-} satisfies Record<string, { label: string; style: Style<Record<string, unknown>> }>;
+} as Record<string, { label: string; style: Style<Record<string, unknown>> }>;
+
 
 export type AvatarStyleKey = keyof typeof AVATAR_STYLES;
 
