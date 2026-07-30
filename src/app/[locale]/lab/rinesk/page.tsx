@@ -269,7 +269,7 @@ export default function RineskPage() {
             </A>
 
             {/* nav */}
-            <A l={295} t={23} w={55} h={24} className="rk-pill" />
+            <A l={295} t={25} w={55} h={24} className="rk-pill" />
             {navItems.map(([label, x]) => (
               <A
                 key={label}
