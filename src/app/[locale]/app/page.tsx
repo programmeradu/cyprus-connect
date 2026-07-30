@@ -123,6 +123,9 @@ export default function ConsolePage() {
         <div className="vc-window vc-state">
           <p>The console cannot reach your data</p>
           <span>{error}</span>
+          <button type="button" className="vc-add-agent" onClick={refresh}>
+            Try again
+          </button>
         </div>
       </div>
     );
