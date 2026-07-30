@@ -24,7 +24,7 @@ export default function AppLayout({
 
           <ConsoleRail />
 
-          <main className="lg:pl-[236px]">{children}</main>
+          <main className="lg:pl-[212px]">{children}</main>
 
           <Toaster />
         </div>
