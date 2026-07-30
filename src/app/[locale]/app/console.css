@@ -55,10 +55,10 @@
   --vc-deck: linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.032));
   --vc-deck-col: rgba(255, 255, 255, 0.035);
   --vc-ink: #f2f3f1;
-  --vc-ink-2: rgba(242, 243, 241, 0.64);
-  --vc-ink-3: rgba(242, 243, 241, 0.44);
-  --vc-rule: rgba(255, 255, 255, 0.1);
-  --vc-rule-soft: rgba(255, 255, 255, 0.11);
+  --vc-ink-2: rgba(242, 243, 241, 0.86);
+  --vc-ink-3: rgba(242, 243, 241, 0.72);
+  --vc-rule: rgba(255, 255, 255, 0.14);
+  --vc-rule-soft: rgba(255, 255, 255, 0.14);
   --vc-rail: #1c1c1c;
   --vc-rail-rule: rgba(255, 255, 255, 0.08);
   --vc-rail-active: rgba(255, 255, 255, 0.07);
