@@ -563,49 +563,8 @@ export default function ConsolePage() {
             </>
           )}
 
-          {section === "agents" && (
-            <div className="vc-plate-grid vc-plate-grid-3">
-              {agents.map((agent) => {
-                const agentRuns = runs.filter((run) => run.agentKey === agent.key);
-                const last = agentRuns[0];
-                return (
-                  <section className="vc-plate" key={agent.key}>
-                    <header>
-                      <span>{AUTONOMY_LABEL[agent.autonomy]}</span>
-                      <strong>{Math.round(agent.healthScore)}%</strong>
-                    </header>
-                    <div className="vc-agent-lead">
-                      <span className="vc-agent-icon">
-                        <AgentGlyph glyph={agent.glyph} size={22} />
-                      </span>
-                      <span>
-                        <strong>{agent.name}</strong>
-                        <small>{agent.role}</small>
-                      </span>
-                      <i className="vc-dot" data-tone={STATUS_TONE[agent.status] ?? "idle"} />
-                    </div>
-                    <p className="vc-agent-mission">{agent.mission}</p>
-                    <dl className="vc-kv">
-                      <div>
-                        <dt>Cadence</dt>
-                        <dd>{agent.cadence}</dd>
-                      </div>
-                      <div>
-                        <dt>Runs held</dt>
-                        <dd>{agentRuns.length}</dd>
-                      </div>
-                      <div>
-                        <dt>Last run</dt>
-                        <dd>{last ? relativeTime(last.startedAt) : "not yet"}</dd>
-                      </div>
-                    </dl>
-                    {last && <p className="vc-agent-mission vc-agent-note">{last.summary}</p>}
-                    <Rule pct={agent.healthScore} tone={agent.status === "active" ? "accent" : "muted"} />
-                  </section>
-                );
-              })}
-            </div>
-          )}
+
+
 
           {section === "evidence" && (
             <div className="vc-plate-grid vc-plate-grid-2">
