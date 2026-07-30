@@ -209,9 +209,105 @@ export default function ConsolePage() {
   const nextObligation = dueObligations[0];
   const focusTone = toneFor(focus.delta, focus.goodDirection);
 
+  /**
+   * The overview no longer repeats the agent roster, which the Agents page owns.
+   * It reads the same records and states what changed, what is short and what
+   * needs a decision. Every line is derived, never written by hand.
+   */
+  const insights: Insight[] = [];
+
+  const mover = [...metrics]
+    .filter((metric) => Number.isFinite(metric.delta) && Math.abs(metric.delta) >= 1)
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))[0];
+  if (mover) {
+    const tone = toneFor(mover.delta, mover.goodDirection);
+    insights.push({
+      id: "mover",
+      tone: tone === "good" ? "good" : tone === "bad" ? "warn" : "info",
+      label: "Largest move",
+      headline: `${mover.shortLabel ?? mover.label} ${fmtSigned(mover.delta)}`,
+      detail: `Now ${fmtNumber(mover.current, mover.precision)} ${mover.unit} against the last period.`,
+      href: "/app/analytics",
+      linkLabel: `Open ${mover.label}`,
+    });
+  }
+
+  const failedRuns = runs.filter((run) => run.status === "failed" || run.status === "error");
+  if (failedRuns.length) {
+    insights.push({
+      id: "runs",
+      tone: "bad",
+      label: "Agent run",
+      headline: `${failedRuns.length} run${failedRuns.length === 1 ? "" : "s"} did not finish`,
+      detail: failedRuns[0].summary ?? "Open the workforce to read the run log.",
+      href: "/app/insights",
+      linkLabel: "Open the agent workforce",
+    });
+  }
+
+  const highTasks = tasks.filter((task) => task.severity === "high");
+  if (tasks.length) {
+    insights.push({
+      id: "tasks",
+      tone: highTasks.length ? "warn" : "info",
+      label: "Decision",
+      headline: `${tasks.length} item${tasks.length === 1 ? "" : "s"} wait for a person`,
+      detail: highTasks.length
+        ? `${highTasks.length} of them are marked high. ${highTasks[0].title}.`
+        : tasks[0].title,
+      href: "/app/actions",
+      linkLabel: "Open the approval queue",
+    });
+  }
+
+  const weakConnection = [...connections]
+    .filter((connection) => connection.status !== "available")
+    .sort((a, b) => a.coveragePct - b.coveragePct)[0];
+  if (weakConnection && weakConnection.coveragePct < 85) {
+    insights.push({
+      id: "coverage",
+      tone: weakConnection.coveragePct < 60 ? "warn" : "info",
+      label: "Evidence gap",
+      headline: `${weakConnection.provider} covers ${Math.round(weakConnection.coveragePct)}%`,
+      detail: `${titleCase(weakConnection.category)} records, synced ${relativeTime(weakConnection.lastSyncAt)}.`,
+      href: "/app/integrations",
+      linkLabel: "Open connections",
+    });
+  }
+
+  const pressing = dueObligations.find(
+    (obligation) => obligation.status === "at_risk" || daysUntil(obligation.dueDate) <= 45
+  );
+  if (pressing) {
+    insights.push({
+      id: "obligation",
+      tone: pressing.status === "at_risk" ? "bad" : "warn",
+      label: "Deadline",
+      headline: `${pressing.title} in ${daysUntil(pressing.dueDate)} days`,
+      detail: `${pressing.framework} · ${Math.round(pressing.progressPct)}% prepared by ${pressing.ownerName}.`,
+      href: "/app/compliance",
+      linkLabel: "Open obligations",
+    });
+  }
+
+  if (!insights.length) {
+    insights.push({
+      id: "steady",
+      tone: "good",
+      label: "Steady",
+      headline: "Nothing needs a decision today",
+      detail: `Evidence coverage sits at ${Math.round(coverage?.current ?? 0)}% and ${Math.round(
+        automation?.current ?? 0
+      )}% of the work is automated.`,
+      href: "/app/analytics",
+      linkLabel: "Open the record",
+    });
+  }
+
+  const topInsights = [...insights].sort((a, b) => TONE_RANK[a.tone] - TONE_RANK[b.tone]).slice(0, 4);
+
   const SECTIONS: { key: SectionKey; label: string; count: number }[] = [
     { key: "overview", label: "Overview", count: metrics.length },
-    { key: "agents", label: "Agents", count: agents.length },
     { key: "evidence", label: "Evidence", count: connections.length },
     { key: "obligations", label: "Obligations", count: obligations.length },
     { key: "connections", label: "Connections", count: connections.length },
@@ -245,14 +341,14 @@ export default function ConsolePage() {
               </div>
 
 
-              <button
-                type="button"
+              <Link
+                href={"/app/insights" as never}
                 className="vc-add-agent"
-                onClick={() => setSection("agents")}
-                aria-label="Show the agent workforce"
+                aria-label="Open the agent workforce"
               >
                 Agent workforce
-              </button>
+              </Link>
+
 
               {/* The rail switches the hero series. It is not decoration. */}
               <div className="vc-side-icons" role="tablist" aria-label="Metric category">
