@@ -303,12 +303,6 @@ export default function DashboardPage() {
   const efficiencyTrend = getMetricTrend('resource_efficiency');
   const renewableTrend = getMetricTrend('renewable_share');
 
-  // Transform historical data for the trend table (oldest to newest)
-  const chartData = historicalData.slice(0, 6).reverse().map(record => ({
-    period: record.monthLabel,
-    renewable: record.renewablePercentage
-  }));
-
   // Console series: monthly readings, oldest to newest.
   const overviewHistory = historicalData
     .slice(0, 12)
