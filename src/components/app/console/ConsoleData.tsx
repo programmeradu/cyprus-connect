@@ -46,26 +46,84 @@ export function ConsoleDataProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let alive = true;
+    const controller = new AbortController();
     setLoading(true);
-    fetch("/api/console/overview")
-      .then(async (res) => {
-        const body = await res.json();
-        if (!res.ok) throw new Error(body?.message ?? body?.error ?? "The console cannot reach your data");
-        return body as ConsoleOverviewData;
-      })
-      .then((body) => {
+
+    /**
+     * Reads the workspace once. The body is read as text first: a dev reload,
+     * a proxy timeout or a gateway error can answer with an empty body or an
+     * HTML page, and res.json() then throws "Unexpected end of JSON input",
+     * which tells the user nothing. We turn those cases into a real message.
+     */
+    async function read(): Promise<ConsoleOverviewData> {
+      const res = await fetch("/api/console/overview", {
+        signal: controller.signal,
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+      const text = await res.text();
+
+      let body: unknown = null;
+      if (text.trim().length > 0) {
+        try {
+          body = JSON.parse(text);
+        } catch {
+          body = null;
+        }
+      }
+
+      const record = (body ?? {}) as { message?: string; error?: string };
+
+      if (!res.ok) {
+        throw new Error(
+          record.message ??
+            record.error ??
+            `The console cannot reach your data (server answered ${res.status}).`,
+        );
+      }
+      if (body === null) {
+        throw new Error(
+          "The console received an empty answer from the server. Please try again.",
+        );
+      }
+      return body as ConsoleOverviewData;
+    }
+
+    (async () => {
+      try {
+        let body: ConsoleOverviewData;
+        try {
+          body = await read();
+        } catch (first) {
+          if (controller.signal.aborted) return;
+          // One retry covers a dev rebuild or a dropped connection.
+          await new Promise((resolve) => setTimeout(resolve, 600));
+          if (controller.signal.aborted) return;
+          try {
+            body = await read();
+          } catch {
+            throw first;
+          }
+        }
         if (!alive) return;
         setData(body);
         setError(null);
-      })
-      .catch((err: Error) => {
-        if (alive) setError(err.message);
-      })
-      .finally(() => {
+      } catch (err) {
+        if (!alive || controller.signal.aborted) return;
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setError(
+          err instanceof Error && err.message
+            ? err.message
+            : "The console cannot reach your data.",
+        );
+      } finally {
         if (alive) setLoading(false);
-      });
+      }
+    })();
+
     return () => {
       alive = false;
+      controller.abort();
     };
   }, [nonce]);
 
