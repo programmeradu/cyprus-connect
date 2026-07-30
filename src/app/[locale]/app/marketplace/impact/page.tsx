@@ -14,6 +14,7 @@ import {
   EmptyState,
   type Column
 } from "@/components/app/shell";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface ImpactData {
   totalTonsOffset: number;
@@ -51,7 +52,7 @@ export default function ImpactPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth?redirect=/app/marketplace/impact");
+      if (!APP_OPEN_ACCESS) router.push("/auth?redirect=/app/marketplace/impact");
     }
   }, [session, isPending, router]);
 

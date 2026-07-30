@@ -14,6 +14,7 @@ import {
   EmptyState,
   type Column
 } from "@/components/app/shell";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Project {
   id: number;
@@ -36,7 +37,7 @@ export default function MarketplaceAdminPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth?redirect=/app/marketplace/admin");
+      if (!APP_OPEN_ACCESS) router.push("/auth?redirect=/app/marketplace/admin");
     }
   }, [session, isPending, router]);
 

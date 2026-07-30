@@ -16,6 +16,7 @@ import {
   EmptyState,
   AiUnavailable
 } from "@/components/app/shell";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface AnalyticsData {
   metrics: {
@@ -61,7 +62,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth?redirect=" + encodeURIComponent(window.location.pathname));
+      if (!APP_OPEN_ACCESS) router.push("/auth?redirect=" + encodeURIComponent(window.location.pathname));
     }
   }, [session, isPending, router]);
 
