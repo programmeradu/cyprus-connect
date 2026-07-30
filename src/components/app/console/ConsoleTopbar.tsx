@@ -139,6 +139,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         setPalette(false);
         setQueue(false);
         setAccount(false);
+        setMore(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -154,6 +155,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
       if (bar.current && !bar.current.contains(event.target as Node)) {
         setQueue(false);
         setAccount(false);
+        setMore(false);
       }
     };
     document.addEventListener("mousedown", onClick);
@@ -167,6 +169,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
     setPalette(false);
     router.push(href as never);
   };
+  const moreActive = MORE_ITEMS.some((item) => path.startsWith(item.href));
 
   return (
     <header className="vc-nav" ref={bar}>
@@ -190,7 +193,42 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
             </Link>
           );
         })}
+
+        <div className="vc-pop-anchor vc-navmore">
+          <button
+            type="button"
+            data-active={moreActive || more}
+            aria-expanded={more}
+            aria-haspopup="menu"
+            onClick={() => {
+              setMore((v) => !v);
+              setQueue(false);
+              setAccount(false);
+            }}
+          >
+            <span>More</span>
+            <i aria-hidden="true">▾</i>
+          </button>
+
+          {more && (
+            <div className="vc-pop vc-pop-menu" role="menu" aria-label="More of the workspace">
+              {MORE_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href as never}
+                  role="menuitem"
+                  data-active={path.startsWith(item.href)}
+                  onClick={() => setMore(false)}
+                >
+                  <strong>{item.label}</strong>
+                  <span>{item.detail}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
+
 
       <div className="vc-actions">
         <ThemeToggle />
