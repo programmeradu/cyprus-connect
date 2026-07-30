@@ -1,8 +1,9 @@
 "use client";
 
 import "./app.css";
+import "./console.css";
 
-import { Sidebar } from "@/components/app/Sidebar";
+import { ConsoleRail } from "@/components/app/console/ConsoleRail";
 import { OnboardingCheck } from "@/components/app/OnboardingCheck";
 import { UserProvider } from "@/lib/user-context";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
@@ -16,21 +17,14 @@ export default function AppLayout({
   return (
     <UserProvider>
       <CurrencyProvider>
-        {/* `viq-app` scopes the workspace stylesheet. Every token, surface and
-            primitive under /app resolves from app.css, not the marketing sheet. */}
-        <div className="viq-app app-page relative min-h-screen">
+        {/* `viq-app` scopes the workspace stylesheet; `vc` scopes the console
+            tokens. Both light and dark modes are authored separately. */}
+        <div className="viq-app vc vc-shell relative min-h-screen">
           <OnboardingCheck />
 
-          {/* Flat page plane. No gradient wash: depth comes from surface value. */}
-          <div className="app-page fixed inset-0 -z-10" />
+          <ConsoleRail />
 
-          <Sidebar />
-
-          <main className="lg:pl-56">
-            <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-              {children}
-            </div>
-          </main>
+          <main className="lg:pl-[212px]">{children}</main>
 
           <Toaster />
         </div>
