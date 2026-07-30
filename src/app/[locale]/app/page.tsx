@@ -9,6 +9,7 @@
  */
 
 import { useMemo, useState } from "react";
+import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
@@ -67,6 +68,19 @@ const STATUS_TONE: Record<string, string> = {
 
 const titleCase = (value: string) =>
   value.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+
+/**
+ * Every plate on the overview is a summary of a page that owns those records.
+ * This link carries the reader to that page, so no figure is a dead end.
+ */
+function PlateOpen({ href, label }: { href: string; label: string }) {
+  return (
+    <Link href={href as never} className="vc-plate-open" aria-label={label}>
+      Open
+    </Link>
+  );
+}
+
 
 const greetingFor = (hour: number) =>
   hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
@@ -238,6 +252,7 @@ export default function ConsolePage() {
                 </p>
                 <p>
                   <i /> Evidence <strong>{Math.round(coverage?.current ?? 0)}%</strong>
+                    <PlateOpen href="/app/analytics" label="Open evidence coverage" />
                 </p>
                 <p>
                   <i data-tone="soft" /> Human tasks <strong>{tasks.length}</strong>
@@ -344,6 +359,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Agent workforce</span>
                     <strong>{activeAgents.length} running</strong>
+                    <PlateOpen href="/app/insights" label="Open the agent workforce" />
                   </header>
                   <div className="vc-agent-table">
                     <div className="vc-table-head">
@@ -405,6 +421,7 @@ export default function ConsolePage() {
                     <strong>
                       {fmtNumber((footprint?.points ?? []).reduce((sum, p) => sum + p.value, 0), 1)} tCO₂e
                     </strong>
+                    <PlateOpen href="/app/analytics" label="Open the footprint record" />
                   </header>
                   <BarRow
                     points={(footprint?.points ?? []).map((p) => ({ label: p.label, value: p.value }))}
@@ -428,6 +445,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Next obligation</span>
                     <strong>{nextObligation ? `${daysUntil(nextObligation.dueDate)} days` : "Clear"}</strong>
+                    <PlateOpen href="/app/compliance" label="Open obligations" />
                   </header>
                   {nextObligation ? (
                     <div className="vc-obligation">
@@ -477,6 +495,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Human in the loop</span>
                     <strong>{tasks.length} waiting</strong>
+                    <PlateOpen href="/app/actions" label="Open the approval queue" />
                   </header>
                   {tasks.length === 0 ? (
                     <p className="vc-empty">The queue is clear.</p>

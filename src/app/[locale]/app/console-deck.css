@@ -1160,3 +1160,75 @@
 
   .vc .vc-big-number small { max-width: none; }
 }
+
+/* --- "More" navigation menu -------------------------------------------
+   The console has more surfaces than the bar can hold. The rest open from
+   this menu, so no route is unreachable from any page. */
+
+.vc-navmore > button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 26px;
+  padding: 0 11px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vc-ink-2);
+  cursor: pointer;
+}
+
+.vc-navmore > button[data-active="true"] { color: var(--vc-ink); }
+.vc-navmore > button i { font-style: normal; font-size: 11px; line-height: 1; }
+
+.vc-pop-menu {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(300px, calc(100vw - 32px));
+  padding: 10px;
+}
+
+.vc-pop-menu a[role="menuitem"] { margin-top: 4px; }
+.vc-pop-menu a[role="menuitem"]:first-child { margin-top: 0; }
+.vc-pop-menu a[role="menuitem"][data-active="true"] { background: var(--vc-lime-soft); }
+
+.vc-pop-menu a[role="menuitem"] strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--vc-ink);
+}
+
+.vc-pop-menu a[role="menuitem"] span {
+  display: block;
+  margin-top: 1px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--vc-ink-3);
+}
+
+/* --- Plate "open the page" link ---------------------------------------
+   Every summary plate names the route that owns its records, so a figure on
+   the overview is never a dead end. */
+
+.vc-plate > header strong { margin-left: auto; }
+
+.vc-plate > header a.vc-plate-open {
+  flex: none;
+  align-self: center;
+  padding: 3px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--vc-rule);
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--vc-ink-2);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.vc-plate > header a.vc-plate-open:hover {
+  background: var(--vc-lime-soft);
+  color: var(--vc-ink);
+}

@@ -32,6 +32,23 @@ export const NAV_ITEMS = [
   { href: "/app/integrations", label: "Connect", icon: IcoPlug },
 ];
 
+/**
+ * The rest of the workspace. These routes exist and read live records, but
+ * six items is the most the bar can hold without wrapping, so they open from
+ * one menu instead of disappearing from the product.
+ */
+export const MORE_ITEMS = [
+  { href: "/app/studio", label: "Studio", detail: "Draft disclosures and briefs" },
+  { href: "/app/learn", label: "Learn", detail: "Courses and guidance" },
+  { href: "/app/marketplace", label: "Marketplace", detail: "Consultants, providers and offsets" },
+  { href: "/app/calculator", label: "Calculator", detail: "Manual emission entries" },
+  { href: "/app/grant-alerts", label: "Grant alerts", detail: "EU and Cyprus funding" },
+  { href: "/app/leaderboard", label: "Benchmarks", detail: "Sector comparison" },
+  { href: "/app/billing", label: "Plan and usage", detail: "Subscription and credits" },
+  { href: "/app/settings", label: "Settings", detail: "Workspace and profile" },
+];
+
+
 interface Entry {
   href: string;
   group: string;
@@ -51,18 +68,28 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const [palette, setPalette] = useState(false);
   const [queue, setQueue] = useState(false);
   const [account, setAccount] = useState(false);
+  const [more, setMore] = useState(false);
   const [query, setQuery] = useState("");
   const field = useRef<HTMLInputElement>(null);
   const bar = useRef<HTMLElement>(null);
 
   /** Everything searchable is built from the loaded workspace records. */
   const entries = useMemo<Entry[]>(() => {
-    const list: Entry[] = NAV_ITEMS.map((item) => ({
-      href: item.href,
-      group: "Go to",
-      title: item.label,
-      detail: item.href,
-    }));
+    const list: Entry[] = [
+      ...NAV_ITEMS.map((item) => ({
+        href: item.href,
+        group: "Go to",
+        title: item.label,
+        detail: item.href,
+      })),
+      ...MORE_ITEMS.map((item) => ({
+        href: item.href,
+        group: "Go to",
+        title: item.label,
+        detail: item.detail,
+      })),
+    ];
+
     if (!data) return list;
     for (const agent of data.agents) {
       list.push({ href: "/app/insights", group: "Agents", title: agent.name, detail: agent.role });
@@ -112,6 +139,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         setPalette(false);
         setQueue(false);
         setAccount(false);
+        setMore(false);
       }
     };
     window.addEventListener("keydown", onKey);
@@ -127,6 +155,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
       if (bar.current && !bar.current.contains(event.target as Node)) {
         setQueue(false);
         setAccount(false);
+        setMore(false);
       }
     };
     document.addEventListener("mousedown", onClick);
@@ -140,6 +169,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
     setPalette(false);
     router.push(href as never);
   };
+  const moreActive = MORE_ITEMS.some((item) => path.startsWith(item.href));
 
   return (
     <header className="vc-nav" ref={bar}>
@@ -163,7 +193,42 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
             </Link>
           );
         })}
+
+        <div className="vc-pop-anchor vc-navmore">
+          <button
+            type="button"
+            data-active={moreActive || more}
+            aria-expanded={more}
+            aria-haspopup="menu"
+            onClick={() => {
+              setMore((v) => !v);
+              setQueue(false);
+              setAccount(false);
+            }}
+          >
+            <span>More</span>
+            <i aria-hidden="true">▾</i>
+          </button>
+
+          {more && (
+            <div className="vc-pop vc-pop-menu" role="menu" aria-label="More of the workspace">
+              {MORE_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href as never}
+                  role="menuitem"
+                  data-active={path.startsWith(item.href)}
+                  onClick={() => setMore(false)}
+                >
+                  <strong>{item.label}</strong>
+                  <span>{item.detail}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </nav>
+
 
       <div className="vc-actions">
         <ThemeToggle />
