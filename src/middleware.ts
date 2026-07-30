@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { betterFetch } from "@better-fetch/fetch";
+import { getSessionCookie } from "better-auth/cookies";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
