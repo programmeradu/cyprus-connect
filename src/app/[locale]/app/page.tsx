@@ -357,8 +357,7 @@ export default function ConsolePage() {
                   </header>
                   <div className="vc-agent-table">
                     <div className="vc-table-head">
-                      <span>Agent</span>
-                      <span>Mode</span>
+                      <span>Agent and last run</span>
                       <span>Health</span>
                     </div>
                     {agents.slice(0, 4).map((agent) => {
@@ -371,8 +370,8 @@ export default function ConsolePage() {
                           <span className="vc-agent-copy">
                             <strong>{agent.name}</strong>
                             <small>{lastRun?.summary ?? agent.role}</small>
+                            <em>{AUTONOMY_LABEL[agent.autonomy]}</em>
                           </span>
-                          <span className="vc-mode">{AUTONOMY_LABEL[agent.autonomy]}</span>
                           <span className="vc-health">{Math.round(agent.healthScore)}%</span>
                         </article>
                       );

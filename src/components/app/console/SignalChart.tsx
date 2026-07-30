@@ -227,7 +227,7 @@ export function SignalChart({ metric }: { metric: ConsoleMetric }) {
         style={{
           left: `calc((100% - 46px) * ${cursorPct / 100})`,
           top: `${(Math.max(WAVE_TOP - 4, geom.ys[active] - 74) / H) * 100}%`,
-          transform: `translateX(${cursorPct > 78 ? "-88%" : cursorPct < 22 ? "-12%" : "-50%"})`,
+          transform: `translateX(${cursorPct > 76 ? "-100%" : cursorPct < 22 ? "-12%" : "-50%"})`,
         }}
       >
         <span>{point.label}</span>

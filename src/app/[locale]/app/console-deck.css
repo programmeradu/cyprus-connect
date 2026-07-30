@@ -969,3 +969,24 @@
     min-height: 0;
   }
 }
+
+/* ---------- the overview agent table reads as two columns ------------ */
+
+.vc-plate .vc-table-head,
+.vc-plate .vc-agent-table article {
+  grid-template-columns: minmax(0, 1fr) 44px;
+}
+
+.vc-plate .vc-agent-copy em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--vc-ink-3);
+}
+
+.vc-plate .vc-health {
+  align-self: start;
+  padding-top: 1px;
+}
