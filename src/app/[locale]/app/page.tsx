@@ -304,8 +304,15 @@ export default function ConsolePage() {
                     decision.
                   </p>
                 </div>
-                <span className="vc-history" title={`Read at ${new Date(data.generatedAt).toLocaleTimeString("en-GB")}`}>
-                  <IcoClock size={16} />
+                <span className="vc-history" title={`Console data read at ${new Date(data.generatedAt).toLocaleTimeString("en-GB")}`}>
+                  <IcoClock size={14} />
+                  <em>
+                    Read{" "}
+                    {new Date(data.generatedAt).toLocaleTimeString("en-GB", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </em>
                 </span>
               </div>
 
