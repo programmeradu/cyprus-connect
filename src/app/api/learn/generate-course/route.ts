@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { courses, courseModules, lessons, notifications, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { generateImage, generateVideo } from "@/lib/generators";
+import { generateImage } from "@/lib/generators";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 
 export async function POST(request: NextRequest) {
@@ -122,7 +122,6 @@ export async function POST(request: NextRequest) {
           title: lesson.title,
           contentType: lesson.contentType,
           contentJson: JSON.stringify(enhancedContent),
-          videoUrl: videoUrl,
           estimatedMinutes: lesson.estimatedMinutes,
           createdAt: new Date().toISOString()
         });

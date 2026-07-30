@@ -389,32 +389,7 @@ CRITICAL: Return ONLY valid JSON (no markdown, no code blocks):
 
       for (const [lessonIndex, lesson] of module.lessons.entries()) {
         // Generate media if needed
-        let videoUrl = null;
         let enhancedContent = { ...lesson.content };
-
-        if (lesson.needsVideo && lesson.videoPrompt) {
-          try {
-            console.log(`Generating video for lesson: ${lesson.title}`);
-            const videoResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-video`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                prompt: lesson.videoPrompt,
-                aspect_ratio: "16:9"
-              })
-            });
-
-            if (videoResponse.ok) {
-              const videoData = await videoResponse.text();
-              if (videoData && !videoData.startsWith('Error:')) {
-                videoUrl = videoData.trim();
-                enhancedContent.videoUrl = videoUrl;
-              }
-            }
-          } catch (error) {
-            console.error(`Failed to generate video for ${lesson.title}:`, error);
-          }
-        }
 
         if (lesson.needsImage && lesson.imagePrompt) {
           try {
@@ -450,7 +425,6 @@ CRITICAL: Return ONLY valid JSON (no markdown, no code blocks):
           title: lesson.title,
           contentType: lesson.contentType,
           contentJson: JSON.stringify(enhancedContent),
-          videoUrl: videoUrl,
           estimatedMinutes: lesson.estimatedMinutes,
           createdAt: new Date().toISOString()
         });
