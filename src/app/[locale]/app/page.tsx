@@ -19,10 +19,13 @@ import {
   DataTable,
   EmptyState
 } from "@/components/app/shell";
-import { BentoOverview, type BentoDeadline } from "@/components/app/dashboard/BentoOverview";
+import {
+  ConsoleOverview,
+  type OverviewDeadline
+} from "@/components/app/dashboard/ConsoleOverview";
 
 /** EU obligations that apply to a Cyprus SME. Past dates are filtered out. */
-const EU_DEADLINES: BentoDeadline[] = [
+const EU_DEADLINES: OverviewDeadline[] = [
   { label: "CBAM definitive declaration (FY2026)", date: "2027-05-31", detail: "Importers of steel, cement, aluminium and fertiliser." },
   { label: "CSRD wave 3 first report", date: "2027-01-01", detail: "Listed SMEs report on financial year 2026." },
   { label: "VSME voluntary disclosure", date: "2026-12-31", detail: "Requested by banks and large customers." }
