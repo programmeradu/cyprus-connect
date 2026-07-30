@@ -476,7 +476,7 @@ export default function RineskPage() {
                 y1={197}
                 x2={841}
                 y2={197}
-                stroke="rgba(255,255,255,.42)"
+                stroke="rgba(255,255,255,.2)"
                 strokeWidth="1"
                 strokeDasharray="3 4"
               />
@@ -503,7 +503,7 @@ export default function RineskPage() {
               ))}
 
               {/* baseline rule under the comb */}
-              <line x1={429} y1={305} x2={824} y2={305} stroke="rgba(255,255,255,.4)" strokeWidth="1" />
+              <line x1={429} y1={305} x2={824} y2={305} stroke="rgba(255,255,255,.16)" strokeWidth="1" />
 
               {/* lower ticks */}
               {TICKS.map(([x]) => (
@@ -552,12 +552,12 @@ export default function RineskPage() {
                         position: "absolute",
                         inset: "-1px 0 0 0",
                         borderRadius: 4,
-                        background: "rgba(232,249,74,.45)",
+                        background: "rgba(232,249,74,.34)",
                       }}
                     />
                   ) : null}
                   <div style={{ position: "relative", paddingLeft: 3, fontSize: 7.4, whiteSpace: "nowrap" }}>
-                    <span style={{ fontWeight: 800, color: "#1c2727" }}>{n as string}</span>{" "}
+                    <span style={{ fontWeight: 800, color: "#1c2727", marginRight: 3 }}>{n as string}</span>
                     <span style={{ fontWeight: 600, color: "rgba(35,46,46,.42)" }}>{label as string}</span>
                   </div>
                 </A>
