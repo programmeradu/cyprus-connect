@@ -5,9 +5,13 @@ import * as schema from '@/db/schema';
 // Create PostgreSQL connection for Supabase
 const createDbClient = () => {
   return postgres((process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!, {
-    max: 10, // Maximum number of connections in the pool
+    // The Supabase pooler caps concurrent client connections hard. Keeping the
+    // local pool small makes extra queries queue instead of getting refused.
+    max: 3,
     idle_timeout: 20,
-    connect_timeout: 10,
+    connect_timeout: 15,
+    max_lifetime: 60 * 30,
+    prepare: false, // required for pooled (pgbouncer-style) connections
   });
 };
 
