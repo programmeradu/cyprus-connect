@@ -91,26 +91,8 @@ export async function POST(request: NextRequest) {
 
       for (const [lessonIndex, lesson] of module.lessons.entries()) {
         // Generate media if needed
-        let videoUrl = null;
         let enhancedContent = { ...lesson.content };
 
-        // Generate video for video lessons
-        if (lesson.contentType === "video" && lesson.needsVideo && lesson.videoPrompt) {
-          try {
-            console.log(`Generating video for lesson: ${lesson.title}`);
-            const result = await generateVideo(lesson.videoPrompt, "16:9");
-            
-            if (result.url) {
-              videoUrl = result.url;
-              enhancedContent.videoUrl = videoUrl;
-              console.log(`✓ Video generated for: ${lesson.title}`);
-              
-              // Track credit for video generation
-            }
-          } catch (error) {
-            console.error(`Failed to generate video for ${lesson.title}:`, error);
-          }
-        }
 
         // Generate image for text lessons
         if (lesson.contentType === "text" && lesson.needsImage && lesson.imagePrompt) {
