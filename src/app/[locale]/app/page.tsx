@@ -252,6 +252,7 @@ export default function ConsolePage() {
                 </p>
                 <p>
                   <i /> Evidence <strong>{Math.round(coverage?.current ?? 0)}%</strong>
+                    <PlateOpen href="/app/analytics" label="Open evidence coverage" />
                 </p>
                 <p>
                   <i data-tone="soft" /> Human tasks <strong>{tasks.length}</strong>
@@ -358,6 +359,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Agent workforce</span>
                     <strong>{activeAgents.length} running</strong>
+                    <PlateOpen href="/app/insights" label="Open the agent workforce" />
                   </header>
                   <div className="vc-agent-table">
                     <div className="vc-table-head">
@@ -419,6 +421,7 @@ export default function ConsolePage() {
                     <strong>
                       {fmtNumber((footprint?.points ?? []).reduce((sum, p) => sum + p.value, 0), 1)} tCO₂e
                     </strong>
+                    <PlateOpen href="/app/analytics" label="Open the footprint record" />
                   </header>
                   <BarRow
                     points={(footprint?.points ?? []).map((p) => ({ label: p.label, value: p.value }))}
@@ -442,6 +445,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Next obligation</span>
                     <strong>{nextObligation ? `${daysUntil(nextObligation.dueDate)} days` : "Clear"}</strong>
+                    <PlateOpen href="/app/compliance" label="Open obligations" />
                   </header>
                   {nextObligation ? (
                     <div className="vc-obligation">
@@ -491,6 +495,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Human in the loop</span>
                     <strong>{tasks.length} waiting</strong>
+                    <PlateOpen href="/app/actions" label="Open the approval queue" />
                   </header>
                   {tasks.length === 0 ? (
                     <p className="vc-empty">The queue is clear.</p>
@@ -513,6 +518,7 @@ export default function ConsolePage() {
                   <header>
                     <span>Audit trail</span>
                     <strong>{events.length} records</strong>
+                    <PlateOpen href="/app/settings" label="Open the audit trail" />
                   </header>
                   <div className="vc-event-row">
                     {events.slice(0, 5).map((event) => (
