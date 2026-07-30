@@ -518,7 +518,6 @@ export default function ConsolePage() {
                   <header>
                     <span>Audit trail</span>
                     <strong>{events.length} records</strong>
-                    <PlateOpen href="/app/settings" label="Open the audit trail" />
                   </header>
                   <div className="vc-event-row">
                     {events.slice(0, 5).map((event) => (
