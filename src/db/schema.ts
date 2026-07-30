@@ -678,3 +678,33 @@ export const copilotProposals = pgTable('copilot_proposals', {
   decidedAt: timestamp('decided_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+/**
+ * A deliverable an agent drafted for a workspace: a VSME or CSRD report.
+ * The body is stored as structured sections so the console can render it,
+ * edit it later and export it, instead of holding a frozen file.
+ */
+export const reports = pgTable('reports', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  /** VSME | CSRD | ... matches workspaces.framework */
+  framework: text('framework').notNull().default('VSME'),
+  title: text('title').notNull(),
+  periodLabel: text('period_label').notNull(),
+  /** draft | in_review | final */
+  status: text('status').notNull().default('draft'),
+  /** Which agent authored it. Every deliverable has an author. */
+  agentKey: text('agent_key').notNull().default('copilot'),
+  agentName: text('agent_name'),
+  /** The review task and the proposal that produced this draft. */
+  taskId: integer('task_id'),
+  proposalId: integer('proposal_id'),
+  summary: text('summary'),
+  /** JSON: Array<{ code, title, body, figures: Array<{label,value,source}>, gaps: string[] }> */
+  sections: text('sections').notNull(),
+  /** JSON: the record keys the draft read, for the audit trail. */
+  sources: text('sources'),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
