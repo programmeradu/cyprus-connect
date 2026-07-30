@@ -325,18 +325,25 @@ export function ConsoleCopilot() {
                   Ask about the records in this workspace. I quote the metric, obligation or run
                   the answer comes from, and I never change anything without your approval.
                 </p>
+                <p className="vc-copilot-empty-label">Start with</p>
                 <ul>
-                  {STARTERS.map((starter) => (
+                  {STARTERS.map((starter, index) => (
                     <li key={starter}>
                       <button type="button" onClick={() => send(starter)}>
+                        <em className="vc-copilot-starter-no" aria-hidden>
+                          {String(index + 1).padStart(2, "0")}
+                        </em>
                         <span>{starter}</span>
-                        <em aria-hidden>&rarr;</em>
+                        <em className="vc-copilot-starter-go" aria-hidden>
+                          &rarr;
+                        </em>
                       </button>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
+
 
             {turns.map((turn, index) => (
               <article key={turn.id} data-role={turn.role} className="vc-copilot-turn">
