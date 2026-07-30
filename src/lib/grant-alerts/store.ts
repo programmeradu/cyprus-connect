@@ -7,7 +7,7 @@ let sql: ReturnType<typeof postgres> | null = null;
 
 function client() {
   if (!sql) {
-    sql = postgres(process.env.SUPABASE_DATABASE_URL!, {
+    sql = postgres((process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!, {
       max: 2,
       ssl: "require",
       prepare: false,

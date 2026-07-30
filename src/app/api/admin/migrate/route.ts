@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
 const MIGRATION_SECRET = "vuneli-migrate-cy-2026-a91f";
 
 async function runMigrations() {
-  const url = process.env.SUPABASE_DATABASE_URL;
-  if (!url) throw new Error("SUPABASE_DATABASE_URL is not set");
+  const url = process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL is not set");
 
   const migrationClient = postgres(url, { max: 1, ssl: "require", prepare: false });
   try {
