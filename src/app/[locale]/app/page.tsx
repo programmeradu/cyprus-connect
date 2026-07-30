@@ -69,6 +69,19 @@ const STATUS_TONE: Record<string, string> = {
 const titleCase = (value: string) =>
   value.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
 
+/**
+ * Every plate on the overview is a summary of a page that owns those records.
+ * This link carries the reader to that page, so no figure is a dead end.
+ */
+function PlateOpen({ href, label }: { href: string; label: string }) {
+  return (
+    <Link href={href as never} className="vc-plate-open" aria-label={label}>
+      Open
+    </Link>
+  );
+}
+
+
 const greetingFor = (hour: number) =>
   hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
