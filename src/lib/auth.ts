@@ -31,8 +31,24 @@ export const auth = betterAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
 		},
 	},
+	advanced: {
+		// The app is rendered inside a cross-site iframe in the Lovable editor
+		// preview. A SameSite=Lax cookie is neither stored nor sent in that
+		// context, so the session cookie never reached the middleware and every
+		// sign-in bounced straight back to /auth. SameSite=None + Secure +
+		// Partitioned (CHIPS) makes the session survive the iframe while keeping
+		// the cookie scoped to this site. localhost counts as a secure origin,
+		// so local development is unaffected.
+		useSecureCookies: true,
+		defaultCookieAttributes: {
+			sameSite: "none",
+			secure: true,
+			partitioned: true,
+		},
+	},
 	plugins: [bearer()]
 });
+
 
 // Session validation helper
 export async function getCurrentUser(request: NextRequest) {
