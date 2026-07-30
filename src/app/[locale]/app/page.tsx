@@ -466,7 +466,21 @@ export default function ConsolePage() {
                       </strong>
                     </div>
                   )}
+                  {dueObligations.length > 1 && (
+                    <div className="vc-reading-list">
+                      {dueObligations.slice(1, 4).map((obligation) => (
+                        <p key={obligation.id}>
+                          <strong>{obligation.title}</strong>
+                          <span>
+                            {obligation.framework} · {titleCase(obligation.status)}
+                          </span>
+                          <em>{daysUntil(obligation.dueDate)} d</em>
+                        </p>
+                      ))}
+                    </div>
+                  )}
                 </section>
+
               </div>
 
               <div className="vc-plate-grid vc-plate-grid-2">
