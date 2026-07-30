@@ -767,13 +767,28 @@ export default function RineskPage() {
                 </A>
               </div>
             ))}
-            <svg width="130" height="52" viewBox="0 0 130 52" style={{ position: "absolute", left: 736, top: 118 }} fill="none">
-              <path d="M4 50 C 20 4, 110 4, 126 50" stroke="rgba(255,255,255,.26)" strokeWidth="1" />
-              <path d="M22 40 C 40 8, 92 8, 112 38" stroke="rgba(255,255,255,.95)" strokeWidth="2.6" strokeLinecap="round" />
+            <svg width="132" height="56" viewBox="0 0 132 56" style={{ position: "absolute", left: 735, top: 116 }} fill="none">
+              <defs>
+                <linearGradient id="rkPredArc" x1="0" y1="1" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.55" />
+                  <stop offset="45%" stopColor="#ffffff" stopOpacity="0.98" />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0.72" />
+                </linearGradient>
+              </defs>
+              <path d="M4 56 A 62 62 0 0 1 128 56" stroke="rgba(255,255,255,.2)" strokeWidth="1.1" strokeLinecap="round" />
+              <path
+                d="M14 46 A 52 52 0 0 1 118 46"
+                stroke="url(#rkPredArc)"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+                pathLength={100}
+                strokeDasharray="94 100"
+              />
             </svg>
-            <A l={766} t={158} style={{ fontSize: 8, fontWeight: 600, color: "rgba(35,46,46,.55)" }}>
+            <A l={735} t={158} w={132} style={{ fontSize: 8, fontWeight: 600, color: "rgba(35,46,46,.58)", textAlign: "center", whiteSpace: "nowrap" }}>
               + 2% vs. last month
             </A>
+
           </div>
         </div>
       </div>
