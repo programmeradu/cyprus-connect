@@ -68,18 +68,28 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const [palette, setPalette] = useState(false);
   const [queue, setQueue] = useState(false);
   const [account, setAccount] = useState(false);
+  const [more, setMore] = useState(false);
   const [query, setQuery] = useState("");
   const field = useRef<HTMLInputElement>(null);
   const bar = useRef<HTMLElement>(null);
 
   /** Everything searchable is built from the loaded workspace records. */
   const entries = useMemo<Entry[]>(() => {
-    const list: Entry[] = NAV_ITEMS.map((item) => ({
-      href: item.href,
-      group: "Go to",
-      title: item.label,
-      detail: item.href,
-    }));
+    const list: Entry[] = [
+      ...NAV_ITEMS.map((item) => ({
+        href: item.href,
+        group: "Go to",
+        title: item.label,
+        detail: item.href,
+      })),
+      ...MORE_ITEMS.map((item) => ({
+        href: item.href,
+        group: "Go to",
+        title: item.label,
+        detail: item.detail,
+      })),
+    ];
+
     if (!data) return list;
     for (const agent of data.agents) {
       list.push({ href: "/app/insights", group: "Agents", title: agent.name, detail: agent.role });
