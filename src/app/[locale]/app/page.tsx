@@ -309,12 +309,18 @@ export default function DashboardPage() {
     renewable: record.renewablePercentage
   }));
 
-  // Hero series: monthly footprint, oldest to newest.
-  const series = historicalData
+  // Console series: monthly readings, oldest to newest.
+  const overviewHistory = historicalData
     .slice(0, 12)
     .reverse()
-    .map((record) => record.totalCo2e)
-    .filter((value) => typeof value === "number" && Number.isFinite(value));
+    .map((record) => ({
+      label: record.monthLabel,
+      carbon: Number(record.totalCo2e) || 0,
+      electricity: Number(record.electricityKwh) || 0,
+      renewable: Number(record.renewablePercentage) || 0,
+      efficiency: Number(record.efficiencyScore) || 0
+    }));
+
 
 
 
