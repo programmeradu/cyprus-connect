@@ -950,3 +950,22 @@
 .vc .vc-gauge-wrap > div { max-width: 220px; }
 
 .vc .vc-mini-rule { margin-top: 0; }
+
+/* ---------- the signal takes the full width of the hero -------------- */
+
+.vc .vc-signal {
+  left: 0;
+  right: 0;
+  top: 236px;
+  bottom: 0;
+  height: auto;
+  min-height: 210px;
+}
+
+@media (max-width: 1100px) {
+  .vc .vc-signal {
+    position: static;
+    height: 250px;
+    min-height: 0;
+  }
+}

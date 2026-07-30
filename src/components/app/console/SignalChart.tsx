@@ -176,8 +176,8 @@ export function SignalChart({ metric }: { metric: ConsoleMetric }) {
             y1={tick.top}
             y2={COMB_BASE}
             stroke={i === active ? "var(--vc-lime)" : "currentColor"}
-            strokeOpacity={i === active ? 1 : 0.3}
-            strokeWidth="2.4"
+            strokeOpacity={i === active ? 1 : 0.42}
+            strokeWidth="3"
             strokeLinecap="round"
             vectorEffect="non-scaling-stroke"
           />
@@ -218,14 +218,14 @@ export function SignalChart({ metric }: { metric: ConsoleMetric }) {
 
       <span
         className="vc-signal-node"
-        style={{ left: `${cursorPct}%`, top: `${(geom.ys[active] / H) * 100}%` }}
+        style={{ left: `calc((100% - 46px) * ${cursorPct / 100})`, top: `${(geom.ys[active] / H) * 100}%` }}
         aria-hidden
       />
 
       <div
         className="vc-tooltip"
         style={{
-          left: `${cursorPct}%`,
+          left: `calc((100% - 46px) * ${cursorPct / 100})`,
           top: `${(Math.max(WAVE_TOP - 4, geom.ys[active] - 74) / H) * 100}%`,
           transform: `translateX(${cursorPct > 78 ? "-88%" : cursorPct < 22 ? "-12%" : "-50%"})`,
         }}
