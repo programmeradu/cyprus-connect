@@ -1,28 +1,33 @@
 /* =====================================================================
    Console copilot.
 
-   A floating instrument in the bottom-right corner of the workspace, on the
-   same sage-glass language as the dock and the plates. Light and dark are
-   authored separately, never inverted. On a phone it becomes a full sheet
-   that clears the dock.
+   A floating instrument centred on the bottom edge of the workspace, on the
+   same sage-glass language as the dock and the plates. Collapsed it is a
+   small pill; a click unfolds it into the panel. Light and dark are authored
+   separately, never inverted. On a phone it becomes a full sheet that clears
+   the dock.
    ===================================================================== */
 
 .vc-copilot-fab {
   position: fixed;
-  right: clamp(14px, 2.4vw, 28px);
+  left: 50%;
   bottom: clamp(14px, 2.4vw, 28px);
+  transform: translateX(-50%);
   z-index: 65;
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100vw - 28px);
+  height: 46px;
+  padding: 0 8px 0 8px;
+  border-radius: 999px;
   border: 1px solid var(--vc-rule);
   background: linear-gradient(
     150deg,
     color-mix(in oklab, var(--vc-rail) 92%, white 8%),
     color-mix(in oklab, var(--vc-rail) 78%, var(--vc-window) 22%)
   );
+  backdrop-filter: blur(18px) saturate(1.15);
   color: var(--vc-ink);
   cursor: pointer;
   box-shadow: 0 16px 34px -16px rgba(20, 34, 26, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -34,7 +39,7 @@
 }
 
 .vc-copilot-fab:hover {
-  transform: translateY(-2px);
+  transform: translateX(-50%) translateY(-2px);
   box-shadow: 0 22px 42px -18px rgba(20, 34, 26, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -43,13 +48,32 @@
   outline-offset: 3px;
 }
 
+.vc-copilot-fab-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 50%;
+  border: 1px solid var(--vc-rail-rule);
+  background: var(--vc-icon-bg);
+  color: var(--vc-ink);
+}
+
+.vc-copilot-fab-label {
+  min-width: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--vc-ink);
+}
+
 .vc-copilot-fab-count {
-  position: absolute;
-  top: -2px;
-  right: -2px;
   min-width: 20px;
   height: 20px;
-  padding: 0 5px;
+  padding: 0 6px;
   display: grid;
   place-items: center;
   border-radius: 10px;
@@ -58,39 +82,34 @@
   font-size: 11px;
   font-weight: 800;
   line-height: 1;
-  box-shadow: 0 2px 6px -2px rgba(20, 34, 26, 0.5);
 }
 
-.vc-copilot-fab-tip {
-  position: absolute;
-  right: calc(100% + 10px);
-  padding: 5px 10px;
+.vc-copilot-fab-key {
+  display: grid;
+  place-items: center;
+  height: 22px;
+  padding: 0 8px;
+  margin-left: 2px;
   border-radius: 999px;
-  border: 1px solid var(--vc-rule);
-  background: var(--vc-rail);
-  color: var(--vc-ink);
-  font-size: 12.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 160ms ease;
-}
-
-.vc-copilot-fab:hover .vc-copilot-fab-tip {
-  opacity: 1;
+  border: 1px solid var(--vc-rail-rule);
+  background: var(--vc-pill-bg);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--vc-ink-3);
 }
 
 /* --------------------------------------------------------------------- */
 
 .vc-copilot {
   position: fixed;
-  right: clamp(14px, 2.4vw, 28px);
+  left: 50%;
   bottom: clamp(14px, 2.4vw, 28px);
+  transform: translateX(-50%);
   z-index: 66;
   display: flex;
   flex-direction: column;
-  width: min(420px, calc(100vw - 28px));
+  width: min(460px, calc(100vw - 28px));
   max-height: min(680px, calc(100svh - 96px));
   border-radius: 26px;
   overflow: hidden;
@@ -98,6 +117,25 @@
   background: color-mix(in oklab, var(--vc-rail) 88%, transparent);
   backdrop-filter: blur(22px) saturate(1.2);
   box-shadow: 0 34px 70px -28px rgba(20, 34, 26, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  animation: vc-copilot-unfold 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: bottom center;
+}
+
+@keyframes vc-copilot-unfold {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px) scale(0.965);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-copilot {
+    animation: none;
+  }
 }
 
 .dark .vc-copilot {
