@@ -56,10 +56,13 @@ export function ConsoleDataProvider({ children }: { children: ReactNode }) {
      * which tells the user nothing. We turn those cases into a real message.
      */
     async function read(): Promise<ConsoleOverviewData> {
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
       const res = await fetch("/api/console/overview", {
         signal: controller.signal,
         headers: {
           Accept: "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         cache: "no-store",
         credentials: "include",
