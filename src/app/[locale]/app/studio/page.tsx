@@ -575,7 +575,8 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
 
   return (
     <PageShell
-      loading={isPending || isLoadingHistory}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && isLoadingHistory)}
       header={<PageHeader title={t("title")} purpose={t("subtitle")} />}
       toolbar={
         <PageToolbar meta={studioStats ? t("itemCount", { count: filteredMedia.length }) : undefined}>

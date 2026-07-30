@@ -79,7 +79,9 @@
 .vc-shell {
   min-height: 100vh;
   min-height: 100svh;
-  background: var(--vc-page);
+  /* The concept field is the application background on every route, not
+     only on the overview. */
+  background: var(--vc-window);
 }
 
 .vc-rail {

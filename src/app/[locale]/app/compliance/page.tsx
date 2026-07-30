@@ -17,6 +17,7 @@ import {
   EmptyState
 } from "@/components/app/shell";
 import type { Column } from "@/components/app/shell";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Regulation {
   id: number;
@@ -75,7 +76,7 @@ export default function CompliancePage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth?redirect=/app/compliance");
+      if (!APP_OPEN_ACCESS) router.push("/auth?redirect=/app/compliance");
     }
   }, [session, isPending, router]);
 
@@ -210,7 +211,8 @@ export default function CompliancePage() {
 
   return (
     <PageShell
-      loading={isPending || loading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && loading)}
       error={pageError}
       onRetry={initializeCompliance}
       header={

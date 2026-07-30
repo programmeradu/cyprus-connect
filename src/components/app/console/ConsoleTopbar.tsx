@@ -39,7 +39,11 @@ interface Entry {
   detail: string;
 }
 
-export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
+/**
+ * `data` is null while the workspace read is in flight. The bar still
+ * renders: navigation must never disappear between pages.
+ */
+export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const path = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
@@ -59,6 +63,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
       title: item.label,
       detail: item.href,
     }));
+    if (!data) return list;
     for (const agent of data.agents) {
       list.push({ href: "/app/insights", group: "Agents", title: agent.name, detail: agent.role });
     }
@@ -128,7 +133,9 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  const initial = (data.workspace.ownerName ?? "V").slice(0, 1).toUpperCase();
+  const tasks = data?.tasks ?? [];
+  const workspace = data?.workspace ?? null;
+  const initial = (workspace?.ownerName ?? "V").slice(0, 1).toUpperCase();
   const open = (href: string) => {
     setPalette(false);
     router.push(href as never);
@@ -176,7 +183,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
           <button
             type="button"
             className="vc-iconbtn vc-notify"
-            aria-label={`Approval queue, ${data.tasks.length} open`}
+            aria-label={`Approval queue, ${tasks.length} open`}
             aria-expanded={queue}
             onClick={() => {
               setQueue((v) => !v);
@@ -184,7 +191,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
             }}
           >
             <IcoBell size={14} />
-            {data.tasks.length > 0 && <span>{data.tasks.length}</span>}
+            {tasks.length > 0 && <span>{tasks.length}</span>}
           </button>
 
           {queue && (
@@ -195,11 +202,11 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
                   <IcoClose size={13} />
                 </button>
               </header>
-              {data.tasks.length === 0 ? (
+              {tasks.length === 0 ? (
                 <p className="vc-pop-empty">The queue is clear. Agents have nothing to escalate.</p>
               ) : (
                 <ul>
-                  {data.tasks.slice(0, 6).map((task) => (
+                  {tasks.slice(0, 6).map((task) => (
                     <li key={task.id} data-severity={task.severity}>
                       <strong>{task.title}</strong>
                       <span>{task.detail}</span>
@@ -234,10 +241,10 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData }) {
           {account && (
             <div className="vc-pop vc-pop-narrow" role="menu" aria-label="Account">
               <header>
-                <strong>{data.workspace.ownerName ?? "Signed in"}</strong>
+                <strong>{workspace?.ownerName ?? "Signed in"}</strong>
               </header>
               <p className="vc-pop-empty">
-                {data.workspace.name} · {data.workspace.sector} · {data.workspace.sites} sites
+                {workspace ? `${workspace.name} · ${workspace.sector} · ${workspace.sites} sites` : "Loading the workspace"}
               </p>
               <Link href={"/app/settings" as never} role="menuitem" onClick={() => setAccount(false)}>
                 Workspace settings

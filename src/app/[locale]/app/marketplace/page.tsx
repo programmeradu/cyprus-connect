@@ -15,6 +15,7 @@ import {
   EmptyState,
   type Column
 } from "@/components/app/shell";
+import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Project {
   id: number;
@@ -45,7 +46,7 @@ export default function MarketplacePage() {
 
   useEffect(() => {
     if (!isPending && !session?.user) {
-      router.push("/auth?redirect=/app/marketplace");
+      if (!APP_OPEN_ACCESS) router.push("/auth?redirect=/app/marketplace");
     }
   }, [session, isPending, router]);
 
@@ -134,7 +135,8 @@ export default function MarketplacePage() {
 
   return (
     <PageShell
-      loading={isPending || loading}
+      signedOut={!isPending && !session?.user}
+      loading={isPending || (!!session?.user && loading)}
       error={error}
       onRetry={fetchProjects}
       header={

@@ -19,9 +19,9 @@ interface PageHeaderProps {
 }
 
 /**
- * The single page header used by every /app route. Title on the editorial
- * display face, one purpose line, actions on the right, closed by a hairline.
- * The account menu lives in the sidebar footer, not here.
+ * The single page header used by every /app route. It renders the console
+ * kit header markup, so the title, the purpose line and the actions read
+ * the same on the overview and on every other page.
  */
 export const PageHeader = ({
   title,
@@ -31,22 +31,17 @@ export const PageHeader = ({
   meta
 }: PageHeaderProps) => {
   return (
-    <header className="mb-6 border-b border-[var(--app-rule)] pb-5">
+    <>
       {breadcrumb && breadcrumb.length > 0 && (
-        <nav aria-label="Breadcrumb" className="mb-2">
-          <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] font-medium text-muted-foreground">
-            {breadcrumb.map((crumb, i) => (
-              <li key={`${crumb.label}-${i}`} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden="true">/</span>}
+        <nav aria-label="Breadcrumb" className="vck-crumb">
+          <ol>
+            {breadcrumb.map((crumb, index) => (
+              <li key={`${crumb.label}-${index}`}>
+                {index > 0 && <span aria-hidden="true">/</span>}
                 {crumb.href ? (
-                  <Link
-                    href={crumb.href as never}
-                    className="hover:text-foreground transition-colors"
-                  >
-                    {crumb.label}
-                  </Link>
+                  <Link href={crumb.href as never}>{crumb.label}</Link>
                 ) : (
-                  <span className="text-foreground">{crumb.label}</span>
+                  <strong>{crumb.label}</strong>
                 )}
               </li>
             ))}
@@ -54,23 +49,19 @@ export const PageHeader = ({
         </nav>
       )}
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-[1.5rem] leading-tight break-words">{title}</h1>
-          {purpose && (
-            <p className="mt-1.5 max-w-[68ch] text-[0.9375rem] leading-relaxed text-muted-foreground break-words">
-              {purpose}
-            </p>
-          )}
+      <header className="vck-head">
+        <div className="vck-head-copy">
+          <h1>{title}</h1>
+          {purpose && <p>{purpose}</p>}
         </div>
 
         {(actions || meta) && (
-          <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
-            {meta && <span className="app-meta mr-1">{meta}</span>}
+          <div className="vck-head-actions">
+            {meta && <span className="vck-head-meta">{meta}</span>}
             {actions}
           </div>
         )}
-      </div>
-    </header>
+      </header>
+    </>
   );
 };

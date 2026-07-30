@@ -3,24 +3,19 @@
 import { ReactNode } from "react";
 
 interface PageToolbarProps {
-  /** Filters, range pickers, search — left aligned. */
+  /** Filters, range pickers, search. Left aligned. */
   children?: ReactNode;
-  /** Result counts or last-updated stamps — right aligned. */
+  /** Result counts or last-read stamps. Right aligned. */
   meta?: ReactNode;
   className?: string;
 }
 
-/**
- * Optional row between the page header and the first section. Sits on a
- * hairline and wraps cleanly at 390px rather than scrolling horizontally.
- */
+/** The row between the header and the deck. Wraps; never scrolls sideways. */
 export const PageToolbar = ({ children, meta, className = "" }: PageToolbarProps) => {
   return (
-    <div
-      className={`mb-6 flex flex-col gap-3 border-b border-[var(--app-rule)] pb-4 sm:flex-row sm:items-center sm:justify-between ${className}`}
-    >
-      <div className="flex flex-wrap items-center gap-2">{children}</div>
-      {meta && <div className="app-meta shrink-0">{meta}</div>}
+    <div className={`vck-tabs ${className}`}>
+      <div className="vck-toolbar-slot">{children}</div>
+      {meta && <div className="vck-tabs-trailing">{meta}</div>}
     </div>
   );
 };
@@ -32,9 +27,7 @@ interface ToolbarTabsProps<T extends string> {
   ariaLabel?: string;
 }
 
-/**
- * Rectangular bordered tabs. Never rounded-full pill chips.
- */
+/** The console section strip. */
 export function ToolbarTabs<T extends string>({
   options,
   value,
@@ -42,11 +35,7 @@ export function ToolbarTabs<T extends string>({
   ariaLabel = "Filter"
 }: ToolbarTabsProps<T>) {
   return (
-    <div
-      role="tablist"
-      aria-label={ariaLabel}
-      className="flex flex-wrap items-center gap-1.5"
-    >
+    <div role="tablist" aria-label={ariaLabel} className="vck-tabs-strip">
       {options.map((option) => {
         const active = option.value === value;
         return (
@@ -55,19 +44,11 @@ export function ToolbarTabs<T extends string>({
             role="tab"
             type="button"
             aria-selected={active}
+            data-active={active}
             onClick={() => onChange(option.value)}
-            className={`rounded-[0.25rem] border px-2.5 py-1.5 text-[0.8125rem] font-medium leading-none transition-colors ${
-              active
-                ? "border-[var(--app-rule-strong)] bg-[var(--app-surface-3)] text-foreground"
-                : "border-[var(--app-rule)] text-muted-foreground hover:text-foreground hover:bg-[var(--app-surface-2)]"
-            }`}
           >
             {option.label}
-            {typeof option.count === "number" && (
-              <span className="app-num ml-1.5 text-muted-foreground">
-                {option.count}
-              </span>
-            )}
+            {typeof option.count === "number" && <span>{option.count}</span>}
           </button>
         );
       })}

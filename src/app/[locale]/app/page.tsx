@@ -8,8 +8,8 @@
  * /api/console/overview. Nothing on this page is written by hand.
  */
 
-import { useEffect, useMemo, useState } from "react";
-import { ConsoleTopbar } from "@/components/app/console/ConsoleTopbar";
+import { useMemo, useState } from "react";
+import { useConsole } from "@/components/app/console/ConsoleData";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
   AgentGlyph,
@@ -30,7 +30,6 @@ import {
   fmtSigned,
   relativeTime,
   toneFor,
-  type ConsoleOverviewData,
 } from "@/components/app/console/types";
 
 const CATEGORY_ICON: Record<string, typeof IcoPulse> = {
@@ -75,30 +74,12 @@ const greetingFor = (hour: number) =>
 type SectionKey = "overview" | "agents" | "evidence" | "obligations" | "connections" | "audit";
 
 export default function ConsolePage() {
-  const [data, setData] = useState<ConsoleOverviewData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  /* The workspace read lives in the layout, so the top bar, the palette
+     and every page share one set of records. */
+  const { data, error } = useConsole();
   const [category, setCategory] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [section, setSection] = useState<SectionKey>("overview");
-
-  useEffect(() => {
-    let alive = true;
-    fetch("/api/console/overview")
-      .then(async (res) => {
-        const body = await res.json();
-        if (!res.ok) throw new Error(body?.message ?? body?.error ?? "Console unavailable");
-        return body as ConsoleOverviewData;
-      })
-      .then((body) => {
-        if (alive) setData(body);
-      })
-      .catch((err) => {
-        if (alive) setError(err.message);
-      });
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   /** Categories are whatever the metric table actually holds. */
   const categories = useMemo(() => {
@@ -189,8 +170,6 @@ export default function ConsolePage() {
   return (
     <div className="vc vc-fit">
       <section className="vc-window" aria-label="Vuneli autonomous ESG console">
-        <ConsoleTopbar data={data} />
-
         <div className="vc-top-panel">
           <div className="vc-hero-grid">
             <aside className="vc-team-card">

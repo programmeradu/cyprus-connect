@@ -1,76 +1,51 @@
-## The real problem
+## Where we are
 
-`/app` has 20 pages, each invented from scratch. There is no page template, no shared header contract, no empty/loading/error convention, and no data contract. `app.css` already defines a good token set (surfaces, rules, `app-card`, `app-label`, `app-metric`, `app-btn`), but most pages never use it — they use raw Tailwind, so the CSS is doing damage control with a "legacy microtype correction" override block instead of pages being written correctly.
+`/app` (the console overview) now has the finished visual language: sage background, flat glass plates, hairline rules, one lime accent, data read from `/api/console/overview`. The other 18 pages still use the older `app.css` shell (`PageShell`, `app-card`) or raw Tailwind, so they will look like a different product the moment you click a rail item.
 
-So the fix is not restyling 20 pages one by one. It is: build the template, then re-seat every page into it.
+The fix is not to restyle 18 pages by hand. It is to promote what the console proved into a shared kit, then re-seat each page into it.
 
-## 1. The workspace page template
+## 1. Promote the console language into universal primitives
 
-One primitive set, used by every route without exception.
+New folder `src/components/app/console/kit/`, one barrel export:
 
-```text
-+------------------------------------------------------------+
-| PageHeader   Title (Fraunces 24px) ........ [ primary CTA ] |
-|              One-line purpose sentence      [ secondary   ] |
-| ---------------------------------------------------------- |  hairline
-| PageToolbar  [ filter ] [ range ] [ search ]     meta right |  optional
-| ---------------------------------------------------------- |
-|                                                             |
-|  Section  "Label"  ............................ [ action ]  |
-|  +-------------------------------------------------------+  |
-|  |  app-card / app-ledger / app-table                    |  |
-|  +-------------------------------------------------------+  |
-|                                                             |
-|  Section  "Label"                                           |
-|  ...                                                        |
-+------------------------------------------------------------+
-```
+- `ConsolePage` — page frame: background, max width, section rhythm, and the three async states (skeleton / empty / error-with-retry) so no page hand-rolls a spinner.
+- `ConsoleHeader` — page title, one purpose line, actions slot. Same type scale as the overview greeting.
+- `ConsoleTabs` — the deck tab strip, already working on the overview, made route- or state-driven for any page.
+- `Plate` — the flat sage glass surface, with `padded` / `flush` variants. Replaces `.vc-plate` ad-hoc markup and `app-card`.
+- `PlateHeader` — plate label + optional right-side action or meta.
+- `Ledger` — the hairline-ruled row list (agents, obligations, events all use this shape today).
+- `ConsoleTable` — left text, right tabular numerals, sticky header, wrapping cells, no truncation.
+- `Reading` / `ReadingRail` — the metric figure + label + delta, the only way a big number renders.
+- `Empty`, `Skeleton` (plate / row / reading / chart variants), `AiUnavailable`.
+- Charts stay where they are (`SignalChart`, `TickSeries`, `ArcGauge`, `MiniBars`) but get a common `ChartFrame` so axes, legend and cursor read-out behave identically everywhere.
 
-New components in `src/components/app/shell/`:
+CSS consolidation: `app.css` + `console.css` + `console-deck.css` collapse into one token layer plus one component layer. The "legacy microtype correction" and "legacy safety net" blocks get deleted once the pages stop needing them.
 
-- `PageShell` — max width, vertical rhythm (32px between sections), owns the page's loading / error / empty state so no page hand-rolls a spinner again.
-- `PageHeader` — title, purpose line, actions slot, optional breadcrumb. Replaces the current `AppHeader` (which today also carries the avatar menu — that moves to the sidebar footer where it belongs).
-- `PageToolbar` — filters/range/search row on a hairline.
-- `Section` — label + optional action + children, consistent spacing.
-- `DataTable` — left-aligned text, right-aligned tabular numerals, sticky header, zebra off by default.
-- `MetricRow` / `Metric` — the only way a big number gets rendered.
-- `EmptyState` — headline + one sentence + one primary action. No "No data".
-- `Skeleton` variants that match the final layout (card, table row, metric).
+## 2. Write the rules down, then enforce them
 
-## 2. Written design rules for the workspace
+`src/app/[locale]/app/README.md` gets the console contract: type scale (24 / 17 / 15 / 13 / 12 floor), surfaces from tokens only, radius 8 / 12 / 26, one primary action per page, tabular numerals, EUR and metric units, `d MMM yyyy` dates, every async surface ships three states, no hardcoded figures or counts anywhere. An eslint rule blocks raw `bg-white`, `bg-neutral-*` and hex colours inside `/app`.
 
-Codified in `src/app/[locale]/app/README.md` and enforced by lint where possible:
+## 3. Data contract per page
 
-- Type scale inside `/app`: 24 page title, 17 section heading, 15 body, 13 meta, 12 label floor. Nothing smaller. No uppercase wide-tracking.
-- Surfaces only from tokens: page `--app-surface-0`, card `--app-surface-1`, inset `-2`, hover `-3`. Never a raw `bg-white`, `bg-neutral-900`, `bg-*/10` wash.
-- Radius 4 / 6 / 8 / 12. Shadows only on `app-overlay`.
-- One primary action per page. Buttons are `app-btn` / `app-btn-ghost`, 40px.
-- All numbers tabular. All money in EUR, all units metric, all dates `d MMM yyyy`.
-- No decorative icons, no pill chips, no gradients — already project law, now applied here.
-- Every async surface ships three states: skeleton, empty, error-with-retry.
+Every page reads from an API route the same way the overview reads `/api/console/overview`. Pages that currently compute or hold demo values in the component get a route and a seed row instead. No page ships a number that is not in the database.
 
-Once pages are migrated, the "legacy microtype correction" and "legacy safety net" blocks in `app.css` get deleted — they exist only to paper over the mess.
+## 4. Migration order
 
-## 3. Re-seat the pages
+1. `analytics`, `compliance`, `actions` — closest to the console shape, they validate the kit.
+2. `insights`, `calculator`, `integrations`.
+3. `marketplace` (+ detail), `learn` (+ lesson), `studio`.
+4. `leaderboard`, `billing`, `settings` (+ privacy), `grant-alerts`, `onboarding`.
 
-Ordered by traffic, in batches:
+Each batch: rewrite the page as `ConsolePage > ConsoleHeader > Plate[]`, wire its data route, then screenshot at 1280 and 390 in light and dark before moving on.  
+  
+while building also  mak sure you establish the right connections between the components amd pages and features  so that they are work together from the get go!
 
-1. `dashboard`, `calculator`, `analytics`
-2. `compliance`, `actions`, `insights`
-3. `marketplace` (+ detail), `learn` (+ lesson), `studio`
-4. `integrations`, `leaderboard`, `billing`, `settings` (+ privacy), `grant-alerts`, `onboarding`
+## 5. Verification per batch
 
-Each page is rewritten as `PageShell > PageHeader > Section[]`, with its bespoke cards replaced by `app-card` / `DataTable` / `Metric`. Presentation only — data fetching stays as-is in this pass.
-
-## 4. "Almost nothing functioning"
-
-Separate from styling, and worth naming: several pages are visibly dead because the Gemini key is revoked (studio, insights, OCR upload) and because open-access mode means there is no user row behind the fetches, so pages fall back to zeros or empty arrays.
-
-I will, in this pass, make that honest rather than broken: every widget with no data renders a real `EmptyState` telling you what to do, and AI surfaces render a clear "AI is unavailable — key missing" state instead of failing silently. Actually restoring the AI key and wiring real data is a follow-up I can start right after, if you want it in the same run.
+No horizontal scroll, no truncated label, contrast at or above 4.5:1 in both modes, empty and error states rendered on purpose, and every control on screen does something real.
 
 ## Technical notes
 
-- New folder `src/components/app/shell/`, exported through one barrel so page files import a single line.
-- `AppHeader.tsx` becomes a thin re-export of `PageHeader` during migration, then is deleted.
-- Sidebar keeps its current `.app-chrome` treatment; the account menu moves into its footer.
-- Verification: screenshot every `/app` route at 1280 and 390, light and dark, checking no horizontal scroll, no truncated labels, contrast ≥ 4.5:1.
+- The rail (`ConsoleRail`) and topbar (`ConsoleTopbar`) become one `ConsoleChrome` so the overview and inner pages share identical navigation; the overview keeps its full-bleed hero as a page-level variant, not a separate shell.
+- `PageShell`, `PageHeader`, `Section`, `DataTable`, `Metric` in `src/components/app/shell/` become thin re-exports of the kit during migration, then are deleted.
+- Presentation and data wiring only. No new features from the roadmap enter in this pass; Release 2 actions come after.
