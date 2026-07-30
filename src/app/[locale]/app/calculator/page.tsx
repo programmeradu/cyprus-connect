@@ -362,87 +362,54 @@ Return ONLY valid JSON (no markdown, no explanations):
   ) => {
     try {
       const token = localStorage.getItem("bearer_token");
-      
-      const totalResources = parseFloat(formData.electricity) + parseFloat(formData.gas) + 
-                            parseFloat(formData.water) + parseFloat(formData.waste) + 
-                            parseFloat(formData.transport);
-      const resourceEfficiency = Math.max(0, Math.min(100, 100 - (totalResources / 100)));
-      
-      const electricityItem = breakdown.find(b => b.category.toLowerCase().includes('electricity'));
-      const renewableShare = electricityItem ? 
-        Math.random() * 30 + 20 :
-        25;
-      
-      const wasteValue = parseFloat(formData.waste) || 0;
-      const wasteDiversion = wasteValue > 0 ? 
-        Math.min(100, (wasteValue * 0.6)) :
-        0;
-      
+
       const periodStart = new Date(year, month - 1, 1).toISOString();
       const periodEnd = new Date(year, month, 0, 23, 59, 59, 999).toISOString();
-      
+
       const prevMonth = month === 1 ? 12 : month - 1;
       const prevYear = month === 1 ? year - 1 : year;
-      
-      const prevEmissionsResponse = await fetch(
-        `/api/emissions?userId=${userId}&year=${prevYear}&month=${prevMonth}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
-      let prevTotalCo2e = totalCo2e * 1.05;
-      if (prevEmissionsResponse.ok) {
-        const prevData = await prevEmissionsResponse.json();
-        if (prevData.length > 0) {
-          prevTotalCo2e = prevData[0].totalCo2e;
+
+      // Trend needs a real earlier reading. Without one the trend is zero.
+      let prevTotalCo2e = totalCo2e;
+      try {
+        const prevEmissionsResponse = await fetch(
+          `/api/emissions?userId=${userId}&year=${prevYear}&month=${prevMonth}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (prevEmissionsResponse.ok) {
+          const prevData = await prevEmissionsResponse.json();
+          if (Array.isArray(prevData) && prevData.length > 0 && typeof prevData[0].totalCo2e === "number") {
+            prevTotalCo2e = prevData[0].totalCo2e;
+          }
         }
+      } catch (error) {
+        console.error("Failed to read the previous period:", error);
       }
-      
-      const metricsToUpdate = [
-        {
+
+      // Only the carbon footprint is measured here. Renewable share, resource
+      // efficiency and waste diversion need data this form does not collect,
+      // so they are not written.
+      await fetch("/api/dashboard/metrics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId,
           metricType: "carbon_footprint",
           currentValue: totalCo2e,
-          previousValue: prevTotalCo2e
-        },
-        {
-          metricType: "resource_efficiency",
-          currentValue: resourceEfficiency,
-          previousValue: resourceEfficiency * 0.95
-        },
-        {
-          metricType: "renewable_share",
-          currentValue: renewableShare,
-          previousValue: renewableShare * 0.9
-        },
-        {
-          metricType: "waste_diversion",
-          currentValue: wasteDiversion,
-          previousValue: wasteDiversion * 0.9
-        }
-      ];
-      
-      for (const metric of metricsToUpdate) {
-        await fetch("/api/dashboard/metrics", {
-          method: "POST",
-          headers: {
- "Content-Type": "application/json",
- "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            userId,
-            metricType: metric.metricType,
-            currentValue: metric.currentValue,
-            previousValue: metric.previousValue,
-            periodStart,
-            periodEnd
-          })
-        });
-      }
-      
+          previousValue: prevTotalCo2e,
+          periodStart,
+          periodEnd,
+        }),
+      });
+
       await fetch("/api/dashboard/historical", {
         method: "POST",
         headers: {
- "Content-Type": "application/json",
- "Authorization": `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId,
@@ -454,15 +421,13 @@ Return ONLY valid JSON (no markdown, no explanations):
           wasteKg: parseFloat(formData.waste) || 0,
           transportKm: parseFloat(formData.transport) || 0,
           totalCo2e,
-          renewablePercentage: renewableShare,
-          efficiencyScore: resourceEfficiency,
-          wasteDiversionRate: wasteDiversion
-        })
+        }),
       });
     } catch (error) {
       console.error("Failed to update dashboard metrics:", error);
     }
   };
+
 
   const categoryLabels = () => ({
     electricity: t("categories.electricity"),
