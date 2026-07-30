@@ -17,7 +17,6 @@ import {
   PageHeader,
   Section,
   DataTable,
-  Metric,
   EmptyState
 } from "@/components/app/shell";
 import { BentoOverview, type BentoDeadline } from "@/components/app/dashboard/BentoOverview";
