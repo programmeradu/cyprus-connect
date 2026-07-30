@@ -1054,7 +1054,7 @@
 }
 
 .vc-loading {
-  grid-template-rows: 64px 1fr 44px 210px;
+  grid-auto-rows: auto;
   color: var(--vc-ink);
 }
 
@@ -1111,7 +1111,7 @@
   background: var(--vc-hero-grad);
 }
 
-.vc-loading-hero aside { min-height: 220px; border-radius: 22px; }
+.vc-loading-hero aside { min-height: 300px; border-radius: 22px; }
 
 .vc-loading-hero main {
   display: grid;
