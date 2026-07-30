@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { courses, courseModules, lessons, notifications, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { generateImage, generateVideo } from "@/lib/generators";
+import { generateImage } from "@/lib/generators";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 
 export async function POST(request: NextRequest) {
@@ -91,26 +91,8 @@ export async function POST(request: NextRequest) {
 
       for (const [lessonIndex, lesson] of module.lessons.entries()) {
         // Generate media if needed
-        let videoUrl = null;
         let enhancedContent = { ...lesson.content };
 
-        // Generate video for video lessons
-        if (lesson.contentType === "video" && lesson.needsVideo && lesson.videoPrompt) {
-          try {
-            console.log(`Generating video for lesson: ${lesson.title}`);
-            const result = await generateVideo(lesson.videoPrompt, "16:9");
-            
-            if (result.url) {
-              videoUrl = result.url;
-              enhancedContent.videoUrl = videoUrl;
-              console.log(`✓ Video generated for: ${lesson.title}`);
-              
-              // Track credit for video generation
-            }
-          } catch (error) {
-            console.error(`Failed to generate video for ${lesson.title}:`, error);
-          }
-        }
 
         // Generate image for text lessons
         if (lesson.contentType === "text" && lesson.needsImage && lesson.imagePrompt) {
@@ -140,7 +122,6 @@ export async function POST(request: NextRequest) {
           title: lesson.title,
           contentType: lesson.contentType,
           contentJson: JSON.stringify(enhancedContent),
-          videoUrl: videoUrl,
           estimatedMinutes: lesson.estimatedMinutes,
           createdAt: new Date().toISOString()
         });
@@ -242,12 +223,11 @@ CRITICAL REQUIREMENTS:
 Course Structure:
 - 3-4 comprehensive modules
 - 4-5 detailed lessons per module
-- Mix of content types: text (detailed articles), video (demonstrations), quiz (knowledge checks), exercise (hands-on activities)
+- Mix of content types: text (detailed articles), quiz (knowledge checks), exercise (hands-on activities)
 - Total estimated time: 4-8 hours of substantial learning
 
 Content Depth Guidelines:
 - Text lessons: 800-1500 words, multiple sections, examples, case studies
-- Video lessons: Include detailed descriptions and learning objectives
 - Quizzes: 4-6 questions with detailed explanations
 - Exercises: Multi-step practical activities with clear deliverables
 
@@ -272,16 +252,6 @@ IMPORTANT: Return ONLY valid JSON (no markdown, no code blocks). Structure:
           },
           "needsImage": true,
           "imagePrompt": "Professional ${industry} sustainability concept illustration showing ${topic}, modern clean style, corporate context, high quality"
-        },
-        {
-          "title": "Video Demonstration Title",
-          "contentType": "video",
-          "estimatedMinutes": 10,
-          "content": {
-            "text": "<p>Detailed video lesson description with learning objectives and key takeaways</p>"
-          },
-          "needsVideo": true,
-          "videoPrompt": "Professional demonstration of ${topic} in ${industry} context, clean modern style, 8 seconds"
         },
         {
           "title": "Knowledge Assessment",

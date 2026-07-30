@@ -269,12 +269,11 @@ CRITICAL REQUIREMENTS:
 Course Structure:
 - 3-4 comprehensive modules
 - 4-5 detailed lessons per module
-- Mix of content types: text (detailed articles), video (demonstrations), quiz (knowledge checks), exercise (hands-on activities)
+- Mix of content types: text (detailed articles), quiz (knowledge checks), exercise (hands-on activities)
 - Total estimated time: 4-8 hours of substantial learning
 
 Content Depth Guidelines:
 - Text lessons: 800-1500 words, multiple sections, examples, case studies
-- Video lessons: Include detailed descriptions and learning objectives
 - Quizzes: 4-6 questions with detailed explanations
 - Exercises: Multi-step practical activities with clear deliverables
 
@@ -299,16 +298,6 @@ CRITICAL: Return ONLY valid JSON (no markdown, no code blocks):
           },
           "needsImage": true,
           "imagePrompt": "Professional sustainability concept image"
-        },
-        {
-          "title": "Video Lesson",
-          "contentType": "video",
-          "estimatedMinutes": 10,
-          "content": {
-            "text": "<p>Detailed video lesson description with learning objectives</p>"
-          },
-          "needsVideo": true,
-          "videoPrompt": "8-second sustainability demonstration"
         }
       ]
     }
@@ -389,32 +378,7 @@ CRITICAL: Return ONLY valid JSON (no markdown, no code blocks):
 
       for (const [lessonIndex, lesson] of module.lessons.entries()) {
         // Generate media if needed
-        let videoUrl = null;
         let enhancedContent = { ...lesson.content };
-
-        if (lesson.needsVideo && lesson.videoPrompt) {
-          try {
-            console.log(`Generating video for lesson: ${lesson.title}`);
-            const videoResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/generate-video`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                prompt: lesson.videoPrompt,
-                aspect_ratio: "16:9"
-              })
-            });
-
-            if (videoResponse.ok) {
-              const videoData = await videoResponse.text();
-              if (videoData && !videoData.startsWith('Error:')) {
-                videoUrl = videoData.trim();
-                enhancedContent.videoUrl = videoUrl;
-              }
-            }
-          } catch (error) {
-            console.error(`Failed to generate video for ${lesson.title}:`, error);
-          }
-        }
 
         if (lesson.needsImage && lesson.imagePrompt) {
           try {
@@ -450,7 +414,6 @@ CRITICAL: Return ONLY valid JSON (no markdown, no code blocks):
           title: lesson.title,
           contentType: lesson.contentType,
           contentJson: JSON.stringify(enhancedContent),
-          videoUrl: videoUrl,
           estimatedMinutes: lesson.estimatedMinutes,
           createdAt: new Date().toISOString()
         });

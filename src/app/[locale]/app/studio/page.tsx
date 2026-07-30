@@ -57,7 +57,6 @@ export default function MediaStudioPage() {
   const { user } = useUser();
 
   const [viewMode, setViewMode] = useState<ViewMode>("recent");
-  const [mediaType, setMediaType] = useState<MediaType>("image");
   const [contextType, setContextType] = useState<ContextType>("custom");
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -304,13 +303,13 @@ Instructions:
 2. Create professional, shareable content suitable for social media, campaigns, or presentations
 3. Incorporate relevant sustainability metrics, tips, or facts when possible
 4. Keep the tone professional, positive, and action-oriented
-5. Generate a detailed ${mediaType === "image" ? "image description" : "video scene description"} that:
+5. Generate a detailed image description that:
    - Highlights sustainability achievements or goals
    - Uses green/eco-friendly visual elements
    - Features professional design suitable for business use
    - Includes relevant sustainability icons, charts, or data visualizations
 
-Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detailed video scene description"} (max 200 words):`;
+Generate a detailed image generation prompt (max 200 words):`;
 
     try {
       const token = localStorage.getItem("bearer_token");
@@ -346,102 +345,54 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       const sustainabilityPrompt = await buildSustainabilityPrompt(prompt);
       const token = localStorage.getItem("bearer_token");
 
-      toast.info(t("toasts.generatingInfo", { type: t(`mediaType.${mediaType}`) }));
+      toast.info(t("toasts.generatingInfo", { type: t("mediaType.image") }));
 
-      if (mediaType === "image") {
-        const response = await fetch("/api/generate-image", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            prompt: sustainabilityPrompt,
-            aspectRatio: "16:9"
-          })
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          prompt: sustainabilityPrompt,
+          aspectRatio: "16:9"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate image");
+      }
+
+      const result = await response.json();
+
+      if (result.url) {
+        const newMedia: GeneratedMedia = {
+          id: Date.now().toString(),
+          type: "image",
+          url: result.url,
+          prompt: prompt,
+          timestamp: new Date(),
+          model: result.model,
+          modelReason: result.modelReason,
+          saved: false
+        };
+
+        const dbId = await saveGenerationToDatabase(newMedia, sustainabilityPrompt);
+        if (dbId) {
+          newMedia.id = dbId;
+        }
+
+        setGeneratedMedia((prev) => [newMedia, ...prev]);
+        setSelectedMedia(newMedia);
+        await loadStudioStats();
+
+        const modelName =
+          result.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlash");
+        toast.success(t("toasts.imageGenerated", { model: modelName }), {
+          description: result.modelReason
         });
-
-        if (!response.ok) {
-          throw new Error("Failed to generate image");
-        }
-
-        const result = await response.json();
-
-        if (result.url) {
-          const newMedia: GeneratedMedia = {
-            id: Date.now().toString(),
-            type: "image",
-            url: result.url,
-            prompt: prompt,
-            timestamp: new Date(),
-            model: result.model,
-            modelReason: result.modelReason,
-            saved: false
-          };
-
-          const dbId = await saveGenerationToDatabase(newMedia, sustainabilityPrompt);
-          if (dbId) {
-            newMedia.id = dbId;
-          }
-
-          setGeneratedMedia((prev) => [newMedia, ...prev]);
-          setSelectedMedia(newMedia);
-          await loadStudioStats();
-
-          const modelName =
-            result.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlash");
-          toast.success(t("toasts.imageGenerated", { model: modelName }), {
-            description: result.modelReason
-          });
-        } else {
-          throw new Error("No media returned");
-        }
       } else {
-        const response = await fetch("/api/generate-video", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            prompt: sustainabilityPrompt,
-            aspectRatio: "16:9",
-            durationSeconds: 8
-          })
-        });
-
-        if (!response.ok) {
-          const error = await response.json().catch(() => ({}));
-          throw new Error(error.error || "Failed to generate video");
-        }
-
-        const result = await response.json();
-
-        if (result.url) {
-          const newMedia: GeneratedMedia = {
-            id: Date.now().toString(),
-            type: "video",
-            url: result.url,
-            prompt: prompt,
-            timestamp: new Date(),
-            model: "veo-3.1-generate-preview",
-            saved: false
-          };
-
-          const dbId = await saveGenerationToDatabase(newMedia, sustainabilityPrompt);
-          if (dbId) {
-            newMedia.id = dbId;
-          }
-
-          setGeneratedMedia((prev) => [newMedia, ...prev]);
-          setSelectedMedia(newMedia);
-          await loadStudioStats();
-          toast.success(t("toasts.videoGenerated"), {
-            description: t("toasts.videoDesc")
-          });
-        } else {
-          throw new Error("No media returned");
-        }
+        throw new Error("No media returned");
       }
     } catch (error: any) {
       console.error("Media generation error:", error);
@@ -595,23 +546,6 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <Section title={t("creator.title")} description={t("creator.subtitle")}>
           <div className="app-card space-y-4 p-4">
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setMediaType("image")}
-                className={`app-btn ${mediaType === "image" ? "" : "app-btn-ghost"}`}
-              >
-                {t("creator.image")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setMediaType("video")}
-                className={`app-btn ${mediaType === "video" ? "" : "app-btn-ghost"}`}
-              >
-                {t("creator.video")}
-              </button>
-            </div>
-
             <div>
               <label className="app-label mb-1.5 block">{t("creator.contextLabel")}</label>
               <select
@@ -663,11 +597,7 @@ Generate a ${mediaType === "image" ? "detailed image generation prompt" : "detai
               disabled={isGenerating || !prompt.trim()}
               className="app-btn w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isGenerating
-                ? t("creator.generating")
-                : mediaType === "image"
-                  ? t("creator.generateImage")
-                  : t("creator.generateVideo")}
+              {isGenerating ? t("creator.generating") : t("creator.generateImage")}
             </button>
           </div>
         </Section>

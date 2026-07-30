@@ -73,57 +73,6 @@ export async function uploadBase64Image(
  * @param bucket - Storage bucket name (default: 'generated-media')
  * @returns Public URL of the uploaded video or the original URL if upload fails
  */
-export async function uploadVideo(
-  videoUrl: string,
-  fileName: string,
-  bucket: string = 'generated-media'
-): Promise<string> {
-  if (!supabase) {
-    console.warn('Supabase client not initialized. Returning original video URL');
-    return videoUrl;
-  }
-
-  try {
-    // Fetch video data
-    const response = await fetch(videoUrl);
-    const blob = await response.blob();
-    const buffer = await blob.arrayBuffer();
-
-    // Generate unique filename with timestamp
-    const timestamp = Date.now();
-    const uniqueFileName = `${fileName}-${timestamp}.mp4`;
-    const filePath = `videos/${uniqueFileName}`;
-
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, buffer, {
-        contentType: 'video/mp4',
-        upsert: false
-      });
-
-    if (error) {
-      console.error('Supabase video upload error:', error);
-      return videoUrl; // Return original URL as fallback
-    }
-
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(filePath);
-
-    return publicUrl;
-  } catch (error) {
-    console.error('Failed to upload video to Supabase:', error);
-    return videoUrl; // Return original URL as fallback
-  }
-}
-
-/**
- * Delete a file from Supabase Storage
- * @param filePath - Path to the file in storage
- * @param bucket - Storage bucket name (default: 'generated-media')
- */
 export async function deleteFile(
   filePath: string,
   bucket: string = 'generated-media'
