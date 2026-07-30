@@ -364,10 +364,7 @@ export async function POST(req: Request) {
         send({ type: "done", id: assistantRow.id });
       } catch (error) {
         console.error("copilot stream failed", error);
-        send({
-          type: "error",
-          message: "The copilot could not finish that answer. Please try again.",
-        });
+        send({ type: "error", message: providerMessage(error) });
       } finally {
         controller.close();
       }
