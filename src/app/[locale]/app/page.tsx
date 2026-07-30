@@ -497,33 +497,37 @@ export default function ConsolePage() {
               <div className="vc-plate-grid">
                 <section className="vc-plate">
                   <header>
-                    <span>Agent workforce</span>
-                    <strong>{activeAgents.length} running</strong>
-                    <PlateOpen href="/app/insights" label="Open the agent workforce" />
+                    <span>What changed</span>
+                    <strong>
+                      {topInsights.length} signal{topInsights.length === 1 ? "" : "s"}
+                    </strong>
+                    <PlateOpen href="/app/analytics" label="Open the analysis record" />
                   </header>
-                  <div className="vc-agent-table">
-                    <div className="vc-table-head">
-                      <span>Agent and last run</span>
-                      <span>Health</span>
-                    </div>
-                    {agents.slice(0, 4).map((agent) => {
-                      const lastRun = runs.find((run) => run.agentKey === agent.key);
-                      return (
-                        <article key={agent.key}>
-                          <span className="vc-agent-icon">
-                            <AgentGlyph glyph={agent.glyph} size={20} />
-                          </span>
-                          <span className="vc-agent-copy">
-                            <strong>{agent.name}</strong>
-                            <small>{lastRun?.summary ?? agent.role}</small>
-                            <em>{AUTONOMY_LABEL[agent.autonomy]}</em>
-                          </span>
-                          <span className="vc-health">{Math.round(agent.healthScore)}%</span>
-                        </article>
-                      );
-                    })}
+                  <div className="vc-insight-list">
+                    {topInsights.map((insight) => (
+                      <article key={insight.id} data-tone={insight.tone}>
+                        <i className="vc-dot" data-tone={insight.tone === "good" ? "good" : insight.tone} />
+                        <span className="vc-insight-copy">
+                          <em>{insight.label}</em>
+                          <strong>{insight.headline}</strong>
+                          <small>{insight.detail}</small>
+                        </span>
+                        <Link
+                          href={insight.href as never}
+                          className="vc-plate-open"
+                          aria-label={insight.linkLabel}
+                        >
+                          Open
+                        </Link>
+                      </article>
+                    ))}
                   </div>
+                  <p className="vc-insight-foot">
+                    {activeAgents.length} of {agents.length} agents active · {runsToday.length} runs closed
+                    today
+                  </p>
                 </section>
+
 
                 <section className="vc-plate vc-plate-tight">
                   <header>
