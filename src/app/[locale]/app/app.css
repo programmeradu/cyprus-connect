@@ -107,19 +107,19 @@
 
 /* Section label — replaces 9px uppercase wide-tracking microtype. */
 .app-label {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   line-height: 1.4;
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
-  color: color-mix(in oklab, var(--foreground) 68%, transparent);
+  color: color-mix(in oklab, var(--foreground) 84%, transparent);
 }
 
 .app-meta {
   font-size: 0.8125rem;
   line-height: 1.5;
   font-weight: 500;
-  color: color-mix(in oklab, var(--foreground) 66%, transparent);
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
 }
 
 .app-metric {
@@ -144,7 +144,7 @@
   border: 1px solid var(--app-rule-strong);
   border-radius: 0.25rem;
   padding: 0.125rem 0.4375rem;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   line-height: 1.5;
   color: color-mix(in oklab, var(--foreground) 78%, transparent);
@@ -245,7 +245,7 @@
 .viq-app .text-\[10px\],
 .viq-app .text-\[10\.5px\],
 .viq-app .text-\[11px\] {
-  font-size: 0.75rem;   /* 12px floor */
+  font-size: 0.8125rem;   /* 12px floor */
   line-height: 1.45;
   font-weight: 500;
 }
@@ -271,7 +271,7 @@
 .viq-app .text-foreground\/50,
 .viq-app .text-foreground\/55,
 .viq-app .text-foreground\/60 {
-  color: color-mix(in oklab, var(--foreground) 72%, transparent);
+  color: color-mix(in oklab, var(--foreground) 84%, transparent);
 }
 
 /* Radius discipline: 4 / 6 / 8 / 12px. No 16px+ on rectangles. */

@@ -80,7 +80,7 @@
 }
 
 .vc-side-series-copy small {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -94,7 +94,7 @@
 
 .vc-side-series-copy em {
   font-style: normal;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--vc-ink-3);
   margin-left: 3px;
@@ -107,7 +107,7 @@
 
 .vc-side-series button > em {
   font-style: normal;
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 900;
   color: var(--vc-ink-3);
   white-space: nowrap;
@@ -194,7 +194,7 @@
   left: 0;
   bottom: -2px;
   margin: 0;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--vc-ink-3);
 }
@@ -210,7 +210,7 @@
   margin: 0;
   max-width: 34ch;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--vc-ink-3);
 }
@@ -228,7 +228,7 @@
   align-items: center;
   gap: 7px;
   height: 100%;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   white-space: nowrap;
   color: var(--vc-ink-3);
@@ -245,7 +245,7 @@
   padding: 1px 6px;
   border-radius: 7px;
   background: rgba(255, 255, 255, 0.24);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   text-align: center;
 }
@@ -330,7 +330,7 @@
 }
 
 .vc-plate > header span {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 800;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -351,7 +351,7 @@
 .vc-plate-foot,
 .vc-empty {
   margin: 0;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--vc-ink-3);
 }
@@ -379,7 +379,7 @@
 }
 
 .vc-agent-lead small {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 650;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -387,7 +387,7 @@
 
 .vc-agent-mission {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.45;
   font-weight: 600;
   color: var(--vc-ink-2);
@@ -408,7 +408,7 @@
 }
 
 .vc-kv dt {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -416,7 +416,7 @@
 
 .vc-kv dd {
   margin: 3px 0 0;
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 800;
   letter-spacing: -0.2px;
   overflow-wrap: anywhere;
@@ -443,7 +443,7 @@
 
 .vc-bar-list em {
   font-style: normal;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
   white-space: nowrap;
 }
@@ -451,7 +451,7 @@
 .vc-bar-list small {
   display: block;
   margin-top: 6px;
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -474,7 +474,7 @@
 .vc-reading-list p:last-child { border-bottom: 0; }
 
 .vc-reading-list strong {
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 800;
   overflow-wrap: anywhere;
 }
@@ -490,7 +490,7 @@
 }
 
 .vc-reading-list span {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -515,7 +515,7 @@
 .vc-audit li:last-child { border-bottom: 0; }
 
 .vc-audit-when {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
   white-space: nowrap;
@@ -523,7 +523,7 @@
 
 .vc-audit-body {
   min-width: 0;
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 620;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -534,13 +534,13 @@
 .vc-audit-body small {
   display: block;
   margin-top: 3px;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 650;
   color: var(--vc-ink-3);
 }
 
 .vc-audit-actor {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
   white-space: nowrap;
@@ -558,7 +558,7 @@
   max-width: 1640px;
   margin: 4px auto 0;
   padding: 12px clamp(16px, 3.2vw, 44px) 28px;
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -600,7 +600,7 @@
 }
 
 .vc-pop > header strong {
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 900;
 }
 
@@ -625,7 +625,7 @@
 .vc-pop li:last-child { border-bottom: 0; }
 
 .vc-pop li strong {
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 800;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -634,7 +634,7 @@
 .vc-pop li[data-severity="high"] strong { color: var(--vc-bad); }
 
 .vc-pop li span {
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 650;
   line-height: 1.4;
   color: var(--vc-ink-2);
@@ -643,14 +643,14 @@
 
 .vc-pop li em {
   font-style: normal;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
 }
 
 .vc-pop-empty {
   margin: 12px 0 0;
-  font-size: 11.5px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--vc-ink-3);
@@ -663,7 +663,7 @@
   margin-top: 10px;
   padding: 9px 12px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   text-align: left;
   background: rgba(255, 255, 255, 0.4);
@@ -740,7 +740,7 @@
   padding: 2px 7px;
   border-radius: 7px;
   border: 1px solid var(--vc-rule);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -771,7 +771,7 @@
 }
 
 .vc-palette li button span {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
 }
@@ -785,7 +785,7 @@
 .vc-palette li button em {
   grid-column: 2;
   font-style: normal;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 650;
   color: var(--vc-ink-3);
   overflow-wrap: anywhere;
@@ -988,7 +988,7 @@
   display: block;
   margin-top: 4px;
   font-style: normal;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   color: var(--vc-ink-3);
 }
