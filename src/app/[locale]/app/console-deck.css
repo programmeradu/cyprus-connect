@@ -1322,3 +1322,84 @@
   background: var(--vc-lime-soft);
   color: var(--vc-ink);
 }
+
+/* ---------- insight list (overview: what changed) --------------------- */
+
+.vc .vc-insight-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.vc .vc-insight-list article {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--vc-rule);
+}
+
+.vc .vc-insight-list article:first-child { padding-top: 4px; }
+.vc .vc-insight-list article:last-child { border-bottom: 0; }
+
+.vc .vc-insight-list .vc-dot {
+  margin-top: 6px;
+}
+
+.vc .vc-insight-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.vc .vc-insight-copy em {
+  font-style: normal;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vc-ink-3, var(--vc-ink-2));
+}
+
+.vc .vc-insight-copy strong {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--vc-ink);
+  overflow-wrap: anywhere;
+}
+
+.vc .vc-insight-copy small {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--vc-ink-2);
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+  overflow: visible;
+}
+
+.vc .vc-insight-list a.vc-plate-open {
+  align-self: center;
+  flex: none;
+}
+
+.vc .vc-insight-foot {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid var(--vc-rule);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--vc-ink-2);
+}
+
+@media (max-width: 520px) {
+  .vc .vc-insight-list article {
+    grid-template-columns: 10px minmax(0, 1fr);
+  }
+  .vc .vc-insight-list a.vc-plate-open {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
