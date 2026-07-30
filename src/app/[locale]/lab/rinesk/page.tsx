@@ -665,8 +665,15 @@ export default function RineskPage() {
               <span style={{ fontSize: 13, fontWeight: 500 }}>%</span>
             </A>
             <svg width="122" height="60" viewBox="0 0 122 60" style={{ position: "absolute", left: 300, top: 74 }} fill="none">
-              <path d="M2 58 C 14 6, 108 6, 120 58" stroke="rgba(255,255,255,.28)" strokeWidth="1" />
-              <path d="M2 58 C 14 6, 100 6, 116 46" stroke="#E8F94A" strokeWidth="2.6" strokeLinecap="round" />
+              <defs>
+                <linearGradient id="rkCsatArc" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+                  <stop offset="42%" stopColor="#E8F94A" />
+                  <stop offset="100%" stopColor="#E8F94A" />
+                </linearGradient>
+              </defs>
+              <path d="M2 58 C 14 6, 108 6, 120 58" stroke="rgba(255,255,255,.22)" strokeWidth="1" />
+              <path d="M2 58 C 14 8, 102 6, 118 48" stroke="url(#rkCsatArc)" strokeWidth="2.1" strokeLinecap="round" />
             </svg>
             <A l={334} t={124} className="rk-kicker" style={{ fontSize: 7.4, color: "rgba(35,46,46,.55)" }}>
               Satisfied
@@ -702,7 +709,7 @@ export default function RineskPage() {
                 <line
                   key={i}
                   x1={4 + i * 5.75}
-                  y1={60 - h}
+                  y1={60 - h * 0.86}
                   x2={4 + i * 5.75}
                   y2={60}
                   stroke={y ? "#E8F94A" : "rgba(255,255,255,.85)"}
