@@ -112,14 +112,14 @@
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
-  color: color-mix(in oklab, var(--foreground) 68%, transparent);
+  color: color-mix(in oklab, var(--foreground) 84%, transparent);
 }
 
 .app-meta {
   font-size: 0.8125rem;
   line-height: 1.5;
   font-weight: 500;
-  color: color-mix(in oklab, var(--foreground) 66%, transparent);
+  color: color-mix(in oklab, var(--foreground) 82%, transparent);
 }
 
 .app-metric {
@@ -271,7 +271,7 @@
 .viq-app .text-foreground\/50,
 .viq-app .text-foreground\/55,
 .viq-app .text-foreground\/60 {
-  color: color-mix(in oklab, var(--foreground) 72%, transparent);
+  color: color-mix(in oklab, var(--foreground) 84%, transparent);
 }
 
 /* Radius discipline: 4 / 6 / 8 / 12px. No 16px+ on rectangles. */
