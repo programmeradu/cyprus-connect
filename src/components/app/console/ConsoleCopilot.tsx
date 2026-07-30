@@ -249,13 +249,19 @@ export function ConsoleCopilot() {
           onClick={() => setOpen(true)}
           aria-label="Open the workspace copilot"
         >
-          <CopilotMark />
+          <span className="vc-copilot-fab-mark">
+            <CopilotMark small />
+          </span>
+          <span className="vc-copilot-fab-label">Ask Copilot</span>
           {pending.length > 0 && (
-            <span className="vc-copilot-fab-count" aria-hidden>
+            <span className="vc-copilot-fab-count">
               {pending.length > 9 ? "9+" : pending.length}
+              <span className="sr-only"> pending approvals</span>
             </span>
           )}
-          <span className="vc-copilot-fab-tip">Copilot</span>
+          <span className="vc-copilot-fab-key" aria-hidden>
+            ⌘J
+          </span>
         </button>
       )}
 
