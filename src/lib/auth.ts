@@ -44,8 +44,6 @@ export const auth = betterAuth({
 			sameSite: "none",
 			secure: true,
 			partitioned: true,
-			httpOnly: true,
-			path: "/",
 		},
 	},
 	plugins: [bearer()]
