@@ -171,23 +171,52 @@
 
 .vc .vck-reading-rail {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 1px;
-  background: var(--vc-rule);
-  border: 1px solid var(--vc-rule);
-  border-radius: 18px;
-  overflow: hidden;
+  grid-template-columns: 1fr;
+  gap: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--vc-rule);
+  border-bottom: 1px solid var(--vc-rule);
+  border-radius: 0;
+  overflow: visible;
+}
+
+@media (min-width: 620px) {
+  .vc .vck-reading-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1020px) {
+  .vc .vck-reading-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 .vc .vck-reading {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 15px 18px;
+  gap: 7px;
+  padding: 18px 22px;
   min-width: 0;
   text-align: left;
-  background: var(--vc-well);
+  background: transparent;
+  border-radius: 0;
   transition: background 160ms ease-out;
+}
+
+/* hairline separators, no filled block */
+.vc .vck-reading + .vck-reading { border-top: 1px solid var(--vc-rule-soft); }
+.vc .vck-reading:first-child { padding-left: 0; }
+
+@media (min-width: 620px) {
+  .vc .vck-reading { padding-left: 22px; border-top: 1px solid var(--vc-rule-soft); }
+  .vc .vck-reading:nth-child(-n + 2) { border-top: 0; }
+  .vc .vck-reading:nth-child(2n + 1) { padding-left: 0; border-left: 0; }
+  .vc .vck-reading:nth-child(2n) { border-left: 1px solid var(--vc-rule-soft); }
+}
+
+@media (min-width: 1020px) {
+  .vc .vck-reading:nth-child(-n + 4) { border-top: 0; }
+  .vc .vck-reading:nth-child(n + 5) { border-top: 1px solid var(--vc-rule-soft); }
+  .vc .vck-reading { border-left: 1px solid var(--vc-rule-soft); padding-left: 22px; }
+  .vc .vck-reading:nth-child(4n + 1) { border-left: 0; padding-left: 0; }
 }
 
 .vc button.vck-reading { cursor: pointer; }
@@ -195,19 +224,21 @@
 .vc .vck-reading[data-active="true"] { background: var(--vc-rail-active); }
 
 .vc .vck-reading small {
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
   color: var(--vc-ink-3);
 }
 
 .vc .vck-reading strong {
   display: flex;
   align-items: baseline;
-  gap: 5px;
-  font-size: 26px;
-  line-height: 1.05;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  gap: 6px;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   color: var(--vc-ink);
 }
@@ -216,8 +247,10 @@
   font-style: normal;
   font-size: 12.5px;
   font-weight: 600;
+  letter-spacing: 0;
   color: var(--vc-ink-3);
 }
+
 
 .vc .vck-reading-foot {
   display: flex;
