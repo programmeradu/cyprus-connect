@@ -344,8 +344,20 @@ export default function ConsolePage() {
                 className="vc-add-agent"
                 aria-label="Open the agent workforce"
               >
-                Agent workforce
+                <span className="vc-add-agent-dot" aria-hidden="true" />
+                <span className="vc-add-agent-label">Agent workforce</span>
+                <svg className="vc-add-agent-arrow" viewBox="0 0 16 16" aria-hidden="true">
+                  <path
+                    d="M3.5 8h8M8 4.5 11.5 8 8 11.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </Link>
+
 
 
               {/* The rail switches the hero series. It is not decoration. */}
