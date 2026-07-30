@@ -308,6 +308,15 @@ export default function DashboardPage() {
     renewable: record.renewablePercentage
   }));
 
+  // Hero series: monthly footprint, oldest to newest.
+  const series = historicalData
+    .slice(0, 12)
+    .reverse()
+    .map((record) => record.totalCo2e)
+    .filter((value) => typeof value === "number" && Number.isFinite(value));
+
+
+
   const peerRows = comparisonData
     ? [
         { label: t("totalCarbonFootprint"), percentile: comparisonData.user_metrics.carbon_footprint?.percentile },
