@@ -238,7 +238,7 @@ export default function ConsolePage() {
       id: "runs",
       tone: "bad",
       label: "Agent run",
-      headline: `${failedRuns.length} run${failedRuns.length === 1 ? "" : "s"} did not finish`,
+      headline: `${failedRuns.length} run${failedRuns.length === 1 ? "" : "s"} need a review`,
       detail: failedRuns[0].summary ?? "Open the workforce to read the run log.",
       href: "/app/insights",
       linkLabel: "Open the agent workforce",
