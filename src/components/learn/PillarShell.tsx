@@ -158,7 +158,7 @@ export default function PillarShell({
       <button
         type="button"
         onClick={() => setMobileTocOpen(true)}
-        className="fixed bottom-6 right-5 z-30 border border-foreground/15 bg-background/95 px-4 py-2.5 eyebrow text-foreground shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)] backdrop-blur lg:hidden"
+        className="fixed bottom-5 left-5 z-30 border border-foreground/15 bg-background/95 px-4 py-2.5 eyebrow text-foreground shadow-[0_8px_24px_-8px_rgba(0,0,0,0.15)] backdrop-blur sm:bottom-6 sm:left-6 lg:hidden"
         aria-label={tocMobileLabel}
       >
         {tocMobileLabel}
