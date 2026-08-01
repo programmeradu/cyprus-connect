@@ -171,119 +171,126 @@ export function FloatingAIAssistant() {
 
       {/* Panel */}
       {open && (
-        <div
-          role="dialog"
-          aria-label={t.title}
-          className="fixed inset-x-3 bottom-3 z-40 flex max-h-[82svh] flex-col overflow-hidden border border-border/70 bg-background shadow-[0_28px_70px_-24px_rgba(0,0,0,0.45)] sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-[27rem]"
-          style={{ fontFamily: "var(--editorial-sans)" }}
-        >
-          <header className="flex items-center justify-between gap-3 bg-[oklch(0.19_0.02_150)] px-4 py-3.5 text-white">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full ring-1 ring-[var(--accent-lime)]/50">
-                <VerdeMark className="h-[19px] w-[19px]" />
-              </span>
-              <div className="min-w-0">
-                <div
-                  className="truncate text-[17px] font-semibold leading-tight tracking-[-0.02em]"
-                  style={{ fontFamily: "var(--editorial-display)" }}
-                >
-                  {t.title}
+        <>
+          {/* Backdrop on mobile for easy dismiss */}
+          <div
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs sm:hidden"
+            onClick={() => setOpen(false)}
+          />
+          <div
+            role="dialog"
+            aria-label={t.title}
+            className="fixed inset-x-0 bottom-0 z-40 flex h-[85vh] max-h-[85vh] flex-col overflow-hidden rounded-t-2xl border-t border-border/70 bg-background shadow-2xl transition-all duration-300 ease-out sm:inset-x-auto sm:bottom-6 sm:right-6 sm:h-[34rem] sm:max-h-[34rem] sm:w-[27rem] sm:rounded-xl sm:border sm:border-border/70"
+            style={{ fontFamily: "var(--editorial-sans)" }}
+          >
+            <header className="flex items-center justify-between gap-3 bg-[oklch(0.19_0.02_150)] px-4 py-3.5 text-white">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full ring-1 ring-[var(--accent-lime)]/50">
+                  <VerdeMark className="h-[19px] w-[19px]" />
+                </span>
+                <div className="min-w-0">
+                  <div
+                    className="truncate text-[17px] font-semibold leading-tight tracking-[-0.02em]"
+                    style={{ fontFamily: "var(--editorial-display)" }}
+                  >
+                    {t.title}
+                  </div>
+                  <div className="truncate text-[12.5px] font-medium text-white/65">{t.subtitle}</div>
                 </div>
-                <div className="truncate text-[12.5px] font-medium text-white/65">{t.subtitle}</div>
               </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label={t.close}
-              className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" aria-hidden>
-                <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
-              </svg>
-            </button>
-          </header>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label={t.close}
+                className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+              >
+                <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" aria-hidden>
+                  <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
+                </svg>
+              </button>
+            </header>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-5" style={{ minHeight: "17rem" }}>
-            {messages.length === 0 ? (
-              <div>
-                <p className="text-[15px] leading-[1.6] text-foreground/75">{t.empty}</p>
-                <ul className="mt-4">
-                  {t.starters.map((s) => (
-                    <li key={s} className="border-b border-border/60 first:border-t">
-                      <button
-                        type="button"
-                        onClick={() => send(s)}
-                        className="group flex w-full items-center justify-between gap-4 py-3 text-left text-[14.5px] font-medium text-foreground/80 transition-colors hover:text-foreground"
-                      >
-                        <span className="min-w-0">{s}</span>
-                        <span aria-hidden className="text-foreground/40 transition-transform group-hover:translate-x-0.5">
-                          →
-                        </span>
-                      </button>
+            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-5" style={{ minHeight: "14rem" }}>
+              {messages.length === 0 ? (
+                <div>
+                  <p className="text-[15px] leading-[1.6] text-foreground/75">{t.empty}</p>
+                  <ul className="mt-4">
+                    {t.starters.map((s) => (
+                      <li key={s} className="border-b border-border/60 first:border-t">
+                        <button
+                          type="button"
+                          onClick={() => send(s)}
+                          className="group flex w-full items-center justify-between gap-4 py-3 text-left text-[14.5px] font-medium text-foreground/80 transition-colors hover:text-foreground"
+                        >
+                          <span className="min-w-0">{s}</span>
+                          <span aria-hidden className="text-foreground/40 transition-transform group-hover:translate-x-0.5">
+                            →
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <ul className="space-y-5">
+                  {messages.map((m, i) => (
+                    <li key={i}>
+                      {m.role === "user" ? (
+                        <div className="flex justify-end">
+                          <div className="max-w-[85%] rounded-sm bg-foreground px-3.5 py-2.5 text-[15px] leading-[1.55] text-background">
+                            {m.text}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="whitespace-pre-wrap text-[15px] leading-[1.68] text-foreground/90">
+                          {m.text ||
+                            (streaming && i === messages.length - 1 ? (
+                              <span className="inline-flex items-center gap-2 text-foreground/55">
+                                <VerdeMark className="h-4 w-4 animate-pulse" />
+                                {t.thinking}
+                              </span>
+                            ) : (
+                              ""
+                            ))}
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
-              </div>
-            ) : (
-              <ul className="space-y-5">
-                {messages.map((m, i) => (
-                  <li key={i}>
-                    {m.role === "user" ? (
-                      <div className="flex justify-end">
-                        <div className="max-w-[85%] rounded-sm bg-foreground px-3.5 py-2.5 text-[15px] leading-[1.55] text-background">
-                          {m.text}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="whitespace-pre-wrap text-[15px] leading-[1.68] text-foreground/90">
-                        {m.text ||
-                          (streaming && i === messages.length - 1 ? (
-                            <span className="inline-flex items-center gap-2 text-foreground/55">
-                              <VerdeMark className="h-4 w-4 animate-pulse" />
-                              {t.thinking}
-                            </span>
-                          ) : (
-                            ""
-                          ))}
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="border-t border-border/60 p-3">
-            <div className="flex items-end gap-2">
-              <textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    send();
-                  }
-                }}
-                placeholder={t.placeholder}
-                rows={1}
-                className="max-h-32 min-h-[42px] flex-1 resize-none border border-border/70 bg-background px-3 py-2.5 text-[15px] leading-[1.45] outline-none transition-colors placeholder:text-foreground/45 focus:border-foreground/50"
-                disabled={streaming}
-              />
-              <button
-                type="button"
-                onClick={() => send()}
-                disabled={streaming || !input.trim()}
-                className="h-[42px] shrink-0 rounded-full bg-[var(--accent-lime)] px-5 text-[14.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] transition-opacity disabled:opacity-40"
-                style={{ fontFamily: "var(--editorial-display)" }}
-              >
-                {t.send}
-              </button>
+              )}
             </div>
-            <p className="mt-2.5 text-[12.5px] font-medium leading-[1.4] text-foreground/50">{t.disclaimer}</p>
+
+            <div className="border-t border-border/60 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              <div className="flex items-end gap-2">
+                <textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      send();
+                    }
+                  }}
+                  placeholder={t.placeholder}
+                  rows={1}
+                  className="max-h-32 min-h-[44px] flex-1 resize-none border border-border/70 bg-background px-3.5 py-2.5 text-[15px] leading-[1.45] outline-none transition-colors placeholder:text-foreground/45 focus:border-foreground/50"
+                  disabled={streaming}
+                />
+                <button
+                  type="button"
+                  onClick={() => send()}
+                  disabled={streaming || !input.trim()}
+                  className="h-[44px] shrink-0 rounded-full bg-[var(--accent-lime)] px-5 text-[14.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] transition-opacity disabled:opacity-40"
+                  style={{ fontFamily: "var(--editorial-display)" }}
+                >
+                  {t.send}
+                </button>
+              </div>
+              <p className="mt-2 text-[12px] font-medium leading-[1.4] text-foreground/50">{t.disclaimer}</p>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

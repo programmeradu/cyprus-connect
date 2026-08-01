@@ -125,11 +125,8 @@ export default function LearnHubClient({
 
       {/* Header - editorial, no pill, no icon */}
       <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">
-        <p className="eyebrow text-primary sm:text-xs">
-          Vuneli Learn
-        </p>
         <h1
-          className="mt-5 text-[44px] font-semibold leading-[0.98] tracking-[-0.03em] sm:mt-7 sm:text-[72px] md:text-[88px]"
+          className="text-[44px] font-semibold leading-[0.98] tracking-[-0.03em] sm:text-[72px] md:text-[88px]"
           style={SANS}
         >
           {heading}
