@@ -3,7 +3,7 @@
 **Version:** 1.0 (2026)
 **Scope:** Cyprus SMEs and Cyprus-based enterprises reporting into EU frameworks
 **Locales:** English + Ελληνικά (el-CY)
-**Production:** https://verdeiq.stauniverse.tech
+**Production:** https://vuneli.com
 **Owner:** StaUniverse
 
 ---

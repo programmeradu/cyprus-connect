@@ -31,7 +31,7 @@ const NAV_LABELS: Record<
     contact: "A question this page does not answer?",
     contactBody:
       "Write to the team in Strovolos. We answer security, privacy and procurement questions within two working days.",
-    contactAction: "samuel@stauniverse.tech",
+    contactAction: "hello@vuneli.com",
   },
   el: {
     privacy: "Πολιτική Απορρήτου",
@@ -44,7 +44,7 @@ const NAV_LABELS: Record<
     contact: "Ερώτηση που δεν απαντά η σελίδα;",
     contactBody:
       "Γράψτε στην ομάδα στον Στρόβολο. Απαντάμε σε ερωτήσεις ασφάλειας, απορρήτου και προμηθειών σε δύο εργάσιμες ημέρες.",
-    contactAction: "samuel@stauniverse.tech",
+    contactAction: "hello@vuneli.com",
   },
 };
 

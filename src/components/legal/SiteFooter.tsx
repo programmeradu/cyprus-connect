@@ -283,8 +283,8 @@ export function SiteFooter() {
             <div>
               <dt className="text-[11px] uppercase tracking-[0.18em] text-white/40">{t.emailLabel}</dt>
               <dd className="mt-1">
-                <a href="mailto:samuel@stauniverse.tech" className="break-words text-white/85 underline-offset-4 hover:text-white hover:underline">
-                  samuel@stauniverse.tech
+                <a href="mailto:hello@vuneli.com" className="break-words text-white/85 underline-offset-4 hover:text-white hover:underline">
+                  hello@vuneli.com
                 </a>
               </dd>
             </div>
@@ -317,7 +317,7 @@ export function SiteFooter() {
         <div>
           <p className={labelCls}>{t.company}</p>
           <ul className="space-y-1">
-            <li><a href="mailto:samuel@stauniverse.tech" className={linkCls}>{t.contact}</a></li>
+            <li><a href="mailto:hello@vuneli.com" className={linkCls}>{t.contact}</a></li>
             <li><Link href={`/${locale}/security`} className={linkCls}>{t.security}</Link></li>
           </ul>
         </div>

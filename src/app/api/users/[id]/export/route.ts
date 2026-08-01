@@ -36,8 +36,8 @@ export async function GET(
     const payload = {
       exportedAt: new Date().toISOString(),
       subject: "GDPR data export (Article 15 / 20)",
-      controller: "Verde IQ, Strovolos, Cyprus",
-      contact: "samuel@stauniverse.tech",
+      controller: "Vuneli, Strovolos, Cyprus",
+      contact: "hello@vuneli.com",
       data: { profile: record },
     };
 

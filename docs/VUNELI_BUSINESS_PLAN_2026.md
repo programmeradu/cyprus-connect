@@ -7,7 +7,7 @@
 Prepared for: Cyprus Startup Visa Scheme (Deputy Ministry of Research, Innovation and Digital Policy), Research and Innovation Foundation calls PRE-SEED/0526 and SEED/0525, and seed-stage equity investors.
 
 Version 1.0 - master document. Date of drafting: February 2026.
-Product: https://verdeiq.stauniverse.tech
+Product: https://vuneli.com
 
 ---
 
@@ -57,7 +57,7 @@ Where a source could not be verified to our satisfaction before drafting, the cl
 
 Vuneli is a Cyprus company that builds sustainability reporting software for Cypriot small and medium enterprises. The product turns the data a company already has, its electricity bills, its fuel purchases, its supplier invoices, into a disclosure that a bank, a large customer or an auditor will accept.
 
-We are pre-revenue. The product is built and running at https://verdeiq.stauniverse.tech with a working console, an agentic copilot, a VSME report drafting engine and seven Cyprus-relevant data connectors. We have not yet taken a paying Cypriot customer. The first four months of the plan exist to fix that, and every projection after Month 4 depends on what those months teach us.
+We are pre-revenue. The product is built and running at https://vuneli.com with a working console, an agentic copilot, a VSME report drafting engine and seven Cyprus-relevant data connectors. We have not yet taken a paying Cypriot customer. The first four months of the plan exist to fix that, and every projection after Month 4 depends on what those months teach us.
 
 **The problem.** From 2025 onward, large EU companies subject to the Corporate Sustainability Reporting Directive must report emissions across their value chain. They cannot do that without data from their suppliers. In Cyprus, most of those suppliers are firms with ten to sixty employees, a part-time finance person and no sustainability function. The same firms face the Carbon Border Adjustment Mechanism if they import cement, steel, aluminium, fertiliser, hydrogen or electricity, and the definitive CBAM regime started in January 2026. The obligation arrives as a customer email with a spreadsheet attached, and the recipient has no idea what to put in it.
 

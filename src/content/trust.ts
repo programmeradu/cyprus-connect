@@ -25,9 +25,9 @@ const LAST_UPDATED_EN = "8 July 2026";
 const LAST_UPDATED_EL = "8 Ιουλίου 2026";
 
 const OWNER_EN =
-  "This page is maintained by Verde IQ (operated from Strovolos, Cyprus) to answer common privacy, security, and compliance questions about Vuneli. Contact: samuel@stauniverse.tech.";
+  "This page is maintained by Verde IQ (operated from Strovolos, Cyprus) to answer common privacy, security, and compliance questions about Vuneli. Contact: hello@vuneli.com.";
 const OWNER_EL =
-  "Η σελίδα αυτή συντηρείται από τη Verde IQ (με έδρα λειτουργίας τον Στρόβολο, Κύπρος) και απαντά σε συνήθεις ερωτήσεις για την ιδιωτικότητα, την ασφάλεια και τη συμμόρφωση του Vuneli. Επικοινωνία: samuel@stauniverse.tech.";
+  "Η σελίδα αυτή συντηρείται από τη Verde IQ (με έδρα λειτουργίας τον Στρόβολο, Κύπρος) και απαντά σε συνήθεις ερωτήσεις για την ιδιωτικότητα, την ασφάλεια και τη συμμόρφωση του Vuneli. Επικοινωνία: hello@vuneli.com.";
 
 const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
   en: {
@@ -42,7 +42,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Data controller",
           body: [
-            "Verde IQ, operating from Strovolos, Cyprus, is the data controller for personal data processed through the Vuneli platform. For any privacy question, request, or complaint, contact samuel@stauniverse.tech.",
+            "Verde IQ, operating from Strovolos, Cyprus, is the data controller for personal data processed through the Vuneli platform. For any privacy question, request, or complaint, contact hello@vuneli.com.",
           ],
         },
         {
@@ -66,7 +66,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Your rights",
           body: [
-            "Under GDPR you may request access, rectification, erasure, restriction, portability, and objection. To exercise these rights, email samuel@stauniverse.tech — we respond within 30 days.",
+            "Under GDPR you may request access, rectification, erasure, restriction, portability, and objection. To exercise these rights, email hello@vuneli.com — we respond within 30 days.",
             "You may also lodge a complaint with the Cyprus Commissioner for Personal Data Protection (dataprotection.gov.cy).",
           ],
         },
@@ -91,7 +91,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Contact",
           body: [
-            "Questions or requests: samuel@stauniverse.tech. Security disclosures may be sent to the same address.",
+            "Questions or requests: hello@vuneli.com. Security disclosures may be sent to the same address.",
           ],
         },
       ],
@@ -149,7 +149,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         },
         {
           heading: "Contact",
-          body: ["Legal / commercial: samuel@stauniverse.tech."],
+          body: ["Legal / commercial: hello@vuneli.com."],
         },
       ],
     },
@@ -206,7 +206,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Reporting a vulnerability",
           body: [
-            "Please email samuel@stauniverse.tech with a description and reproduction steps. We aim to acknowledge within 3 business days. Please do not run automated scans against production or access data that is not your own.",
+            "Please email hello@vuneli.com with a description and reproduction steps. We aim to acknowledge within 3 business days. Please do not run automated scans against production or access data that is not your own.",
           ],
         },
         {
@@ -276,7 +276,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Requesting a signed DPA",
           body: [
-            "Email samuel@stauniverse.tech with your legal entity name and address. We will return a signed counterpart within 5 business days.",
+            "Email hello@vuneli.com with your legal entity name and address. We will return a signed counterpart within 5 business days.",
           ],
         },
       ],
@@ -294,7 +294,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Υπεύθυνος επεξεργασίας",
           body: [
-            "Η Verde IQ, με έδρα λειτουργίας τον Στρόβολο Κύπρου, είναι ο υπεύθυνος επεξεργασίας για τα προσωπικά δεδομένα που επεξεργάζονται μέσω της πλατφόρμας Vuneli. Για κάθε ερώτημα, αίτημα ή παράπονο επικοινωνήστε στο samuel@stauniverse.tech.",
+            "Η Verde IQ, με έδρα λειτουργίας τον Στρόβολο Κύπρου, είναι ο υπεύθυνος επεξεργασίας για τα προσωπικά δεδομένα που επεξεργάζονται μέσω της πλατφόρμας Vuneli. Για κάθε ερώτημα, αίτημα ή παράπονο επικοινωνήστε στο hello@vuneli.com.",
           ],
         },
         {
@@ -316,7 +316,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Τα δικαιώματά σας",
           body: [
-            "Βάσει του GDPR έχετε δικαίωμα πρόσβασης, διόρθωσης, διαγραφής, περιορισμού, φορητότητας και εναντίωσης. Για να ασκήσετε αυτά τα δικαιώματα, στείλτε email στο samuel@stauniverse.tech — απαντάμε εντός 30 ημερών.",
+            "Βάσει του GDPR έχετε δικαίωμα πρόσβασης, διόρθωσης, διαγραφής, περιορισμού, φορητότητας και εναντίωσης. Για να ασκήσετε αυτά τα δικαιώματα, στείλτε email στο hello@vuneli.com — απαντάμε εντός 30 ημερών.",
             "Έχετε επίσης δικαίωμα καταγγελίας στην Επίτροπο Προστασίας Δεδομένων Προσωπικού Χαρακτήρα Κύπρου (dataprotection.gov.cy).",
           ],
         },
@@ -341,7 +341,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Επικοινωνία",
           body: [
-            "Ερωτήσεις ή αιτήματα: samuel@stauniverse.tech. Αναφορές ασφάλειας μπορούν να αποσταλούν στην ίδια διεύθυνση.",
+            "Ερωτήσεις ή αιτήματα: hello@vuneli.com. Αναφορές ασφάλειας μπορούν να αποσταλούν στην ίδια διεύθυνση.",
           ],
         },
       ],
@@ -399,7 +399,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         },
         {
           heading: "Επικοινωνία",
-          body: ["Νομικά / εμπορικά: samuel@stauniverse.tech."],
+          body: ["Νομικά / εμπορικά: hello@vuneli.com."],
         },
       ],
     },
@@ -454,7 +454,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Αναφορά ευπάθειας",
           body: [
-            "Στείλτε email στο samuel@stauniverse.tech με περιγραφή και βήματα αναπαραγωγής. Στόχος μας είναι απάντηση εντός 3 εργάσιμων ημερών. Παρακαλούμε μην εκτελείτε αυτοματοποιημένα scans σε παραγωγή ούτε να αποκτάτε πρόσβαση σε δεδομένα που δεν σας ανήκουν.",
+            "Στείλτε email στο hello@vuneli.com με περιγραφή και βήματα αναπαραγωγής. Στόχος μας είναι απάντηση εντός 3 εργάσιμων ημερών. Παρακαλούμε μην εκτελείτε αυτοματοποιημένα scans σε παραγωγή ούτε να αποκτάτε πρόσβαση σε δεδομένα που δεν σας ανήκουν.",
           ],
         },
         {
@@ -524,7 +524,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Αίτημα υπογεγραμμένης DPA",
           body: [
-            "Στείλτε email στο samuel@stauniverse.tech με την επωνυμία και τη διεύθυνση της εταιρείας σας. Θα σας επιστρέψουμε υπογεγραμμένο αντίτυπο εντός 5 εργάσιμων ημερών.",
+            "Στείλτε email στο hello@vuneli.com με την επωνυμία και τη διεύθυνση της εταιρείας σας. Θα σας επιστρέψουμε υπογεγραμμένο αντίτυπο εντός 5 εργάσιμων ημερών.",
           ],
         },
       ],

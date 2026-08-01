@@ -3,7 +3,7 @@
 ## Business Plan - Cyprus Startup Visa, Team Application
 
 Company: Vuneli Ltd (in registration, Nicosia, Cyprus)
-Product: https://verdeiq.stauniverse.tech
+Product: https://vuneli.com
 Category: A (business plan route, pre-revenue)
 Date: February 2026
 
