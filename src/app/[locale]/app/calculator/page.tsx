@@ -276,7 +276,7 @@ Return ONLY valid JSON (no markdown, no explanations):
         transport: parseFloat(formData.transport) || 0,
       };
 
-      const useReferenceFactors = () => {
+      const applyReferenceFactors = () => {
         const reference = calculateFromReferenceFactors(inputs, categoryLabels());
         totalEmissions = reference.totalTonnes;
         emissionsBreakdown = reference.breakdown;
@@ -308,10 +308,10 @@ Return ONLY valid JSON (no markdown, no explanations):
         } catch (error) {
           console.error("Climatiq API error, using published reference factors:", error);
           toast.warning(t("toasts.calcFallback"));
-          useReferenceFactors();
+          applyReferenceFactors();
         }
       } else {
-        useReferenceFactors();
+        applyReferenceFactors();
       }
 
 
