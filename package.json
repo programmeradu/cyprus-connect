@@ -4,7 +4,8 @@
   "description": "AI-Powered Sustainability Platform for SMEs - Track, optimize, and report your environmental impact effortlessly",
   "private": true,
   "scripts": {
-    "build": "opennextjs-cloudflare build",
+    "build": "next build",
+    "build:cf": "opennextjs-cloudflare build",
     "dev": "next dev -p 8080 -H 0.0.0.0",
     "dev:vite": "vite --host 0.0.0.0",
     "build:vite-legacy": "vite build",
