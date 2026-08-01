@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useSession } from "@/lib/auth-client";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
@@ -13,6 +13,7 @@ import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
  * centered with nav + controls. Transparent over hero, gains glass on scroll.
  */
 export function MarketingHeader() {
+  const locale = useLocale();
   const { data: session, isPending } = useSession();
   const tNav = useTranslations("nav");
   const tHero = useTranslations("hero");
