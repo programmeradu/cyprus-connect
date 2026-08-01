@@ -19,24 +19,9 @@ type NewsItem = {
  * photograph above it, so the edge fade uses an alpha mask rather than a
  * colour gradient (a colour gradient painted chalky blocks over the hero).
  */
-const INITIAL_NEWS: Record<"en" | "el", NewsItem[]> = {
-  en: [
-    { title: "EFRAG Voluntary SME Standard (VSME) Officially Adopted by European Commission", link: "/en/learn/vsme-reporting-guide", pubDate: new Date().toISOString(), description: "" },
-    { title: "CBAM Definitive Phase Active for Steel and Aluminum Imports at Limassol Port", link: "/en/learn/cbam-cyprus", pubDate: new Date().toISOString(), description: "" },
-    { title: "EAC Commercial Solar Net-Billing Tariffs Updated for 2026", link: "/en/learn/csrd-reporting-cyprus", pubDate: new Date().toISOString(), description: "" },
-    { title: "Bank of Cyprus and Hellenic Bank Announce 25-50 bps Margin Discounts for VSME", link: "/en/learn/how-to-choose-sustainability-analytics-software", pubDate: new Date().toISOString(), description: "" },
-  ],
-  el: [
-    { title: "Επίσημη Υιοθέτηση του Προτύπου EFRAG VSME για τις ΜμΕ από την Ευρωπαϊκή Επιτροπή", link: "/el/learn/vsme-reporting-guide", pubDate: new Date().toISOString(), description: "" },
-    { title: "Έναρξη Οριστικής Περιόδου CBAM για Εισαγωγές Χάλυβα και Αλουμινίου στο Λιμάνι Λεμεσού", link: "/el/learn/cbam-cyprus", pubDate: new Date().toISOString(), description: "" },
-    { title: "Ενημερωμένα Τιμολόγια Net-Billing Φωτοβολταϊκών ΑΗΚ για το 2026", link: "/el/learn/csrd-reporting-cyprus", pubDate: new Date().toISOString(), description: "" },
-    { title: "Τράπεζα Κύπρου & Ελληνική Τράπεζα: Εκπτώσεις Επιτοκίων 25-50 bps για VSME", link: "/el/learn/how-to-choose-sustainability-analytics-software", pubDate: new Date().toISOString(), description: "" },
-  ]
-};
-
 export function NewsTicker() {
   const locale = (useLocale() as "en" | "el") ?? "en";
-  const [items, setItems] = useState<NewsItem[]>(INITIAL_NEWS[locale] ?? INITIAL_NEWS.en);
+  const [items, setItems] = useState<NewsItem[]>([]);
   const trackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

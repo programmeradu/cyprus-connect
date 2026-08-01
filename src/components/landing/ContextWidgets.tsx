@@ -74,17 +74,9 @@ export function ContextWidgets() {
   const locale = (useLocale() as "en" | "el") ?? "en";
   const t = COPY[locale] ?? COPY.en;
 
-  const DEFAULT_TOP_NEWS: NewsItem = {
-    title: locale === "el"
-      ? "Επίσημη Υιοθέτηση του Προτύπου EFRAG VSME για τις ΜμΕ από την Ευρωπαϊκή Επιτροπή"
-      : "EFRAG Voluntary SME Standard (VSME) Officially Adopted by European Commission",
-    link: `/${locale}/learn/vsme-reporting-guide`,
-    pubDate: new Date().toISOString(),
-  };
-
   const [geo, setGeo] = useState<Geo | null>(null);
   const [carbon, setCarbon] = useState<Carbon | null>(null);
-  const [topNews, setTopNews] = useState<NewsItem>(DEFAULT_TOP_NEWS);
+  const [topNews, setTopNews] = useState<NewsItem | null>(null);
 
   useEffect(() => {
     let cancelled = false;
