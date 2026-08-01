@@ -147,7 +147,7 @@ export default function PillarShell({
       <MarketingHeader />
 
       {/* Reading progress */}
-      <div className="pointer-events-none fixed inset-x-0 top-[57px] z-40 h-0.5 bg-transparent">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-1 bg-transparent">
         <div
           className="h-full bg-primary transition-[width] duration-150 ease-out"
           style={{ width: `${progress}%` }}
