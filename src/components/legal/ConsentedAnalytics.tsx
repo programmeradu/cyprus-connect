@@ -1,40 +1,67 @@
 "use client";
 
-/**
- * Renders analytics/tracking scripts ONLY when the visitor has accepted the
- * optional analytics cookies via the cookie banner. Wire up your analytics
- * providers (Plausible, GA4, PostHog, etc.) inside the `ConsentedAnalytics`
- * body - they will mount when consent is granted and unmount when consent is
- * revoked, keeping the site GDPR/ePrivacy compliant.
- *
- * The strictly-necessary Lovable error/log script is loaded in root layout
- * and is unaffected by this gate (it is required for the service to function).
- */
-
 import Script from "next/script";
+import { useEffect } from "react";
 import { useCookieConsent } from "@/lib/consent";
+
+const GA_MEASUREMENT_ID = "G-B4SQWJ45RE";
 
 export function ConsentedAnalytics() {
   const { accepted, hydrated } = useCookieConsent();
 
-  // Don't render anything until hydration completes, and only when accepted.
-  if (!hydrated || !accepted) return null;
+  // Update GA4 consent mode dynamically when consent state changes
+  useEffect(() => {
+    if (!hydrated || typeof window === "undefined" || typeof window.gtag !== "function") return;
+
+    if (accepted) {
+      window.gtag("consent", "update", {
+        analytics_storage: "granted",
+        ad_storage: "granted",
+        ad_user_data: "granted",
+        ad_personalization: "granted",
+      });
+    } else {
+      window.gtag("consent", "update", {
+        analytics_storage: "denied",
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+      });
+    }
+  }, [accepted, hydrated]);
 
   return (
     <>
-      {/* Google Analytics (GA4) — consent-gated */}
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=G-B4SQWJ45RE"
-        strategy="afterInteractive"
-      />
-      <Script id="gtag-init" strategy="afterInteractive">
+      {/* 1. Define dataLayer and set default consent mode to 'denied' (GDPR & ePrivacy compliant) */}
+      <Script id="gtag-consent-default" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
+          gtag('consent', 'default', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied'
+          });
           gtag('js', new Date());
-          gtag('config', 'G-B4SQWJ45RE');
+          gtag('config', '${GA_MEASUREMENT_ID}', {
+            send_page_view: true
+          });
         `}
       </Script>
+
+      {/* 2. Load Google Tag Manager / GA4 script so GA4 detectors and Tag Assistant find G-B4SQWJ45RE immediately */}
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
+      />
     </>
   );
+}
+
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+    dataLayer?: any[];
+  }
 }
