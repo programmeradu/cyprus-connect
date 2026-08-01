@@ -160,9 +160,9 @@ export function FloatingAIAssistant() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label={t.open}
-          className="group fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-[oklch(0.19_0.02_150)] text-white shadow-[0_14px_34px_-14px_rgba(0,0,0,0.6)] ring-1 ring-[var(--accent-lime)]/45 transition-transform duration-300 hover:scale-[1.04] sm:bottom-6 sm:right-6"
+          className="group fixed bottom-4 right-4 z-40 grid h-12 w-12 place-items-center rounded-full bg-[oklch(0.19_0.02_150)] text-white shadow-[0_10px_28px_-10px_rgba(0,0,0,0.5)] ring-1 ring-[var(--accent-lime)]/45 transition-transform duration-300 hover:scale-[1.04] sm:bottom-6 sm:right-6 sm:h-14 sm:w-14"
         >
-          <VerdeMark className="h-7 w-7" />
+          <VerdeMark className="h-6 w-6 sm:h-7 sm:w-7" />
           <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-full bg-[oklch(0.19_0.02_150)] px-3 py-1.5 text-[13px] font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 sm:block">
             {t.open}
           </span>
@@ -174,13 +174,13 @@ export function FloatingAIAssistant() {
         <>
           {/* Backdrop on mobile for easy dismiss */}
           <div
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs sm:hidden"
+            className="fixed inset-0 z-40 bg-black/25 backdrop-blur-[2px] sm:hidden"
             onClick={() => setOpen(false)}
           />
           <div
             role="dialog"
             aria-label={t.title}
-            className="fixed inset-x-0 bottom-0 z-40 flex h-[85vh] max-h-[85vh] flex-col overflow-hidden rounded-t-2xl border-t border-border/70 bg-background shadow-2xl transition-all duration-300 ease-out sm:inset-x-auto sm:bottom-6 sm:right-6 sm:h-[34rem] sm:max-h-[34rem] sm:w-[27rem] sm:rounded-xl sm:border sm:border-border/70"
+            className="fixed inset-x-3 bottom-3 z-40 flex max-h-[58vh] flex-col overflow-hidden rounded-2xl border border-border/70 bg-background shadow-[0_20px_50px_-15px_rgba(0,0,0,0.4)] transition-all duration-300 ease-out sm:inset-x-auto sm:bottom-6 sm:right-6 sm:max-h-[30rem] sm:w-[25rem] sm:rounded-xl"
             style={{ fontFamily: "var(--editorial-sans)" }}
           >
             <header className="flex items-center justify-between gap-3 bg-[oklch(0.19_0.02_150)] px-4 py-3.5 text-white">
