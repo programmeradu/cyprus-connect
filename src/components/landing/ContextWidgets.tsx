@@ -74,9 +74,17 @@ export function ContextWidgets() {
   const locale = (useLocale() as "en" | "el") ?? "en";
   const t = COPY[locale] ?? COPY.en;
 
+  const DEFAULT_TOP_NEWS: NewsItem = {
+    title: locale === "el"
+      ? "Επίσημη Υιοθέτηση του Προτύπου EFRAG VSME για τις ΜμΕ από την Ευρωπαϊκή Επιτροπή"
+      : "EFRAG Voluntary SME Standard (VSME) Officially Adopted by European Commission",
+    link: `/${locale}/learn/vsme-reporting-guide`,
+    pubDate: new Date().toISOString(),
+  };
+
   const [geo, setGeo] = useState<Geo | null>(null);
   const [carbon, setCarbon] = useState<Carbon | null>(null);
-  const [topNews, setTopNews] = useState<NewsItem | null>(null);
+  const [topNews, setTopNews] = useState<NewsItem>(DEFAULT_TOP_NEWS);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,7 +104,7 @@ export function ContextWidgets() {
       .catch(() => {});
 
     fetch("/api/news?country=cy")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((data) => {
         if (!cancelled && Array.isArray(data.items) && data.items[0]) {
           setTopNews(data.items[0]);
@@ -107,7 +115,7 @@ export function ContextWidgets() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [locale]);
 
   // Next upcoming deadline
   const now = Date.now();
