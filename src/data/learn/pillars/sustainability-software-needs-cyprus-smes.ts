@@ -5,7 +5,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
   category: "cyprus",
   primaryKeyword: "sustainability software needs cyprus smes",
   monthlyVolume: 420,
-  readingMinutes: 10,
+  readingMinutes: 11,
   relatedSlugs: [
     "csrd-reporting-cyprus",
     "cbam-cyprus",
@@ -20,28 +20,28 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
     heroSubtitle: "Cypriot small and medium enterprises face unique operational, energy, and regulatory demands. Here are the 7 non-negotiable software capabilities needed for compliance in Nicosia, Limassol, Larnaca, and Paphos.",
     tocLabel: "On this page",
     introduction: [
-      "Operating a small or medium enterprise in Cyprus in 2026 comes with distinct commercial challenges. As island-specific energy tariffs, high grid carbon intensity, and EU regulatory mandates converge, Cypriot business owners face growing pressure to report environmental performance.",
-      "Whether supplying European tour operators in Paphos, exporting food and wine from Limassol, or handling port logistics in Larnaca, local SMEs can no longer ignore carbon accounting. However, generic international software often fails to account for Cyprus's specific energy mix, bilingual business environment, and local legal frameworks.",
-      "This report identifies the top 7 operational features Cypriot SMEs require when choosing sustainability and carbon accounting software."
+      "Operating a small or medium enterprise in Cyprus in 2026 comes with distinct commercial and operational realities. As island-specific energy tariffs, high grid carbon intensity, and EU regulatory mandates converge, Cypriot business owners face growing pressure to report environmental performance.",
+      "Whether supplying European tour operators in Paphos, exporting food and wine from Limassol, or handling port logistics in Larnaca, local SMEs can no longer ignore carbon accounting. However, generic international software often fails to account for Cyprus's specific energy mix (0.642 kg CO2e/kWh EAC grid emission factor), bilingual business environment, and local legal frameworks.",
+      "This technical audit identifies the top 7 operational features Cypriot SMEs require when choosing sustainability and carbon accounting software."
     ],
     sections: [
       {
         heading: "1. EAC Electricity Grid & Solar PV Net-Metering Integration",
         body: [
-          "Cyprus electricity generation relies predominantly on heavy fuel oil, resulting in a high grid carbon intensity factor (~0.62–0.68 kg CO2e per kWh) compared to continental Europe. Software must feature updated Electricity Authority of Cyprus (EAC) emission factors.",
-          "Furthermore, with widespread rooftop solar adoption across Cypriot commercial facilities, software must accurately calculate net-metering and net-billing solar offsets to reflect true Scope 2 net emissions."
+          "Cyprus electricity generation relies predominantly on heavy fuel oil (HFO) at Vasilikos and Dhekelia power stations, resulting in a high grid carbon intensity factor (~0.642 kg CO2e per kWh) compared to continental Europe (EU average 0.230 kg CO2e/kWh). Software must feature updated Electricity Authority of Cyprus (EAC) emission factors.",
+          "Furthermore, with widespread rooftop solar adoption across Cypriot commercial facilities, software must accurately calculate CERA net-metering and net-billing solar offsets (under EAC Commercial Tariffs 21 and 31) to reflect true Scope 2 location-based net emissions."
         ]
       },
       {
         heading: "2. CBAM Customs Autopilot for Limassol & Larnaca Port Importers",
         body: [
-          "As an island nation dependent on maritime trade, Cyprus imports significant quantities of steel, aluminum, cement, and fertilizer through Limassol and Larnaca ports. Under the definitive CBAM phase active in 2026, software must generate compliant quarterly CBAM declarations and supplier embedded emission requests."
+          "As an island nation dependent on maritime trade, Cyprus imports significant quantities of steel (CN 7208–7229), aluminum profiles (CN 7604–7610), cement (CN 2523), and fertilizer through Limassol and Larnaca ports. Under the definitive CBAM phase active in 2026, software must generate compliant quarterly CBAM declarations and supplier embedded emission requests."
         ]
       },
       {
         heading: "3. Native Bilingual Capability (English & Ελληνικά - el-CY)",
         body: [
-          "In Cyprus, daily facility operations, utility bill entries, and staff workflows occur in Greek (el-CY). However, corporate buyers, EU auditors, and international bank lenders require reports in English.",
+          "In Cyprus, daily facility operations, utility bill entries, and staff workflows occur in Greek (el-CY). However, corporate buyers, EU auditors, and international bank lenders (Bank of Cyprus, Hellenic Bank, Eurobank Cyprus) require reports in English.",
           "Sustainability software must offer seamless dual-language interfaces and export audit-ready disclosures in both Greek and English with zero manual translation cost."
         ]
       },
@@ -69,12 +69,12 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
         heading: "7. EU Data Sovereignty & GDPR Protection",
         body: [
           "Cypriot commercial data—including energy expenses, facility production figures, and supplier lists—must remain protected under European privacy laws.",
-          "Ensure your software host stores data strictly within the European Economic Area (EEA) with full GDPR compliance and local customer support."
+          "Ensure your software host stores data strictly within the European Economic Area (EEA, e.g., Frankfurt/Dublin Cloudflare nodes) with full GDPR compliance and local customer support."
         ]
       }
     ],
     keyTakeaways: [
-      "Select software tailored to EAC grid emission factors and solar net-metering structures.",
+      "Select software tailored to EAC grid emission factors (0.642 kg CO2e/kWh) and solar net-metering structures.",
       "Ensure native bilingual support (Greek operational interface + English audit exports).",
       "Verify CBAM declarant tools for logistics and import operations at Limassol/Larnaca ports.",
       "Demand transparent EUR pricing with 19% Cyprus VAT invoicing and EU data residency."
@@ -90,7 +90,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
       },
       {
         q: "Are small Cyprus businesses required to report emissions in 2026?",
-        a: "While non-listed SMEs are not directly mandated by CSRD law, they are indirectly forced to report by bank lenders and European corporate customers who require Scope 3 value chain data."
+        a: "While non-listed SMEs are not directly mandated by CSRD law, they are indirectly forced to report by bank lenders (Bank of Cyprus green loans) and European corporate customers who require Scope 3 value chain data."
       }
     ],
     ctaHeading: "Built in Cyprus for Cypriot and European SMEs",
@@ -104,7 +104,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
     heroSubtitle: "Οι κυπριακές μικρομεσαίες επιχειρήσεις αντιμετωπίζουν ιδιαίτερες ενεργειακές και ρυθμιστικές προκλήσεις. Δείτε τις 7 απαραίτητες δυνατότητες λογισμικού για Λευκωσία, Λεμεσό, Λάρνακα και Πάφο.",
     tocLabel: "Σε αυτή τη σελίδα",
     introduction: [
-      "Η λειτουργία μιας ΜμΕ στην Κύπρο το 2026 συνοδεύεται από ιδιαίτερες προκλήσεις. Η υψηλή ένταση άνθρακα του ηλεκτρικού δικτύου, τα ιδιαίτερα τιμολόγια και οι ευρωπαϊκοί κανονισμοί πιέζουν τις τοπικές επιχειρήσεις να μετρήσουν το περιβαλλοντικό τους αποτύπωμα.",
+      "Η λειτουργία μιας ΜμΕ στην Κύπρο το 2026 συνοδεύεται από ιδιαίτερες προκλήσεις. Η υψηλή ένταση άνθρακα του ηλεκτρικού δικτύου (συντελεστής ΑΗΚ 0,642 kg CO2e/kWh), τα ιδιαίτερα τιμολόγια και οι ευρωπαϊκοί κανονισμοί πιέζουν τις τοπικές επιχειρήσεις να μετρήσουν το περιβαλλοντικό τους αποτύπωμα.",
       "Είτε τροφοδοτείτε ευρωπαϊκές τουριστικές επιχειρήσεις στην Πάφο, είτε εξάγετε τρόφιμα από τη Λεμεσό, είτε διαχειρίζεστε logistics στο λιμάνι Λάρνακας, η ανθρακική λογιστική είναι πλέον απαραίτητη. Τα γενικά διεθνή λογισμικά συχνά αποτυγχάνουν να καλύψουν το ενεργειακό μίγμα της Κύπρου και το δίγλωσσο περιβάλλον.",
       "Αυτή η αναφορά καταγράφει τα 7 απαραίτητα χαρακτηριστικά που χρειάζονται οι κυπριακές ΜμΕ."
     ],
@@ -112,20 +112,20 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
       {
         heading: "1. Ενσωμάτωση Δικτύου ΑΗΚ & Φωτοβολταϊκών (Net-Metering / Net-Billing)",
         body: [
-          "Η παραγωγή ηλεκτρισμού στην Κύπρο βασίζεται στο μαζούτ, με αποτέλεσμα υψηλό συντελεστή εκπομπών (~0,62–0,68 kg CO2e ανά kWh). Το λογισμικό πρέπει να περιλαμβάνει τους ενημερωμένους συντελεστές της Αρχής Ηλεκτρισμού Κύπρου (ΑΗΚ).",
-          "Επιπλέον, λόγω της ευρείας χρήσης φωτοβολταϊκών, το λογισμικό πρέπει να υπολογίζει ακριβώς τον συμψηφισμό net-metering και net-billing."
+          "Η παραγωγή ηλεκτρισμού στην Κύπρο βασίζεται στο μαζούτ στους σταθμούς Βασιλικού και Δεκέλειας, με αποτέλεσμα υψηλό συντελεστή εκπομπών (~0,642 kg CO2e ανά kWh) σε σύγκριση με την ηπειρωτική Ευρώπη (μέσος όρος ΕΕ 0,230 kg CO2e/kWh). Το λογισμικό πρέπει να περιλαμβάνει τους ενημερωμένους συντελεστές της ΑΗΚ.",
+          "Επιπλέον, λόγω της ευρείας χρήσης φωτοβολταϊκών, το λογισμικό πρέπει να υπολογίζει ακριβώς τον συμψηφισμό net-metering και net-billing (υπό τα Τιμολόγια 21 & 31) για τον υπολογισμό των πραγματικών εκπομπών Scope 2."
         ]
       },
       {
         heading: "2. Αυτόματος Υπολογισμός CBAM για Εισαγωγές στα Λιμάνια Λεμεσού & Λάρνακας",
         body: [
-          "Ως νησιωτικό κράτος, η Κύπρος εισάγει σημαντικές ποσότητες χάλυβα, αλουμινίου, τσιμέντου και λιπασμάτων. Στην οριστική φάση CBAM του 2026, το λογισμικό πρέπει να παράγει έγκυρες τριμηνιαίες δηλώσεις CBAM."
+          "Ως νησιωτικό κράτος, η Κύπρος εισάγει σημαντικές ποσότητες χάλυβα (CN 7208–7229), αλουμινίου (CN 7604–7610), τσιμέντου (CN 2523) και λιπασμάτων. Στην οριστική φάση CBAM του 2026, το λογισμικό πρέπει να παράγει έγκυρες τριμηνιαίες δηλώσεις CBAM."
         ]
       },
       {
         heading: "3. Πλήρης Διγλωσσία (Αγγλικά & Ελληνικά - el-CY)",
         body: [
-          "Στην Κύπρο, οι καθημερινές εργασίες εκτελούνται στα Ελληνικά (el-CY). Ωστόσο, οι διεθνείς πελάτες, οι ευρωπαίοι ελεγκτές και οι τράπεζες απαιτούν αναφορές στα Αγγλικά.",
+          "Στην Κύπρο, οι καθημερινές εργασίες εκτελούνται στα Ελληνικά (el-CY). Ωστόσο, οι διεθνείς πελάτες, οι ευρωπαίοι ελεγκτές και οι τράπεζες (Τράπεζα Κύπρου, Ελληνική Τράπεζα, Eurobank Κύπρου) απαιτούν αναφορές στα Αγγλικά.",
           "Το λογισμικό πρέπει να προσφέρει δίγλωσσο περιβάλλον και αυτόματη εξαγωγή αναφορών και στις δύο γλώσσες."
         ]
       },
@@ -157,7 +157,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
       }
     ],
     keyTakeaways: [
-      "Επιλέξτε λογισμικό προσαρμοσμένο στους συντελεστές της ΑΗΚ και στα φωτοβολταϊκά.",
+      "Επιλέξτε λογισμικό προσαρμοσμένο στους συντελεστές της ΑΗΚ (0,642 kg CO2e/kWh) και στα φωτοβολταϊκά.",
       "Εξασφαλίστε δίγλωσση λειτουργία (Ελληνικό περιβάλλον + Αγγλική εξαγωγή ελέγχου).",
       "Επιβεβαιώστε εργαλεία CBAM για εισαγωγές στα λιμάνια Λεμεσού και Λάρνακας.",
       "Απαιτήστε τιμολόγηση σε EUR με κυπριακό ΦΠΑ 19% και φιλοξενία εντός ΕΕ."
@@ -173,7 +173,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
       },
       {
         q: "Είναι υποχρεωτική η αναφορά εκπομπών για τις μικρές κυπριακές επιχειρήσεις;",
-        a: "Παρόλο που οι μη εισηγμένες ΜμΕ δεν υποχρεούνται άμεσα από τον νόμο CSRD, πιέζονται έμμεσα από τράπεζες και ευρωπαίους αγοραστές."
+        a: "Παρόλο που οι μη εισηγμένες ΜμΕ δεν υποχρεούνται άμεσα από τον νόμο CSRD, πιέζονται έμμεσα από τράπεζες (πράσινα δάνεια) και ευρωπαίους αγοραστές."
       }
     ],
     ctaHeading: "Σχεδιασμένο στην Κύπρο για Κυπριακές & Ευρωπαϊκές ΜμΕ",
