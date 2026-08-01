@@ -22,27 +22,18 @@ export function ConsentedAnalytics() {
 
   return (
     <>
-      {/*
-        Example: Plausible analytics (self-hosted, cookieless-friendly but
-        still user-choice gated here).
-
-        <Script
-          defer
-          data-domain="vuneli.lovable.app"
-          src="https://plausible.io/js/script.js"
-          strategy="afterInteractive"
-        />
-      */}
-      {/*
-        Example: PostHog
-
-        <Script id="posthog" strategy="afterInteractive">
-          {`!function(t,e){ ... }`}
-        </Script>
-      */}
-      {/* Explicit placeholder so the file compiles with no providers wired. */}
-      <Script id="vuneli-analytics-noop" strategy="afterInteractive">
-        {`window.__vuneliAnalyticsReady=true;`}
+      {/* Google Analytics (GA4) — consent-gated */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-B4SQWJ45RE"
+        strategy="afterInteractive"
+      />
+      <Script id="gtag-init" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-B4SQWJ45RE');
+        `}
       </Script>
     </>
   );
