@@ -34,7 +34,7 @@ function authHeaders(): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export function formatDay(value: string): string {
+function formatDay(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
