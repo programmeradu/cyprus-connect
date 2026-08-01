@@ -121,7 +121,7 @@ export default function LearnHubClient({
   return (
     <div style={SANS}>
       <MarketingHeader />
-      <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pt-16">
+      <main className="mx-auto w-full max-w-6xl px-5 pb-24 pt-24 sm:px-8 sm:pt-28 md:pt-32">
 
       {/* Header - editorial, no pill, no icon */}
       <header className="mx-auto mb-14 max-w-3xl sm:mb-20 sm:text-center">

@@ -96,7 +96,7 @@ export default function ToolShell({
         <MarketingHeader />
       </div>
 
-      <article className="mx-auto w-full max-w-5xl px-5 pb-24 pt-10 sm:px-8 sm:pt-14">
+      <article className="mx-auto w-full max-w-5xl px-5 pb-24 pt-24 sm:px-8 sm:pt-28 md:pt-32">
         {/* Hero */}
         <header className="mb-14 sm:mb-20">
           <div className="grid gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] md:items-center md:gap-14">

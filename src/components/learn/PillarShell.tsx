@@ -208,7 +208,7 @@ export default function PillarShell({
         </div>
       )}
 
-      <div className="mx-auto w-full max-w-7xl px-5 pb-24 pt-6 sm:px-8 sm:pt-10">
+      <div className="mx-auto w-full max-w-7xl px-5 pb-24 pt-24 sm:px-8 sm:pt-28 md:pt-32">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-8 text-[12.5px] text-foreground/55 sm:mb-12">
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
