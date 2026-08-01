@@ -36,7 +36,7 @@ export function MarketingHeader() {
           (photo always carries a dark scrim). Once scrolled past the hero it
           adopts the theme's foreground color. */}
       <Link
-        href="/"
+        href={`/${locale}`}
         className={[
           "pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 text-[20px] font-semibold tracking-[-0.03em] transition-colors duration-300 sm:left-8",
           scrolled ? "text-foreground" : "text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_2px_18px_rgba(0,0,0,0.35)]",
@@ -53,7 +53,7 @@ export function MarketingHeader() {
             <div className="flex items-center gap-2">
               <SubscriptionBadge />
               <Link
-                href="/app"
+                href={`/${locale}/app`}
                 className="inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
                 style={{ fontFamily: "var(--editorial-display)" }}
               >
@@ -62,7 +62,7 @@ export function MarketingHeader() {
             </div>
           ) : (
             <Link
-              href="/auth"
+              href={`/${locale}/auth`}
               className="inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
               style={{ fontFamily: "var(--editorial-display)" }}
             >
@@ -104,19 +104,19 @@ export function MarketingHeader() {
       <div className="hidden w-full justify-center md:flex">
         <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-black/25 px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
           <nav className="hidden items-center md:flex">
-            <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
+            <Link href={`/${locale}/tools`} className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("tools")}
             </Link>
-            <Link href="/learn" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
+            <Link href={`/${locale}/learn`} className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("learn")}
             </Link>
-            <Link href="/vision" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
+            <Link href={`/${locale}/vision`} className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("vision")}
             </Link>
-            <Link href="/news" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
+            <Link href={`/${locale}/news`} className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("news")}
             </Link>
-            <Link href="/pricing" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
+            <Link href={`/${locale}/pricing`} className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("pricing")}
             </Link>
           </nav>
@@ -135,11 +135,11 @@ export function MarketingHeader() {
         <div className="pointer-events-auto absolute inset-x-4 top-[calc(100%+0.75rem)] overflow-hidden rounded-3xl bg-black/55 p-2 ring-1 ring-white/12 backdrop-blur-2xl backdrop-saturate-150 md:hidden">
           <nav className="flex flex-col">
             {[
-              { href: "/tools", label: tNav("tools") },
-              { href: "/learn", label: tNav("learn") },
-              { href: "/vision", label: tNav("vision") },
-              { href: "/news", label: tNav("news") },
-              { href: "/pricing", label: tNav("pricing") },
+              { href: `/${locale}/tools`, label: tNav("tools") },
+              { href: `/${locale}/learn`, label: tNav("learn") },
+              { href: `/${locale}/vision`, label: tNav("vision") },
+              { href: `/${locale}/news`, label: tNav("news") },
+              { href: `/${locale}/pricing`, label: tNav("pricing") },
             ].map((item) => (
               <Link
                 key={item.href}
@@ -153,7 +153,7 @@ export function MarketingHeader() {
           </nav>
           {(
             <Link
-              href={session?.user ? "/app" : "/auth"}
+              href={session?.user ? `/${locale}/app` : `/${locale}/auth`}
               onClick={() => setMenuOpen(false)}
               className="mt-2 flex h-11 w-full items-center justify-center rounded-2xl bg-[var(--accent-lime)] text-[16px] font-semibold text-[var(--accent-lime-foreground)]"
               style={{ fontFamily: "var(--editorial-display)" }}

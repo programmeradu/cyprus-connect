@@ -76,7 +76,7 @@ export function LearnLinksSection() {
           {pillars.map((p, i) => (
             <li key={p.slug} className="min-w-0 border-b border-border/60">
               <Link
-                href={`/learn/${p.slug}`}
+                href={`/${locale}/learn/${p.slug}`}
                 className="group flex items-center gap-4 py-4 transition-colors sm:gap-5 sm:py-5"
               >
                 <span className="w-6 shrink-0 font-[family-name:var(--editorial-serif)] text-[15px] italic tabular-nums text-foreground/40">
@@ -110,7 +110,7 @@ export function LearnLinksSection() {
 
         <div className="mt-10">
           <Link
-            href="/learn"
+            href={`/${locale}/learn`}
             className="group inline-flex items-baseline gap-2 font-[family-name:var(--editorial-serif)] text-[18px] italic text-foreground transition-colors sm:text-[20px]"
           >
             <span className="border-b border-foreground/25 pb-0.5 transition-colors group-hover:border-foreground/70">

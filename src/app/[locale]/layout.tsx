@@ -26,11 +26,12 @@ export async function generateMetadata({
 
   const t = await getTranslations({ locale: safeLocale, namespace: "seo.home" });
 
-  const languages: Record<string, string> = {};
-  for (const l of routing.locales) {
-    languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}`;
-  }
-  languages["x-default"] = `${SITE_URL}/${routing.defaultLocale}`;
+  const languages: Record<string, string> = {
+    en: `${SITE_URL}/en`,
+    el: `${SITE_URL}/el`,
+    "el-CY": `${SITE_URL}/el`,
+    "x-default": `${SITE_URL}/${routing.defaultLocale}`,
+  };
 
   const title = t("title");
   const description = t("description");
@@ -91,7 +92,6 @@ export default async function LocaleLayout({
       addressCountry: "CY",
     },
     areaServed: ["CY", "EU"],
-    sameAs: [] as string[],
   };
 
   const websiteLd = {
@@ -100,14 +100,14 @@ export default async function LocaleLayout({
     name: "Vuneli",
     url: `${SITE_URL}/${locale}`,
     inLanguage,
-    publisher: { "@type": "Organization", name: "Vuneli" },
+    publisher: { "@type": "Organization", name: "Vuneli", url: `${SITE_URL}/${locale}` },
   };
 
   const serviceLd = {
     "@context": "https://schema.org",
     "@type": "Service",
     name: "Vuneli Sustainability Platform",
-    provider: { "@type": "Organization", name: "Vuneli" },
+    provider: { "@type": "Organization", name: "Vuneli", url: `${SITE_URL}/${locale}` },
     areaServed: ["CY", "EU"],
     serviceType: "AI-powered ESG, carbon accounting and CSRD/VSME reporting for SMEs",
     description: t("description"),
