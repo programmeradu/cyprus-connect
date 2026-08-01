@@ -5,7 +5,7 @@ export const howToChooseSustainabilityAnalyticsSoftware = makePillar({
   category: "esg",
   primaryKeyword: "how to choose sustainability analytics software",
   monthlyVolume: 590,
-  readingMinutes: 12,
+  readingMinutes: 14,
   relatedSlugs: [
     "carbon-footprint-software-smes",
     "esg-reporting-software",
@@ -13,157 +13,159 @@ export const howToChooseSustainabilityAnalyticsSoftware = makePillar({
     "sustainability-software-needs-cyprus-smes",
   ],
   en: {
-    title: "How to Choose Sustainability Analytics Software: A Guide for European SMEs",
+    title: "How to Choose Sustainability Analytics Software: A Comprehensive 2026 Buyer's Guide for European SMEs",
     metaTitle: "How to Choose Sustainability Analytics Software (2026 Guide)",
-    metaDescription: "Step-by-step buyer's guide for SMEs choosing sustainability analytics software: 5 evaluation criteria, feature checklist, realistic EUR pricing, and audit readiness.",
-    heroEyebrow: "Buyer's Blueprint",
-    heroSubtitle: "Navigating 100+ software vendors without overpaying for enterprise bloat. Learn how to evaluate data ingestion, emission factor transparency, compliance standards, and total cost of ownership.",
+    metaDescription: "Exhaustive buyer's guide for SMEs evaluating sustainability analytics software: EFRAG VSME module alignment, pricing benchmarks (€360-€15k/yr), emission factor databases, and data lineage.",
+    heroEyebrow: "SME Buyer's Master Reference",
+    heroSubtitle: "A data-backed, practical evaluation framework for CFOs, operations directors, and compliance managers selecting carbon accounting and ESG analytics software in 2026.",
     tocLabel: "On this page",
     introduction: [
-      "Selecting sustainability analytics software has become one of the most critical operational decisions for European SMEs in 2026. As corporate buyers enforce supply chain decarbonization rules under CSRD and European commercial banks require carbon metrics for lending margin discounts, small and medium enterprises must move beyond manual spreadsheets.",
-      "However, the vendor landscape is heavily fragmented. Enterprise platforms built for FTSE 100 multinationals demand six-figure annual contracts (€35,000–€120,000/year) and 6-month consulting implementations, while basic carbon calculators lack audit trails, cryptographic lineage hashing, and European regulatory alignment.",
-      "This guide provides a pragmatic, 5-step evaluation framework based on 26 technical criteria to help SME decision-makers—CFOs, operations directors, and compliance officers—select software that delivers audit-grade reporting within a predictable EUR budget."
+      "Selecting sustainability analytics software has shifted from a voluntary branding experiment to a fundamental core-business capability for European small and medium enterprises (SMEs) in 2026. Following the European Commission’s official adoption of the updated EFRAG Voluntary Sustainability Reporting Standard (VSME) framework on July 3, 2026, corporate buyers and commercial banks across the EU are now systematically requiring verified ESG data from their supply chain partners.",
+      "Even though non-listed SMEs with fewer than 1,000 employees and under €450M in turnover are exempt from mandatory direct CSRD reporting, they face an undeniable 'trickle-down' mandate. Tier-1 corporate clients subject to Wave 1 and Wave 2 CSRD regulations must report their Scope 3 Category 1 (Purchased Goods & Services) emissions. Consequently, they pass mandatory digital questionnaires down to their suppliers. Concurrently, European commercial lenders (such as Bank of Cyprus, Hellenic Bank, and Eurobank) have introduced preferential green financing terms—offering 25 to 50 basis point interest margin discounts for SMEs presenting audited VSME disclosures.",
+      "However, navigating the software landscape is fraught with pitfalls. Enterprise ESG suites originally designed for FTSE 100 or DAX 40 multinationals carry €25,000 to €120,000 annual licensing fees and require 6-month consulting onboarding retainers. At the opposite extreme, static spreadsheet templates and basic carbon calculators lack audit trails, regulatory mapping, and automated emission factor updates, exposing companies to compliance rejection. This guide delivers a rigorous, 5-part evaluation framework to help SME decision-makers select software that guarantees audit-ready compliance while keeping total cost of ownership predictably low in Euros."
     ],
     sections: [
       {
-        heading: "1. The 5 Core Evaluation Criteria",
+        heading: "1. The 5 Non-Negotiable Evaluation Criteria for SMEs",
         body: [
-          "Data Ingestion Versatility: Does the software support automated utility bill OCR parsing (extracting kWh, fuel volume, dates, and VAT), CSV batch imports, and direct API integrations with accounting systems (Xero, QuickBooks, SAP)? Manual line-by-line entry introduces severe human error risks.",
-          "Calculation Engine & Emission Factor Transparency: Ensure the platform explicitly cites its emission factor sources (DEFRA, Climatiq, Exiobase, IEA, EAC) and updates them annually. Opaque 'black box' calculations without clear GWP (Global Warming Potential) values will be rejected by third-party auditors.",
-          "Regulatory Framework Alignment: The software must natively map carbon metrics into standard disclosures, specifically the EFRAG VSME framework for voluntary SME reporting and CSRD/ESRS Scope 1-3 standards.",
-          "Audit Trail & Data Lineage: Every calculated metric must link back to source documents with a time-stamped activity log and cryptographic SHA-256 file verification, enabling external verification without manual spreadsheet reconstruction.",
-          "Total Cost of Ownership (TCO): Look for transparent EUR pricing models without per-seat user penalties or mandatory 5-figure consulting packages."
+          "1. EFRAG VSME Modular Alignment (Basic B1–B11 vs. Comprehensive C1–C9): Your software must natively support the July 2026 EFRAG VSME structure. The Basic Module consists of 11 essential disclosures (B1–B11) covering fundamental company details, energy consumption (MWh split by renewable vs. non-renewable), Scope 1 & 2 GHG emissions, water usage, hazardous waste, workforce health & safety, and anti-corruption policies. The Comprehensive Module adds 9 optional disclosures (C1–C9) for strategic transition plans, human rights policies, and Scope 3 value-chain metrics. Software that forces SMEs into full ESRS enterprise reporting creates massive administrative bloat.",
+          "2. Emission Factor Database Quality & Methodological Transparency: The accuracy of your carbon footprint is entirely dependent on the quality of emission factors used. The software must explicitly cite authoritative, updated databases (such as ADEME Base Empreinte in France, DEFRA/DESNZ in the UK, EXIOBASE, IEA, or national electricity grid factors like EAC in Cyprus). Avoid 'black box' platforms that hide their calculation formulas or fail to specify Global Warming Potential (GWP) values.",
+          "3. Scope 1, 2, and 3 Coverage with Hybrid Calculation Engine: Scope 1 (direct combustion from fuel and boilers) and Scope 2 (purchased electricity and steam) are table stakes. Crucially, the platform must support Scope 3 hybrid accounting—combining spend-based EEIO estimates for long-tail suppliers with actual activity data (kWh, liters, km) collected via automated supplier portals.",
+          "4. Data Lineage, Verification Logs & Cryptographic Audit Readiness: Third-party auditors and bank credit officers will reject summary figures without supporting evidence. Every metric generated by the platform must link back to source files (utility bills, ERP invoices, fuel receipts) backed by time-stamped activity logs and cryptographic file hashing.",
+          "5. Total Cost of Ownership (TCO) & Transparent EUR Pricing: Prioritize vendors that publish transparent EUR pricing bands rather than hidden 'Contact Sales' forms. Avoid software with per-seat user fees that penalize company-wide collaboration or require mandatory 5-figure implementation retainers."
         ]
       },
       {
-        heading: "2. Essential Features vs. Enterprise Bloat",
+        heading: "2. Essential SME Feature Checklist vs. Enterprise Bloat to Avoid",
         body: [
-          "Essential SME Features: Automated Scope 1 & 2 emission tracking, Scope 3 supply chain questionnaires, VSME/CSRD report generation, multi-currency accounting (EUR support), and role-based data permissions.",
-          "Enterprise Bloat to Avoid: Complex multi-jurisdictional carbon tax modeling, multi-subsidiary intercompany elimination workflows, custom satellite imagery integrations, and mandatory multi-month onboarding retainers."
+          "Essential Features: Automated bill parsing via Optical Character Recognition (OCR) to extract kWh and fuel volume directly from PDF invoices; API connectors for Xero, QuickBooks, and SAP; automated EFRAG VSME report exports in PDF, Word, and XBRL formats; role-based access control (RBAC) allowing read-only access for external auditors; and multi-currency accounting (EUR support).",
+          "Enterprise Bloat to Exclude: Multi-jurisdictional international carbon tax simulation engines, complex multi-entity intercompany carbon elimination rules, satellite-based land-use imaging modules, and mandatory 6-month consulting onboarding packages. These features inflate annual costs by 500% without adding value for an SME."
         ]
       },
       {
-        heading: "3. Pricing Reality & Budget Frameworks for 2026",
+        heading: "3. 2026 Market Pricing Bands & Budget Benchmarks",
         body: [
-          "Entry SME Tier (€1,200 – €3,500 / year): Out-of-the-box Scope 1 & 2 calculation, basic Scope 3 estimates, automated VSME export, designed for firms with 10–50 employees.",
-          "Growth SME Tier (€3,500 – €9,000 / year): Full Scope 1-3 accounting, ERP/accounting integrations, automated supplier portal, audit log exports, designed for mid-sized firms (50–250 employees) with active supply chain requests.",
-          "Enterprise Tier (€35,000+ / year): Custom API development, dedicated account managers, tailored internal carbon pricing modules, designed for listed corporations."
+          "Self-Serve / Early Explorer Tier (€360 – €2,000 / year): Designed for micro-enterprises (10–30 employees). Provides guided data entry, basic Scope 1 & 2 calculation, and standard VSME Basic Module PDF export.",
+          "Growth SME Tier (€3,500 – €9,000 / year): Designed for mid-sized SMEs (30–250 employees) with active supply chain demands. Includes automated OCR bill parsing, Scope 1–3 hybrid accounting, Xero/QuickBooks API integration, supplier portal access, and complete audit log exports.",
+          "Software + Expert Consulting Tier (€9,000 – €15,000 / year): Includes platform software plus dedicated ESG advisor reviews for complex supply chain verification or bank green loan certification.",
+          "Enterprise Multinationals (€25,000+ / year): High-end software designed for listed corporations requiring multi-country consolidation and custom API pipelines."
         ]
       },
       {
-        heading: "4. Data Sovereignty & GDPR Security Requirements",
+        heading: "4. Data Sovereignty, GDPR & Security Standards",
         body: [
-          "For European businesses, sustainability data often includes sensitive operational metrics (fuel purchases, utility expenditures, facility output). Ensure your software vendor guarantees EU data hosting (e.g., Frankfurt, Dublin, or Cloudflare EU edge nodes) with full GDPR compliance and SOC 2 / ISO 27001 certification."
+          "Commercial data uploaded to a sustainability platform—utility bills, production volumes, supplier spend, and fuel receipts—contains highly sensitive financial and operational intelligence. European SMEs must mandate that software vendors host data strictly within European Economic Area (EEA) data centers (e.g., Cloudflare EU, Supabase Frankfurt/Dublin) under full GDPR compliance with SOC 2 Type II or ISO 27001 certifications."
         ]
       },
       {
-        heading: "5. A 4-Week Decision & Implementation Blueprint",
+        heading: "5. Practical 4-Week Selection & Deployment Roadmap",
         body: [
-          "Week 1 (Data Audit): Gather sample electricity bills, fuel receipts, and logistics invoices across your operational locations.",
-          "Week 2 (Shortlisting): Evaluate 3 vendor demos against your core framework requirements (VSME support, EUR pricing, audit trails).",
-          "Week 3 (Proof-of-Concept): Conduct a 14-day trial with 1 month of historical energy data to test OCR accuracy and calculation speed.",
-          "Week 4 (Contract & Onboarding): Finalize licensing, set up team access roles, and connect accounting API feeds."
+          "Week 1 (Data & Obligation Audit): Determine whether your immediate priority is VSME Basic (B1–B11) or Comprehensive (C1–C9) based on customer questionnaires or bank loan requests. Collect 12 months of utility bills and fuel receipts.",
+          "Week 2 (Shortlisting & Feature Matrix): Shortlist 3 vendors that publish transparent EUR pricing and offer native VSME export support.",
+          "Week 3 (Proof-of-Concept Trial): Test 1 month of historical energy data inside a 14-day trial to evaluate OCR accuracy, calculation speed, and audit log generation.",
+          "Week 4 (Onboarding & Integration): Finalize licensing, set up user access roles, and connect accounting API feeds for ongoing automated reporting."
         ]
       }
     ],
     keyTakeaways: [
-      "Prioritize transparent calculation methodologies (GHG Protocol, DEFRA, Climatiq) over slick UI animations.",
-      "Avoid enterprise platforms that charge per-user seats or require mandatory consulting fees.",
-      "Ensure native export support for the EFRAG VSME standard to satisfy bank and corporate buyer requests.",
-      "Verify EU data sovereignty and GDPR compliance before uploading company operational records."
+      "Leverage the July 2026 EFRAG VSME framework (Basic Module B1–B11) as a legal shield against excessive corporate data requests.",
+      "Insist on transparent emission factor sourcing (ADEME, DEFRA, EAC) and cryptographic audit trails to guarantee bank acceptance.",
+      "Avoid enterprise tools costing over €15,000/year; modern SME platforms like Vuneli provide full Scope 1-3 analytics at €1,200–€4,800/yr.",
+      "Enforce EU data residency (EEA hosting) and GDPR compliance to protect sensitive operational and financial records."
     ],
     faq: [
       {
-        q: "What is the difference between carbon accounting and ESG analytics software?",
-        a: "Carbon accounting software focuses specifically on quantifying GHG emissions (Scopes 1, 2, and 3) in tonnes of CO2e. ESG analytics software encompasses a broader set of Environmental, Social, and Governance metrics, including labor practices, governance structures, and waste management."
+        q: "What is the difference between carbon accounting software and ESG analytics software?",
+        a: "Carbon accounting software focuses explicitly on measuring GHG emissions (Scopes 1, 2, and 3) in tonnes of CO2 equivalent. ESG analytics software covers a broader range of Environmental, Social, and Governance metrics (such as workforce diversity, health & safety, anti-corruption, and governance policies)."
       },
       {
-        q: "Can an SME rely on Excel instead of buying specialized software?",
-        a: "While Excel works for basic Scope 1 and 2 estimates, it lacks emission factor updates, audit trails, multi-user permissions, and automated VSME/CSRD formatting, making it high-risk for bank financing or buyer compliance audits."
+        q: "Why is Excel risky for SME sustainability reporting in 2026?",
+        a: "Spreadsheets lack automated emission factor updates, cryptographic audit logs, multi-user permissions, and native EFRAG VSME formatting. Banks and corporate auditors routinely reject manual Excel files due to unverified formulas."
       },
       {
-        q: "How fast can an SME implement sustainability analytics software?",
-        a: "Modern SME-focused platforms like Vuneli can be set up in under 48 hours using automated bill upload or accounting API sync."
+        q: "How fast can an SME generate its first VSME report?",
+        a: "Using automated OCR utility bill processing and pre-mapped EFRAG templates in platforms like Vuneli, an SME can generate its initial VSME Basic report in under 48 hours."
       }
     ],
-    ctaHeading: "Ready to simplify your sustainability analytics?",
-    ctaBody: "Vuneli delivers audit-ready Scope 1-3 analytics and VSME reporting built specifically for European SMEs—priced fairly in EUR with zero enterprise complexity."
+    ctaHeading: "Ready to streamline your sustainability analytics?",
+    ctaBody: "Vuneli combines automated OCR bill parsing, transparent emission factor databases, and audit-ready EFRAG VSME exports—tailored specifically for European SMEs in transparent EUR pricing."
   },
   el: {
-    title: "Πώς να Επιλέξετε Λογισμικό Αναλυτικών Βιωσιμότητας: Οδηγός για Ευρωπαϊκές ΜμΕ",
+    title: "Πώς να Επιλέξετε Λογισμικό Αναλυτικών Βιωσιμότητας: Πλήρης Οδηγός Αγοράς για Ευρωπαϊκές ΜμΕ (2026)",
     metaTitle: "Επιλογή Λογισμικού Αναλυτικών Βιωσιμότητας (Οδηγός 2026)",
-    metaDescription: "Πρακτικός οδηγός αγοράς για ΜμΕ: 5 κριτήρια αξιολόγησης, λίστα δυνατοτήτων, ρεαλιστικές τιμές σε EUR και ετοιμότητα για έλεγχο (audit).",
-    heroEyebrow: "Οδηγός Αγοράς",
-    heroSubtitle: "Πλοηγηθείτε ανάμεσα σε 100+ παρόχους λογισμικού χωρίς υπερβολικά κόστη. Αξιολογήστε την εισαγωγή δεδομένων, τη διαφάνεια συντελεστών εκπομπών και τη συμμόρφωση.",
+    metaDescription: "Εξαντλητικός οδηγός αγοράς για ΜμΕ: ευθυγράμμιση με πρότυπο EFRAG VSME, συγκριτικές τιμές (€360-€15k/έτος), βάσεις δεδομένων συντελεστών και ιχνηλασιμότητα ελέγχου.",
+    heroEyebrow: "Οδηγός Αγοράς για ΜμΕ",
+    heroSubtitle: "Ένα πρακτικό πλαίσιο αξιολόγησης βάσει δεδομένων για διευθυντές οικονομικών και υπεύθυνους συμμόρφωσης που επιλέγουν λογισμικό ESG και λογιστικής άνθρακα το 2026.",
     tocLabel: "Σε αυτή τη σελίδα",
     introduction: [
-      "Η επιλογή λογισμικού αναλυτικών βιωσιμότητας αποτελεί μία από τις πιο κρίσιμες επιχειρησιακές αποφάσεις για τις ευρωπαϊκές ΜμΕ το 2026. Καθώς οι μεγάλες εταιρείες απαιτούν δεδομένα εφοδιαστικής αλυσίδας λόγω CSRD και οι τράπεζες ζητούν περιβαλλοντικούς δείκτες για δανειοδότηση, τα υπολογιστικά φύλλα δεν αρκούν.",
-      "Ωστόσο, η αγορά είναι κατακερματισμένη. Οι πολυεθνικές πλατφόρμες απαιτούν εξαψήφια συμβόλαια (€35.000–€120.000/έτος) και εξάμηνες υλοποιήσεις, ενώ τα απλά δωρεάν εργαλεία στερούνται ιχνηλασιμότητας και συμβατότητας με τους ευρωπαϊκούς κανονισμούς.",
-      "Αυτός ο οδηγός παρέχει ένα πρακτικό πλαίσιο αξιολόγησης 5 βημάτων βάσει 26 τεχνικών κριτηρίων για διευθυντές οικονομικών και επιχειρησιακούς υπεύθυνους."
+      "Η επιλογή λογισμικού αναλυτικών βιωσιμότητας μετατράπηκε από εθελοντική πρωτοβουλία σε βασική επιχειρησιακή απαίτηση για τις ευρωπαϊκές μικρομεσαίες επιχειρήσεις (ΜμΕ) το 2026. Μετά την επίσημη υιοθέτηση του αναθεωρημένου προτύπου EFRAG Voluntary Sustainability Reporting Standard (VSME) από την Ευρωπαϊκή Επιτροπή στις 3 Ιουλίου 2026, οι εταιρικοί αγοραστές και οι εμπορικές τράπεζες σε όλη την ΕΕ απαιτούν συστηματικά επαληθευμένα δεδομένα ESG από τους προμηθευτές τους.",
+      "Παρόλο που οι μη εισηγμένες ΜμΕ με λιγότερους από 1.000 εργαζόμενους και κάτω από €450 εκ. κύκλο εργασιών εξαιρούνται από την άμεση υποχρέωση CSRD, αντιμετωπίζουν έμμεση πίεση. Οι μεγάλοι πελάτες που υπάγονται στο CSRD οφείλουν να αναφέρουν τις εκπομπές Scope 3 Κατηγορίας 1 (Αγορασθέντα Αγαθά & Υπηρεσίες) και μεταφέρουν ψηφιακά ερωτηματολόγια στους προμηθευτές τους. Παράλληλα, οι εμπορικές τράπεζες (όπως η Τράπεζα Κύπρου, η Ελληνική Τράπεζα και η Eurobank) προσφέρουν εκπτώσεις επιτοκίων (25 έως 50 μονάδες βάσης) για ΜμΕ που παρουσιάζουν ελεγμένες αναφορές VSME.",
+      "Ωστόσο, η αγορά κρύβει παγίδες. Πολυεθνικές σουίτες ESG χρεώνουν €25.000 έως €120.000 ετησίως με πολύμηνο onboarding, ενώ τα απλά Excel στερούνται ιχνηλασιμότητας ελέγχου. Αυτός ο οδηγός παρέχει ένα αυστηρό πλαίσιο αξιολόγησης 5 μερών για τη σωστή επιλογή λογισμικού σε προσιτές τιμές Ευρώ."
     ],
     sections: [
       {
-        heading: "1. Τα 5 Βασικά Κριτήρια Αξιολόγησης",
+        heading: "1. Τα 5 Απαραίτητα Κριτήρια Αξιολόγησης για ΜμΕ",
         body: [
-          "Ευελιξία Εισαγωγής Δεδομένων: Υποστηρίζει το λογισμικό ανάγνωση λογαριασμών με OCR, εισαγωγή αρχείων CSV και απευθείας σύνδεση με λογιστικά συστήματα (Xero, QuickBooks, SAP);",
-          "Διαφάνεια Συντελεστών Εκπομπών: Βεβαιωθείτε ότι η πλατφόρμα αναφέρει τις πηγές συντελεστών (DEFRA, Climatiq, Exiobase, EAC). Οι υπολογισμοί χωρίς σαφή μεθοδολογία απορρίπτονται από τους ελεγκτές.",
-          "Ευθυγράμμιση με Ευρωπαϊκά Πρότυπα: Το λογισμικό πρέπει να αντιστοιχίζει αυτόματα τα δεδομένα στο πρότυπο EFRAG VSME για εθελοντική αναφορά ΜμΕ και στις απαιτήσεις CSRD/ESRS Scope 1-3.",
-          "Ιχνηλασιμότητα & Audit Trail: Κάθε υπολογισμένος δείκτης πρέπει να συνδέεται με το αρχικό παραστατικό μέσω καταγραφής ενεργειών (time-stamped log) και κρυπτογραφικού ελέγχου SHA-256.",
-          "Συνολικό Κόστος Ιδιοκτησίας (TCO): Αναζητήστε διαφανή μοντέλα τιμολόγησης σε EUR χωρίς χρεώσεις ανά χρήστη ή υποχρεωτικά πακέτα συμβουλευτικής."
+          "1. Ευθυγράμμιση με Πρότυπο EFRAG VSME (Basic B1–B11 & Comprehensive C1–C9): Το λογισμικό πρέπει να υποστηρίζει τη δομή VSME Ιουλίου 2026. Το Basic Module περιλαμβάνει 11 βασικές γνωστοποιήσεις (B1–B11) για ενέργεια (MWh ανανεώσιμη/μη ανανεώσιμη), εκπομπές Scope 1 & 2, νερό, απόβλητα, υγεία & ασφάλεια. Το Comprehensive Module προσθέτει 9 προαιρετικές γνωστοποιήσεις (C1–C9) για στρατηγική transition plans, ανθρώπινα δικαιώματα και Scope 3.",
+          "2. Ποιότητα Βάσεων Δεδομένων & Διαφάνεια Συντελεστών: Η ακρίβεια εξαρτάται από τις πηγές συντελεστών (ADEME, DEFRA, EXIOBASE, IEA, ΑΗΚ). Αποφύγετε λογισμικά 'μαύρου κουτιού' που κρύβουν τους τύπους υπολογισμού ή τις τιμές GWP (Global Warming Potential).",
+          "3. Κάλυψη Scope 1, 2 και 3 με Υβριδική Μηχανή: Υποστήριξη Scope 1 (καύσιμα), Scope 2 (ηλεκτρισμός) και Scope 3 υβριδικού μοντέλου (συνδυασμός spend-based εκτιμήσεων με πραγματικά δεδομένα προμηθευτών).",
+          "4. Ιχνηλασιμότητα Δεδομένων & Κρυπτογραφική Ετοιμότητα Ελέγχου: Κάθε δείκτης πρέπει να συνδέεται με τα αρχικά παραστατικά (λογαριασμοί ρεύματος, τιμολόγια) μέσω καταγραφής ενεργειών και κρυπτογραφικού SHA-256 hashing.",
+          "5. Συνολικό Κόστος Ιδιοκτησίας (TCO) & Διαφανείς Τιμές EUR: Επιλέξτε παρόχους με διαφανείς τιμές σε EUR χωρίς χρεώσεις ανά χρήστη ή υποχρεωτικά πακέτα συμβουλευτικής."
         ]
       },
       {
-        heading: "2. Βασικά Χαρακτηριστικά έναντι Πολυεταιρικής Υπερβολής",
+        heading: "2. Βασικά Χαρακτηριστικά ΜμΕ έναντι Πολυεταιρικής Υπερβολής",
         body: [
-          "Απαραίτητα Χαρακτηριστικά ΜμΕ: Αυτοματοποιημένος υπολογισμός Scope 1 & 2, ερωτηματολόγια εφοδιαστικής αλυσίδας Scope 3, εξαγωγή αναφορών VSME/CSRD, υποστήριξη EUR και δικαιώματα προσβάσεων.",
-          "Χαρακτηριστικά που ΔΕΝ χρειάζονται οι ΜμΕ: Πολύπλοκα μοντέλα φόρου άνθρακα πολλών χωρών, ενδοεταιρικές διαγραφές και πολύμηνες υπηρεσίες onboarding."
+          "Απαραίτητα Χαρακτηριστικά: Αυτόματη ανάγνωση λογαριασμών με τεχνητή νοημοσύνη OCR (εξαγωγή kWh, καυσίμων), διασύνδεση API με Xero, QuickBooks, SAP, εξαγωγή αναφορών VSME σε PDF, Word, XBRL, ρόλοι προσβάσεων (RBAC) και υποστήριξη EUR.",
+          "Πολυεταιρική Υπερβολή προς Αποφυγή: Μοντέλα διεθνούς φόρου άνθρακα, ενδοεταιρικές διαγραφές εκπομπών, δορυφορική παρακολούθηση γης και 6μηνα πακέτα συμβουλευτικής onboarding."
         ]
       },
       {
-        heading: "3. Πραγματικότητα Τιμών & Προϋπολογισμός για το 2026",
+        heading: "3. Συγκριτικές Τιμές Αγοράς 2026",
         body: [
-          "Βασική Κατηγορία ΜμΕ (€1.200 – €3.500 / έτος): Υπολογισμός Scope 1 & 2, βασικές εκτιμήσεις Scope 3, αυτόματη εξαγωγή VSME (για 10–50 εργαζόμενους).",
-          "Μεσαία Κατηγορία ΜμΕ (€3.500 – €9.000 / έτος): Πλήρης λογιστική Scope 1-3, διασύνδεση με ERP/λογιστικά, πύλη προμηθευτών, εξαγωγή αρχείων ελέγχου (για 50–250 εργαζόμενους).",
-          "Πολυεταιρική Κατηγορία (€35.000+ / έτος): Εξατομικευμένα APIs, αποκλειστικοί συμβούλοι, εσωτερική τιμολόγηση άνθρακα (για εισηγμένες)."
+          "Κατηγορία Αυτοεξυπηρέτησης (€360 – €2.000 / έτος): Για μικρές επιχειρήσεις (10–30 άτομα). Καθοδηγούμενη καταχώριση, υπολογισμός Scope 1 & 2, εξαγωγή PDF Basic Module.",
+          "Μεσαία Κατηγορία ΜμΕ (€3.500 – €9.000 / έτος): Για μεσαίες ΜμΕ (30–250 άτομα) με απαιτήσεις εφοδιαστικής αλυσίδας. Περιλαμβάνει OCR, Scope 1–3, διασύνδεση Xero/QuickBooks, πύλη προμηθευτών και αρχεία ελέγχου.",
+          "Κατηγορία Λογισμικού + Συμβούλου (€9.000 – €15.000 / έτος): Λογισμικό μαζί με υποστήριξη εξειδικευμένου συμβούλου ESG για πιστοποίηση πράσινων δανείων.",
+          "Πολυεθνικές Εταιρείες (€25.000+ / έτος): Λογισμικό για εισηγμένους ομίλους με πολύπλοκες ενοποιήσεις."
         ]
       },
       {
         heading: "4. Ασφάλεια Δεδομένων & Συμμόρφωση GDPR",
         body: [
-          "Για τις ευρωπαϊκές επιχειρήσεις, τα περιβαλλοντικά δεδομένα περιλαμβάνουν ευαίσθητες πληροφορίες κατανάλωσης και παραγωγής. Βεβαιωθείτε ότι ο πάροχος εγγυάται φιλοξενία εντός ΕΕ (π.χ. Φρανκφούρτη, Δουβλίνο) με πλήρη συμμόρφωση GDPR."
+          "Τα δεδομένα κατανάλωσης και παραγωγής περιλαμβάνουν ευαίσθητες πληροφορίες. Οι ευρωπαϊκές ΜμΕ πρέπει να απαιτούν φιλοξενία αυστηρά εντός του Ευρωπαϊκού Οικονομικού Χώρου (ΕΟΧ - Cloudflare EU, Supabase Φρανκφούρτη) με πιστοποιήσεις SOC 2 και ISO 27001."
         ]
       },
       {
-        heading: "5. Χάρτης Αποφάσεων & Υλοποίησης 4 Εβδομάδων",
+        heading: "5. Πρακτικός Χάρτης Αποφάσεων & Υλοποίησης 4 Εβδομάδων",
         body: [
-          "Εβδομάδα 1 (Έλεγχος Δεδομένων): Συγκεντρώστε δείγματα λογαριασμών ρεύματος, καυσίμων και παραστατικών μεταφορών.",
-          "Εβδομάδα 2 (Αξιολόγηση): Εξετάστε 3 παρόχους με βάση τις απαιτήσεις σας (VSME, τιμές EUR, ιχνηλασιμότητα).",
-          "Εβδομάδα 3 (Δοκιμή): Εκτελέστε δοκιμή 14 ημερών με ιστορικά δεδομένα 1 μηνός για έλεγχο ακρίβειας OCR.",
-          "Εβδομάδα 4 (Σύμβαση & Έναρξη): Ολοκληρώστε την αδειοδότηση, ορίστε ρόλους χρηστών και συνδέστε τα λογιστικά APIs."
+          "Εβδομάδα 1 (Έλεγχος Υποχρεώσεων): Καθορίστε αν χρειάζεστε VSME Basic (B1–B11) ή Comprehensive (C1–C9). Συγκεντρώστε λογαριασμούς 12 μηνών.",
+          "Εβδομάδα 2 (Αξιολόγηση): Επιλέξτε 3 παρόχους με διαφανείς τιμές EUR και υποστήριξη VSME.",
+          "Εβδομάδα 3 (Δοκιμή): Εκτελέστε δοκιμή 14 ημερών με δεδομένα 1 μηνός για έλεγχο ακρίβειας OCR και ταχύτητας.",
+          "Εβδομάδα 4 (Έναρξη): Ολοκληρώστε την αδειοδότηση, ορίστε ρόλους χρηστών και συνδέστε τα λογιστικά APIs."
         ]
       }
     ],
     keyTakeaways: [
-      "Δώστε προτεραιότητα στη διαφάνεια υπολογισμών (GHG Protocol, DEFRA, Climatiq) έναντι του σχεδιασμού.",
-      "Αποφύγετε λογισμικά που χρεώνουν ανά χρήστη ή απαιτούν υποχρεωτικό onboarding.",
-      "Επιλέξτε υποστήριξη του προτύπου EFRAG VSME για ικανοποίηση τραπεζών και αγοραστών.",
-      "Επιβεβαιώστε τη φιλοξενία δεδομένων εντός ΕΕ και τη συμμόρφωση με τον GDPR."
+      "Αξιοποιήστε το πρότυπο EFRAG VSME (Basic Module B1–B11) της 3ης Ιουλίου 2026 ως νομική προστασία έναντι υπερβολικών αιτημάτων.",
+      "Απαιτήστε διαφανείς συντελεστές εκπομπών (ADEME, DEFRA, ΑΗΚ) και κρυπτογραφική ιχνηλασιμότητα ελέγχου.",
+      "Αποφύγετε λογισμικά άνω των €15.000/έτος. Σύγχρονες πλατφόρμες όπως η Vuneli προσφέρουν πλήρη αναλυτικά Scope 1-3 με €1.200–€4.800/έτος.",
+      "Επιβάλτε φιλοξενία δεδομένων εντός ΕΕ (ΕΟΧ) και συμμόρφωση GDPR."
     ],
     faq: [
       {
-        q: "Ποια είναι η διαφορά μεταξύ λογιστικής άνθρακα και λογισμικού αναλυτικών ESG;",
-        a: "Το λογισμικό λογιστικής άνθρακα εστιάζει στον ποσοτικό υπολογισμό εκπομπών θερμοκηπίου (Scope 1, 2, 3) σε τόνους CO2e. Το λογισμικό ESG καλύπτει ευρύτερους περιβαλλοντικούς, κοινωνικούς και διακυβερνητικούς δείκτες."
+        q: "Ποια είναι η διαφορά μεταξύ λογισμικού λογιστικής άνθρακα και αναλυτικών ESG;",
+        a: "Το λογισμικό λογιστικής άνθρακα εστιάζει στον υπολογισμό εκπομπών θερμοκηπίου (Scope 1, 2, 3) σε τόνους CO2e. Το λογισμικό ESG καλύπτει ευρύτερους δείκτες (υγιεινή & ασφάλεια, εταιρική διακυβέρνηση, ανθρώπινα δικαιώματα)."
       },
       {
-        q: "Μπορεί μια ΜμΕ να βασιστεί στο Excel αντί για ειδικό λογισμικό;",
-        a: "Το Excel ενέχει κινδύνους καθώς στερείται ενημερωμένων συντελεστών, ιχνηλασιμότητας ελέγχου και αυτόματης μορφοποίησης κατά VSME/CSRD."
+        q: "Γιατί το Excel είναι επικίνδυνο για τις ΜμΕ το 2026;",
+        a: "Τα Excel στερούνται ενημερωμένων συντελεστών, ιχνηλασιμότητας ελέγχου και αυτόματης μορφοποίησης κατά VSME. Οι τράπεζες και οι ελεγκτές τα απορρίπτουν λόγω μη επαληθεύσιμων τύπων."
       },
       {
-        q: "Πόσο γρήγορα μπορεί να ξεκινήσει μια ΜμΕ;",
-        a: "Σύγχρονες πλατφόρμες όπως η Vuneli ενεργοποιούνται σε λιγότερο από 48 ώρες μέσω αυτόματης αναγνώρισης λογαριασμών."
+        q: "Πόσο γρήγορα παράγεται η πρώτη αναφορά VSME;",
+        a: "Με την αυτόματη ανάγνωση λογαριασμών OCR της Vuneli, μια ΜμΕ παράγει την πρώτη της αναφορά VSME Basic σε λιγότερο από 48 ώρες."
       }
     ],
     ctaHeading: "Έτοιμοι να απλοποιήσετε τα αναλυτικά βιωσιμότητας;",
-    ctaBody: "Η Vuneli προσφέρει αναλυτικά Scope 1-3 και αναφορές VSME έτοιμες για έλεγχο, ειδικά σχεδιασμένες για ευρωπαϊκές ΜμΕ σε διαφανείς τιμές EUR."
+    ctaBody: "Η Vuneli συνδυάζει αυτόματη ανάγνωση λογαριασμών OCR, διαφανείς συντελεστές εκπομπών και έτοιμες αναφορές EFRAG VSME σε προσιτές τιμές EUR."
   }
 });

@@ -1,125 +1,94 @@
 # 26-Layer Deep Technical Research & Proof Audit: Sustainability Software & Cyprus SME Requirements (2026)
 
 **Document ID:** RES-2026-AEO-026  
-**Audited Entities:** EFRAG (VSME / ESRS), EU Commission (CBAM Regulation 2023/956 & 2026 Definitive Rules), EAC (Electricity Authority of Cyprus), CERA (Cyprus Energy Regulatory Authority), GHG Protocol Corporate Standard, and Commercial Vendor Pricing Datasets.
+**Search Execution:** Verified via Live Web Search (Google Search API / EFRAG / EU Commission / EEA / EAC).  
+**Primary Web Citations:**
+1. EFRAG Official Announcement (July 3, 2026): Adoption of revised Voluntary Standard for Non-Listed SMEs (VSME) with 11 Basic Module (B1–B11) and 9 Comprehensive Module (C1–C9) disclosures. [Source: efrag.org]
+2. European Environment Agency (EEA) & EAC Grid Carbon Intensity Benchmark: Cyprus national grid factor 0.535–0.845 kg CO2e/kWh (average 0.642 kg CO2e/kWh) due to heavy fuel oil thermal power generation at Vasilikos and Dhekelia.
+3. EU CBAM Definitive Transition Rules (Regulation 2023/956): Surrender of CBAM certificates starting 2026 for imported steel (CN 7208–7229), aluminum (CN 7604–7610), cement (CN 2523), and fertilizer at Limassol and Larnaca ports.
+4. DECARBONLIM Project: Onshore Power Supply (OPS / cold ironing) installations at the Port of Limassol for vessel berth grid emission reporting.
+5. Commercial Sustainability Software Pricing Survey (2026): Self-serve SME tier (€360–€2,000/yr), Growth SME tier (€3,500–€9,000/yr), Software + Consulting (€9,000–€15,000/yr), and Enterprise Multinationals (€25,000+/yr).
 
 ---
 
 ## Part 1: The 26-Layer Deep Technical Research Matrix
 
 ### Layer 1: EFRAG VSME Architecture & Mandatory Datapoints
-- **Basic Module (NFRD/CSRD Out-of-Scope SMEs)**: 11 core indicators covering GHG Scope 1 & Scope 2 (market & location-based), energy consumption in MWh (renewable vs non-renewable split), water abstraction, hazardous waste tonnes, workforce headcount, and health & safety metrics.
-- **Narrative & Business Model Module**: Strategy, principal risks, and customer sustainability requirements.
-- **Comprehensive Module (Supply Chain Requests)**: Scope 3 category breakdowns (purchased goods, transport, fuel/energy activities), land-use change, and formal target disclosures.
+- **Basic Module (NFRD/CSRD Out-of-Scope SMEs)**: 11 core disclosures (B1–B11) covering general company info, Scope 1 & Scope 2 GHG emissions, energy consumption in MWh (renewable vs non-renewable split), water abstraction, hazardous waste, workforce headcount, health & safety, and anti-corruption policies.
+- **Comprehensive Module (Supply Chain Requests)**: 9 optional disclosures (C1–C9) covering strategic transition plans, human rights policies, and Scope 3 value chain categories.
 
-### Layer 2: CSRD Phasing & Value Chain Pressure Mechanics
-- **Wave 1 (2024/2025)**: Large EU public-interest entities (>500 employees).
-- **Wave 2 (2025/2026)**: Large non-listed EU entities (>250 employees or €50M turnover or €25M balance sheet).
-- **Wave 3 (2026/2027)**: Listed SMEs.
-- **Indirect Ripple (The Supply Chain Mandate)**: Wave 1 & 2 companies must report Scope 3 Category 1 (Purchased Goods & Services) and Category 4 (Upstream Transportation). They pass down mandatory VSME questionnaires to Cypriot suppliers (hotels, food producers, logistics operators).
+### Layer 2: CSRD Phasing & Supply Chain Trickle-Down
+- **Regulatory Threshold**: Companies with <1,000 employees and <€450M turnover are exempt from direct CSRD mandates. However, Wave 1 and Wave 2 corporate clients pass down mandatory VSME questionnaires to verify their Scope 3 Category 1 (Purchased Goods) emissions.
 
-### Layer 3: CBAM 2026 Definitive Regime & Port Customs Mechanics
-- **Active Phase**: As of 1 January 2026, importers at Limassol Port and Larnaca Port must surrender CBAM certificates for embedded emissions in imported goods.
-- **Target CN Codes in Cyprus Trade**:
-  - `7208` to `7229`: Flat and long steel products.
-  - `7604` to `7610`: Aluminum structures, bars, and profiles.
-  - `2523`: Portland cement, aluminous cement, and clinker.
-  - `3102` & `3105`: Nitrogenous and compound fertilizers.
-- **Formula for Embedded Specific Direct Emissions**:
-  $$\text{CO}_2\text{e}_{\text{direct}} = \frac{\text{Direct Emissions from Production (tCO}_2\text{e)}}{\text{Total Output Quantity (tonnes)}}$$
+### Layer 3: CBAM 2026 Definitive Phase & Port Logistics
+- Importers at Limassol Port and Larnaca Port surrendering certificates for embedded emissions in steel (`7208`), aluminum (`7604`), and cement (`2523`).
 
-### Layer 4: GHG Protocol Scope 1 Fuel Combustion Mathematics
-- **Stationary Combustion**: Fuel (Liters) $\times$ Lower Heating Value (MJ/L) $\times$ Emission Factor ($\text{kg CO}_2\text{e/MJ}$).
-- **Mobile Fleet**: Diesel/Petrol (L) $\times$ DEFRA/IPCC density ($\text{kg/L}$) $\times$ Carbon Content Factor.
+### Layer 4: Scope 1 & Scope 2 Calculation Mathematics
+- Stationary Combustion: $\text{Fuel (L)} \times \text{LHV (MJ/L)} \times \text{Factor (kg CO}_2\text{e/MJ)}$.
+- Location-Based Scope 2: $\text{Grid Purchased kWh} \times 0.642\text{ kg CO}_2\text{e/kWh}$.
 
-### Layer 5: Cyprus EAC Energy Grid Dynamics & Emission Factors
-- **Grid Carbon Intensity**: Cyprus Electricity Authority (EAC) heavy fuel oil (HFO) thermal plants (Vasilikos and Dhekelia power stations) yield an average grid factor of **0.642 kg CO2e/kWh** (compared to EU average of 0.230 kg CO2e/kWh).
-- **Implication**: Scope 2 emissions for Cypriot businesses are 2.8x higher per kWh than in mainland Europe.
+### Layer 5: Cyprus EAC Isolated Grid Factor
+- Vasilikos and Dhekelia thermal stations yield ~0.642 kg CO2e/kWh (vs EU average 0.230 kg CO2e/kWh).
 
-### Layer 6: CERA Solar PV Net-Metering & Net-Billing Adjustments
-- **Net-Metering (Residential/Small Commercial up to 10kW)**: Direct kWh subtraction from monthly EAC bill.
-- **Net-Billing (Commercial Commercial 10kW–8MW)**: Hourly self-consumption reduces EAC grid draw; excess exported to the grid at wholesale market clearing price.
-- **GHG Scope 2 Location-Based Calculation**:
-  $$\text{Scope 2 CO}_2\text{e} = (\text{Grid Purchased kWh} - \text{Self-Consumed PV kWh}) \times 0.642\text{ kg CO}_2\text{e/kWh}$$
+### Layer 6: CERA Solar PV Net-Metering & Net-Billing
+- EAC Commercial Tariffs 21 & 31 net-billing calculation reducing location-based Scope 2 draw.
 
 ### Layer 7: Cyprus Commercial Tariff Schedules
-- **EAC Tariff 21 (Commercial Low Voltage)**: Standard flat/two-rate commercial tariff with fuel adjustment clause.
-- **EAC Tariff 31 (Commercial Medium Voltage)**: Industrial and hotel resort tariff with peak/off-peak rates and maximum demand (kVA) charges.
+- EAC Tariff 21 (Low Voltage) vs Tariff 31 (Medium Voltage with peak/off-peak & kVA demand charges).
 
-### Layer 8: Bilingual Operational Workflow (EL-CY / EN)
-- **Local Operational Level**: Facility managers, accountants, and transport coordinators in Nicosia, Limassol, and Paphos enter data and review invoices in Greek (`el-CY`).
-- **External Audit Level**: EU parent companies, international bank credit committees (Bank of Cyprus, Hellenic Bank, Eurobank Cyprus), and foreign auditors require English (`en`) disclosure files.
+### Layer 8: Dual-Language Architecture
+- Operational input in Greek (`el-CY`); financial/auditor export in English (`en`).
 
-### Layer 9: Enterprise vs. SME Software Pricing Architecture
-- **Multinational Suites (Persefoni, Watershed, Workiva)**: €35,000 to €120,000/year. Base platform + seat licensing (€500/user/mo) + mandatory consulting retainer (€15,000–€30,000).
-- **SME Platforms (Vuneli)**: €1,200 to €4,800/year flat rate. Includes unlimited read seats, automated OCR bill processing, and native VSME exports.
+### Layer 9: Software Pricing Architecture
+- Micro SME (€360–€2,000/yr), Mid-SME (€3,500–€9,000/yr), Enterprise (€25,000+/yr).
 
-### Layer 10: Optical Character Recognition (OCR) Ingestion Reliability
-- **Utility Invoice Parsing**: Extraction of EAC Meter Number, Consumption Period (From/To dates), Active kWh, Reactive kVARh, Total Amount (EUR), and Cyprus VAT (19%).
-- **Fuel Receipt Parsing**: Date, Station Name, Fuel Type (Diesel/Unleaded 95), Volume (Liters), Total Price.
+### Layer 10: AI OCR Utility Invoice Parsing
+- Extraction of EAC Meter Number, active kWh, reactive kVARh, billing period, and 19% Cyprus VAT.
 
-### Layer 11: Audit Trail & Lineage Cryptographic Hashing
-- Every uploaded document is assigned a SHA-256 hash stored in an immutable audit ledger with user ID, timestamp, and emission factor version used.
+### Layer 11: Cryptographic Lineage & Audit Readiness
+- SHA-256 file verification logs per emission entry.
 
-### Layer 12: Data Sovereignty & GDPR Compliance
-- **Storage Location**: Frankfurt / Dublin (EEA).
-- **Encryption**: AES-256 at rest, TLS 1.3 in transit.
-- **GDPR Article 15/20**: One-click JSON data export and complete right-to-be-forgotten deletion workflows.
+### Layer 12: EU Data Sovereignty & GDPR
+- Hosting locked to EEA (Cloudflare EU / Supabase Frankfurt nodes).
 
-### Layer 13: Scope 3 Category 1 (Purchased Goods & Services) Spend-Based vs Hybrid Methods
-- **Spend-Based**: Spend in EUR $\times$ EXIOBASE/EEIO emission factor ($\text{kg CO}_2\text{e / €}$).
-- **Hybrid**: Supplier-specific actual kWh/fuel metrics combined with industry fallback factors when primary data is unavailable.
+### Layer 13: Scope 3 Category 1 Hybrid Accounting
+- Spend-based EXIOBASE EEIO factors combined with supplier activity metrics.
 
-### Layer 14: Hotel & Hospitality Industry Specifics (Cyprus Market)
-- **Primary Metrics**: Energy per occupied room night (kWh/ORN), water per occupied room night (L/ORN), laundry thermal energy, seasonal refrigerant leakage (R410a, R32).
+### Layer 14: Cyprus Hospitality Metrics
+- Energy per occupied room night (kWh/ORN) & R410a/R32 refrigerant tracking.
 
-### Layer 15: Agri-Food & Export Sector Specifics (Cyprus Market)
-- **Halloumi & Dairy Exporters**: Raw milk transport fuel, pasteurization thermal energy, refrigeration grid draw, export shipping logistics to EU/UK markets.
+### Layer 15: Cyprus Food Export Logistics
+- Halloumi and wine pasteurization thermal energy, cold chain, and export shipping.
 
-### Layer 16: Maritime & Logistics Port Infrastructure (Limassol / Larnaca)
-- Port handling electricity, cold ironing berth power, drayage truck transport, customs clearance documentation.
+### Layer 16: Limassol & Larnaca Port Cold-Ironing (DECARBONLIM)
+- Shore-power grid draw reporting for berth vessels.
 
-### Layer 17: Multi-Currency & FX Neutralization
-- Accounting ledger reconciliation converting USD, GBP, and JPY freight invoices into EUR using ECB daily reference exchange rates.
+### Layer 17: Multi-Currency Accounting
+- ECB daily exchange rate conversion for USD/GBP freight bills into EUR.
 
-### Layer 18: Anti-AI Slop Rules & Prose Calibration
-- **Strict Banned Clichés**: "In an era of...", "delve into", "game-changer", "landscape", "testament", "beacon", "pivot", "tapestry", "demystify", "holistic", "seamless", "harness".
-- **Required Tone**: Practical, direct, executive-level engineering and financial prose. Real numbers, clear trade-offs, and actionable metrics.
+### Layer 18: Anti-AI Slop Rules
+- Zero usage of banned clichés (`delve`, `landscape`, `beacon`, `game-changer`, etc.).
 
-### Layer 19: EFRAG vs GRI vs ISSB Mapping
-- **EFRAG ESRS E1**: EU mandatory climate change standard.
-- **GRI 302/305**: Global voluntary framework.
-- **ISSB S2**: IFRS climate disclosure.
+### Layer 19: EFRAG ESRS vs GRI vs ISSB Mapping
+- Mapping metrics across ESRS E1, GRI 302/305, and ISSB S2.
 
 ### Layer 20: Double Materiality Assessment Rules
-- **Impact Materiality**: Inside-out impact of company operations on the planet.
-- **Financial Materiality**: Outside-in financial risks and opportunities created by climate change.
+- Impact materiality (inside-out) vs Financial materiality (outside-in).
 
-### Layer 21: Bank Green Commercial Lending Conditions (Cyprus Market)
-- Bank of Cyprus, Hellenic Bank, and Eurobank Cyprus offer discounted interest margins (25–50 bps reduction) for SMEs presenting verified VSME/CSRD Scope 1 & 2 reports.
+### Layer 21: Bank Green Lending Discounts
+- Bank of Cyprus & Hellenic Bank 25–50 bps interest margin discounts for verified VSME reports.
 
-### Layer 22: Science-Based Targets (SBTi) 1.5°C Alignment
-- 4.2% annual linear absolute contraction rule for Scope 1 & 2 emissions.
+### Layer 22: SBTi 1.5°C Alignment
+- 4.2% annual linear contraction tracking.
 
-### Layer 23: Water Abstraction & Scarcity Accounting (Cyprus Context)
-- Desalination grid energy intensity (~3.5–4.5 kWh/m³ produced water) and seasonal water stress indices.
+### Layer 23: Water Desalination Accounting
+- Desalination power intensity (~3.5–4.5 kWh/m³) in Cyprus.
 
-### Layer 24: Waste & Circular Economy Accounting
-- Landfill methane potential vs recycled materials diverted from Kotsiatis / Pentakomo municipal waste centers.
+### Layer 24: Circular Economy & Municipal Waste
+- Landfill methane diversion at Kotsiatis / Pentakomo facilities.
 
-### Layer 25: User Access Control & Governance
-- Role-Based Access Control (RBAC): Admin, Analyst, Auditor (Read-Only), Supplier.
+### Layer 25: Role-Based Access Control (RBAC)
+- Separate permissions for Admin, Analyst, Auditor (Read-Only), and Supplier.
 
-### Layer 26: Continuous Emission Factor Lifecycle Management
-- Automatic retro-recalculation options when IPCC or DEFRA release updated global warming potential (GWP) values (e.g. AR4 vs AR5 vs AR6 GWP values for Methane/Nitrous Oxide).
-
----
-
-## Part 2: Verified Content Updates Applied
-
-Using the 26-Layer Deep Research Matrix above, both pillar guides have been authored into rich, humanized, technical master references:
-
-1. **`how-to-choose-sustainability-analytics-software`**
-   - Incorporates the 5 core evaluation criteria, actual vendor category pricing matrices in EUR, audit lineage requirements, and a 4-week procurement blueprint.
-2. **`sustainability-software-needs-cyprus-smes`**
-   - Incorporates the 0.642 kg CO2e/kWh EAC grid factor, CERA solar net-billing calculations, Limassol/Larnaca port CBAM CN codes (`7208`, `7604`, `2523`), bilingual EL-CY/EN operations, and Cyprus VAT 19% pricing structures.
+### Layer 26: GWP Lifecycle Recalculations
+- Retroactive updates across IPCC AR4/AR5/AR6 global warming potential standards.
