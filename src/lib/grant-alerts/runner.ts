@@ -13,6 +13,26 @@ import type { RawOpportunity } from "./types";
 
 type FetcherResult = { source: string; ok: boolean; count: number; error?: string };
 
+function describeError(error: unknown): string {
+  if (error instanceof Error && error.message) return error.message;
+  if (typeof error === "string" && error) return error;
+  try {
+    const serialized = JSON.stringify(error);
+    if (serialized && serialized !== "{}") return serialized;
+  } catch {
+    // Fall through to the stable unknown-error message below.
+  }
+  return "unknown error";
+}
+
+async function required<T>(stage: string, action: () => Promise<T>): Promise<T> {
+  try {
+    return await action();
+  } catch (error) {
+    throw new Error(`Grant-alert scan failed during ${stage}: ${describeError(error)}`);
+  }
+}
+
 async function safe(name: string, fn: () => Promise<RawOpportunity[]>) {
   try {
     const items = await fn();
@@ -33,7 +53,7 @@ export interface RunSummary {
 }
 
 export async function runGrantAlerts(): Promise<RunSummary> {
-  await ensureSchema();
+  await required("storage readiness", ensureSchema);
 
   const [eu, cy, acc] = await Promise.all([
     safe("eu-funding-tenders", fetchEuFundingOpportunities),
@@ -50,7 +70,7 @@ export async function runGrantAlerts(): Promise<RunSummary> {
 
   const all = [...eu.items, ...cy.items, ...acc.items];
 
-  const subs = await listActiveSubscribers();
+  const subs = await required("subscriber lookup", listActiveSubscribers);
   const emailErrors: string[] = [];
   let matched = 0;
   let newMatches = 0;
@@ -60,7 +80,7 @@ export async function runGrantAlerts(): Promise<RunSummary> {
     const m = matchOpportunity(op);
     if (!m.isMatch) continue;
     matched++;
-    const { isNew, row } = await upsertOpportunity({
+    const { isNew, row } = await required("opportunity storage", () => upsertOpportunity({
       source: op.source,
       externalId: op.externalId,
       title: op.title,
@@ -71,7 +91,7 @@ export async function runGrantAlerts(): Promise<RunSummary> {
       publishedAt: op.publishedAt ?? null,
       score: m.score,
       reasons: m.reasons.join(","),
-    });
+    }));
     if (!isNew || row.notified_at) continue;
     newMatches++;
     for (const sub of subs) {
@@ -84,7 +104,7 @@ export async function runGrantAlerts(): Promise<RunSummary> {
       if (res.sent) emailed++;
       else if (res.error) emailErrors.push(`${sub.email}: ${res.error}`);
     }
-    await markNotified(row.id);
+    await required("notification update", () => markNotified(row.id));
   }
 
   return {
