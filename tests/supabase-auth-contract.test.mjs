@@ -52,3 +52,8 @@ test("grant alerts use Supabase HTTP storage rather than a raw Worker socket", a
   assert.match(migration, /create table if not exists public\.grant_opportunities/i);
   assert.match(migration, /create table if not exists public\.grant_alert_subscriptions/i);
 });
+
+test("Cloudflare deployments retain dashboard-managed runtime variables", async () => {
+  const wrangler = await read("wrangler.jsonc");
+  assert.match(wrangler, /"keep_vars"\s*:\s*true/);
+});
