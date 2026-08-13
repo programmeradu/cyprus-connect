@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { authClient } from "@/lib/auth-client";
@@ -18,7 +18,6 @@ const LABEL =
   "block text-[12.5px] font-semibold uppercase tracking-[0.1em] text-foreground/60";
 
 export default function AuthPage() {
-  const router = useRouter();
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const locale = (useLocale() as "en" | "el") ?? "en";
@@ -69,11 +68,11 @@ export default function AuthPage() {
           password: formData.password,
         });
 
-        if (error?.code) {
+        if (error) {
           const errorMessages: Record<string, string> = {
             USER_ALREADY_EXISTS: t("toast.userExists"),
           };
-          toast.error(errorMessages[error.code] || t("toast.registerFailed"));
+          toast.error(errorMessages[error.code ?? ""] || t("toast.registerFailed"));
           setIsLoading(false);
           return;
         }
@@ -88,14 +87,14 @@ export default function AuthPage() {
           callbackURL: "/app",
         });
 
-        if (error?.code) {
+        if (error) {
           toast.error(t("toast.loginInvalid"));
           setIsLoading(false);
           return;
         }
 
         toast.success(t("toast.welcomeBack"));
-        router.push("/app");
+        window.location.assign(`/${locale}/app`);
       }
     } catch (error) {
       console.error("Auth error:", error);
@@ -123,7 +122,7 @@ export default function AuthPage() {
       setIsLoading(true);
       const { error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/app",
+        callbackURL: `/${locale}/app`,
       });
 
       if (error) {
