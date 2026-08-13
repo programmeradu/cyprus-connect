@@ -8,6 +8,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation";
 import authPhoto from "@/assets/auth-limestone-desk.jpg";
 
 const FIELD =
@@ -19,9 +20,12 @@ const LABEL =
 export default function AuthPage() {
   const router = useRouter();
   const t = useTranslations("auth");
+  const searchParams = useSearchParams();
   const locale = (useLocale() as "en" | "el") ?? "en";
   const el = locale === "el";
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register" | "reset">(
+    searchParams.get("reset") === "1" ? "reset" : "login"
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -36,7 +40,23 @@ export default function AuthPage() {
     setIsLoading(true);
 
     try {
-      if (mode === "register") {
+      if (mode === "reset") {
+        if (formData.password !== formData.confirmPassword) {
+          toast.error(t("toast.passwordMismatch"));
+          setIsLoading(false);
+          return;
+        }
+
+        const { error } = await authClient.updatePassword(formData.password);
+        if (error) {
+          toast.error(t("toast.unexpected"));
+          setIsLoading(false);
+          return;
+        }
+
+        toast.success(t("toast.passwordUpdated"));
+        setMode("login");
+      } else if (mode === "register") {
         if (formData.password !== formData.confirmPassword) {
           toast.error(t("toast.passwordMismatch"));
           setIsLoading(false);
@@ -59,16 +79,7 @@ export default function AuthPage() {
         }
 
         toast.success(t("toast.accountCreated"));
-
-        const { error: loginError } = await authClient.signIn.email({
-          email: formData.email,
-          password: formData.password,
-          callbackURL: "/app",
-        });
-
-        if (!loginError) {
-          router.push("/app");
-        }
+        setMode("login");
       } else {
         const { error } = await authClient.signIn.email({
           email: formData.email,
@@ -91,6 +102,20 @@ export default function AuthPage() {
       toast.error(t("toast.unexpected"));
       setIsLoading(false);
     }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!formData.email) return;
+
+    setIsLoading(true);
+    const { error } = await authClient.resetPassword({
+      email: formData.email,
+      redirectTo: `${window.location.origin}/${locale}/auth/callback?next=/${locale}/auth?reset=1`,
+    });
+
+    if (error) toast.error(t("toast.passwordResetFailed"));
+    else toast.success(t("passwordResetSent"));
+    setIsLoading(false);
   };
 
   const handleGoogleAuth = async () => {
@@ -222,14 +247,14 @@ export default function AuthPage() {
                 className="mt-[clamp(1rem,3vh,1.75rem)] font-[family-name:var(--editorial-display)] text-[clamp(1.5rem,3.6vh,2.15rem)] font-semibold leading-[1.08] tracking-[-0.025em]"
                 style={{ textWrap: "balance" }}
               >
-                {mode === "login" ? t("signInTitle") : t("createTitle")}
+                {mode === "reset" ? t("setNewPassword") : mode === "login" ? t("signInTitle") : t("createTitle")}
               </h1>
               <p className="mt-[clamp(0.45rem,1.2vh,0.75rem)] hidden text-[clamp(14px,1.9vh,15.5px)] font-medium leading-[1.5] text-foreground/65 [@media(min-height:560px)]:block">
-                {mode === "login" ? t("signInSubtitle") : t("createSubtitle")}
+                {mode === "login" ? t("signInSubtitle") : mode === "register" ? t("createSubtitle") : ""}
               </p>
 
               {/* Google */}
-              <button
+              {mode !== "reset" && <button
                 onClick={handleGoogleAuth}
                 disabled={isLoading}
                 className="mt-[clamp(1rem,3vh,1.75rem)] flex h-[clamp(2.5rem,5.4vh,2.9rem)] w-full items-center justify-center gap-2.5 rounded-full border border-border bg-card px-5 text-[15px] font-semibold tracking-[-0.01em] transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-55"
@@ -253,15 +278,15 @@ export default function AuthPage() {
                   />
                 </svg>
                 <span className="min-w-0 truncate">{t("google")}</span>
-              </button>
+              </button>}
 
-              <div className="my-[clamp(0.9rem,2.6vh,1.6rem)] flex items-center gap-4">
+              {mode !== "reset" && <div className="my-[clamp(0.9rem,2.6vh,1.6rem)] flex items-center gap-4">
                 <span className="h-px flex-1 bg-border/70" />
                 <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-foreground/50">
                   {t("orEmail")}
                 </span>
                 <span className="h-px flex-1 bg-border/70" />
-              </div>
+              </div>}
 
               <form
                 onSubmit={handleSubmit}
@@ -294,7 +319,7 @@ export default function AuthPage() {
                   </div>
                 )}
 
-                <div>
+                {mode !== "reset" && <div>
                   <label className={LABEL} htmlFor="email">
                     {t("email")}
                   </label>
@@ -309,7 +334,7 @@ export default function AuthPage() {
                     required
                     disabled={isLoading}
                   />
-                </div>
+                </div>}
 
                 <div>
                   <label className={LABEL} htmlFor="password">
@@ -328,7 +353,7 @@ export default function AuthPage() {
                   />
                 </div>
 
-                {mode === "register" && (
+                {(mode === "register" || mode === "reset") && (
                   <div>
                     <label className={LABEL} htmlFor="confirmPassword">
                       {t("confirmPassword")}
@@ -367,13 +392,24 @@ export default function AuthPage() {
                   </label>
                 )}
 
+                {mode === "login" && (
+                  <button
+                    type="button"
+                    onClick={handlePasswordReset}
+                    disabled={isLoading}
+                    className="-mt-1 block text-left text-[13.5px] font-semibold text-foreground/65 underline-offset-4 hover:text-foreground hover:underline disabled:opacity-60"
+                  >
+                    {t("forgotPassword")}
+                  </button>
+                )}
+
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="mt-[clamp(0.25rem,1vh,0.6rem)] inline-flex h-[clamp(2.5rem,5.4vh,2.9rem)] w-full items-center justify-center gap-2 rounded-full bg-[var(--accent-lime)] px-6 text-[15.5px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
                 >
                   <span className="min-w-0 truncate">
-                    {isLoading ? t("processing") : mode === "login" ? t("signIn") : t("createAccount")}
+                    {isLoading ? t("processing") : mode === "login" ? t("signIn") : mode === "reset" ? t("resetPassword") : t("createAccount")}
                   </span>
                   {!isLoading && (
                     <svg

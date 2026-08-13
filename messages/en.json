@@ -70,6 +70,10 @@
     "confirmPassword": "Confirm Password",
     "passwordPh": "••••••••",
     "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "passwordResetSent": "If this email has a Vuneli account, a secure password-reset link has been sent.",
+    "setNewPassword": "Set a new password",
+    "resetPassword": "Reset password",
     "signIn": "Sign In",
     "createAccount": "Create Account",
     "processing": "Processing…",
@@ -85,7 +89,9 @@
       "welcomeBack": "Welcome back!",
       "unexpected": "An unexpected error occurred. Please try again.",
       "googleFailed": "Failed to initiate Google sign-in. Please try again.",
-      "accountCreated": "Account created! Redirecting to dashboard…"
+      "accountCreated": "Account created! Check your email to confirm it before signing in.",
+      "passwordResetFailed": "We could not send a password-reset email. Please try again.",
+      "passwordUpdated": "Your password has been updated. You can now sign in."
     },
     "demoQuestion": "Want to explore first?",
     "demoTry": "Try demo",

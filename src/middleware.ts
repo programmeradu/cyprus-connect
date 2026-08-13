@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { createServerClient } from "@supabase/ssr";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
+import { getSupabaseServerConfig } from "@/lib/supabase/server";
 
 
 const intlMiddleware = createIntlMiddleware(routing);
@@ -47,13 +48,21 @@ export default async function middleware(request: NextRequest) {
       (route) => pathWithoutLocale === route || pathWithoutLocale.startsWith(route + "/")
     );
 
-  if (isProtected) {
-    // Cookie-only check: middleware runs on the edge and cannot self-fetch
-    // the app origin reliably. Full session validation happens in the route
-    // handlers / server components behind this gate.
-    const sessionCookie = getSessionCookie(request);
+  let response = intlMiddleware(request);
 
-    if (!sessionCookie) {
+  if (isProtected) {
+    const { url, publishableKey } = getSupabaseServerConfig();
+    const supabase = createServerClient(url, publishableKey, {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+        },
+      },
+    });
+    const { data: claimsResult } = await supabase.auth.getClaims();
+
+    if (!claimsResult?.claims) {
       const locale = localeMatch?.[1] || routing.defaultLocale;
       const url = new URL(`/${locale}/auth`, request.url);
       url.searchParams.set("redirect", pathname);
@@ -62,7 +71,7 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Delegate to next-intl for locale routing / redirects
-  return intlMiddleware(request);
+  return response;
 }
 
 export const config = {

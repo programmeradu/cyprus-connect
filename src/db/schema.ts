@@ -1,4 +1,4 @@
-import { pgTable, serial, text, real, integer, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, real, integer, boolean, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
   id: serial('id').primaryKey(),
@@ -72,6 +72,18 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => new Date())
     .notNull(),
+});
+
+// Maps a Supabase Auth identity to the pre-existing Vuneli profile ID. Keeping
+// Vuneli's text IDs intact preserves every current business-table relationship.
+export const authIdentity = pgTable("auth_identity", {
+  supabaseUserId: uuid("supabase_user_id").primaryKey(),
+  vuneliUserId: text("vuneli_user_id")
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastAuthenticatedAt: timestamp("last_authenticated_at").defaultNow().notNull(),
 });
 
 export const emissions = pgTable('emissions', {

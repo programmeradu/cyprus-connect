@@ -4,28 +4,14 @@ import { complianceDocuments, complianceAuditLogs, emissions, user } from '@/db/
 import { eq, desc } from 'drizzle-orm';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
+import { requireVuneliUserId } from '@/lib/auth';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    
-    // Get user_id from session token
-    const sessionResult = await db.query.session.findFirst({
-      where: (session, { eq }) => eq(session.token, token),
-    });
-
-    if (!sessionResult) {
-      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
-    }
-
-    const userId = sessionResult.userId;
+    const userId = await requireVuneliUserId(req.headers);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { framework } = await req.json();
 
     if (!framework) {

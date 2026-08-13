@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { complianceDocuments } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { requireVuneliUserId } from '@/lib/auth';
 
 export async function GET(
   req: NextRequest,
@@ -9,23 +10,8 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    
-    // Get user_id from session token
-    const sessionResult = await db.query.session.findFirst({
-      where: (session, { eq }) => eq(session.token, token),
-    });
-
-    if (!sessionResult) {
-      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
-    }
-
-    const userId = sessionResult.userId;
+    const userId = await requireVuneliUserId(req.headers);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     // Fetch document
     const document = await db.select()
@@ -59,23 +45,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    
-    // Get user_id from session token
-    const sessionResult = await db.query.session.findFirst({
-      where: (session, { eq }) => eq(session.token, token),
-    });
-
-    if (!sessionResult) {
-      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
-    }
-
-    const userId = sessionResult.userId;
+    const userId = await requireVuneliUserId(req.headers);
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     // Delete document
     await db.delete(complianceDocuments)
