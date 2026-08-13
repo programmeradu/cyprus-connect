@@ -9,11 +9,12 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 	}),
-	// No fixed baseURL: better-auth infers the origin from the incoming request,
-	// so the same build works on localhost, the Lovable preview and production.
+	// Vuneli's canonical production authentication origin.
+	baseURL: process.env.BETTER_AUTH_URL || "https://vuneli.com",
 	trustedOrigins: [
 		"http://localhost:3000",
 		"http://localhost:8080",
+		"https://vuneli.com",
 		process.env.NEXT_PUBLIC_SITE_URL || "",
 		process.env.BETTER_AUTH_URL || "",
 		process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
