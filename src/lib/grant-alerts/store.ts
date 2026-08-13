@@ -53,16 +53,20 @@ function mapMatch(row: Record<string, unknown>): StoredMatch {
 }
 
 function missingSchemaMessage(error: { code?: string; message: string }) {
-  if (error.code === "42P01" || /relation .* does not exist/i.test(error.message)) {
+  if (
+    error.code === "42P01" ||
+    error.code === "PGRST205" ||
+    /relation .* does not exist|could not find the table|schema cache/i.test(error.message)
+  ) {
     return "Grant-alert tables are missing. Apply supabase/migrations/20260813_create_grant_alerts.sql first.";
   }
-  return error.message;
+  return error.message || "Unable to access grant-alert storage. Apply supabase/migrations/20260813_create_grant_alerts.sql and retry.";
 }
 
 export async function ensureSchema(): Promise<void> {
   const { error } = await client()
     .from("grant_opportunities")
-    .select("id", { head: true, count: "exact" })
+    .select("id")
     .limit(1);
   if (error) throw new Error(missingSchemaMessage(error));
 }
