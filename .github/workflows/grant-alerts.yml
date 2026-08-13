@@ -18,12 +18,22 @@ jobs:
           SECRET="${CRON_SECRET:-vuneli-cron-grant-alerts-2026-cy}"
           URL="https://vuneli.com/api/cron/grant-alerts?secret=${SECRET}"
           echo "Triggering grant-alerts scan"
-          RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" -X POST "$URL")
-          STATUS=$(echo "$RESPONSE" | grep -oE 'HTTP_STATUS:[0-9]+' | cut -d: -f2)
-          BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
-          echo "Status: $STATUS"
-          echo "Body: $BODY"
-          if [ "$STATUS" != "200" ]; then
-            echo "Grant alerts cron failed"
-            exit 1
-          fi
+          ATTEMPTS=3
+          for ATTEMPT in $(seq 1 "$ATTEMPTS"); do
+            RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}" -X POST "$URL" || true)
+            STATUS=$(echo "$RESPONSE" | grep -oE 'HTTP_STATUS:[0-9]+' | cut -d: -f2 || true)
+            STATUS="${STATUS:-000}"
+            BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
+            echo "Attempt $ATTEMPT/$ATTEMPTS"
+            echo "Status: $STATUS"
+            echo "Body: $BODY"
+            if [ "$STATUS" = "200" ]; then
+              exit 0
+            fi
+            if [ "$ATTEMPT" -lt "$ATTEMPTS" ]; then
+              echo "Grant alerts cron failed, retrying in 10s..."
+              sleep 10
+            fi
+          done
+          echo "Grant alerts cron failed after $ATTEMPTS attempts"
+          exit 1
