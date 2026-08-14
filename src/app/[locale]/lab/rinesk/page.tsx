@@ -6,15 +6,8 @@
  * the viewport, so nothing reflows away from the reference.
  */
 
-import { Nunito } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 import "./rinesk.css";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 /* ------------------------------------------------------------------ */
 /* geometry helpers                                                     */
@@ -249,7 +242,7 @@ export default function RineskPage() {
   ] as const;
 
   return (
-    <div className={`rk-root ${nunito.className}`} style={{ ["--rk-font" as string]: nunito.style.fontFamily }}>
+    <div className="rk-root">
       <div ref={wrapRef} className="rk-stage" style={{ transform: `scale(${scale})` }}>
         <div className="rk-window">
           {/* ============================ TOP CARD ============================ */}
