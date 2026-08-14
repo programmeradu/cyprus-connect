@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
 import VisualEditsMessenger from "../visual-edits/VisualEditsMessenger";
-import ErrorReporter from "@/components/ErrorReporter";
 import Script from "next/script";
 import { CurrencyProvider } from "@/contexts/CurrencyContext";
 import { Toaster } from "@/components/ui/sonner";
@@ -52,7 +51,6 @@ export default async function RootLayout({
           data-orchids-project-id="d20fb006-92bc-4c81-8b2f-07a37aa9e2cd"
         />
         <CurrencyProvider>
-          <ErrorReporter />
           <Script
             src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/scripts//route-messenger.js"
             strategy="afterInteractive"
