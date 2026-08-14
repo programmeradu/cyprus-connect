@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { authClient } from "@/lib/auth-client";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
 import { useSearchParams } from "next/navigation";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import authPhoto from "@/assets/auth-limestone-desk.jpg";
 
 const FIELD =
@@ -22,6 +24,10 @@ export default function AuthPage() {
   const searchParams = useSearchParams();
   const locale = (useLocale() as "en" | "el") ?? "en";
   const el = locale === "el";
+  const requestedRedirect = searchParams.get("redirect");
+  const appRedirect = requestedRedirect?.startsWith(`/${locale}/`)
+    ? requestedRedirect
+    : `/${locale}/app`;
   const [mode, setMode] = useState<"login" | "register" | "reset">(
     searchParams.get("reset") === "1" ? "reset" : "login"
   );
@@ -33,6 +39,35 @@ export default function AuthPage() {
     confirmPassword: "",
     rememberMe: false,
   });
+
+  useEffect(() => {
+    if (mode !== "login") return;
+
+    let active = true;
+    let unsubscribe: (() => void) | undefined;
+    const continueToApp = () => {
+      if (active) window.location.replace(appRedirect);
+    };
+
+    void getSupabaseBrowserClient()
+      .then(async (supabase) => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) continueToApp();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, nextSession: Session | null) => {
+          if (event === "SIGNED_IN" && nextSession) continueToApp();
+        });
+        unsubscribe = () => subscription.unsubscribe();
+      })
+      .catch(() => {
+        // Submission actions surface configuration errors to the user directly.
+      });
+
+    return () => {
+      active = false;
+      unsubscribe?.();
+    };
+  }, [appRedirect, mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,7 +129,7 @@ export default function AuthPage() {
         }
 
         toast.success(t("toast.welcomeBack"));
-        window.location.assign(`/${locale}/app`);
+        window.location.replace(appRedirect);
       }
     } catch (error) {
       console.error("Auth error:", error);

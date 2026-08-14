@@ -23,6 +23,10 @@ test("Supabase Auth replaces Better Auth runtime integrations", async () => {
   assert.match(browserClient, /fetch\("\/api\/auth\/config"/);
   const authConfigRoute = await read("src/app/api/auth/config/route.ts");
   assert.match(authConfigRoute, /Cache-Control.*no-store/);
+  const authPage = await read("src/app/[locale]/auth/page.tsx");
+  assert.match(authPage, /onAuthStateChange/);
+  assert.match(authPage, /event === "SIGNED_IN"/);
+  assert.match(authPage, /window\.location\.replace\(appRedirect\)/);
 });
 
 test("identity mapping migration remains additive and locked down", async () => {
