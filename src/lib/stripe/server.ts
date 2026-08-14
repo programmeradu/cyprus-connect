@@ -61,9 +61,6 @@ export function createStripeClient(env: StripeEnv = 'sandbox'): Stripe {
   });
 }
 
-/** Legacy singleton (sandbox). Prefer createStripeClient(env) in new code. */
-export const stripe = createStripeClient('sandbox');
-
 /**
  * HMAC-SHA256 verification of a Lovable-payments webhook. Uses the env-scoped
  * signing secret provisioned by enable_stripe_payments. Does NOT depend on the
