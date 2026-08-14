@@ -1,9 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+let supabaseClient: ReturnType<typeof createClient> | null | undefined;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabaseClient() {
+  if (supabaseClient !== undefined) return supabaseClient;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    supabaseClient = null;
+    return supabaseClient;
+  }
+  supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+  return supabaseClient;
+}
 
 const BUCKET_NAME = 'documents';
 
@@ -13,6 +22,8 @@ const BUCKET_NAME = 'documents';
  */
 export async function initializeStorageBucket() {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return { success: false, error: 'Supabase is not configured' };
     const { data: buckets } = await supabase.storage.listBuckets();
     const bucketExists = buckets?.some(bucket => bucket.name === BUCKET_NAME);
 
@@ -59,6 +70,8 @@ export async function uploadFileToStorage(
   userId: string
 ): Promise<{ success: boolean; url?: string; error?: any }> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return { success: false, error: 'Supabase is not configured' };
     // Create a unique file path: userId/timestamp-filename
     const timestamp = Date.now();
     const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
@@ -101,6 +114,8 @@ export async function deleteFileFromStorage(
   fileUrl: string
 ): Promise<{ success: boolean; error?: any }> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return { success: false, error: 'Supabase is not configured' };
     // Extract the file path from the URL
     const url = new URL(fileUrl);
     const pathParts = url.pathname.split(`/storage/v1/object/public/${BUCKET_NAME}/`);
@@ -136,6 +151,8 @@ export async function getSignedUrl(
   expiresIn: number = 3600
 ): Promise<{ success: boolean; url?: string; error?: any }> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return { success: false, error: 'Supabase is not configured' };
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .createSignedUrl(filePath, expiresIn);
@@ -158,6 +175,8 @@ export async function listUserFiles(
   userId: string
 ): Promise<{ success: boolean; files?: any[]; error?: any }> {
   try {
+    const supabase = getSupabaseClient();
+    if (!supabase) return { success: false, error: 'Supabase is not configured' };
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
       .list(userId);
