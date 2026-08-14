@@ -15,7 +15,7 @@ function rememberAccessToken(token: string | undefined) {
 }
 
 async function resolveVuneliSession(): Promise<{ data: SessionData; error: Error | null }> {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = await getSupabaseBrowserClient();
   const { data: { session }, error } = await supabase.auth.getSession();
   if (error || !session) {
     rememberAccessToken(undefined);
@@ -37,7 +37,7 @@ export const authClient = {
   signUp: {
     email: async ({ email, name, password }: { email: string; name: string; password: string }) => {
       const redirectTo = `${window.location.origin}/en/auth/callback?next=/en/app`;
-      return getSupabaseBrowserClient().auth.signUp({
+      return (await getSupabaseBrowserClient()).auth.signUp({
         email,
         password,
         options: { data: { full_name: name }, emailRedirectTo: redirectTo },
@@ -46,23 +46,23 @@ export const authClient = {
   },
   signIn: {
     email: async ({ email, password }: { email: string; password: string; rememberMe?: boolean; callbackURL?: string }) => {
-      const result = await getSupabaseBrowserClient().auth.signInWithPassword({ email, password });
+      const result = await (await getSupabaseBrowserClient()).auth.signInWithPassword({ email, password });
       rememberAccessToken(result.data.session?.access_token);
       return result;
     },
     social: async ({ provider, callbackURL }: { provider: "google"; callbackURL?: string }) => {
       const redirectTo = `${window.location.origin}/en/auth/callback?next=${encodeURIComponent(callbackURL || "/en/app")}`;
-      return getSupabaseBrowserClient().auth.signInWithOAuth({ provider, options: { redirectTo } });
+      return (await getSupabaseBrowserClient()).auth.signInWithOAuth({ provider, options: { redirectTo } });
     },
   },
   resetPassword: async ({ email, redirectTo }: { email: string; redirectTo?: string }) =>
-    getSupabaseBrowserClient().auth.resetPasswordForEmail(email, {
+    (await getSupabaseBrowserClient()).auth.resetPasswordForEmail(email, {
       redirectTo: redirectTo || `${window.location.origin}/en/auth/callback?next=/en/auth?reset=1`,
     }),
-  updatePassword: async (password: string) => getSupabaseBrowserClient().auth.updateUser({ password }),
+  updatePassword: async (password: string) => (await getSupabaseBrowserClient()).auth.updateUser({ password }),
   getSession: resolveVuneliSession,
   signOut: async () => {
-    const result = await getSupabaseBrowserClient().auth.signOut();
+    const result = await (await getSupabaseBrowserClient()).auth.signOut();
     rememberAccessToken(undefined);
     return result;
   },
@@ -96,10 +96,14 @@ export function useSession() {
 
   useEffect(() => {
     void fetchSession();
-    const { data: { subscription } } = getSupabaseBrowserClient().auth.onAuthStateChange(() => {
-      void fetchSession();
+    let unsubscribe: (() => void) | undefined;
+    void getSupabaseBrowserClient().then((supabase) => {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+        void fetchSession();
+      });
+      unsubscribe = () => subscription.unsubscribe();
     });
-    return () => subscription.unsubscribe();
+    return () => unsubscribe?.();
   }, [fetchSession]);
 
   return { data: session, isPending, isRefetching, error, refetch };

@@ -19,6 +19,10 @@ test("Supabase Auth replaces Better Auth runtime integrations", async () => {
   assert.match(browserAuth, /signInWithOAuth/);
   assert.match(authRoute, /getVuneliSession/);
   assert.match(middleware, /createServerClient/);
+  const browserClient = await read("src/lib/supabase/client.ts");
+  assert.match(browserClient, /fetch\("\/api\/auth\/config"/);
+  const authConfigRoute = await read("src/app/api/auth/config/route.ts");
+  assert.match(authConfigRoute, /Cache-Control.*no-store/);
 });
 
 test("identity mapping migration remains additive and locked down", async () => {
