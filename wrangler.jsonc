@@ -4,6 +4,9 @@
 	"name": "cyprus-connect",
 	"compatibility_date": "2026-08-01",
 	"keep_vars": true,
+	"placement": {
+		"mode": "smart"
+	},
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"

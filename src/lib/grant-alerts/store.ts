@@ -6,6 +6,25 @@ import { getSupabaseServerConfig } from "@/lib/supabase/server";
 
 let supabase: SupabaseClient | null = null;
 
+const RETRYABLE_1016_ATTEMPTS = 3;
+
+async function isOriginDnsError(response: Response) {
+  if (response.status !== 530) return false;
+  const body = await response.clone().text();
+  return /error\s*1016|origin dns error/i.test(body);
+}
+
+async function fetchSupabaseWithRetry(input: RequestInfo | URL, init?: RequestInit) {
+  for (let attempt = 1; attempt <= RETRYABLE_1016_ATTEMPTS; attempt++) {
+    const response = await fetch(input, init);
+    if (!(await isOriginDnsError(response)) || attempt === RETRYABLE_1016_ATTEMPTS) {
+      return response;
+    }
+    await new Promise((resolve) => setTimeout(resolve, attempt * 250));
+  }
+  throw new Error("Unreachable retry state.");
+}
+
 function client() {
   if (!supabase) {
     const { url } = getSupabaseServerConfig();
@@ -15,6 +34,7 @@ function client() {
     }
     supabase = createClient(url, serviceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false },
+      global: { fetch: fetchSupabaseWithRetry },
     });
   }
   return supabase;
