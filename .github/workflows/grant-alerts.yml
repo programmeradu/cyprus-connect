@@ -1,9 +1,10 @@
 name: Grant Alerts Cron
 
+# The hourly cron is now handled natively by Cloudflare Workers
+# (see wrangler.jsonc → triggers.crons: "0 * * * *").
+# This workflow is kept for manual one-off test runs only.
+
 on:
-  schedule:
-    # Every hour on the hour.
-    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:

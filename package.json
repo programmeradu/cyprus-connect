@@ -17,9 +17,10 @@
     "lint": "next lint",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "preview": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build && opennextjs-cloudflare build --skipNextBuild && node scripts/inject-scheduled-handler.mjs && opennextjs-cloudflare preview",
+    "deploy": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build && opennextjs-cloudflare build --skipNextBuild && node scripts/inject-scheduled-handler.mjs && opennextjs-cloudflare deploy",
+    "upload": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build && opennextjs-cloudflare build --skipNextBuild && node scripts/inject-scheduled-handler.mjs && opennextjs-cloudflare upload",
+    "inject:cron": "node scripts/inject-scheduled-handler.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "auth:migrate-legacy": "node scripts/migrate-legacy-auth.mjs",
     "test:auth-migration": "node --test tests/supabase-auth-contract.test.mjs"
@@ -151,6 +152,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@opennextjs/cloudflare": "^1.20.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.38.0",
     "eslint-config-next": "15.5.7",
     "wrangler": "^4.118.0"

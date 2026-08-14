@@ -8,6 +8,12 @@
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
+	"triggers": {
+		"crons": [
+			// Grant-alerts scan: every hour on the hour
+			"0 * * * *"
+		]
+	},
 	"observability": {
 		"enabled": false,
 		"head_sampling_rate": 1,
