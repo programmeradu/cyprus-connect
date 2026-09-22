@@ -187,7 +187,11 @@ export default function AnalyticsPage() {
               <button type="button" onClick={handleRefresh} disabled={refreshing} className="app-btn-ghost app-btn">
                 {refreshing ? tc("refreshing") : tc("refresh")}
               </button>
-              {session?.user?.id && <ExportReportButton userId={session.user.id} />}
+              <ExportReportButton
+                userId={session?.user?.id}
+                analyticsData={analyticsData}
+                companyName={session?.user?.name || "Pilot Enterprise"}
+              />
             </>
           }
         />

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSustainabilityReport, ReportData } from '@/lib/pdf/export-report';
 import { db } from '@/db';
-import { user, historicalEmissions, industryComparisons } from '@/db/schema';
+import { user, historicalEmissions, emissions, industryComparisons } from '@/db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 
@@ -51,14 +51,43 @@ export async function POST(request: NextRequest) {
     const userInfo = userData[0];
 
     // Fetch emissions data directly from database
-    const emissions = await db
+    let emissionsList = await db
       .select()
       .from(historicalEmissions)
       .where(eq(historicalEmissions.userId, userId))
       .orderBy(desc(historicalEmissions.year), desc(historicalEmissions.month))
       .limit(12);
 
-    if (emissions.length === 0) {
+    if (emissionsList.length === 0) {
+      // Check standard emissions table as fallback
+      const standardEmissions = await db
+        .select()
+        .from(emissions)
+        .where(eq(emissions.userId, userId))
+        .orderBy(desc(emissions.periodYear), desc(emissions.periodMonth))
+        .limit(12);
+
+      if (standardEmissions.length > 0) {
+        emissionsList = standardEmissions.map((e) => ({
+          id: e.id,
+          userId: e.userId,
+          year: e.periodYear,
+          month: e.periodMonth,
+          electricityKwh: e.electricity ? e.electricity / 0.5 : 0,
+          gasM3: e.gas ? e.gas / 2.0 : 0,
+          waterLiters: e.water ? e.water / 0.0003 : 0,
+          wasteKg: e.waste ? e.waste / 0.5 : 0,
+          transportKm: e.transport ? e.transport / 0.2 : 0,
+          totalCo2e: e.totalCo2e,
+          renewablePercentage: 0,
+          efficiencyScore: 75,
+          wasteDiversionRate: 50,
+          createdAt: e.createdAt,
+        }));
+      }
+    }
+
+    if (emissionsList.length === 0) {
       return NextResponse.json(
         { error: 'No emissions data available for this user' },
         { status: 404 }
@@ -66,12 +95,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current period (most recent)
-    const currentPeriod = emissions[0];
+    const currentPeriod = emissionsList[0];
     const currentYear = currentPeriod.year;
     const currentMonth = currentPeriod.month;
 
     // Get previous year same month for YoY comparison
-    const previousYearData = emissions.find(
+    const previousYearData = emissionsList.find(
       e => e.year === currentYear - 1 && e.month === currentMonth
     );
 
@@ -101,8 +130,8 @@ export async function POST(request: NextRequest) {
 
     // Get monthly trend (last 6 months)
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthlyTrend = emissions.slice(0, 6).map((emission, index) => {
-      const prevEmission = emissions[index + 1];
+    const monthlyTrend = emissionsList.slice(0, 6).map((emission, index) => {
+      const prevEmission = emissionsList[index + 1];
       const change = prevEmission
         ? ((emission.totalCo2e - prevEmission.totalCo2e) / prevEmission.totalCo2e) * 100
         : 0;
@@ -155,7 +184,7 @@ export async function POST(request: NextRequest) {
       ],
       highlights: [
         `Operating in ${userInfo.companyIndustry || 'technology'} sector`,
-        emissions.length >= 6 
+        emissionsList.length >= 6 
           ? 'Consistent data tracking over multiple months'
           : 'Building emissions tracking history',
         totalEmissions < 1000 

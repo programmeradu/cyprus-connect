@@ -52,7 +52,7 @@ export function createStripeClient(env: StripeEnv = 'sandbox'): Stripe {
   const legacyKey = getEnv('STRIPE_SECRET_KEY');
   if (!legacyKey) {
     throw new Error(
-      'Stripe is not configured. Missing STRIPE_SANDBOX_API_KEY/LOVABLE_API_KEY (gateway) and STRIPE_SECRET_KEY (fallback).',
+      'Stripe is not configured. Missing valid Stripe API credentials in environment.',
     );
   }
   return new Stripe(legacyKey, {

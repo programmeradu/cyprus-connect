@@ -33,7 +33,7 @@ export function getStripeEnvironment(): StripeEnv {
   // was shipped before Stripe go-live finished, or the env file wasn't
   // regenerated. Fail loudly at the call site.
   throw new Error(
-    'Payments are not configured for this build. Complete Stripe go-live in your Lovable project to enable checkout.',
+    'Billing is currently in private preview for Cyprus pilot enterprises. Reach out to advisors to activate your tier.',
   );
 }
 

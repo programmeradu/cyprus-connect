@@ -88,7 +88,7 @@ export function generateSustainabilityReport(data: ReportData): jsPDF {
   
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text('tons CO₂e/year', 25, yPosition + 27);
+  doc.text('tons CO2e/year', 25, yPosition + 27);
   
   // YoY Change Badge
     const changeColor: [number, number, number] = data.yoyChange < 0 ? primaryGreen : [239, 68, 68];
@@ -224,7 +224,7 @@ export function generateSustainabilityReport(data: ReportData): jsPDF {
   doc.setTextColor(...darkGreen);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('🤖 AI-Powered Insights', 20, 10);
+  doc.text('AI-Powered Insights', 20, 10);
   
   yPosition = 30;
 
@@ -296,7 +296,7 @@ export function generateSustainabilityReport(data: ReportData): jsPDF {
     doc.setTextColor(...darkGreen);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    const lines = doc.splitTextToSize('✓ ' + highlight, 160);
+    const lines = doc.splitTextToSize('• ' + highlight, 160);
     doc.text(lines, 25, yPosition + 3);
     yPosition += 12;
   });

@@ -105,6 +105,8 @@
   position: fixed;
   inset: 0;
   z-index: 64;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   background: radial-gradient(
       120% 80% at 50% 100%,
       color-mix(in oklab, var(--vc-lime) 10%, transparent),
@@ -116,6 +118,8 @@
 }
 
 .dark .vc-copilot-scrim {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
   background: radial-gradient(
       120% 80% at 50% 100%,
       color-mix(in oklab, var(--vc-lime) 8%, transparent),

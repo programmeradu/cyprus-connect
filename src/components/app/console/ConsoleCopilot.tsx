@@ -285,7 +285,16 @@ export function ConsoleCopilot() {
         <div
           className="vc-copilot-scrim"
           onClick={() => setOpen(false)}
-          aria-hidden
+          onTouchStart={() => setOpen(false)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+              setOpen(false);
+            }
+          }}
+          aria-label="Close Copilot"
+          title="Click outside to close Copilot (or press Esc)"
         />
       )}
 
