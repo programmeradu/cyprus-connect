@@ -39,7 +39,9 @@ export type VuneliSession = {
 function getBearerToken(headers: Headers): string | null {
   const authorization = headers.get("authorization");
   if (!authorization?.startsWith("Bearer ")) return null;
-  return authorization.slice("Bearer ".length).trim() || null;
+  const token = authorization.slice("Bearer ".length).trim();
+  if (!token || token === "null" || token === "undefined") return null;
+  return token;
 }
 
 function profileName(supabaseUser: SupabaseUser): string {
