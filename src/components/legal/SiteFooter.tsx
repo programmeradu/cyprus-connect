@@ -157,6 +157,12 @@ export function SiteFooter() {
               className="inline-flex items-center gap-3"
               aria-label="Vuneli home"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/brand/icon/vuneli-mark-transparent-for-dark.png"
+                alt="Vuneli"
+                className="h-8 w-auto"
+              />
               <span
                 className="text-2xl tracking-tight text-white sm:text-[26px]"
                 style={{ fontFamily: "var(--editorial-serif)", fontWeight: 500 }}

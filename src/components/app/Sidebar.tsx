@@ -123,7 +123,19 @@ export const Sidebar = () => {
     <>
       {/* Brand */}
       <div className="p-4 border-b border-border/50">
-        <Link href="/app" className="flex items-center gap-2 group">
+        <Link href="/app" className="flex items-center gap-2.5 group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/icon/vuneli-mark-transparent.png"
+            alt="Vuneli"
+            className="h-6 w-auto dark:hidden"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/icon/vuneli-mark-transparent-for-dark.png"
+            alt="Vuneli"
+            className="h-6 w-auto hidden dark:inline-block"
+          />
           <h1 className="text-base font-semibold text-foreground" style={{ fontFamily: 'var(--editorial-display)', letterSpacing: '-0.02em' }}>Vuneli</h1>
         </Link>
       </div>

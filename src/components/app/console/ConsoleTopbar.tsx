@@ -175,8 +175,20 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
 
   return (
     <header className="vc-nav" ref={bar}>
-      <Link href={"/app" as never} className="vc-brand" aria-label="Vuneli console home">
-        Vuneli
+      <Link href={"/app" as never} className="vc-brand flex items-center gap-2" aria-label="Vuneli console home">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/icon/vuneli-mark-transparent.png"
+          alt="Vuneli"
+          className="h-6 w-auto dark:hidden"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/icon/vuneli-mark-transparent-for-dark.png"
+          alt="Vuneli"
+          className="h-6 w-auto hidden dark:inline-block"
+        />
+        <span>Vuneli</span>
       </Link>
 
       <nav className="vc-mainnav" aria-label="Workspace navigation">
