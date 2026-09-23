@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SubscriptionBadge } from "@/components/billing/SubscriptionBadge";
+import { VuneliWordmark } from "@/components/brand/VuneliWordmark";
 
 /**
  * MarketingHeader — wordmark anchored top-left, floating "dynamic island" pill
@@ -41,13 +42,13 @@ export function MarketingHeader() {
           adopts the theme's foreground color. */}
       <Link
         href="/"
+        aria-label="Vuneli home"
         className={[
-          "pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 text-[20px] font-semibold tracking-[-0.03em] transition-colors duration-300 sm:left-8",
-          scrolled ? "text-foreground" : "text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.55),0_2px_18px_rgba(0,0,0,0.35)]",
+          "pointer-events-auto absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 sm:left-8",
+          scrolled ? "text-foreground" : "text-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.5))_drop-shadow(0_2px_14px_rgba(0,0,0,0.3))]",
         ].join(" ")}
-        style={{ fontFamily: "var(--editorial-display)" }}
       >
-        Vuneli
+        <VuneliWordmark className="block h-6 w-auto sm:h-7" />
       </Link>
 
       {/* Top-right CTA — desktop only; on mobile it lives in the menu sheet */}
