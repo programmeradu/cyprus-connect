@@ -15,5 +15,7 @@
 - [ ] Blocked on user/outside: EAC/CERA count of net-billing agreements by tariff; 2-3 real net-billing bills; Scheid 2025 full text
 - [x] S2 on I-02 and I-03b: both killed; I-07 opened
 - [x] CBAM sizing: 50 t de-minimis verified; CY import mass 2023-25
-- [ ] Next: S2 on I-07; CBAM field re-map on definitive-period acts; ESRS datapoint list
+- [x] S2 screen on I-07 (survives, narrowed); I-08 killed; I-09 parked
+- [ ] Blocked on founder: commit prereg/I-07.md; recruit 3-5 pilot SMEs for real document sets
+- [ ] Next: claim-level patent search for I-07; read MFA-BOED 2025 + Watershed 2026 full text; CBAM definitive-period re-map; ESRS list
 - [ ] Blocked outside: CY Customs count of CBAM importers above/below 50 t
