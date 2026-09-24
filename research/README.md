@@ -15,7 +15,10 @@ S4 experiments, S5 Frascati + TRL gate, S6 mapping and roadmap.
 2. Every experiment includes a missing-data and noise stress test (0%, 25%, 50% missing).
 3. Cyprus realism: island grid mix and bilingual local documents in the ground truth.
 4. Frascati audit trail: every R&D hour and cost goes in `ledger.csv`.
-5. Kill decisions and failed results stay in the files. Nobody deletes them.
+5. Provenance: every raw file has a SHA-256 checksum and source URL in `data/raw/manifest.json`. Run `python3 research/s0/manifest.py verify`.
+6. S2 checks novelty AND freedom to operate (active patents) separately.
+7. Synthetic data is used only if it passes KS p > 0.05 or Wasserstein <= 0.1 against CYSTAT/Eurostat marginals.
+8. Kill decisions and failed results stay in the files. Nobody deletes them.
 
 ## Layout
 - `data/raw/` source downloads, unchanged. `data/processed/` script outputs.

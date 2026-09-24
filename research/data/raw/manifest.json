@@ -1,0 +1,8 @@
+{
+  "eurostat_nrg_cb_pem_CY.json": {
+    "sha256": "b0ff9485198415be7483c2a20fdce49dca250ab3ae31d041ebe335ce02b1719a",
+    "source_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_cb_pem?geo=CY&unit=GWH&sinceTimePeriod=2021-01&format=JSON",
+    "bytes": 26025,
+    "retrieved_utc": "2026-09-24T11:15:02Z"
+  }
+}
