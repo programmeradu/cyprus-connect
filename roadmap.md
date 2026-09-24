@@ -16,6 +16,8 @@
 - [x] S2 on I-02 and I-03b: both killed; I-07 opened
 - [x] CBAM sizing: 50 t de-minimis verified; CY import mass 2023-25
 - [x] S2 screen on I-07 (survives, narrowed); I-08 killed; I-09 parked
-- [ ] Blocked on founder: commit prereg/I-07.md; recruit 3-5 pilot SMEs for real document sets
-- [ ] Next: claim-level patent search for I-07; read MFA-BOED 2025 + Watershed 2026 full text; CBAM definitive-period re-map; ESRS list
+- [x] I-07 prereg written and locked (SHA-256 in registry)
+- [ ] Blocked on founder: add git hash of prereg to registry; recruit 3-5 pilot SMEs
+- [x] I-07 full S2 screen (survives); I-05, I-06 killed; CBAM definitive re-map; VSME B1-B11 list
+- [ ] Next: full text Owl + arXiv 2504.13382; Espacenet claim search; verify CBAM mark-up; VSME datapoint inventory
 - [ ] Blocked outside: CY Customs count of CBAM importers above/below 50 t
