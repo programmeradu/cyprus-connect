@@ -9,3 +9,4 @@ date,task,stage,person,hours,cost_eur,frascati_type,notes
 2026-09-24,"S4 E01 I-07: generator, baselines, mixture model, H1-H3, stress test",S4,AI,2.5,0,experimental development,S4-E01-07
 2026-09-24,S2 on I-10/I-11/I-12; S1 gap mining; I-13 opened,S1-S2,AI,2,0,experimental development,S2-PA-08..10 S1-MINE-10
 2026-09-24,S2 prior art I-13,S2,AI,1,0,experimental development,S2-PA-11
+2026-09-24,I-13 prereg lock; EXIOBASE CY priors; E02 experiment; SBC attempt,S0-S4,AI,3,0,experimental development,S3-PREREG-13 S1-PRIOR-13 S4-E02-13 S4-E02-SBC

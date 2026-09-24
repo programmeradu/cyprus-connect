@@ -55,7 +55,7 @@ OCR noise costs width: at 3 docs the half-width is 0.27-0.30 without OCR errors 
 Two in-model runs did not converge: main_missing25 (r-hat 1.78) and eval_set_k1 (r-hat 2.06). Their numbers are invalid. Probable cause: x10 OCR errors create a second mode for single-document firms. H13-2 uses the k0 and k3 runs (r-hat 1.009 and 1.014), so the verdict stands, but the model needs a robust likelihood (e.g. Student-t or an explicit OCR-error mixture, which is the I-07 layer) before any real use. Any rerun is a new run with a new ID.
 
 ## SBC (simuk + PyMC, reduced model)
-See sbc_results.json. Status at report time: see registry row S4-E02-SBC.
+NOT COMPLETED. The PyMC run (100 simulations) did not finish in over 20 minutes and showed numerical overflow warnings in the sampler; it was stopped. No SBC verdict exists. Next step: run it offline with fewer simulations or port the SBC to NumPyro, under a new run ID.
 
 ## Limits
 - Generator NOT validated: Eurostat SBS gives only totals per NACE for CY micro firms, so KS/Wasserstein cannot be run. Turnover mean is matched by construction; firm spread (sd 1.0), sector bias sd, firm heterogeneity and document noise are assumptions.
