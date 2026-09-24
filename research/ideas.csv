@@ -1,0 +1,7 @@
+idea_id,title,origin,status,gate_reached,evidence,notes
+I-01,Dynamic monthly grid factors for CY SMEs,User review (S1.5),deprioritised,S1,S1-GRID-01: max 2.97% error at monthly resolution,Hourly resolution (midday solar curtailment) not yet tested; needs TSO Cyprus hourly data
+I-02,Confidence-scored footprint + evidence value ranking,Earlier reasoning (untested),open,S1,none yet,Must pass S2 prior art: uncertainty quantification exists in LCA (Brightway2 Monte Carlo)
+I-03,Inferring hidden behind-the-meter PV self-consumption from net bills,S1 mining (B3 energyTotal / energyRenewable),open,S1,S1-RANK-01 rank 1-2,Needs S1 size check: share of CY SMEs on net-metering / net-billing
+I-04,Scope 1 from fragmentary fuel evidence (EUR-only card lines; handwritten slips),S1 mining (B3 scope1),reframed,S1,S1-FUEL-01: price conversion <=2.7% error; fuel-type confusion 7-11%,"Open part: classify fuel type and fuel-vs-shop spend from bank lines. Mixed baskets untested (needs real data). May be engineering, not research: S2 must decide"
+I-05,Water withdrawal for unmetered boreholes / shared buildings,S1 mining (B6),open,S1,S1-RANK-01 rank 5,Lower priority
+I-06,Waste mass with no weight evidence,S1 mining (B7),open,S1,S1-RANK-01 rank 7-8,Class d: may not be solvable; possible kill

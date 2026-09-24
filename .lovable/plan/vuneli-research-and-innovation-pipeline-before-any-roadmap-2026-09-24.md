@@ -95,3 +95,9 @@ S0 and S1 first (the problem list with measurements). I report the ranked proble
 - Public sources: Eurostat (nrg_bal, sbs), CYSTAT, EAC published tariffs, EU/DEFRA emission factors, EFRAG VSME datapoint list, CBAM implementing regulation annexes.
 - The app is not touched until S6.
 - Separate issue: the automatic preview check fails because it expects a different app framework than this project uses (Next.js on Cloudflare). This is the known platform mismatch from earlier. It does not affect the live site.
+
+## Refinements (round 2, added 24 Sep 2026)
+1. **Citations.** Frascati Manual 2015, Chapter 2 (§2.15, §2.17): uncertainty means the solution is not readily apparent to someone familiar with the common stock of knowledge and techniques in the sector. Cyprus Income Tax Law, Art. 9(1)(d) as amended 2022: 120% deduction of qualifying R&D expense. Both came from the review. Status: to be checked against the original texts before we quote them to an evaluator.
+2. **S0 provenance.** Every raw dataset in `research/data/raw/` has a SHA-256 checksum, source URL and download time in `data/raw/manifest.json`. `research/s0/verify_manifest.py` fails if any file changed.
+3. **S2 freedom to operate.** The prior-art gate asks two separate questions: (a) can we claim novelty? (b) do we infringe active EU/US patents (for example on automated carbon ledgers held by Persefoni, Watershed, IBM)? This is awareness only, not a legal opinion.
+4. **S4 synthetic validation rule.** The synthetic SME generator passes only if, for turnover, headcount and kWh against CYSTAT/Eurostat marginals, a two-sample Kolmogorov-Smirnov test gives p > 0.05, or the normalised Wasserstein distance ≤ 0.1 where only binned marginals exist. The threshold is fixed in `prereg/` before generation.

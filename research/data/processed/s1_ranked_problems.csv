@@ -1,0 +1,12 @@
+rank,code,field,class,score,rationale
+1,B3,energyTotal,c,6,Net-metered/net-billed rooftop PV hides self-consumed kWh: bill shows net import only
+2,B3,energyRenewable,c,6,Behind-the-meter PV share not observed; must be inferred
+3,B3,scope1,c,6,Litres often missing; EUR-to-litres needs price at date and fuel type
+4,B3,scope2Market,c,6,Residual mix for CY not always published; thin GO market
+5,B6,withdrawal,c,4,Borehole and shared-building water not metered
+6,B7,wasteHazardous,c,4,Sector-dependent partial evidence
+7,B7,wasteTotal,d,2,No mass evidence for most micro-SMEs
+8,B7,wasteDiverted,d,2,No per-firm mass evidence
+9,B9,recordable,c,2,Under-recording common; no reference
+10,B10,trainingHours,c,2,Needs reconstruction from invoices/HRDA subsidies
+11,B4,pollutants,d,1,No evidence for non-obligated firms
