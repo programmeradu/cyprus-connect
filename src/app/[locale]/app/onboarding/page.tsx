@@ -8,10 +8,10 @@ import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import {
   LeafIcon,
-  BoltIcon,
-  FireIcon,
+  BoltIcon
+
 } from "@/components/icons/CustomIcons";
-import { Check, Cloud, Settings, FolderUp, Trophy, BarChart3, Loader2, ExternalLink } from "lucide-react";
+import { Check, Cloud, Settings, FolderUp, Trophy, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
