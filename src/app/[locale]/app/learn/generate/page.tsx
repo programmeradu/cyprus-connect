@@ -157,7 +157,7 @@ export default function GenerateCoursePage() {
                     onClick={() => setFormData({ ...formData, difficultyLevel: level })}
                     disabled={isGenerating}
                     className={`vck-btn vck-btn-primary capitalize ${
-                      formData.difficultyLevel === level ? "" : "vck-btn-ghost"
+                      formData.difficultyLevel === level ? "vck-btn-primary" : ""
                     }`}
                   >
                     {level}

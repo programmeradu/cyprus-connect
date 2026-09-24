@@ -568,7 +568,7 @@ export default function InsightsPage() {
         title={t("compliance.title")}
         description={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
         action={
-          <Link href="/app/compliance" className="vck-btn vck-btn-primary">
+          <Link href="/app/compliance" className="vck-btn">
             {t("compliance.viewDashboard")}
           </Link>
         }

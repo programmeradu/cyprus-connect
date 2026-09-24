@@ -726,7 +726,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                   rowKey={(r, i) => `${r.title}-${i}`}
                 />
                 <div className="mt-3">
-                  <button type="button" onClick={() => router.push("/app/actions")} className="vck-btn vck-btn-primary w-full">
+                  <button type="button" onClick={() => router.push("/app/actions")} className="vck-btn w-full">
                     {t("results.viewAllActions")}
                   </button>
                 </div>
@@ -737,7 +737,7 @@ Return ONLY valid JSON (no markdown, no explanations):
           </Section>
 
           <div className="flex gap-3">
-            <button type="button" onClick={handleReset} className="vck-btn vck-btn-primary flex-1">
+            <button type="button" onClick={handleReset} className="vck-btn flex-1">
               {t("results.calcAgain")}
             </button>
             <button type="button" onClick={() => router.push("/app")} className="vck-btn vck-btn-primary flex-1">

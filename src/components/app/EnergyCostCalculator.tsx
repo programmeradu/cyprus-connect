@@ -245,7 +245,7 @@ export function EnergyCostCalculator() {
       <button
         type="button"
         onClick={fetchEnergyData}
-        className="vck-btn vck-btn-primary w-full mt-4"
+        className="vck-btn w-full mt-4"
       >
         {t("refresh")}
       </button>

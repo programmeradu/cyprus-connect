@@ -367,7 +367,7 @@ export default function LessonViewerPage() {
             )}
 
             <div className="mt-8 flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-5">
-              <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn vck-btn-primary">
+              <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn">
                 Back to course
               </button>
 

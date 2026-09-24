@@ -180,7 +180,7 @@ export default function MarketplaceAdminPage() {
           type="button"
           onClick={() => toggleFeatured(p.id, p.isFeatured)}
           disabled={updating === p.id}
-          className="vck-btn vck-btn-primary"
+          className="vck-btn"
         >
           {p.isFeatured ? "Featured" : "Feature"}
         </button>
@@ -214,7 +214,7 @@ export default function MarketplaceAdminPage() {
             type="button"
             onClick={() => generateBanner(p.id)}
             disabled={generating === p.id}
-            className="vck-btn vck-btn-primary"
+            className="vck-btn"
           >
             {generating === p.id ? "Generating\u2026" : "Generate banner"}
           </button>

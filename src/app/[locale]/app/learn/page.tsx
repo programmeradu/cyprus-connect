@@ -236,7 +236,7 @@ export default function LearnPage() {
       render: (c) => (
         <button
           type="button"
-          className="vck-btn vck-btn-primary"
+          className="vck-btn"
           onClick={(e) => {
             e.stopPropagation();
             if (c.isEnrolled) {

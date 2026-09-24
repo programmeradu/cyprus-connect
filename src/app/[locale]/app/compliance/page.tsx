@@ -445,7 +445,7 @@ function DocumentsTab({
       render: (doc) => (
         <button
           type="button"
-          className="vck-btn vck-btn-primary"
+          className="vck-btn"
           onClick={() => {
             if (doc.content) {
               const blob = new Blob([doc.content], { type: "text/markdown" });
@@ -473,7 +473,7 @@ function DocumentsTab({
             <button
               key={framework}
               type="button"
-              className="vck-btn vck-btn-primary"
+              className="vck-btn"
               onClick={() => onGenerate(framework)}
               disabled={generating}
             >

@@ -633,7 +633,7 @@ Generate a detailed image generation prompt (max 200 words):`;
                   <button
                     type="button"
                     onClick={() => downloadMedia(selectedMedia)}
-                    className="vck-btn vck-btn-primary"
+                    className="vck-btn"
                   >
                     {t("preview.download")}
                   </button>
@@ -663,7 +663,7 @@ Generate a detailed image generation prompt (max 200 words):`;
                           <button
                             type="button"
                             onClick={() => openExternalUrl(selectedMedia.url)}
-                            className="vck-btn vck-btn-primary"
+                            className="vck-btn"
                           >
                             {t("preview.openNewTab")}
                           </button>

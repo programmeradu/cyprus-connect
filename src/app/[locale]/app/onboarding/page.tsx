@@ -460,7 +460,7 @@ export default function OnboardingPage() {
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.accounting.desc")}
                   </p>
-                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
+                  <button className="vck-btn w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('accounting')}
                     disabled={qbConnecting}
                   >
@@ -487,7 +487,7 @@ export default function OnboardingPage() {
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.manual.desc")}
                   </p>
-                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
+                  <button className="vck-btn w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('manual')}
                   >
                     {t("step2.manual.cta")}

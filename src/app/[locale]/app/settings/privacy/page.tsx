@@ -172,7 +172,7 @@ export default function PrivacySettingsPage() {
         <div className="vck-card p-4 border-[var(--destructive)]">
           {!confirming ? (
             <button
-              className="vck-btn vck-btn-primary border-[var(--destructive)] text-[var(--destructive)]"
+              className="vck-btn border-[var(--destructive)] text-[var(--destructive)]"
               onClick={() => setConfirming(true)}
             >
               {t.deleteCta}
@@ -192,7 +192,7 @@ export default function PrivacySettingsPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  className="vck-btn vck-btn-primary"
+                  className="vck-btn"
                   onClick={() => {
                     setConfirming(false);
                     setConfirmText("");

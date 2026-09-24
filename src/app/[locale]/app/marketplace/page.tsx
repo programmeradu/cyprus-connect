@@ -148,7 +148,7 @@ export default function MarketplacePage() {
           title={t("titleA") + " " + t("titleB")}
           purpose={t("subtitle")}
           actions={
-            <a href="/app/marketplace/impact" className="vck-btn vck-btn-primary">
+            <a href="/app/marketplace/impact" className="vck-btn">
               {t("yourImpact")}
             </a>
           }
