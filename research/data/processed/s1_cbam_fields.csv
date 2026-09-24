@@ -1,0 +1,224 @@
+path,field,class,reason
+CBAM Report,Report issue date,A,report metadata
+CBAM Report,Draft report ID,A,report metadata
+CBAM Report,Report ID,A,report metadata
+CBAM Report,Reporting period,A,report metadata
+CBAM Report,Year,A,report metadata
+CBAM Report,Total goods imported,A,report metadata
+CBAM Report,Total emissions,A,report metadata
+CBAM Report > Reporting declarant,Identification number,A,importer registry data
+CBAM Report > Reporting declarant,Name,A,importer registry data
+CBAM Report > Reporting declarant,Role,A,importer registry data
+CBAM Report > Reporting declarant > Address,Member State of establishment,A,address
+CBAM Report > Reporting declarant > Address,Sub-division,A,address
+CBAM Report > Reporting declarant > Address,City,A,address
+CBAM Report > Reporting declarant > Address,Street,A,address
+CBAM Report > Reporting declarant > Address,Street additional line,A,address
+CBAM Report > Reporting declarant > Address,Number,A,address
+CBAM Report > Reporting declarant > Address,Postcode,A,address
+CBAM Report > Reporting declarant > Address,P.O. Box,A,address
+CBAM Report > Representative,Identification number,A,registry data
+CBAM Report > Representative,Name,A,registry data
+CBAM Report > Representative > Address,Member State of establishment,A,address
+CBAM Report > Representative > Address,Sub-division,A,address
+CBAM Report > Representative > Address,City,A,address
+CBAM Report > Representative > Address,Street,A,address
+CBAM Report > Representative > Address,Street additional line,A,address
+CBAM Report > Representative > Address,Number,A,address
+CBAM Report > Representative > Address,Postcode,A,address
+CBAM Report > Representative > Address,P.O. Box,A,address
+CBAM Report > Importer,Identification number,A,registry data
+CBAM Report > Importer,Name,A,registry data
+CBAM Report > Importer > Address,Member State or country of establishment,A,address
+CBAM Report > Importer > Address,Sub-division,A,address
+CBAM Report > Importer > Address,City,A,address
+CBAM Report > Importer > Address,Street,A,address
+CBAM Report > Importer > Address,Street additional line,A,address
+CBAM Report > Importer > Address,Number,A,address
+CBAM Report > Importer > Address,Postcode,A,address
+CBAM Report > Importer > Address,P.O. Box,A,address
+CBAM Report > Competent authority,Reference number,A,admin
+CBAM Report > Signatures > Report confirmation,Report global data confirmation,A,admin
+CBAM Report > Signatures > Report confirmation,Use of data confirmation,A,admin
+CBAM Report > Signatures > Report confirmation,Date of signature,A,admin
+CBAM Report > Signatures > Report confirmation,Place of signature,A,admin
+CBAM Report > Signatures > Report confirmation,Signature,A,admin
+CBAM Report > Signatures > Report confirmation,Position of person signing,A,admin
+CBAM Report > Signatures > Type of applicable reporting methodology,Other applicable reporting methodology,A,declaration choice
+CBAM Report > Remarks,Additional information,A,free text
+CBAM Report > CBAM goods imported,Goods item number,I,customs declaration line
+CBAM Report > CBAM goods imported > Representative,Identification number,A,registry data
+CBAM Report > CBAM goods imported > Representative,Name,A,registry data
+CBAM Report > CBAM goods imported > Representative > Address,Member State of establishment,A,address
+CBAM Report > CBAM goods imported > Representative > Address,Sub-division,A,address
+CBAM Report > CBAM goods imported > Representative > Address,City,A,address
+CBAM Report > CBAM goods imported > Representative > Address,Street,A,address
+CBAM Report > CBAM goods imported > Representative > Address,Street additional line,A,address
+CBAM Report > CBAM goods imported > Representative > Address,Number,A,address
+CBAM Report > CBAM goods imported > Representative > Address,Postcode,A,address
+CBAM Report > CBAM goods imported > Representative > Address,P.O. Box,A,address
+CBAM Report > CBAM goods imported > Importer,Identification number,A,registry data
+CBAM Report > CBAM goods imported > Importer,Name,A,registry data
+CBAM Report > CBAM goods imported > Importer > Address,Member State or country of establishment,A,address
+CBAM Report > CBAM goods imported > Importer > Address,Sub-division,A,address
+CBAM Report > CBAM goods imported > Importer > Address,City,A,address
+CBAM Report > CBAM goods imported > Importer > Address,Street,A,address
+CBAM Report > CBAM goods imported > Importer > Address,Street additional line,A,address
+CBAM Report > CBAM goods imported > Importer > Address,Number,A,address
+CBAM Report > CBAM goods imported > Importer > Address,Postcode,A,address
+CBAM Report > CBAM goods imported > Importer > Address,P.O. Box,A,address
+CBAM Report > CBAM goods imported > Commodity code,Harmonized system sub-heading code,I,SAD box 33 (CN code)
+CBAM Report > CBAM goods imported > Commodity code,Combined nomenclature code,I,SAD box 33 (CN code)
+CBAM Report > CBAM goods imported > Commodity code > Commodity details,Description of goods,I,SAD box 31
+CBAM Report > CBAM goods imported > Country of origin,Country code,I,SAD box 34
+CBAM Report > CBAM goods imported > Imported quantity per customs procedure,Sequence number,I,SAD procedure
+CBAM Report > CBAM goods imported > Imported quantity per customs procedure > Procedure,Requested procedure,I,SAD box 37
+CBAM Report > CBAM goods imported > Imported quantity per customs procedure > Procedure,Previous procedure,I,SAD box 37
+Inward processing information,Member State of inward processing authorisation,I,customs authorisation
+Inward processing information,Inward processing waiver for bill of discharge,I,customs authorisation
+Inward processing information,Authorisation,I,customs authorisation
+Inward processing information,Globalisation time start,I,customs authorisation
+Inward processing information,Globalisation time end,I,customs authorisation
+Inward processing information,Deadline for submission of bill of discharge,I,customs authorisation
+Area of import > Goods measure (per procedure),Net mass,I,SAD net mass
+Area of import > Goods measure (per procedure),Supplementary units,I,SAD net mass
+Area of import > Goods measure (per procedure),Type of measurement unit,I,SAD net mass
+Area of import > Goods measure (per procedure) > Goods measure (inward processing),Net mass,I,customs
+Area of import > Goods measure (per procedure) > Goods measure (inward processing),Supplementary units,I,customs
+Area of import > Goods measure (per procedure) > Goods measure (inward processing),Type of measurement unit,I,customs
+Area of import > Goods measure (per procedure) > Goods measure (inward processing) > Special references for goods,Additional information,I,customs
+Area of import > Goods measure (per procedure) > Goods measure (imported),Net mass,I,SAD net mass
+Area of import > Goods measure (per procedure) > Goods measure (imported),Supplementary units,I,SAD net mass
+Area of import > Goods measure (per procedure) > Goods measure (imported),Type of measurement unit,I,SAD net mass
+Area of import > Goods measure (per procedure) > Goods imported total emissions,Goods emissions per unit of product,S,computed from operator-specific embedded emissions
+Area of import > Goods measure (per procedure) > Goods imported total emissions,Goods total emissions,S,computed from operator-specific embedded emissions
+Area of import > Goods measure (per procedure) > Goods imported total emissions,Goods direct emissions,S,computed from operator-specific embedded emissions
+Area of import > Goods measure (per procedure) > Goods imported total emissions,Goods indirect emissions,S,computed from operator-specific embedded emissions
+Area of import > Goods measure (per procedure) > Goods imported total emissions,Type of measurement unit for emissions,S,computed from operator-specific embedded emissions
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Sequence number,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Type,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Country of document issuance,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Reference number,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Document line item number,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Issuing authority name,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Validity start date,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Validity end date,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods),Description,I,importer attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods) > Attachments,Filename,A,attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods) > Attachments,Universal Resource Identified,A,attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods) > Attachments,Multipurpose Internet Mail Extensions,A,attachments
+Area of import > Goods measure (per procedure) > Supporting documents (for goods) > Attachments,Included binary object,A,attachments
+Area of import > Goods measure (per procedure) > Remarks,Additional information,A,free text
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions,Emissions sequence number,S,operator data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions,Country of production,S,operator data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation,Operator ID,S,"operator identity; invoice often shows trader, not installation"
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation,Operator name,S,"operator identity; invoice often shows trader, not installation"
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,Country code,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,Sub-division,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,City,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,Street,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,Street additional line,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,Number,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,Postcode,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Address,P.O. Box,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Contact details,Name,S,operator
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Contact details,Phone number,S,operator
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > The company name of the installation > Contact details,e-mail,S,operator
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation,Installation ID,S,"installation ID, coordinates, UNLOCODE"
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation,Installation name,S,"installation ID, coordinates, UNLOCODE"
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation,Economic activity,S,"installation ID, coordinates, UNLOCODE"
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Country of establishment,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Sub-division,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,City,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Street,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Street additional line,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Number,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Postcode,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,P.O. Box,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Plot or parcel number,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,UNLOCODE,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Latitude,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Longitude,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation > Address,Type of coordinates,A,address
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Goods measure (produced),Net mass,S,operator production data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Goods measure (produced),Supplementary units,S,operator production data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Goods measure (produced),Type of measurement unit,S,operator production data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation emissions,Installation total emissions,S,operator MRV data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation emissions,Installation direct emissions,S,operator MRV data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation emissions,Installation indirect emissions,S,operator MRV data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Installation emissions,Type of measurement unit for emissions,S,operator MRV data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Direct embedded emissions,Type of determination,S,operator MRV data
+Area of import > Goods measure (per procedure) > CBAM goods’ emissions > Direct embedded emissions,Type of determination (electricity),S,operator MRV data
+Type of applicable reporting methodology,Applicable reporting methodology,A,declaration choice
+Type of applicable reporting methodology,Specific (direct) embedded emissions,A,declaration choice
+Type of applicable reporting methodology,Other source indication,A,declaration choice
+Type of applicable reporting methodology,Source of emission factor (for electricity),A,declaration choice
+Type of applicable reporting methodology,Emission factor,A,declaration choice
+Type of applicable reporting methodology,Electricity imported,A,declaration choice
+Type of applicable reporting methodology,Total embedded emissions of electricity imported,A,declaration choice
+Type of applicable reporting methodology,Type of measurement unit,A,declaration choice
+Type of applicable reporting methodology,Source of emissions factor value,A,declaration choice
+Type of applicable reporting methodology,Justification,A,declaration choice
+Type of applicable reporting methodology,Fulfilment of conditionality,A,declaration choice
+Type of applicable reporting methodology > Indirect embedded emissions,Type of determination,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Source of emission factor,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Emission factor,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Specific (indirect) embedded emissions,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Type of measurement unit,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Electricity consumed,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Source of electricity,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions,Source of emissions factor value,S3,operator electricity consumption + source of emission factor
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters,Sequence number,S3,"operator process data (route, precursors)"
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters,Method ID,S3,"operator process data (route, precursors)"
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters,Method name,S3,"operator process data (route, precursors)"
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters,Identification number of the specific steel mill,S3,"operator process data (route, precursors)"
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters,Additional Information,S3,"operator process data (route, precursors)"
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Sequence number,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Parameter ID,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Parameter name,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Description,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Type of parameter value,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Parameter value,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters,Additional information,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Sequence number,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Parameter ID,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Parameter name,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Description,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Type of parameter value,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Parameter value,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Direct emissions qualifying parameters > Indirect emissions qualifying parameters,Additional information,S3,operator process data
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Sequence number,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Type of emissions document,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Country of document issuance,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Reference number,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Document line item number,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Issuing authority name,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Validity start date,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Validity end date,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition),Description,S,operator verification documents
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition) > Attachments,Filename,A,attachments
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition) > Attachments,Universal Resource Identified,A,attachments
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition) > Attachments,Multipurpose Internet Mail Extensions,A,attachments
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Supporting documents (for emissions definition) > Attachments,Included binary object,A,attachments
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Sequence number,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Type of instrument,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Description and indication of legal act,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Amount of carbon price due,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Currency,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Exchange rate,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Amount (EURO),S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due,Country code,S,origin-country carbon price paid by operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,Sequence number,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,Type of goods covered,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,CN code of goods covered,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,Quantity of emissions covered,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,"Quantity covered by free allocations, any rebate or other form of compensation",S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,Supplementary information,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due,Additional information,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due > Goods measure (covered),Net mass,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due > Goods measure (covered),Supplementary units,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Carbon price due > Goods covered under carbon price due > Goods measure (covered),Type of measurement unit,S,operator
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Remarks,Sequence number,A,free text
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Remarks,Additional Information,A,free text
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Remarks,"Representatives/importers shall be registered either at CBAM report level or at the CBAM goods imported level, which shall depend on whether the same or different representatives/importers are related to CBAM goods imported.",A,free text
+Type of applicable reporting methodology > Indirect embedded emissions > Production method & qualifying parameters > Remarks,"Representatives/importers shall be registered either at CBAM report level or at the CBAM goods imported level, which shall depend on whether the same or different representatives/importers are related to CBAM goods imported.",A,free text
