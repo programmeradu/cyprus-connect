@@ -1,0 +1,11 @@
+# Research stack (S4 experiments). Install in a local venv, not the web app.
+pymc
+numpyro
+arviz
+simuk
+mapie
+pymrio
+brightway2
+scipy
+pandas
+open-coscientist
