@@ -257,7 +257,7 @@ export default function OnboardingPage() {
   }
 
   const inputCls =
-    "w-full h-10 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-[14px] text-[var(--vc-ink)] focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-70";
+    "vco-input w-full h-10 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-[14px] text-[var(--vc-ink)] focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-70";
   const stepMotion = {
     initial: { opacity: 0, y: 12 },
     animate: { opacity: 1, y: 0 },

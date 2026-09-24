@@ -1367,6 +1367,15 @@
   .vc .vco .vck-head h1 { font-size: 22px; }
   .vc .vco-rail { margin-bottom: 12px; }
   .vc .vco-rail li { padding-top: 8px; }
+  .vc .vck-page.vco { padding-bottom: 76px !important; }
+  .vc .vco-plate { padding-top: 16px; padding-bottom: 16px; }
+  .vc .vco-input { height: 36px; }
+  .vc .vco-form .vck-label { margin-bottom: 4px; }
+  .vc .vco-form .grid { row-gap: 8px; }
+  .vc .vco-form-head { margin-bottom: 6px; }
+  .vc .vco-form-head img { width: 48px; height: 48px; margin: -8px 0; }
+  .vc .vco-plate-head { margin-bottom: 10px; }
+  .vc .vco-foot { margin-top: 10px; padding-top: 10px; }
 }
 /* One frame on desktop and tablet with enough height. */
 @media (min-width: 900px) and (min-height: 620px) {
