@@ -87,7 +87,7 @@
 /* A row of plates is not a row of cards. It is ONE slab of sage glass,
    divided by hairlines, exactly as the concept divides its bottom band. */
 .vc .vck-grid,
-.vc .grid:has(> .app-card) {
+.vc .grid:has(> .vck-card) {
   display: grid;
   gap: 0;
   min-width: 0;
@@ -110,7 +110,7 @@
    overflow clip removes the ones that would land on the outer edge, so
    spans, odd counts and wrapped rows all seam correctly. */
 .vc .vck-grid > *,
-.vc .grid:has(> .app-card) > * {
+.vc .grid:has(> .vck-card) > * {
   min-width: 0;
   border: 0;
   border-radius: 0;
