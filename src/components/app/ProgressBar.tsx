@@ -39,16 +39,16 @@ export const ProgressBar = ({
       {(label || showValue) && (
         <div className="flex items-center justify-between mb-1.5">
           {label && (
-            <span className="app-label break-words">{label}</span>
+            <span className="vck-label break-words">{label}</span>
           )}
           {showValue && (
-            <span className="app-num app-meta shrink-0">
+            <span className="vck-num vck-meta shrink-0">
               {value} / {max}
             </span>
           )}
         </div>
       )}
-      <div className={`relative w-full ${sizeClasses[size]} rounded-[2px] bg-[var(--app-surface-2)] overflow-hidden border border-[var(--app-rule)]`}>
+      <div className={`relative w-full ${sizeClasses[size]} rounded-[2px] bg-[var(--vc-well)] overflow-hidden border border-[var(--vc-rule-soft)]`}>
         <div
           className={`absolute inset-y-0 left-0 rounded-[2px] ${colorClasses[color]} transition-[width] duration-500 ease-out`}
           style={{ width: `${percentage}%` }}

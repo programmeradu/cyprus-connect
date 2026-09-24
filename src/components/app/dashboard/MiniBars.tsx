@@ -30,7 +30,7 @@ export const MiniBars = ({
   if (!points.length) {
     return (
       <div className={`flex items-end ${className}`} style={{ height }} role="img" aria-label={`${label}: no data yet`}>
-        <span className="h-px w-full bg-[var(--app-rule)]" />
+        <span className="h-px w-full bg-[var(--vc-rule-soft)]" />
       </div>
     );
   }
@@ -49,7 +49,7 @@ export const MiniBars = ({
           >
             <div
               className={`absolute inset-x-0 bottom-0 transition-colors group-hover:bg-primary ${
-                i === points.length - 1 ? "bg-primary" : "bg-[var(--app-rule-strong)]"
+                i === points.length - 1 ? "bg-primary" : "bg-[var(--vc-rule)]"
               }`}
               style={{ height: `${Math.max(2, (p.value / max) * 100)}%` }}
             />
@@ -57,13 +57,13 @@ export const MiniBars = ({
         ))}
       </div>
       <div className="mt-2 flex items-baseline justify-between gap-2">
-        <span className="app-meta text-[0.6875rem]">{points[0].label}</span>
+        <span className="vck-meta text-[0.6875rem]">{points[0].label}</span>
         {points.length > 2 && (
-          <span className="app-meta text-[0.6875rem]">
+          <span className="vck-meta text-[0.6875rem]">
             {points[Math.floor((points.length - 1) / 2)].label}
           </span>
         )}
-        <span className="app-meta text-[0.6875rem]">{points[points.length - 1].label}</span>
+        <span className="vck-meta text-[0.6875rem]">{points[points.length - 1].label}</span>
       </div>
     </div>
   );

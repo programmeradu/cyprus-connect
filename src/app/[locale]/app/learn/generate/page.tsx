@@ -110,9 +110,9 @@ export default function GenerateCoursePage() {
         <AiUnavailable feature="generate a lesson" onRetry={generateCourse} />
       ) : (
         <Section title="Course details">
-          <div className="app-card space-y-5 p-5">
+          <div className="vck-card space-y-5 p-5">
             <div>
-              <label className="app-label mb-2 block">
+              <label className="vck-label mb-2 block">
                 Course topic <span className="text-destructive">*</span>
               </label>
               <input
@@ -121,18 +121,18 @@ export default function GenerateCoursePage() {
                 onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
                 placeholder="e.g., Carbon footprint reduction strategies"
                 disabled={isGenerating}
-                className="w-full rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--app-rule-strong)]"
+                className="w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               />
-              <p className="app-meta mt-1">What sustainability topic would you like to learn about?</p>
+              <p className="vck-meta mt-1">What sustainability topic would you like to learn about?</p>
             </div>
 
             <div>
-              <label className="app-label mb-2 block">Industry</label>
+              <label className="vck-label mb-2 block">Industry</label>
               <select
                 value={formData.industry}
                 onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
                 disabled={isGenerating}
-                className="w-full rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--app-rule-strong)]"
+                className="w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               >
                 <option value="">General</option>
                 <option value="manufacturing">Manufacturing</option>
@@ -144,11 +144,11 @@ export default function GenerateCoursePage() {
                 <option value="agriculture">Agriculture</option>
                 <option value="finance">Finance</option>
               </select>
-              <p className="app-meta mt-1">The course will be tailored to your industry.</p>
+              <p className="vck-meta mt-1">The course will be tailored to your industry.</p>
             </div>
 
             <div>
-              <label className="app-label mb-2 block">Difficulty level</label>
+              <label className="vck-label mb-2 block">Difficulty level</label>
               <div className="grid grid-cols-3 gap-2">
                 {["beginner", "intermediate", "advanced"].map((level) => (
                   <button
@@ -156,8 +156,8 @@ export default function GenerateCoursePage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, difficultyLevel: level })}
                     disabled={isGenerating}
-                    className={`app-btn capitalize ${
-                      formData.difficultyLevel === level ? "" : "app-btn-ghost"
+                    className={`vck-btn capitalize ${
+                      formData.difficultyLevel === level ? "" : "vck-btn-ghost"
                     }`}
                   >
                     {level}
@@ -167,19 +167,19 @@ export default function GenerateCoursePage() {
             </div>
 
             <div>
-              <label className="app-label mb-2 block">Additional context (optional)</label>
+              <label className="vck-label mb-2 block">Additional context (optional)</label>
               <textarea
                 value={formData.customContext}
                 onChange={(e) => setFormData({ ...formData, customContext: e.target.value })}
                 placeholder="Any specific topics or challenges you'd like the course to address..."
                 rows={4}
                 disabled={isGenerating}
-                className="w-full resize-none rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--app-rule-strong)]"
+                className="w-full resize-none rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               />
             </div>
 
-            <div className="border-t border-[var(--app-rule)] pt-4">
-              <p className="app-label mb-2">What's included</p>
+            <div className="border-t border-[var(--vc-rule-soft)] pt-4">
+              <p className="vck-label mb-2">What's included</p>
               <ul className="space-y-1.5 text-sm leading-relaxed text-muted-foreground">
                 <li>AI-generated course structure with 3-4 comprehensive modules</li>
                 <li>3-5 lessons per module with varied content types</li>
@@ -193,7 +193,7 @@ export default function GenerateCoursePage() {
               type="button"
               onClick={generateCourse}
               disabled={!formData.topic || isGenerating}
-              className="app-btn w-full disabled:cursor-not-allowed disabled:opacity-50"
+              className="vck-btn w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isGenerating ? generationStep || "Generating…" : "Generate course with AI"}
             </button>

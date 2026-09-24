@@ -184,7 +184,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   const recColumns: Column<Recommendation>[] = [
     { key: "name", header: "Project", render: (r) => r.name },
-    { key: "category", header: "Category", hideOnMobile: true, render: (r) => <span className="app-tag capitalize">{r.category.replace("_", " ")}</span> },
+    { key: "category", header: "Category", hideOnMobile: true, render: (r) => <span className="vck-tag capitalize">{r.category.replace("_", " ")}</span> },
     { key: "price", header: "Price / ton", numeric: true, render: (r) => `\u20ac${r.pricePerTon}` }
   ];
 
@@ -200,7 +200,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           purpose={project?.description}
           breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: project?.name ?? "" }]}
           actions={
-            <button type="button" className="app-btn" onClick={() => setShowPurchaseDialog(true)} disabled={!project}>
+            <button type="button" className="vck-btn" onClick={() => setShowPurchaseDialog(true)} disabled={!project}>
               Purchase offsets
             </button>
           }
@@ -222,13 +222,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             {Object.keys(project.impactMetrics ?? {}).length === 0 ? (
               <EmptyState title="No impact metrics recorded yet" description="This project has not published measured impact data." />
             ) : (
-              <div className="app-card grid grid-cols-2 gap-4 p-4 sm:grid-cols-4">
+              <div className="vck-card grid grid-cols-2 gap-4 p-4 sm:grid-cols-4">
                 {Object.entries(project.impactMetrics).map(([key, value]) => (
                   <div key={key}>
-                    <p className="app-num text-lg font-semibold">
+                    <p className="vck-num text-lg font-semibold">
                       {typeof value === "number" ? value.toLocaleString() : String(value ?? "")}
                     </p>
-                    <p className="app-meta capitalize">{key.replace(/_/g, " ")}</p>
+                    <p className="vck-meta capitalize">{key.replace(/_/g, " ")}</p>
                   </div>
                 ))}
               </div>
@@ -239,7 +239,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             <Section title="UN Sustainable Development Goals">
               <div className="flex flex-wrap gap-1.5">
                 {project.sdgGoals.map((goal) => (
-                  <span key={goal} className="app-tag app-num">
+                  <span key={goal} className="vck-tag vck-num">
                     SDG {goal}
                   </span>
                 ))}
@@ -249,7 +249,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
           {!project.bannerImage && (
             <Section title="Banner image" description="Generate a banner image for this listing.">
-              <button type="button" className="app-btn-ghost app-btn" onClick={handleGenerateBanner} disabled={generatingBanner}>
+              <button type="button" className="vck-btn-ghost vck-btn" onClick={handleGenerateBanner} disabled={generatingBanner}>
                 {generatingBanner ? "Generating\u2026" : "Generate banner"}
               </button>
             </Section>
@@ -277,34 +277,34 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           className="fixed inset-0 z-50 flex items-center justify-center bg-[color-mix(in_oklab,var(--foreground)_60%,transparent)] p-4"
           onClick={() => setShowPurchaseDialog(false)}
         >
-          <div className="app-overlay w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
+          <div className="vck-overlay w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-[1.0625rem] font-semibold leading-snug">Purchase carbon offsets</h3>
 
             <div className="mt-4 space-y-3">
               <div>
-                <label className="app-label mb-1.5 block">Number of tons</label>
+                <label className="vck-label mb-1.5 block">Number of tons</label>
                 <input
                   type="number"
                   min="1"
                   max={project.availableTons}
                   value={purchaseTons}
                   onChange={(e) => setPurchaseTons(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-full rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                  className="w-full rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
 
-              <div className="app-card-inset space-y-2 p-3.5">
+              <div className="vck-inset space-y-2 p-3.5">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Price per ton</span>
-                  <span className="app-num font-medium">\u20ac{project.pricePerTon}</span>
+                  <span className="vck-num font-medium">\u20ac{project.pricePerTon}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Quantity</span>
-                  <span className="app-num font-medium">{purchaseTons} tons CO\u2082</span>
+                  <span className="vck-num font-medium">{purchaseTons} tons CO\u2082</span>
                 </div>
-                <div className="flex items-center justify-between border-t border-[var(--app-rule)] pt-2">
+                <div className="flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-2">
                   <span className="text-sm font-semibold">Total amount</span>
-                  <span className="app-metric text-lg">\u20ac{totalPrice}</span>
+                  <span className="vck-num text-lg">\u20ac{totalPrice}</span>
                 </div>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             <div className="mt-5 flex gap-2">
               <button
                 type="button"
-                className="app-btn-ghost app-btn flex-1"
+                className="vck-btn-ghost vck-btn flex-1"
                 onClick={() => setShowPurchaseDialog(false)}
                 disabled={purchasing}
               >
@@ -320,7 +320,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </button>
               <button
                 type="button"
-                className="app-btn flex-1"
+                className="vck-btn flex-1"
                 onClick={handlePurchase}
                 disabled={purchasing}
               >

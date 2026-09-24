@@ -156,15 +156,15 @@ export function EnergyCostCalculator() {
   }
 
   return (
-    <div className="app-card p-4">
+    <div className="vck-card p-4">
       <div className="mb-4">
         <h3 className="text-[1.0625rem] font-semibold leading-snug break-words">{t("title")}</h3>
-        <p className="app-meta mt-1 break-words">
+        <p className="vck-meta mt-1 break-words">
           {dataRegion} &middot; {user?.countryCode || userZone}
         </p>
         {isUsingFallback && (
-          <div className="app-card-inset mt-2 p-2.5">
-            <p className="app-meta break-words">{t("fallbackNote", { region: dataRegion })}</p>
+          <div className="vck-inset mt-2 p-2.5">
+            <p className="vck-meta break-words">{t("fallbackNote", { region: dataRegion })}</p>
           </div>
         )}
       </div>
@@ -186,7 +186,7 @@ export function EnergyCostCalculator() {
       {/* Input Controls */}
       <div className="space-y-4 my-4">
         <div>
-          <label className="app-label mb-1.5 block">
+          <label className="vck-label mb-1.5 block">
             {t("annualConsumption")}
           </label>
           <input
@@ -198,15 +198,15 @@ export function EnergyCostCalculator() {
             onChange={(e) => setConsumption(parseInt(e.target.value))}
             className="w-full accent-primary"
           />
-          <div className="flex justify-between app-meta mt-1">
+          <div className="flex justify-between vck-meta mt-1">
             <span>10k</span>
-            <span className="app-num font-medium text-foreground">{(consumption / 1000).toFixed(0)}k</span>
+            <span className="vck-num font-medium text-foreground">{(consumption / 1000).toFixed(0)}k</span>
             <span>200k</span>
           </div>
         </div>
 
         <div>
-          <label className="app-label mb-1.5 block">
+          <label className="vck-label mb-1.5 block">
             {t("efficiencyGain")}
           </label>
           <input
@@ -218,9 +218,9 @@ export function EnergyCostCalculator() {
             onChange={(e) => setEfficiencyGain(parseInt(e.target.value))}
             className="w-full accent-primary"
           />
-          <div className="flex justify-between app-meta mt-1">
+          <div className="flex justify-between vck-meta mt-1">
             <span>5%</span>
-            <span className="app-num font-medium text-foreground">{efficiencyGain}%</span>
+            <span className="vck-num font-medium text-foreground">{efficiencyGain}%</span>
             <span>50%</span>
           </div>
         </div>
@@ -245,7 +245,7 @@ export function EnergyCostCalculator() {
       <button
         type="button"
         onClick={fetchEnergyData}
-        className="app-btn-ghost app-btn w-full mt-4"
+        className="vck-btn-ghost vck-btn w-full mt-4"
       >
         {t("refresh")}
       </button>

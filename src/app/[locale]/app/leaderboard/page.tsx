@@ -62,7 +62,7 @@ export default function LeaderboardPage() {
       header: t("globalRankings"),
       numeric: true,
       width: "4rem",
-      render: (row) => <span className="app-num">#{row.rank}</span>
+      render: (row) => <span className="vck-num">#{row.rank}</span>
     },
     {
       key: "name",
@@ -73,7 +73,7 @@ export default function LeaderboardPage() {
           <div className="min-w-0">
           <p className="font-medium break-words">{row.companyName || row.name}</p>
           {user && row.userId === user.id && (
-            <span className="app-tag mt-1" data-tone="positive">{t("you")}</span>
+            <span className="vck-tag mt-1" data-tone="positive">{t("you")}</span>
           )}
           </div>
         </div>
@@ -118,14 +118,14 @@ export default function LeaderboardPage() {
         <Section title="Top three">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {topThree.map((entry) => (
-              <div key={entry.userId} className="app-card p-4">
+              <div key={entry.userId} className="vck-card p-4">
                 <div className="mb-2 flex items-center gap-2.5">
                   <ConsoleAvatar seed={entry.companyName || entry.name || "vuneli"} size={32} styleKey="shapes" alt="" />
-                  <p className="app-label">#{entry.rank}</p>
+                  <p className="vck-label">#{entry.rank}</p>
                 </div>
                 <p className="text-sm font-medium break-words mb-1">{entry.companyName || entry.name}</p>
-                <p className="app-meta">{t("podiumCredits", { credits: entry.totalCredits })}</p>
-                <p className="app-meta">{t("podiumActions", { actions: entry.actionsCompleted })}</p>
+                <p className="vck-meta">{t("podiumCredits", { credits: entry.totalCredits })}</p>
+                <p className="vck-meta">{t("podiumActions", { actions: entry.actionsCompleted })}</p>
               </div>
             ))}
           </div>

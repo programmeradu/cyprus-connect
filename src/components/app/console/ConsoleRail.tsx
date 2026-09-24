@@ -81,14 +81,14 @@ export const ConsoleRail = ({
           <span className="block truncate text-[13px] font-extrabold leading-tight tracking-[-0.2px]">
             {workspaceName ?? "Vuneli"}
           </span>
-          <span className="block truncate text-[10px] font-semibold opacity-50">Cyprus workspace</span>
+          <span className="block truncate text-[12px] font-semibold opacity-50">Cyprus workspace</span>
         </span>
       </div>
 
       <nav className="vc-scroll flex-1 overflow-y-auto px-2.5 pb-3">
         {GROUPS.map((group) => (
           <div key={group.title} className="mb-4">
-            <p className="px-2.5 pb-1.5 text-[9.5px] font-extrabold uppercase tracking-[0.5px] opacity-40">
+            <p className="px-2.5 pb-1.5 text-[9.5px] font-extrabold tracking-[0.5px] opacity-40">
               {group.title}
             </p>
             <div className="space-y-0.5">
@@ -125,7 +125,7 @@ export const ConsoleRail = ({
             <span className="block truncate text-[12px] font-bold leading-tight">
               {ownerName ?? "Signed in"}
             </span>
-            <span className="block truncate text-[10px] font-semibold opacity-50">
+            <span className="block truncate text-[12px] font-semibold opacity-50">
               {ownerRole ?? "Workspace member"}
             </span>
           </span>

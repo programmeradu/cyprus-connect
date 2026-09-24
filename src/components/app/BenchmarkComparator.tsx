@@ -152,20 +152,20 @@ export function BenchmarkComparator() {
   }
 
   return (
-    <div className="app-card p-4">
+    <div className="vck-card p-4">
       <div className="mb-4">
         <h3 className="text-[1.0625rem] font-semibold leading-snug break-words">{t("title")}</h3>
-        <p className="app-meta mt-1 break-words">{t("subtitle")} &mdash; {userCountry}</p>
+        <p className="vck-meta mt-1 break-words">{t("subtitle")} &mdash; {userCountry}</p>
       </div>
 
       {/* Input Form */}
       <div className="space-y-3 mb-4">
         <div>
-          <label className="app-label mb-1.5 block">{t("sector")}</label>
+          <label className="vck-label mb-1.5 block">{t("sector")}</label>
           <select
             value={companyData.sector}
             onChange={(e) => setCompanyData({ ...companyData, sector: e.target.value })}
-            className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm text-foreground"
+            className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm text-foreground"
           >
             {SECTOR_KEYS.map((k) => (
               <option key={k} value={k}>
@@ -177,35 +177,35 @@ export function BenchmarkComparator() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label className="app-label mb-1.5 block">{t("emissions")}</label>
+            <label className="vck-label mb-1.5 block">{t("emissions")}</label>
             <input
               type="number"
               value={companyData.annual_emissions || ''}
               onChange={(e) => setCompanyData({ ...companyData, annual_emissions: parseFloat(e.target.value) || 0 })}
               placeholder="250"
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm app-num"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm vck-num"
             />
           </div>
 
           <div>
-            <label className="app-label mb-1.5 block">{t("employees")}</label>
+            <label className="vck-label mb-1.5 block">{t("employees")}</label>
             <input
               type="number"
               value={companyData.employees || ''}
               onChange={(e) => setCompanyData({ ...companyData, employees: parseInt(e.target.value) || 0 })}
               placeholder="50"
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm app-num"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm vck-num"
             />
           </div>
 
           <div>
-            <label className="app-label mb-1.5 block">{t("revenue")}</label>
+            <label className="vck-label mb-1.5 block">{t("revenue")}</label>
             <input
               type="number"
               value={companyData.annual_revenue || ''}
               onChange={(e) => setCompanyData({ ...companyData, annual_revenue: parseFloat(e.target.value) || 0 })}
               placeholder="5000000"
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm app-num"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm vck-num"
             />
           </div>
         </div>
@@ -218,7 +218,7 @@ export function BenchmarkComparator() {
           type="button"
           onClick={handleCompare}
           disabled={loading}
-          className="app-btn w-full"
+          className="vck-btn w-full"
         >
           {loading ? t('analyzing') : t('compare')}
         </button>
@@ -227,21 +227,21 @@ export function BenchmarkComparator() {
       {/* Comparison Results */}
       {comparison && (
         <div className="space-y-3">
-          <div className="app-card-inset p-3">
+          <div className="vck-inset p-3">
             <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-              <span className="app-label">{t("performance")}</span>
-              <span className="app-tag" data-tone={interpretationTone(comparison.interpretation)}>
+              <span className="vck-label">{t("performance")}</span>
+              <span className="vck-tag" data-tone={interpretationTone(comparison.interpretation)}>
                 {t(`interp.${comparison.interpretation}` as any)}
               </span>
             </div>
-            <p className="app-meta break-words">
+            <p className="vck-meta break-words">
               {t('percentileLocal', { country: userCountry, n: comparison.percentile_rank })}
             </p>
           </div>
 
           {comparison.location_context && (
-            <div className="app-card-inset p-3">
-              <p className="app-meta break-words">
+            <div className="vck-inset p-3">
+              <p className="vck-meta break-words">
                 {t('countryImpact', { country: userCountry })}
               </p>
               <p className="text-sm font-medium break-words mt-1">
@@ -291,9 +291,9 @@ export function BenchmarkComparator() {
           </MetricRow>
 
           {comparison.recommendations && comparison.recommendations.length > 0 && (
-            <div className="app-ledger">
+            <div className="vck-ledgerbox">
               <div className="px-3 py-2">
-                <p className="app-label">{t("tailored")}</p>
+                <p className="vck-label">{t("tailored")}</p>
               </div>
               {comparison.recommendations.slice(0, 3).map((rec, idx) => (
                 <div key={idx} className="px-3 py-2.5 text-sm break-words">

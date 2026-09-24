@@ -64,7 +64,7 @@ export const TickSeries = ({
         role="img"
         aria-label={`${label}: not enough data yet`}
       >
-        <span className="h-px w-full bg-[var(--app-rule)]" />
+        <span className="h-px w-full bg-[var(--vc-rule-soft)]" />
       </div>
     );
   }
@@ -149,7 +149,7 @@ export const TickSeries = ({
             x2={tooth.x}
             y1={combBottom}
             y2={combBottom - tooth.h}
-            stroke={tooth.active ? "var(--primary)" : "var(--app-rule-strong)"}
+            stroke={tooth.active ? "var(--primary)" : "var(--vc-rule)"}
             strokeWidth={tooth.active ? 2 : tooth.anchor ? 1.5 : 1}
             strokeOpacity={tooth.active ? 1 : tooth.anchor ? 0.95 : 0.55}
             vectorEffect="non-scaling-stroke"
@@ -173,13 +173,13 @@ export const TickSeries = ({
       {/* Hover read-out */}
       {activePoint && (
         <div
-          className="pointer-events-none absolute top-0 z-10 min-w-[8.5rem] -translate-x-1/2 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 py-2 shadow-sm"
+          className="pointer-events-none absolute top-0 z-10 min-w-[8.5rem] -translate-x-1/2 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 py-2 shadow-sm"
           style={{
             left: `clamp(4.75rem, ${((active! + 0.5) / points.length) * 100}%, calc(100% - 4.75rem))`
           }}
         >
-          <p className="app-meta leading-tight break-words">{activePoint.label}</p>
-          <p className="app-num mt-0.5 text-sm font-semibold leading-tight break-words">
+          <p className="vck-meta leading-tight break-words">{activePoint.label}</p>
+          <p className="vck-num mt-0.5 text-sm font-semibold leading-tight break-words">
             {activePoint.value.toFixed(precision)}
             {unit ? <span className="ml-1 text-xs font-medium text-muted-foreground">{unit}</span> : null}
           </p>
@@ -214,7 +214,7 @@ export const TickSeries = ({
         {[0, Math.floor((points.length - 1) / 2), points.length - 1]
           .filter((v, i, arr) => arr.indexOf(v) === i)
           .map((i) => (
-            <span key={i} className="app-meta text-[0.6875rem] whitespace-nowrap">
+            <span key={i} className="vck-meta text-[0.6875rem] whitespace-nowrap">
               {points[i].label}
             </span>
           ))}

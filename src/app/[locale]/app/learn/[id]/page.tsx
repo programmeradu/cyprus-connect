@@ -120,11 +120,11 @@ export default function CourseDetailsPage() {
       render: (l) => (
         <div>
           <p className="font-medium break-words">{l.title}</p>
-          <p className="app-meta mt-0.5 break-words">{l.moduleTitle}</p>
+          <p className="vck-meta mt-0.5 break-words">{l.moduleTitle}</p>
         </div>
       )
     },
-    { key: "type", header: "Type", hideOnMobile: true, render: (l) => <span className="app-tag capitalize">{l.contentType}</span> },
+    { key: "type", header: "Type", hideOnMobile: true, render: (l) => <span className="vck-tag capitalize">{l.contentType}</span> },
     { key: "minutes", header: "Minutes", numeric: true, render: (l) => l.estimatedMinutes },
     { key: "status", header: "Status", numeric: true, render: (l) => (l.isCompleted ? "Done" : "\u2013") }
   ];
@@ -144,7 +144,7 @@ export default function CourseDetailsPage() {
             course?.isEnrolled && progressPercentage < 100 ? (
               <button
                 type="button"
-                className="app-btn"
+                className="vck-btn"
                 onClick={() => {
                   for (const m of course.modules) {
                     for (const l of m.lessons) {
@@ -173,7 +173,7 @@ export default function CourseDetailsPage() {
               <Metric label="Total time" value={`${totalHours}h`} />
             </MetricRow>
             {course.isEnrolled && (
-              <p className="app-meta mt-3">{Math.round(progressPercentage)}% complete \u00b7 {completedCount} / {totalLessons} lessons</p>
+              <p className="vck-meta mt-3">{Math.round(progressPercentage)}% complete \u00b7 {completedCount} / {totalLessons} lessons</p>
             )}
           </Section>
 

@@ -106,7 +106,7 @@ export default function MarketplacePage() {
           <ConsoleAvatar seed={p.name} size={30} styleKey="shapes" alt="" />
           <div className="min-w-0">
             <p className="font-medium break-words">{p.name}</p>
-            <p className="app-meta mt-0.5 break-words">{p.location}</p>
+            <p className="vck-meta mt-0.5 break-words">{p.location}</p>
           </div>
         </div>
       )
@@ -115,7 +115,7 @@ export default function MarketplacePage() {
       key: "category",
       header: "Category",
       hideOnMobile: true,
-      render: (p) => <span className="app-tag capitalize">{p.category.replace("_", " ")}</span>
+      render: (p) => <span className="vck-tag capitalize">{p.category.replace("_", " ")}</span>
     },
     {
       key: "certification",
@@ -148,7 +148,7 @@ export default function MarketplacePage() {
           title={t("titleA") + " " + t("titleB")}
           purpose={t("subtitle")}
           actions={
-            <a href="/app/marketplace/impact" className="app-btn-ghost app-btn">
+            <a href="/app/marketplace/impact" className="vck-btn-ghost vck-btn">
               {t("yourImpact")}
             </a>
           }

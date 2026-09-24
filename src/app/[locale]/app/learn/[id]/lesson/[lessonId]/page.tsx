@@ -221,7 +221,7 @@ export default function LessonViewerPage() {
     >
       {lesson && contentData && (
         <Section>
-          <div className="app-card p-5 sm:p-8">
+          <div className="vck-card p-5 sm:p-8">
             {lesson.contentType === "text" && contentData.text && (
               <div
                 className="prose max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-muted-foreground prose-img:rounded-lg"
@@ -231,7 +231,7 @@ export default function LessonViewerPage() {
 
             {lesson.contentType === "video" && (lesson.videoUrl || contentData.videoUrl) && (
               <div className="space-y-4">
-                <div className="app-card-inset overflow-hidden">
+                <div className="vck-inset overflow-hidden">
                   <video src={lesson.videoUrl || contentData.videoUrl} controls className="w-full" />
                 </div>
                 {contentData.text && (
@@ -246,12 +246,12 @@ export default function LessonViewerPage() {
                   <>
                     <div>
                       <h2 className="text-[1.0625rem] font-semibold">Quiz assessment</h2>
-                      <p className="app-meta mt-1">Answer all questions below to complete this lesson. You need 70% or higher to pass.</p>
+                      <p className="vck-meta mt-1">Answer all questions below to complete this lesson. You need 70% or higher to pass.</p>
                     </div>
 
                     {contentData.questions.map((question, qIndex) => (
-                      <div key={qIndex} className="app-card-inset p-4">
-                        <p className="app-label mb-2">Question {qIndex + 1} of {contentData.questions?.length ?? 0}</p>
+                      <div key={qIndex} className="vck-inset p-4">
+                        <p className="vck-label mb-2">Question {qIndex + 1} of {contentData.questions?.length ?? 0}</p>
                         <p className="mb-4 text-sm font-medium">{question.question}</p>
                         <div className="space-y-2">
                           {question.options.map((option, oIndex) => (
@@ -261,8 +261,8 @@ export default function LessonViewerPage() {
                               onClick={() => setSelectedAnswers((prev) => ({ ...prev, [qIndex]: oIndex }))}
                               className={`w-full rounded-[0.375rem] border p-3 text-left text-sm transition-colors ${
                                 selectedAnswers[qIndex] === oIndex
-                                  ? "border-[var(--app-rule-strong)] bg-[var(--app-surface-3)]"
-                                  : "border-[var(--app-rule)] hover:bg-[var(--app-surface-2)]"
+                                  ? "border-[var(--vc-rule)] bg-[var(--vc-rail-active)]"
+                                  : "border-[var(--vc-rule-soft)] hover:bg-[var(--vc-well)]"
                               }`}
                             >
                               {option}
@@ -272,15 +272,15 @@ export default function LessonViewerPage() {
                       </div>
                     ))}
 
-                    <div className="flex items-center justify-between border-t border-[var(--app-rule)] pt-4">
-                      <p className="app-meta">
+                    <div className="flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-4">
+                      <p className="vck-meta">
                         {Object.keys(selectedAnswers).length} of {contentData.questions?.length ?? 0} questions answered
                       </p>
                       <button
                         type="button"
                         onClick={submitQuiz}
                         disabled={Object.keys(selectedAnswers).length < (contentData.questions?.length ?? 0) || isCompleting}
-                        className="app-btn"
+                        className="vck-btn"
                       >
                         {isCompleting ? "Submitting\u2026" : "Submit quiz"}
                       </button>
@@ -288,12 +288,12 @@ export default function LessonViewerPage() {
                   </>
                 ) : (
                   <div className="space-y-6">
-                    <div className="app-card-inset p-6 text-center">
-                      <p className="app-metric text-3xl">{quizScore}%</p>
+                    <div className="vck-inset p-6 text-center">
+                      <p className="vck-num text-3xl">{quizScore}%</p>
                       <h3 className="mt-2 text-[1.0625rem] font-semibold">
                         {quizScore >= 70 ? "You passed this quiz" : "Keep learning"}
                       </h3>
-                      <p className="app-meta mt-1">
+                      <p className="vck-meta mt-1">
                         {quizScore >= 70
                           ? "You've passed this quiz and completed the lesson."
                           : "You need 70% to pass. Review the material and try again."}
@@ -306,8 +306,8 @@ export default function LessonViewerPage() {
                         {contentData.questions.map((question, qIndex) => {
                           const isCorrect = selectedAnswers[qIndex] === question.correctAnswer;
                           return (
-                            <div key={qIndex} className="app-card-inset p-4">
-                              <p className="app-label mb-1">Question {qIndex + 1} \u00b7 {isCorrect ? "Correct" : "Incorrect"}</p>
+                            <div key={qIndex} className="vck-inset p-4">
+                              <p className="vck-label mb-1">Question {qIndex + 1} \u00b7 {isCorrect ? "Correct" : "Incorrect"}</p>
                               <p className="mb-3 text-sm font-medium">{question.question}</p>
                               <div className="space-y-1.5">
                                 {question.options.map((option, oIndex) => {
@@ -318,10 +318,10 @@ export default function LessonViewerPage() {
                                       key={oIndex}
                                       className={`rounded-[0.375rem] border px-3 py-2 text-sm ${
                                         isCorrectOption
-                                          ? "border-[var(--app-rule-strong)]"
+                                          ? "border-[var(--vc-rule)]"
                                           : isSelected
                                             ? "border-destructive"
-                                            : "border-[var(--app-rule)]"
+                                            : "border-[var(--vc-rule-soft)]"
                                       }`}
                                     >
                                       {option}
@@ -329,7 +329,7 @@ export default function LessonViewerPage() {
                                   );
                                 })}
                               </div>
-                              {question.explanation && <p className="app-meta mt-2">{question.explanation}</p>}
+                              {question.explanation && <p className="vck-meta mt-2">{question.explanation}</p>}
                             </div>
                           );
                         })}
@@ -344,12 +344,12 @@ export default function LessonViewerPage() {
               <div className="space-y-4">
                 <div>
                   <h2 className="text-[1.0625rem] font-semibold">Practical exercises</h2>
-                  <p className="app-meta mt-1">Complete these hands-on exercises to apply what you've learned.</p>
+                  <p className="vck-meta mt-1">Complete these hands-on exercises to apply what you've learned.</p>
                 </div>
                 {contentData.exercises.map((exercise, index) => (
-                  <div key={index} className="app-card-inset p-4">
+                  <div key={index} className="vck-inset p-4">
                     <h3 className="text-sm font-semibold">{index + 1}. {exercise.title}</h3>
-                    <p className="app-meta mt-1">{exercise.description}</p>
+                    <p className="vck-meta mt-1">{exercise.description}</p>
                     <ul className="mt-3 space-y-1.5 text-sm">
                       {exercise.tasks.map((task, tIndex) => (
                         <li key={tIndex}>{task}</li>
@@ -361,24 +361,24 @@ export default function LessonViewerPage() {
             )}
 
             {!lesson.completion && lesson.contentType !== "quiz" && (
-              <button type="button" onClick={() => completeLesson()} disabled={isCompleting} className="app-btn mt-6">
+              <button type="button" onClick={() => completeLesson()} disabled={isCompleting} className="vck-btn mt-6">
                 {isCompleting ? "Saving\u2026" : "Mark as complete"}
               </button>
             )}
 
-            <div className="mt-8 flex items-center justify-between border-t border-[var(--app-rule)] pt-5">
-              <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="app-btn-ghost app-btn">
+            <div className="mt-8 flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-5">
+              <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn-ghost vck-btn">
                 Back to course
               </button>
 
               {lesson.completion && nextLessonId && (
-                <button type="button" onClick={goToNextLesson} className="app-btn">
+                <button type="button" onClick={goToNextLesson} className="vck-btn">
                   Next lesson
                 </button>
               )}
 
               {lesson.completion && !nextLessonId && (
-                <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="app-btn">
+                <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn">
                   Course complete
                 </button>
               )}

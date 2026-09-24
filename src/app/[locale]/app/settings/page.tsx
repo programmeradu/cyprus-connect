@@ -26,7 +26,7 @@ import {
 } from "@/components/app/console/ConsoleAvatar";
 
 const inputClass =
-  "w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
+  "w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
 
 function SettingsContent() {
   const t = useTranslations("dashboard.settings");
@@ -229,9 +229,9 @@ function SettingsContent() {
       {activeTab === "profile" && (
         <>
           <Section title={t("profileInformation")}>
-            <div className="app-card p-4 space-y-4">
+            <div className="vck-card p-4 space-y-4">
               <div>
-                <label className="app-label block mb-1.5">{t("yourName")}</label>
+                <label className="vck-label block mb-1.5">{t("yourName")}</label>
                 <input
                   type="text"
                   value={name}
@@ -240,12 +240,12 @@ function SettingsContent() {
                 />
               </div>
               <div>
-                <label className="app-label block mb-1.5">{t("email")}</label>
+                <label className="vck-label block mb-1.5">{t("email")}</label>
                 <input type="email" value={email} disabled className={`${inputClass} opacity-60 cursor-not-allowed`} />
-                <p className="app-meta mt-1.5">{t("emailLocked")}</p>
+                <p className="vck-meta mt-1.5">{t("emailLocked")}</p>
               </div>
               <div>
-                <label className="app-label block mb-1.5">{t("companyName")}</label>
+                <label className="vck-label block mb-1.5">{t("companyName")}</label>
                 <input
                   type="text"
                   value={companyName}
@@ -256,7 +256,7 @@ function SettingsContent() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="app-label block mb-1.5">{t("industry")}</label>
+                  <label className="vck-label block mb-1.5">{t("industry")}</label>
                   <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputClass}>
                     <option value="">{t("selectIndustry")}</option>
                     <option value="technology">{t("industries.technology")}</option>
@@ -268,7 +268,7 @@ function SettingsContent() {
                   </select>
                 </div>
                 <div>
-                  <label className="app-label block mb-1.5">{t("companySize")}</label>
+                  <label className="vck-label block mb-1.5">{t("companySize")}</label>
                   <select value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className={inputClass}>
                     <option value="">{t("selectTeamSize")}</option>
                     <option value="1-10">{t("teamSizes.1-10")}</option>
@@ -286,12 +286,12 @@ function SettingsContent() {
             title="Avatar character"
             description="Your avatar is drawn from your name. Pick the character family you like."
           >
-            <div className="app-card p-4">
+            <div className="vck-card p-4">
               <div className="flex items-center gap-3 mb-4">
                 <ConsoleAvatar seed={name || user?.name || "vuneli"} size={48} styleKey={avatarStyle} alt="" />
                 <div className="min-w-0">
                   <p className="text-sm font-medium break-words">{name || user?.name || "Your avatar"}</p>
-                  <p className="app-meta mt-0.5">{AVATAR_STYLES[avatarStyle]?.label ?? "Sketch people"}</p>
+                  <p className="vck-meta mt-0.5">{AVATAR_STYLES[avatarStyle]?.label ?? "Sketch people"}</p>
                 </div>
               </div>
               <div
@@ -310,8 +310,8 @@ function SettingsContent() {
                       onClick={() => setAvatarStyle(key as AvatarStyleKey)}
                       className={`flex flex-col items-center gap-1.5 rounded-[0.625rem] border p-2.5 text-center transition-colors ${
                         selected
-                          ? "border-[var(--app-rule-strong)] ring-2 ring-[var(--app-rule-strong)]"
-                          : "border-[var(--app-rule)] hover:border-[var(--app-rule-strong)]"
+                          ? "border-[var(--vc-rule)] ring-2 ring-[var(--vc-rule)]"
+                          : "border-[var(--vc-rule-soft)] hover:border-[var(--vc-rule)]"
                       }`}
                     >
                       <ConsoleAvatar
@@ -320,7 +320,7 @@ function SettingsContent() {
                         styleKey={key as AvatarStyleKey}
                         alt=""
                       />
-                      <span className="app-meta leading-tight break-words">{entry.label}</span>
+                      <span className="vck-meta leading-tight break-words">{entry.label}</span>
                     </button>
                   );
                 })}
@@ -329,29 +329,29 @@ function SettingsContent() {
           </Section>
 
           <Section title={t("regional")}>
-            <div className="app-card p-4 space-y-4">
-              <div className="app-card-inset p-3">
+            <div className="vck-card p-4 space-y-4">
+              <div className="vck-inset p-3">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-medium">Cyprus (CY)</p>
-                    <p className="app-meta mt-0.5">Asia/Nicosia · el-CY / en-CY</p>
+                    <p className="vck-meta mt-0.5">Asia/Nicosia · el-CY / en-CY</p>
                   </div>
-                  <span className="app-tag" data-tone="positive">EUR €</span>
+                  <span className="vck-tag" data-tone="positive">EUR €</span>
                 </div>
-                <p className="app-meta mt-2">
+                <p className="vck-meta mt-2">
                   Vuneli is Cyprus-native. Jurisdiction, currency, timezone and emission factors are fixed to Cyprus.
                 </p>
               </div>
-              <button className="app-btn" onClick={handleSave} disabled={isSaving}>
+              <button className="vck-btn" onClick={handleSave} disabled={isSaving}>
                 {isSaving ? tc("saving") : tc("save")}
               </button>
             </div>
           </Section>
 
           <Section title={t("dangerZone")}>
-            <div className="app-card p-4 border-[var(--destructive)]">
+            <div className="vck-card p-4 border-[var(--destructive)]">
               <p className="text-sm text-muted-foreground mb-4">{t("dangerBody")}</p>
-              <button className="app-btn-ghost app-btn border-[var(--destructive)] text-[var(--destructive)]">
+              <button className="vck-btn-ghost vck-btn border-[var(--destructive)] text-[var(--destructive)]">
                 {t("deleteAccount")}
               </button>
             </div>
@@ -375,7 +375,7 @@ function SettingsContent() {
           {prefsLoading ? (
             <SkeletonMetricRow />
           ) : (
-            <div className="app-ledger">
+            <div className="vck-ledgerbox">
               {[
                 { key: "emissionAlerts" as const, label: t("notif.emissionAlertsLabel"), description: t("notif.emissionAlertsDesc") },
                 { key: "goalAlerts" as const, label: t("notif.goalAlertsLabel"), description: t("notif.goalAlertsDesc") },
@@ -388,15 +388,15 @@ function SettingsContent() {
                 <div key={item.key} className="flex items-start justify-between gap-3 px-4 py-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{item.label}</p>
-                    <p className="app-meta mt-0.5">{item.description}</p>
+                    <p className="vck-meta mt-0.5">{item.description}</p>
                   </div>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={notificationPrefs[item.key]}
                     onClick={() => handleNotificationToggle(item.key)}
-                    className={`app-btn-ghost app-btn shrink-0 !min-h-[2.25rem] !px-3 ${
-                      notificationPrefs[item.key] ? "bg-[var(--app-surface-3)]" : ""
+                    className={`vck-btn-ghost vck-btn shrink-0 !min-h-[2.25rem] !px-3 ${
+                      notificationPrefs[item.key] ? "bg-[var(--vc-rail-active)]" : ""
                     }`}
                   >
                     {notificationPrefs[item.key] ? "On" : "Off"}

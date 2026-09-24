@@ -91,8 +91,8 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
         />
         <label
           htmlFor="file-upload"
-          className={`app-card-inset flex flex-col items-center justify-center w-full min-h-32 px-4 py-4 border-dashed text-center ${
-            state.loading ? "cursor-not-allowed" : "cursor-pointer hover:border-[var(--app-rule-strong)]"
+          className={`vck-inset flex flex-col items-center justify-center w-full min-h-32 px-4 py-4 border-dashed text-center ${
+            state.loading ? "cursor-not-allowed" : "cursor-pointer hover:border-[var(--vc-rule)]"
           }`}
         >
           {state.loading ? (
@@ -100,7 +100,7 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
           ) : (
             <>
               <p className="text-sm font-medium text-foreground break-words">{t('uploadCta')}</p>
-              <p className="app-meta mt-1 break-words">{t('uploadHint')}</p>
+              <p className="vck-meta mt-1 break-words">{t('uploadHint')}</p>
             </>
           )}
         </label>
@@ -113,28 +113,28 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
 
       {/* Success - Extracted Data */}
       {state.billData && (
-        <div className="app-ledger">
+        <div className="vck-ledgerbox">
           <div className="px-3 py-2.5">
-            <p className="app-label">{t('extracted')}</p>
+            <p className="vck-label">{t('extracted')}</p>
           </div>
           <div className="grid grid-cols-1 gap-y-2.5 px-3 py-2.5 sm:grid-cols-2 sm:gap-x-4">
             <div>
-              <p className="app-meta break-words">{t('accountNumber')}</p>
+              <p className="vck-meta break-words">{t('accountNumber')}</p>
               <p className="text-sm font-medium break-words">{state.billData.accountNumber || t('na')}</p>
             </div>
             <div>
-              <p className="app-meta break-words">{t('utilityType')}</p>
+              <p className="vck-meta break-words">{t('utilityType')}</p>
               <p className="text-sm font-medium capitalize break-words">{state.billData.usageType}</p>
             </div>
             <div>
-              <p className="app-meta break-words">{t('usageAmount')}</p>
-              <p className="app-num text-sm font-medium break-words">
+              <p className="vck-meta break-words">{t('usageAmount')}</p>
+              <p className="vck-num text-sm font-medium break-words">
                 {state.billData.usageAmount?.toFixed(2) || t('na')} {state.billData.usageUnit}
               </p>
             </div>
             <div>
-              <p className="app-meta break-words">{t('totalAmount')}</p>
-              <p className="app-num text-sm font-medium break-words">
+              <p className="vck-meta break-words">{t('totalAmount')}</p>
+              <p className="vck-num text-sm font-medium break-words">
                 {state.billData.currency} {state.billData.totalAmount?.toFixed(2) || t('na')}
               </p>
             </div>
@@ -142,7 +142,7 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
 
           {state.billData.billingPeriodStart && (
             <div className="px-3 py-2.5">
-              <p className="app-meta break-words">{t('billingPeriod')}</p>
+              <p className="vck-meta break-words">{t('billingPeriod')}</p>
               <p className="text-sm font-medium break-words">{state.billData.billingPeriodStart}</p>
             </div>
           )}
@@ -151,16 +151,16 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
 
       {/* OCR Result Details */}
       {state.ocrResult && state.ocrResult.text && (
-        <details className="app-card group">
+        <details className="vck-card group">
           <summary className="flex flex-wrap items-center gap-2 px-3 py-2.5 text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
             <span className="break-words">{t('viewRaw')}</span>
             {state.ocrResult.confidence && (
-              <span className="app-meta ml-auto break-words">
+              <span className="vck-meta ml-auto break-words">
                 {t('confidence', { pct: (state.ocrResult.confidence * 100).toFixed(0) })}
               </span>
             )}
           </summary>
-          <div className="border-t border-[var(--app-rule)] px-3 py-2.5 max-h-48 overflow-y-auto">
+          <div className="border-t border-[var(--vc-rule-soft)] px-3 py-2.5 max-h-48 overflow-y-auto">
             <p className="text-xs whitespace-pre-wrap font-mono text-muted-foreground break-words">
               {state.ocrResult.text}
             </p>
