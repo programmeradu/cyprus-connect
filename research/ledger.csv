@@ -11,3 +11,4 @@ date,task,stage,person,hours,cost_eur,frascati_type,notes
 2026-09-24,S2 prior art I-13,S2,AI,1,0,experimental development,S2-PA-11
 2026-09-24,I-13 prereg lock; EXIOBASE CY priors; E02 experiment; SBC attempt,S0-S4,AI,3,0,experimental development,S3-PREREG-13 S1-PRIOR-13 S4-E02-13 S4-E02-SBC
 2026-09-24,Unified spec + CYSTAT check + frontier mining round 1,S1/S5,AI agent,3,0,basic research (desk),see registry S1-CYSTAT-13 S5-UNIFY-01 S1-FRONTIER-01
+2026-09-24,S2 prior art I-14 + frontier mining round 2,S1-S2,AI,2.5,0,basic research (desk),S2-PA-12 S1-FRONTIER-02
