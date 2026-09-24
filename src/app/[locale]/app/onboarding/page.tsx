@@ -66,7 +66,7 @@ export default function OnboardingPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isSessionLoading && !session?.user) {
-      router.push("/auth");
+      if (!APP_OPEN_ACCESS) router.push("/auth");
     }
   }, [session, isSessionLoading, router]);
 
