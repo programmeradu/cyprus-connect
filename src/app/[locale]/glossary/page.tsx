@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     ? "Γλωσσάρι Βιωσιμότητας & ESG | Vuneli"
     : "Sustainability & ESG Glossary | Vuneli";
   const description = isEl
-    ? "Ορισμοί όρων για CSRD, CBAM, Scope 1/2/3, EU Taxonomy και άλλα - γραμμένοι για ΜμΕ."
-    : "Plain-English definitions for CSRD, CBAM, Scope 1/2/3, EU Taxonomy and more - written for SMEs.";
+    ? "Απλοί ορισμοί για CSRD, CBAM, VSME, Scope 1/2/3, EU Taxonomy και άλλους όρους βιωσιμότητας. Γραμμένοι για ΜμΕ στην Κύπρο."
+    : "Plain-English definitions for CSRD, CBAM, VSME, Scope 1/2/3, EU Taxonomy and 45 more sustainability terms. Written for SMEs in Cyprus.";
   const url = `${SITE_URL}/${locale}/glossary`;
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/glossary`;
@@ -31,7 +31,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title, description,
     alternates: { canonical: url, languages },
     openGraph: { title, description, url, siteName: "Vuneli", type: "website",
-      locale: isEl ? "el_CY" : "en_US" },
+      locale: isEl ? "el_CY" : "en_US",
+      images: [{ url: `${SITE_URL}/opengraph-image.png`, width: 1200, height: 630, alt: title }] },
   };
 }
 

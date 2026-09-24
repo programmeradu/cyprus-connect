@@ -18,16 +18,21 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `/${locale}/news`,
+      canonical: `https://vuneli.com/${locale}/news`,
       languages: {
-        en: "/en/news",
-        el: "/el/news",
+        en: "https://vuneli.com/en/news",
+        "el-CY": "https://vuneli.com/el/news",
+        "x-default": "https://vuneli.com/en/news",
       },
     },
     openGraph: {
       title,
       description,
       type: "website",
+      url: `https://vuneli.com/${locale}/news`,
+      siteName: "Vuneli",
+      locale: isEl ? "el_CY" : "en_US",
+      images: [{ url: "https://vuneli.com/opengraph-image.png", width: 1200, height: 630, alt: title }],
     },
     twitter: { card: "summary_large_image", title, description },
   };
