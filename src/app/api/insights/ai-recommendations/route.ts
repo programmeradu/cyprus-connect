@@ -33,19 +33,10 @@ export async function POST(request: NextRequest) {
       ]
     });
 
-    if (!hasLovableAi()) {
-      return NextResponse.json({
-        success: true,
-        recommendations: generateFallbackRecommendations(currencySymbol, savingsInUserCurrency),
-        generatedAt: new Date().toISOString(),
-        fallback: true
-      });
-    }
-
     // Get user's preferred currency from userProfile
-    const userCurrency = userProfile?.preferredCurrency || "GHS";
+    const userCurrency = userProfile?.preferredCurrency || "EUR";
     const countryCurrencyMap: Record<string, string> = {
-      GH: "GHS", NG: "NGN", ZA: "ZAR", KE: "KES", US: "USD", 
+      CY: "EUR", GR: "EUR", GH: "GHS", NG: "NGN", ZA: "ZAR", KE: "KES", US: "USD", 
       GB: "GBP", EU: "EUR", CA: "CAD", AU: "AUD"
     };
     const detectedCurrency = countryCurrencyMap[userLocation?.countryCode] || userCurrency;
@@ -64,6 +55,15 @@ export async function POST(request: NextRequest) {
       if (converted !== null) {
         savingsInUserCurrency = Math.round(converted);
       }
+    }
+
+    if (!hasLovableAi()) {
+      return NextResponse.json({
+        success: true,
+        recommendations: generateFallbackRecommendations(currencySymbol, savingsInUserCurrency),
+        generatedAt: new Date().toISOString(),
+        fallback: true
+      });
     }
 
     // Build comprehensive context from user data
