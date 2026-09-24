@@ -1249,3 +1249,55 @@
     gap: 24px;
   }
 }
+
+/* ---- Onboarding frame -------------------------------------------------
+   Same page width and header as every console route. A numbered rail
+   replaces the per-step progress bars; the step body sits on one plate. */
+.vc .vco-rail {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--vc-rule);
+}
+.vc .vco-rail li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px 0 0;
+  min-width: 0;
+  border-top: 2px solid transparent;
+  margin-top: -1px;
+  color: var(--vc-ink-3);
+}
+.vc .vco-rail li[data-state="done"],
+.vc .vco-rail li[data-state="current"] { border-top-color: var(--vc-ink); color: var(--vc-ink); }
+.vc .vco-rail-n {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--vc-rule);
+  font-size: 13px;
+  font-weight: 650;
+}
+.vc .vco-rail li[data-state="current"] .vco-rail-n { background: var(--vc-lime); color: var(--vc-lime-ink); border-color: transparent; }
+.vc .vco-rail li[data-state="done"] .vco-rail-n { background: var(--vc-well); }
+.vc .vco-rail-label { font-size: 14px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+.vc .vco-plate {
+  border: 1px solid var(--vc-rule);
+  border-radius: 18px;
+  background: var(--vc-well);
+  padding: clamp(20px, 4vw, 40px);
+  color: var(--vc-ink-2);
+}
+@media (max-width: 640px) {
+  .vc .vco-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .vc .vco-rail li { flex-direction: column; align-items: flex-start; gap: 6px; padding-right: 6px; }
+  .vc .vco-rail-label { font-size: 12.5px; }
+}

@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import {
   LeafIcon,
   BoltIcon,
-  FireIcon
+  FireIcon,
 } from "@/components/icons/CustomIcons";
 import { Check, Cloud, Settings, FolderUp, Trophy, BarChart3, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
@@ -324,7 +324,7 @@ export default function OnboardingPage() {
                     ))}
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-[13.5px] text-[var(--vc-ink-2)] mb-6 leading-relaxed">
                     {t("step1.description")}
                   </p>
 
@@ -347,18 +347,8 @@ export default function OnboardingPage() {
               exit={{ opacity: 0, y: -20 }}
               className="vco-plate"
             >
-              {/* Progress bar */}
-              <div className="mb-8">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-[var(--vc-rule-soft)]" />
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-[var(--vc-rule-soft)]" />
-                </div>
-                <p className="text-center text-sm font-semibold text-foreground">2/4</p>
-              </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">
+              <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-2">
                 {t("step2.title")}
               </h2>
               <p className="text-sm text-muted-foreground mb-8">
@@ -370,7 +360,7 @@ export default function OnboardingPage() {
                 <h3 className="text-sm font-semibold mb-4">{t("step2.companyHeader")}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.yourName")}</label>
+                    <label className="block vck-label mb-2">{t("step2.yourName")}</label>
                     <input
                       type="text"
                       value={name}
@@ -380,7 +370,7 @@ export default function OnboardingPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.email")}</label>
+                    <label className="block vck-label mb-2">{t("step2.email")}</label>
                     <input
                       type="email"
                       value={email}
@@ -391,7 +381,7 @@ export default function OnboardingPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.companyName")}</label>
+                    <label className="block vck-label mb-2">{t("step2.companyName")}</label>
                     <input
                       type="text"
                       value={companyName}
@@ -401,7 +391,7 @@ export default function OnboardingPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.industry")}</label>
+                    <label className="block vck-label mb-2">{t("step2.industry")}</label>
                     <select
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
@@ -417,7 +407,7 @@ export default function OnboardingPage() {
                     </select>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-medium mb-2">{t("step2.teamSize")}</label>
+                    <label className="block vck-label mb-2">{t("step2.teamSize")}</label>
                     <select
                       value={teamSize}
                       onChange={(e) => setTeamSize(e.target.value)}
@@ -539,13 +529,7 @@ export default function OnboardingPage() {
               className="vco-plate"
             >
               <div className="text-center mb-8">
-                <div className="inline-flex gap-1 mb-3">
-                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-20 h-1.5 rounded-[2px] bg-[var(--vc-rule-soft)]" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-6">
                   {t("step3.title")}
                 </h2>
               </div>
@@ -655,7 +639,7 @@ export default function OnboardingPage() {
               className="vco-plate"
             >
               <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-4">
                   {t("step4.title")}
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
@@ -666,12 +650,6 @@ export default function OnboardingPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {(() => {
                   const items = t.raw("step4.features") as Array<{ title: string; desc: string }>;
-                  const icons = [
-                    <BarChart3 key="0" className="w-4 h-4" />,
-                    <BoltIcon key="1" className="w-4 h-4" />,
-                    <Trophy key="2" className="w-4 h-4" />,
-                    <FireIcon key="3" className="w-4 h-4" />,
-                  ];
                   return items.map((feature, i) => (
                     <motion.div
                       key={i}
