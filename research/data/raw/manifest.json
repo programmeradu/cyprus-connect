@@ -28,5 +28,29 @@
     "source_url": "http://publications.europa.eu/resource/celex/32023R1773",
     "bytes": 1564256,
     "retrieved_utc": "2026-09-24T11:23:48Z"
+  },
+  "eac_netbilling_connection_procedure_2022.pdf": {
+    "sha256": "297650394cc5af76fad6e5ed45998d80e1d6ceec983c30819dc5a611b8838206",
+    "source_url": "https://pilot.eac.com.cy/app/uploads/2026/04/PV_Systems_Connection_Procedure_with_Net_Billing_Method.pdf",
+    "bytes": 550218,
+    "retrieved_utc": "2026-09-24T11:31:33Z"
+  },
+  "eac_netbilling_technical_guide_2023_2.pdf": {
+    "sha256": "c8977bb9a709b5dc8822308193cc27b82d3fd3f30459ebb603d59eec49405cdd",
+    "source_url": "https://pilot.eac.com.cy/app/uploads/2026/04/Annex_1_Technical_Guide_Net-Billing_Version_2023_2.pdf",
+    "bytes": 6229121,
+    "retrieved_utc": "2026-09-24T11:31:33Z"
+  },
+  "eu_2025_2083_cbam_amendment.xhtml": {
+    "sha256": "0238f5524bc7f0b816ee976329c3bdd328aa5d16980e532fe2505d9dad7204ac",
+    "source_url": "http://publications.europa.eu/resource/celex/32025R2083",
+    "bytes": 294387,
+    "retrieved_utc": "2026-09-24T11:31:33Z"
+  },
+  "comext_cy_cbam_imports.json": {
+    "sha256": "a6a013eb62fe661a99d36fdf3ff8f8967a7db372a6250d0b6992b4a878af1a96",
+    "source_url": "https://ec.europa.eu/eurostat/api/comext/dissemination/statistics/1.0/data/DS-045409 (reporter=CY partner=EXT_EU27_2020 flow=1 2023-2025)",
+    "bytes": 36560,
+    "retrieved_utc": "2026-09-24T11:31:33Z"
   }
 }
