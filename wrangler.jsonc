@@ -14,7 +14,9 @@
 	"triggers": {
 		"crons": [
 			// Grant-alerts scan: every hour on the hour
-			"0 * * * *"
+			"0 * * * *",
+			// Database keep-alive: daily at 06:15 UTC (stops the free-tier pause)
+			"15 6 * * *"
 		]
 	},
 	"observability": {
