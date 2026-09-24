@@ -10,5 +10,23 @@
     "source_url": "https://energy.ec.europa.eu/document/download/906e60ca-8b6a-44e7-8589-652854d2fd3f_en?filename=Weekly_Oil_Bulletin_Prices_History_maticni_4web.xlsx",
     "bytes": 4471821,
     "retrieved_utc": "2026-09-24T11:15:31Z"
+  },
+  "cera_annual_report_2023_en.pdf": {
+    "sha256": "1a088855bada3e5b5e09a240fe3fe2a7c6d7956feb731801df983adc9dd7c764",
+    "source_url": "https://www.cera.org.cy/Templates/00001/data/ektheseis/2023_en.pdf",
+    "bytes": 2587693,
+    "retrieved_utc": "2026-09-24T11:23:48Z"
+  },
+  "cera_ceer_national_report_2024_en.pdf": {
+    "sha256": "f653c42b8122e26cf84fb055ae91f4444a21da64c280ee0aefc467f3655e0544",
+    "source_url": "https://www.ceer.eu/wp-content/uploads/2024/07/C24_Cyprus-EN.pdf",
+    "bytes": 6352513,
+    "retrieved_utc": "2026-09-24T11:23:48Z"
+  },
+  "eu_2023_1773_cbam_ir.xhtml": {
+    "sha256": "245929c6719fc361cb3ace6e129ab1c132275d7a5c92270a5f8c6093aee12eec",
+    "source_url": "http://publications.europa.eu/resource/celex/32023R1773",
+    "bytes": 1564256,
+    "retrieved_utc": "2026-09-24T11:23:48Z"
   }
 }
