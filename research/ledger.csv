@@ -1,3 +1,4 @@
 date,task,stage,person,hours,cost_eur,frascati_type,notes
 2026-09-24,Research pipeline design and review,S0,founder + AI,2,0,experimental development,Plan approved
 2026-09-24,S1 grid factor analysis + datapoint derivability,S1,AI,1.5,0,experimental development,Runs S1-GRID-01/02 S1-RANK-01
+2026-09-24,S1 fuel EUR-to-litres simulation + provenance manifest,S1,AI,1,0,experimental development,Run S1-FUEL-01

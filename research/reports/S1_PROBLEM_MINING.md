@@ -42,12 +42,26 @@ Ranked open problems (the top 3 stay in the top 3 in 26 of 27 weightings):
 Limits: the classification and the weights are judgement, recorded row by row in
 `s1/datapoints_classified.csv`. Next, pilot SME documents must validate them.
 
-## 3. Still open in S1
+## 3. Scope 1 from EUR-only fuel card lines (S1-FUEL-01)
+Data: EU Weekly Oil Bulletin, Cyprus pump prices 2022-2025 (checksum in manifest).
+Method: 2,000 simulated SMEs per year and fuel, 20-80 fill-ups each, station price spread 2.5%. Seed 20260924.
+
+| Method to turn EUR into litres | Error range (p5 to p95) |
+|---|---|
+| Yearly average price | within ±2.7% |
+| Weekly price at the payment date | within ±0.7% |
+| Wrong fuel type assumed (petrol vs diesel) | +7% to +11% (2023-2025) |
+
+**Verdict:** converting price to litres is solved by known methods, so it is not research.
+The error comes from *classification*: which fuel it was, and how much of a station payment was
+fuel versus shop items. We cannot measure the second without real bank data. I-04 is reframed.
+S2 must decide if the classification is research or plain engineering.
+
+## 4. Still open in S1
 - Size of problem 1: share of Cyprus SMEs with rooftop PV on net-metering or net-billing, and the
   typical self-consumption share (sources: CERA, EAC, RES and Energy Conservation Fund data).
-- Size of problem 3: EUR-to-litres error using EU Weekly Oil Bulletin prices for Cyprus.
 - CBAM fields (SAD customs data) and ESRS datapoints: not yet in the regulation graph.
 
-## 4. Candidates going to S2 (prior-art gate)
+## 5. Candidates going to S2 (prior-art gate)
 I-03 hidden PV self-consumption, I-04 Scope 1 from fragmentary fuel evidence, I-02 confidence
 scoring + evidence ranking. All three are candidates only. None is an innovation claim.
