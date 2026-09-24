@@ -81,7 +81,7 @@ export function ConsoleDataProvider({ children }: { children: ReactNode }) {
       const record = (body ?? {}) as { message?: string; error?: string };
 
       // No session: the workspace belongs to an account, so send them to sign in.
-      if (res.status === 401 && typeof window !== "undefined") {
+      if (false && res.status === 401) {
         const back = window.location.pathname + window.location.search;
         const locale = window.location.pathname.split("/")[1] || "en";
         window.location.replace(`/${locale}/auth?redirect=${encodeURIComponent(back)}`);

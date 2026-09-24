@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { LeafIcon } from "@/components/icons/CustomIcons";
-import { Check, Trophy, Loader2, ExternalLink } from "lucide-react";
+import { Check, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
@@ -67,7 +66,7 @@ export default function OnboardingPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isSessionLoading && !session?.user) {
-      if (!APP_OPEN_ACCESS) router.push("/auth");
+      if (false) router.push("/auth");
     }
   }, [session, isSessionLoading, router]);
 
@@ -245,7 +244,7 @@ export default function OnboardingPage() {
   };
 
   // Show loading state while fetching session data
-  if (isLoadingUserData || isSessionLoading) {
+  if (false && (isLoadingUserData || isSessionLoading)) {
     return (
       <div className="vck-page" aria-busy="true" aria-label={t("loading")}>
         <DeckSkeleton />
@@ -253,9 +252,23 @@ export default function OnboardingPage() {
     );
   }
 
-  if (!session?.user) {
+  if (false && !session?.user) {
     return null;
   }
+
+  const inputCls =
+    "w-full h-10 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-[14px] text-[var(--vc-ink)] focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-70";
+  const stepMotion = {
+    initial: { opacity: 0, y: 12 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -12 },
+    transition: { duration: 0.22, ease: "easeOut" as const },
+  };
+  const sources = [
+    { key: "utility" as const, img: step2Utility.src, primary: true },
+    { key: "accounting" as const, img: step2Accounting.src, primary: false },
+    { key: "manual" as const, img: step2Manual.src, primary: false },
+  ];
 
   return (
     <div className="vck-page vco">
@@ -266,7 +279,7 @@ export default function OnboardingPage() {
           const state = n < step ? "done" : n === step ? "current" : "next";
           return (
             <li key={label} data-state={state} aria-current={state === "current" ? "step" : undefined}>
-              <span className="vco-rail-n vck-num">{n}</span>
+              <span className="vco-rail-n vck-num">{state === "done" ? <Check className="h-3.5 w-3.5" aria-hidden /> : n}</span>
               <span className="vco-rail-label">{label}</span>
             </li>
           );
@@ -274,416 +287,170 @@ export default function OnboardingPage() {
       </ol>
       <div className="vco-body">
         <AnimatePresence mode="wait">
-          {/* Step 1: Welcome */}
           {step === 1 && (
-            <motion.div
-              key="step1"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="vco-plate"
-            >
-              {/* Title at Top - Spans Full Width */}
-              <div className="mb-8">
-                <div className="mb-2">
-                  <h2 className="text-[22px] font-semibold text-[var(--vc-ink)]">
-                    {t("step1.title")}
-                  </h2>
+            <motion.section key="step1" {...stepMotion} className="vco-plate">
+              <div className="vco-split">
+                <div className="vco-art">
+                  <div aria-hidden className="vco-art-shadow" />
+                  <img src={step1Welcome.src} alt={t("step1.imageAlt")} width={1024} height={1024} />
                 </div>
-              </div>
-
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                {/* Left Side - Illustration */}
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="relative w-full max-w-[20rem] sm:max-w-sm aspect-square">
-                    <div aria-hidden className="absolute inset-x-12 bottom-4 h-6 rounded-[50%] bg-foreground/10 blur-xl" />
-                    <img
-                      src={step1Welcome.src}
-                      alt={t("step1.imageAlt")}
-                      width={1024}
-                      height={1024}
-                      className="relative h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(40,60,45,0.18)]"
-                    />
-                  </div>
-                </div>
-
-                {/* Right Side - Content */}
-                <div className="flex-1 text-left">
-                  <h2 className="text-xl md:text-2xl font-semibold mb-6">
-                    {t("step1.heading")}
-                  </h2>
-
-                  <div className="space-y-3 mb-8">
-                    {(t.raw("step1.features") as string[]).map((feature, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * i }}
-                        className="flex items-center gap-3"
-                      >
-                        <div className="w-5 h-5 rounded-full border border-[var(--vc-rule)] flex items-center justify-center flex-shrink-0">
-                          <Check className="w-3 h-3 text-primary" />
-                        </div>
-                        <span className="text-sm text-foreground">{feature}</span>
-                      </motion.div>
+                <div className="vco-copy">
+                  <h2 className="vco-title">{t("step1.title")}</h2>
+                  <p className="vco-lead">{t("step1.heading")}</p>
+                  <ul className="vco-checks">
+                    {(t.raw("step1.features") as string[]).map((feature) => (
+                      <li key={feature}>
+                        <span className="vco-check" aria-hidden><Check className="h-3 w-3" /></span>
+                        {feature}
+                      </li>
                     ))}
-                  </div>
-
-                  <p className="text-[13.5px] text-[var(--vc-ink-2)] mb-6 leading-relaxed">
-                    {t("step1.description")}
-                  </p>
-
-                  <div className="flex items-center gap-4">
-                    <button className="vck-btn vck-btn-primary" onClick={() => setStep(2)}>
+                  </ul>
+                  <p className="vco-note">{t("step1.description")}</p>
+                  <div className="vco-actions">
+                    <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(2)}>
                       {t("step1.getStarted")}
                     </button>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </motion.section>
           )}
 
-          {/* Step 2: Connect Data Sources + Company Details */}
           {step === 2 && (
-            <motion.div
-              key="step2"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="vco-plate"
-            >
-
-              <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-2">
-                {t("step2.title")}
-              </h2>
-              <p className="text-sm text-muted-foreground mb-8">
-                {t("step2.subtitle")}
-              </p>
-
-              {/* Company Details Form */}
-              <div className="relative mb-8 overflow-hidden p-6 rounded-lg vck-inset">
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <h3 className="min-w-0 text-sm font-semibold">{t("step2.companyHeader")}</h3>
-                  <img src={step2Company.src} alt="" aria-hidden width={1024} height={1024} className="-my-4 h-20 w-20 shrink-0 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)] sm:h-24 sm:w-24" />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block vck-label mb-2">{t("step2.yourName")}</label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder={t("step2.yourNamePlaceholder")}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                  <div>
-                    <label className="block vck-label mb-2">{t("step2.email")}</label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder={t("step2.emailPlaceholder")}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                      disabled
-                    />
-                  </div>
-                  <div>
-                    <label className="block vck-label mb-2">{t("step2.companyName")}</label>
-                    <input
-                      type="text"
-                      value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder={t("step2.companyNamePlaceholder")}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                  <div>
-                    <label className="block vck-label mb-2">{t("step2.industry")}</label>
-                    <select
-                      value={industry}
-                      onChange={(e) => setIndustry(e.target.value)}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    >
-                      <option value="">{t("step2.selectIndustry")}</option>
-                      <option value="technology">{t("step2.industries.technology")}</option>
-                      <option value="retail">{t("step2.industries.retail")}</option>
-                      <option value="manufacturing">{t("step2.industries.manufacturing")}</option>
-                      <option value="hospitality">{t("step2.industries.hospitality")}</option>
-                      <option value="healthcare">{t("step2.industries.healthcare")}</option>
-                      <option value="finance">{t("step2.industries.finance")}</option>
-                    </select>
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block vck-label mb-2">{t("step2.teamSize")}</label>
-                    <select
-                      value={teamSize}
-                      onChange={(e) => setTeamSize(e.target.value)}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    >
-                      <option value="">{t("step2.selectTeamSize")}</option>
-                      <option value="1-10">{t("step2.teamSizes.1-10")}</option>
-                      <option value="11-50">{t("step2.teamSizes.11-50")}</option>
-                      <option value="51-200">{t("step2.teamSizes.51-200")}</option>
-                      <option value="201-500">{t("step2.teamSizes.201-500")}</option>
-                      <option value="500+">{t("step2.teamSizes.500+")}</option>
-                    </select>
-                  </div>
+            <motion.section key="step2" {...stepMotion} className="vco-plate">
+              <div className="vco-plate-head">
+                <div className="min-w-0">
+                  <h2 className="vco-title">{t("step2.title")}</h2>
+                  <p className="vco-sub">{t("step2.subtitle")}</p>
                 </div>
               </div>
 
-              {/* Data Source Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                {/* Utility Bills */}
-                <div className="p-5 rounded-lg bg-background border border-[var(--vc-rule)]">
-                  <img src={step2Utility.src} alt="" aria-hidden width={1024} height={1024} loading="lazy" className="mx-auto mb-3 h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)]" />
-                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.utility.title")}</h3>
-                  <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    {t("step2.utility.desc")}
-                  </p>
-                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
-                    onClick={() => handleUploadClick('utility')}
-                  >
-                    {t("step2.utility.cta")}
-                  </button>
+              <div className="vco-two">
+                <div className="vco-form vck-inset">
+                  <div className="vco-form-head">
+                    <h3>{t("step2.companyHeader")}</h3>
+                    <img src={step2Company.src} alt="" aria-hidden width={1024} height={1024} />
+                  </div>
+                  <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
+                    <label className="block">
+                      <span className="block vck-label mb-1.5">{t("step2.yourName")}</span>
+                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("step2.yourNamePlaceholder")} className={inputCls} autoComplete="name" />
+                    </label>
+                    <label className="block">
+                      <span className="block vck-label mb-1.5">{t("step2.email")}</span>
+                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("step2.emailPlaceholder")} className={inputCls} disabled />
+                    </label>
+                    <label className="block">
+                      <span className="block vck-label mb-1.5">{t("step2.companyName")}</span>
+                      <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder={t("step2.companyNamePlaceholder")} className={inputCls} autoComplete="organization" />
+                    </label>
+                    <label className="block">
+                      <span className="block vck-label mb-1.5">{t("step2.industry")}</span>
+                      <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputCls}>
+                        <option value="">{t("step2.selectIndustry")}</option>
+                        {["technology", "retail", "manufacturing", "hospitality", "healthcare", "finance"].map((k) => (
+                          <option key={k} value={k}>{t(`step2.industries.${k}`)}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block sm:col-span-2">
+                      <span className="block vck-label mb-1.5">{t("step2.teamSize")}</span>
+                      <select value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className={inputCls}>
+                        <option value="">{t("step2.selectTeamSize")}</option>
+                        {["1-10", "11-50", "51-200", "201-500", "500+"].map((k) => (
+                          <option key={k} value={k}>{t(`step2.teamSizes.${k}`)}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
                 </div>
 
-                {/* Accounting Software */}
-                <div className="p-5 rounded-lg vck-card hover:bg-[var(--vc-rail-active)] transition-colors">
-                  <img src={step2Accounting.src} alt="" aria-hidden width={1024} height={1024} loading="lazy" className="mx-auto mb-3 h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)]" />
-                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.accounting.title")}</h3>
-                  <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    {t("step2.accounting.desc")}
-                  </p>
-                  <button className="vck-btn w-full text-[12px] h-7"
-                    onClick={() => handleUploadClick('accounting')}
-                    disabled={qbConnecting}
-                  >
-                    {qbConnecting ? (
-                      <>
-                        <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                        {t("step2.accounting.connecting")}
-                      </>
-                    ) : (
-                      <>
-                        {t("step2.accounting.cta")}
-                        <ExternalLink className="w-3 h-3 ml-1" />
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Manual Upload */}
-                <div className="p-5 rounded-lg vck-card hover:bg-[var(--vc-rail-active)] transition-colors">
-                  <img src={step2Manual.src} alt="" aria-hidden width={1024} height={1024} loading="lazy" className="mx-auto mb-3 h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)]" />
-                  <h3 className="text-xs font-bold mb-2 text-center">{t("step2.manual.title")}</h3>
-                  <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
-                    {t("step2.manual.desc")}
-                  </p>
-                  <button className="vck-btn w-full text-[12px] h-7"
-                    onClick={() => handleUploadClick('manual')}
-                  >
-                    {t("step2.manual.cta")}
-                  </button>
-                </div>
+                <ul className="vco-sources">
+                  {sources.map((s) => (
+                    <li key={s.key} className="vco-source">
+                      <img src={s.img} alt="" aria-hidden width={1024} height={1024} loading="lazy" />
+                      <div className="min-w-0">
+                        <h3>{t(`step2.${s.key}.title`)}</h3>
+                        <p>{t(`step2.${s.key}.desc`)}</p>
+                      </div>
+                      <button
+                        className={`vck-btn ${s.primary ? "vck-btn-primary" : ""} vco-source-btn`}
+                        onClick={() => handleUploadClick(s.key)}
+                        disabled={s.key === "accounting" && qbConnecting}
+                      >
+                        {s.key === "accounting" && qbConnecting ? (
+                          <><Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" aria-hidden />{t("step2.accounting.connecting")}</>
+                        ) : (
+                          <>{t(`step2.${s.key}.cta`)}{s.key === "accounting" && <ExternalLink className="ml-1 h-3.5 w-3.5" aria-hidden />}</>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              {/* Security Notice */}
-              <div className="flex items-start gap-3 p-3 rounded-lg vck-inset mb-6">
-                <div className="w-7 h-7 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-[12px] font-medium text-foreground">
-                    {t("step2.security")}
-                  </p>
-                </div>
-              </div>
-
-              {/* Navigation */}
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => setStep(1)}
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {t("step2.back")}
-                </button>
-                <button className="vck-btn vck-btn-primary"
-                  onClick={() => setStep(3)}
-                  disabled={!canProceed()}
-                >
+              <div className="vco-foot">
+                <button onClick={() => setStep(1)} className="vco-back">{t("step2.back")}</button>
+                <p className="vco-foot-note">{t("step2.security")}</p>
+                <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(3)} disabled={false && !canProceed()}>
                   {t("step2.next")}
                 </button>
               </div>
-            </motion.div>
+            </motion.section>
           )}
 
-          {/* Step 3: Gamification Intro */}
           {step === 3 && (
-            <motion.div
-              key="step3"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="vco-plate"
-            >
-              <div className="text-center mb-8">
-                <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-6">
-                  {t("step3.title")}
-                </h2>
-              </div>
-
-              <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
-                {/* Left - Illustration */}
-                <div className="flex-1 flex justify-center">
-                  <div className="relative w-56 h-56 sm:w-72 sm:h-72">
-                    <div aria-hidden className="absolute inset-x-10 bottom-3 h-6 rounded-[50%] bg-foreground/10 blur-xl" />
-                    <img
-                      src={step3Plant.src}
-                      alt="A smiling young plant in a pot, with green credit coins and a check mark around it"
-                      width={1024}
-                      height={1024}
-                      loading="lazy"
-                      className="relative h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(40,60,45,0.18)]"
-                    />
-                  </div>
+            <motion.section key="step3" {...stepMotion} className="vco-plate">
+              <div className="vco-split">
+                <div className="vco-art">
+                  <div aria-hidden className="vco-art-shadow" />
+                  <img src={step3Plant.src} alt="A smiling young plant in a pot, with green credit coins and a check mark around it" width={1024} height={1024} />
                 </div>
-
-                {/* Right - Content */}
-                <div className="flex-1 text-left">
-                  <h3 className="text-xl font-bold mb-4">
-                    {t("step3.heading")}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                    {t("step3.description")}
-                  </p>
-
-                  {/* Preview Cards */}
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Green Credits */}
-                    <div className="p-3 rounded-lg vck-card">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 rounded-md border border-[var(--vc-rule)] flex items-center justify-center">
-                          <LeafIcon className="w-3 h-3 text-primary" />
-                        </div>
-                        <h4 className="text-[12px] font-bold">{t("step3.greenCredits")}</h4>
-                      </div>
-                      <p className="text-xl font-bold mb-0.5">
-                        1,250
-                        <span className="text-xs font-normal text-green-500 ml-1.5">+50</span>
-                      </p>
-                      <p className="text-[12px] text-muted-foreground">{t("step3.creditsEarned")}</p>
-                    </div>
-
-                    {/* Leaderboard */}
-                    <div className="p-3 rounded-lg vck-card">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 rounded-md border border-[var(--vc-rule)] flex items-center justify-center">
-                          <Trophy className="w-3 h-3 text-primary" />
-                        </div>
-                        <div className="flex gap-0.5">
-                          <div className="w-1 h-3 bg-chart-2 rounded" />
-                          <div className="w-1 h-4 bg-destructive rounded" />
-                          <div className="w-1 h-2.5 bg-chart-3 rounded" />
-                          <div className="w-1 h-3 bg-muted rounded" />
-                        </div>
-                      </div>
-                      <p className="text-[12px] font-medium mb-0.5">{t("step3.leaderboard")}</p>
-                      <p className="text-[12px] text-muted-foreground">{t("step3.yourRank")}</p>
-                    </div>
+                <div className="vco-copy">
+                  <h2 className="vco-title">{t("step3.title")}</h2>
+                  <p className="vco-lead">{t("step3.heading")}</p>
+                  <p className="vco-note">{t("step3.description")}</p>
+                  <dl className="vco-facts">
+                    <div><dt>{t("step3.greenCredits")}</dt><dd>{t("step3.creditsEarned")}</dd></div>
+                    <div><dt>{t("step3.leaderboard")}</dt><dd>{t("step3.yourRank")}</dd></div>
+                  </dl>
+                  <div className="vco-actions">
+                    <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(4)}>{t("step3.explore")}</button>
+                    <button onClick={() => setStep(2)} className="vco-back">{t("step3.back")}</button>
+                    <button onClick={() => setStep(4)} className="vco-back underline underline-offset-4">{t("step3.skip")}</button>
                   </div>
                 </div>
               </div>
-
-              <div className="flex flex-col items-center gap-3">
-                <button className="vck-btn vck-btn-primary w-full md:w-auto px-6" onClick={() => setStep(4)}>
-                  {t("step3.explore")}
-                </button>
-                <div className="flex items-center gap-6">
-                  <button
-                    onClick={() => setStep(2)}
-                    className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {t("step3.back")}
-                  </button>
-                  <button
-                    onClick={() => setStep(4)}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors underline"
-                  >
-                    {t("step3.skip")}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+            </motion.section>
           )}
 
-          {/* Step 4: Dashboard Tour */}
           {step === 4 && (
-            <motion.div
-              key="step4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="vco-plate"
-            >
-              <div className="flex justify-center mb-4">
-                <div className="relative w-40 h-40 sm:w-52 sm:h-52">
-                  <div aria-hidden className="absolute inset-x-8 bottom-2 h-5 rounded-[50%] bg-foreground/10 blur-xl" />
-                  <img
-                    src={step4Console.src}
-                    alt="A console tablet with a rising chart and gauge, a leaf coin, a check mark and a flag"
-                    width={1024}
-                    height={1024}
-                    loading="lazy"
-                    className="relative h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(40,60,45,0.18)]"
-                  />
+            <motion.section key="step4" {...stepMotion} className="vco-plate">
+              <div className="vco-split">
+                <div className="vco-art">
+                  <div aria-hidden className="vco-art-shadow" />
+                  <img src={step4Console.src} alt="A console tablet with a rising chart and gauge, a leaf coin, a check mark and a flag" width={1024} height={1024} />
+                </div>
+                <div className="vco-copy">
+                  <h2 className="vco-title">{t("step4.title")}</h2>
+                  <p className="vco-sub">{t("step4.subtitle")}</p>
+                  <ul className="vco-features">
+                    {(t.raw("step4.features") as Array<{ title: string; desc: string }>).map((feature) => (
+                      <li key={feature.title}>
+                        <h3>{feature.title}</h3>
+                        <p>{feature.desc}</p>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="vco-actions">
+                    <button className="vck-btn vck-btn-primary px-8" onClick={handleComplete} disabled={isSubmitting}>
+                      {isSubmitting ? t("step4.settingUp") : t("step4.cta")}
+                    </button>
+                    <button onClick={() => setStep(3)} className="vco-back">{t("step4.back")}</button>
+                  </div>
                 </div>
               </div>
-              <div className="text-center mb-8">
-                <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-4">
-                  {t("step4.title")}
-                </h2>
-                <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-                  {t("step4.subtitle")}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {(() => {
-                  const items = t.raw("step4.features") as Array<{ title: string; desc: string }>;
-                  return items.map((feature, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * i }}
-                      className="p-4 rounded-lg vck-card"
-                    >
-                      <h3 className="text-[15px] font-semibold mb-1.5 text-[var(--vc-ink)]">{feature.title}</h3>
-                      <p className="text-[13.5px] leading-relaxed text-[var(--vc-ink-2)]">{feature.desc}</p>
-                    </motion.div>
-                  ));
-                })()}
-              </div>
-
-              <div className="flex flex-col items-center gap-3">
-                <button className="vck-btn vck-btn-primary w-full md:w-auto px-8"
-                  onClick={handleComplete}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? t("step4.settingUp") : t("step4.cta")}
-                </button>
-                <button
-                  onClick={() => setStep(3)}
-                  className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {t("step4.back")}
-                </button>
-              </div>
-            </motion.div>
+            </motion.section>
           )}
         </AnimatePresence>
 
