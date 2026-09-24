@@ -4,5 +4,11 @@
     "source_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_cb_pem?geo=CY&unit=GWH&sinceTimePeriod=2021-01&format=JSON",
     "bytes": 26025,
     "retrieved_utc": "2026-09-24T11:15:02Z"
+  },
+  "eu_weekly_oil_bulletin_history.xlsx": {
+    "sha256": "8467d8c13c85f69bd59ee817832865ab92d2e57c11b1d572cf102df459446856",
+    "source_url": "https://energy.ec.europa.eu/document/download/906e60ca-8b6a-44e7-8589-652854d2fd3f_en?filename=Weekly_Oil_Bulletin_Prices_History_maticni_4web.xlsx",
+    "bytes": 4471821,
+    "retrieved_utc": "2026-09-24T11:15:31Z"
   }
 }
