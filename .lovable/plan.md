@@ -1,51 +1,76 @@
-## Where we are
+# Vuneli Research and Innovation Pipeline (before any roadmap)
 
-`/app` (the console overview) now has the finished visual language: sage background, flat glass plates, hairline rules, one lime accent, data read from `/api/console/overview`. The other 18 pages still use the older `app.css` shell (`PageShell`, `app-card`) or raw Tailwind, so they will look like a different product the moment you click a rail item.
+## Honest correction
+The thesis in the last document (confidence ranges, evidence ranking) was a hypothesis I wrote from reasoning alone. Nobody tested it, and nobody checked it against prior art. It does not count as research. It goes into the pipeline as one candidate, and it gets no special treatment. If the pipeline kills it, it is dead.
 
-The fix is not to restyle 18 pages by hand. It is to promote what the console proved into a shared kit, then re-seat each page into it.
+No feature and no roadmap will come until an idea passes every gate below with recorded evidence.
 
-## 1. Promote the console language into universal primitives
+## The pipeline
 
-New folder `src/components/app/console/kit/`, one barrel export:
+```text
+S0 Infrastructure
+S1 Problem mining (measured, not guessed)
+S2 Prior-art gate  -> kill anything that already exists
+S3 Formal hypotheses + pre-registered pass/fail thresholds
+S4 Experiments (computational, reproducible, vs baselines)
+S5 Frascati + TRL gate (evidence-scored)
+S6 Mapping to existing features + roadmap
+```
+Every stage writes files to the repo. Every gate decision is logged with its reason, and results that fail are kept.
 
-- `ConsolePage` — page frame: background, max width, section rhythm, and the three async states (skeleton / empty / error-with-retry) so no page hand-rolls a spinner.
-- `ConsoleHeader` — page title, one purpose line, actions slot. Same type scale as the overview greeting.
-- `ConsoleTabs` — the deck tab strip, already working on the overview, made route- or state-driven for any page.
-- `Plate` — the flat sage glass surface, with `padded` / `flush` variants. Replaces `.vc-plate` ad-hoc markup and `app-card`.
-- `PlateHeader` — plate label + optional right-side action or meta.
-- `Ledger` — the hairline-ruled row list (agents, obligations, events all use this shape today).
-- `ConsoleTable` — left text, right tabular numerals, sticky header, wrapping cells, no truncation.
-- `Reading` / `ReadingRail` — the metric figure + label + delta, the only way a big number renders.
-- `Empty`, `Skeleton` (plate / row / reading / chart variants), `AiUnavailable`.
-- Charts stay where they are (`SignalChart`, `TickSeries`, `ArcGauge`, `MiniBars`) but get a common `ChartFrame` so axes, legend and cursor read-out behave identically everywhere.
+### S0. Research infrastructure
+- A `research/` workspace (Python) holding datasets, experiments, results and a report.
+- An experiment registry. Each run records: ID, research question, data version, code version, seed, metric, result and verdict.
+- An idea register. Each candidate records: status (open / killed / passed), the gate it reached, and the evidence behind it.
+- An R&D ledger: hours and costs per research task (the 10% rule).
 
-CSS consolidation: `app.css` + `console.css` + `console-deck.css` collapse into one token layer plus one component layer. The "legacy microtype correction" and "legacy safety net" blocks get deleted once the pages stop needing them.
+### S1. Problem mining: find gaps with data, not opinion
+1. **Regulation graph.** Parse the VSME Basic + Comprehensive datapoints, the CBAM reporting fields and the ESRS datapoints I can get into a machine-readable list of required datapoints.
+2. **Evidence graph.** For each datapoint, record which evidence a Cyprus micro-SME actually has: bills, invoices, bank lines, customs forms, payroll. Use our existing schema and OCR types as the ground truth for what Vuneli can collect.
+3. **Derivability analysis.** Compute, for each datapoint, whether it is: (a) directly observed, (b) derivable by known methods, (c) derivable only with unknown error, or (d) not derivable. Categories (c) and (d) are where research questions live.
+4. **Quantify with public data.** Use Eurostat / CYSTAT sector energy and structure data, EAC tariffs and grid factors, and EU emission factors. Measure how much each gap affects a footprint or disclosure, for example the error share per datapoint.
+5. **Output:** a ranked list of unsolved problems. Each has a measured size, who suffers from it, and why the known methods fail.
 
-## 2. Write the rules down, then enforce them
+### S2. Prior-art gate
+Web search here is not the research. It is the check that stops us calling something new when it already exists.
+- A systematic search per problem: patents (Google Patents, Espacenet), papers (arXiv, Semantic Scholar, OpenAlex), and competitor product documentation (Greenly, Normative, Sweep, Watershed, Plan A, Persefoni, Cyprus consultancies).
+- A novelty matrix per candidate that scores each existing solution against the candidate's mechanism: exists / partial / absent, with a citation.
+- Kill rule: if the core mechanism exists and is published or shipped, the candidate is killed or reframed. The reason is recorded.
+- Novelty level recorded: new to Cyprus / new to the EU / new to the world (Oslo levels).
 
-`src/app/[locale]/app/README.md` gets the console contract: type scale (24 / 17 / 15 / 13 / 12 floor), surfaces from tokens only, radius 8 / 12 / 26, one primary action per page, tabular numerals, EUR and metric units, `d MMM yyyy` dates, every async surface ships three states, no hardcoded figures or counts anywhere. An eslint rule blocks raw `bg-white`, `bg-neutral-*` and hex colours inside `/app`.
+### S3. Formal hypotheses
+For each survivor, record:
+- the hypothesis as a falsifiable statement
+- the null baseline (the best existing method from S2)
+- the metric and the pass threshold, fixed **before** the experiment runs
+- the datasets
+- the failure criterion and what we conclude if it fails
 
-## 3. Data contract per page
+### S4. Experiments
+- Computational experiments I can run here, using public data plus synthetic SME populations built from the S1 distributions. The synthetic generator is validated against the real sector statistics first. If validation fails, the synthetic results are not used.
+- Every candidate is compared against the S2 baseline, with fixed seeds and error bars.
+- Ablations: remove the novel part and measure the drop. No drop means the novel part is not the source of the value, so it is not the innovation.
+- Real-data validation stage, used only when pilot SME documents exist with consent. Until then, the maximum claim is TRL 3 (proof of concept).
 
-Every page reads from an API route the same way the overview reads `/api/console/overview`. Pages that currently compute or hold demo values in the component get a route and a seed row instead. No page ships a number that is not in the database.
+### S5. Frascati + TRL gate
+Score each survivor on the five criteria (novel, creative, uncertain, systematic, reproducible). Each score needs an evidence link from S2–S4, not a sentence. Record the start TRL and the target TRL. Only candidates that pass all five become innovation claims.
 
-## 4. Migration order
+### S6. Mapping and roadmap
+Only for passed candidates:
+- Map each one to the existing surfaces: onboarding, calculator, OCR/documents, reports (VSME/CBAM), copilot and agents, compliance, integrations.
+- Decide what the research core is (R&D, logged) and what the engineering wrapper is (not R&D).
+- Build the roadmap to Slush from the passed set only. If nothing passes, the Slush pitch is the honest research programme with its measured early results, not an invented claim.
 
-1. `analytics`, `compliance`, `actions` — closest to the console shape, they validate the kit.
-2. `insights`, `calculator`, `integrations`.
-3. `marketplace` (+ detail), `learn` (+ lesson), `studio`.
-4. `leaderboard`, `billing`, `settings` (+ privacy), `grant-alerts`, `onboarding`.
+## Order of execution
+S0 and S1 first (the problem list with measurements). I report the ranked problems to you before S2. At every gate you see the evidence and the kill decisions before the next stage starts.
 
-Each batch: rewrite the page as `ConsolePage > ConsoleHeader > Plate[]`, wire its data route, then screenshot at 1280 and 390 in light and dark before moving on.  
-  
-while building also  mak sure you establish the right connections between the components amd pages and features  so that they are work together from the get go!
+## Limits I will state up front
+- I can run real computational research: data analysis, modelling, simulation, benchmarks, systematic prior-art review. I cannot run wet-lab or field studies, or interview SMEs myself. Real-data validation needs pilot documents from you.
+- Prior-art search is broad but not a legal patent opinion. Before a patent filing, a patent attorney must check it.
+- Some regulation texts or datasets may be paywalled or not machine-readable. Each gap gets logged, not hidden.
 
-## 5. Verification per batch
-
-No horizontal scroll, no truncated label, contrast at or above 4.5:1 in both modes, empty and error states rendered on purpose, and every control on screen does something real.
-
-## Technical notes
-
-- The rail (`ConsoleRail`) and topbar (`ConsoleTopbar`) become one `ConsoleChrome` so the overview and inner pages share identical navigation; the overview keeps its full-bleed hero as a page-level variant, not a separate shell.
-- `PageShell`, `PageHeader`, `Section`, `DataTable`, `Metric` in `src/components/app/shell/` become thin re-exports of the kit during migration, then are deleted.
-- Presentation and data wiring only. No new features from the roadmap enter in this pass; Release 2 actions come after.
+## Technical details
+- `research/` sits outside the app bundle: Python scripts, pinned requirements, `data/raw`, `data/processed`, `experiments/<id>/`, `registry.csv`, `ideas.csv`, `ledger.csv`, `reports/`.
+- Public sources: Eurostat (nrg_bal, sbs), CYSTAT, EAC published tariffs, EU/DEFRA emission factors, EFRAG VSME datapoint list, CBAM implementing regulation annexes.
+- The app is not touched until S6.
+- Separate issue: the automatic preview check fails because it expects a different app framework than this project uses (Next.js on Cloudflare). This is the known platform mismatch from earlier. It does not affect the live site.
