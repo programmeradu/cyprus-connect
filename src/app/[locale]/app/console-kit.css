@@ -756,17 +756,16 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Bridge for the markup written before the kit.
+ * Inline primitives.
  *
- * Pages still holding raw `app-*` classes read as console surfaces here,
- * so no route looks like a different product while it waits its turn to
- * be rewritten against the kit. Delete a rule when its last call site is
- * gone; run `rg "app-card|app-btn|app-tag" src/app/\[locale\]/app` to check.
+ * Class-level parts for markup that sits inside a Plate: a nested
+ * surface, a label, meta text, a state tag. They replace the earlier
+ * `app-*` layer, which is gone.
  * ------------------------------------------------------------------ */
 
-.vc .app-card,
-.vc .app-ledger,
-.vc .app-card-inset {
+.vc .vck-card,
+.vc .vck-ledgerbox,
+.vc .vck-inset {
   border: 1px solid var(--vc-rule);
   border-radius: 16px;
   background: var(--vc-well);
@@ -774,59 +773,31 @@
   color: var(--vc-ink-2);
 }
 
-.vc .app-card-inset { border-radius: 12px; }
+.vc .vck-inset { border-radius: 12px; }
+.vc .vck-ledgerbox { overflow: hidden; }
+.vc .vck-ledgerbox > * + * { border-top: 1px solid var(--vc-rule-soft); }
 
-.vc .app-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 15px;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  background: var(--vc-lime);
-  font-family: var(--vc-font);
+.vc .vck-rule { border-color: var(--vc-rule); }
+.vc .vck-rule-soft { border-color: var(--vc-rule-soft); }
+
+.vc .vck-btn:disabled { opacity: 0.55; cursor: not-allowed; filter: none; }
+
+.vc .vck-label {
   font-size: 13.5px;
+  line-height: 1.4;
   font-weight: 650;
-  color: var(--vc-lime-ink);
-  cursor: pointer;
-  text-decoration: none;
+  color: var(--vc-ink-2);
 }
 
-.vc .app-btn:hover { filter: brightness(0.96); }
-
-.vc .app-btn-ghost {
-  background: var(--vc-well);
-  border-color: var(--vc-rule);
-  color: var(--vc-ink);
-}
-
-.vc .app-btn-ghost:hover { background: var(--vc-rail-active); filter: none; }
-
-.vc .app-btn:disabled { opacity: 0.55; cursor: not-allowed; filter: none; }
-
-.vc .app-label {
-  font-size: 13.5px;
-  font-weight: 650;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--vc-ink-3);
-}
-
-.vc .app-meta {
+.vc .vck-meta {
   font-size: 13.5px;
   line-height: 1.5;
   color: var(--vc-ink-3);
 }
 
-.vc .app-metric,
-.vc .app-num {
-  font-variant-numeric: tabular-nums;
-  color: var(--vc-ink);
-}
+.vc .vck-num { color: inherit; }
 
-.vc .app-tag {
+.vc .vck-tag {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -836,12 +807,37 @@
   background: var(--vc-icon-bg);
   font-size: 13px;
   font-weight: 650;
+  line-height: 1.5;
   color: var(--vc-ink-2);
 }
 
-.vc .app-tag[data-tone="positive"] { color: var(--vc-good); }
-.vc .app-tag[data-tone="caution"] { color: var(--vc-warn); }
-.vc .app-tag[data-tone="critical"] { color: var(--vc-bad); }
+.vc .vck-tag[data-tone="positive"] { color: var(--vc-good); }
+.vc .vck-tag[data-tone="caution"] { color: var(--vc-warn); }
+.vc .vck-tag[data-tone="critical"] { color: var(--vc-bad); }
+
+/* Dialogs portal out of `.vc`, so the overlay is not scoped. */
+.vck-overlay {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid color-mix(in oklab, var(--foreground) 18%, transparent);
+  border-radius: 18px;
+  box-shadow: 0 16px 48px -12px rgb(0 0 0 / 0.28);
+}
+
+.vc .vck-chrome {
+  background: var(--vc-well);
+  border-color: var(--vc-rule);
+  color: var(--vc-ink);
+}
+
+.vc :focus-visible { outline: 2px solid var(--vc-lime); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vc *, .vc *::before, .vc *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 /* Bridge, part two: pages still holding shadcn and raw Tailwind classes.
    These rules pull their colour, radius and contrast onto the console
