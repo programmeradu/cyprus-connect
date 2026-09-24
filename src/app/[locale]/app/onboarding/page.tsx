@@ -17,6 +17,7 @@ import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
+import step3Plant from "@/assets/onboarding-step3-plant.png";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -537,27 +538,16 @@ export default function OnboardingPage() {
               <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
                 {/* Left - Illustration */}
                 <div className="flex-1 flex justify-center">
-                  <div className="relative w-64 h-64">
-                    <svg viewBox="0 0 200 200" className="w-full h-full">
-                      <path d="M60 160 L70 180 L130 180 L140 160 Z" fill="var(--color-muted)" opacity="0.6" />
-                      <rect x="95" y="80" width="10" height="80" fill="var(--color-chart-2)" rx="2" />
-                      <ellipse cx="80" cy="120" rx="25" ry="15" fill="var(--color-primary)" opacity="0.8" />
-                      <ellipse cx="120" cy="110" rx="25" ry="15" fill="var(--color-primary)" opacity="0.8" />
-                      <ellipse cx="85" cy="140" rx="20" ry="12" fill="var(--color-chart-2)" opacity="0.7" />
-                      <ellipse cx="115" cy="135" rx="20" ry="12" fill="var(--color-chart-2)" opacity="0.7" />
-                      <circle cx="100" cy="90" r="30" fill="var(--color-primary)" />
-                      <circle cx="90" cy="85" r="3" fill="var(--color-background)" />
-                      <circle cx="110" cy="85" r="3" fill="var(--color-background)" />
-                      <circle cx="92" cy="90" r="4" fill="#ff6b9d" opacity="0.6" />
-                      <circle cx="108" cy="90" r="4" fill="#ff6b9d" opacity="0.6" />
-                      <path d="M 90 100 Q 100 105 110 100" stroke="var(--color-background)" strokeWidth="2" fill="none" strokeLinecap="round" />
-                      <circle cx="40" cy="80" r="12" fill="var(--color-chart-3)" opacity="0.3" />
-                      <text x="40" y="85" textAnchor="middle" fontSize="12" fill="var(--color-foreground)">$</text>
-                      <circle cx="160" cy="70" r="12" fill="var(--color-chart-1)" opacity="0.3" />
-                      <path d="M155 70 L160 75 L170 62" stroke="var(--color-foreground)" strokeWidth="2" fill="none" />
-                      <circle cx="50" cy="140" r="10" fill="var(--color-chart-4)" opacity="0.3" />
-                      <circle cx="150" cy="145" r="8" fill="var(--color-chart-5)" opacity="0.3" />
-                    </svg>
+                  <div className="relative w-56 h-56 sm:w-72 sm:h-72">
+                    <div aria-hidden className="absolute inset-x-10 bottom-3 h-6 rounded-[50%] bg-foreground/10 blur-xl" />
+                    <img
+                      src={step3Plant.src}
+                      alt="A smiling young plant in a pot, with green credit coins and a check mark around it"
+                      width={1024}
+                      height={1024}
+                      loading="lazy"
+                      className="relative h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(40,60,45,0.18)]"
+                    />
                   </div>
                 </div>
 
