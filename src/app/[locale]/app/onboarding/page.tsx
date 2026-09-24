@@ -18,6 +18,7 @@ import { useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
 import step3Plant from "@/assets/onboarding-step3-plant.png";
+import step1Welcome from "@/assets/onboarding-step1-welcome.png";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -293,11 +294,14 @@ export default function OnboardingPage() {
               <div className="flex flex-col md:flex-row items-center gap-8">
                 {/* Left Side - Illustration */}
                 <div className="flex-1 flex items-center justify-center">
-                  <div className="relative w-full max-w-md aspect-square rounded-lg overflow-hidden">
-                    <img 
-                      src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/object/public/project-uploads/452e6a6c-dfb5-4b2f-890f-4242ef400721/generated_images/premium-isometric-illustration-of-a-sust-f36bea66-20251116234646.jpg"
+                  <div className="relative w-full max-w-[20rem] sm:max-w-sm aspect-square">
+                    <div aria-hidden className="absolute inset-x-12 bottom-4 h-6 rounded-[50%] bg-foreground/10 blur-xl" />
+                    <img
+                      src={step1Welcome.src}
                       alt={t("step1.imageAlt")}
-                      className="w-full h-full object-cover"
+                      width={1024}
+                      height={1024}
+                      className="relative h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(40,60,45,0.18)]"
                     />
                   </div>
                 </div>
