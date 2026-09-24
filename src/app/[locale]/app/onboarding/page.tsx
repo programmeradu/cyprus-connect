@@ -16,6 +16,7 @@ import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -243,11 +244,8 @@ export default function OnboardingPage() {
   // Show loading state while fetching session data
   if (isLoadingUserData || isSessionLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="vck-card p-8 text-center">
-          <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">{t("loading")}</p>
-        </div>
+      <div className="vck-page" aria-busy="true" aria-label={t("loading")}>
+        <DeckSkeleton />
       </div>
     );
   }
@@ -257,8 +255,21 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className="vck-page vco">
+      <ConsoleHeader title={t("frame.title")} purpose={t("frame.purpose")} />
+      <ol className="vco-rail" aria-label={t("frame.stepOf", { n: step })}>
+        {(t.raw("frame.rail") as string[]).map((label, i) => {
+          const n = i + 1;
+          const state = n < step ? "done" : n === step ? "current" : "next";
+          return (
+            <li key={label} data-state={state} aria-current={state === "current" ? "step" : undefined}>
+              <span className="vco-rail-n vck-num">{n}</span>
+              <span className="vco-rail-label">{label}</span>
+            </li>
+          );
+        })}
+      </ol>
+      <div className="vco-body">
         <AnimatePresence mode="wait">
           {/* Step 1: Welcome */}
           {step === 1 && (
@@ -267,20 +278,14 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="vck-card p-8 md:p-12"
+              className="vco-plate"
             >
               {/* Title at Top - Spans Full Width */}
               <div className="mb-8">
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center">
-                    <LeafIcon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-center">
+                <div className="mb-2">
+                  <h2 className="text-[22px] font-semibold text-[var(--vc-ink)]">
                     {t("step1.title")}
-                  </h1>
-                </div>
-                <div className="text-[12px] text-center text-muted-foreground">
-                  {t("step1.step")}
+                  </h2>
                 </div>
               </div>
 
@@ -327,9 +332,6 @@ export default function OnboardingPage() {
                     <button className="vck-btn vck-btn-primary" onClick={() => setStep(2)}>
                       {t("step1.getStarted")}
                     </button>
-                    <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                      {t("step1.learnMore")}
-                    </button>
                   </div>
                 </div>
               </div>
@@ -343,7 +345,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="vck-card p-8 md:p-12"
+              className="vco-plate"
             >
               {/* Progress bar */}
               <div className="mb-8">
@@ -534,7 +536,7 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="vck-card p-8 md:p-12"
+              className="vco-plate"
             >
               <div className="text-center mb-8">
                 <div className="inline-flex gap-1 mb-3">
@@ -650,15 +652,9 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="vck-card p-8 md:p-12"
+              className="vco-plate"
             >
               <div className="text-center mb-8">
-                <div className="inline-flex gap-1 mb-3">
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                </div>
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">
                   {t("step4.title")}
                 </h2>
@@ -684,11 +680,8 @@ export default function OnboardingPage() {
                       transition={{ delay: 0.1 * i }}
                       className="p-4 rounded-lg vck-card"
                     >
-                      <div className="w-9 h-9 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center text-primary mb-3">
-                        {icons[i]}
-                      </div>
-                      <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
-                      <p className="text-[12px] text-muted-foreground leading-relaxed">{feature.desc}</p>
+                      <h3 className="text-[15px] font-semibold mb-1.5 text-[var(--vc-ink)]">{feature.title}</h3>
+                      <p className="text-[13.5px] leading-relaxed text-[var(--vc-ink-2)]">{feature.desc}</p>
                     </motion.div>
                   ));
                 })()}
@@ -725,7 +718,7 @@ export default function OnboardingPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="vck-card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="vck-overlay p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">
