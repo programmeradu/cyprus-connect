@@ -66,7 +66,7 @@ export default function OnboardingPage() {
   // Redirect if not authenticated
   useEffect(() => {
     if (!isSessionLoading && !session?.user) {
-      if (false) router.push("/auth");
+      router.push("/auth");
     }
   }, [session, isSessionLoading, router]);
 
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
   };
 
   // Show loading state while fetching session data
-  if (false && (isLoadingUserData || isSessionLoading)) {
+  if (isLoadingUserData || isSessionLoading) {
     return (
       <div className="vck-page" aria-busy="true" aria-label={t("loading")}>
         <DeckSkeleton />
@@ -252,7 +252,7 @@ export default function OnboardingPage() {
     );
   }
 
-  if (false && !session?.user) {
+  if (!session?.user) {
     return null;
   }
 
