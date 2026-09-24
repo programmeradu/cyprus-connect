@@ -41,21 +41,20 @@ export function OnboardingCheck() {
       return;
     }
 
-    // If localStorage doesn't have the flag, check database
-    if (user) {
-      if (user.onboardingCompleted) {
-        // Sync localStorage with database
-        localStorage.setItem("onboarding_completed", "true");
-        return;
-      } else {
-        // User hasn't completed onboarding in database - redirect
-        router.push("/app/onboarding");
-      }
-    } else {
-      // No user data loaded - redirect to onboarding
-      router.push("/app/onboarding");
+    // Only redirect when the account is loaded AND the database says setup
+    // is not finished. A missing user means sign-in is still resolving or has
+    // failed; the auth gate owns that case, so we never redirect on it (this
+    // was the cause of the earlier /auth <-> /app loop).
+    if (!user) {
+      hasChecked.current = false;
+      return;
     }
-  }, [pathname, router, isLoading]);
+    if (user.onboardingCompleted) {
+      localStorage.setItem("onboarding_completed", "true");
+      return;
+    }
+    router.replace("/app/onboarding");
+  }, [pathname, router, isLoading, user]);
 
   return null;
 }
