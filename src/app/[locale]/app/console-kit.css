@@ -1342,7 +1342,7 @@
 .vc .vco-features p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--vc-ink-2); }
 /* step 2 */
 .vc .vco-plate-head { margin-bottom: clamp(12px, 2vh, 20px); }
-.vc .vco-two { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(16px, 2.4vw, 28px); align-items: stretch; }
+.vc .vco-two { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 2.4vw, 28px); align-items: stretch; }
 .vc .vco-form { border-radius: 12px; padding: clamp(14px, 2.2vh, 22px) 20px; }
 .vc .vco-form-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .vc .vco-form-head h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--vc-ink); min-width: 0; }
@@ -1358,7 +1358,7 @@
 .vc .vco-foot-note { margin: 0; font-size: 13px; line-height: 1.45; color: var(--vc-ink-2); text-align: center; }
 
 @media (min-width: 1100px) {
-  .vc .vco-source { grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-rows: auto; row-gap: 0; }
+  .vc .vco-source { grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-rows: auto; row-gap: 0; align-items: center; }
   .vc .vco-source img { grid-row: auto; width: 52px; height: 52px; }
   .vc .vco-source-btn { justify-self: end; }
 }
@@ -1376,6 +1376,8 @@
   .vc .vco-form-head img { width: 48px; height: 48px; margin: -8px 0; }
   .vc .vco-plate-head { margin-bottom: 10px; }
   .vc .vco-foot { margin-top: 10px; padding-top: 10px; }
+  .vc .vco-source { padding-top: 8px; padding-bottom: 8px; }
+  .vc .vco-form .grid { row-gap: 6px; }
 }
 /* One frame on desktop and tablet with enough height. */
 @media (min-width: 900px) and (min-height: 620px) {
