@@ -22,13 +22,16 @@
 - [x] S4 E01 on I-07 (synthetic): H1 pass, H2 fail, H3 pass; generator not validated
 - [x] External ideas I-10 killed, I-11 merged into I-07, I-12 killed; gap mining opened I-13
 - [x] S2 prior-art on I-13: PASS with caveats
-- [ ] Blocked on founder: commit I-13 prereg (draft H13-1..3 in report); bank contact for ground-truth data
+- [x] I-13 prereg written and locked (SHA-256 in registry)
+- [x] S4 E02 on I-13 (synthetic): H13-1 pass, H13-2 pass, H13-3 fail; pooling not the value
+- [x] EXIOBASE CY sector priors via pymrio
+- [ ] Blocked on founder: git hash of prereg/I-13.md in registry; bank contact / pilot SMEs for ground truth
+- [ ] Next: robust document likelihood (I-07 layer) under new prereg; rerun 2 non-converged runs; SBC via NumPyro; CYSTAT check of hotel Scope 1
 - [ ] Next: full text Owl + arXiv 2504.13382; Espacenet claim search; verify CBAM mark-up; VSME datapoint inventory
 - [ ] Blocked outside: CY Customs count of CBAM importers above/below 50 t
 
 ## Research tooling (2026-09-24)
 - [x] Tooling survey + check of uploaded concepts A/B/C (research/reports/TOOLING_SURVEY_2026-09-24.md)
 - [ ] Rebuild E01 on PyMC; add MAPIE conformal + Brightway MC baselines; SBC via simuk
-- [ ] I-13 sector priors from EXIOBASE via pymrio (Cyprus rows)
 - [ ] Patent white-space scan (BLANC method) + EPO OPS claim sets — needs EPO API key
 - [ ] Idea generation run: Open Coscientist grounded on OpenAlex → I-14+ (unproven until gated) — needs an LLM API key
