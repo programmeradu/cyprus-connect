@@ -37,7 +37,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title, description,
     alternates: { canonical: url, languages },
     openGraph: { title, description, url, siteName: "Vuneli", type: "article",
-      locale: isEl ? "el_CY" : "en_US" },
+      locale: isEl ? "el_CY" : "en_US",
+      images: [{ url: `${SITE_URL}/opengraph-image.png`, width: 1200, height: 630, alt: title }] },
     twitter: { card: "summary", title, description },
   };
 }
