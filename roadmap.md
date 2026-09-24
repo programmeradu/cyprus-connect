@@ -25,3 +25,10 @@
 - [ ] Blocked on founder: commit I-13 prereg (draft H13-1..3 in report); bank contact for ground-truth data
 - [ ] Next: full text Owl + arXiv 2504.13382; Espacenet claim search; verify CBAM mark-up; VSME datapoint inventory
 - [ ] Blocked outside: CY Customs count of CBAM importers above/below 50 t
+
+## Research tooling (2026-09-24)
+- [x] Tooling survey + check of uploaded concepts A/B/C (research/reports/TOOLING_SURVEY_2026-09-24.md)
+- [ ] Rebuild E01 on PyMC; add MAPIE conformal + Brightway MC baselines; SBC via simuk
+- [ ] I-13 sector priors from EXIOBASE via pymrio (Cyprus rows)
+- [ ] Patent white-space scan (BLANC method) + EPO OPS claim sets — needs EPO API key
+- [ ] Idea generation run: Open Coscientist grounded on OpenAlex → I-14+ (unproven until gated) — needs an LLM API key
