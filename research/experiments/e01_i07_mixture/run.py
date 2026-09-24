@@ -26,6 +26,7 @@ SEED = 20260924
 N_FIRMS = 1000
 S = 4000            # posterior samples per firm (candidate / ablation)
 S_MC = 10000        # Baseline 2 Monte Carlo draws (prereg brief)
+N_H2 = 300          # firms per scenario used for H2 (runtime); first 300 of the 1000
 HALF = 0.15         # H2 target half-width / median
 
 # ---------------------------------------------------------------- real inputs
@@ -289,11 +290,11 @@ def scenario(name, p_miss, p_shop_true, dual_boost, rng, do_h2):
     res["coverage_CI95"] = {k: [float(x) for x in stats.binomtest(int(sum(v)), len(v)).proportion_ci()] for k, v in cov.items()}
     if do_h2:
         nq = {"eig": [], "gsa": [], "checklist": []}; reached = {k: 0 for k in nq}
-        for f in firms:
+        for f in firms[:N_H2]:
             for pol in nq:
                 n, h = run_policy(f, pol, rng); nq[pol].append(n); reached[pol] += h <= HALF
         res["H2_queries_mean"] = {k: float(np.mean(v)) for k, v in nq.items()}
-        res["H2_reached_target"] = {k: v/N_FIRMS for k, v in reached.items()}
+        res["H2_reached_target"] = {k: v/N_H2 for k, v in reached.items()}
         e = np.mean(nq["eig"])
         res["H2_reduction_vs"] = {k: float(1-e/np.mean(nq[k])) if np.mean(nq[k]) > 0 else None for k in ["gsa", "checklist"]}
     return res, firms

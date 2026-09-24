@@ -1,0 +1,280 @@
+{
+ "seed": 20260924,
+ "N": 1000,
+ "EF_grid": 0.5818303888657014,
+ "GSD": {
+  "bill": 1.05,
+  "imputed": 1.5469676927740923,
+  "spend": 2.0722492331392273
+ },
+ "SBS_turnover_2023": {
+  "office": 100331.42949078916,
+  "retail_hosp": 287084.4885451627,
+  "light_ind": 212859.75749256462
+ },
+ "scenarios": [
+  {
+   "scenario": "in_model_miss0",
+   "p_miss": 0.0,
+   "p_shop_true": 0.15,
+   "dual_boost": 1.0,
+   "coverage": {
+    "candidate": 0.918,
+    "ablation": 0.833,
+    "baseline2": 0.935
+   },
+   "median_halfwidth": {
+    "candidate": 0.23897597732224832,
+    "ablation": 0.1513368087516928,
+    "baseline2": 0.2960799701950073
+   },
+   "baseline1_MAPE": 0.0563200008534183,
+   "baseline1_median_APE": 0.017131462563527232,
+   "n_ambiguous": 1000,
+   "coverage_CI95": {
+    "candidate": [
+     0.8992371325846886,
+     0.9342541397281681
+    ],
+    "ablation": [
+     0.8084109298236908,
+     0.8556096938052533
+    ],
+    "baseline2": [
+     0.917898930078629,
+     0.949479690310382
+    ]
+   },
+   "H2_queries_mean": {
+    "eig": 1.0733333333333333,
+    "gsa": 3.34,
+    "checklist": 1.1766666666666667
+   },
+   "H2_reached_target": {
+    "eig": 1.0,
+    "gsa": 1.0,
+    "checklist": 1.0
+   },
+   "H2_reduction_vs": {
+    "gsa": 0.6786427145708582,
+    "checklist": 0.0878186968838528
+   }
+  },
+  {
+   "scenario": "in_model_miss25",
+   "p_miss": 0.25,
+   "p_shop_true": 0.15,
+   "dual_boost": 1.0,
+   "coverage": {
+    "candidate": 0.919,
+    "ablation": 0.848,
+    "baseline2": 0.953
+   },
+   "median_halfwidth": {
+    "candidate": 0.24513805139327022,
+    "ablation": 0.1575271590888052,
+    "baseline2": 0.35204515419702254
+   },
+   "baseline1_MAPE": 0.06189371108881803,
+   "baseline1_median_APE": 0.027424048362191922,
+   "n_ambiguous": 1000,
+   "coverage_CI95": {
+    "candidate": [
+     0.9003283010315127,
+     0.935156460291505
+    ],
+    "ablation": [
+     0.8242275312668873,
+     0.869701749675018
+    ],
+    "baseline2": [
+     0.9379873693066948,
+     0.965264937733204
+    ]
+   },
+   "H2_queries_mean": {
+    "eig": 1.1566666666666667,
+    "gsa": 4.523333333333333,
+    "checklist": 2.763333333333333
+   },
+   "H2_reached_target": {
+    "eig": 1.0,
+    "gsa": 1.0,
+    "checklist": 1.0
+   },
+   "H2_reduction_vs": {
+    "gsa": 0.7442888725128961,
+    "checklist": 0.5814234016887816
+   }
+  },
+  {
+   "scenario": "in_model_miss50",
+   "p_miss": 0.5,
+   "p_shop_true": 0.15,
+   "dual_boost": 1.0,
+   "coverage": {
+    "candidate": 0.919,
+    "ablation": 0.856,
+    "baseline2": 0.976
+   },
+   "median_halfwidth": {
+    "candidate": 0.25258250715801617,
+    "ablation": 0.17027059296772212,
+    "baseline2": 0.45480942008795455
+   },
+   "baseline1_MAPE": 0.07117880615654772,
+   "baseline1_median_APE": 0.041104400908228714,
+   "n_ambiguous": 1000,
+   "coverage_CI95": {
+    "candidate": [
+     0.9003283010315127,
+     0.935156460291505
+    ],
+    "ablation": [
+     0.8326930831842089,
+     0.877187248892484
+    ],
+    "baseline2": [
+     0.9644993614686408,
+     0.9845636167664915
+    ]
+   },
+   "H2_queries_mean": {
+    "eig": 1.28,
+    "gsa": 5.8933333333333335,
+    "checklist": 4.153333333333333
+   },
+   "H2_reached_target": {
+    "eig": 1.0,
+    "gsa": 1.0,
+    "checklist": 1.0
+   },
+   "H2_reduction_vs": {
+    "gsa": 0.7828054298642534,
+    "checklist": 0.6918138041733548
+   }
+  },
+  {
+   "scenario": "misspecified_miss0",
+   "p_miss": 0.0,
+   "p_shop_true": 0.3,
+   "dual_boost": 1.8,
+   "coverage": {
+    "candidate": 0.877,
+    "ablation": 0.72,
+    "baseline2": 0.883
+   },
+   "median_halfwidth": {
+    "candidate": 0.2406001945274708,
+    "ablation": 0.14756265983892006,
+    "baseline2": 0.2705552920792966
+   },
+   "baseline1_MAPE": 0.08338898806414642,
+   "baseline1_median_APE": 0.04249249356927051,
+   "n_ambiguous": 1000,
+   "coverage_CI95": {
+    "candidate": [
+     0.8550277613264315,
+     0.8967230903585823
+    ],
+    "ablation": [
+     0.6910512139809369,
+     0.7476471169965965
+    ],
+    "baseline2": [
+     0.8614425336094167,
+     0.9022709975049333
+    ]
+   }
+  },
+  {
+   "scenario": "misspecified_miss25",
+   "p_miss": 0.25,
+   "p_shop_true": 0.3,
+   "dual_boost": 1.8,
+   "coverage": {
+    "candidate": 0.862,
+    "ablation": 0.731,
+    "baseline2": 0.912
+   },
+   "median_halfwidth": {
+    "candidate": 0.24458477979551638,
+    "ablation": 0.1543919164690104,
+    "baseline2": 0.33864692493639115
+   },
+   "baseline1_MAPE": 0.09067643840835393,
+   "baseline1_median_APE": 0.05098007965786489,
+   "n_ambiguous": 1000,
+   "coverage_CI95": {
+    "candidate": [
+     0.8390570783886684,
+     0.8827864176914192
+    ],
+    "ablation": [
+     0.7023620968228451,
+     0.7582707605480967
+    ],
+    "baseline2": [
+     0.8927052349649914,
+     0.9288248657147135
+    ]
+   }
+  },
+  {
+   "scenario": "misspecified_miss50",
+   "p_miss": 0.5,
+   "p_shop_true": 0.3,
+   "dual_boost": 1.8,
+   "coverage": {
+    "candidate": 0.882,
+    "ablation": 0.758,
+    "baseline2": 0.942
+   },
+   "median_halfwidth": {
+    "candidate": 0.25246379874940167,
+    "ablation": 0.16849830867048315,
+    "baseline2": 0.43516216644723277
+   },
+   "baseline1_MAPE": 0.0979356422030946,
+   "baseline1_median_APE": 0.06054767405640079,
+   "n_ambiguous": 1000,
+   "coverage_CI95": {
+    "candidate": [
+     0.8603722794655597,
+     0.9013474836051032
+    ],
+    "ablation": [
+     0.7302177554526308,
+     0.7842540621318351
+    ],
+    "baseline2": [
+     0.9256635046176483,
+     0.9556671397471793
+    ]
+   }
+  }
+ ],
+ "validation": {
+  "V1_fuel_price_KS_vs_2022_2025": {
+   "stat": 0.4278846153846153,
+   "p": 2.0483649704483688e-29,
+   "note": "synthetic draws come from 2025 prices; test against 2022-2025 is a partial independence check"
+  },
+  "V1b_fuel_price_KS_vs_2025_source": {
+   "stat": 0.01758441922376347,
+   "p": 1.0,
+   "note": "same-source check (circular, sanity only)"
+  },
+  "V2_seasonality_wasserstein": {
+   "w": 0.003222462152097788,
+   "note": "national demand shape is a proxy; not firm-level"
+  },
+  "V3_turnover_mean_rel_err": {
+   "office": 0.01071016318254836,
+   "retail_hosp": 0.029969584579993214,
+   "light_ind": 0.013764154273628426
+  },
+  "V4_energy_per_firm": "NO REAL REFERENCE: no public firm-level energy or fuel data for CY micro firms; UNVALIDATED"
+ },
+ "runtime_s": 41.3
+}
