@@ -52,5 +52,11 @@
     "source_url": "https://ec.europa.eu/eurostat/api/comext/dissemination/statistics/1.0/data/DS-045409 (reporter=CY partner=EXT_EU27_2020 flow=1 2023-2025)",
     "bytes": 36560,
     "retrieved_utc": "2026-09-24T11:31:33Z"
+  },
+  "eurostat_sbs_sc_ovw_CY_micro.json": {
+    "sha256": "3a468a64c1ed6b611ea87c800a951cf97fbe67b3afa052ac74cceda3d5dbbca4",
+    "source_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sbs_sc_ovw?geo=CY&size_emp=0-9&lang=EN",
+    "bytes": 327421,
+    "retrieved_utc": "2026-09-24T11:55:24Z"
   }
 }
