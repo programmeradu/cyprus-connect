@@ -19,6 +19,10 @@ import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
 import step3Plant from "@/assets/onboarding-step3-plant.png";
 import step1Welcome from "@/assets/onboarding-step1-welcome.png";
+import step2Company from "@/assets/onboarding-step2-company.png";
+import step2Utility from "@/assets/onboarding-step2-utility.png";
+import step2Accounting from "@/assets/onboarding-step2-accounting.png";
+import step2Manual from "@/assets/onboarding-step2-manual.png";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -361,8 +365,11 @@ export default function OnboardingPage() {
               </p>
 
               {/* Company Details Form */}
-              <div className="mb-8 p-6 rounded-lg vck-inset">
-                <h3 className="text-sm font-semibold mb-4">{t("step2.companyHeader")}</h3>
+              <div className="relative mb-8 overflow-hidden p-6 rounded-lg vck-inset">
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <h3 className="min-w-0 text-sm font-semibold">{t("step2.companyHeader")}</h3>
+                  <img src={step2Company.src} alt="" aria-hidden width={1024} height={1024} className="-my-4 h-20 w-20 shrink-0 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)] sm:h-24 sm:w-24" />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block vck-label mb-2">{t("step2.yourName")}</label>
@@ -433,10 +440,7 @@ export default function OnboardingPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 {/* Utility Bills */}
                 <div className="p-5 rounded-lg bg-background border border-[var(--vc-rule)]">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center mb-3 mx-auto">
-                    <Cloud className="w-5 h-5 text-primary" />
-                    <BoltIcon className="w-3 h-3 text-primary -ml-1.5 -mt-1.5" />
-                  </div>
+                  <img src={step2Utility.src} alt="" aria-hidden width={1024} height={1024} loading="lazy" className="mx-auto mb-3 h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)]" />
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.utility.title")}</h3>
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.utility.desc")}
@@ -450,9 +454,7 @@ export default function OnboardingPage() {
 
                 {/* Accounting Software */}
                 <div className="p-5 rounded-lg vck-card hover:bg-[var(--vc-rail-active)] transition-colors">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center mb-3 mx-auto">
-                    <Settings className="w-5 h-5 text-muted-foreground" />
-                  </div>
+                  <img src={step2Accounting.src} alt="" aria-hidden width={1024} height={1024} loading="lazy" className="mx-auto mb-3 h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)]" />
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.accounting.title")}</h3>
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.accounting.desc")}
@@ -477,9 +479,7 @@ export default function OnboardingPage() {
 
                 {/* Manual Upload */}
                 <div className="p-5 rounded-lg vck-card hover:bg-[var(--vc-rail-active)] transition-colors">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center mb-3 mx-auto">
-                    <FolderUp className="w-5 h-5 text-muted-foreground" />
-                  </div>
+                  <img src={step2Manual.src} alt="" aria-hidden width={1024} height={1024} loading="lazy" className="mx-auto mb-3 h-20 w-20 object-contain drop-shadow-[0_10px_16px_rgba(40,60,45,0.16)]" />
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.manual.title")}</h3>
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.manual.desc")}
