@@ -392,7 +392,7 @@ export default function OnboardingPage() {
               <div className="vco-foot">
                 <button onClick={() => setStep(1)} className="vco-back">{t("step2.back")}</button>
                 <p className="vco-foot-note">{t("step2.security")}</p>
-                <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(3)} disabled={false && !canProceed()}>
+                <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(3)} disabled={!canProceed()}>
                   {t("step2.next")}
                 </button>
               </div>
