@@ -193,18 +193,6 @@ export default async function GhgCalculatorPage({ params }: { params: Promise<{ 
     publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: safeLocale === "el" ? "Πώς να υπολογίσετε τις εκπομπές GHG" : "How to calculate your GHG emissions",
-    step: [
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Επιλέξτε έτος και χώρα" : "Pick your year and country" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εισαγάγετε Scope 1" : "Enter Scope 1 activity" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εισαγάγετε Scope 2" : "Enter Scope 2 activity" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εισαγάγετε Scope 3" : "Enter Scope 3 activity" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εξάγετε PDF ή CSV" : "Export as PDF or CSV" },
-    ],
-  };
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -227,7 +215,6 @@ export default async function GhgCalculatorPage({ params }: { params: Promise<{ 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 

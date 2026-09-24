@@ -143,18 +143,6 @@ export default async function EuTaxonomyCheckerPage({ params }: { params: Promis
     publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: safeLocale === "el" ? "Πώς να ελέγξετε επιλεξιμότητα EU Taxonomy" : "How to check EU Taxonomy eligibility",
-    step: [
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Βρείτε τη δραστηριότητα NACE" : "Find your NACE activity" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Επιλέξτε τον κύριο στόχο" : "Choose the primary environmental objective" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Ολοκληρώστε τους ελέγχους DNSH" : "Complete DNSH screening for the other five objectives" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Επιβεβαιώστε τις ελάχιστες εγγυήσεις" : "Confirm minimum safeguards under Art. 18" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εξάγετε την ετυμηγορία" : "Export the verdict as PDF or CSV" },
-    ],
-  };
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -177,7 +165,6 @@ export default async function EuTaxonomyCheckerPage({ params }: { params: Promis
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 

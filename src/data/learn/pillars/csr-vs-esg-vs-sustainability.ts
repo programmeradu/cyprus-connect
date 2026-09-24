@@ -50,7 +50,7 @@ export const csrVsEsgVsSustainability = makePillar({
   el: {
     title: "CSR vs ESG vs Βιωσιμότητα: Οι Διαφορές",
     metaTitle: "CSR vs ESG vs Βιωσιμότητα: Πραγματικές Διαφορές",
-    metaDescription: "CSR: εθελοντικό/PR. ESG: μετρήσεις για επενδυτές. Βιωσιμότητα: το αποτέλεσμα. Δείτε πού διαφέρουν.",
+    metaDescription: "CSR: εθελοντικό πλαίσιο και PR. ESG: μετρήσιμα κριτήρια για επενδυτές. Βιωσιμότητα: το αποτέλεσμα. Μάθετε τις διαφορές με το Vuneli.",
     heroEyebrow: "Έννοιες",
     heroSubtitle: "Τρεις όροι που χρησιμοποιούνται εναλλάξ, με πολύ διαφορετική σημασία.",
     tocLabel: "Σε αυτή τη σελίδα",

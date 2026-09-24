@@ -49,7 +49,7 @@ export const scope123ExplainedSimply = makePillar({
   el: {
     title: "Scope 1, 2, 3: Απλή Επεξήγηση",
     metaTitle: "Scope 1, 2, 3 Εκπομπές: Απλή Επεξήγηση με Παραδείγματα",
-    metaDescription: "Scope 1: όσα καίτε. Scope 2: όσα αγοράζετε ως ενέργεια. Scope 3: όλα τα άλλα. Δείτε τι καλύπτει το καθένα.",
+    metaDescription: "Scope 1: όσα καίτε. Scope 2: όσα αγοράζετε ως ενέργεια. Scope 3: όλα τα άλλα. Πλήρης επεξήγηση με παραδείγματα επιχειρήσεων στο Vuneli.",
     heroEyebrow: "Βασικά",
     heroSubtitle: "Τρία απλά όρια του GHG Protocol για να μετρούν όλοι τις εκπομπές με τον ίδιο τρόπο.",
     tocLabel: "Σε αυτή τη σελίδα",

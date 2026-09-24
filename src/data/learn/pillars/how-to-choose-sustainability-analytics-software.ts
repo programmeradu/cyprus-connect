@@ -15,7 +15,7 @@ export const howToChooseSustainabilityAnalyticsSoftware = makePillar({
   en: {
     title: "How to Choose Sustainability Analytics Software: A Comprehensive 2026 Buyer's Guide for European SMEs",
     metaTitle: "How to Choose Sustainability Analytics Software (2026 Guide)",
-    metaDescription: "Exhaustive buyer's guide for SMEs evaluating sustainability analytics software: EFRAG VSME module alignment, pricing benchmarks (€360-€15k/yr), emission factor databases, and data lineage.",
+    metaDescription: "Buyer's guide for SMEs evaluating sustainability analytics software: EFRAG VSME alignment, pricing benchmarks (€360-€15k), and audit trails.",
     heroEyebrow: "SME Buyer's Master Reference",
     heroSubtitle: "A data-backed, practical evaluation framework for CFOs, operations directors, and compliance managers selecting carbon accounting and ESG analytics software in 2026.",
     tocLabel: "On this page",
@@ -93,7 +93,7 @@ export const howToChooseSustainabilityAnalyticsSoftware = makePillar({
   el: {
     title: "Πώς να Επιλέξετε Λογισμικό Αναλυτικών Βιωσιμότητας: Πλήρης Οδηγός Αγοράς για Ευρωπαϊκές ΜμΕ (2026)",
     metaTitle: "Επιλογή Λογισμικού Αναλυτικών Βιωσιμότητας (Οδηγός 2026)",
-    metaDescription: "Εξαντλητικός οδηγός αγοράς για ΜμΕ: ευθυγράμμιση με πρότυπο EFRAG VSME, συγκριτικές τιμές (€360-€15k/έτος), βάσεις δεδομένων συντελεστών και ιχνηλασιμότητα ελέγχου.",
+    metaDescription: "Οδηγός αγοράς λογισμικού ESG για ΜμΕ: πρότυπο EFRAG VSME, συγκριτικές τιμές (€360-€15k/έτος), βάσεις συντελεστών και ιχνηλασιμότητα ελέγχου.",
     heroEyebrow: "Οδηγός Αγοράς για ΜμΕ",
     heroSubtitle: "Ένα πρακτικό πλαίσιο αξιολόγησης βάσει δεδομένων για διευθυντές οικονομικών και υπεύθυνους συμμόρφωσης που επιλέγουν λογισμικό ESG και λογιστικής άνθρακα το 2026.",
     tocLabel: "Σε αυτή τη σελίδα",

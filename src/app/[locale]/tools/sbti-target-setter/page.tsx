@@ -141,17 +141,6 @@ export default async function SbtiTargetSetterPage({ params }: { params: Promise
     publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: safeLocale === "el" ? "Πώς να ορίσετε βραχυπρόθεσμο στόχο SBTi" : "How to set an SBTi near-term target",
-    step: [
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Καταχωρίστε προφίλ εταιρείας και έτος βάσης" : "Enter company profile and base year" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εισαγάγετε εκπομπές Scope 1, 2, 3" : "Enter Scope 1, 2 and 3 base-year emissions" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Επιλέξτε φιλοδοξία και έτος στόχου" : "Pick ambition level and target year" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Ελέγξτε και εξάγετε το προσχέδιο" : "Review and export the draft target" },
-    ],
-  };
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -174,7 +163,6 @@ export default async function SbtiTargetSetterPage({ params }: { params: Promise
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 

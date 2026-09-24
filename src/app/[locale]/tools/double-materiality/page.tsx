@@ -145,18 +145,6 @@ export default async function DoubleMaterialityPage({ params }: { params: Promis
     publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: safeLocale === "el" ? "Πώς να δημιουργήσετε μήτρα διπλής ουσιαστικότητας" : "How to build a double materiality matrix",
-    step: [
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Ορίστε το κατώφλι" : "Set the materiality threshold" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Βαθμολογήστε επιπτώσεις" : "Score the impact axis (severity, scope, irremediability, likelihood)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Βαθμολογήστε οικονομικά" : "Score the financial axis (magnitude, likelihood)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Προσθέστε υπο-θέματα" : "Add sector-specific topics or sub-topics" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εξάγετε PDF ή CSV" : "Export the matrix as PDF or CSV" },
-    ],
-  };
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -179,7 +167,6 @@ export default async function DoubleMaterialityPage({ params }: { params: Promis
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 

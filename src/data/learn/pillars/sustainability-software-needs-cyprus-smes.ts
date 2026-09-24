@@ -15,7 +15,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
   en: {
     title: "Top 7 Sustainability Software Needs for Cyprus SMEs in 2026",
     metaTitle: "Top 7 Sustainability Software Needs for Cyprus SMEs (2026)",
-    metaDescription: "Essential guide to sustainability software for Cyprus SMEs: EAC grid factor calculation, CBAM port compliance, bilingual EN/EL-CY reporting, and VSME standards.",
+    metaDescription: "Sustainability software guide for Cyprus SMEs: EAC grid factor calculation, CBAM port compliance, bilingual EN/EL reporting, and VSME standards.",
     heroEyebrow: "Cyprus Market Master Guide",
     heroSubtitle: "Cypriot small and medium enterprises face unique operational, energy, and regulatory demands. Here are the 7 non-negotiable software capabilities needed for compliance in Nicosia, Limassol, Larnaca, and Paphos.",
     tocLabel: "On this page",

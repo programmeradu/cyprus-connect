@@ -141,19 +141,6 @@ export default async function VsmeTemplatePage({ params }: { params: Promise<{ l
     publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: safeLocale === "el" ? "Πώς να συμπληρώσετε αναφορά VSME" : "How to complete a VSME Basic Module report",
-    step: [
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Ορίστε βάση κατάρτισης (B1)" : "Set the basis for preparation (B1)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Δηλώστε πολιτικές (B2)" : "Declare policies and initiatives (B2)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Υπολογίστε Scope 1 & 2 (B3)" : "Enter energy and Scope 1 & 2 emissions (B3)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Ρύπανση, νερό, απόβλητα (B4–B7)" : "Complete pollution, biodiversity, water and waste (B4–B7)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εργαζόμενοι (B8–B11)" : "Workforce and value-chain disclosures (B8–B11)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εξάγετε PDF ή CSV" : "Export the report as PDF or CSV" },
-    ],
-  };
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -176,7 +163,6 @@ export default async function VsmeTemplatePage({ params }: { params: Promise<{ l
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 

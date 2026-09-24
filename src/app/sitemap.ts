@@ -7,7 +7,7 @@ import { COUNTRY_SLUGS } from "@/data/tools/countries";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
-const STATIC_PATHS = ["", "/pricing", "/privacy", "/terms", "/security", "/dpa", "/learn", "/tools", "/glossary"] as const;
+const STATIC_PATHS = ["", "/pricing", "/privacy", "/terms", "/security", "/dpa", "/learn", "/tools", "/glossary", "/news", "/vision"] as const;
 const LEARN_PATHS = PILLAR_SLUGS.map((slug) => `/learn/${slug}` as const);
 const GLOSSARY_PATHS = GLOSSARY_SLUGS.map((slug) => `/glossary/${slug}` as const);
 const TOOL_PATHS = AVAILABLE_TOOL_SLUGS.map((slug) => `/tools/${slug}` as const);

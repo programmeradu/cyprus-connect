@@ -28,7 +28,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const title = isEl
     ? `${entry.term} - Ορισμός | Vuneli Γλωσσάρι`
     : `${entry.term} - Definition & Meaning | Vuneli Glossary`;
-  const description = definition.length > 158 ? definition.slice(0, 155) + "..." : definition;
+
+  let description = definition;
+  if (definition.length > 158) {
+    description = definition.slice(0, 155) + "...";
+  } else if (definition.length < 115) {
+    const suffix = isEl
+      ? " Μάθετε τι σημαίνει και πώς εφαρμόζεται στις επιχειρήσεις με το Vuneli."
+      : " Learn what this means and how it applies to ESG compliance at Vuneli.";
+    const combined = definition.endsWith(".") ? `${definition}${suffix}` : `${definition}.${suffix}`;
+    description = combined.length <= 158 ? combined : combined.slice(0, 155) + "...";
+  }
+
   const url = `${SITE_URL}/${safeLocale}/glossary/${term}`;
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/glossary/${term}`;

@@ -11,7 +11,7 @@ export const whatIsNetZero = makePillar({
   en: {
     title: "What Is Net Zero? A Clear Definition",
     metaTitle: "What Is Net Zero? Definition, Meaning, and How It's Reached",
-    metaDescription: "Net zero means cutting greenhouse gas emissions as close to zero as possible and neutralising the rest with permanent removals. Here's what it really requires.",
+    metaDescription: "Net zero means cutting GHG emissions as close to zero as possible and neutralising residual emissions with permanent removals. Full guide by Vuneli.",
     heroEyebrow: "Basics",
     heroSubtitle: "The most-used and most-abused climate term of the decade - defined the way the IPCC, SBTi, and EU regulators actually use it.",
     tocLabel: "On this page",
@@ -47,7 +47,7 @@ export const whatIsNetZero = makePillar({
   el: {
     title: "Τι Είναι το Net Zero; Σαφής Ορισμός",
     metaTitle: "Τι Είναι το Net Zero; Ορισμός & Πώς Επιτυγχάνεται",
-    metaDescription: "Net zero: μείωση εκπομπών όσο πιο κοντά στο μηδέν και εξουδετέρωση υπολειπόμενων με μόνιμες απομακρύνσεις.",
+    metaDescription: "Net zero: μείωση εκπομπών αερίων του θερμοκηπίου όσο πιο κοντά στο μηδέν και εξουδετέρωση των υπολοίπων με μόνιμες απομακρύνσεις από το Vuneli.",
     heroEyebrow: "Βασικά",
     heroSubtitle: "Ο πιο παρεξηγημένος κλιματικός όρος - ορισμένος όπως τον χρησιμοποιούν IPCC και SBTi.",
     tocLabel: "Σε αυτή τη σελίδα",

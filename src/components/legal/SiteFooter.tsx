@@ -313,6 +313,7 @@ export function SiteFooter() {
         <div>
           <p className={labelCls}>{t.company}</p>
           <ul className="space-y-1">
+            <li><Link href={`/${locale}/vision`} className={linkCls}>{locale === "el" ? "Όραμα" : "Vision"}</Link></li>
             <li><a href="mailto:hello@vuneli.com" className={linkCls}>{t.contact}</a></li>
             <li><Link href={`/${locale}/security`} className={linkCls}>{t.security}</Link></li>
           </ul>

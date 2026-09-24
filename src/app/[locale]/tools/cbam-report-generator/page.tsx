@@ -145,18 +145,6 @@ export default async function CbamReportGeneratorPage({ params }: { params: Prom
     publisher: { "@type": "Organization", name: "Vuneli", url: SITE_URL },
     image: heroUrl,
   };
-  const howToLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: safeLocale === "el" ? "Πώς να δημιουργήσετε μια τριμηνιαία αναφορά CBAM" : "How to draft a CBAM quarterly report",
-    step: [
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Επιλέξτε τρίμηνο και έτος" : "Pick the reporting quarter and year" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εισάγετε στοιχεία εισαγωγέα (EORI)" : "Enter reporting declarant details (EORI)" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Προσθέστε κάθε CN κωδικό εισαγωγής" : "Add each imported CN code line" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Αντικαταστήστε προεπιλεγμένους συντελεστές" : "Override defaults with verified factors where available" },
-      { "@type": "HowToStep", name: safeLocale === "el" ? "Εξάγετε XML ή PDF" : "Export as XML draft or PDF" },
-    ],
-  };
   const faqLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -179,7 +167,6 @@ export default async function CbamReportGeneratorPage({ params }: { params: Prom
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
