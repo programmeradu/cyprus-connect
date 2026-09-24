@@ -87,13 +87,12 @@ with a comment saying why, then use it.
 - Every interactive element keeps a visible focus ring and a target of at
   least 44px on touch.
 
-## 7. The bridge
+## 7. The adapters
 
-Routes written before the kit import `@/components/app/shell`. Those files are
-adapters: they take the earlier props and draw kit markup, so no page looks
-like a different product. `console-kit.css` also holds a bridge block that
-restyles the raw `app-*` classes still in page bodies.
+`app.css` and the `app-*` classes are gone. Inline parts inside a plate use
+the kit classes `vck-card`, `vck-inset`, `vck-label`, `vck-meta`, `vck-tag`,
+`vck-btn` (+ `vck-btn-primary`) and `vck-num`.
 
-Both are temporary. When a page is rewritten against the kit, drop its
-`shell` import. When the last `app-*` class is gone from `/app`, delete the
-bridge block and `app.css`.
+Some routes still import `@/components/app/shell`. Those files draw kit markup
+from the earlier props. When a page is next touched, import from the kit
+directly and drop the `shell` import.
