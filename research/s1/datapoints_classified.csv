@@ -1,0 +1,46 @@
+code,field,quantitative,evidence_cy_micro_sme,class,rationale
+B1,entity,0,Registrar of Companies record,a,Directly observed
+B1,vat,0,Tax Department registration,a,Directly observed
+B1,country,0,Registration,a,Directly observed
+B1,period,0,Owner choice,a,Directly observed
+B1,consolidation,0,Registrar group structure,b,Known method from ownership records
+B1,omissions,0,Output of the report itself,b,Derived from which fields stay empty
+B2,hasPolicies,0,Owner statement,a,Self-declared
+B2,policiesDesc,0,Owner statement,a,Self-declared
+B2,certifications,0,Certificates,a,Directly observed
+B2,initiatives,0,Owner statement,a,Self-declared
+B3,energyTotal,1,EAC bills; fuel slips; PV inverter (often absent),c,Net-metered/net-billed rooftop PV hides self-consumed kWh: bill shows net import only
+B3,energyRenewable,1,PV generation not on bill; no GO purchases common,c,Behind-the-meter PV share not observed; must be inferred
+B3,scope1,1,Handwritten or partial fuel slips; bank card lines with EUR only,c,Litres often missing; EUR-to-litres needs price at date and fuel type
+B3,scope2Location,1,EAC bills (bi-monthly periods crossing years),b,Known method; period split + factor vintage choice (measured in S1.5a)
+B3,scope2Market,1,Supplier mix disclosure; GOs rarely held,c,Residual mix for CY not always published; thin GO market
+B3,intensityRevenue,1,Revenue from accounts,b,Division once B3 figures exist
+B3,methodology,0,Output of the engine,b,Generated from calculation trail
+B4,obligated,0,E-PRTR register,a,Lookup
+B4,pollutants,1,Rarely measured by micro-SMEs,d,No evidence for non-obligated firms
+B5,sensitiveSites,0,Site address + Natura 2000 layer,b,GIS overlay; known method
+B5,sitesList,0,Addresses,b,GIS overlay
+B6,withdrawal,1,Municipal/Water Board bills (m3); boreholes unmetered,c,Borehole and shared-building water not metered
+B6,stressedWithdrawal,1,All of Cyprus is water-stressed (WRI),b,Equals withdrawal for CY sites
+B7,wasteTotal,1,Municipal waste fee is flat; no weights,d,No mass evidence for most micro-SMEs
+B7,wasteHazardous,1,Collector notes for some sectors only,c,Sector-dependent partial evidence
+B7,wasteDiverted,1,Recycling scheme (Green Dot) records rarely per firm,d,No per-firm mass evidence
+B7,circularNotes,0,Owner statement,a,Self-declared
+B8,headcount,1,Social Insurance Services records,a,Directly observed
+B8,permanent,1,Contracts/payroll,a,Directly observed
+B8,temporary,1,Contracts/payroll,a,Directly observed
+B8,female,1,Payroll,a,Directly observed
+B8,male,1,Payroll,a,Directly observed
+B8,other,1,Payroll,a,Directly observed
+B8,turnover,1,Payroll joiners/leavers,b,Known formula
+B9,recordable,1,Accident book (often not kept),c,Under-recording common; no reference
+B9,fatalities,1,Labour Inspection reports,a,Directly observed
+B9,hoursWorked,1,Payroll/Social Insurance,b,Known method from contracted hours
+B10,payGap,1,Payroll,b,Known formula; unstable for n<10 employees
+B10,minWageCompliant,0,Payroll vs national minimum wage,b,Known check
+B10,cbaCoverage,1,Contracts,a,Directly observed
+B10,trainingHours,1,Rarely logged,c,Needs reconstruction from invoices/HRDA subsidies
+B11,incidents,1,Owner statement,a,Self-declared
+B11,actions,0,Owner statement,a,Self-declared
+B12,convictions,1,Court records,a,Directly observed
+B12,fines,1,Accounts,a,Directly observed
