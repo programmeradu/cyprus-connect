@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { VuneliWordmark } from "@/components/brand/VuneliWordmark";
 import {
   IcoBell,
   IcoClose,
@@ -175,20 +176,8 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
 
   return (
     <header className="vc-nav" ref={bar}>
-      <Link href={"/app" as never} className="vc-brand flex items-center gap-2" aria-label="Vuneli console home">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/icon/vuneli-mark-transparent.png"
-          alt="Vuneli"
-          className="h-6 w-auto dark:hidden"
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/icon/vuneli-mark-transparent-for-dark.png"
-          alt="Vuneli"
-          className="h-6 w-auto hidden dark:inline-block"
-        />
-        <span>Vuneli</span>
+      <Link href={"/app" as never} className="vc-brand flex items-center text-foreground transition-opacity hover:opacity-90" aria-label="Vuneli console home">
+        <VuneliWordmark className="block h-5 w-auto sm:h-5.5" />
       </Link>
 
       <nav className="vc-mainnav" aria-label="Workspace navigation">

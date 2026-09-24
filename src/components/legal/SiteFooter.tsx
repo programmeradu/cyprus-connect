@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale } from "next-intl";
 import { useState } from "react";
 import { reopenCookieBanner } from "./CookieBanner";
+import { VuneliWordmark } from "@/components/brand/VuneliWordmark";
 
 const COPY = {
   en: {
@@ -154,21 +155,10 @@ export function SiteFooter() {
           <div>
             <Link
               href={`/${locale}`}
-              className="inline-flex items-center gap-3"
+              className="inline-block text-white transition-opacity hover:opacity-90"
               aria-label="Vuneli home"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/brand/icon/vuneli-mark-transparent-for-dark.png"
-                alt="Vuneli"
-                className="h-8 w-auto"
-              />
-              <span
-                className="text-2xl tracking-tight text-white sm:text-[26px]"
-                style={{ fontFamily: "var(--editorial-serif)", fontWeight: 500 }}
-              >
-                Vuneli
-              </span>
+              <VuneliWordmark className="block h-8 w-auto sm:h-9" />
             </Link>
             <h2
               className="mt-6 max-w-xl text-balance text-white sm:mt-8"
