@@ -19,6 +19,7 @@ import step2Company from "@/assets/onboarding-step2-company.png";
 import step2Utility from "@/assets/onboarding-step2-utility.png";
 import step2Accounting from "@/assets/onboarding-step2-accounting.png";
 import step2Manual from "@/assets/onboarding-step2-manual.png";
+import step4Console from "@/assets/onboarding-step4-console.png";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -628,6 +629,19 @@ export default function OnboardingPage() {
               exit={{ opacity: 0, y: -20 }}
               className="vco-plate"
             >
+              <div className="flex justify-center mb-4">
+                <div className="relative w-40 h-40 sm:w-52 sm:h-52">
+                  <div aria-hidden className="absolute inset-x-8 bottom-2 h-5 rounded-[50%] bg-foreground/10 blur-xl" />
+                  <img
+                    src={step4Console.src}
+                    alt="A console tablet with a rising chart and gauge, a leaf coin, a check mark and a flag"
+                    width={1024}
+                    height={1024}
+                    loading="lazy"
+                    className="relative h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(40,60,45,0.18)]"
+                  />
+                </div>
+              </div>
               <div className="text-center mb-8">
                 <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-4">
                   {t("step4.title")}
