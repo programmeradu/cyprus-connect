@@ -35,3 +35,4 @@
 - [ ] Rebuild E01 on PyMC; add MAPIE conformal + Brightway MC baselines; SBC via simuk
 - [ ] Patent white-space scan (BLANC method) + EPO OPS claim sets — needs EPO API key
 - [ ] Idea generation run: Open Coscientist grounded on OpenAlex → I-14+ (unproven until gated) — needs an LLM API key
+- [x] I-14 prereg locked + E03 run → killed on power (reports/S4_I14_RESULTS.md)
