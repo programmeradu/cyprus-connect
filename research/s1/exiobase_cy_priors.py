@@ -24,7 +24,7 @@ GROUPS = {
                            "Production of meat products nec", "Processing vegetable oils and fats", "Processing of dairy products",
                            "Processed rice", "Sugar refining", "Processing of Food products nec", "Manufacture of beverages",
                            "Manufacture of fish products"],
-    "land_transport": ["Other land transportation"],
+    "land_transport": ["Other land transport"],
     "business_services": ["Other business activities (74)", "Computer and related activities (72)", "Real estate activities (70)"],
 }
 
