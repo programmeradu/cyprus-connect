@@ -3,3 +3,4 @@ date,task,stage,person,hours,cost_eur,frascati_type,notes
 2026-09-24,S1 grid factor analysis + datapoint derivability,S1,AI,1.5,0,experimental development,Runs S1-GRID-01/02 S1-RANK-01
 2026-09-24,S1 fuel EUR-to-litres simulation + provenance manifest,S1,AI,1,0,experimental development,Run S1-FUEL-01
 2026-09-24,S1 close-out (PV penetration; CBAM fields) + S2 prior art I-03/I-04,S1-S2,AI,1.5,0,experimental development,Runs S1-PV-01 S1-CBAM-01 S2-PA-01
+2026-09-24,S2 prior art I-02 + EAC metering check + CBAM sizing,S1-S2,AI,1.5,0,experimental development,Runs S2-PA-02 S2-PA-03 S1-CBAM-02 S1-CBAM-03
