@@ -162,7 +162,7 @@ export default function PrivacySettingsPage() {
     <PageShell header={header}>
       <Section title={t.exportTitle} description={t.exportBody}>
         <div className="vck-card p-4">
-          <button className="vck-btn" onClick={handleExport} disabled={exporting}>
+          <button className="vck-btn vck-btn-primary" onClick={handleExport} disabled={exporting}>
             {exporting ? t.exporting : t.exportCta}
           </button>
         </div>
@@ -172,7 +172,7 @@ export default function PrivacySettingsPage() {
         <div className="vck-card p-4 border-[var(--destructive)]">
           {!confirming ? (
             <button
-              className="vck-btn-ghost vck-btn border-[var(--destructive)] text-[var(--destructive)]"
+              className="vck-btn vck-btn-primary border-[var(--destructive)] text-[var(--destructive)]"
               onClick={() => setConfirming(true)}
             >
               {t.deleteCta}
@@ -192,7 +192,7 @@ export default function PrivacySettingsPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  className="vck-btn-ghost vck-btn"
+                  className="vck-btn vck-btn-primary"
                   onClick={() => {
                     setConfirming(false);
                     setConfirmText("");
@@ -202,7 +202,7 @@ export default function PrivacySettingsPage() {
                   {t.cancel}
                 </button>
                 <button
-                  className="vck-btn"
+                  className="vck-btn vck-btn-primary"
                   style={{ background: "var(--destructive)" }}
                   onClick={handleDelete}
                   disabled={confirmText !== "DELETE" || deleting}

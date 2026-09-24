@@ -348,7 +348,7 @@ export default function InsightsPage() {
           title={t("title")}
           purpose={`${t("subtitle")}${userLocation ? ` — ${userLocation.country}` : ""}`}
           actions={
-            <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn">
+            <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn vck-btn-primary">
               {t("refresh")}
             </button>
           }
@@ -568,7 +568,7 @@ export default function InsightsPage() {
         title={t("compliance.title")}
         description={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
         action={
-          <Link href="/app/compliance" className="vck-btn-ghost vck-btn">
+          <Link href="/app/compliance" className="vck-btn vck-btn-primary">
             {t("compliance.viewDashboard")}
           </Link>
         }

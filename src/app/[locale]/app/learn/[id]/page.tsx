@@ -144,7 +144,7 @@ export default function CourseDetailsPage() {
             course?.isEnrolled && progressPercentage < 100 ? (
               <button
                 type="button"
-                className="vck-btn"
+                className="vck-btn vck-btn-primary"
                 onClick={() => {
                   for (const m of course.modules) {
                     for (const l of m.lessons) {

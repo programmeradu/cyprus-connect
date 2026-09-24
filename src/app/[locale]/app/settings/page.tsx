@@ -342,7 +342,7 @@ function SettingsContent() {
                   Vuneli is Cyprus-native. Jurisdiction, currency, timezone and emission factors are fixed to Cyprus.
                 </p>
               </div>
-              <button className="vck-btn" onClick={handleSave} disabled={isSaving}>
+              <button className="vck-btn vck-btn-primary" onClick={handleSave} disabled={isSaving}>
                 {isSaving ? tc("saving") : tc("save")}
               </button>
             </div>
@@ -351,7 +351,7 @@ function SettingsContent() {
           <Section title={t("dangerZone")}>
             <div className="vck-card p-4 border-[var(--destructive)]">
               <p className="text-sm text-muted-foreground mb-4">{t("dangerBody")}</p>
-              <button className="vck-btn-ghost vck-btn border-[var(--destructive)] text-[var(--destructive)]">
+              <button className="vck-btn vck-btn-primary border-[var(--destructive)] text-[var(--destructive)]">
                 {t("deleteAccount")}
               </button>
             </div>
@@ -395,7 +395,7 @@ function SettingsContent() {
                     role="switch"
                     aria-checked={notificationPrefs[item.key]}
                     onClick={() => handleNotificationToggle(item.key)}
-                    className={`vck-btn-ghost vck-btn shrink-0 !min-h-[2.25rem] !px-3 ${
+                    className={`vck-btn vck-btn-primary shrink-0 !min-h-[2.25rem] !px-3 ${
                       notificationPrefs[item.key] ? "bg-[var(--vc-rail-active)]" : ""
                     }`}
                   >

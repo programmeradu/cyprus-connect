@@ -324,7 +324,7 @@ export default function OnboardingPage() {
                   </p>
 
                   <div className="flex items-center gap-4">
-                    <button className="vck-btn" onClick={() => setStep(2)}>
+                    <button className="vck-btn vck-btn-primary" onClick={() => setStep(2)}>
                       {t("step1.getStarted")}
                     </button>
                     <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -444,7 +444,7 @@ export default function OnboardingPage() {
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.utility.desc")}
                   </p>
-                  <button className="vck-btn w-full text-[12px] h-7"
+                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('utility')}
                   >
                     {t("step2.utility.cta")}
@@ -460,7 +460,7 @@ export default function OnboardingPage() {
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.accounting.desc")}
                   </p>
-                  <button className="vck-btn-ghost vck-btn w-full text-[12px] h-7"
+                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('accounting')}
                     disabled={qbConnecting}
                   >
@@ -487,7 +487,7 @@ export default function OnboardingPage() {
                   <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.manual.desc")}
                   </p>
-                  <button className="vck-btn-ghost vck-btn w-full text-[12px] h-7"
+                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('manual')}
                   >
                     {t("step2.manual.cta")}
@@ -517,7 +517,7 @@ export default function OnboardingPage() {
                 >
                   {t("step2.back")}
                 </button>
-                <button className="vck-btn"
+                <button className="vck-btn vck-btn-primary"
                   onClick={() => setStep(3)}
                   disabled={!canProceed()}
                 >
@@ -622,7 +622,7 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col items-center gap-3">
-                <button className="vck-btn w-full md:w-auto px-6" onClick={() => setStep(4)}>
+                <button className="vck-btn vck-btn-primary w-full md:w-auto px-6" onClick={() => setStep(4)}>
                   {t("step3.explore")}
                 </button>
                 <div className="flex items-center gap-6">
@@ -695,7 +695,7 @@ export default function OnboardingPage() {
               </div>
 
               <div className="flex flex-col items-center gap-3">
-                <button className="vck-btn w-full md:w-auto px-8"
+                <button className="vck-btn vck-btn-primary w-full md:w-auto px-8"
                   onClick={handleComplete}
                   disabled={isSubmitting}
                 >

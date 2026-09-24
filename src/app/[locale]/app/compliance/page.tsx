@@ -445,7 +445,7 @@ function DocumentsTab({
       render: (doc) => (
         <button
           type="button"
-          className="vck-btn-ghost vck-btn"
+          className="vck-btn vck-btn-primary"
           onClick={() => {
             if (doc.content) {
               const blob = new Blob([doc.content], { type: "text/markdown" });
@@ -473,7 +473,7 @@ function DocumentsTab({
             <button
               key={framework}
               type="button"
-              className="vck-btn-ghost vck-btn"
+              className="vck-btn vck-btn-primary"
               onClick={() => onGenerate(framework)}
               disabled={generating}
             >
@@ -583,7 +583,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
               <span className="text-sm">{label}</span>
             </label>
           ))}
-          <button type="button" className="vck-btn mt-2" onClick={() => onSave(localSettings)}>
+          <button type="button" className="vck-btn vck-btn-primary mt-2" onClick={() => onSave(localSettings)}>
             {t("settings.save")}
           </button>
         </div>

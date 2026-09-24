@@ -259,7 +259,7 @@ export const NotificationBell = () => {
         type="button"
         onClick={handleBellClick}
         aria-label={t("title")}
-        className="vck-btn-ghost vck-btn relative h-11 w-11 px-0"
+        className="vck-btn vck-btn-primary relative h-11 w-11 px-0"
       >
         <BellIcon className="w-4 h-4" />
         {unreadCount > 0 && (
@@ -285,7 +285,7 @@ export const NotificationBell = () => {
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="vck-btn-ghost vck-btn shrink-0 h-9 px-2.5 text-xs"
+                className="vck-btn vck-btn-primary shrink-0 h-9 px-2.5 text-xs"
               >
                 {t("markAllRead")}
               </button>
@@ -342,7 +342,7 @@ export const NotificationBell = () => {
                               handleDeleteNotification(e, notification.id)
                             }
                             aria-label={t("toasts.deleted")}
-                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity vck-btn-ghost vck-btn h-8 px-2 text-xs"
+                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity vck-btn vck-btn-primary h-8 px-2 text-xs"
                           >
                             ×
                           </button>
@@ -364,7 +364,7 @@ export const NotificationBell = () => {
                   setIsOpen(false);
                   router.push("/app/settings#notifications");
                 }}
-                className="vck-btn-ghost vck-btn h-9 px-2.5 text-xs w-full"
+                className="vck-btn vck-btn-primary h-9 px-2.5 text-xs w-full"
               >
                 {t("settings")}
               </button>

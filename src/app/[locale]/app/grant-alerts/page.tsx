@@ -120,8 +120,8 @@ export default function GrantAlertsPage() {
             placeholder="you@yourcompany.cy"
             className="h-11 flex-1 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
-          <button type="submit" className="vck-btn">Subscribe</button>
-          <button type="button" onClick={unsubscribe} className="vck-btn-ghost vck-btn">Unsubscribe</button>
+          <button type="submit" className="vck-btn vck-btn-primary">Subscribe</button>
+          <button type="button" onClick={unsubscribe} className="vck-btn vck-btn-primary">Unsubscribe</button>
         </form>
         {status && <p className="vck-meta mt-3">{status}</p>}
       </Section>

@@ -193,7 +193,7 @@ export function ComplianceChecker() {
           type="button"
           onClick={handleCheck}
           disabled={loading}
-          className="vck-btn w-full"
+          className="vck-btn vck-btn-primary w-full"
         >
           {loading ? t('checking') : t('checkStatus')}
         </button>

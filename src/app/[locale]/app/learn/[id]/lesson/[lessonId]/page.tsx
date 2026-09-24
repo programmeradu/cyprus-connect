@@ -280,7 +280,7 @@ export default function LessonViewerPage() {
                         type="button"
                         onClick={submitQuiz}
                         disabled={Object.keys(selectedAnswers).length < (contentData.questions?.length ?? 0) || isCompleting}
-                        className="vck-btn"
+                        className="vck-btn vck-btn-primary"
                       >
                         {isCompleting ? "Submitting\u2026" : "Submit quiz"}
                       </button>
@@ -361,24 +361,24 @@ export default function LessonViewerPage() {
             )}
 
             {!lesson.completion && lesson.contentType !== "quiz" && (
-              <button type="button" onClick={() => completeLesson()} disabled={isCompleting} className="vck-btn mt-6">
+              <button type="button" onClick={() => completeLesson()} disabled={isCompleting} className="vck-btn vck-btn-primary mt-6">
                 {isCompleting ? "Saving\u2026" : "Mark as complete"}
               </button>
             )}
 
             <div className="mt-8 flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-5">
-              <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn-ghost vck-btn">
+              <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn vck-btn-primary">
                 Back to course
               </button>
 
               {lesson.completion && nextLessonId && (
-                <button type="button" onClick={goToNextLesson} className="vck-btn">
+                <button type="button" onClick={goToNextLesson} className="vck-btn vck-btn-primary">
                   Next lesson
                 </button>
               )}
 
               {lesson.completion && !nextLessonId && (
-                <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn">
+                <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn vck-btn-primary">
                   Course complete
                 </button>
               )}

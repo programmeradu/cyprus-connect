@@ -200,7 +200,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           purpose={project?.description}
           breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: project?.name ?? "" }]}
           actions={
-            <button type="button" className="vck-btn" onClick={() => setShowPurchaseDialog(true)} disabled={!project}>
+            <button type="button" className="vck-btn vck-btn-primary" onClick={() => setShowPurchaseDialog(true)} disabled={!project}>
               Purchase offsets
             </button>
           }
@@ -249,7 +249,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
           {!project.bannerImage && (
             <Section title="Banner image" description="Generate a banner image for this listing.">
-              <button type="button" className="vck-btn-ghost vck-btn" onClick={handleGenerateBanner} disabled={generatingBanner}>
+              <button type="button" className="vck-btn vck-btn-primary" onClick={handleGenerateBanner} disabled={generatingBanner}>
                 {generatingBanner ? "Generating\u2026" : "Generate banner"}
               </button>
             </Section>
@@ -312,7 +312,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             <div className="mt-5 flex gap-2">
               <button
                 type="button"
-                className="vck-btn-ghost vck-btn flex-1"
+                className="vck-btn vck-btn-primary flex-1"
                 onClick={() => setShowPurchaseDialog(false)}
                 disabled={purchasing}
               >
@@ -320,7 +320,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </button>
               <button
                 type="button"
-                className="vck-btn flex-1"
+                className="vck-btn vck-btn-primary flex-1"
                 onClick={handlePurchase}
                 disabled={purchasing}
               >

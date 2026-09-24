@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
           purpose={t("subtitle")}
           actions={
             <>
-              <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn-ghost vck-btn">
+              <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn vck-btn-primary">
                 {refreshing ? tc("refreshing") : tc("refresh")}
               </button>
               <ExportReportButton

@@ -517,7 +517,7 @@ Return ONLY valid JSON (no markdown, no explanations):
               >
                 <h3 className="text-[1.0625rem] font-semibold mb-2">{t("ai.uploadTitle")}</h3>
                 <p className="vck-meta max-w-lg mx-auto mb-4 break-words">{t("ai.uploadDescription")}</p>
-                <span className="vck-btn inline-flex">{t("ai.uploadCta")}</span>
+                <span className="vck-btn vck-btn-primary inline-flex">{t("ai.uploadCta")}</span>
               </button>
 
               <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -637,7 +637,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                 type="button"
                 onClick={calculateEmissions}
                 disabled={isCalculating || !isFormValid()}
-                className="vck-btn w-full"
+                className="vck-btn vck-btn-primary w-full"
               >
                 {isCalculating ? t("manual.calculating") : t("manual.calculate")}
               </button>
@@ -726,7 +726,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                   rowKey={(r, i) => `${r.title}-${i}`}
                 />
                 <div className="mt-3">
-                  <button type="button" onClick={() => router.push("/app/actions")} className="vck-btn-ghost vck-btn w-full">
+                  <button type="button" onClick={() => router.push("/app/actions")} className="vck-btn vck-btn-primary w-full">
                     {t("results.viewAllActions")}
                   </button>
                 </div>
@@ -737,10 +737,10 @@ Return ONLY valid JSON (no markdown, no explanations):
           </Section>
 
           <div className="flex gap-3">
-            <button type="button" onClick={handleReset} className="vck-btn-ghost vck-btn flex-1">
+            <button type="button" onClick={handleReset} className="vck-btn vck-btn-primary flex-1">
               {t("results.calcAgain")}
             </button>
-            <button type="button" onClick={() => router.push("/app")} className="vck-btn flex-1">
+            <button type="button" onClick={() => router.push("/app")} className="vck-btn vck-btn-primary flex-1">
               {t("results.goDashboard")}
             </button>
           </div>

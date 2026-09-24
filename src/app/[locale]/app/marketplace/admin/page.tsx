@@ -180,7 +180,7 @@ export default function MarketplaceAdminPage() {
           type="button"
           onClick={() => toggleFeatured(p.id, p.isFeatured)}
           disabled={updating === p.id}
-          className="vck-btn-ghost vck-btn"
+          className="vck-btn vck-btn-primary"
         >
           {p.isFeatured ? "Featured" : "Feature"}
         </button>
@@ -214,7 +214,7 @@ export default function MarketplaceAdminPage() {
             type="button"
             onClick={() => generateBanner(p.id)}
             disabled={generating === p.id}
-            className="vck-btn-ghost vck-btn"
+            className="vck-btn vck-btn-primary"
           >
             {generating === p.id ? "Generating\u2026" : "Generate banner"}
           </button>
@@ -235,7 +235,7 @@ export default function MarketplaceAdminPage() {
           breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: "Admin" }]}
           actions={
             projectsWithoutBanners > 0 ? (
-              <button type="button" className="vck-btn" onClick={bulkGenerateBanners}>
+              <button type="button" className="vck-btn vck-btn-primary" onClick={bulkGenerateBanners}>
                 Generate all banners ({projectsWithoutBanners})
               </button>
             ) : undefined

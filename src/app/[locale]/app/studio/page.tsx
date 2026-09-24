@@ -595,7 +595,7 @@ Generate a detailed image generation prompt (max 200 words):`;
               type="button"
               onClick={generateMedia}
               disabled={isGenerating || !prompt.trim()}
-              className="vck-btn w-full disabled:cursor-not-allowed disabled:opacity-50"
+              className="vck-btn vck-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isGenerating ? t("creator.generating") : t("creator.generateImage")}
             </button>
@@ -626,14 +626,14 @@ Generate a detailed image generation prompt (max 200 words):`;
                   <button
                     type="button"
                     onClick={() => toggleSaveToLibrary(selectedMedia)}
-                    className={`vck-btn ${selectedMedia.saved ? "" : "vck-btn-ghost"}`}
+                    className={`vck-btn ${selectedMedia.saved ? "vck-btn-primary" : ""}`}
                   >
                     {selectedMedia.saved ? t("preview.savedToLibrary") : t("preview.saveToLibrary")}
                   </button>
                   <button
                     type="button"
                     onClick={() => downloadMedia(selectedMedia)}
-                    className="vck-btn-ghost vck-btn"
+                    className="vck-btn vck-btn-primary"
                   >
                     {t("preview.download")}
                   </button>
@@ -663,7 +663,7 @@ Generate a detailed image generation prompt (max 200 words):`;
                           <button
                             type="button"
                             onClick={() => openExternalUrl(selectedMedia.url)}
-                            className="vck-btn-ghost vck-btn"
+                            className="vck-btn vck-btn-primary"
                           >
                             {t("preview.openNewTab")}
                           </button>
@@ -710,7 +710,7 @@ Generate a detailed image generation prompt (max 200 words):`;
                       type="button"
                       onClick={handleNaturalLanguageEdit}
                       disabled={isEditingImage || !editPrompt.trim()}
-                      className="vck-btn disabled:cursor-not-allowed disabled:opacity-50"
+                      className="vck-btn vck-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {isEditingImage ? t("creator.generating") : t("editing.title")}
                     </button>

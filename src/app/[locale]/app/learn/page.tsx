@@ -236,7 +236,7 @@ export default function LearnPage() {
       render: (c) => (
         <button
           type="button"
-          className="vck-btn-ghost vck-btn"
+          className="vck-btn vck-btn-primary"
           onClick={(e) => {
             e.stopPropagation();
             if (c.isEnrolled) {
@@ -263,7 +263,7 @@ export default function LearnPage() {
           title={t("title")}
           purpose={t("subtitle")}
           actions={
-            <button type="button" className="vck-btn" onClick={triggerAutoGeneration} disabled={isAutoGenerating}>
+            <button type="button" className="vck-btn vck-btn-primary" onClick={triggerAutoGeneration} disabled={isAutoGenerating}>
               {isAutoGenerating ? t("generatingCourses") : t("generateFirst")}
             </button>
           }

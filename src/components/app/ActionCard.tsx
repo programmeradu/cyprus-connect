@@ -75,7 +75,7 @@ export const ActionCard = ({
         <button
           onClick={onComplete}
           disabled={completed}
-          className={`vck-btn mt-4 w-full ${completed ? "vck-btn-ghost" : ""}`}
+          className={`vck-btn vck-btn-primary mt-4 w-full ${completed ? "" : "vck-btn-primary"}`}
         >
           <span className="break-words text-center">
             {completed ? t("completed") : t("markComplete")}

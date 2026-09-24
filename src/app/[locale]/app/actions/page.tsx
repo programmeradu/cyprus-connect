@@ -340,7 +340,7 @@ export default function ActionsPage() {
               type="button"
               onClick={generateAIActions}
               disabled={isGenerating}
-              className="vck-btn-ghost vck-btn"
+              className="vck-btn vck-btn-primary"
             >
               {isGenerating ? t("generating") : t("aiGenerate")}
               {aiActionsCount > 0 && <span className="vck-tag vck-num">{aiActionsCount}</span>}

@@ -218,7 +218,7 @@ export function BenchmarkComparator() {
           type="button"
           onClick={handleCompare}
           disabled={loading}
-          className="vck-btn w-full"
+          className="vck-btn vck-btn-primary w-full"
         >
           {loading ? t('analyzing') : t('compare')}
         </button>

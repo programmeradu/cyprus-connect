@@ -156,7 +156,7 @@ export default function GenerateCoursePage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, difficultyLevel: level })}
                     disabled={isGenerating}
-                    className={`vck-btn capitalize ${
+                    className={`vck-btn vck-btn-primary capitalize ${
                       formData.difficultyLevel === level ? "" : "vck-btn-ghost"
                     }`}
                   >
@@ -193,7 +193,7 @@ export default function GenerateCoursePage() {
               type="button"
               onClick={generateCourse}
               disabled={!formData.topic || isGenerating}
-              className="vck-btn w-full disabled:cursor-not-allowed disabled:opacity-50"
+              className="vck-btn vck-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isGenerating ? generationStep || "Generating…" : "Generate course with AI"}
             </button>
