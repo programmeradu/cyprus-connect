@@ -10,4 +10,7 @@
 
 - [x] Research pipeline plan: fold in user review (Cyprus grid/doc realism, negative prior art, pre-registration lock, stress tests, tax/grant compliance, dual-track S6), then re-review
 - [x] Fold refinements 2 (citations, raw-data SHA-256 manifest, FTO in S2, KS/Wasserstein synthetic validation) into plan + research README
-- [ ] S1 open items: PV net-metering share, EUR-to-litres error, CBAM/ESRS graph; then S2
+- [x] S1 close-out: PV penetration (share by category not published), CBAM fields (78/111 supplier-only)
+- [x] S2 on I-03 and I-04: both killed; I-03b residual opened
+- [ ] Blocked on user/outside: EAC/CERA count of net-billing agreements by tariff; 2-3 real net-billing bills; Scheid 2025 full text
+- [ ] Next: S2 on I-02 (+I-03b merge); CBAM re-run on definitive-period acts; ESRS datapoint list

@@ -65,3 +65,6 @@ S2 must decide if the classification is research or plain engineering.
 ## 5. Candidates going to S2 (prior-art gate)
 I-03 hidden PV self-consumption, I-04 Scope 1 from fragmentary fuel evidence, I-02 confidence
 scoring + evidence ranking. All three are candidates only. None is an innovation claim.
+
+## Close-out (24 Sep 2026)
+S1-PV-01 and S1-CBAM-01 done. See `reports/S2_PRIOR_ART.md` sections 1.4 and 3. Open: CY commercial PV share (not published; data request), ESRS datapoint list.
