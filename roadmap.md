@@ -20,5 +20,7 @@
 - [ ] Blocked on founder: add git hash of prereg to registry; recruit 3-5 pilot SMEs
 - [x] I-07 full S2 screen (survives); I-05, I-06 killed; CBAM definitive re-map; VSME B1-B11 list
 - [x] S4 E01 on I-07 (synthetic): H1 pass, H2 fail, H3 pass; generator not validated
+- [x] External ideas I-10 killed, I-11 merged into I-07, I-12 killed; gap mining opened I-13
+- [ ] Next: S2 prior-art on I-13
 - [ ] Next: full text Owl + arXiv 2504.13382; Espacenet claim search; verify CBAM mark-up; VSME datapoint inventory
 - [ ] Blocked outside: CY Customs count of CBAM importers above/below 50 t
