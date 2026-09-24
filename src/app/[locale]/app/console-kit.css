@@ -1289,12 +1289,115 @@
 .vc .vco-rail li[data-state="current"] .vco-rail-n { background: var(--vc-lime); color: var(--vc-lime-ink); border-color: transparent; }
 .vc .vco-rail li[data-state="done"] .vco-rail-n { background: var(--vc-well); }
 .vc .vco-rail-label { font-size: 14px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+/* Onboarding fits one frame: the page fills the viewport under the 68px
+   top bar, the plate takes the remaining height, and artwork scales with
+   the height instead of the width. Bottom padding keeps clear of the
+   Copilot pill. Short or narrow screens fall back to normal scrolling. */
+.vc .vck-page.vco { display: flex; flex-direction: column; }
+.vc .vco .vck-head { margin-bottom: 14px; padding-bottom: 12px; }
+.vc .vco-body { display: flex; flex-direction: column; }
 .vc .vco-plate {
   border: 1px solid var(--vc-rule);
   border-radius: 18px;
   background: var(--vc-well);
-  padding: clamp(20px, 4vw, 40px);
+  padding: clamp(20px, 3.2vh, 36px) clamp(20px, 3.4vw, 44px);
   color: var(--vc-ink-2);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.vc .vco-split {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(20px, 4vw, 56px); align-items: center;
+}
+.vc .vco-art { position: relative; display: flex; justify-content: center; align-items: center; min-height: 0; height: 100%; }
+.vc .vco-art img {
+  position: relative; width: auto; height: auto;
+  max-width: 100%; max-height: min(100%, 440px);
+  aspect-ratio: 1; object-fit: contain;
+  filter: drop-shadow(0 18px 30px rgba(40, 60, 45, 0.18));
+}
+.vc .vco-art-shadow { position: absolute; left: 22%; right: 22%; bottom: 6%; height: 22px; border-radius: 50%; background: color-mix(in oklab, var(--vc-ink) 12%, transparent); filter: blur(16px); }
+.vc .vco-copy { min-width: 0; display: flex; flex-direction: column; }
+.vc .vco-title { margin: 0; font-size: clamp(21px, 2.9vh, 26px); line-height: 1.2; font-weight: 700; letter-spacing: -0.015em; color: var(--vc-ink); text-wrap: balance; }
+.vc .vco-lead { margin: 6px 0 0; font-size: 16.5px; line-height: 1.4; font-weight: 600; color: var(--vc-ink); }
+.vc .vco-sub { margin: 6px 0 0; font-size: 14.5px; line-height: 1.5; color: var(--vc-ink-2); max-width: 68ch; }
+.vc .vco-note { margin: clamp(12px, 2vh, 18px) 0 0; font-size: 14.5px; line-height: 1.6; color: var(--vc-ink-2); max-width: 60ch; }
+.vc .vco-checks { list-style: none; margin: clamp(12px, 2.2vh, 20px) 0 0; padding: 0; display: grid; gap: clamp(6px, 1.1vh, 10px); }
+.vc .vco-checks li { display: flex; align-items: center; gap: 10px; font-size: 15px; line-height: 1.4; color: var(--vc-ink); }
+.vc .vco-check { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 6px; background: var(--vc-lime); color: var(--vc-lime-ink); }
+.vc .vco-actions { margin-top: clamp(16px, 3vh, 28px); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
+.vc .vco-back { font-size: 14px; font-weight: 600; color: var(--vc-ink-2); min-height: 40px; background: none; border: 0; cursor: pointer; }
+.vc .vco-back:hover { color: var(--vc-ink); }
+.vc .vco-facts { margin: clamp(14px, 2.4vh, 22px) 0 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--vc-rule); border-bottom: 1px solid var(--vc-rule); }
+.vc .vco-facts > div { padding: 12px 16px 12px 0; }
+.vc .vco-facts > div + div { padding-left: 16px; border-left: 1px solid var(--vc-rule); }
+.vc .vco-facts dt { font-size: 14.5px; font-weight: 700; color: var(--vc-ink); }
+.vc .vco-facts dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--vc-ink-2); }
+.vc .vco-features { list-style: none; margin: clamp(14px, 2.4vh, 22px) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--vc-rule); }
+.vc .vco-features li { padding: clamp(10px, 1.8vh, 16px) 16px clamp(10px, 1.8vh, 16px) 0; border-bottom: 1px solid var(--vc-rule); }
+.vc .vco-features li:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--vc-rule); }
+.vc .vco-features h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--vc-ink); }
+.vc .vco-features p { margin: 3px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--vc-ink-2); }
+/* step 2 */
+.vc .vco-plate-head { margin-bottom: clamp(12px, 2vh, 20px); }
+.vc .vco-two { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 2.4vw, 28px); align-items: stretch; }
+.vc .vco-form { border-radius: 12px; padding: clamp(14px, 2.2vh, 22px) 20px; }
+.vc .vco-form-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.vc .vco-form-head h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--vc-ink); min-width: 0; }
+.vc .vco-form-head img { flex: none; width: 60px; height: 60px; margin: -12px 0; object-fit: contain; filter: drop-shadow(0 8px 12px rgba(40, 60, 45, 0.16)); }
+.vc .vco-sources { list-style: none; margin: 0; padding: 0; display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); border: 1px solid var(--vc-rule); border-radius: 12px; }
+.vc .vco-source { display: grid; grid-template-columns: 56px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 14px; row-gap: 8px; align-content: center; padding: clamp(10px, 1.6vh, 16px) 16px; }
+.vc .vco-source + .vco-source { border-top: 1px solid var(--vc-rule); }
+.vc .vco-source img { grid-row: span 2; width: 56px; height: 56px; object-fit: contain; align-self: center; filter: drop-shadow(0 8px 12px rgba(40, 60, 45, 0.16)); }
+.vc .vco-source h3 { margin: 0; font-size: 14.5px; font-weight: 700; color: var(--vc-ink); line-height: 1.3; }
+.vc .vco-source p { margin: 2px 0 0; font-size: 13px; line-height: 1.4; color: var(--vc-ink-2); }
+.vc .vco-source-btn { justify-self: start; height: 34px; font-size: 13px; padding: 0 14px; }
+.vc .vco-foot { margin-top: clamp(12px, 2vh, 20px); padding-top: clamp(10px, 1.6vh, 16px); border-top: 1px solid var(--vc-rule); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.vc .vco-foot-note { margin: 0; font-size: 13px; line-height: 1.45; color: var(--vc-ink-2); text-align: center; }
+
+@media (min-width: 1100px) {
+  .vc .vco-source { grid-template-columns: 52px minmax(0, 1fr) auto; grid-template-rows: auto; row-gap: 0; align-items: center; }
+  .vc .vco-source img { grid-row: auto; width: 52px; height: 52px; }
+  .vc .vco-source-btn { justify-self: end; }
+}
+@media (max-height: 780px) {
+  .vc .vco .vck-head { margin-bottom: 10px; padding-bottom: 10px; }
+  .vc .vco .vck-head h1 { font-size: 22px; }
+  .vc .vco-rail { margin-bottom: 12px; }
+  .vc .vco-rail li { padding-top: 8px; }
+  .vc .vck-page.vco { padding-bottom: 76px !important; }
+  .vc .vco-plate { padding-top: 16px; padding-bottom: 16px; }
+  .vc .vco-input { height: 36px; }
+  .vc .vco-form .vck-label { margin-bottom: 4px; }
+  .vc .vco-form .grid { row-gap: 8px; }
+  .vc .vco-form-head { margin-bottom: 6px; }
+  .vc .vco-form-head img { width: 48px; height: 48px; margin: -8px 0; }
+  .vc .vco-plate-head { margin-bottom: 10px; }
+  .vc .vco-foot { margin-top: 10px; padding-top: 10px; }
+  .vc .vco-source { padding-top: 8px; padding-bottom: 8px; }
+  .vc .vco-form .grid { row-gap: 6px; }
+}
+/* One frame on desktop and tablet with enough height. */
+@media (min-width: 900px) and (min-height: 620px) {
+  .vc .vck-page.vco { height: calc(100dvh - 68px); padding-top: 20px; padding-bottom: 84px; overflow: hidden; }
+  .vc .vco-body { flex: 1; min-height: 0; }
+  .vc .vco-body > .vco-plate { flex: 1; overflow: auto; }
+  .vc .vco-art { max-height: 100%; }
+}
+@media (max-width: 899px) {
+  .vc .vco-split, .vc .vco-two { grid-template-columns: 1fr; }
+  .vc .vco-art { height: auto; }
+  .vc .vco-art img { max-height: 240px; }
+}
+@media (max-width: 560px) {
+  .vc .vco-foot { grid-template-columns: 1fr 1fr; }
+  .vc .vco-foot-note { grid-column: 1 / -1; grid-row: 1; text-align: left; }
+  .vc .vco-foot .vck-btn { justify-self: end; }
+  .vc .vco-features, .vc .vco-facts { grid-template-columns: 1fr; }
+  .vc .vco-features li:nth-child(even), .vc .vco-facts > div + div { padding-left: 0; border-left: 0; }
+  .vc .vco-facts > div + div { border-top: 1px solid var(--vc-rule); }
 }
 @media (max-width: 640px) {
   .vc .vco-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }

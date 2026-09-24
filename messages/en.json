@@ -913,8 +913,8 @@
       "imageAlt": "Sustainable city with green buildings and nature"
     },
     "step2": {
-      "title": "Step 2: Connect Your Data Sources",
-      "subtitle": "Seamless Integration for Smarter Insights",
+      "title": "Connect your data sources",
+      "subtitle": "Tell us about your company, then add a first data source. You can skip the sources for now.",
       "companyHeader": "First, tell us about your company",
       "yourName": "Your Name *",
       "yourNamePlaceholder": "John Doe",
@@ -957,24 +957,24 @@
         "desc": "Upload any documents for OCR processing",
         "cta": "Upload Files"
       },
-      "security": "Your data is encrypted and secure. We comply with all privacy regulations",
+      "security": "Your data is encrypted in transit and at rest. We process it under the GDPR.",
       "back": "Back",
       "next": "Next Step"
     },
     "step3": {
-      "title": "Step 3 of 4: Gamify Your Green Journey",
-      "heading": "Earn Green Credits & Climb the Leaderboard!",
-      "description": "Our unique Green Credit system rewards your sustainable actions. The more you reduce your carbon footprint, recycle, and conserve resources, the more credits you earn. Compete with other local businesses on the leaderboard to see your impact grow and inspire others. It's fun, rewarding, and great for your brand!",
+      "title": "Green credits and the leaderboard",
+      "heading": "Earn credits for every reduction",
+      "description": "Each verified action earns green credits: lower energy use, less waste, cleaner suppliers. Compare your progress with other Cyprus businesses on the leaderboard.",
       "greenCredits": "Green Credits",
-      "creditsEarned": "Credits earned this month",
+      "creditsEarned": "Earned from verified actions",
       "leaderboard": "Leaderboard",
-      "yourRank": "Your Rank: #7 out of 45 SMEs",
+      "yourRank": "Your position among Cyprus SMEs",
       "explore": "Explore Initial Recommendations",
       "back": "Back",
       "skip": "Skip for now"
     },
     "step4": {
-      "title": "Step 4 of 4: Your Dashboard Awaits",
+      "title": "Your console is ready",
       "subtitle": "You're all set! Here's a quick overview of what you'll find on your dashboard",
       "features": [
         {
