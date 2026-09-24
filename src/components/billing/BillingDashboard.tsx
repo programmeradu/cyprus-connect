@@ -174,7 +174,7 @@ export const BillingDashboard = () => {
   if (isLoading || isSessionPending || loadingBillingData) {
     return (
       <div className="space-y-4">
-        <div className="app-card p-4 animate-pulse">
+        <div className="vck-card p-4 animate-pulse">
           <div className="h-6 bg-muted rounded w-32 mb-3" />
           <div className="h-3 bg-muted rounded w-full mb-1.5" />
           <div className="h-3 bg-muted rounded w-3/4" />
@@ -186,7 +186,7 @@ export const BillingDashboard = () => {
   if (!session?.user) {
     return (
       <div className="space-y-4">
-        <div className="app-card p-4 text-center">
+        <div className="vck-card p-4 text-center">
           <p className="text-muted-foreground text-sm">{t("signInRequired")}</p>
         </div>
       </div>
@@ -227,7 +227,7 @@ export const BillingDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
       >
         {loadingCredits ? (
-          <div className="app-card p-4 animate-pulse">
+          <div className="vck-card p-4 animate-pulse">
             <div className="h-6 bg-muted rounded w-32 mb-3" />
             <div className="h-8 bg-muted rounded w-20" />
           </div>
@@ -246,7 +246,7 @@ export const BillingDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
       >
-        <div className="app-card p-4">
+        <div className="vck-card p-4">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("currentPlan")}</h3>
@@ -334,7 +334,7 @@ export const BillingDashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="app-card p-4">
+          <div className="vck-card p-4">
             <h3 className="text-sm font-medium mb-3">{t("purchaseSummary")}</h3>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
@@ -366,7 +366,7 @@ export const BillingDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
       >
-        <div className="app-card p-4">
+        <div className="vck-card p-4">
           <h3 className="text-sm font-medium mb-3">{t("paymentHistory")}</h3>
           
           {paymentHistory.length === 0 ? (
@@ -378,7 +378,7 @@ export const BillingDashboard = () => {
               {paymentHistory.slice(0, 10).map((payment) => (
                 <div
                   key={payment.id}
-                  className="flex items-center justify-between px-3 py-3 border-b border-[var(--app-rule)] last:border-b-0"
+                  className="flex items-center justify-between px-3 py-3 border-b border-[var(--vc-rule-soft)] last:border-b-0"
                 >
                   <div className="flex items-center gap-2">
                     <div>

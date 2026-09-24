@@ -251,7 +251,7 @@ export function FileUploadDialog({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl z-50"
           >
-            <div className="app-overlay p-6 max-h-[85vh] overflow-hidden flex flex-col">
+            <div className="vck-overlay p-6 max-h-[85vh] overflow-hidden flex flex-col">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
