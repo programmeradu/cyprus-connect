@@ -19,5 +19,6 @@
 - [x] I-07 prereg written and locked (SHA-256 in registry)
 - [ ] Blocked on founder: add git hash of prereg to registry; recruit 3-5 pilot SMEs
 - [x] I-07 full S2 screen (survives); I-05, I-06 killed; CBAM definitive re-map; VSME B1-B11 list
+- [x] S4 E01 on I-07 (synthetic): H1 pass, H2 fail, H3 pass; generator not validated
 - [ ] Next: full text Owl + arXiv 2504.13382; Espacenet claim search; verify CBAM mark-up; VSME datapoint inventory
 - [ ] Blocked outside: CY Customs count of CBAM importers above/below 50 t

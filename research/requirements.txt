@@ -1,1 +1,7 @@
 # S1 uses the Python standard library only. Pin additions here.
+
+# S4
+numpy
+pandas
+scipy
+openpyxl
