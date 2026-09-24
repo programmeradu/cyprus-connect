@@ -144,16 +144,19 @@ function IntegrationsContent() {
         }
       }
 
-      const employees = user.teamSize ? parseInt(user.teamSize.split("-")[0]) || 50 : 50;
+      // Lower bound of the team-size band the company gave. No invented
+      // fallback: 0 means "not provided".
+      const employees = user.teamSize ? parseInt(user.teamSize.split("-")[0]) || 0 : 0;
 
       setUserData({
         id: user.id,
         companyName: user.companyName || user.name || "My Company",
         companyIndustry: user.companyIndustry || "technology",
-        teamSize: user.teamSize || "1-50",
+        teamSize: user.teamSize || "",
         totalEmissions,
         employees,
-        revenue: 5000000,
+        // Revenue is not collected yet, so per-revenue figures stay hidden.
+        revenue: 0,
       });
     } catch (error) {
       console.error("Failed to fetch user data:", error);
@@ -674,16 +677,18 @@ function IntegrationsContent() {
                     })}
                   />
                 </Plate>
-                <Plate label={t("benchmarks.perRevenue")}>
-                  <Reading
-                    label={t("benchmarks.perRevenue")}
-                    value={benchmarkComparison.emissions_per_revenue.toFixed(2)}
-                    unit="tCO₂e"
-                    note={t("benchmarks.vsIndustryAvg", {
-                      value: benchmarkComparison.industry_emissions_per_revenue.toFixed(2),
-                    })}
-                  />
-                </Plate>
+                {userData && userData.revenue > 0 && (
+                  <Plate label={t("benchmarks.perRevenue")}>
+                    <Reading
+                      label={t("benchmarks.perRevenue")}
+                      value={benchmarkComparison.emissions_per_revenue.toFixed(2)}
+                      unit="tCO₂e"
+                      note={t("benchmarks.vsIndustryAvg", {
+                        value: benchmarkComparison.industry_emissions_per_revenue.toFixed(2),
+                      })}
+                    />
+                  </Plate>
+                )}
                 <Plate
                   label={t("benchmarks.locationContext", {
                     country: benchmarkComparison.location_context.country,
