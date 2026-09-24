@@ -8,3 +8,4 @@ date,task,stage,person,hours,cost_eur,frascati_type,notes
 2026-09-24,"S2 full I-07, S2 I-05/I-06, CBAM re-map, VSME list, I-07 prereg",S1-S3,AI,2,0,experimental development,S2-PA-05..07 S1-CBAM-02 S3-PREREG-07
 2026-09-24,"S4 E01 I-07: generator, baselines, mixture model, H1-H3, stress test",S4,AI,2.5,0,experimental development,S4-E01-07
 2026-09-24,S2 on I-10/I-11/I-12; S1 gap mining; I-13 opened,S1-S2,AI,2,0,experimental development,S2-PA-08..10 S1-MINE-10
+2026-09-24,S2 prior art I-13,S2,AI,1,0,experimental development,S2-PA-11
