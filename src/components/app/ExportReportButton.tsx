@@ -125,7 +125,7 @@ export function ExportReportButton({
       type="button"
       onClick={handleExport}
       disabled={isExporting}
-      className="app-btn"
+      className="vck-btn vck-btn-primary"
     >
       {isExporting ? t('loading') : t('idle')}
     </button>

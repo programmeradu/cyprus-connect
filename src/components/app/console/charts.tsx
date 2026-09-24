@@ -203,7 +203,7 @@ export const WaveChart = ({ points, unit, precision, comb, height = 250 }: WaveC
         }}
       >
         <div className="vc-pill whitespace-nowrap px-2.5 py-1.5">
-          <div className="text-[9.5px] font-bold uppercase tracking-[0.3px] opacity-55">
+          <div className="text-[9.5px] font-bold tracking-[0.3px] opacity-55">
             {activePoint?.label}
           </div>
           <div className="vc-num text-[13.5px] leading-tight">
@@ -285,7 +285,7 @@ export const ArcGauge = ({
           {Math.round(pct)}
           <span className="ml-0.5 text-[12px] font-bold opacity-55">{suffix}</span>
         </div>
-        <div className="mt-1 text-[10px] font-semibold opacity-55">{caption}</div>
+        <div className="mt-1 text-[12px] font-semibold opacity-55">{caption}</div>
       </div>
     </div>
   );

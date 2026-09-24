@@ -115,30 +115,30 @@ export function ComplianceChecker() {
   }
 
   return (
-    <div className="app-card p-4">
+    <div className="vck-card p-4">
       <div className="mb-4">
         <h3 className="text-[1.0625rem] font-semibold leading-snug break-words">{t('title')}</h3>
-        <p className="app-meta mt-1 break-words">{t('subtitle')}</p>
+        <p className="vck-meta mt-1 break-words">{t('subtitle')}</p>
       </div>
 
       {/* Input Form */}
       <div className="space-y-3 mb-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
-            <label className="app-label mb-1.5 block">{t('country')}</label>
+            <label className="vck-label mb-1.5 block">{t('country')}</label>
             <input
               value={t('cyprusOnly')}
               readOnly
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule)] bg-[var(--app-surface-2)] px-3 text-sm text-muted-foreground"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 text-sm text-muted-foreground"
             />
           </div>
 
           <div>
-            <label className="app-label mb-1.5 block">{t('industry')}</label>
+            <label className="vck-label mb-1.5 block">{t('industry')}</label>
             <select
               value={smeData.industry}
               onChange={(e) => setSmeData({ ...smeData, industry: e.target.value })}
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm text-foreground"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm text-foreground"
             >
               <option value="">{t('select')}</option>
               {INDUSTRIES.map((industry) => (
@@ -152,35 +152,35 @@ export function ComplianceChecker() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label className="app-label mb-1.5 block">{t('employees')}</label>
+            <label className="vck-label mb-1.5 block">{t('employees')}</label>
             <input
               type="number"
               value={smeData.employees || ''}
               onChange={(e) => setSmeData({ ...smeData, employees: parseInt(e.target.value) || 0 })}
               placeholder="150"
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm app-num"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm vck-num"
             />
           </div>
 
           <div>
-            <label className="app-label mb-1.5 block">{t('revenue')}</label>
+            <label className="vck-label mb-1.5 block">{t('revenue')}</label>
             <input
               type="number"
               value={smeData.annualRevenue || ''}
               onChange={(e) => setSmeData({ ...smeData, annualRevenue: parseFloat(e.target.value) || 0 })}
               placeholder="25000000"
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm app-num"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm vck-num"
             />
           </div>
 
           <div>
-            <label className="app-label mb-1.5 block">{t('assets')}</label>
+            <label className="vck-label mb-1.5 block">{t('assets')}</label>
             <input
               type="number"
               value={smeData.totalAssets || ''}
               onChange={(e) => setSmeData({ ...smeData, totalAssets: parseFloat(e.target.value) || 0 })}
               placeholder="15000000"
-              className="w-full min-h-11 rounded-md border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm app-num"
+              className="w-full min-h-11 rounded-md border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm vck-num"
             />
           </div>
         </div>
@@ -193,7 +193,7 @@ export function ComplianceChecker() {
           type="button"
           onClick={handleCheck}
           disabled={loading}
-          className="app-btn w-full"
+          className="vck-btn vck-btn-primary w-full"
         >
           {loading ? t('checking') : t('checkStatus')}
         </button>
@@ -202,44 +202,44 @@ export function ComplianceChecker() {
       {/* Compliance Results */}
       {compliance && (
         <div className="space-y-3">
-          <div className="app-card-inset p-3">
+          <div className="vck-inset p-3">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <span className="app-label">{t('complianceStatus')}</span>
-              <span className="app-tag">{getComplianceLevelBadge(compliance.complianceLevel)}</span>
+              <span className="vck-label">{t('complianceStatus')}</span>
+              <span className="vck-tag">{getComplianceLevelBadge(compliance.complianceLevel)}</span>
             </div>
-            <p className="app-meta break-words">{compliance.threshold}</p>
+            <p className="vck-meta break-words">{compliance.threshold}</p>
           </div>
 
-          <div className="app-ledger">
+          <div className="vck-ledgerbox">
             <div className="flex flex-col gap-1 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-              <span className="app-label">{t('csrdScope')}</span>
+              <span className="vck-label">{t('csrdScope')}</span>
               <span className="text-sm font-medium break-words">{compliance.csrdScope ? t('inScope') : t('exempt')}</span>
             </div>
             <div className="flex flex-col gap-1 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-              <span className="app-label">{t('vsme')}</span>
+              <span className="vck-label">{t('vsme')}</span>
               <span className="text-sm font-medium break-words">{compliance.vsmeEligible ? t('eligible') : t('notEligible')}</span>
             </div>
             <div className="flex flex-col gap-1 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-              <span className="app-label">{t('reporting')}</span>
+              <span className="vck-label">{t('reporting')}</span>
               <span className="text-sm font-medium break-words">{compliance.mandatoryReporting ? t('mandatory') : t('optional')}</span>
             </div>
             {compliance.reportingDeadline && (
               <div className="flex flex-col gap-1 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-                <span className="app-label">{t('reportingDeadline')}</span>
+                <span className="vck-label">{t('reportingDeadline')}</span>
                 <span className="text-sm font-medium break-words">{compliance.reportingDeadline}</span>
               </div>
             )}
             <div className="flex flex-col gap-1 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-              <span className="app-label">{t('dataPoints')}</span>
-              <span className="app-num text-sm font-medium">~{compliance.estimatedDataPoints}</span>
+              <span className="vck-label">{t('dataPoints')}</span>
+              <span className="vck-num text-sm font-medium">~{compliance.estimatedDataPoints}</span>
             </div>
           </div>
 
-          <div className="app-card-inset p-3">
-            <p className="app-label mb-2">{t('applicableFrameworks')}</p>
+          <div className="vck-inset p-3">
+            <p className="vck-label mb-2">{t('applicableFrameworks')}</p>
             <div className="flex flex-wrap gap-1.5">
               {compliance.applicableFrameworks.map((framework) => (
-                <span key={framework} className="app-tag break-words">
+                <span key={framework} className="vck-tag break-words">
                   {framework}
                 </span>
               ))}

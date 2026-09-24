@@ -168,7 +168,7 @@ export default function MarketplaceAdminPage() {
       render: (p) => (
         <div>
           <p className="font-medium break-words">{p.name}</p>
-          <p className="app-meta mt-0.5 break-words capitalize">{p.category.replace("_", " ")} \u00b7 {p.location}</p>
+          <p className="vck-meta mt-0.5 break-words capitalize">{p.category.replace("_", " ")} \u00b7 {p.location}</p>
         </div>
       )
     },
@@ -180,7 +180,7 @@ export default function MarketplaceAdminPage() {
           type="button"
           onClick={() => toggleFeatured(p.id, p.isFeatured)}
           disabled={updating === p.id}
-          className="app-btn-ghost app-btn"
+          className="vck-btn"
         >
           {p.isFeatured ? "Featured" : "Feature"}
         </button>
@@ -194,7 +194,7 @@ export default function MarketplaceAdminPage() {
           value={p.verificationStatus}
           onChange={(e) => updateVerificationStatus(p.id, e.target.value)}
           disabled={updating === p.id}
-          className="rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-2 py-1.5 text-sm"
+          className="rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-2 py-1.5 text-sm"
         >
           <option value="verified">Verified</option>
           <option value="pending">Pending</option>
@@ -208,13 +208,13 @@ export default function MarketplaceAdminPage() {
       header: "Banner",
       render: (p) =>
         p.bannerImage ? (
-          <span className="app-tag" data-tone="positive">Has banner</span>
+          <span className="vck-tag" data-tone="positive">Has banner</span>
         ) : (
           <button
             type="button"
             onClick={() => generateBanner(p.id)}
             disabled={generating === p.id}
-            className="app-btn-ghost app-btn"
+            className="vck-btn"
           >
             {generating === p.id ? "Generating\u2026" : "Generate banner"}
           </button>
@@ -235,7 +235,7 @@ export default function MarketplaceAdminPage() {
           breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: "Admin" }]}
           actions={
             projectsWithoutBanners > 0 ? (
-              <button type="button" className="app-btn" onClick={bulkGenerateBanners}>
+              <button type="button" className="vck-btn vck-btn-primary" onClick={bulkGenerateBanners}>
                 Generate all banners ({projectsWithoutBanners})
               </button>
             ) : undefined

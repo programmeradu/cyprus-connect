@@ -3,6 +3,7 @@
 - [x] Keep-alive ping moved to a daily Cloudflare cron (GitHub kept as weekly backup)
 - [x] Remove invented figures in Integrations benchmarks (revenue, team-size fallback)
 - [x] Re-enable "finish your setup" redirect without the sign-in loop
-- [ ] Rebuild Onboarding in the console design
-- [ ] Remove the old-styling layer page by page (19 pages)
+- [x] Rebuild Onboarding in the console design
+- [x] Remove the old-styling layer (app.css + app-* bridge) from all 19 pages
+- [ ] Rewrite pages from the shell adapters to direct kit imports (visual parity already)
 - [ ] Collect company revenue in Settings so per-revenue benchmarks can return

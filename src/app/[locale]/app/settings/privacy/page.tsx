@@ -68,7 +68,7 @@ const COPY = {
 } as const;
 
 const inputClass =
-  "w-full max-w-xs h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-destructive/40";
+  "w-full max-w-xs h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-destructive/40";
 
 export default function PrivacySettingsPage() {
   const { data: session, isPending } = useSession();
@@ -161,18 +161,18 @@ export default function PrivacySettingsPage() {
   return (
     <PageShell header={header}>
       <Section title={t.exportTitle} description={t.exportBody}>
-        <div className="app-card p-4">
-          <button className="app-btn" onClick={handleExport} disabled={exporting}>
+        <div className="vck-card p-4">
+          <button className="vck-btn vck-btn-primary" onClick={handleExport} disabled={exporting}>
             {exporting ? t.exporting : t.exportCta}
           </button>
         </div>
       </Section>
 
       <Section title={t.deleteTitle} description={t.deleteBody}>
-        <div className="app-card p-4 border-[var(--destructive)]">
+        <div className="vck-card p-4 border-[var(--destructive)]">
           {!confirming ? (
             <button
-              className="app-btn-ghost app-btn border-[var(--destructive)] text-[var(--destructive)]"
+              className="vck-btn border-[var(--destructive)] text-[var(--destructive)]"
               onClick={() => setConfirming(true)}
             >
               {t.deleteCta}
@@ -180,7 +180,7 @@ export default function PrivacySettingsPage() {
           ) : (
             <div className="space-y-3">
               <div>
-                <label className="app-label block mb-1.5">{t.confirmTitle}</label>
+                <label className="vck-label block mb-1.5">{t.confirmTitle}</label>
                 <input
                   type="text"
                   value={confirmText}
@@ -192,7 +192,7 @@ export default function PrivacySettingsPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  className="app-btn-ghost app-btn"
+                  className="vck-btn"
                   onClick={() => {
                     setConfirming(false);
                     setConfirmText("");
@@ -202,7 +202,7 @@ export default function PrivacySettingsPage() {
                   {t.cancel}
                 </button>
                 <button
-                  className="app-btn"
+                  className="vck-btn vck-btn-primary"
                   style={{ background: "var(--destructive)" }}
                   onClick={handleDelete}
                   disabled={confirmText !== "DELETE" || deleting}
@@ -215,7 +215,7 @@ export default function PrivacySettingsPage() {
         </div>
       </Section>
 
-      <p className="app-meta">
+      <p className="vck-meta">
         {t.docs}{" "}
         <Link href="/privacy" className="underline hover:text-foreground">
           {t.privacyLink}

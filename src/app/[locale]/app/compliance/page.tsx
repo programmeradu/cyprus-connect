@@ -289,13 +289,13 @@ function OverviewTab({
 
       <Section title={t("overview.healthBreakdown")}>
         {complianceBreakdown.length > 0 ? (
-          <div className="app-ledger">
+          <div className="vck-ledgerbox">
             {complianceBreakdown.map((item, index) => (
               <div key={index} className="flex items-center justify-between gap-3 px-4 py-3">
                 <span className="text-sm font-medium break-words">{item.label}</span>
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="app-meta">{item.status}</span>
-                  <span className="app-num text-sm font-semibold">{item.value}%</span>
+                  <span className="vck-meta">{item.status}</span>
+                  <span className="vck-num text-sm font-semibold">{item.value}%</span>
                 </div>
               </div>
             ))}
@@ -310,11 +310,11 @@ function OverviewTab({
 
       <Section title={t("overview.recentUpdates")}>
         {recentUpdates.length > 0 ? (
-          <div className="app-ledger">
+          <div className="vck-ledgerbox">
             {recentUpdates.map((item, index) => (
               <div key={index} className="flex items-start justify-between gap-3 px-4 py-3">
                 <span className="text-sm font-medium break-words">{item.title}</span>
-                <span className="app-meta shrink-0">{item.date}</span>
+                <span className="vck-meta shrink-0">{item.date}</span>
               </div>
             ))}
           </div>
@@ -349,7 +349,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
       render: (reg) => (
         <div>
           <p className="font-medium break-words">{reg.name}</p>
-          <p className="app-meta break-words">{reg.jurisdiction}</p>
+          <p className="vck-meta break-words">{reg.jurisdiction}</p>
         </div>
       )
     },
@@ -357,7 +357,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
       key: "status",
       header: t("status.compliant"),
       render: (reg) => (
-        <span className="app-tag" data-tone={statusTone(reg.status)}>
+        <span className="vck-tag" data-tone={statusTone(reg.status)}>
           {statusLabel(reg.status)}
         </span>
       )
@@ -373,7 +373,7 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
         return (
           <div>
             <p>{new Date(reg.nextDeadline).toLocaleDateString()}</p>
-            <p className="app-meta">
+            <p className="vck-meta">
               {daysUntil > 0 ? t("regulations.daysRemaining", { days: daysUntil }) : t("regulations.overdue")}
             </p>
           </div>
@@ -420,7 +420,7 @@ function DocumentsTab({
       render: (doc) => (
         <div>
           <p className="font-medium break-words">{doc.title}</p>
-          <p className="app-meta">{doc.framework}</p>
+          <p className="vck-meta">{doc.framework}</p>
         </div>
       )
     },
@@ -428,7 +428,7 @@ function DocumentsTab({
       key: "status",
       header: t("status.ready"),
       render: (doc) => (
-        <span className="app-tag" data-tone={statusTone(doc.status)}>
+        <span className="vck-tag" data-tone={statusTone(doc.status)}>
           {statusLabel(doc.status)}
         </span>
       )
@@ -445,7 +445,7 @@ function DocumentsTab({
       render: (doc) => (
         <button
           type="button"
-          className="app-btn-ghost app-btn"
+          className="vck-btn"
           onClick={() => {
             if (doc.content) {
               const blob = new Blob([doc.content], { type: "text/markdown" });
@@ -468,12 +468,12 @@ function DocumentsTab({
   return (
     <>
       <Section title={t("documents.aiTitle")} description={t("documents.aiDescription")}>
-        <div className="app-card flex flex-wrap gap-2 p-4">
+        <div className="vck-card flex flex-wrap gap-2 p-4">
           {["CSRD", "CDP", "GHG Protocol", "SEC"].map((framework) => (
             <button
               key={framework}
               type="button"
-              className="app-btn-ghost app-btn"
+              className="vck-btn"
               onClick={() => onGenerate(framework)}
               disabled={generating}
             >
@@ -509,8 +509,8 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
       render: (log) => (
         <div>
           <p className="font-medium break-words">{log.action}</p>
-          <p className="app-meta break-words">{log.details}</p>
-          <p className="app-meta">{t("audit.by", { user: log.createdBy })}</p>
+          <p className="vck-meta break-words">{log.details}</p>
+          <p className="vck-meta">{t("audit.by", { user: log.createdBy })}</p>
         </div>
       )
     },
@@ -557,11 +557,11 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
   return (
     <>
       <Section title={t("settings.jurisdictionsTitle")} description={t("settings.jurisdictionsDescription")}>
-        <div className="app-card space-y-2 p-4">
+        <div className="vck-card space-y-2 p-4">
           {jurisdictionOptions.map(({ value, label }) => (
             <label
               key={value}
-              className="app-card-inset flex items-center gap-2 px-3 py-2 cursor-pointer"
+              className="vck-inset flex items-center gap-2 px-3 py-2 cursor-pointer"
             >
               <input
                 type="checkbox"
@@ -583,18 +583,18 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
               <span className="text-sm">{label}</span>
             </label>
           ))}
-          <button type="button" className="app-btn mt-2" onClick={() => onSave(localSettings)}>
+          <button type="button" className="vck-btn vck-btn-primary mt-2" onClick={() => onSave(localSettings)}>
             {t("settings.save")}
           </button>
         </div>
       </Section>
 
       <Section title={t("settings.automationTitle")}>
-        <div className="app-card space-y-3 p-4">
-          <label className="app-card-inset flex items-center justify-between gap-3 px-3 py-2 cursor-pointer">
+        <div className="vck-card space-y-3 p-4">
+          <label className="vck-inset flex items-center justify-between gap-3 px-3 py-2 cursor-pointer">
             <div>
               <p className="text-sm font-medium">{t("settings.autoSubmitTitle")}</p>
-              <p className="app-meta">{t("settings.autoSubmitDesc")}</p>
+              <p className="vck-meta">{t("settings.autoSubmitDesc")}</p>
             </div>
             <input
               type="checkbox"
@@ -603,10 +603,10 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
             />
           </label>
 
-          <label className="app-card-inset flex items-center justify-between gap-3 px-3 py-2 cursor-pointer">
+          <label className="vck-inset flex items-center justify-between gap-3 px-3 py-2 cursor-pointer">
             <div>
               <p className="text-sm font-medium">{t("settings.emailNotificationsTitle")}</p>
-              <p className="app-meta">{t("settings.emailNotificationsDesc")}</p>
+              <p className="vck-meta">{t("settings.emailNotificationsDesc")}</p>
             </div>
             <input
               type="checkbox"

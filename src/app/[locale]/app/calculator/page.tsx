@@ -509,15 +509,15 @@ Return ONLY valid JSON (no markdown, no explanations):
       {!results ? (
         <>
           <Section title={t("ai.heading")} description={t("ai.description")}>
-            <div className="app-card p-6">
+            <div className="vck-card p-6">
               <button
                 type="button"
                 onClick={() => setShowDocumentUploader(true)}
-                className="w-full border border-[var(--app-rule-strong)] rounded-md p-8 text-center hover:bg-[var(--app-surface-2)] transition-colors"
+                className="w-full border border-[var(--vc-rule)] rounded-md p-8 text-center hover:bg-[var(--vc-well)] transition-colors"
               >
                 <h3 className="text-[1.0625rem] font-semibold mb-2">{t("ai.uploadTitle")}</h3>
-                <p className="app-meta max-w-lg mx-auto mb-4 break-words">{t("ai.uploadDescription")}</p>
-                <span className="app-btn inline-flex">{t("ai.uploadCta")}</span>
+                <p className="vck-meta max-w-lg mx-auto mb-4 break-words">{t("ai.uploadDescription")}</p>
+                <span className="vck-btn vck-btn-primary inline-flex">{t("ai.uploadCta")}</span>
               </button>
 
               <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -529,38 +529,38 @@ Return ONLY valid JSON (no markdown, no explanations):
                   t("ai.types.water"),
                   t("ai.types.transport")
                 ].map((label) => (
-                  <div key={label} className="app-card-inset px-3 py-3 text-center">
+                  <div key={label} className="vck-inset px-3 py-3 text-center">
                     <p className="text-sm font-medium break-words">{label}</p>
                   </div>
                 ))}
               </div>
 
               <div className="mt-6 grid sm:grid-cols-3 gap-3">
-                <div className="app-card-inset p-4">
+                <div className="vck-inset p-4">
                   <h4 className="text-sm font-semibold mb-1">{t("ai.features.smartTitle")}</h4>
-                  <p className="app-meta break-words">{t("ai.features.smartDesc")}</p>
+                  <p className="vck-meta break-words">{t("ai.features.smartDesc")}</p>
                 </div>
-                <div className="app-card-inset p-4">
+                <div className="vck-inset p-4">
                   <h4 className="text-sm font-semibold mb-1">{t("ai.features.multiTitle")}</h4>
-                  <p className="app-meta break-words">{t("ai.features.multiDesc")}</p>
+                  <p className="vck-meta break-words">{t("ai.features.multiDesc")}</p>
                 </div>
-                <div className="app-card-inset p-4">
+                <div className="vck-inset p-4">
                   <h4 className="text-sm font-semibold mb-1">{t("ai.features.autoTitle")}</h4>
-                  <p className="app-meta break-words">{t("ai.features.autoDesc")}</p>
+                  <p className="vck-meta break-words">{t("ai.features.autoDesc")}</p>
                 </div>
               </div>
             </div>
           </Section>
 
           <Section title={t("manual.title")} description={t("manual.hint")}>
-            <div className="app-card p-6 max-w-xl">
+            <div className="vck-card p-6 max-w-xl">
               <div className="flex items-center justify-between mb-5">
-                <span className="app-tag">{t("manual.monthly")}</span>
+                <span className="vck-tag">{t("manual.monthly")}</span>
               </div>
 
               <div className="space-y-4 mb-6">
                 <label className="block">
-                  <span className="app-label block mb-1.5">{t("manual.electricity")}</span>
+                  <span className="vck-label block mb-1.5">{t("manual.electricity")}</span>
                   <input
                     type="number"
                     value={formData.electricity}
@@ -571,7 +571,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                 </label>
 
                 <label className="block">
-                  <span className="app-label block mb-1.5">{t("manual.gas")}</span>
+                  <span className="vck-label block mb-1.5">{t("manual.gas")}</span>
                   <input
                     type="number"
                     value={formData.gas}
@@ -582,7 +582,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                 </label>
 
                 <label className="block">
-                  <span className="app-label block mb-1.5">{t("manual.water")}</span>
+                  <span className="vck-label block mb-1.5">{t("manual.water")}</span>
                   <input
                     type="number"
                     value={formData.water}
@@ -593,7 +593,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                 </label>
 
                 <label className="block">
-                  <span className="app-label block mb-1.5">{t("manual.waste")}</span>
+                  <span className="vck-label block mb-1.5">{t("manual.waste")}</span>
                   <input
                     type="number"
                     value={formData.waste}
@@ -604,7 +604,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                 </label>
 
                 <label className="block">
-                  <span className="app-label block mb-1.5">{t("manual.transport")}</span>
+                  <span className="vck-label block mb-1.5">{t("manual.transport")}</span>
                   <input
                     type="number"
                     value={formData.transport}
@@ -615,13 +615,13 @@ Return ONLY valid JSON (no markdown, no explanations):
                 </label>
               </div>
 
-              <div className="flex items-center justify-between app-card-inset px-3 py-3 mb-6">
+              <div className="flex items-center justify-between vck-inset px-3 py-3 mb-6">
                 <span className="text-sm font-medium">{t("manual.climatiq")}</span>
                 <button
                   type="button"
                   onClick={() => setUseRealAPI(!useRealAPI)}
                   aria-pressed={useRealAPI}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-md transition-colors border border-[var(--app-rule-strong)] ${
+                  className={`relative inline-flex h-6 w-11 items-center rounded-md transition-colors border border-[var(--vc-rule)] ${
                     useRealAPI ? "bg-primary" : "bg-transparent"
                   }`}
                 >
@@ -637,18 +637,18 @@ Return ONLY valid JSON (no markdown, no explanations):
                 type="button"
                 onClick={calculateEmissions}
                 disabled={isCalculating || !isFormValid()}
-                className="app-btn w-full"
+                className="vck-btn vck-btn-primary w-full"
               >
                 {isCalculating ? t("manual.calculating") : t("manual.calculate")}
               </button>
 
-              <p className="app-meta text-center mt-4">{t("manual.hint")}</p>
+              <p className="vck-meta text-center mt-4">{t("manual.hint")}</p>
             </div>
           </Section>
         </>
       ) : (
         <>
-          <Section title={t("results.title")} description={t("results.subtitle")} action={<span className="app-tag">{t("results.completed")}</span>}>
+          <Section title={t("results.title")} description={t("results.subtitle")} action={<span className="vck-tag">{t("results.completed")}</span>}>
             <MetricRow columns={2}>
               <Metric label={t("results.totalTitle")} value={results.totalEmissions.toFixed(2)} unit={t("results.totalUnit")} />
               <Metric
@@ -663,19 +663,19 @@ Return ONLY valid JSON (no markdown, no explanations):
               />
             </MetricRow>
 
-            <div className="app-card-inset mt-4 px-4 py-3">
-              <p className="app-label mb-1">
+            <div className="vck-inset mt-4 px-4 py-3">
+              <p className="vck-label mb-1">
                 {results.method === "climatiq"
                   ? "Calculation basis: Climatiq emission factors"
                   : "Calculation basis: published reference factors"}
               </p>
-              <p className="app-meta break-words">
+              <p className="vck-meta break-words">
                 {results.method === "climatiq"
                   ? "Factors were resolved live from the Climatiq database for your region."
                   : "The live factor service was not available. The result uses published factors with the sources below. Recalculate later for a factor-resolved figure."}
               </p>
               {results.sources.length > 0 && (
-                <ul className="app-meta mt-2 space-y-1">
+                <ul className="vck-meta mt-2 space-y-1">
                   {results.sources.map((source) => (
                     <li key={source} className="break-words">
                       {source}
@@ -699,7 +699,7 @@ Return ONLY valid JSON (no markdown, no explanations):
             />
           </Section>
 
-          <Section title={t("results.aiRecs")} action={results.recommendations.length > 0 ? <span className="app-tag" data-tone="positive">{t("results.addedToActions")}</span> : undefined}>
+          <Section title={t("results.aiRecs")} action={results.recommendations.length > 0 ? <span className="vck-tag" data-tone="positive">{t("results.addedToActions")}</span> : undefined}>
             {aiRecsFailed ? (
               <AiUnavailable feature="generate personalized recommendations" />
             ) : results.recommendations.length > 0 ? (
@@ -712,9 +712,9 @@ Return ONLY valid JSON (no markdown, no explanations):
                       render: (r) => (
                         <div>
                           <p className="text-sm font-medium break-words">
-                            {r.title} {r.isNew && <span className="app-tag ml-1.5">{t("results.new")}</span>}
+                            {r.title} {r.isNew && <span className="vck-tag ml-1.5">{t("results.new")}</span>}
                           </p>
-                          <p className="app-meta mt-1 break-words">{r.description}</p>
+                          <p className="vck-meta mt-1 break-words">{r.description}</p>
                         </div>
                       )
                     },
@@ -726,7 +726,7 @@ Return ONLY valid JSON (no markdown, no explanations):
                   rowKey={(r, i) => `${r.title}-${i}`}
                 />
                 <div className="mt-3">
-                  <button type="button" onClick={() => router.push("/app/actions")} className="app-btn-ghost app-btn w-full">
+                  <button type="button" onClick={() => router.push("/app/actions")} className="vck-btn w-full">
                     {t("results.viewAllActions")}
                   </button>
                 </div>
@@ -737,10 +737,10 @@ Return ONLY valid JSON (no markdown, no explanations):
           </Section>
 
           <div className="flex gap-3">
-            <button type="button" onClick={handleReset} className="app-btn-ghost app-btn flex-1">
+            <button type="button" onClick={handleReset} className="vck-btn flex-1">
               {t("results.calcAgain")}
             </button>
-            <button type="button" onClick={() => router.push("/app")} className="app-btn flex-1">
+            <button type="button" onClick={() => router.push("/app")} className="vck-btn vck-btn-primary flex-1">
               {t("results.goDashboard")}
             </button>
           </div>

@@ -259,11 +259,11 @@ export const NotificationBell = () => {
         type="button"
         onClick={handleBellClick}
         aria-label={t("title")}
-        className="app-btn-ghost app-btn relative h-11 w-11 px-0"
+        className="vck-btn relative h-11 w-11 px-0"
       >
         <BellIcon className="w-4 h-4" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-[4px] border border-[var(--app-rule-strong)] bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center app-num">
+          <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-[4px] border border-[var(--vc-rule)] bg-primary text-primary-foreground text-xs font-semibold flex items-center justify-center vck-num">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -271,13 +271,13 @@ export const NotificationBell = () => {
 
       {isOpen && (
         <div
-          className="app-overlay absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] overflow-hidden z-50"
+          className="vck-overlay absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] overflow-hidden z-50"
         >
           {/* Header */}
-          <div className="px-4 py-3 border-b border-[var(--app-rule)] flex items-center justify-between gap-2">
+          <div className="px-4 py-3 border-b border-[var(--vc-rule-soft)] flex items-center justify-between gap-2">
             <div className="min-w-0">
               <h3 className="text-sm font-semibold break-words">{t("title")}</h3>
-              <p className="app-meta break-words">
+              <p className="vck-meta break-words">
                 {t("unread", { count: unreadCount })}
               </p>
             </div>
@@ -285,7 +285,7 @@ export const NotificationBell = () => {
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="app-btn-ghost app-btn shrink-0 h-9 px-2.5 text-xs"
+                className="vck-btn shrink-0 h-9 px-2.5 text-xs"
               >
                 {t("markAllRead")}
               </button>
@@ -311,8 +311,8 @@ export const NotificationBell = () => {
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`px-4 py-3 border-b border-[var(--app-rule)] last:border-b-0 hover:bg-[var(--app-surface-2)] transition-colors cursor-pointer group relative ${
-                      !notification.isRead ? "bg-[var(--app-surface-2)]" : ""
+                    className={`px-4 py-3 border-b border-[var(--vc-rule-soft)] last:border-b-0 hover:bg-[var(--vc-well)] transition-colors cursor-pointer group relative ${
+                      !notification.isRead ? "bg-[var(--vc-well)]" : ""
                     }`}
                     onClick={() => handleNotificationClick(notification)}
                   >
@@ -326,14 +326,14 @@ export const NotificationBell = () => {
                             {notification.title}
                           </h4>
                           {!notification.isRead && (
-                            <span className="app-tag shrink-0">{t("unread", { count: 1 })}</span>
+                            <span className="vck-tag shrink-0">{t("unread", { count: 1 })}</span>
                           )}
                         </div>
-                        <p className="app-meta mt-0.5 break-words">
+                        <p className="vck-meta mt-0.5 break-words">
                           {notification.message}
                         </p>
                         <div className="flex items-center justify-between mt-2 gap-2">
-                          <p className="app-meta">
+                          <p className="vck-meta">
                             {formatRelativeTime(notification.createdAt)}
                           </p>
                           <button
@@ -342,7 +342,7 @@ export const NotificationBell = () => {
                               handleDeleteNotification(e, notification.id)
                             }
                             aria-label={t("toasts.deleted")}
-                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity app-btn-ghost app-btn h-8 px-2 text-xs"
+                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity vck-btn h-8 px-2 text-xs"
                           >
                             ×
                           </button>
@@ -357,14 +357,14 @@ export const NotificationBell = () => {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="px-4 py-2 border-t border-[var(--app-rule)] text-center">
+            <div className="px-4 py-2 border-t border-[var(--vc-rule-soft)] text-center">
               <button
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
                   router.push("/app/settings#notifications");
                 }}
-                className="app-btn-ghost app-btn h-9 px-2.5 text-xs w-full"
+                className="vck-btn h-9 px-2.5 text-xs w-full"
               >
                 {t("settings")}
               </button>

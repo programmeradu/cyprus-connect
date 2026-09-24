@@ -348,7 +348,7 @@ export default function InsightsPage() {
           title={t("title")}
           purpose={`${t("subtitle")}${userLocation ? ` — ${userLocation.country}` : ""}`}
           actions={
-            <button type="button" onClick={handleRefresh} disabled={refreshing} className="app-btn">
+            <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn vck-btn-primary">
               {t("refresh")}
             </button>
           }
@@ -388,7 +388,7 @@ export default function InsightsPage() {
 
       <Section title={t("energySection.title")}>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="app-card p-4">
+          <div className="vck-card p-4">
             <h3 className="text-sm font-semibold mb-3">{t("energySection.forecastTitle")}</h3>
 
             {forecastChartData.length > 0 ? (
@@ -402,13 +402,13 @@ export default function InsightsPage() {
                           <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--app-rule)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--vc-rule-soft)" />
                       <XAxis dataKey="time" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "var(--app-surface-1)",
-                          border: "1px solid var(--app-rule)",
+                          backgroundColor: "var(--vc-well)",
+                          border: "1px solid var(--vc-rule-soft)",
                           borderRadius: "6px",
                           fontSize: "12px"
                         }}
@@ -453,7 +453,7 @@ export default function InsightsPage() {
             )}
           </div>
 
-          <div className="app-card p-4">
+          <div className="vck-card p-4">
             <h3 className="text-sm font-semibold mb-3">
               {t("energySection.performanceTitle")} <span className="text-muted-foreground">{t("energySection.vs")}</span> {t("energySection.industry")}
             </h3>
@@ -462,13 +462,13 @@ export default function InsightsPage() {
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={performanceData} barGap={2}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--app-rule)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--vc-rule-soft)" />
                     <XAxis dataKey="month" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "var(--app-surface-1)",
-                        border: "1px solid var(--app-rule)",
+                        backgroundColor: "var(--vc-well)",
+                        border: "1px solid var(--vc-rule-soft)",
                         borderRadius: "6px",
                         fontSize: "12px"
                       }}
@@ -515,17 +515,17 @@ export default function InsightsPage() {
         description={userLocation ? t("ai.personalizedFor", { country: userLocation.country }) : undefined}
       >
         {aiLoading ? (
-          <div className="app-card p-6">
-            <p className="app-meta">{t("ai.generating")}</p>
+          <div className="vck-card p-6">
+            <p className="vck-meta">{t("ai.generating")}</p>
           </div>
         ) : aiRecommendations ? (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             {aiRecommendations.energyOptimizationTips?.length > 0 && (
-              <div className="app-card p-4">
+              <div className="vck-card p-4">
                 <h3 className="text-sm font-semibold mb-3">{t("ai.energyOptimization")}</h3>
                 <ul className="space-y-2">
                   {aiRecommendations.energyOptimizationTips.map((tip, index) => (
-                    <li key={index} className="app-card-inset px-3 py-2 text-sm">
+                    <li key={index} className="vck-inset px-3 py-2 text-sm">
                       {tip}
                     </li>
                   ))}
@@ -534,11 +534,11 @@ export default function InsightsPage() {
             )}
 
             {aiRecommendations.complianceRecommendations?.length > 0 && (
-              <div className="app-card p-4">
+              <div className="vck-card p-4">
                 <h3 className="text-sm font-semibold mb-3">{t("ai.complianceGuidance")}</h3>
                 <ul className="space-y-2">
                   {aiRecommendations.complianceRecommendations.map((rec, index) => (
-                    <li key={index} className="app-card-inset px-3 py-2 text-sm">
+                    <li key={index} className="vck-inset px-3 py-2 text-sm">
                       {rec}
                     </li>
                   ))}
@@ -547,11 +547,11 @@ export default function InsightsPage() {
             )}
 
             {aiRecommendations.industryInsights?.length > 0 && (
-              <div className="app-card p-4">
+              <div className="vck-card p-4">
                 <h3 className="text-sm font-semibold mb-3">{t("ai.industryInsights")}</h3>
                 <ul className="space-y-2">
                   {aiRecommendations.industryInsights.map((insight, index) => (
-                    <li key={index} className="app-card-inset px-3 py-2 text-sm">
+                    <li key={index} className="vck-inset px-3 py-2 text-sm">
                       {insight}
                     </li>
                   ))}
@@ -568,13 +568,13 @@ export default function InsightsPage() {
         title={t("compliance.title")}
         description={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
         action={
-          <Link href="/app/compliance" className="app-btn-ghost app-btn">
+          <Link href="/app/compliance" className="vck-btn">
             {t("compliance.viewDashboard")}
           </Link>
         }
       >
         {complianceData ? (
-          <div className="app-card p-4">
+          <div className="vck-card p-4">
             <MetricRow columns={4}>
               <Metric label={t("compliance.health")} value={`${complianceData.score}%`} note={t("compliance.regsTracked", { count: complianceData.regulations.length })} />
               {complianceData.urgentCount > 0 && (

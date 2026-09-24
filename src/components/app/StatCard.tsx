@@ -27,18 +27,18 @@ export const StatCard = ({
 }: StatCardProps) => {
   return (
     <motion.div
-      className={`app-card p-4 ${className}`}
+      className={`vck-card p-4 ${className}`}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
     >
-      <p className="app-label mb-2">{title}</p>
+      <p className="vck-label mb-2">{title}</p>
 
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="app-metric text-[1.75rem] break-words">{value}</span>
+        <span className="vck-num text-[1.75rem] break-words">{value}</span>
         {change && (
           <span
-            className={`app-num text-sm font-medium ${
+            className={`vck-num text-sm font-medium ${
               changeType === "positive"
                 ? "text-primary"
                 : changeType === "negative"
@@ -52,7 +52,7 @@ export const StatCard = ({
       </div>
 
       {subtitle && (
-        <p className="app-meta mt-2 text-[0.8125rem]">{subtitle}</p>
+        <p className="vck-meta mt-2 text-[0.8125rem]">{subtitle}</p>
       )}
     </motion.div>
   );

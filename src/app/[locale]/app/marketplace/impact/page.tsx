@@ -109,7 +109,7 @@ export default function ImpactPage() {
       render: (p) => (
         <div>
           <p className="font-medium break-words">{p.projectName}</p>
-          <p className="app-meta mt-0.5 break-words">{p.projectLocation}</p>
+          <p className="vck-meta mt-0.5 break-words">{p.projectLocation}</p>
         </div>
       )
     },

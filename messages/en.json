@@ -1003,6 +1003,17 @@
       "documentTitle": "Upload Document",
       "descUtility": "Upload your utility bill and we'll automatically extract the data using OCR technology.",
       "descDocument": "Upload your document and we'll automatically extract the data using OCR technology."
+    },
+    "frame": {
+      "title": "Set up your workspace",
+      "purpose": "Four short steps. You can change every answer later in Settings.",
+      "rail": [
+        "Welcome",
+        "Your company",
+        "Your data",
+        "The console"
+      ],
+      "stepOf": "Step {n} of 4"
     }
   },
   "shared": {

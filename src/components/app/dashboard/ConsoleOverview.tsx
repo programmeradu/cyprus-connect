@@ -174,36 +174,36 @@ export const ConsoleOverview = ({
   return (
     <div className="space-y-4">
       {/* ---------- Masthead and hero ---------- */}
-      <section className="app-card overflow-hidden">
-        <div className="flex flex-col gap-4 border-b border-[var(--app-rule)] p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
+      <section className="vck-card overflow-hidden">
+        <div className="flex flex-col gap-4 border-b border-[var(--vc-rule-soft)] p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
           <div className="min-w-0">
-            <h2 className="app-metric text-[clamp(1.5rem,3.4vw,2.125rem)] leading-[1.1] break-words">
+            <h2 className="vck-num text-[clamp(1.5rem,3.4vw,2.125rem)] leading-[1.1] break-words">
               {greeting}
             </h2>
-            <p className="app-meta mt-1.5 max-w-[58ch] break-words">{subline}</p>
+            <p className="vck-meta mt-1.5 max-w-[58ch] break-words">{subline}</p>
             {sample && (
               <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="inline-flex items-center gap-1.5 border border-[var(--app-rule-strong)] px-2 py-0.5 text-[0.6875rem] font-medium tracking-[0.08em] uppercase text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5 border border-[var(--vc-rule)] px-2 py-0.5 text-[0.6875rem] font-medium text-muted-foreground">
                   <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary" />
                   Sample data
                 </span>
-                {sampleNote && <span className="app-meta break-words">{sampleNote}</span>}
+                {sampleNote && <span className="vck-meta break-words">{sampleNote}</span>}
               </p>
             )}
           </div>
 
-          <dl className="shrink-0 rounded-md border border-[var(--app-rule)] px-3.5 py-2.5 sm:min-w-[13.5rem]">
-            <dt className="app-label mb-1 break-words">{labels.grid}</dt>
+          <dl className="shrink-0 rounded-md border border-[var(--vc-rule-soft)] px-3.5 py-2.5 sm:min-w-[13.5rem]">
+            <dt className="vck-label mb-1 break-words">{labels.grid}</dt>
             <dd className="flex flex-wrap items-baseline gap-x-2">
-              <span className="app-metric text-xl">{grid.value}</span>
+              <span className="vck-num text-xl">{grid.value}</span>
               <span className="text-xs font-medium text-muted-foreground break-words">{grid.unit}</span>
             </dd>
             <dd className="mt-2">
               <div className="mb-1 flex items-baseline justify-between gap-2">
-                <span className="app-meta break-words">{labels.renewables}</span>
-                <span className="app-num text-xs font-medium">{grid.renewables}%</span>
+                <span className="vck-meta break-words">{labels.renewables}</span>
+                <span className="vck-num text-xs font-medium">{grid.renewables}%</span>
               </div>
-              <div className="h-[3px] w-full bg-[var(--app-surface-2)]">
+              <div className="h-[3px] w-full bg-[var(--vc-well)]">
                 <div
                   className="h-full bg-primary"
                   style={{ width: `${Math.min(100, Math.max(0, grid.renewables))}%` }}
@@ -215,9 +215,9 @@ export const ConsoleOverview = ({
 
         <div className="grid grid-cols-1 gap-6 p-5 sm:p-6 lg:grid-cols-12 lg:gap-8">
           <div className="min-w-0 lg:col-span-4">
-            <p className="app-label mb-1.5 break-words">{activeTab.label}</p>
+            <p className="vck-label mb-1.5 break-words">{activeTab.label}</p>
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className="app-metric text-[clamp(2.75rem,7vw,4.5rem)] leading-[0.92] break-words">
+              <span className="vck-num text-[clamp(2.75rem,7vw,4.5rem)] leading-[0.92] break-words">
                 {fmt(heroValue, activeTab.precision)}
               </span>
               <span className="text-base font-medium text-muted-foreground break-words">
@@ -227,7 +227,7 @@ export const ConsoleOverview = ({
 
             {activeTab.trend !== 0 && (
               <p
-                className={`app-num mt-2 text-sm font-medium ${
+                className={`vck-num mt-2 text-sm font-medium ${
                   trendTone === "positive"
                     ? "text-primary"
                     : trendTone === "negative"
@@ -240,21 +240,21 @@ export const ConsoleOverview = ({
             )}
 
             {/* Legend: the other readings, so the figure has company. */}
-            <dl className="mt-5 space-y-2.5 border-t border-[var(--app-rule)] pt-4">
+            <dl className="mt-5 space-y-2.5 border-t border-[var(--vc-rule-soft)] pt-4">
               {tabs
                 .filter((t) => t.key !== activeTab.key)
                 .map((t) => (
                   <div key={t.key} className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                    <dt className="app-meta min-w-0 flex-1 break-words">{t.label}</dt>
-                    <dd className="app-num text-sm font-medium whitespace-nowrap">
+                    <dt className="vck-meta min-w-0 flex-1 break-words">{t.label}</dt>
+                    <dd className="vck-num text-sm font-medium whitespace-nowrap">
                       {fmt(t.value, t.precision)}
                       <span className="ml-1 text-xs font-normal text-muted-foreground">{t.unit}</span>
                     </dd>
                   </div>
                 ))}
               <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                <dt className="app-meta min-w-0 flex-1 break-words">{labels.waste}</dt>
-                <dd className="app-num text-sm font-medium whitespace-nowrap">
+                <dt className="vck-meta min-w-0 flex-1 break-words">{labels.waste}</dt>
+                <dd className="vck-num text-sm font-medium whitespace-nowrap">
                   {fmt(current.waste, 0)}
                   <span className="ml-1 text-xs font-normal text-muted-foreground">%</span>
                 </dd>
@@ -271,15 +271,15 @@ export const ConsoleOverview = ({
                 precision={activeTab.precision}
               />
             ) : (
-              <div className="flex h-full min-h-[9rem] items-center justify-center rounded-md border border-dashed border-[var(--app-rule-strong)] p-5">
-                <p className="app-meta max-w-[34ch] text-center break-words">{labels.noSeries}</p>
+              <div className="flex h-full min-h-[9rem] items-center justify-center rounded-md border border-dashed border-[var(--vc-rule)] p-5">
+                <p className="vck-meta max-w-[34ch] text-center break-words">{labels.noSeries}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Series rail */}
-        <div className="overflow-x-auto border-t border-[var(--app-rule)]">
+        <div className="overflow-x-auto border-t border-[var(--vc-rule-soft)]">
           <div className="flex min-w-max">
             {tabs.map((t) => {
               const isActive = t.key === activeTab.key;
@@ -310,22 +310,22 @@ export const ConsoleOverview = ({
       {/* ---------- Analysis plates ---------- */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {/* Peer standing */}
-        <section className="app-card flex flex-col p-5">
-          <p className="app-label mb-3 break-words">{labels.peers}</p>
+        <section className="vck-card flex flex-col p-5">
+          <p className="vck-label mb-3 break-words">{labels.peers}</p>
           {peers.length ? (
             <ul className="space-y-3">
               {peers.map((row) => (
                 <li key={row.label}>
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                     <span className="min-w-0 flex-1 text-sm font-medium break-words">{row.label}</span>
-                    <span className="app-num text-sm font-medium whitespace-nowrap">
+                    <span className="vck-num text-sm font-medium whitespace-nowrap">
                       {row.percentile != null ? `${row.percentile.toFixed(0)}` : "-"}
                       {row.percentile != null && (
                         <span className="ml-1 text-xs font-normal text-muted-foreground">pct</span>
                       )}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-[3px] w-full bg-[var(--app-surface-2)]">
+                  <div className="mt-1.5 h-[3px] w-full bg-[var(--vc-well)]">
                     <div
                       className="h-full bg-primary"
                       style={{ width: `${Math.min(100, Math.max(2, row.percentile ?? 0))}%` }}
@@ -335,16 +335,16 @@ export const ConsoleOverview = ({
               ))}
             </ul>
           ) : (
-            <p className="app-meta break-words">{labels.noPeers}</p>
+            <p className="vck-meta break-words">{labels.noPeers}</p>
           )}
-          {peerNote && <p className="app-meta mt-auto pt-4 break-words">{peerNote}</p>}
+          {peerNote && <p className="vck-meta mt-auto pt-4 break-words">{peerNote}</p>}
         </section>
 
         {/* Renewable share */}
-        <section className="app-card flex flex-col p-5">
-          <p className="app-label mb-3 break-words">{labels.renewables}</p>
+        <section className="vck-card flex flex-col p-5">
+          <p className="vck-label mb-3 break-words">{labels.renewables}</p>
           <div className="flex flex-wrap items-baseline gap-x-1.5">
-            <span className="app-metric text-[2.5rem] leading-none">{fmt(current.renewable, 0)}</span>
+            <span className="vck-num text-[2.5rem] leading-none">{fmt(current.renewable, 0)}</span>
             <span className="text-sm font-medium text-muted-foreground">%</span>
           </div>
           <div className="mt-auto pt-5">
@@ -353,12 +353,12 @@ export const ConsoleOverview = ({
         </section>
 
         {/* Footprint by month */}
-        <section className="app-card flex flex-col p-5">
-          <p className="app-label mb-3 break-words">{labels.monthly}</p>
+        <section className="vck-card flex flex-col p-5">
+          <p className="vck-label mb-3 break-words">{labels.monthly}</p>
           {monthlyBars.length ? (
             <>
               <div className="flex flex-wrap items-baseline gap-x-1.5">
-                <span className="app-metric text-[2rem] leading-none">
+                <span className="vck-num text-[2rem] leading-none">
                   {fmt(monthlyBars.reduce((sum, b) => sum + b.value, 0), 1)}
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">tCO₂e logged</span>
@@ -368,15 +368,15 @@ export const ConsoleOverview = ({
               </div>
             </>
           ) : (
-            <p className="app-meta break-words">{labels.noSeries}</p>
+            <p className="vck-meta break-words">{labels.noSeries}</p>
           )}
         </section>
 
         {/* Regulatory horizon */}
-        <section className="app-card flex flex-col p-5">
-          <p className="app-label mb-3 break-words">{labels.horizon}</p>
+        <section className="vck-card flex flex-col p-5">
+          <p className="vck-label mb-3 break-words">{labels.horizon}</p>
           {dated.length === 0 ? (
-            <p className="app-meta break-words">{labels.noDeadlines}</p>
+            <p className="vck-meta break-words">{labels.noDeadlines}</p>
           ) : (
             <ul className="space-y-4">
               {dated.map((item) => (
@@ -384,17 +384,17 @@ export const ConsoleOverview = ({
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
                     <span className="min-w-0 flex-1 text-sm font-medium break-words">{item.label}</span>
                     <span
-                      className={`app-num text-sm font-medium whitespace-nowrap ${
+                      className={`vck-num text-sm font-medium whitespace-nowrap ${
                         item.days <= 30 ? "text-destructive" : "text-muted-foreground"
                       }`}
                     >
                       {labels.daysLeft(item.days)}
                     </span>
                   </div>
-                  {item.detail && <p className="app-meta mt-1 break-words">{item.detail}</p>}
-                  <div className="mt-2 h-px w-full bg-[var(--app-surface-2)]">
+                  {item.detail && <p className="vck-meta mt-1 break-words">{item.detail}</p>}
+                  <div className="mt-2 h-px w-full bg-[var(--vc-well)]">
                     <div
-                      className={`h-px ${item.days <= 30 ? "bg-destructive" : "bg-[var(--app-rule-strong)]"}`}
+                      className={`h-px ${item.days <= 30 ? "bg-destructive" : "bg-[var(--vc-rule)]"}`}
                       style={{
                         width: `${Math.min(100, Math.max(4, ((horizon - item.days) / horizon) * 100))}%`
                       }}

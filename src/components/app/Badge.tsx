@@ -36,7 +36,7 @@ export const Badge = ({
 
   return (
     <span
-      className={`app-tag ${sizeClasses[size]} ${className}`}
+      className={`vck-tag ${sizeClasses[size]} ${className}`}
       data-tone={tone[variant]}
     >
       {children}

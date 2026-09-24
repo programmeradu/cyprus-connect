@@ -184,7 +184,7 @@ export default function AnalyticsPage() {
           purpose={t("subtitle")}
           actions={
             <>
-              <button type="button" onClick={handleRefresh} disabled={refreshing} className="app-btn-ghost app-btn">
+              <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn">
                 {refreshing ? tc("refreshing") : tc("refresh")}
               </button>
               <ExportReportButton
@@ -254,7 +254,7 @@ export default function AnalyticsPage() {
                   header: "Change",
                   numeric: true,
                   render: (r) => (
-                    <span className="app-tag" data-tone={r.change < 0 ? "positive" : "caution"}>
+                    <span className="vck-tag" data-tone={r.change < 0 ? "positive" : "caution"}>
                       {r.change > 0 ? "+" : ""}
                       {r.change.toFixed(1)}%
                     </span>
@@ -288,20 +288,20 @@ export default function AnalyticsPage() {
             ) : aiInsights ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="app-label mb-3">{t("topRecommendations")}</h3>
+                  <h3 className="vck-label mb-3">{t("topRecommendations")}</h3>
                   <ul className="space-y-2">
                     {aiInsights.recommendations.slice(0, 3).map((rec, index) => (
-                      <li key={index} className="app-card-inset px-3 py-2.5 text-sm break-words">
+                      <li key={index} className="vck-inset px-3 py-2.5 text-sm break-words">
                         {rec}
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h3 className="app-label mb-3">{t("keyHighlights")}</h3>
+                  <h3 className="vck-label mb-3">{t("keyHighlights")}</h3>
                   <ul className="space-y-2">
                     {aiInsights.highlights.map((highlight, index) => (
-                      <li key={index} className="app-card-inset px-3 py-2.5 text-sm break-words">
+                      <li key={index} className="vck-inset px-3 py-2.5 text-sm break-words">
                         {highlight}
                       </li>
                     ))}

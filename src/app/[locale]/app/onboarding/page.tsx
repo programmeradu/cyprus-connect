@@ -8,14 +8,15 @@ import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 import {
   LeafIcon,
-  BoltIcon,
-  FireIcon
+  BoltIcon
+
 } from "@/components/icons/CustomIcons";
-import { Check, Cloud, Settings, FolderUp, Trophy, BarChart3, Loader2, ExternalLink } from "lucide-react";
+import { Check, Cloud, Settings, FolderUp, Trophy, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
@@ -243,11 +244,8 @@ export default function OnboardingPage() {
   // Show loading state while fetching session data
   if (isLoadingUserData || isSessionLoading) {
     return (
-      <div className="min-h-screen app-page flex items-center justify-center p-4">
-        <div className="app-card p-8 text-center">
-          <div className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">{t("loading")}</p>
-        </div>
+      <div className="vck-page" aria-busy="true" aria-label={t("loading")}>
+        <DeckSkeleton />
       </div>
     );
   }
@@ -257,8 +255,21 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen app-page flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className="vck-page vco">
+      <ConsoleHeader title={t("frame.title")} purpose={t("frame.purpose")} />
+      <ol className="vco-rail" aria-label={t("frame.stepOf", { n: step })}>
+        {(t.raw("frame.rail") as string[]).map((label, i) => {
+          const n = i + 1;
+          const state = n < step ? "done" : n === step ? "current" : "next";
+          return (
+            <li key={label} data-state={state} aria-current={state === "current" ? "step" : undefined}>
+              <span className="vco-rail-n vck-num">{n}</span>
+              <span className="vco-rail-label">{label}</span>
+            </li>
+          );
+        })}
+      </ol>
+      <div className="vco-body">
         <AnimatePresence mode="wait">
           {/* Step 1: Welcome */}
           {step === 1 && (
@@ -267,20 +278,14 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="app-card p-8 md:p-12"
+              className="vco-plate"
             >
               {/* Title at Top - Spans Full Width */}
               <div className="mb-8">
-                <div className="flex items-center justify-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center">
-                    <LeafIcon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-center">
+                <div className="mb-2">
+                  <h2 className="text-[22px] font-semibold text-[var(--vc-ink)]">
                     {t("step1.title")}
-                  </h1>
-                </div>
-                <div className="text-[10px] text-center text-muted-foreground">
-                  {t("step1.step")}
+                  </h2>
                 </div>
               </div>
 
@@ -311,7 +316,7 @@ export default function OnboardingPage() {
                         transition={{ delay: 0.1 * i }}
                         className="flex items-center gap-3"
                       >
-                        <div className="w-5 h-5 rounded-full border border-[var(--app-rule-strong)] flex items-center justify-center flex-shrink-0">
+                        <div className="w-5 h-5 rounded-full border border-[var(--vc-rule)] flex items-center justify-center flex-shrink-0">
                           <Check className="w-3 h-3 text-primary" />
                         </div>
                         <span className="text-sm text-foreground">{feature}</span>
@@ -319,16 +324,13 @@ export default function OnboardingPage() {
                     ))}
                   </div>
 
-                  <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-[13.5px] text-[var(--vc-ink-2)] mb-6 leading-relaxed">
                     {t("step1.description")}
                   </p>
 
                   <div className="flex items-center gap-4">
-                    <button className="app-btn" onClick={() => setStep(2)}>
+                    <button className="vck-btn vck-btn-primary" onClick={() => setStep(2)}>
                       {t("step1.getStarted")}
-                    </button>
-                    <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                      {t("step1.learnMore")}
                     </button>
                   </div>
                 </div>
@@ -343,20 +345,10 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="app-card p-8 md:p-12"
+              className="vco-plate"
             >
-              {/* Progress bar */}
-              <div className="mb-8">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-[var(--app-rule)]" />
-                  <div className="flex-1 h-1.5 rounded-[2px] bg-[var(--app-rule)]" />
-                </div>
-                <p className="text-center text-sm font-semibold text-foreground">2/4</p>
-              </div>
 
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">
+              <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-2">
                 {t("step2.title")}
               </h2>
               <p className="text-sm text-muted-foreground mb-8">
@@ -364,46 +356,46 @@ export default function OnboardingPage() {
               </p>
 
               {/* Company Details Form */}
-              <div className="mb-8 p-6 rounded-lg app-card-inset">
+              <div className="mb-8 p-6 rounded-lg vck-inset">
                 <h3 className="text-sm font-semibold mb-4">{t("step2.companyHeader")}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.yourName")}</label>
+                    <label className="block vck-label mb-2">{t("step2.yourName")}</label>
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder={t("step2.yourNamePlaceholder")}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.email")}</label>
+                    <label className="block vck-label mb-2">{t("step2.email")}</label>
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={t("step2.emailPlaceholder")}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.companyName")}</label>
+                    <label className="block vck-label mb-2">{t("step2.companyName")}</label>
                     <input
                       type="text"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder={t("step2.companyNamePlaceholder")}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-2">{t("step2.industry")}</label>
+                    <label className="block vck-label mb-2">{t("step2.industry")}</label>
                     <select
                       value={industry}
                       onChange={(e) => setIndustry(e.target.value)}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     >
                       <option value="">{t("step2.selectIndustry")}</option>
                       <option value="technology">{t("step2.industries.technology")}</option>
@@ -415,11 +407,11 @@ export default function OnboardingPage() {
                     </select>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-medium mb-2">{t("step2.teamSize")}</label>
+                    <label className="block vck-label mb-2">{t("step2.teamSize")}</label>
                     <select
                       value={teamSize}
                       onChange={(e) => setTeamSize(e.target.value)}
-                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
                     >
                       <option value="">{t("step2.selectTeamSize")}</option>
                       <option value="1-10">{t("step2.teamSizes.1-10")}</option>
@@ -435,16 +427,16 @@ export default function OnboardingPage() {
               {/* Data Source Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 {/* Utility Bills */}
-                <div className="p-5 rounded-lg bg-background border border-[var(--app-rule-strong)]">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center mb-3 mx-auto">
+                <div className="p-5 rounded-lg bg-background border border-[var(--vc-rule)]">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center mb-3 mx-auto">
                     <Cloud className="w-5 h-5 text-primary" />
                     <BoltIcon className="w-3 h-3 text-primary -ml-1.5 -mt-1.5" />
                   </div>
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.utility.title")}</h3>
-                  <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
+                  <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.utility.desc")}
                   </p>
-                  <button className="app-btn w-full text-[10px] h-7"
+                  <button className="vck-btn vck-btn-primary w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('utility')}
                   >
                     {t("step2.utility.cta")}
@@ -452,15 +444,15 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Accounting Software */}
-                <div className="p-5 rounded-lg app-card hover:bg-[var(--app-surface-3)] transition-colors">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center mb-3 mx-auto">
+                <div className="p-5 rounded-lg vck-card hover:bg-[var(--vc-rail-active)] transition-colors">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center mb-3 mx-auto">
                     <Settings className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.accounting.title")}</h3>
-                  <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
+                  <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.accounting.desc")}
                   </p>
-                  <button className="app-btn-ghost app-btn w-full text-[10px] h-7"
+                  <button className="vck-btn w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('accounting')}
                     disabled={qbConnecting}
                   >
@@ -479,15 +471,15 @@ export default function OnboardingPage() {
                 </div>
 
                 {/* Manual Upload */}
-                <div className="p-5 rounded-lg app-card hover:bg-[var(--app-surface-3)] transition-colors">
-                  <div className="w-10 h-10 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center mb-3 mx-auto">
+                <div className="p-5 rounded-lg vck-card hover:bg-[var(--vc-rail-active)] transition-colors">
+                  <div className="w-10 h-10 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center mb-3 mx-auto">
                     <FolderUp className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <h3 className="text-xs font-bold mb-2 text-center">{t("step2.manual.title")}</h3>
-                  <p className="text-[10px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
+                  <p className="text-[12px] text-muted-foreground mb-3 text-center min-h-[2.5rem]">
                     {t("step2.manual.desc")}
                   </p>
-                  <button className="app-btn-ghost app-btn w-full text-[10px] h-7"
+                  <button className="vck-btn w-full text-[12px] h-7"
                     onClick={() => handleUploadClick('manual')}
                   >
                     {t("step2.manual.cta")}
@@ -496,14 +488,14 @@ export default function OnboardingPage() {
               </div>
 
               {/* Security Notice */}
-              <div className="flex items-start gap-3 p-3 rounded-lg app-card-inset mb-6">
-                <div className="w-7 h-7 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="flex items-start gap-3 p-3 rounded-lg vck-inset mb-6">
+                <div className="w-7 h-7 rounded-lg border border-[var(--vc-rule)] flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[10px] font-medium text-foreground">
+                  <p className="text-[12px] font-medium text-foreground">
                     {t("step2.security")}
                   </p>
                 </div>
@@ -517,7 +509,7 @@ export default function OnboardingPage() {
                 >
                   {t("step2.back")}
                 </button>
-                <button className="app-btn"
+                <button className="vck-btn vck-btn-primary"
                   onClick={() => setStep(3)}
                   disabled={!canProceed()}
                 >
@@ -534,16 +526,10 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="app-card p-8 md:p-12"
+              className="vco-plate"
             >
               <div className="text-center mb-8">
-                <div className="inline-flex gap-1 mb-3">
-                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-20 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-20 h-1.5 rounded-[2px] bg-[var(--app-rule)]" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-6">
+                <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-6">
                   {t("step3.title")}
                 </h2>
               </div>
@@ -587,24 +573,24 @@ export default function OnboardingPage() {
                   {/* Preview Cards */}
                   <div className="grid grid-cols-2 gap-3">
                     {/* Green Credits */}
-                    <div className="p-3 rounded-lg app-card">
+                    <div className="p-3 rounded-lg vck-card">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 rounded-md border border-[var(--app-rule-strong)] flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-md border border-[var(--vc-rule)] flex items-center justify-center">
                           <LeafIcon className="w-3 h-3 text-primary" />
                         </div>
-                        <h4 className="text-[10px] font-bold">{t("step3.greenCredits")}</h4>
+                        <h4 className="text-[12px] font-bold">{t("step3.greenCredits")}</h4>
                       </div>
                       <p className="text-xl font-bold mb-0.5">
                         1,250
                         <span className="text-xs font-normal text-green-500 ml-1.5">+50</span>
                       </p>
-                      <p className="text-[9px] text-muted-foreground">{t("step3.creditsEarned")}</p>
+                      <p className="text-[12px] text-muted-foreground">{t("step3.creditsEarned")}</p>
                     </div>
 
                     {/* Leaderboard */}
-                    <div className="p-3 rounded-lg app-card">
+                    <div className="p-3 rounded-lg vck-card">
                       <div className="flex items-center gap-1.5 mb-2">
-                        <div className="w-6 h-6 rounded-md border border-[var(--app-rule-strong)] flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-md border border-[var(--vc-rule)] flex items-center justify-center">
                           <Trophy className="w-3 h-3 text-primary" />
                         </div>
                         <div className="flex gap-0.5">
@@ -614,15 +600,15 @@ export default function OnboardingPage() {
                           <div className="w-1 h-3 bg-muted rounded" />
                         </div>
                       </div>
-                      <p className="text-[10px] font-medium mb-0.5">{t("step3.leaderboard")}</p>
-                      <p className="text-[9px] text-muted-foreground">{t("step3.yourRank")}</p>
+                      <p className="text-[12px] font-medium mb-0.5">{t("step3.leaderboard")}</p>
+                      <p className="text-[12px] text-muted-foreground">{t("step3.yourRank")}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-col items-center gap-3">
-                <button className="app-btn w-full md:w-auto px-6" onClick={() => setStep(4)}>
+                <button className="vck-btn vck-btn-primary w-full md:w-auto px-6" onClick={() => setStep(4)}>
                   {t("step3.explore")}
                 </button>
                 <div className="flex items-center gap-6">
@@ -650,16 +636,10 @@ export default function OnboardingPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="app-card p-8 md:p-12"
+              className="vco-plate"
             >
               <div className="text-center mb-8">
-                <div className="inline-flex gap-1 mb-3">
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                  <div className="w-16 h-1.5 rounded-[2px] bg-primary" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                <h2 className="text-[22px] font-semibold text-[var(--vc-ink)] mb-4">
                   {t("step4.title")}
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
@@ -670,32 +650,23 @@ export default function OnboardingPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {(() => {
                   const items = t.raw("step4.features") as Array<{ title: string; desc: string }>;
-                  const icons = [
-                    <BarChart3 key="0" className="w-4 h-4" />,
-                    <BoltIcon key="1" className="w-4 h-4" />,
-                    <Trophy key="2" className="w-4 h-4" />,
-                    <FireIcon key="3" className="w-4 h-4" />,
-                  ];
                   return items.map((feature, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * i }}
-                      className="p-4 rounded-lg app-card"
+                      className="p-4 rounded-lg vck-card"
                     >
-                      <div className="w-9 h-9 rounded-lg border border-[var(--app-rule-strong)] flex items-center justify-center text-primary mb-3">
-                        {icons[i]}
-                      </div>
-                      <h3 className="text-xs font-bold mb-1.5">{feature.title}</h3>
-                      <p className="text-[10px] text-muted-foreground leading-relaxed">{feature.desc}</p>
+                      <h3 className="text-[15px] font-semibold mb-1.5 text-[var(--vc-ink)]">{feature.title}</h3>
+                      <p className="text-[13.5px] leading-relaxed text-[var(--vc-ink-2)]">{feature.desc}</p>
                     </motion.div>
                   ));
                 })()}
               </div>
 
               <div className="flex flex-col items-center gap-3">
-                <button className="app-btn w-full md:w-auto px-8"
+                <button className="vck-btn vck-btn-primary w-full md:w-auto px-8"
                   onClick={handleComplete}
                   disabled={isSubmitting}
                 >
@@ -725,7 +696,7 @@ export default function OnboardingPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="app-card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="vck-overlay p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-4">

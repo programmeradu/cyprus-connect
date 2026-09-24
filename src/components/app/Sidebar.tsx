@@ -160,7 +160,7 @@ export const Sidebar = () => {
                     {urgentItems > 0 && (
                       <div className="w-1.5 h-1.5 rounded-full bg-destructive animate-pulse" />
                     )}
-                    <div className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                    <div className={`text-[12px] font-bold px-1.5 py-0.5 rounded ${
                       complianceScore >= 80 ? 'text-primary' : 
                       complianceScore >= 60 ? 'text-yellow-500' : 
                       'text-destructive'
@@ -183,10 +183,10 @@ export const Sidebar = () => {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-[var(--app-rule)] space-y-3">
+      <div className="p-4 border-t border-[var(--vc-rule-soft)] space-y-3">
         {/* Theme + language + notifications */}
         <div className="flex items-center justify-between gap-2">
-          <span className="app-meta">{t("appearance")}</span>
+          <span className="vck-meta">{t("appearance")}</span>
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
             <ThemeToggle />
@@ -194,9 +194,9 @@ export const Sidebar = () => {
         </div>
 
         {/* Account */}
-        <div className="rounded-md border border-[var(--app-rule)]">
+        <div className="rounded-md border border-[var(--vc-rule-soft)]">
           <Link href="/app/settings" className="block">
-            <div className="p-2.5 rounded-t-md hover:bg-[var(--app-surface-3)] transition-colors cursor-pointer">
+            <div className="p-2.5 rounded-t-md hover:bg-[var(--vc-rail-active)] transition-colors cursor-pointer">
               {isUserLoading ? (
                 <div className="space-y-1.5">
                   <div className="h-3 w-24 bg-muted animate-pulse rounded" />
@@ -207,7 +207,7 @@ export const Sidebar = () => {
                   <p className="text-[0.8125rem] font-semibold text-foreground break-words leading-tight">
                     {displayName}
                   </p>
-                  <p className="app-meta break-all leading-tight mt-0.5">
+                  <p className="vck-meta break-all leading-tight mt-0.5">
                     {displayEmail}
                   </p>
                 </>
@@ -218,7 +218,7 @@ export const Sidebar = () => {
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full border-t border-[var(--app-rule)] px-2.5 py-2 text-left text-[0.8125rem] font-medium text-muted-foreground hover:text-foreground hover:bg-[var(--app-surface-3)] transition-colors rounded-b-md"
+            className="w-full border-t border-[var(--vc-rule-soft)] px-2.5 py-2 text-left text-[0.8125rem] font-medium text-muted-foreground hover:text-foreground hover:bg-[var(--vc-rail-active)] transition-colors rounded-b-md"
           >
             {tHeader("signOut")}
           </button>
@@ -238,7 +238,7 @@ export const Sidebar = () => {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className="app-chrome hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 border-r z-40">
+      <aside className="vck-chrome hidden lg:flex lg:flex-col fixed left-0 top-0 h-screen w-56 border-r z-40">
         <SidebarContent />
       </aside>
 
@@ -257,7 +257,7 @@ export const Sidebar = () => {
 
             {/* Sidebar */}
             <motion.aside
-              className="app-chrome fixed left-0 top-0 h-screen w-64 border-r z-50 lg:hidden flex flex-col"
+              className="vck-chrome fixed left-0 top-0 h-screen w-64 border-r z-50 lg:hidden flex flex-col"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
               exit={{ x: -280 }}

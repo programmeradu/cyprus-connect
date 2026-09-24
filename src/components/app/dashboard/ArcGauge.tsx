@@ -34,7 +34,7 @@ export const ArcGauge = ({ value, caption, height = 92, className = "" }: ArcGau
         <path
           d={arc}
           fill="none"
-          stroke="var(--app-rule-strong)"
+          stroke="var(--vc-rule)"
           strokeWidth="2"
           vectorEffect="non-scaling-stroke"
         />
@@ -52,7 +52,7 @@ export const ArcGauge = ({ value, caption, height = 92, className = "" }: ArcGau
           }}
         />
       </svg>
-      {caption && <p className="app-meta mt-1 text-center break-words">{caption}</p>}
+      {caption && <p className="vck-meta mt-1 text-center break-words">{caption}</p>}
     </div>
   );
 };

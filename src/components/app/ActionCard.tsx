@@ -44,7 +44,7 @@ export const ActionCard = ({
 
   return (
     <motion.div
-      className={`app-card flex h-full flex-col p-4 ${className}`}
+      className={`vck-card flex h-full flex-col p-4 ${className}`}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
@@ -58,13 +58,13 @@ export const ActionCard = ({
       </p>
 
       {impact && (
-        <p className="app-meta mt-3">
-          <span className="font-semibold text-foreground app-num">{impact}</span>
+        <p className="vck-meta mt-3">
+          <span className="font-semibold text-foreground vck-num">{impact}</span>
         </p>
       )}
 
       <div className="mt-3">
-        <span className="app-tag" data-tone={impactTone[difficulty]}>
+        <span className="vck-tag" data-tone={impactTone[difficulty]}>
           {impactLabels[difficulty]}
         </span>
       </div>
@@ -75,7 +75,7 @@ export const ActionCard = ({
         <button
           onClick={onComplete}
           disabled={completed}
-          className={`app-btn mt-4 w-full ${completed ? "app-btn-ghost" : ""}`}
+          className={`vck-btn mt-4 w-full ${completed ? "" : "vck-btn-primary"}`}
         >
           <span className="break-words text-center">
             {completed ? t("completed") : t("markComplete")}

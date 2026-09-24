@@ -545,13 +545,13 @@ Generate a detailed image generation prompt (max 200 words):`;
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <Section title={t("creator.title")} description={t("creator.subtitle")}>
-          <div className="app-card space-y-4 p-4">
+          <div className="vck-card space-y-4 p-4">
             <div>
-              <label className="app-label mb-1.5 block">{t("creator.contextLabel")}</label>
+              <label className="vck-label mb-1.5 block">{t("creator.contextLabel")}</label>
               <select
                 value={contextType}
                 onChange={(e) => setContextType(e.target.value as ContextType)}
-                className="w-full rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--app-rule-strong)]"
+                className="w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               >
                 <option value="custom">{t("contextTypes.custom")}</option>
                 <option value="company_data">{t("contextTypes.company_data")}</option>
@@ -562,14 +562,14 @@ Generate a detailed image generation prompt (max 200 words):`;
             </div>
 
             <div>
-              <label className="app-label mb-1.5 block">{t("creator.quickIdeas")}</label>
+              <label className="vck-label mb-1.5 block">{t("creator.quickIdeas")}</label>
               <div className="flex flex-wrap gap-1.5">
                 {generateContextSuggestions().map((suggestion, index) => (
                   <button
                     key={index}
                     type="button"
                     onClick={() => setPrompt(suggestion)}
-                    className="app-tag"
+                    className="vck-tag"
                   >
                     {suggestion}
                   </button>
@@ -578,14 +578,14 @@ Generate a detailed image generation prompt (max 200 words):`;
             </div>
 
             <div>
-              <label className="app-label mb-1.5 block">{t("creator.promptLabel")}</label>
+              <label className="vck-label mb-1.5 block">{t("creator.promptLabel")}</label>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder={t("creator.promptPlaceholder")}
-                className="min-h-[96px] w-full resize-none rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--app-rule-strong)]"
+                className="min-h-[96px] w-full resize-none rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               />
-              <p className="app-meta mt-2 leading-relaxed">
+              <p className="vck-meta mt-2 leading-relaxed">
                 <strong className="text-foreground">{t("creator.intelligentSelection")}</strong>{" "}
                 {t("creator.intelligentDesc")}
               </p>
@@ -595,7 +595,7 @@ Generate a detailed image generation prompt (max 200 words):`;
               type="button"
               onClick={generateMedia}
               disabled={isGenerating || !prompt.trim()}
-              className="app-btn w-full disabled:cursor-not-allowed disabled:opacity-50"
+              className="vck-btn vck-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isGenerating ? t("creator.generating") : t("creator.generateImage")}
             </button>
@@ -606,11 +606,11 @@ Generate a detailed image generation prompt (max 200 words):`;
           {aiError ? (
             <AiUnavailable feature="generate report visuals" onRetry={generateMedia} />
           ) : selectedMedia ? (
-            <div className="app-card p-4">
+            <div className="vck-card p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div>
                   {selectedMedia.model && (
-                    <p className="app-meta">
+                    <p className="vck-meta">
                       {t("preview.generatedWith", {
                         model:
                           selectedMedia.model === "imagen-4.0-generate-001"
@@ -626,21 +626,21 @@ Generate a detailed image generation prompt (max 200 words):`;
                   <button
                     type="button"
                     onClick={() => toggleSaveToLibrary(selectedMedia)}
-                    className={`app-btn ${selectedMedia.saved ? "" : "app-btn-ghost"}`}
+                    className={`vck-btn ${selectedMedia.saved ? "vck-btn-primary" : ""}`}
                   >
                     {selectedMedia.saved ? t("preview.savedToLibrary") : t("preview.saveToLibrary")}
                   </button>
                   <button
                     type="button"
                     onClick={() => downloadMedia(selectedMedia)}
-                    className="app-btn-ghost app-btn"
+                    className="vck-btn"
                   >
                     {t("preview.download")}
                   </button>
                 </div>
               </div>
 
-              <div className="relative overflow-hidden rounded-[0.5rem] border border-[var(--app-rule)] bg-[var(--app-surface-2)]">
+              <div className="relative overflow-hidden rounded-[0.5rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)]">
                 {selectedMedia.type === "image" ? (
                   <NextImage
                     src={selectedMedia.url}
@@ -652,18 +652,18 @@ Generate a detailed image generation prompt (max 200 words):`;
                 ) : (
                   <div className="relative w-full">
                     {isVideoLoading && (
-                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--app-surface-2)]">
-                        <p className="app-meta">{t("preview.loadingVideo")}</p>
+                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--vc-well)]">
+                        <p className="vck-meta">{t("preview.loadingVideo")}</p>
                       </div>
                     )}
                     {videoError && (
-                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--app-surface-2)]">
+                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--vc-well)]">
                         <div className="max-w-md p-4 text-center">
                           <p className="mb-2 text-sm text-destructive">{videoError}</p>
                           <button
                             type="button"
                             onClick={() => openExternalUrl(selectedMedia.url)}
-                            className="app-btn-ghost app-btn"
+                            className="vck-btn"
                           >
                             {t("preview.openNewTab")}
                           </button>
@@ -688,14 +688,14 @@ Generate a detailed image generation prompt (max 200 words):`;
                 )}
               </div>
 
-              <p className="app-meta mt-3 break-words leading-relaxed">
+              <p className="vck-meta mt-3 break-words leading-relaxed">
                 <strong className="text-foreground">{t("preview.prompt")}</strong> {selectedMedia.prompt}
               </p>
 
               {selectedMedia.type === "image" && (
-                <div className="mt-4 border-t border-[var(--app-rule)] pt-4">
-                  <p className="app-label mb-1">{t("editing.title")}</p>
-                  <p className="app-meta mb-2">{t("editing.subtitle")}</p>
+                <div className="mt-4 border-t border-[var(--vc-rule-soft)] pt-4">
+                  <p className="vck-label mb-1">{t("editing.title")}</p>
+                  <p className="vck-meta mb-2">{t("editing.subtitle")}</p>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <input
                       type="text"
@@ -704,18 +704,18 @@ Generate a detailed image generation prompt (max 200 words):`;
                       onKeyDown={(e) => e.key === "Enter" && handleNaturalLanguageEdit()}
                       placeholder={t("editing.placeholder")}
                       disabled={isEditingImage}
-                      className="flex-1 rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--app-rule-strong)]"
+                      className="flex-1 rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
                     />
                     <button
                       type="button"
                       onClick={handleNaturalLanguageEdit}
                       disabled={isEditingImage || !editPrompt.trim()}
-                      className="app-btn disabled:cursor-not-allowed disabled:opacity-50"
+                      className="vck-btn vck-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {isEditingImage ? t("creator.generating") : t("editing.title")}
                     </button>
                   </div>
-                  <p className="app-meta mt-2">{t("editing.examples")}</p>
+                  <p className="vck-meta mt-2">{t("editing.examples")}</p>
                 </div>
               )}
             </div>
@@ -740,8 +740,8 @@ Generate a detailed image generation prompt (max 200 words):`;
               <div
                 key={media.id}
                 onClick={() => setSelectedMedia(media)}
-                className={`app-card cursor-pointer overflow-hidden p-0 ${
-                  selectedMedia?.id === media.id ? "border-[var(--app-rule-strong)]" : ""
+                className={`vck-card cursor-pointer overflow-hidden p-0 ${
+                  selectedMedia?.id === media.id ? "border-[var(--vc-rule)]" : ""
                 }`}
               >
                 {media.type === "image" ? (
@@ -753,15 +753,15 @@ Generate a detailed image generation prompt (max 200 words):`;
                     className="h-28 w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-28 w-full items-center justify-center bg-[var(--app-surface-2)]">
-                    <span className="app-meta">{t("mediaType.video")}</span>
+                  <div className="flex h-28 w-full items-center justify-center bg-[var(--vc-well)]">
+                    <span className="vck-meta">{t("mediaType.video")}</span>
                   </div>
                 )}
                 <div className="space-y-1 p-2">
                   <p className="break-words text-[0.8125rem] font-medium leading-snug">{media.prompt}</p>
                   <div className="flex items-center justify-between">
                     {media.model && (
-                      <span className="app-meta">
+                      <span className="vck-meta">
                         {media.model === "imagen-4.0-generate-001"
                           ? t("models.imagen4")
                           : t("models.geminiFlashShort")}
@@ -773,12 +773,12 @@ Generate a detailed image generation prompt (max 200 words):`;
                         e.stopPropagation();
                         deleteGeneration(media);
                       }}
-                      className="app-meta hover:text-destructive"
+                      className="vck-meta hover:text-destructive"
                     >
                       {t("sidebar.noSaved") ? "Remove" : "Remove"}
                     </button>
                   </div>
-                  {media.saved && <span className="app-tag">Saved</span>}
+                  {media.saved && <span className="vck-tag">Saved</span>}
                 </div>
               </div>
             ))}

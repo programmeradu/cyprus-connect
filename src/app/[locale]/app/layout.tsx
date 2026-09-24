@@ -1,6 +1,5 @@
 "use client";
 
-import "./app.css";
 import "./console.css";
 import "./console-deck.css";
 import "./console-kit.css";

@@ -201,7 +201,7 @@ export default function LearnPage() {
       render: (c) => (
         <div>
           <p className="font-medium break-words">{c.title}</p>
-          <p className="app-meta mt-0.5 break-words">{c.description}</p>
+          <p className="vck-meta mt-0.5 break-words">{c.description}</p>
         </div>
       )
     },
@@ -209,7 +209,7 @@ export default function LearnPage() {
       key: "difficulty",
       header: "Difficulty",
       hideOnMobile: true,
-      render: (c) => <span className="app-tag capitalize">{c.difficultyLevel}</span>
+      render: (c) => <span className="vck-tag capitalize">{c.difficultyLevel}</span>
     },
     {
       key: "lessons",
@@ -236,7 +236,7 @@ export default function LearnPage() {
       render: (c) => (
         <button
           type="button"
-          className="app-btn-ghost app-btn"
+          className="vck-btn"
           onClick={(e) => {
             e.stopPropagation();
             if (c.isEnrolled) {
@@ -263,7 +263,7 @@ export default function LearnPage() {
           title={t("title")}
           purpose={t("subtitle")}
           actions={
-            <button type="button" className="app-btn" onClick={triggerAutoGeneration} disabled={isAutoGenerating}>
+            <button type="button" className="vck-btn vck-btn-primary" onClick={triggerAutoGeneration} disabled={isAutoGenerating}>
               {isAutoGenerating ? t("generatingCourses") : t("generateFirst")}
             </button>
           }
@@ -277,7 +277,7 @@ export default function LearnPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("searchPh")}
-              className="rounded-[0.375rem] border border-[var(--app-rule)] bg-[var(--app-surface-1)] px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              className="rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             />
           }
         >

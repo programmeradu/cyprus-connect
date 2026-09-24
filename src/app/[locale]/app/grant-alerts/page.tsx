@@ -72,7 +72,7 @@ export default function GrantAlertsPage() {
           <a href={m.url} target="_blank" rel="noreferrer" className="font-medium hover:underline break-words">
             {m.title}
           </a>
-          <p className="app-meta mt-0.5">
+          <p className="vck-meta mt-0.5">
             {SOURCE_LABELS[m.source] ?? m.source}
             {m.program ? ` · ${m.program}` : ""}
           </p>
@@ -88,7 +88,7 @@ export default function GrantAlertsPage() {
     {
       key: "seen",
       header: "First seen",
-      render: (m) => <span className="app-num">{new Date(m.first_seen_at).toLocaleDateString()}</span>
+      render: (m) => <span className="vck-num">{new Date(m.first_seen_at).toLocaleDateString()}</span>
     },
     {
       key: "score",
@@ -111,19 +111,19 @@ export default function GrantAlertsPage() {
       }
     >
       <Section title="Subscribe">
-        <form onSubmit={subscribe} className="app-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+        <form onSubmit={subscribe} className="vck-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
           <input
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@yourcompany.cy"
-            className="h-11 flex-1 rounded-[0.375rem] border border-[var(--app-rule-strong)] bg-[var(--app-surface-1)] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="h-11 flex-1 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
-          <button type="submit" className="app-btn">Subscribe</button>
-          <button type="button" onClick={unsubscribe} className="app-btn-ghost app-btn">Unsubscribe</button>
+          <button type="submit" className="vck-btn vck-btn-primary">Subscribe</button>
+          <button type="button" onClick={unsubscribe} className="vck-btn">Unsubscribe</button>
         </form>
-        {status && <p className="app-meta mt-3">{status}</p>}
+        {status && <p className="vck-meta mt-3">{status}</p>}
       </Section>
 
       <Section title="Recent matches">
