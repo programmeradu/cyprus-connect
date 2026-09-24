@@ -7,3 +7,5 @@
 - [x] Remove the old-styling layer (app.css + app-* bridge) from all 19 pages
 - [ ] Rewrite pages from the shell adapters to direct kit imports (visual parity already)
 - [ ] Collect company revenue in Settings so per-revenue benchmarks can return
+
+- [ ] Research pipeline plan: fold in user review (Cyprus grid/doc realism, negative prior art, pre-registration lock, stress tests, tax/grant compliance, dual-track S6), then re-review
