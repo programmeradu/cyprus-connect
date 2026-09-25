@@ -13,3 +13,4 @@ date,task,stage,person,hours,cost_eur,frascati_type,notes
 2026-09-24,Unified spec + CYSTAT check + frontier mining round 1,S1/S5,AI agent,3,0,basic research (desk),see registry S1-CYSTAT-13 S5-UNIFY-01 S1-FRONTIER-01
 2026-09-24,S2 prior art I-14 + frontier mining round 2,S1-S2,AI,2.5,0,basic research (desk),S2-PA-12 S1-FRONTIER-02
 2026-09-24,I-14 prereg lock + E03 power simulation + kill,S3-S4,AI,1.5,0,experimental development,S3-PREREG-14 S4-E03-14
+2026-09-26,Mining engine run 1 (A x B x C cross + AI screen),S1,AI,1,0,basic research (desk),research/reports/MINING_ENGINE_RUN1_2026-09-26.md
