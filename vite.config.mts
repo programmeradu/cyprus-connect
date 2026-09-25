@@ -14,6 +14,8 @@ export default defineConfig({
   },
   plugins: [
     tanstackStart({
+      // Keep the shell out of src/ (owned by Next.js).
+      srcDirectory: "lovable-shell",
       // `customViteReactPlugin` is accepted at runtime but not typed in the
       // installed schema; cast the options object to keep TS happy while we
       // explicitly own the React plugin below.
