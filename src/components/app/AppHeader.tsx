@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { PageHeader } from "@/components/app/shell/PageHeader";
+import { PageHeader } from "@/components/app/console/kit";
 
 interface AppHeaderProps {
   title: string;

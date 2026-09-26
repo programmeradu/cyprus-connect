@@ -6,7 +6,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { EmptyState } from "@/components/app/shell";
+import { Empty } from "@/components/app/console/kit";
 
 import {
   EmissionEntryIcon,
@@ -301,10 +301,9 @@ export const NotificationBell = () => {
                 ))}
               </div>
             ) : notifications.length === 0 ? (
-              <EmptyState
-                className="border-0"
+              <Empty
                 title={t("empty")}
-                description={t("unread", { count: 0 })}
+                body={t("unread", { count: 0 })}
               />
             ) : (
               <div>

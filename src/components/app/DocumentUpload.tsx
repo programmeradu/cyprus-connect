@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { UtilityBillData, OCRResult } from '@/lib/ocr/types';
 import { toast } from 'sonner';
-import { EmptyState } from "@/components/app/shell";
+import { Empty } from "@/components/app/console/kit";
 
 interface UploadState {
   loading: boolean;
@@ -108,7 +108,7 @@ export function DocumentUpload({ onUploadComplete }: { onUploadComplete?: (data:
 
       {/* Error Message */}
       {state.error && (
-        <EmptyState tone="critical" title={t('error')} description={state.error} />
+        <Empty tone="bad" title={t('error')} body={state.error} />
       )}
 
       {/* Success - Extracted Data */}

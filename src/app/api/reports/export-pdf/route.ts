@@ -1,25 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { generateSustainabilityReport, ReportData } from '@/lib/pdf/export-report';
 import { db } from '@/db';
 import { user, historicalEmissions, emissions, industryComparisons } from '@/db/schema';
-import { eq, and, sql, desc } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('reports.export-pdf');
+
+const bodySchema = z.object({
+  userId: z.string().trim().min(1).max(128),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const __auth = await bindSessionUser(request, (body).userId);
+    const bodyResult = await readJson(request, bodySchema);
+    if (!bodyResult.ok) return bodyResult.response;
+    const __auth = await bindSessionUser(request, bodyResult.data.userId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
-
-
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json(
-        { error: 'userId is required' },
-        { status: 400 }
-      );
-    }
 
     // Get authorization token for feature tracking
     const authHeader = request.headers.get('authorization');
@@ -29,8 +31,6 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-
-    const token = authHeader.split(' ')[1];
 
     // Check + deduct AI credits (sustainability report costs 1 credit)
     const creditGate = await checkAndDeductAiCredits(request, 1, 'report-pdf');
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     const water = (currentPeriod.waterLiters || 0) * 0.0003; // ~0.0003 kg CO2e per liter
     const waste = (currentPeriod.wasteKg || 0) * 0.5; // ~0.5 kg CO2e per kg
     const transportation = (currentPeriod.transportKm || 0) * 0.2; // ~0.2 kg CO2e per km
-    
+
     const total = electricity + gas + water + waste + transportation || 1;
 
     const emissionsBreakdown = {
@@ -171,14 +171,14 @@ export async function POST(request: NextRequest) {
     const insights = {
       observations: [
         `Total emissions for ${monthNames[currentMonth - 1]} ${currentYear}: ${totalEmissions.toFixed(1)} tons CO2e`,
-        yoyChange < 0 
+        yoyChange < 0
           ? `Emissions decreased by ${Math.abs(yoyChange).toFixed(1)}% compared to last year`
           : `Emissions increased by ${yoyChange.toFixed(1)}% compared to last year`,
         `Electricity accounts for ${emissionsBreakdown.electricity.percentage.toFixed(0)}% of total emissions`
       ],
       recommendations: [
         'Continue monitoring your emissions regularly',
-        electricity > gas + transportation 
+        electricity > gas + transportation
           ? 'Focus on renewable energy adoption to reduce electricity emissions'
           : 'Optimize transportation and fleet management',
         'Set specific reduction targets for each category',
@@ -188,10 +188,10 @@ export async function POST(request: NextRequest) {
       ],
       highlights: [
         `Operating in ${userInfo.companyIndustry || 'technology'} sector`,
-        emissionsList.length >= 6 
+        emissionsList.length >= 6
           ? 'Consistent data tracking over multiple months'
           : 'Building emissions tracking history',
-        totalEmissions < 1000 
+        totalEmissions < 1000
           ? 'Low emissions profile - maintain sustainable practices'
           : 'Significant emissions - high impact potential for reductions'
       ],
@@ -223,8 +223,6 @@ export async function POST(request: NextRequest) {
     const pdf = generateSustainabilityReport(reportData);
     const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
 
-    // Track sustainability report usage after successful generation
-
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
@@ -233,12 +231,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('PDF export error:', error);
+    const ref = log.error('PDF export error', error);
     return NextResponse.json(
-      { 
-        error: 'Failed to generate PDF report',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Failed to generate PDF report.', ref },
       { status: 500 }
     );
   }

@@ -7,7 +7,7 @@ import { useUser } from "@/lib/user-context";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
 import { getEnergyZoneData } from "@/lib/energy-zones";
-import { Metric, MetricRow, EmptyState, SkeletonCards } from "@/components/app/shell";
+import { Metric, MetricRow, Empty, SkeletonCards } from "@/components/app/console/kit";
 
 interface CarbonIntensityData {
   carbonIntensity: number;
@@ -147,9 +147,9 @@ export function EnergyCostCalculator() {
   // Upgrade prompt if no access
   if (!hasRealtimeDataAccess) {
     return (
-      <EmptyState
+      <Empty
         title={t("proFeature")}
-        description={t("proBlurb")}
+        body={t("proBlurb")}
         action={{ label: t("upgradeCta"), onClick: () => router.push('/pricing') }}
       />
     );

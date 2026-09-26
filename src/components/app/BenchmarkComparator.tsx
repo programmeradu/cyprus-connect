@@ -6,7 +6,7 @@ import { useSession } from "@/lib/auth-client";
 import { useUser } from "@/lib/user-context";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
-import { Metric, MetricRow, EmptyState, SkeletonCards } from "@/components/app/shell";
+import { Metric, MetricRow, Empty, SkeletonCards } from "@/components/app/console/kit";
 
 interface CompanyData {
   sector: string;
@@ -143,9 +143,9 @@ export function BenchmarkComparator() {
   // Upgrade prompt if no access
   if (!hasBenchmarkingAccess) {
     return (
-      <EmptyState
+      <Empty
         title={t("proFeature")}
-        description={t("proBlurb")}
+        body={t("proBlurb")}
         action={{ label: t("upgradeCta"), onClick: () => router.push('/pricing') }}
       />
     );
@@ -211,7 +211,7 @@ export function BenchmarkComparator() {
         </div>
 
         {error && (
-          <EmptyState tone="critical" title={t('unknownError')} description={error} />
+          <Empty tone="bad" title={t('unknownError')} body={error} />
         )}
 
         <button

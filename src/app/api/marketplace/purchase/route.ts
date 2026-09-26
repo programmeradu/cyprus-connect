@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/db";
-import { offsetProjects, offsetPurchases, userImpactTracking } from "@/db/schema";
-import { eq, sql } from "drizzle-orm";
+import { offsetProjects } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import Stripe from "stripe";
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('marketplace.purchase');
+
+const bodySchema = z.object({
+  projectId: z.coerce.number().int().positive(),
+  tons: z.number().finite().positive().max(1_000_000),
+});
 
 export async function POST(request: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -20,15 +30,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const { projectId, tons } = body;
-
-    if (!projectId || !tons || tons <= 0) {
-      return NextResponse.json(
-        { error: "Invalid purchase parameters" },
-        { status: 400 }
-      );
-    }
+    const bodyResult = await readJson(request, bodySchema);
+    if (!bodyResult.ok) return bodyResult.response;
+    const { projectId, tons } = bodyResult.data;
 
     // Get project details
     const project = await db
@@ -53,9 +57,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Calculate total price
-    const totalPrice = Math.round(projectData.pricePerTon * tons * 100); // In cents
 
     // Create Stripe checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -85,14 +86,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       url: checkoutSession.url,
-      sessionId: checkoutSession.id 
+      sessionId: checkoutSession.id
     });
-  } catch (error: any) {
-    console.error("Error creating purchase:", error);
+  } catch (error) {
+    const ref = log.error("Error creating purchase", error);
     return NextResponse.json(
-      { error: "Failed to create purchase", details: error.message },
+      { error: "Failed to create purchase.", ref },
       { status: 500 }
     );
   }

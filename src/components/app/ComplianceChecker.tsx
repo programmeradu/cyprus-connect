@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useRouter } from "next/navigation";
-import { EmptyState, SkeletonCards } from "@/components/app/shell";
+import { Empty, SkeletonCards } from "@/components/app/console/kit";
 
 interface ComplianceStatus {
   csrdScope: boolean;
@@ -106,9 +106,9 @@ export function ComplianceChecker() {
   // Upgrade prompt if no access
   if (!hasComplianceAccess) {
     return (
-      <EmptyState
+      <Empty
         title={t("proFeature")}
-        description={t("proBlurb")}
+        body={t("proBlurb")}
         action={{ label: t("upgradeCta"), onClick: () => router.push('/pricing') }}
       />
     );
@@ -186,7 +186,7 @@ export function ComplianceChecker() {
         </div>
 
         {error && (
-          <EmptyState tone="critical" title={t('failed')} description={error} />
+          <Empty tone="bad" title={t('failed')} body={error} />
         )}
 
         <button
