@@ -20,9 +20,9 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Step 2 (first part) Evidence sweep agent: asks for missing bills/receipts, flags obligations at risk, records coverage fact
 - [ ] Step 2 (rest) pull bills automatically from connectors — blocked: no EAC/bank connector access yet
 - [x] Step 3 CBAM agent: CSV import, annual draft (hash), supplier data requests, L3 signature via approval, /app/cbam page
-- [ ] Next: CBAM supplier emails (approval-gated) and EU Registry upload file
+- [x] CBAM supplier emails (L2, full text on approval, Resend) and Registry export XML (draft/final)
 - [ ] CBAM: official definitive default values + full Annex I CN list; confirm rules (founder, see docs/FOUNDER_EXTERNAL_SETUP.md)
-- [ ] CBAM: outward supplier emails (L2) and registry-ready XML export
+- [ ] CBAM: match export to the official Registry XSD (blocked: founder to supply XSD); live email send (blocked: RESEND_API_KEY + EMAIL_FROM)
 - [ ] Step 4 research gates on I-25 (Grid Surplus) and I-26 (Upgrade Club) — blocked: TSO/EAC curtailment + tariff data, pilot SMEs, licence checks
 - [ ] Steps 5-6 pilots, Upgrade Club, agent-to-agent exchange — depend on step 4
 - [ ] Founder: set CRON_SECRET in Cloudflare (heartbeat skips without it); sign off Postgres queue vs Queues/Durable Objects
