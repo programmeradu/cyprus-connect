@@ -1,25 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { db } from "@/db";
 import { courses, courseModules, lessons, notifications, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { generateImage } from "@/lib/generators";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("api.learn.generate-course");
+
+const postSchema = z.object({
+  topic: z.string().trim().min(1).max(300),
+  industry: z.string().trim().min(1).max(200),
+  difficultyLevel: z.enum(['beginner', 'intermediate', 'advanced']),
+  userId: z.string().trim().min(1).max(200).optional(),
+  companyContext: z.record(z.string(), z.unknown()).nullable().optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
     const {
       topic,
       industry,
       difficultyLevel,
       userId: __claimedUserId,
       companyContext
-    } = body;
+    } = parsed.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
-
 
     // Get authorization token
     const authHeader = request.headers.get('authorization');
@@ -29,8 +42,6 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-
-    const token = authHeader.split(' ')[1];
 
     // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
     const creditGate = await checkAndDeductAiCredits(request, 1, 'course');
@@ -46,23 +57,19 @@ export async function POST(request: NextRequest) {
       companyContext
     );
 
-    // Track credit for course structure generation
-
     // Generate course thumbnail image
     let thumbnailUrl = null;
     try {
       console.log(`Generating thumbnail for course: ${courseStructure.title}`);
       const thumbnailPrompt = `Professional wide banner for "${courseStructure.title}" sustainability course, modern flat design illustration, clean horizontal composition, ${industry} industry theme with green environmental elements, technology and innovation motifs, high quality digital art, 21:9 ultra-wide format`;
-      
+
       const result = await generateImage(thumbnailPrompt, "21:9");
       if (result.url) {
         thumbnailUrl = result.url;
         console.log(`✓ Thumbnail generated successfully`);
-        
-        // Track credit for thumbnail generation
       }
     } catch (error) {
-      console.error("Failed to generate course thumbnail:", error);
+      log.warn("Failed to generate course thumbnail", { error: String(error) });
     }
 
     // Create course in database
@@ -95,29 +102,23 @@ export async function POST(request: NextRequest) {
       const moduleId = newModule.id;
 
       for (const [lessonIndex, lesson] of module.lessons.entries()) {
-        // Generate media if needed
         let enhancedContent = { ...lesson.content };
 
-
-        // Generate image for text lessons
         if (lesson.contentType === "text" && lesson.needsImage && lesson.imagePrompt) {
           try {
             console.log(`Generating image for lesson: ${lesson.title}`);
             const result = await generateImage(lesson.imagePrompt, "16:9");
-            
+
             if (result.url) {
               const imageUrl = result.url;
               enhancedContent.imageUrl = imageUrl;
-              // Add image to HTML content at the beginning
               if (enhancedContent.text) {
                 enhancedContent.text = `<img src="${imageUrl}" alt="${lesson.title}" style="width:100%;max-width:800px;height:auto;border-radius:8px;margin-bottom:1.5rem;" />${enhancedContent.text}`;
               }
               console.log(`✓ Image generated for: ${lesson.title}`);
-              
-              // Track credit for image generation
             }
           } catch (error) {
-            console.error(`Failed to generate image for ${lesson.title}:`, error);
+            log.warn(`Failed to generate image for lesson`, { error: String(error) });
           }
         }
 
@@ -136,11 +137,9 @@ export async function POST(request: NextRequest) {
     // Create notifications only if userId is valid
     if (userId) {
       try {
-        // Verify user exists before creating notification
         const userExists = await db.select({ id: user.id }).from(user).where(eq(user.id, userId)).limit(1);
-        
+
         if (userExists.length > 0) {
-          // Create notification for the user who generated the course
           await db.insert(notifications).values({
             userId: userId,
             type: 'system_alert',
@@ -158,12 +157,11 @@ export async function POST(request: NextRequest) {
             createdAt: new Date().toISOString()
           });
 
-          // Notify all other users about the new course (system-wide)
           const allUsers = await db.select({ id: user.id }).from(user);
           const otherUsers = allUsers.filter(u => u.id !== userId);
-          
+
           if (otherUsers.length > 0) {
-            await Promise.all(otherUsers.map(u => 
+            await Promise.all(otherUsers.map(u =>
               db.insert(notifications).values({
                 userId: u.id,
                 type: 'insight_available',
@@ -183,19 +181,18 @@ export async function POST(request: NextRequest) {
           }
         }
       } catch (notificationError) {
-        // Log but don't fail the request if notifications fail
-        console.error("Failed to create notifications:", notificationError);
+        log.warn("Failed to create notifications", { error: String(notificationError) });
       }
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       courseId,
       message: "Course generated successfully"
     });
-  } catch (error: any) {
-    console.error("Failed to generate course:", error);
+  } catch (error) {
+    const ref = log.error("Failed to generate course", error);
     return NextResponse.json(
-      { error: "Failed to generate course" },
+      { error: "Failed to generate course", ref },
       { status: 500 }
     );
   }
@@ -286,29 +283,25 @@ IMPORTANT: Return ONLY valid JSON (no markdown, no code blocks). Structure:
     });
 
     const result = await response.json();
-    
-    // Try to parse the response, cleaning markdown code blocks if present
+
     let cleanedText = result.text.trim();
-    
-    // Remove markdown code blocks if present
+
     if (cleanedText.startsWith('```json')) {
       cleanedText = cleanedText.replace(/^```json\n/, '').replace(/\n```$/, '');
     } else if (cleanedText.startsWith('```')) {
       cleanedText = cleanedText.replace(/^```\n/, '').replace(/\n```$/, '');
     }
-    
+
     const parsed = JSON.parse(cleanedText);
-    
-    // Validate structure
+
     if (parsed.modules && parsed.modules.length > 0) {
       return parsed;
     }
-    
+
     throw new Error("Invalid course structure");
   } catch (error) {
-    console.error("Failed to parse Gemini response, using fallback:", error);
-    
-    // Comprehensive fallback structure with rich content
+    log.warn("Failed to parse Gemini response, using fallback", { error: String(error) });
+
     return createFallbackCourse(topic, industry, difficultyLevel);
   }
 }
