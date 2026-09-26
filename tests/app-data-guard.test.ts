@@ -11,7 +11,6 @@ import { join, relative } from "node:path";
 const ROOT = join(process.cwd(), "src/app/[locale]/app");
 
 const NOT_YET_MOVED: Record<string, string> = {
-  "calculator/page.tsx": "phase 4",
   "insights/page.tsx": "phase 4",
   "integrations/page.tsx": "phase 4",
   "agents/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",

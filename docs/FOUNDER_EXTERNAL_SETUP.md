@@ -38,6 +38,9 @@ _Last updated: 26 September 2026 — security, report filters/PDF, logging turn.
 Approving "Sign the 2026 CBAM declaration" records your signature on that exact draft in Vuneli (fingerprinted). It does **not** submit anything to the EU CBAM Registry. Submission still needs the importer's own authorised-declarant account (applied for through the Cyprus Customs Department). Decide with a lawyer how you describe this to customers.
 
 
+## 2026-09-26 (Monthly footprint rebuild)
+- Optional: `CLIMATIQ_API_KEY` in Cloudflare gives live factors. Electricity already resolves live for Cyprus in preview; gas, waste and car travel fall back to published DEFRA factors, and the page says which were used.
+
 ## 2026-09-26 (Report Visuals rebuild)
 - Making images needs the same AI service key (`LOVABLE_API_KEY`) and the image storage bucket `generated-media`. Without the key the page says so and charges nothing.
 

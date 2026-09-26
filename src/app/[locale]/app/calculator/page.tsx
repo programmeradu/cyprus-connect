@@ -1,756 +1,306 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+/**
+ * Monthly footprint. One form, one save.
+ *
+ * The server works out the footprint with the company's own country and
+ * writes it into the shared workspace (emissions, dashboard figures, activity),
+ * so the dashboard, actions, Report Visuals and agents all see the new month.
+ */
+
+import { useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { useEmissionCalculator } from "@/hooks/useEmissionCalculator";
+import { Link } from "@/i18n/navigation";
 import { DocumentUploader } from "@/components/DocumentUploader";
-import { useSession } from "@/lib/auth-client";
-import {
-  calculateFromReferenceFactors,
-  usedSources,
-} from "@/lib/emissions/reference-factors";
-import { APP_OPEN_ACCESS } from "@/lib/open-access";
-import {
-  PageShell,
-  PageHeader,
-  Section,
-  DataTable,
-  Metric,
-  MetricRow,
-  Empty,
-  AiUnavailable
-} from "@/components/app/console/kit";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+import { PageShell, PageHeader, Section, DataTable, Metric, MetricRow, Empty } from "@/components/app/console/kit";
+import { FOOTPRINT_KEYS, isFutureMonth, previousMonth, type FootprintKey, type FootprintLine } from "@/lib/emissions/footprint";
+
+const PATH = "/api/console/emissions";
+
+interface RecordedMonth {
+  year: number;
+  month: number;
+  electricity: number;
+  gas: number;
+  water: number;
+  waste: number;
+  transport: number;
+  totalTonnes: number;
+}
+
+interface SavedFootprint {
+  year: number;
+  month: number;
+  region: string;
+  replaced: boolean;
+  previousTonnes: number | null;
+  trendPercent: number | null;
+  totalTonnes: number;
+  scopes: { scope1: number; scope2: number; scope3: number };
+  lines: FootprintLine[];
+  basis: "climatiq" | "reference" | "mixed";
+}
+
+type Amounts = Record<FootprintKey, string>;
+const EMPTY: Amounts = { electricity: "", gas: "", water: "", waste: "", transport: "" };
+
+function defaultPeriod() {
+  const now = new Date();
+  // Bills arrive after the month ends, so the last full month is the usual case.
+  return previousMonth(now.getUTCFullYear(), now.getUTCMonth() + 1);
+}
+
+function toNumber(v: string): number {
+  const n = Number(v.replace(",", "."));
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
 
 export default function CalculatorPage() {
-  const router = useRouter();
   const t = useTranslations("dashboard.calculator");
-  const { data: session, isPending: isSessionLoading } = useSession();
-  const { calculateBatch } = useEmissionCalculator();
-  
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [useRealAPI, setUseRealAPI] = useState(true);
-  const [showDocumentUploader, setShowDocumentUploader] = useState(false);
-  const [userRegion, setUserRegion] = useState<string>("");
-  const [aiRecsFailed, setAiRecsFailed] = useState(false);
+  const locale = useLocale();
+  const history = useWorkspaceResource<{ months: RecordedMonth[]; country: string }>(PATH);
+  const save = useWorkspaceAction();
 
-  const [formData, setFormData] = useState({
-    electricity: "",
-    gas: "",
-    water: "",
-    waste: "",
-    transport: ""
-  });
+  const [period, setPeriod] = useState(defaultPeriod);
+  const [amounts, setAmounts] = useState<Amounts>(EMPTY);
+  const [result, setResult] = useState<SavedFootprint | null>(null);
+  const [uploading, setUploading] = useState(false);
 
-  const [results, setResults] = useState<{
-    totalEmissions: number;
-    breakdown: Array<{
-      category: string;
-      value: number;
-      unit: string;
-      emissions: number;
-    }>;
-    recommendations: Array<{
-      title: string;
-      description: string;
-      category: string;
-      impact: string;
-      points: number;
-      actionId?: number;
-      isNew?: boolean;
-    }>;
-    method: "climatiq" | "reference-factors";
-    sources: string[];
-  } | null>(null);
+  const monthName = useMemo(() => {
+    const fmt = new Intl.DateTimeFormat(locale === "el" ? "el-CY" : "en-GB", { month: "long", timeZone: "UTC" });
+    return (m: number) => fmt.format(new Date(Date.UTC(2020, m - 1, 1)));
+  }, [locale]);
+  const periodLabel = (y: number, m: number) => `${monthName(m)} ${y}`;
+  const number = useMemo(() => new Intl.NumberFormat(locale === "el" ? "el-CY" : "en-GB", { maximumFractionDigits: 3 }), [locale]);
+  const tonnes = (v: number) => number.format(Math.round(v * 1000) / 1000);
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isSessionLoading && !session?.user) {
-      if (!APP_OPEN_ACCESS) router.push("/auth");
-    }
-  }, [session, isSessionLoading, router]);
+  const months = history.data?.months ?? [];
+  const country = history.data?.country ?? "CY";
+  const existing = months.find((m) => m.year === period.year && m.month === period.month);
+  const hasValue = FOOTPRINT_KEYS.some((k) => toNumber(amounts[k]) > 0);
+  const nowYear = new Date().getUTCFullYear();
+  const years = [nowYear, nowYear - 1, nowYear - 2, nowYear - 3];
 
-  useEffect(() => {
-    fetchUserRegion();
-
-    const draft = localStorage.getItem("calculator_draft");
-    if (draft) {
-      try {
-        const parsed = JSON.parse(draft);
-        setFormData(parsed);
-      } catch (e) {
-        console.error("Failed to load draft:", e);
-      }
-    }
-  }, []);
-
-  const fetchUserRegion = async () => {
-    try {
-      const response = await fetch("/api/geolocation");
-      if (response.ok) {
-        const data = await response.json();
-        setUserRegion(data.countryCode || "");
-      }
-    } catch (error) {
-      console.error("Failed to fetch user region:", error);
-    }
-  };
-
-  const isFormValid = () => {
-    return Object.values(formData).some(val => val !== "");
-  };
-
-  const generateAIRecommendations = async (
-    totalEmissions: number,
-    breakdown: any[],
-    userId: string
-  ) => {
-    try {
-      const actionsResponse = await fetch(`/api/actions?userId=${userId}`);
-      const existingActions = actionsResponse.ok ? await actionsResponse.json() : [];
-      const existingTitles = existingActions.map((a: any) => a.title.toLowerCase());
-
-      const sortedBreakdown = [...breakdown]
-        .filter(item => item.emissions > 0)
-        .sort((a, b) => b.emissions - a.emissions);
-
-      const topCategories = sortedBreakdown.slice(0, 3);
-      
-      const prompt = `You are an expert sustainability advisor analyzing carbon footprint data for a business.
-
-EMISSIONS ANALYSIS:
-Total Monthly CO2e: ${totalEmissions.toFixed(2)} tonnes
-
-BREAKDOWN BY CATEGORY:
-${sortedBreakdown.map(item => 
-  `- ${item.category}: ${item.emissions.toFixed(3)} tonnes (${item.value} ${item.unit})`
-).join('\n')}
-
-TOP EMISSION SOURCES:
-${topCategories.map((item, i) => 
-  `${i + 1}. ${item.category}: ${item.emissions.toFixed(3)} tonnes - ${((item.emissions / totalEmissions) * 100).toFixed(1)}% of total`
-).join('\n')}
-
-EXISTING ACTIONS (DO NOT DUPLICATE):
-${existingTitles.join(', ') || 'None'}
-
-TASK:
-Generate 4-6 HIGH-IMPACT, SPECIFIC recommendations to reduce emissions, focusing on the top emission sources.
-
-RULES:
-1. DO NOT duplicate existing actions
-2. Focus on categories with HIGHEST emissions first
-3. Provide SPECIFIC, ACTIONABLE advice (not generic)
-4. Include realistic savings estimates based on actual data
-5. Each recommendation must be unique and different from existing actions
-6. Make recommendations practical for businesses
-
-Return ONLY valid JSON (no markdown, no explanations):
-[
-  {
- "title": "Specific action title (max 60 chars)",
- "description": "Detailed description with savings estimate (max 200 chars)",
- "category": "energy|waste|water|operations|transport",
- "impact": "medium|high",
- "points": 100-500,
- "estimatedSavings": "X kg CO2e/year or X%"
-  }
-]`;
-
-      const response = await fetch('/api/gemini/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt,
-          context: {
-            totalEmissions,
-            breakdown: sortedBreakdown,
-            topCategories
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate AI recommendations');
-      }
-
-      const result = await response.json();
-      
-      let recommendations = [];
-      try {
-        const jsonMatch = result.text.match(/\[[\s\S]*\]/);
-        if (jsonMatch) {
-          recommendations = JSON.parse(jsonMatch[0]);
-        }
-      } catch (parseError) {
-        console.error('Failed to parse AI recommendations:', parseError);
-        setAiRecsFailed(true);
-        return [];
-      }
-
-      const uniqueRecommendations = recommendations.filter((rec: any) => {
-        const titleLower = rec.title.toLowerCase();
-        return !existingTitles.some((existing: string) => 
-          titleLower.includes(existing) || existing.includes(titleLower)
-        );
-      });
-
-      const savedRecommendations = [];
-      for (const rec of uniqueRecommendations) {
-        try {
-          const saveResponse = await fetch('/api/actions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId,
-              title: rec.title,
-              description: rec.description,
-              category: rec.category,
-              impact: rec.impact,
-              difficulty: rec.impact,
-              points: rec.points,
-              iconName: getCategoryIcon(rec.category)
-            })
-          });
-
-          if (saveResponse.ok) {
-            const savedAction = await saveResponse.json();
-            savedRecommendations.push({
-              ...rec,
-              actionId: savedAction.id,
-              isNew: true
-            });
-          }
-        } catch (error) {
-          console.error('Failed to save recommendation:', error);
-        }
-      }
-
-      setAiRecsFailed(false);
-      return savedRecommendations;
-    } catch (error) {
-      console.error('AI recommendation generation failed:', error);
-      setAiRecsFailed(true);
-      return [];
-    }
-  };
-
-  const getCategoryIcon = (category: string): string => {
-    const iconMap: Record<string, string> = {
-      energy: 'bolt',
-      waste: 'recycle',
-      water: 'water',
-      operations: 'target',
-      transport: 'fire'
-    };
-    return iconMap[category] || 'leaf';
-  };
-
-  const calculateEmissions = async () => {
-    if (!session?.user?.id) {
-      toast.error(t("toasts.loginRequired"));
-      if (!APP_OPEN_ACCESS) router.push("/auth");
-      return;
-    }
-
-    if (!isFormValid()) {
-      toast.error(t("toasts.enterValue"));
-      return;
-    }
-
-    setIsCalculating(true);
-    setAiRecsFailed(false);
-
-    try {
-      let totalEmissions = 0;
-      let emissionsBreakdown: any[] = [];
-      let method: "climatiq" | "reference-factors" = "climatiq";
-      let sources: string[] = [];
-
-      const inputs = {
-        electricity: parseFloat(formData.electricity) || 0,
-        gas: parseFloat(formData.gas) || 0,
-        water: parseFloat(formData.water) || 0,
-        waste: parseFloat(formData.waste) || 0,
-        transport: parseFloat(formData.transport) || 0,
-      };
-
-      const applyReferenceFactors = () => {
-        const reference = calculateFromReferenceFactors(inputs, categoryLabels());
-        totalEmissions = reference.totalTonnes;
-        emissionsBreakdown = reference.breakdown;
-        method = "reference-factors";
-        sources = usedSources(reference.breakdown);
-      };
-
-      if (useRealAPI) {
-        try {
-          const result = await calculateBatch({
-            electricity_kwh: inputs.electricity,
-            gas_m3: inputs.gas,
-            water_liters: inputs.water,
-            waste_kg: inputs.waste,
-            transport_km: inputs.transport,
-            region: userRegion || "CY",
-          });
-
-          totalEmissions = result.total_co2e_tonnes;
-          emissionsBreakdown = result.breakdown.map((item) => ({
-            category: item.category,
-            value: item.input_value,
-            unit: item.input_unit,
-            emissions: item.co2e_tonnes,
-          }));
-          sources = ["Climatiq emission factor database"];
-
-          toast.success(t("toasts.calcOk"));
-        } catch (error) {
-          console.error("Climatiq API error, using published reference factors:", error);
-          toast.warning(t("toasts.calcFallback"));
-          applyReferenceFactors();
-        }
-      } else {
-        applyReferenceFactors();
-      }
-
-
-      const now = new Date();
-      const currentMonth = now.getMonth() + 1;
-      const currentYear = now.getFullYear();
-
-      const saveResponse = await fetch("/api/emissions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: session.user.id,
-          electricity: parseFloat(formData.electricity) || 0,
-          gas: parseFloat(formData.gas) || 0,
-          water: parseFloat(formData.water) || 0,
-          waste: parseFloat(formData.waste) || 0,
-          transport: parseFloat(formData.transport) || 0,
-          totalCo2e: totalEmissions,
-          periodMonth: currentMonth,
-          periodYear: currentYear,
-        }),
-      });
-
-      if (!saveResponse.ok) {
-        const errorData = await saveResponse.json();
-        console.error("Save error:", errorData);
-        throw new Error(errorData.error || "Failed to save emissions data");
-      }
-
-      await updateDashboardMetrics(
-        session.user.id,
-        totalEmissions,
-        emissionsBreakdown,
-        currentMonth,
-        currentYear
-      );
-
-      toast.info(t("toasts.generatingRecs"));
-      const aiRecommendations = await generateAIRecommendations(
-        totalEmissions,
-        emissionsBreakdown,
-        session.user.id
-      );
-
-      setResults({
-        totalEmissions: totalEmissions,
-        breakdown: emissionsBreakdown,
-        recommendations: aiRecommendations,
-        method,
-        sources,
-      });
-
-
-      if (aiRecommendations.length > 0) {
-        toast.success(t("toasts.doneWithRecs", { count: aiRecommendations.length }));
-      } else {
-        toast.success(t("toasts.doneNoRecs"));
-      }
-      
-      localStorage.removeItem("calculator_draft");
-    } catch (error) {
-      console.error("Calculation error:", error);
-      toast.error(t("toasts.saveFail"));
-    } finally {
-      setIsCalculating(false);
-    }
-  };
-
-  const updateDashboardMetrics = async (
-    userId: string,
-    totalCo2e: number,
-    breakdown: any[],
-    month: number,
-    year: number
-  ) => {
-    try {
-      const token = localStorage.getItem("bearer_token");
-
-      const periodStart = new Date(year, month - 1, 1).toISOString();
-      const periodEnd = new Date(year, month, 0, 23, 59, 59, 999).toISOString();
-
-      const prevMonth = month === 1 ? 12 : month - 1;
-      const prevYear = month === 1 ? year - 1 : year;
-
-      // Trend needs a real earlier reading. Without one the trend is zero.
-      let prevTotalCo2e = totalCo2e;
-      try {
-        const prevEmissionsResponse = await fetch(
-          `/api/emissions?userId=${userId}&year=${prevYear}&month=${prevMonth}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (prevEmissionsResponse.ok) {
-          const prevData = await prevEmissionsResponse.json();
-          if (Array.isArray(prevData) && prevData.length > 0 && typeof prevData[0].totalCo2e === "number") {
-            prevTotalCo2e = prevData[0].totalCo2e;
-          }
-        }
-      } catch (error) {
-        console.error("Failed to read the previous period:", error);
-      }
-
-      // Only the carbon footprint is measured here. Renewable share, resource
-      // efficiency and waste diversion need data this form does not collect,
-      // so they are not written.
-      await fetch("/api/dashboard/metrics", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId,
-          metricType: "carbon_footprint",
-          currentValue: totalCo2e,
-          previousValue: prevTotalCo2e,
-          periodStart,
-          periodEnd,
-        }),
-      });
-
-      await fetch("/api/dashboard/historical", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId,
-          year,
-          month,
-          electricityKwh: parseFloat(formData.electricity) || 0,
-          gasM3: parseFloat(formData.gas) || 0,
-          waterLiters: parseFloat(formData.water) || 0,
-          wasteKg: parseFloat(formData.waste) || 0,
-          transportKm: parseFloat(formData.transport) || 0,
-          totalCo2e,
-        }),
-      });
-    } catch (error) {
-      console.error("Failed to update dashboard metrics:", error);
-    }
-  };
-
-
-  const categoryLabels = () => ({
-    electricity: t("categories.electricity"),
-    gas: t("categories.gas"),
-    water: t("categories.water"),
-    waste: t("categories.waste"),
-    transport: t("categories.transport"),
-  });
-
-
-  const handleDocumentDataExtracted = (data: {
-    electricity?: number;
-    gas?: number;
-    water?: number;
-    waste?: number;
-    transport?: number;
-  }) => {
-    setFormData({
-      electricity: data.electricity?.toString() || "",
-      gas: data.gas?.toString() || "",
-      water: data.water?.toString() || "",
-      waste: data.waste?.toString() || "",
-      transport: data.transport?.toString() || "",
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!hasValue || save.busy) return;
+    const body = { year: period.year, month: period.month, ...Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, toNumber(amounts[k])])) };
+    const saved = await save.run<SavedFootprint>(PATH, {
+      body,
+      invalidates: [PATH, "/api/emissions", "/api/dashboard", "/api/analytics", "/api/actions", "/api/studio"],
     });
-    setShowDocumentUploader(false);
-    toast.success(t("toasts.extracted"));
+    if (saved) {
+      setResult(saved);
+      setAmounts(EMPTY);
+      toast.success(t("toasts.saved", { period: periodLabel(saved.year, saved.month) }));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
-  const handleReset = () => {
-    setResults(null);
-    setAiRecsFailed(false);
-    setFormData({
-      electricity: "",
-      gas: "",
-      water: "",
-      waste: "",
-      transport: ""
-    });
-    localStorage.removeItem("calculator_draft");
+  const edit = (m: RecordedMonth) => {
+    setResult(null);
+    setPeriod({ year: m.year, month: m.month });
+    setAmounts(Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, m[k] > 0 ? String(m[k]) : ""])) as Amounts);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Don't render if no session
-  if (!isSessionLoading && !session?.user) {
-    return null;
-  }
+  const change = (row: RecordedMonth) => {
+    const p = previousMonth(row.year, row.month);
+    const before = months.find((m) => m.year === p.year && m.month === p.month);
+    if (!before || before.totalTonnes <= 0) return "—";
+    const pct = ((row.totalTonnes - before.totalTonnes) / before.totalTonnes) * 100;
+    return `${pct > 0 ? "+" : ""}${pct.toFixed(1)}%`;
+  };
 
   return (
-    <PageShell
-      loading={isSessionLoading}
-      header={<PageHeader title={t("title")} purpose={t("subtitle")} />}
-    >
-      {!results ? (
-        <>
-          <Section title={t("ai.heading")} description={t("ai.description")}>
-            <div className="vck-card p-6">
-              <button
-                type="button"
-                onClick={() => setShowDocumentUploader(true)}
-                className="w-full border border-[var(--vc-rule)] rounded-md p-8 text-center hover:bg-[var(--vc-well)] transition-colors"
-              >
-                <h3 className="text-[1.0625rem] font-semibold mb-2">{t("ai.uploadTitle")}</h3>
-                <p className="vck-meta max-w-lg mx-auto mb-4 break-words">{t("ai.uploadDescription")}</p>
-                <span className="vck-btn vck-btn-primary inline-flex">{t("ai.uploadCta")}</span>
-              </button>
+    <PageShell header={<PageHeader title={t("title")} purpose={t("subtitle")} />}>
+      {result && (
+        <Section
+          title={t("result.title", { period: periodLabel(result.year, result.month) })}
+          description={result.replaced ? t("result.replaced") : undefined}
+        >
+          <MetricRow>
+            <Metric
+              label={t("result.total")}
+              value={tonnes(result.totalTonnes)}
+              unit={t("result.unit")}
+              delta={result.trendPercent === null ? undefined : `${result.trendPercent > 0 ? "+" : ""}${result.trendPercent.toFixed(1)}%`}
+              deltaTone={result.trendPercent === null ? undefined : result.trendPercent > 0 ? "negative" : result.trendPercent < 0 ? "positive" : "neutral"}
+              note={
+                result.trendPercent === null
+                  ? t("result.noPrevious")
+                  : t("result.vsPrevious", { period: periodLabel(previousMonth(result.year, result.month).year, previousMonth(result.year, result.month).month) })
+              }
+            />
+            <Metric label={t("result.scope1")} value={tonnes(result.scopes.scope1)} unit={t("result.unit")} />
+            <Metric label={t("result.scope2")} value={tonnes(result.scopes.scope2)} unit={t("result.unit")} />
+            <Metric label={t("result.scope3")} value={tonnes(result.scopes.scope3)} unit={t("result.unit")} />
+          </MetricRow>
 
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {[
-                  t("ai.types.pdf"),
-                  t("ai.types.excel"),
-                  t("ai.types.images"),
-                  t("ai.types.gas"),
-                  t("ai.types.water"),
-                  t("ai.types.transport")
-                ].map((label) => (
-                  <div key={label} className="vck-inset px-3 py-3 text-center">
-                    <p className="text-sm font-medium break-words">{label}</p>
-                  </div>
-                ))}
-              </div>
+          <p className="vck-meta mt-4 break-words">
+            {result.basis === "climatiq"
+              ? t("result.basisLive", { country: result.region })
+              : result.basis === "mixed"
+                ? t("result.basisMixed", { country: result.region })
+                : t("result.basisReference")}
+          </p>
 
-              <div className="mt-6 grid sm:grid-cols-3 gap-3">
-                <div className="vck-inset p-4">
-                  <h4 className="text-sm font-semibold mb-1">{t("ai.features.smartTitle")}</h4>
-                  <p className="vck-meta break-words">{t("ai.features.smartDesc")}</p>
-                </div>
-                <div className="vck-inset p-4">
-                  <h4 className="text-sm font-semibold mb-1">{t("ai.features.multiTitle")}</h4>
-                  <p className="vck-meta break-words">{t("ai.features.multiDesc")}</p>
-                </div>
-                <div className="vck-inset p-4">
-                  <h4 className="text-sm font-semibold mb-1">{t("ai.features.autoTitle")}</h4>
-                  <p className="vck-meta break-words">{t("ai.features.autoDesc")}</p>
-                </div>
-              </div>
-            </div>
-          </Section>
-
-          <Section title={t("manual.title")} description={t("manual.hint")}>
-            <div className="vck-card p-6 max-w-xl">
-              <div className="flex items-center justify-between mb-5">
-                <span className="vck-tag">{t("manual.monthly")}</span>
-              </div>
-
-              <div className="space-y-4 mb-6">
-                <label className="block">
-                  <span className="vck-label block mb-1.5">{t("manual.electricity")}</span>
-                  <input
-                    type="number"
-                    value={formData.electricity}
-                    onChange={(e) => setFormData({ ...formData, electricity: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-md text-sm"
-                    placeholder="500"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="vck-label block mb-1.5">{t("manual.gas")}</span>
-                  <input
-                    type="number"
-                    value={formData.gas}
-                    onChange={(e) => setFormData({ ...formData, gas: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-md text-sm"
-                    placeholder="100"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="vck-label block mb-1.5">{t("manual.water")}</span>
-                  <input
-                    type="number"
-                    value={formData.water}
-                    onChange={(e) => setFormData({ ...formData, water: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-md text-sm"
-                    placeholder="10000"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="vck-label block mb-1.5">{t("manual.waste")}</span>
-                  <input
-                    type="number"
-                    value={formData.waste}
-                    onChange={(e) => setFormData({ ...formData, waste: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-md text-sm"
-                    placeholder="200"
-                  />
-                </label>
-
-                <label className="block">
-                  <span className="vck-label block mb-1.5">{t("manual.transport")}</span>
-                  <input
-                    type="number"
-                    value={formData.transport}
-                    onChange={(e) => setFormData({ ...formData, transport: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-md text-sm"
-                    placeholder="1000"
-                  />
-                </label>
-              </div>
-
-              <div className="flex items-center justify-between vck-inset px-3 py-3 mb-6">
-                <span className="text-sm font-medium">{t("manual.climatiq")}</span>
-                <button
-                  type="button"
-                  onClick={() => setUseRealAPI(!useRealAPI)}
-                  aria-pressed={useRealAPI}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-md transition-colors border border-[var(--vc-rule)] ${
-                    useRealAPI ? "bg-primary" : "bg-transparent"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-sm bg-[var(--primary-foreground)] transition-transform ${
-                      useRealAPI ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <button
-                type="button"
-                onClick={calculateEmissions}
-                disabled={isCalculating || !isFormValid()}
-                className="vck-btn vck-btn-primary w-full"
-              >
-                {isCalculating ? t("manual.calculating") : t("manual.calculate")}
-              </button>
-
-              <p className="vck-meta text-center mt-4">{t("manual.hint")}</p>
-            </div>
-          </Section>
-        </>
-      ) : (
-        <>
-          <Section title={t("results.title")} description={t("results.subtitle")} action={<span className="vck-tag">{t("results.completed")}</span>}>
-            <MetricRow columns={2}>
-              <Metric label={t("results.totalTitle")} value={results.totalEmissions.toFixed(2)} unit={t("results.totalUnit")} />
-              <Metric
-                label={t("results.breakdownTitle")}
-                value={results.breakdown.filter((item) => item.emissions > 0).length}
-                unit="categories"
-                note={results.breakdown
-                  .filter((item) => item.emissions > 0)
-                  .slice(0, 3)
-                  .map((item) => `${item.category}: ${item.emissions.toFixed(3)} t`)
-                  .join(" · ")}
-              />
-            </MetricRow>
-
-            <div className="vck-inset mt-4 px-4 py-3">
-              <p className="vck-label mb-1">
-                {results.method === "climatiq"
-                  ? "Calculation basis: Climatiq emission factors"
-                  : "Calculation basis: published reference factors"}
-              </p>
-              <p className="vck-meta break-words">
-                {results.method === "climatiq"
-                  ? "Factors were resolved live from the Climatiq database for your region."
-                  : "The live factor service was not available. The result uses published factors with the sources below. Recalculate later for a factor-resolved figure."}
-              </p>
-              {results.sources.length > 0 && (
-                <ul className="vck-meta mt-2 space-y-1">
-                  {results.sources.map((source) => (
-                    <li key={source} className="break-words">
-                      {source}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </Section>
-
-
-          <Section title={t("results.detailTitle")}>
+          <div className="mt-4">
             <DataTable
               columns={[
-                { key: "category", header: "Category", render: (r) => r.category },
-                { key: "input", header: "Input", render: (r) => `${r.value} ${r.unit}` },
-                { key: "emissions", header: "Emissions", numeric: true, render: (r) => `${r.emissions.toFixed(3)} t CO2e` }
+                { key: "line", header: t("result.line"), render: (l) => <span className="break-words">{t(`fields.${l.key}`)}</span> },
+                { key: "amount", header: t("result.amount"), numeric: true, render: (l) => `${number.format(l.value)} ${t(`units.${l.key}`)}` },
+                { key: "emissions", header: t("result.emissions"), numeric: true, render: (l) => `${tonnes(l.tonnes)} t` },
+                { key: "source", header: t("result.source"), hideOnMobile: true, render: (l) => <span className="vck-meta break-words">{l.source}</span> },
               ]}
-              rows={results.breakdown}
-              rowKey={(r) => r.category}
+              rows={result.lines}
+              rowKey={(l) => l.key}
             />
-          </Section>
+          </div>
 
-          <Section title={t("results.aiRecs")} action={results.recommendations.length > 0 ? <span className="vck-tag" data-tone="positive">{t("results.addedToActions")}</span> : undefined}>
-            {aiRecsFailed ? (
-              <AiUnavailable feature="generate personalized recommendations" />
-            ) : results.recommendations.length > 0 ? (
-              <>
-                <DataTable
-                  columns={[
-                    {
-                      key: "title",
-                      header: "Recommendation",
-                      render: (r) => (
-                        <div>
-                          <p className="text-sm font-medium break-words">
-                            {r.title} {r.isNew && <span className="vck-tag ml-1.5">{t("results.new")}</span>}
-                          </p>
-                          <p className="vck-meta mt-1 break-words">{r.description}</p>
-                        </div>
-                      )
-                    },
-                    { key: "category", header: "Category", hideOnMobile: true, render: (r) => r.category },
-                    { key: "impact", header: "Impact", hideOnMobile: true, render: (r) => `${r.impact} ${t("results.impactSuffix")}` },
-                    { key: "points", header: "Credits", numeric: true, render: (r) => `+${r.points}` }
-                  ]}
-                  rows={results.recommendations}
-                  rowKey={(r, i) => `${r.title}-${i}`}
-                />
-                <div className="mt-3">
-                  <button type="button" onClick={() => router.push("/app/actions")} className="vck-btn w-full">
-                    {t("results.viewAllActions")}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <Empty title={t("results.noRecs")} body={t("results.noRecsSub")} />
-            )}
-          </Section>
-
-          <div className="flex gap-3">
-            <button type="button" onClick={handleReset} className="vck-btn flex-1">
-              {t("results.calcAgain")}
-            </button>
-            <button type="button" onClick={() => router.push("/app")} className="vck-btn vck-btn-primary flex-1">
-              {t("results.goDashboard")}
+          <div className="mt-4 flex flex-col sm:flex-row gap-3">
+            <Link href="/app/actions" className="vck-btn vck-btn-primary justify-center">
+              {t("result.actions")}
+            </Link>
+            <button type="button" className="vck-btn justify-center" onClick={() => setResult(null)}>
+              {t("result.another")}
             </button>
           </div>
-        </>
+        </Section>
       )}
 
-      {showDocumentUploader && (
+      {!result && (
+        <Section
+          title={t("form.title")}
+          description={t("form.description")}
+          action={<span className="vck-tag">{t("form.region", { country })}</span>}
+        >
+          <form onSubmit={submit} className="vck-card p-5 sm:p-6 max-w-2xl" noValidate>
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <label className="block min-w-0">
+                <span className="vck-label block mb-1.5">{t("form.month")}</span>
+                <select
+                  value={period.month}
+                  onChange={(e) => setPeriod((p) => ({ ...p, month: Number(e.target.value) }))}
+                  className="w-full px-3 py-2.5 rounded-md text-sm"
+                >
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                    <option key={m} value={m} disabled={isFutureMonth(period.year, m)}>
+                      {monthName(m)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block min-w-0">
+                <span className="vck-label block mb-1.5">{t("form.year")}</span>
+                <select
+                  value={period.year}
+                  onChange={(e) => {
+                    const year = Number(e.target.value);
+                    setPeriod((p) => (isFutureMonth(year, p.month) ? defaultPeriod() : { ...p, year }));
+                  }}
+                  className="w-full px-3 py-2.5 rounded-md text-sm"
+                >
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            {existing && (
+              <p className="vck-inset px-3 py-2.5 mb-5 text-sm break-words" role="status">
+                {t("form.replaceNotice", { period: periodLabel(existing.year, existing.month) })}
+              </p>
+            )}
+
+            <div className="grid sm:grid-cols-2 gap-4 mb-5">
+              {FOOTPRINT_KEYS.map((k) => (
+                <label key={k} className="block min-w-0">
+                  <span className="vck-label block mb-1.5">{t(`fields.${k}`)}</span>
+                  <div className="flex items-stretch">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      autoComplete="off"
+                      value={amounts[k]}
+                      onChange={(e) => setAmounts((a) => ({ ...a, [k]: e.target.value.replace(/[^\d.,]/g, "").slice(0, 12) }))}
+                      className="w-full min-w-0 px-3 py-2.5 rounded-l-md text-sm"
+                      aria-describedby={`unit-${k}`}
+                    />
+                    <span id={`unit-${k}`} className="vck-inset px-3 min-w-[4.75rem] flex items-center justify-center text-sm rounded-r-md whitespace-nowrap">
+                      {t(`units.${k}`)}
+                    </span>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            {save.error && (
+              <p className="text-sm mb-4 break-words" role="alert" style={{ color: "var(--vc-negative, var(--destructive))" }}>
+                {save.error}
+              </p>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button type="submit" className="vck-btn vck-btn-primary justify-center sm:flex-1" disabled={!hasValue || save.busy}>
+                {save.busy ? t("form.saving") : t("form.save")}
+              </button>
+              <button type="button" className="vck-btn justify-center" onClick={() => setUploading(true)} disabled={save.busy}>
+                {t("form.upload")}
+              </button>
+            </div>
+            <p className="vck-meta mt-3 break-words">{hasValue ? t("form.uploadHint") : t("form.needValue")}</p>
+          </form>
+        </Section>
+      )}
+
+      <Section title={t("history.title")} description={months.length ? t("history.description") : undefined}>
+        {history.loading ? (
+          <p className="vck-meta">…</p>
+        ) : history.error ? (
+          <p className="vck-meta break-words" role="alert">
+            {history.error}{" "}
+            <button type="button" className="underline" onClick={history.reload}>
+              ↻
+            </button>
+          </p>
+        ) : months.length === 0 ? (
+          <Empty title={t("history.emptyTitle")} body={t("history.emptyBody")} />
+        ) : (
+          <DataTable
+            columns={[
+              { key: "month", header: t("history.month"), render: (m) => periodLabel(m.year, m.month) },
+              { key: "total", header: t("history.total"), numeric: true, render: (m) => `${tonnes(m.totalTonnes)} t` },
+              { key: "change", header: t("history.change"), numeric: true, hideOnMobile: true, render: change },
+              {
+                key: "edit",
+                header: "",
+                render: (m) => (
+                  <button type="button" className="vck-btn" onClick={() => edit(m)}>
+                    {t("history.edit")}
+                  </button>
+                ),
+              },
+            ]}
+            rows={months}
+            rowKey={(m) => `${m.year}-${m.month}`}
+          />
+        )}
+      </Section>
+
+      {uploading && (
         <DocumentUploader
-          onDataExtracted={handleDocumentDataExtracted}
-          onClose={() => setShowDocumentUploader(false)}
+          onDataExtracted={(data) => {
+            setAmounts(Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, data[k] && data[k]! > 0 ? String(data[k]) : ""])) as Amounts);
+            setUploading(false);
+            toast.success(t("toasts.extracted"));
+          }}
+          onClose={() => setUploading(false)}
         />
       )}
     </PageShell>
