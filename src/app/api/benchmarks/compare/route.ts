@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { ClimateTraceClient } from '@/lib/api-clients/climate-trace';
 import { db } from '@/db';
 import { emissions, user } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
 
-interface CompanyData {
-  sector: string;
-  annual_emissions: number; // tCO2e
-  employees: number;
-  annual_revenue: number; // millions
-  country?: string;
-  userId?: string;
-}
+const log = logger("benchmarks.compare");
+
+const SECTORS = ['retail', 'manufacturing', 'hospitality', 'technology', 'logistics', 'food-service'] as const;
+
+const bodySchema = z.object({
+  sector: z.enum(SECTORS),
+  annual_emissions: z.number().finite().min(0).max(1_000_000_000),
+  employees: z.number().finite().min(0).max(10_000_000),
+  annual_revenue: z.number().finite().min(0).max(1_000_000_000),
+  country: z.string().trim().min(1).max(100).optional(),
+  userId: z.string().trim().min(1).max(100).optional(),
+});
 
 interface BenchmarkComparison {
   company_emissions: number;
@@ -60,47 +67,43 @@ const INDUSTRY_BENCHMARKS: Record<string, {
 };
 
 export async function POST(request: NextRequest) {
+  const parsed = await readJson(request, bodySchema);
+  if (!parsed.ok) return parsed.response;
+  const companyData = parsed.data;
+
   try {
-    const companyData: CompanyData = await request.json();
     const climateTraceClient = new ClimateTraceClient();
 
-    // Determine country from user data or request
     let country = companyData.country || 'USA';
     let actualEmissions = companyData.annual_emissions;
-    
-    // If userId provided, fetch real user data
+
     if (companyData.userId) {
       try {
         const userData = await db.select()
           .from(user)
           .where(eq(user.id, companyData.userId))
           .limit(1);
-        
+
         if (userData.length > 0) {
-          // Get user's latest emissions
           const userEmissions = await db.select()
             .from(emissions)
             .where(eq(emissions.userId, companyData.userId))
             .orderBy(desc(emissions.createdAt))
             .limit(1);
-          
+
           if (userEmissions.length > 0) {
             actualEmissions = userEmissions[0].totalCo2e;
           }
         }
       } catch (error) {
-        console.error('Failed to fetch user data:', error);
+        log.warn('Failed to fetch user data', { error: String(error) });
       }
     }
 
-    // Fetch real-time country emissions data
     let countryData: any;
     try {
       countryData = await climateTraceClient.getCountryEmissions(country);
-      console.log(`Climate TRACE data for ${country}:`, countryData);
     } catch (error) {
-      console.error(`No Climate TRACE data for ${country}, using fallback`);
-      // Use fallback
       countryData = {
         country_iso3: country,
         total_emissions_mtco2e: 5000000000,
@@ -108,43 +111,37 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    // Map company sector to Climate TRACE sector
     const traceSector = SECTOR_MAPPING[companyData.sector.toLowerCase()] || 'manufacturing';
-    
-    // Calculate sector emissions from country data
+
     let sectorEmissionsInCountry = 0;
-    const sectorData = countryData.sectors?.find((s: any) => 
+    const sectorData = countryData.sectors?.find((s: any) =>
       s.sector.toLowerCase().includes(traceSector.toLowerCase())
     );
-    
+
     if (sectorData) {
       sectorEmissionsInCountry = sectorData.emissions;
     }
 
-    // Use direct benchmark data instead of internal fetch
     const benchmarkData = INDUSTRY_BENCHMARKS[companyData.sector.toLowerCase()] || INDUSTRY_BENCHMARKS['retail'];
-    
+
     let regionalAverage = benchmarkData.emissions_avg;
-    let globalAverage = regionalAverage * 1.25; // Global average is typically 20-30% higher
+    let globalAverage = regionalAverage * 1.25;
     let industryEmissionsPerEmployee = benchmarkData.emissions_per_employee;
     let industryEmissionsPerRevenue = benchmarkData.emissions_per_revenue;
 
-    // Calculate metrics
-    const companyEmissionsPerEmployee = companyData.employees > 0 
-      ? actualEmissions / companyData.employees 
+    const companyEmissionsPerEmployee = companyData.employees > 0
+      ? actualEmissions / companyData.employees
       : 0;
-    const companyEmissionsPerRevenue = companyData.annual_revenue > 0 
-      ? actualEmissions / companyData.annual_revenue 
+    const companyEmissionsPerRevenue = companyData.annual_revenue > 0
+      ? actualEmissions / companyData.annual_revenue
       : 0;
-    
+
     const vsAveragePercent = ((actualEmissions - regionalAverage) / regionalAverage) * 100;
     const vsGlobalPercent = ((actualEmissions - globalAverage) / globalAverage) * 100;
 
-    // Determine percentile ranks
     let percentileRank = 50;
     let globalPercentileRank = 50;
-    
-    // Regional percentile
+
     if (actualEmissions <= regionalAverage * 0.5) {
       percentileRank = 10;
     } else if (actualEmissions <= regionalAverage * 0.75) {
@@ -157,7 +154,6 @@ export async function POST(request: NextRequest) {
       percentileRank = 90;
     }
 
-    // Global percentile
     if (actualEmissions <= globalAverage * 0.5) {
       globalPercentileRank = 10;
     } else if (actualEmissions <= globalAverage * 0.75) {
@@ -170,7 +166,6 @@ export async function POST(request: NextRequest) {
       globalPercentileRank = 90;
     }
 
-    // Interpretation based on regional performance
     let interpretation: BenchmarkComparison['interpretation'];
     if (percentileRank <= 25) {
       interpretation = 'EXCELLENT';
@@ -184,9 +179,8 @@ export async function POST(request: NextRequest) {
       interpretation = 'NEEDS_IMPROVEMENT';
     }
 
-    // Generate personalized recommendations based on actual performance
     const recommendations: string[] = [];
-    
+
     if (vsAveragePercent > 30) {
       recommendations.push(`Your emissions are ${Math.abs(vsAveragePercent).toFixed(1)}% above the ${country} ${companyData.sector} average. Priority: Energy efficiency audit`);
       recommendations.push('Consider renewable energy transition to reduce carbon footprint');
@@ -206,17 +200,14 @@ export async function POST(request: NextRequest) {
       recommendations.push('Document case studies for sustainability reports and awards');
     }
 
-    // Add employee-specific insights
     if (companyEmissionsPerEmployee > industryEmissionsPerEmployee * 1.2) {
       recommendations.push(`High per-employee emissions (${companyEmissionsPerEmployee.toFixed(2)} vs ${industryEmissionsPerEmployee.toFixed(2)} tCO₂e). Focus on operational efficiency`);
     }
 
-    // Add revenue-specific insights
     if (companyEmissionsPerRevenue > industryEmissionsPerRevenue * 1.2) {
       recommendations.push(`Carbon intensity per revenue is high. Optimize supply chain and logistics`);
     }
 
-    // Location context
     const userPercentageOfCountry = countryData.total_emissions_mtco2e > 0
       ? (actualEmissions / countryData.total_emissions_mtco2e) * 100
       : 0;
@@ -254,12 +245,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Benchmark comparison error:', error);
+    const ref = log.error('Benchmark comparison error', error);
     return NextResponse.json(
-      { 
-        error: 'Comparison failed', 
-        details: error instanceof Error ? error.message : 'Unknown error' 
-      },
+      { error: 'The comparison could not be completed.', ref },
       { status: 500 }
     );
   }

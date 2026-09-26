@@ -1651,14 +1651,14 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 16px;
-  padding: 12px 18px 4px;
+  padding: 14px clamp(16px, 3.2vw, 44px) 2px;
 }
 .vc .vc-filter {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 12.5px;
-  color: var(--vc-muted, var(--vc-ink));
+  color: var(--vc-ink-3);
 }
 .vc .vc-filter span { font-weight: 600; color: var(--vc-ink); }
 .vc .vc-filter select {
@@ -1681,8 +1681,7 @@
   margin: 0;
   font-size: 12px;
   line-height: 1.45;
-  color: var(--vc-muted, var(--vc-ink));
-  opacity: 0.8;
+  color: var(--vc-ink-3);
 }
 .vc .vc-filter-reset {
   height: 32px;
@@ -1704,9 +1703,7 @@
 }
 .vc .vc-tab-strip .vc-tab-exports button.vc-tab-export { margin-left: 0; }
 @media (max-width: 640px) {
-  .vc .vc-filter-bar { padding: 10px 12px 2px; }
+  .vc .vc-filter-bar { padding: 12px 18px 2px; }
   .vc .vc-filter { flex: 1 1 100%; justify-content: space-between; }
   .vc .vc-filter select { flex: 1; min-width: 0; }
-  .vc .vc-tab-strip .vc-tab-exports { margin-left: 0; width: 100%; }
-  .vc .vc-tab-strip .vc-tab-exports button.vc-tab-export { flex: 1; }
 }
