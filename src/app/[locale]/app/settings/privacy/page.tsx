@@ -160,7 +160,7 @@ export default function PrivacySettingsPage() {
 
   return (
     <PageShell header={header}>
-      <Section title={t.exportTitle} body={t.exportBody}>
+      <Section title={t.exportTitle} description={t.exportBody}>
         <div className="vck-card p-4">
           <button className="vck-btn vck-btn-primary" onClick={handleExport} disabled={exporting}>
             {exporting ? t.exporting : t.exportCta}
@@ -168,7 +168,7 @@ export default function PrivacySettingsPage() {
         </div>
       </Section>
 
-      <Section title={t.deleteTitle} body={t.deleteBody}>
+      <Section title={t.deleteTitle} description={t.deleteBody}>
         <div className="vck-card p-4 border-[var(--destructive)]">
           {!confirming ? (
             <button

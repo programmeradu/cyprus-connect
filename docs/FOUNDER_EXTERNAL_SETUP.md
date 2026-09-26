@@ -2,12 +2,17 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 26 September 2026 — CBAM supplier emails and Registry file turn._
+_Last updated: 26 September 2026 — security, report filters/PDF, logging turn._
 
 **This turn:**
-- Run `scripts/sql/0021_cbam_suppliers.sql` (and `0020` if not done yet) on the production database before deploying. The preview database already has both.
-- Create a free Resend account, verify a sending domain (e.g. `notify.vuneli.com`), then set Cloudflare secrets `RESEND_API_KEY` and `EMAIL_FROM` (e.g. `Vuneli CBAM <cbam@notify.vuneli.com>`). Until then, approving a supplier email fails safely with "Nothing was sent".
-- Get the official CBAM Registry XML format (XSD) for annual declarations from the CBAM Registry / DG TAXUD documentation, so the export file can be matched and validated. Until then the file is marked "unvalidated".
+- Run `scripts/sql/0022_sites_and_roles.sql` on the production database before deploying (after `0020` and `0021` if not done). The preview database already has it. It adds a site column to readings and a separate admin-role table.
+- Nobody is an admin yet, so the marketplace admin page now refuses everyone. To make yourself admin, run the grant at the bottom of `0022` on production with your own account id (find it in the `user` table by your email). Do not grant the QA test account.
+- Readings don't carry a site yet, so the Site filter shows "Whole workspace" only until bills or connections are tagged per site (Limassol, Nicosia...).
+
+**Previous turn:**
+- Run `scripts/sql/0021_cbam_suppliers.sql` (and `0020` if not done yet) on the production database before deploying.
+- Create a Resend account, verify a sending domain, then set Cloudflare secrets `RESEND_API_KEY` and `EMAIL_FROM`.
+- Get the official CBAM Registry XML format (XSD) so the export can be validated.
 
 ## Needed now
 

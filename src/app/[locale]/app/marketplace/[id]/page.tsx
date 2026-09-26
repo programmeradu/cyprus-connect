@@ -248,7 +248,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           )}
 
           {!project.bannerImage && (
-            <Section title="Banner image" body="Generate a banner image for this listing.">
+            <Section title="Banner image" description="Generate a banner image for this listing.">
               <button type="button" className="vck-btn" onClick={handleGenerateBanner} disabled={generatingBanner}>
                 {generatingBanner ? "Generating\u2026" : "Generate banner"}
               </button>

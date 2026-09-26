@@ -3,6 +3,22 @@ import { db } from '@/db';
 import { actions } from '@/db/schema';
 import { eq, like, and, or, desc, asc, isNull } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { z } from "zod";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("actions");
+const BodySchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  description: z.string().trim().min(1).max(2000),
+  category: z.string().trim().min(1).max(50),
+  impact: z.string().trim().min(1).max(50),
+  difficulty: z.string().trim().min(1).max(50),
+  points: z.coerce.number().int().positive().max(100000),
+  iconName: z.string().trim().min(1).max(60),
+  userId: z.string().max(200).optional(),
+});
+
 
 const VALID_CATEGORIES = ['energy', 'waste', 'water', 'operations'];
 const VALID_IMPACTS = ['high', 'medium', 'low'];
@@ -101,16 +117,16 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(results, { status: 200 });
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error as Error).message 
-    }, { status: 500 });
+    const ref = log.error('GET error:', error);
+    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsedBody = await readJson(request, BodySchema);
+    if (!parsedBody.ok) return parsedBody.response;
+    const body = parsedBody.data;
     const { title, description, category, impact, difficulty, points, iconName, userId: __claimedUserId } = body;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
@@ -192,7 +208,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate points is positive integer
-    const pointsValue = parseInt(points);
+    const pointsValue = Math.trunc(points);
     if (isNaN(pointsValue) || pointsValue <= 0) {
       return NextResponse.json({ 
         error: "Points must be a positive integer",
@@ -228,9 +244,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newAction[0], { status: 201 });
   } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error as Error).message 
-    }, { status: 500 });
+    const ref = log.error('POST error:', error);
+    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
   }
 }

@@ -374,13 +374,13 @@ export default function ActionsPage() {
       )}
 
       {aiActions.length > 0 && (
-        <Section title={t("aiSection")} body={t("aiBadge")}>
+        <Section title={t("aiSection")} description={t("aiBadge")}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {aiActions.map((action) => (
               <ActionCard
                 key={action.id}
                 title={action.title}
-                body={action.description}
+                description={action.description}
                 impact={action.impact}
                 difficulty={action.difficulty}
                 points={action.points}
@@ -404,7 +404,7 @@ export default function ActionsPage() {
               <ActionCard
                 key={action.id}
                 title={action.title}
-                body={action.description}
+                description={action.description}
                 impact={action.impact}
                 difficulty={action.difficulty}
                 points={action.points}

@@ -57,9 +57,11 @@ export function columnWidths(
   });
   const sum = want.reduce((a, b) => a + b, 0);
   if (sum <= total) return want.map((w) => (w / sum) * total);
-  // Shrink wide columns first, keeping every column at least `min`.
-  const scale = (total - min * want.length) / Math.max(1, sum - min * want.length);
-  return want.map((w) => min + (w - min) * Math.max(0, scale));
+  // Shrink wide columns first, keeping every column at least `floor`. With
+  // very many columns the floor itself drops so the table never leaves the page.
+  const floor = Math.min(min, total / want.length);
+  const scale = (total - floor * want.length) / Math.max(1, sum - floor * want.length);
+  return want.map((w) => floor + (Math.max(floor, w) - floor) * Math.max(0, scale));
 }
 
 export function buildSectionPdf(input: SectionPdfInput): jsPDF {

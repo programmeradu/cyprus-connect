@@ -512,7 +512,7 @@ export default function InsightsPage() {
 
       <Section
         title={t("ai.title")}
-        body={userLocation ? t("ai.personalizedFor", { country: userLocation.country }) : undefined}
+        description={userLocation ? t("ai.personalizedFor", { country: userLocation.country }) : undefined}
       >
         {aiLoading ? (
           <div className="vck-card p-6">
@@ -566,7 +566,7 @@ export default function InsightsPage() {
 
       <Section
         title={t("compliance.title")}
-        body={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
+        description={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
         action={
           <Link href="/app/compliance" className="vck-btn">
             {t("compliance.viewDashboard")}
