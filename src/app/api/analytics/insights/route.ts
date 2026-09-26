@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { aiChat, aiErrorMessage, hasLovableAi } from '@/lib/lovable-ai';
 import { bindSessionUser } from "@/lib/api-auth";
 import { z } from "zod";
 import { readJson } from "@/lib/validate";
@@ -20,7 +20,12 @@ const BodySchema = z.object({
 });
 
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const insightsSchema = z.object({
+  observations: z.array(z.string().max(600)).max(8).default([]),
+  recommendations: z.array(z.string().max(600)).max(8).default([]),
+  highlights: z.array(z.string().max(600)).max(8).default([]),
+  risks: z.array(z.string().max(600)).max(8).default([]),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,11 +52,12 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
+    if (!hasLovableAi()) {
       return NextResponse.json({
-        error: 'Gemini API key not configured',
-        code: 'API_KEY_MISSING'
-      }, { status: 500 });
+        error: 'AI is not set up',
+        message: 'AI insights need the AI service, which is not set up on this site yet.',
+        code: 'AI_NOT_CONFIGURED'
+      }, { status: 503 });
     }
 
     // Prepare context for AI
@@ -100,69 +106,15 @@ Format your response as JSON with these fields:
 }
 `;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    
-    const result = await model.generateContent(context);
-    const response = await result.response;
-    const text = response.text();
-
-    // Try to parse JSON response
-    let insights;
+    // One validated answer or an honest error; never stand-in text.
+    let insights: z.infer<typeof insightsSchema>;
     try {
-      // Extract JSON from markdown code blocks if present
-      const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/\{[\s\S]*\}/);
-      const jsonText = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : text;
-      insights = JSON.parse(jsonText);
-    } catch (parseError) {
-      // Fallback: create structured response from text
-      insights = {
-        observations: [
-          "Unable to parse AI response",
-          "Manual review recommended"
-        ],
-        recommendations: [
-          "Review emissions data for accuracy",
-          "Consult with sustainability experts",
-          "Implement energy monitoring systems"
-        ],
-        highlights: [
-          "Data collection system is operational"
-        ],
-        risks: [
-          "AI analysis temporarily unavailable"
-        ]
-      };
-    }
-
-    // 🎓 AUTO-GENERATE COURSES based on insights
-    if (userId) {
-      try {
-        const emissionsData = {
-          electricity: emissionsBreakdown?.electricity?.percentage || 0,
-          gas: emissionsBreakdown?.gas?.percentage || 0,
-          transportation: emissionsBreakdown?.transportation?.percentage || 0,
-          waste: emissionsBreakdown?.other?.percentage || 0
-        };
-
-        console.log('🎓 Triggering auto-course generation from analytics insights...');
-        
-        // Fire and forget - don't wait for course generation
-        fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/learn/auto-generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId,
-            insights: [
-              ...(insights.observations || []),
-              ...(insights.recommendations || [])
-            ],
-            emissionsData,
-            trigger: 'insight'
-          })
-        }).catch(err => console.error('Auto-course generation failed:', err));
-      } catch (autoGenError) {
-        console.error('Failed to trigger auto-course generation:', autoGenError);
-      }
+      const text = await aiChat({ json: true, temperature: 0.3, messages: [{ role: 'user', content: context }] });
+      const match = text.match(/\{[\s\S]*\}/);
+      insights = insightsSchema.parse(JSON.parse(match ? match[0] : text));
+    } catch (aiError) {
+      const ref = log.error('insights answer failed', aiError);
+      return NextResponse.json({ error: 'insights_unavailable', message: aiErrorMessage(aiError), ref }, { status: 502 });
     }
 
     return NextResponse.json({
@@ -172,31 +124,7 @@ Format your response as JSON with these fields:
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Analytics insights API error:', error);
-    
-    // Return fallback insights on error
-    return NextResponse.json({
-      success: true,
-      insights: {
-        observations: [
-          "Your emissions data is being tracked consistently",
-          "Historical trends are available for analysis"
-        ],
-        recommendations: [
-          "Focus on reducing electricity consumption - it represents the largest share of emissions",
-          "Implement energy monitoring systems to identify high-consumption periods",
-          "Consider renewable energy procurement or on-site generation"
-        ],
-        highlights: [
-          "You're actively monitoring your sustainability metrics"
-        ],
-        risks: [
-          "Continue regular data collection to identify trends",
-          "Set specific reduction targets for each category"
-        ]
-      },
-      generatedAt: new Date().toISOString(),
-      fallback: true
-    }, { status: 200 });
+    const ref = log.error('insights failed', error);
+    return NextResponse.json({ error: 'insights_unavailable', message: 'AI insights could not be created. Please try again.', ref }, { status: 500 });
   }
 }

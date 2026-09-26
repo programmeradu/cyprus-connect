@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
@@ -56,9 +57,11 @@ export default function CourseDetailsPage() {
   const params = useParams();
   const courseId = params.id as string;
 
-  const [course, setCourse] = useState<Course | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Shared record: the library, this page and each lesson read the same copy.
+  const courseRes = useWorkspaceResource<Course>(session?.user?.id && courseId ? `/api/learn/courses/${courseId}` : null);
+  const course = courseRes.data ?? null;
+  const error = courseRes.error ? "This course could not be loaded." : null;
+  const writer = useWorkspaceAction();
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -67,36 +70,20 @@ export default function CourseDetailsPage() {
   }, [session, isPending, router]);
 
   useEffect(() => {
-    if (session?.user?.id && courseId) {
-      loadCourseDetails();
-    }
-  }, [session?.user?.id, courseId]);
+    if (writer.error) toast.error(writer.error);
+  }, [writer.error]);
 
-  const loadCourseDetails = async () => {
-    if (!session?.user?.id) return;
+  const firstOpenLesson = () => {
+    for (const m of course?.modules ?? []) for (const l of m.lessons) if (!l.isCompleted) return l.id;
+    return course?.modules[0]?.lessons[0]?.id ?? null;
+  };
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/learn/courses/${courseId}?userId=${session.user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCourse(data);
-      } else {
-        setError("This course could not be loaded.");
-        toast.error("Failed to load course details");
-      }
-    } catch (err) {
-      console.error("Failed to load course details:", err);
-      setError("This course could not be loaded.");
-      toast.error("Failed to load course details");
-    } finally {
-      setIsLoading(false);
-    }
+  /** One click: enrol (idempotent on the server) and open the first lesson. */
+  const startCourse = async () => {
+    const ok = await writer.run(`/api/learn/courses/${courseId}/enroll`, { invalidates: ["/api/learn/courses"] });
+    if (!ok) return;
+    const first = firstOpenLesson();
+    if (first) startLesson(first);
   };
 
   const startLesson = (lessonId: number) => {
@@ -132,28 +119,26 @@ export default function CourseDetailsPage() {
   return (
     <PageShell
       signedOut={!isPending && !session?.user}
-      loading={isPending || (!!session?.user && isLoading)}
+      loading={isPending || courseRes.loading}
       error={error}
-      onRetry={loadCourseDetails}
+      onRetry={courseRes.reload}
       header={
         <PageHeader
           title={course?.title ?? "Course"}
           purpose={course?.description}
           breadcrumb={[{ label: "Learn", href: "/app/learn" }, { label: course?.title ?? "" }]}
           actions={
-            course?.isEnrolled && progressPercentage < 100 ? (
+            !course || totalLessons === 0 ? undefined : !course.isEnrolled ? (
+              <button type="button" className="vck-btn vck-btn-primary" disabled={writer.busy} onClick={startCourse}>
+                {writer.busy ? "Starting\u2026" : "Start course"}
+              </button>
+            ) : progressPercentage < 100 ? (
               <button
                 type="button"
                 className="vck-btn vck-btn-primary"
                 onClick={() => {
-                  for (const m of course.modules) {
-                    for (const l of m.lessons) {
-                      if (!l.isCompleted) {
-                        startLesson(l.id);
-                        return;
-                      }
-                    }
-                  }
+                  const next = firstOpenLesson();
+                  if (next) startLesson(next);
                 }}
               >
                 Continue learning
@@ -173,7 +158,7 @@ export default function CourseDetailsPage() {
               <Metric label="Total time" value={`${totalHours}h`} />
             </MetricRow>
             {course.isEnrolled && (
-              <p className="vck-meta mt-3">{Math.round(progressPercentage)}% complete \u00b7 {completedCount} / {totalLessons} lessons</p>
+              <p className="vck-meta mt-3">{Math.round(progressPercentage)}% complete {"\u00b7"} {completedCount} / {totalLessons} lessons</p>
             )}
           </Section>
 

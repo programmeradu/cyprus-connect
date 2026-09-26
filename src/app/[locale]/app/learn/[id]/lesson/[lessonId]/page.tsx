@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
@@ -13,7 +14,7 @@ interface Lesson {
   order: number;
   title: string;
   contentType: string;
-  contentJson: string;
+  contentJson: unknown;
   videoUrl: string | null;
   estimatedMinutes: number;
   completion: { completedAt: string; timeSpent: number; score: number } | null;
@@ -58,13 +59,33 @@ export default function LessonViewerPage() {
   const courseId = params.id as string;
   const lessonId = params.lessonId as string;
 
-  const [lesson, setLesson] = useState<Lesson | null>(null);
-  const [contentData, setContentData] = useState<ContentData | null>(null);
-  const [nextLessonId, setNextLessonId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isCompleting, setIsCompleting] = useState(false);
+  const uid = session?.user?.id;
+  // Shared records: the course page and this lesson read the same copies.
+  const lessonRes = useWorkspaceResource<Lesson>(uid && lessonId ? `/api/learn/lessons/${lessonId}` : null);
+  const courseRes = useWorkspaceResource<CourseData>(uid && courseId ? `/api/learn/courses/${courseId}` : null);
+  const writer = useWorkspaceAction();
+  const lesson = lessonRes.data ?? null;
+  const error = lessonRes.error ? "This lesson could not be loaded." : null;
+  const isCompleting = writer.busy;
   const [startTime] = useState(Date.now());
+
+  // The server cleans lesson HTML; a bare string becomes a text lesson.
+  const contentData = useMemo<ContentData | null>(() => {
+    const raw = lesson?.contentJson;
+    if (raw == null) return null;
+    if (typeof raw === "string") return { text: raw };
+    return typeof raw === "object" ? (raw as ContentData) : null;
+  }, [lesson?.contentJson]);
+
+  const nextLessonId = useMemo(() => {
+    const data = courseRes.data;
+    if (!data?.modules) return null;
+    const ordered = [...data.modules]
+      .sort((x, y) => x.order - y.order)
+      .flatMap((m) => [...m.lessons].sort((x, y) => x.order - y.order).map((l) => l.id));
+    const i = ordered.indexOf(parseInt(lessonId));
+    return i !== -1 && i < ordered.length - 1 ? ordered[i + 1] : null;
+  }, [courseRes.data, lessonId]);
 
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
@@ -76,111 +97,19 @@ export default function LessonViewerPage() {
     }
   }, [session, isPending, router]);
 
-  useEffect(() => {
-    if (session?.user?.id && lessonId && courseId) {
-      loadLesson();
-      loadCourseStructure();
-    }
-  }, [session?.user?.id, lessonId, courseId]);
-
-  const loadCourseStructure = async () => {
-    if (!session?.user?.id) return;
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/learn/courses/${courseId}?userId=${session.user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data: CourseData = await response.json();
-        const allLessons: Array<{ id: number; moduleOrder: number; lessonOrder: number }> = [];
-        data.modules.forEach((module) => {
-          module.lessons.forEach((lesson) => {
-            allLessons.push({ id: lesson.id, moduleOrder: module.order, lessonOrder: lesson.order });
-          });
-        });
-        allLessons.sort((a, b) => (a.moduleOrder !== b.moduleOrder ? a.moduleOrder - b.moduleOrder : a.lessonOrder - b.lessonOrder));
-        const currentIndex = allLessons.findIndex((l) => l.id === parseInt(lessonId));
-        if (currentIndex !== -1 && currentIndex < allLessons.length - 1) {
-          setNextLessonId(allLessons[currentIndex + 1].id);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to load course structure:", error);
-    }
-  };
-
-  const loadLesson = async () => {
-    if (!session?.user?.id) return;
-
-    setIsLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/learn/lessons/${lessonId}?userId=${session.user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setLesson(data);
-
-        if (data.contentJson) {
-          try {
-            let parsed = typeof data.contentJson === "string" ? JSON.parse(data.contentJson) : data.contentJson;
-            if (typeof parsed === "string") parsed = { text: parsed };
-            setContentData(parsed);
-          } catch (e) {
-            console.error("Failed to parse content JSON:", e);
-            const contentStr = typeof data.contentJson === "string" ? data.contentJson : JSON.stringify(data.contentJson);
-            setContentData({ text: contentStr });
-          }
-        }
-      } else {
-        setError("This lesson could not be loaded.");
-        toast.error("Failed to load lesson");
-      }
-    } catch (err) {
-      console.error("Failed to load lesson:", err);
-      setError("This lesson could not be loaded.");
-      toast.error("Failed to load lesson");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const completeLesson = async (score?: number) => {
-    if (!session?.user?.id || !lesson || lesson.completion) return;
-
-    setIsCompleting(true);
-    try {
-      const timeSpent = Math.floor((Date.now() - startTime) / 1000);
-      const token = localStorage.getItem("bearer_token");
-
-      const response = await fetch(`/api/learn/lessons/${lessonId}/complete`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: session.user.id, timeSpent, score: score ?? null, passed: score !== undefined ? score >= 70 : null })
-      });
-
-      if (response.ok) {
-        toast.success("Lesson completed!");
-        await loadLesson();
-      } else {
-        const data = await response.json();
-        if (data.code === "ALREADY_COMPLETED") {
-          toast.info("You've already completed this lesson");
-        } else {
-          toast.error(data.error || "Failed to complete lesson");
-        }
-      }
-    } catch (error) {
-      console.error("Failed to complete lesson:", error);
-      toast.error("Failed to complete lesson");
-    } finally {
-      setIsCompleting(false);
-    }
+    if (!uid || !lesson || lesson.completion || writer.busy) return;
+    const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+    const ok = await writer.run(`/api/learn/lessons/${lessonId}/complete`, {
+      body: { timeSpent, score: score ?? null, passed: score !== undefined ? score >= 70 : null },
+      invalidates: ["/api/learn/lessons", "/api/learn/courses", "/api/learn/certificates"],
+    });
+    if (ok) toast.success("Lesson completed");
   };
+
+  useEffect(() => {
+    if (writer.error) toast.error(writer.error);
+  }, [writer.error]);
 
   const goToNextLesson = () => {
     if (nextLessonId) {
@@ -204,9 +133,9 @@ export default function LessonViewerPage() {
 
   return (
     <PageShell
-      loading={isPending || isLoading}
+      loading={isPending || lessonRes.loading}
       error={error}
-      onRetry={loadLesson}
+      onRetry={lessonRes.reload}
       header={
         <PageHeader
           title={lesson?.title ?? "Lesson"}

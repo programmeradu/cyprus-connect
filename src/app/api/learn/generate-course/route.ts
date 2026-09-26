@@ -1,382 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/db";
-import { courses, courseModules, lessons, notifications, user } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { generateImage } from "@/lib/generators";
-import { checkAndDeductAiCredits } from '@/lib/ai-credits';
+import { checkAndDeductAiCredits, refundAiCredits } from "@/lib/ai-credits";
 import { bindSessionUser } from "@/lib/api-auth";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
+import { aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { CourseGenerationError, generateCourse } from "@/lib/learn/course-generator.server";
 
 const log = logger("api.learn.generate-course");
 
 const postSchema = z.object({
   topic: z.string().trim().min(1).max(300),
   industry: z.string().trim().min(1).max(200),
-  difficultyLevel: z.enum(['beginner', 'intermediate', 'advanced']),
+  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]),
   userId: z.string().trim().min(1).max(200).optional(),
   companyContext: z.record(z.string(), z.unknown()).nullable().optional(),
+  customContext: z.string().trim().max(1000).nullable().optional(),
 });
 
 export async function POST(request: NextRequest) {
-  try {
-    const parsed = await readJson(request, postSchema);
-    if (!parsed.ok) return parsed.response;
-    const {
-      topic,
-      industry,
-      difficultyLevel,
-      userId: __claimedUserId,
-      companyContext
-    } = parsed.data;
-    const __auth = await bindSessionUser(request, __claimedUserId);
-    if (!__auth.ok) return __auth.response;
-    const userId = __auth.userId;
+  const parsed = await readJson(request, postSchema);
+  if (!parsed.ok) return parsed.response;
+  const { userId: claimed, ...input } = parsed.data;
+  const auth = await bindSessionUser(request, claimed);
+  if (!auth.ok) return auth.response;
 
-    // Get authorization token
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!hasLovableAi()) {
+    return NextResponse.json(
+      { error: "AI is not set up", message: "Course creation needs the AI service, which is not set up on this site yet." },
+      { status: 503 },
+    );
+  }
+
+  const gate = await checkAndDeductAiCredits(request, 1, "course");
+  if (!gate.ok) return NextResponse.json({ error: gate.error, message: gate.error }, { status: gate.status });
+
+  try {
+    const result = await generateCourse({ userId: auth.userId, ...input });
+    return NextResponse.json(result);
+  } catch (error) {
+    // Nothing usable was made, so the credit goes back.
+    await refundAiCredits(auth.userId, 1, "course_failed").catch(() => {});
+    if (error instanceof CourseGenerationError) {
+      const ref = log.error("course answer rejected", error);
       return NextResponse.json(
-        { error: "Unauthorized - Please log in" },
-        { status: 401 }
+        { error: "generation_failed", message: "The AI did not return a usable course. Your credit was returned; please try again.", ref },
+        { status: 502 },
       );
     }
-
-    // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
-    const creditGate = await checkAndDeductAiCredits(request, 1, 'course');
-    if (!creditGate.ok) {
-      return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
-    }
-
-    // Generate course structure using Gemini
-    const courseStructure = await generateCourseStructure(
-      topic,
-      industry,
-      difficultyLevel,
-      companyContext
-    );
-
-    // Generate course thumbnail image
-    let thumbnailUrl = null;
-    try {
-      console.log(`Generating thumbnail for course: ${courseStructure.title}`);
-      const thumbnailPrompt = `Professional wide banner for "${courseStructure.title}" sustainability course, modern flat design illustration, clean horizontal composition, ${industry} industry theme with green environmental elements, technology and innovation motifs, high quality digital art, 21:9 ultra-wide format`;
-
-      const result = await generateImage(thumbnailPrompt, "21:9");
-      if (result.url) {
-        thumbnailUrl = result.url;
-        console.log(`✓ Thumbnail generated successfully`);
-      }
-    } catch (error) {
-      log.warn("Failed to generate course thumbnail", { error: String(error) });
-    }
-
-    // Create course in database
-    const [newCourse] = await db.insert(courses).values({
-      title: courseStructure.title,
-      description: courseStructure.description,
-      industry,
-      difficultyLevel,
-      estimatedHours: courseStructure.estimatedHours || 4,
-      isPublished: true,
-      thumbnailUrl: thumbnailUrl,
-      createdBy: userId || 'system',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }).returning();
-
-    const courseId = newCourse.id;
-
-    // Generate modules and lessons with rich media content
-    for (const [moduleIndex, module] of courseStructure.modules.entries()) {
-      const [newModule] = await db.insert(courseModules).values({
-        courseId,
-        order: moduleIndex + 1,
-        title: module.title,
-        description: module.description,
-        estimatedMinutes: module.estimatedMinutes,
-        createdAt: new Date().toISOString()
-      }).returning();
-
-      const moduleId = newModule.id;
-
-      for (const [lessonIndex, lesson] of module.lessons.entries()) {
-        let enhancedContent = { ...lesson.content };
-
-        if (lesson.contentType === "text" && lesson.needsImage && lesson.imagePrompt) {
-          try {
-            console.log(`Generating image for lesson: ${lesson.title}`);
-            const result = await generateImage(lesson.imagePrompt, "16:9");
-
-            if (result.url) {
-              const imageUrl = result.url;
-              enhancedContent.imageUrl = imageUrl;
-              if (enhancedContent.text) {
-                enhancedContent.text = `<img src="${imageUrl}" alt="${lesson.title}" style="width:100%;max-width:800px;height:auto;border-radius:8px;margin-bottom:1.5rem;" />${enhancedContent.text}`;
-              }
-              console.log(`✓ Image generated for: ${lesson.title}`);
-            }
-          } catch (error) {
-            log.warn(`Failed to generate image for lesson`, { error: String(error) });
-          }
-        }
-
-        await db.insert(lessons).values({
-          moduleId,
-          order: lessonIndex + 1,
-          title: lesson.title,
-          contentType: lesson.contentType,
-          contentJson: JSON.stringify(enhancedContent),
-          estimatedMinutes: lesson.estimatedMinutes,
-          createdAt: new Date().toISOString()
-        });
-      }
-    }
-
-    // Create notifications only if userId is valid
-    if (userId) {
-      try {
-        const userExists = await db.select({ id: user.id }).from(user).where(eq(user.id, userId)).limit(1);
-
-        if (userExists.length > 0) {
-          await db.insert(notifications).values({
-            userId: userId,
-            type: 'system_alert',
-            title: '🎓 New Course Available',
-            message: `"${courseStructure.title}" has been generated and is ready for you!`,
-            link: `/app/learn/${courseId}`,
-            metadata: JSON.stringify({
-              courseId,
-              title: courseStructure.title,
-              industry,
-              difficultyLevel,
-              estimatedHours: courseStructure.estimatedHours
-            }),
-            isRead: false,
-            createdAt: new Date().toISOString()
-          });
-
-          const allUsers = await db.select({ id: user.id }).from(user);
-          const otherUsers = allUsers.filter(u => u.id !== userId);
-
-          if (otherUsers.length > 0) {
-            await Promise.all(otherUsers.map(u =>
-              db.insert(notifications).values({
-                userId: u.id,
-                type: 'insight_available',
-                title: '📚 New Course Published',
-                message: `A new ${difficultyLevel} course on "${topic}" is now available in the Learning Center.`,
-                link: `/app/learn`,
-                metadata: JSON.stringify({
-                  courseId,
-                  title: courseStructure.title,
-                  industry,
-                  difficultyLevel
-                }),
-                isRead: false,
-                createdAt: new Date().toISOString()
-              })
-            ));
-          }
-        }
-      } catch (notificationError) {
-        log.warn("Failed to create notifications", { error: String(notificationError) });
-      }
-    }
-
-    return NextResponse.json({
-      courseId,
-      message: "Course generated successfully"
-    });
-  } catch (error) {
-    const ref = log.error("Failed to generate course", error);
-    return NextResponse.json(
-      { error: "Failed to generate course", ref },
-      { status: 500 }
-    );
+    const ref = log.error("course generation failed", error);
+    return NextResponse.json({ error: "generation_failed", message: `${aiErrorMessage(error)} Your credit was returned.`, ref }, { status: 500 });
   }
-}
-
-async function generateCourseStructure(
-  topic: string,
-  industry: string,
-  difficultyLevel: string,
-  companyContext: any
-) {
-  const prompt = `You are a sustainability education expert creating professional, comprehensive courses for business professionals.
-
-Topic: ${topic}
-Industry: ${industry}
-Difficulty: ${difficultyLevel}
-${companyContext ? `Company Context: ${JSON.stringify(companyContext)}` : ''}
-
-Create a DETAILED, COMPREHENSIVE course with substantial educational value:
-
-CRITICAL REQUIREMENTS:
-- Each text lesson MUST contain 800-1500 words of rich, detailed content
-- Include multiple sections with H2/H3 headings
-- Provide specific industry examples, case studies, and real-world scenarios
-- Add actionable steps, best practices, and implementation guidance
-- Include statistics, data points, and research findings where relevant
-- Use proper HTML formatting with paragraphs, lists, bold/italic emphasis
-- Make content practical and immediately applicable for ${industry} businesses
-
-Course Structure:
-- 3-4 comprehensive modules
-- 4-5 detailed lessons per module
-- Mix of content types: text (detailed articles), quiz (knowledge checks), exercise (hands-on activities)
-- Total estimated time: 4-8 hours of substantial learning
-
-Content Depth Guidelines:
-- Text lessons: 800-1500 words, multiple sections, examples, case studies
-- Quizzes: 4-6 questions with detailed explanations
-- Exercises: Multi-step practical activities with clear deliverables
-
-IMPORTANT: Return ONLY valid JSON (no markdown, no code blocks). Structure:
-
-{
-  "title": "Engaging Professional Course Title",
-  "description": "Comprehensive 3-4 sentence description explaining course value, learning outcomes, and target audience",
-  "estimatedHours": 6,
-  "modules": [
-    {
-      "title": "Module Title",
-      "description": "Detailed module description (2-3 sentences)",
-      "estimatedMinutes": 120,
-      "lessons": [
-        {
-          "title": "Detailed Lesson Title",
-          "contentType": "text",
-          "estimatedMinutes": 25,
-          "content": {
-            "text": "<h2>Main Section Heading</h2><p>Comprehensive opening paragraph introducing the topic with context and relevance for ${industry} businesses. Include specific examples and data points.</p><h3>Subsection 1: Key Concept</h3><p>Detailed explanation with multiple paragraphs covering the concept thoroughly. Include real-world examples, case studies, and specific applications for ${industry}.</p><ul><li><strong>Point 1:</strong> Detailed explanation with examples</li><li><strong>Point 2:</strong> Detailed explanation with data</li><li><strong>Point 3:</strong> Detailed explanation with best practices</li></ul><h3>Subsection 2: Implementation</h3><p>Step-by-step guidance with specific actions. Multiple paragraphs covering different aspects.</p><h3>Subsection 3: Common Challenges</h3><p>Detailed discussion of challenges and solutions specific to ${industry}.</p><p>Concluding paragraph with key takeaways and next steps.</p>"
-          },
-          "needsImage": true,
-          "imagePrompt": "Professional ${industry} sustainability concept illustration showing ${topic}, modern clean style, corporate context, high quality"
-        },
-        {
-          "title": "Knowledge Assessment",
-          "contentType": "quiz",
-          "estimatedMinutes": 15,
-          "content": {
-            "questions": [
-              {
-                "question": "Detailed question text?",
-                "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
-                "correctAnswer": 0,
-                "explanation": "Comprehensive 2-3 sentence explanation of why this is correct and why other options are incorrect"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  ]
-}`;
-
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/gemini/analyze`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt })
-    });
-
-    const result = await response.json();
-
-    let cleanedText = result.text.trim();
-
-    if (cleanedText.startsWith('```json')) {
-      cleanedText = cleanedText.replace(/^```json\n/, '').replace(/\n```$/, '');
-    } else if (cleanedText.startsWith('```')) {
-      cleanedText = cleanedText.replace(/^```\n/, '').replace(/\n```$/, '');
-    }
-
-    const parsed = JSON.parse(cleanedText);
-
-    if (parsed.modules && parsed.modules.length > 0) {
-      return parsed;
-    }
-
-    throw new Error("Invalid course structure");
-  } catch (error) {
-    log.warn("Failed to parse Gemini response, using fallback", { error: String(error) });
-
-    return createFallbackCourse(topic, industry, difficultyLevel);
-  }
-}
-
-function createFallbackCourse(topic: string, industry: string, difficultyLevel: string) {
-  return {
-    title: `${topic} for ${industry} Businesses`,
-    description: `A comprehensive ${difficultyLevel} course designed to help ${industry} businesses implement sustainable practices, reduce environmental impact, and achieve their sustainability goals. Through detailed modules covering theory, practical implementation, and real-world case studies, you'll gain the knowledge and tools needed to drive meaningful change in your organization.`,
-    estimatedHours: 6,
-    modules: [
-      {
-        title: "Foundations of Sustainable Business Practices",
-        description: "Build a solid foundation in sustainability principles, understand the business case, and learn how to align environmental goals with business objectives.",
-        estimatedMinutes: 120,
-        lessons: [
-          {
-            title: "Welcome & Comprehensive Course Overview",
-            contentType: "text",
-            estimatedMinutes: 20,
-            content: {
-              text: `<h2>Welcome to ${topic}</h2>
-<p>Welcome to this comprehensive professional development course specifically designed for <strong>${industry}</strong> businesses seeking to enhance their sustainability practices and create lasting environmental impact. In today's business landscape, sustainability is no longer optional—it's a critical component of long-term success, risk management, and competitive advantage.</p>
-
-<p>This course represents a carefully curated learning journey that combines theoretical foundations with practical, actionable strategies. Whether you're just beginning your sustainability journey or looking to enhance existing programs, this course will provide you with the tools, frameworks, and knowledge needed to drive meaningful change within your organization.</p>
-
-<h3>What You'll Learn Throughout This Course</h3>
-<p>Over the coming modules, you'll gain comprehensive knowledge across multiple dimensions of sustainability:</p>
-
-<ul>
-  <li><strong>Core Sustainability Principles:</strong> Understanding the fundamental concepts of environmental stewardship, including the triple bottom line (people, planet, profit), circular economy principles, and systems thinking approaches to business operations.</li>
-  <li><strong>Industry-Specific Applications:</strong> Tailored strategies and best practices specifically relevant to the ${industry} sector, including common challenges, regulatory requirements, and proven solutions implemented by industry leaders.</li>
-  <li><strong>Measurement & Reporting:</strong> Learn how to establish baseline metrics, track progress using industry-standard frameworks (GRI, SASB, TCFD), and communicate your sustainability performance to stakeholders effectively.</li>
-  <li><strong>Implementation Strategies:</strong> Step-by-step guidance for implementing sustainable practices, from quick wins that can be achieved immediately to long-term transformational initiatives that require strategic planning and investment.</li>
-  <li><strong>Stakeholder Engagement:</strong> Techniques for building internal buy-in, engaging employees, communicating with customers, and collaborating with suppliers to create systemic change across your value chain.</li>
-</ul>
-
-<h3>Course Structure & Learning Approach</h3>
-<p>This course is organized into four comprehensive modules, each building upon the previous one to create a complete learning experience:</p>
-
-<ol>
-  <li><strong>Foundations (Module 1):</strong> Establishing your sustainability knowledge base and understanding the business case</li>
-  <li><strong>Measurement (Module 2):</strong> Learning to quantify, track, and report on your environmental impact</li>
-  <li><strong>Implementation (Module 3):</strong> Putting theory into practice with actionable strategies and real-world applications</li>
-  <li><strong>Continuous Improvement (Module 4):</strong> Building systems for ongoing progress, reporting, and stakeholder engagement</li>
-</ol>
-
-<p>Each module contains a variety of content types designed to accommodate different learning styles. You'll encounter detailed educational content, practical exercises, knowledge assessments, and real-world case studies. The estimated completion time is 6 hours, but we encourage you to take the time you need to fully absorb and apply the concepts.</p>
-
-<h3>Who Should Take This Course</h3>
-<p>This course is designed for business professionals in the ${industry} sector, including:</p>
-<ul>
-  <li>Sustainability managers and coordinators</li>
-  <li>Operations and facility managers</li>
-  <li>Executive leadership and decision-makers</li>
-  <li>Department heads responsible for implementing sustainable practices</li>
-  <li>Anyone passionate about driving positive environmental change in their organization</li>
-</ul>
-
-<h3>How to Get the Most from This Course</h3>
-<p>To maximize your learning experience, we recommend:</p>
-<ul>
-  <li>Setting aside dedicated time for each module without distractions</li>
-  <li>Taking notes and documenting ideas specific to your organization</li>
-  <li>Completing all exercises and assessments to reinforce learning</li>
-  <li>Sharing key concepts with colleagues to build organizational awareness</li>
-  <li>Applying concepts in real-time as you progress through the course</li>
-</ul>
-
-<p><strong>Let's begin your sustainability transformation journey!</strong></p>`
-            },
-            needsImage: true,
-            imagePrompt: `Professional welcome banner for ${industry} sustainability course, modern corporate design, clean minimal style, featuring green environmental themes`
-          }
-        ]
-      }
-    ]
-  };
 }

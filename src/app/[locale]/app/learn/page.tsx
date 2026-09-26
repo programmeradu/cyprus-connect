@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -39,10 +40,11 @@ export default function LearnPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isAutoGenerating, setIsAutoGenerating] = useState(false);
+  // Shared record: the course page and lessons refresh this list after each change.
+  const coursesRes = useWorkspaceResource<Course[]>(session?.user?.id ? "/api/learn/courses" : null);
+  const courses = coursesRes.data ?? [];
+  const error = coursesRes.error ? t("toast.loadFailed") : null;
+  const writer = useWorkspaceAction();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("all");
 
@@ -53,127 +55,15 @@ export default function LearnPage() {
   }, [session, isPending, router]);
 
   useEffect(() => {
-    if (session?.user?.id) {
-      loadCourses();
-    }
-  }, [session?.user?.id]);
+    if (writer.error) toast.error(writer.error);
+  }, [writer.error]);
 
-  const loadCourses = async () => {
-    if (!session?.user?.id) return;
+  const goGenerate = () => router.push("/app/learn/generate");
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/learn/courses?userId=${session.user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCourses(data);
-      } else {
-        setError(t("toast.loadFailed"));
-        toast.error(t("toast.loadFailed"));
-      }
-    } catch (err) {
-      console.error("Failed to load courses:", err);
-      setError(t("toast.loadFailed"));
-      toast.error(t("toast.loadFailed"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const triggerAutoGeneration = async () => {
-    if (!session?.user?.id) return;
-
-    setIsAutoGenerating(true);
-    try {
-      const token = localStorage.getItem("bearer_token");
-
-      const metricsResponse = await fetch(`/api/dashboard/metrics?userId=${session.user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      let emissionsData = null;
-      if (metricsResponse.ok) {
-        const metricsData = await metricsResponse.json();
-        emissionsData = metricsData.latest_emissions;
-      }
-
-      toast.info(t("toast.generatingInfo"), { duration: 10000 });
-
-      const response = await fetch("/api/learn/auto-generate", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          recommendations: [],
-          insights: [],
-          complianceGaps: [],
-          emissionsData,
-          trigger: "manual"
-        })
-      });
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: t("toast.generateFail") }));
-        toast.error(err.error || t("toast.generateFail"));
-        return;
-      }
-
-      const data = await response.json();
-
-      if (data.coursesGenerated > 0) {
-        toast.success(t("toast.generatedN", { count: data.coursesGenerated, plural: data.coursesGenerated > 1 ? "s" : "" }));
-      } else {
-        toast.info(data.message || t("toast.noNewNeeded"));
-      }
-
-      await loadCourses();
-    } catch (error) {
-      console.error("Auto-generation failed:", error);
-      toast.error(t("toast.generateFail"));
-    } finally {
-      setIsAutoGenerating(false);
-    }
-  };
-
+  /** Enrolling twice is fine on the server, so this is always one click. */
   const enrollInCourse = async (courseId: number) => {
-    if (!session?.user?.id) return;
-
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/learn/courses/${courseId}/enroll`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ userId: session.user.id })
-      });
-
-      if (response.ok) {
-        toast.success(t("toast.enrolledOk"));
-        setCourses(prev => prev.map(c => c.id === courseId ? { ...c, isEnrolled: true, progress: 0 } : c));
-        router.push(`/app/learn/${courseId}`);
-      } else {
-        const data = await response.json();
-        if (data.code === "ALREADY_ENROLLED") {
-          toast.info(t("toast.alreadyEnrolled"));
-          router.push(`/app/learn/${courseId}`);
-        } else {
-          toast.error(data.error || t("toast.enrollFail"));
-        }
-      }
-    } catch (error) {
-      console.error("Failed to enroll:", error);
-      toast.error(t("toast.enrollFail"));
-    }
+    const ok = await writer.run(`/api/learn/courses/${courseId}/enroll`, { invalidates: ["/api/learn/courses"] });
+    if (ok) router.push(`/app/learn/${courseId}`);
   };
 
   let filteredCourses = courses;
@@ -255,16 +145,16 @@ export default function LearnPage() {
   return (
     <PageShell
       signedOut={!isPending && !session?.user}
-      loading={isPending || (!!session?.user && isLoading)}
+      loading={isPending || coursesRes.loading}
       error={error}
-      onRetry={loadCourses}
+      onRetry={coursesRes.reload}
       header={
         <PageHeader
           title={t("title")}
           purpose={t("subtitle")}
           actions={
-            <button type="button" className="vck-btn vck-btn-primary" onClick={triggerAutoGeneration} disabled={isAutoGenerating}>
-              {isAutoGenerating ? t("generatingCourses") : t("generateFirst")}
+            <button type="button" className="vck-btn vck-btn-primary" onClick={goGenerate}>
+              {t("generateFirst")}
             </button>
           }
         />
@@ -317,7 +207,7 @@ export default function LearnPage() {
               action={
                 hasActiveFilters
                   ? { label: t("clearFilters"), onClick: () => { setSearchQuery(""); setSelectedDifficulty("all"); } }
-                  : { label: t("generateFirst"), onClick: triggerAutoGeneration }
+                  : { label: t("generateFirst"), onClick: goGenerate }
               }
             />
           }

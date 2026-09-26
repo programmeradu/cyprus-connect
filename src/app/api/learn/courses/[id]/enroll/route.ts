@@ -1,93 +1,40 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { lmsUserProgress, courses } from '@/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { getCurrentUser } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { and, eq } from "drizzle-orm";
+import { db } from "@/db";
+import { lmsUserProgress } from "@/db/schema";
+import { bindSessionUser } from "@/lib/api-auth";
+import { gateCourse } from "@/lib/learn/course-access.server";
+import { logger } from "@/lib/log";
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+const log = logger("api.learn.enroll");
+
+/**
+ * Enrols the signed-in account in a course it may see (a published course or
+ * its own private one). Enrolling twice is not an error: the existing
+ * enrolment is returned, so "Start" is always one click.
+ */
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const user = await getCurrentUser(request);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
+    const auth = await bindSessionUser(request);
+    if (!auth.ok) return auth.response;
     const { id } = await params;
-    const courseId = parseInt(id);
+    const gate = await gateCourse(Number(id), auth.userId, "view");
+    if (!gate.ok) return gate.response;
+    const courseId = gate.course.id;
 
-    // Validate courseId
-    if (!courseId || isNaN(courseId)) {
-      return NextResponse.json(
-        {
-          error: 'Valid course ID is required',
-          code: 'INVALID_COURSE_ID',
-        },
-        { status: 400 }
-      );
-    }
-
-    // Check if course exists and is published
-    const course = await db
-      .select()
-      .from(courses)
-      .where(eq(courses.id, courseId))
-      .limit(1);
-
-    if (course.length === 0) {
-      return NextResponse.json(
-        {
-          error: 'Course not found',
-          code: 'COURSE_NOT_FOUND',
-        },
-        { status: 404 }
-      );
-    }
-
-    if (!course[0].isPublished) {
-      return NextResponse.json(
-        {
-          error: 'Course is not published',
-          code: 'COURSE_NOT_PUBLISHED',
-        },
-        { status: 400 }
-      );
-    }
-
-    // Check if user is already enrolled
-    const existingEnrollment = await db
+    const [existing] = await db
       .select()
       .from(lmsUserProgress)
-      .where(
-        and(
-          eq(lmsUserProgress.userId, user.id),
-          eq(lmsUserProgress.courseId, courseId)
-        )
-      )
+      .where(and(eq(lmsUserProgress.userId, auth.userId), eq(lmsUserProgress.courseId, courseId)))
       .limit(1);
+    if (existing) return NextResponse.json({ enrollment: existing, alreadyEnrolled: true });
 
-    if (existingEnrollment.length > 0) {
-      return NextResponse.json(
-        {
-          error: 'User is already enrolled in this course',
-          code: 'ALREADY_ENROLLED',
-          enrollment: existingEnrollment[0],
-        },
-        { status: 409 }
-      );
-    }
-
-    // Create new enrollment
     const now = new Date().toISOString();
-    const newEnrollment = await db
+    const [enrollment] = await db
       .insert(lmsUserProgress)
       .values({
-        userId: user.id,
-        courseId: courseId,
+        userId: auth.userId,
+        courseId,
         enrolledAt: now,
         completedAt: null,
         progressPercentage: 0,
@@ -95,15 +42,9 @@ export async function POST(
         updatedAt: now,
       })
       .returning();
-
-    return NextResponse.json(newEnrollment[0], { status: 201 });
+    return NextResponse.json({ enrollment, alreadyEnrolled: false }, { status: 201 });
   } catch (error) {
-    console.error('POST enrollment error:', error);
-    return NextResponse.json(
-      {
-        error: 'Internal server error: ' + (error as Error).message,
-      },
-      { status: 500 }
-    );
+    const ref = log.error("enrol failed", error);
+    return NextResponse.json({ error: "enroll_failed", message: "Enrolment did not go through. Please try again.", ref }, { status: 500 });
   }
 }
