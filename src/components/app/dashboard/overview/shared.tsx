@@ -38,8 +38,7 @@ export const STATUS_TONE: Record<string, string> = {
   active: "live",
 };
 
-export const titleCase = (value: string) =>
-  value.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+export { titleCase } from "./text";
 
 export const greetingFor = (hour: number) =>
   hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";

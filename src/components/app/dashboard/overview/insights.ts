@@ -5,7 +5,7 @@
 
 import type { ConsoleOverviewData } from "@/components/app/console/types";
 import { daysUntil, fmtNumber, fmtSigned, relativeTime, toneFor } from "@/components/app/console/types";
-import { titleCase } from "./shared";
+import { titleCase } from "./text";
 
 export type Insight = {
   id: string;
