@@ -2,7 +2,7 @@
 Sources (Hugging Face datasets-server): CORD-v2 (CC-BY-4.0), katanaml invoices-donut-data-v1 (MIT), FUNSD (research use)."""
 import json, os, sys, time, urllib.request, urllib.parse
 OUT = os.path.join(os.path.dirname(__file__), "samples")
-PLAN = [("katanaml-org/invoices-donut-data-v1","invoice",[("train",150),("test",50)],"ground_truth"),
+PLAN = [("katanaml-org/invoices-donut-data-v1","invoice",[("train",150),("test",50),("validation",50)],"ground_truth"),
         ("nielsr/funsd","form",[("train",50),("test",50)],None)]
 def get(url):
     for i in range(4):
