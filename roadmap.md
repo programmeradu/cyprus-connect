@@ -11,7 +11,7 @@
 - [x] P3b CSV export per console section
 - [x] P3c Approve runs the exact act the agent asked for (fingerprint-checked); first act: CBAM signature
 - [x] P3d Start agent run — real for Ledger (evidence sweep) via /api/console/agents/run; other agents still sample
-- [ ] P3f Console UI: "Run now" button on runnable agent cards, pause switch, step ledger view per run
+- [x] P3f Agents page (/app/agents): run now + pause per agent, pause all, run history with step-by-step ledger per run
 
 External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every turn)
 
@@ -20,6 +20,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Step 2 (first part) Evidence sweep agent: asks for missing bills/receipts, flags obligations at risk, records coverage fact
 - [ ] Step 2 (rest) pull bills automatically from connectors — blocked: no EAC/bank connector access yet
 - [x] Step 3 CBAM agent: CSV import, annual draft (hash), supplier data requests, L3 signature via approval, /app/cbam page
+- [ ] Next: CBAM supplier emails (approval-gated) and EU Registry upload file
 - [ ] CBAM: official definitive default values + full Annex I CN list; confirm rules (founder, see docs/FOUNDER_EXTERNAL_SETUP.md)
 - [ ] CBAM: outward supplier emails (L2) and registry-ready XML export
 - [ ] Step 4 research gates on I-25 (Grid Surplus) and I-26 (Upgrade Club) — blocked: TSO/EAC curtailment + tariff data, pilot SMEs, licence checks
