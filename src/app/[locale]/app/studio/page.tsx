@@ -1,801 +1,283 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { useUser } from "@/lib/user-context";
-import { toast } from "sonner";
+import { useMemo, useState } from "react";
 import NextImage from "next/image";
 import { useTranslations } from "next-intl";
+import { useSession } from "@/lib/auth-client";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
-import {
-  PageShell,
-  PageHeader,
-  PageToolbar,
-  ToolbarTabs,
-  Section,
-  Empty,
-  AiUnavailable,
-  MetricRow,
-  Metric
-} from "@/components/app/console/kit";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+import { PageShell, PageHeader, PageToolbar, ToolbarTabs, Section, Empty } from "@/components/app/console/kit";
 
-type MediaType = "image" | "video";
-type ContextType = "company_data" | "progress" | "insights" | "recommendations" | "custom";
-type ViewMode = "recent" | "library";
+/**
+ * Report Visuals. One step: pick what the image is about, describe it, make
+ * it. The server reads the company's real records for that topic, so every
+ * figure in the image comes from the workspace. Images are stored and shared
+ * through the workspace store.
+ */
 
-interface GeneratedMedia {
-  id: string | number;
-  type: MediaType;
+type Topic = "custom" | "company_data" | "progress" | "insights" | "recommendations";
+type Ratio = "16:9" | "1:1" | "9:16" | "4:3";
+type View = "recent" | "library";
+
+interface Generation {
+  id: number;
+  type: "image" | "video";
   url: string;
   prompt: string;
-  timestamp?: Date;
-  createdAt?: string;
-  model?: string;
-  modelReason?: string;
-  enhancedPrompt?: string;
-  contextType?: string;
-  aspectRatio?: string;
-  saved?: boolean;
+  contextType: string | null;
+  aspectRatio: string | null;
+  saved: boolean;
+  createdAt: string;
 }
 
-interface StudioStats {
-  totalGenerations: number;
-  imagesCount: number;
-  videosCount: number;
-  savedCount: number;
-  modelsUsed: {
-    imagen4: number;
-    geminiFlash: number;
-  };
-}
+const LIST = "/api/studio/generations?limit=60";
+const TOPICS: Topic[] = ["custom", "company_data", "progress", "insights", "recommendations"];
+const RATIOS: Ratio[] = ["16:9", "1:1", "9:16", "4:3"];
+const field =
+  "w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]";
 
-export default function MediaStudioPage() {
+export default function StudioPage() {
   const t = useTranslations("dashboard.studio");
   const { data: session, isPending } = useSession();
-  const router = useRouter();
-  const { user } = useUser();
+  const signedIn = !!session?.user || APP_OPEN_ACCESS;
 
-  const [viewMode, setViewMode] = useState<ViewMode>("recent");
-  const [contextType, setContextType] = useState<ContextType>("custom");
-  const [prompt, setPrompt] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedMedia, setGeneratedMedia] = useState<GeneratedMedia[]>([]);
-  const [selectedMedia, setSelectedMedia] = useState<GeneratedMedia | null>(null);
-  const [studioStats, setStudioStats] = useState<StudioStats | null>(null);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
-  const [aiError, setAiError] = useState(false);
+  const list = useWorkspaceResource<Generation[]>(signedIn ? LIST : null);
+  const make = useWorkspaceAction();
+  const edit = useWorkspaceAction();
+  const change = useWorkspaceAction();
 
-  const [editPrompt, setEditPrompt] = useState("");
-  const [isEditingImage, setIsEditingImage] = useState(false);
+  const [view, setView] = useState<View>("recent");
+  const [topic, setTopic] = useState<Topic>("progress");
+  const [ratio, setRatio] = useState<Ratio>("16:9");
+  const [brief, setBrief] = useState("");
+  const [editBrief, setEditBrief] = useState("");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [usedFacts, setUsedFacts] = useState<string[]>([]);
 
-  const [userData, setUserData] = useState<any>(null);
+  const items = useMemo(() => list.data ?? [], [list.data]);
+  const shown = view === "library" ? items.filter((g) => g.saved) : items;
+  const savedCount = items.filter((g) => g.saved).length;
+  const selected = items.find((g) => g.id === selectedId) ?? items[0] ?? null;
 
-  const [isVideoLoading, setIsVideoLoading] = useState(false);
-  const [videoError, setVideoError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isPending && !session?.user) {
-      if (!APP_OPEN_ACCESS) router.push("/auth");
-    }
-  }, [session, isPending, router]);
-
-  useEffect(() => {
-    if (session?.user?.id) {
-      loadUserData();
-      loadGenerationHistory();
-      loadStudioStats();
-    }
-  }, [session?.user?.id]);
-
-  const loadGenerationHistory = async () => {
-    if (!session?.user?.id) return;
-
-    setIsLoadingHistory(true);
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/studio/generations?userId=${session.user.id}&limit=50`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const transformed = data.map((item: any) => ({
-          id: item.id,
-          type: item.type,
-          url: item.url,
-          prompt: item.prompt,
-          createdAt: item.createdAt,
-          timestamp: new Date(item.createdAt),
-          model: item.model,
-          modelReason: item.modelReason,
-          enhancedPrompt: item.enhancedPrompt,
-          contextType: item.contextType,
-          aspectRatio: item.aspectRatio,
-          saved: item.saved || false
-        }));
-        setGeneratedMedia(transformed);
-      }
-    } catch (error) {
-      console.error("Failed to load generation history:", error);
-      toast.error(t("toasts.historyLoadFailed"));
-    } finally {
-      setIsLoadingHistory(false);
+  const create = async () => {
+    const res = await make.run<{ generation: Generation; facts: string[] }>("/api/studio/create", {
+      body: { brief, context: topic, aspectRatio: ratio },
+      invalidates: ["/api/studio"],
+    });
+    if (res) {
+      setSelectedId(res.generation.id);
+      setUsedFacts(res.facts);
+      setView("recent");
     }
   };
 
-  const loadStudioStats = async () => {
-    if (!session?.user?.id) return;
-
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/studio/stats?userId=${session.user.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setStudioStats(data);
-      }
-    } catch (error) {
-      console.error("Failed to load studio stats:", error);
+  const applyEdit = async () => {
+    if (!selected) return;
+    const res = await edit.run<{ generation: Generation }>("/api/studio/create", {
+      body: { brief: editBrief, sourceId: selected.id, aspectRatio: (selected.aspectRatio as Ratio) ?? "16:9" },
+      invalidates: ["/api/studio"],
+    });
+    if (res) {
+      setSelectedId(res.generation.id);
+      setUsedFacts([]);
+      setEditBrief("");
     }
   };
 
-  const saveGenerationToDatabase = async (media: GeneratedMedia, enhancedPrompt: string) => {
-    if (!session?.user?.id) return;
+  const toggleSaved = (g: Generation) =>
+    change.run(`/api/studio/generations/${g.id}`, { method: "PATCH", body: { saved: !g.saved }, invalidates: ["/api/studio"] });
 
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch("/api/studio/generations", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          type: media.type,
-          url: media.url,
-          prompt: media.prompt,
-          enhancedPrompt: enhancedPrompt,
-          model: media.model,
-          modelReason: media.modelReason,
-          contextType: contextType,
-          aspectRatio: "16:9",
-          saved: false
-        })
-      });
-
-      if (response.ok) {
-        const savedGeneration = await response.json();
-        return savedGeneration.id;
-      }
-    } catch (error) {
-      console.error("Failed to save generation to database:", error);
-    }
-    return null;
+  const remove = async (g: Generation) => {
+    if (!window.confirm(t("confirmDelete"))) return;
+    const ok = await change.run(`/api/studio/generations/${g.id}`, { method: "DELETE", invalidates: ["/api/studio"] });
+    if (ok && selectedId === g.id) setSelectedId(null);
   };
-
-  const toggleSaveToLibrary = async (media: GeneratedMedia) => {
-    if (typeof media.id === "string") return;
-
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const newSavedState = !media.saved;
-
-      const response = await fetch(`/api/studio/generations/${media.id}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ saved: newSavedState })
-      });
-
-      if (response.ok) {
-        setGeneratedMedia((prev) =>
-          prev.map((m) => (m.id === media.id ? { ...m, saved: newSavedState } : m))
-        );
-        if (selectedMedia?.id === media.id) {
-          setSelectedMedia({ ...selectedMedia, saved: newSavedState });
-        }
-        await loadStudioStats();
-        toast.success(newSavedState ? t("toasts.savedLibraryOn") : t("toasts.savedLibraryOff"));
-      }
-    } catch (error) {
-      console.error("Failed to toggle save:", error);
-      toast.error(t("toasts.libraryUpdateFailed"));
-    }
-  };
-
-  const deleteGeneration = async (media: GeneratedMedia) => {
-    if (typeof media.id === "string") {
-      setGeneratedMedia((prev) => prev.filter((m) => m.id !== media.id));
-      if (selectedMedia?.id === media.id) {
-        setSelectedMedia(null);
-      }
-      toast.success(t("toasts.removed"));
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch(`/api/studio/generations/${media.id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        setGeneratedMedia((prev) => prev.filter((m) => m.id !== media.id));
-        if (selectedMedia?.id === media.id) {
-          setSelectedMedia(null);
-        }
-        await loadStudioStats();
-        toast.success(t("toasts.deleted"));
-      }
-    } catch (error) {
-      console.error("Failed to delete generation:", error);
-      toast.error(t("toasts.deleteFailed"));
-    }
-  };
-
-  const loadUserData = async () => {
-    if (!session?.user?.id) return;
-
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const headers = { Authorization: `Bearer ${token}` };
-
-      const [metricsRes, actionsRes, emissionsRes] = await Promise.all([
-        fetch(`/api/dashboard/metrics?userId=${session.user.id}`, { headers }),
-        fetch(`/api/actions/user/${session.user.id}`, { headers }),
-        fetch(`/api/emissions?userId=${session.user.id}`, { headers })
-      ]);
-
-      const metrics = metricsRes.ok ? await metricsRes.json() : null;
-      const actions = actionsRes.ok ? await actionsRes.json() : null;
-      const emissions = emissionsRes.ok ? await emissionsRes.json() : null;
-
-      setUserData({ metrics, actions, emissions });
-    } catch (error) {
-      console.error("Failed to load user data:", error);
-    }
-  };
-
-  const buildSustainabilityPrompt = async (userPrompt: string): Promise<string> => {
-    let contextInfo = "";
-
-    if (contextType === "company_data" && user) {
-      contextInfo = `Company Context:
-- Company: ${user.companyName || "Unknown"}
-- Industry: ${user.companyIndustry || "General"}
-- Size: ${user.teamSize || "SME"}
-- Location: ${user.countryCode || "Global"}`;
-    } else if (contextType === "progress" && userData?.metrics) {
-      const carbonMetric = userData.metrics.metrics?.find((m: any) => m.metricType === "carbon_footprint");
-      const renewableMetric = userData.metrics.metrics?.find((m: any) => m.metricType === "renewable_share");
-
-      contextInfo = `Sustainability Progress:
-- Carbon Footprint: ${carbonMetric?.currentValue?.toFixed(2) || "N/A"} tCO₂e (${carbonMetric?.trendPercentage?.toFixed(1) || "N/A"}% change)
-- Renewable Energy: ${renewableMetric?.currentValue?.toFixed(0) || "N/A"}%
-- Completed Actions: ${userData.actions?.filter((a: any) => a.is_completed).length || 0}`;
-    } else if (contextType === "insights" && userData?.emissions) {
-      const latestEmission = userData.emissions[0];
-      contextInfo = `Recent Insights:
-- Latest Monthly Emissions: ${latestEmission?.totalCo2e?.toFixed(2) || "N/A"} tCO₂e
-- Electricity: ${latestEmission?.electricity || "N/A"} kWh
-- Transportation: ${latestEmission?.transport || "N/A"} km`;
-    } else if (contextType === "recommendations" && userData?.actions) {
-      const pendingActions = userData.actions?.filter((a: any) => !a.is_completed).slice(0, 3);
-      contextInfo = `Recommended Actions:
-${pendingActions?.map((a: any) => `- ${a.title}`).join("\n") || "No pending actions"}`;
-    }
-
-    const systemPrompt = `You are a sustainability-focused content creator for SMEs. Your task is to take ANY user prompt and transform it into engaging, professional content that relates to sustainability, environmental responsibility, and green business practices.
-
-${contextInfo ? `\nRelevant Context:\n${contextInfo}\n` : ""}
-
-User's Original Request: "${userPrompt}"
-
-Instructions:
-1. Even if the prompt seems unrelated to sustainability, find creative ways to connect it to environmental themes
-2. Create professional, shareable content suitable for social media, campaigns, or presentations
-3. Incorporate relevant sustainability metrics, tips, or facts when possible
-4. Keep the tone professional, positive, and action-oriented
-5. Generate a detailed image description that:
-   - Highlights sustainability achievements or goals
-   - Uses green/eco-friendly visual elements
-   - Features professional design suitable for business use
-   - Includes relevant sustainability icons, charts, or data visualizations
-
-Generate a detailed image generation prompt (max 200 words):`;
-
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch("/api/gemini/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ prompt: systemPrompt })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        return result.text || userPrompt;
-      }
-    } catch (error) {
-      console.error("Failed to enhance prompt:", error);
-    }
-
-    return `${userPrompt} - Focus on sustainability, environmental responsibility, green business practices, and eco-friendly themes. Include professional design with green color palette, leaf motifs, and data visualizations showing environmental impact.`;
-  };
-
-  const generateMedia = async () => {
-    if (!prompt.trim()) {
-      toast.error(t("toasts.enterPrompt"));
-      return;
-    }
-
-    setIsGenerating(true);
-    setAiError(false);
-    try {
-      const sustainabilityPrompt = await buildSustainabilityPrompt(prompt);
-      const token = localStorage.getItem("bearer_token");
-
-      toast.info(t("toasts.generatingInfo", { type: t("mediaType.image") }));
-
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          prompt: sustainabilityPrompt,
-          aspectRatio: "16:9"
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate image");
-      }
-
-      const result = await response.json();
-
-      if (result.url) {
-        const newMedia: GeneratedMedia = {
-          id: Date.now().toString(),
-          type: "image",
-          url: result.url,
-          prompt: prompt,
-          timestamp: new Date(),
-          model: result.model,
-          modelReason: result.modelReason,
-          saved: false
-        };
-
-        const dbId = await saveGenerationToDatabase(newMedia, sustainabilityPrompt);
-        if (dbId) {
-          newMedia.id = dbId;
-        }
-
-        setGeneratedMedia((prev) => [newMedia, ...prev]);
-        setSelectedMedia(newMedia);
-        await loadStudioStats();
-
-        const modelName =
-          result.model === "imagen-4.0-generate-001" ? t("models.imagen4") : t("models.geminiFlash");
-        toast.success(t("toasts.imageGenerated", { model: modelName }), {
-          description: result.modelReason
-        });
-      } else {
-        throw new Error("No media returned");
-      }
-    } catch (error: any) {
-      console.error("Media generation error:", error);
-      setAiError(true);
-      toast.error(error.message || t("toasts.generationFailed"));
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const handleNaturalLanguageEdit = async () => {
-    if (!editPrompt.trim() || !selectedMedia || selectedMedia.type !== "image") {
-      toast.error(t("toasts.enterEdit"));
-      return;
-    }
-
-    setIsEditingImage(true);
-    try {
-      const response = await fetch("/api/edit-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          imageUrl: selectedMedia.url,
-          editPrompt: editPrompt
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to edit image");
-      }
-
-      const result = await response.json();
-
-      if (result.url) {
-        const editedMedia: GeneratedMedia = {
-          id: Date.now().toString(),
-          type: "image",
-          url: result.url,
-          prompt: `${selectedMedia.prompt} (Edited: ${editPrompt})`,
-          timestamp: new Date(),
-          model: "gemini-2.5-flash-image",
-          modelReason: "Natural language image editing",
-          saved: false
-        };
-
-        const dbId = await saveGenerationToDatabase(editedMedia, editPrompt);
-        if (dbId) {
-          editedMedia.id = dbId;
-        }
-
-        setGeneratedMedia((prev) => [editedMedia, ...prev]);
-        setSelectedMedia(editedMedia);
-        await loadStudioStats();
-
-        toast.success(t("toasts.imageEdited"), {
-          description: t("toasts.imageEditedDesc")
-        });
-        setEditPrompt("");
-      }
-    } catch (error: any) {
-      console.error("Image editing error:", error);
-      toast.error(error.message || t("toasts.imageEditFailed"));
-    } finally {
-      setIsEditingImage(false);
-    }
-  };
-
-  const openExternalUrl = (url: string) => {
-    const isInIframe = window.self !== window.top;
-    if (isInIframe) {
-      window.parent.postMessage({ type: "OPEN_EXTERNAL_URL", data: { url } }, "*");
-    } else {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  };
-
-  const downloadMedia = async (media: GeneratedMedia) => {
-    try {
-      const response = await fetch(media.url);
-      const blob = await response.blob();
-
-      const objectUrl = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = objectUrl;
-      link.download = `vuneli-${media.type}-${media.id}.${media.type === "image" ? "png" : "mp4"}`;
-      document.body.appendChild(link);
-      link.click();
-
-      document.body.removeChild(link);
-      URL.revokeObjectURL(objectUrl);
-
-      toast.success(t("toasts.downloadStarted"));
-    } catch (error) {
-      console.error("Download failed:", error);
-      toast.error(t("toasts.downloadFailed"));
-      openExternalUrl(media.url);
-    }
-  };
-
-  const handleVideoLoad = () => {
-    setIsVideoLoading(false);
-    setVideoError(null);
-  };
-
-  const handleVideoError = (e: any) => {
-    console.error("Video loading error:", e);
-    setIsVideoLoading(false);
-
-    const isInvalidProtocol = selectedMedia?.url && !selectedMedia.url.startsWith("http");
-
-    setVideoError(isInvalidProtocol ? t("toasts.videoErrorInvalid") : t("toasts.videoErrorGeneric"));
-  };
-
-  useEffect(() => {
-    if (selectedMedia?.type === "video") {
-      setIsVideoLoading(true);
-      setVideoError(null);
-    }
-  }, [selectedMedia?.id]);
-
-  const generateContextSuggestions = (): string[] => {
-    try {
-      const raw = t.raw(`suggestions.${contextType}`);
-      if (Array.isArray(raw)) return raw as string[];
-    } catch {}
-    return t.raw("suggestions.custom") as string[];
-  };
-
-  const filteredMedia = viewMode === "library" ? generatedMedia.filter((m) => m.saved) : generatedMedia;
 
   return (
     <PageShell
-      signedOut={!isPending && !session?.user}
-      loading={isPending || (!!session?.user && isLoadingHistory)}
+      signedOut={!isPending && !signedIn}
+      loading={isPending || list.loading}
+      error={list.error}
+      onRetry={list.reload}
       header={<PageHeader title={t("title")} purpose={t("subtitle")} />}
       toolbar={
-        <PageToolbar meta={studioStats ? t("itemCount", { count: filteredMedia.length }) : undefined}>
+        <PageToolbar meta={t("itemCount", { count: shown.length })}>
           <ToolbarTabs
-            ariaLabel="Gallery"
-            value={viewMode}
-            onChange={setViewMode}
+            ariaLabel={t("galleryLabel")}
+            value={view}
+            onChange={setView}
             options={[
               { value: "recent", label: t("recent") },
-              { value: "library", label: t("library"), count: studioStats?.savedCount }
+              { value: "library", label: t("library"), count: savedCount },
             ]}
           />
         </PageToolbar>
       }
     >
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <Section title={t("creator.title")} description={t("creator.subtitle")}>
-          <div className="vck-card space-y-4 p-4">
+          <form
+            className="vck-card space-y-4 p-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (brief.trim().length >= 3 && !make.busy) void create();
+            }}
+          >
             <div>
-              <label className="vck-label mb-1.5 block">{t("creator.contextLabel")}</label>
-              <select
-                value={contextType}
-                onChange={(e) => setContextType(e.target.value as ContextType)}
-                className="w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
-              >
-                <option value="custom">{t("contextTypes.custom")}</option>
-                <option value="company_data">{t("contextTypes.company_data")}</option>
-                <option value="progress">{t("contextTypes.progress")}</option>
-                <option value="insights">{t("contextTypes.insights")}</option>
-                <option value="recommendations">{t("contextTypes.recommendations")}</option>
+              <label htmlFor="studio-topic" className="vck-label mb-1.5 block">{t("creator.topic")}</label>
+              <select id="studio-topic" value={topic} onChange={(e) => setTopic(e.target.value as Topic)} className={field}>
+                {TOPICS.map((k) => (
+                  <option key={k} value={k}>{t(`topics.${k}`)}</option>
+                ))}
               </select>
+              <p className="vck-meta mt-1.5 leading-relaxed">{t(`topicHints.${topic}`)}</p>
             </div>
 
             <div>
-              <label className="vck-label mb-1.5 block">{t("creator.quickIdeas")}</label>
-              <div className="flex flex-wrap gap-1.5">
-                {generateContextSuggestions().map((suggestion, index) => (
+              <label htmlFor="studio-brief" className="vck-label mb-1.5 block">{t("creator.brief")}</label>
+              <textarea
+                id="studio-brief"
+                value={brief}
+                maxLength={1000}
+                onChange={(e) => setBrief(e.target.value)}
+                placeholder={t(`placeholders.${topic}`)}
+                className={`${field} min-h-[104px] resize-y`}
+              />
+            </div>
+
+            <div>
+              <span className="vck-label mb-1.5 block">{t("creator.shape")}</span>
+              <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={t("creator.shape")}>
+                {RATIOS.map((r) => (
                   <button
-                    key={index}
+                    key={r}
                     type="button"
-                    onClick={() => setPrompt(suggestion)}
-                    className="vck-tag"
+                    role="radio"
+                    aria-checked={ratio === r}
+                    onClick={() => setRatio(r)}
+                    className={`vck-btn ${ratio === r ? "vck-btn-primary" : ""}`}
                   >
-                    {suggestion}
+                    {t(`ratios.${r.replace(":", "x")}`)}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div>
-              <label className="vck-label mb-1.5 block">{t("creator.promptLabel")}</label>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder={t("creator.promptPlaceholder")}
-                className="min-h-[96px] w-full resize-none rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
-              />
-              <p className="vck-meta mt-2 leading-relaxed">
-                <strong className="text-foreground">{t("creator.intelligentSelection")}</strong>{" "}
-                {t("creator.intelligentDesc")}
-              </p>
-            </div>
+            {make.error && <p role="alert" className="text-sm text-destructive break-words">{make.error}</p>}
 
             <button
-              type="button"
-              onClick={generateMedia}
-              disabled={isGenerating || !prompt.trim()}
+              type="submit"
+              disabled={make.busy || brief.trim().length < 3}
               className="vck-btn vck-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isGenerating ? t("creator.generating") : t("creator.generateImage")}
+              {make.busy ? t("creator.making") : t("creator.make")}
             </button>
-          </div>
+            <p className="vck-meta leading-relaxed">{t("creator.cost")}</p>
+          </form>
         </Section>
 
         <Section title={t("preview.title")}>
-          {aiError ? (
-            <AiUnavailable feature="generate report visuals" onRetry={generateMedia} />
-          ) : selectedMedia ? (
-            <div className="vck-card p-4">
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  {selectedMedia.model && (
-                    <p className="vck-meta">
-                      {t("preview.generatedWith", {
-                        model:
-                          selectedMedia.model === "imagen-4.0-generate-001"
-                            ? t("models.imagen4")
-                            : selectedMedia.model === "veo-3.1-generate-preview"
-                              ? t("models.veo")
-                              : t("models.geminiFlash")
-                      })}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => toggleSaveToLibrary(selectedMedia)}
-                    className={`vck-btn ${selectedMedia.saved ? "vck-btn-primary" : ""}`}
-                  >
-                    {selectedMedia.saved ? t("preview.savedToLibrary") : t("preview.saveToLibrary")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => downloadMedia(selectedMedia)}
-                    className="vck-btn"
-                  >
-                    {t("preview.download")}
-                  </button>
-                </div>
-              </div>
-
-              <div className="relative overflow-hidden rounded-[0.5rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)]">
-                {selectedMedia.type === "image" ? (
-                  <NextImage
-                    src={selectedMedia.url}
-                    alt="Generated content"
-                    width={1200}
-                    height={675}
-                    className="h-auto w-full"
-                  />
+          {selected ? (
+            <div className="vck-card space-y-4 p-4">
+              <div className="overflow-hidden rounded-[0.5rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)]">
+                {selected.type === "image" ? (
+                  <NextImage src={selected.url} alt={selected.prompt} width={1200} height={675} unoptimized className="h-auto w-full" />
                 ) : (
-                  <div className="relative w-full">
-                    {isVideoLoading && (
-                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--vc-well)]">
-                        <p className="vck-meta">{t("preview.loadingVideo")}</p>
-                      </div>
-                    )}
-                    {videoError && (
-                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--vc-well)]">
-                        <div className="max-w-md p-4 text-center">
-                          <p className="mb-2 text-sm text-destructive">{videoError}</p>
-                          <button
-                            type="button"
-                            onClick={() => openExternalUrl(selectedMedia.url)}
-                            className="vck-btn"
-                          >
-                            {t("preview.openNewTab")}
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                    <video
-                      key={selectedMedia.url}
-                      src={selectedMedia.url}
-                      controls
-                      playsInline
-                      preload="auto"
-                      className="h-auto w-full"
-                      onLoadedData={handleVideoLoad}
-                      onError={handleVideoError}
-                      onLoadStart={() => setIsVideoLoading(true)}
-                    >
-                      <source src={selectedMedia.url} type="video/mp4" />
-                      {t("preview.videoUnsupported")}
-                    </video>
-                  </div>
+                  <video src={selected.url} controls playsInline className="h-auto w-full" />
                 )}
               </div>
 
-              <p className="vck-meta mt-3 break-words leading-relaxed">
-                <strong className="text-foreground">{t("preview.prompt")}</strong> {selectedMedia.prompt}
-              </p>
+              <p className="text-sm leading-relaxed break-words">{selected.prompt}</p>
 
-              {selectedMedia.type === "image" && (
-                <div className="mt-4 border-t border-[var(--vc-rule-soft)] pt-4">
-                  <p className="vck-label mb-1">{t("editing.title")}</p>
-                  <p className="vck-meta mb-2">{t("editing.subtitle")}</p>
+              {selected.id === selectedId && usedFacts.length > 0 && (
+                <div>
+                  <p className="vck-label mb-1">{t("preview.facts")}</p>
+                  <ul className="vck-meta list-disc space-y-0.5 pl-5">
+                    {usedFacts.map((f) => <li key={f} className="break-words">{f}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2">
+                <button type="button" disabled={change.busy} onClick={() => toggleSaved(selected)} className={`vck-btn ${selected.saved ? "vck-btn-primary" : ""}`}>
+                  {selected.saved ? t("preview.inLibrary") : t("preview.addToLibrary")}
+                </button>
+                <a href={selected.url} download={`vuneli-visual-${selected.id}.png`} target="_blank" rel="noopener noreferrer" className="vck-btn">
+                  {t("preview.download")}
+                </a>
+                <button type="button" disabled={change.busy} onClick={() => remove(selected)} className="vck-btn">
+                  {t("preview.delete")}
+                </button>
+              </div>
+              {change.error && <p role="alert" className="text-sm text-destructive break-words">{change.error}</p>}
+
+              {selected.type === "image" && (
+                <form
+                  className="border-t border-[var(--vc-rule-soft)] pt-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (editBrief.trim().length >= 3 && !edit.busy) void applyEdit();
+                  }}
+                >
+                  <label htmlFor="studio-edit" className="vck-label mb-1.5 block">{t("editing.title")}</label>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <input
-                      type="text"
-                      value={editPrompt}
-                      onChange={(e) => setEditPrompt(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleNaturalLanguageEdit()}
+                      id="studio-edit"
+                      value={editBrief}
+                      maxLength={1000}
+                      onChange={(e) => setEditBrief(e.target.value)}
                       placeholder={t("editing.placeholder")}
-                      disabled={isEditingImage}
-                      className="flex-1 rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
+                      disabled={edit.busy}
+                      className={`${field} flex-1`}
                     />
-                    <button
-                      type="button"
-                      onClick={handleNaturalLanguageEdit}
-                      disabled={isEditingImage || !editPrompt.trim()}
-                      className="vck-btn vck-btn-primary disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {isEditingImage ? t("creator.generating") : t("editing.title")}
+                    <button type="submit" disabled={edit.busy || editBrief.trim().length < 3} className="vck-btn vck-btn-primary disabled:cursor-not-allowed disabled:opacity-50">
+                      {edit.busy ? t("creator.making") : t("editing.apply")}
                     </button>
                   </div>
-                  <p className="vck-meta mt-2">{t("editing.examples")}</p>
-                </div>
+                  {edit.error && <p role="alert" className="mt-2 text-sm text-destructive break-words">{edit.error}</p>}
+                </form>
               )}
             </div>
           ) : (
-            <Empty
-              title={t("preview.empty")}
-              body={t("preview.emptyHint")}
-            />
+            <Empty title={t("preview.empty")} body={t("preview.emptyHint")} />
           )}
         </Section>
       </div>
 
-      <Section title={viewMode === "recent" ? t("recentGenerations") : t("savedLibrary")}>
-        {filteredMedia.length === 0 ? (
+      <Section title={view === "recent" ? t("recent") : t("library")}>
+        {shown.length === 0 ? (
           <Empty
-            title={viewMode === "library" ? t("sidebar.noSaved") : t("sidebar.noGenerations")}
-            body={viewMode === "library" ? t("sidebar.saveHint") : t("sidebar.createHint")}
+            title={view === "library" ? t("gallery.noSaved") : t("gallery.none")}
+            body={view === "library" ? t("gallery.saveHint") : t("gallery.createHint")}
           />
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {filteredMedia.map((media) => (
-              <div
-                key={media.id}
-                onClick={() => setSelectedMedia(media)}
-                className={`vck-card cursor-pointer overflow-hidden p-0 ${
-                  selectedMedia?.id === media.id ? "border-[var(--vc-rule)]" : ""
-                }`}
-              >
-                {media.type === "image" ? (
-                  <NextImage
-                    src={media.url}
-                    alt="Thumbnail"
-                    width={200}
-                    height={150}
-                    className="h-28 w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-28 w-full items-center justify-center bg-[var(--vc-well)]">
-                    <span className="vck-meta">{t("mediaType.video")}</span>
-                  </div>
-                )}
-                <div className="space-y-1 p-2">
-                  <p className="break-words text-[0.8125rem] font-medium leading-snug">{media.prompt}</p>
-                  <div className="flex items-center justify-between">
-                    {media.model && (
-                      <span className="vck-meta">
-                        {media.model === "imagen-4.0-generate-001"
-                          ? t("models.imagen4")
-                          : t("models.geminiFlashShort")}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteGeneration(media);
-                      }}
-                      className="vck-meta hover:text-destructive"
-                    >
-                      {t("sidebar.noSaved") ? "Remove" : "Remove"}
-                    </button>
-                  </div>
-                  {media.saved && <span className="vck-tag">Saved</span>}
-                </div>
-              </div>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {shown.map((g) => (
+              <li key={g.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedId(g.id)}
+                  aria-pressed={selected?.id === g.id}
+                  className={`vck-card block w-full overflow-hidden p-0 text-left ${selected?.id === g.id ? "border-[var(--vc-rule)]" : ""}`}
+                >
+                  {g.type === "image" ? (
+                    <NextImage src={g.url} alt="" width={320} height={200} unoptimized className="h-28 w-full object-cover" />
+                  ) : (
+                    <span className="vck-meta flex h-28 w-full items-center justify-center bg-[var(--vc-well)]">{t("video")}</span>
+                  )}
+                  <span className="block space-y-1 p-2">
+                    <span className="line-clamp-3 block break-words text-[0.8125rem] font-medium leading-snug" title={g.prompt}>{g.prompt}</span>
+                    <span className="vck-meta block">
+                      {new Date(g.createdAt).toLocaleDateString()}
+                      {g.saved ? ` · ${t("preview.inLibrary")}` : ""}
+                    </span>
+                  </span>
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </Section>
-
-      {studioStats && (
-        <Section title={t("stats.label")}>
-          <MetricRow columns={4}>
-            <Metric label={t("stats.total")} value={studioStats.totalGenerations} />
-            <Metric label={t("stats.images")} value={studioStats.imagesCount} />
-            <Metric label={t("stats.videos")} value={studioStats.videosCount} />
-            <Metric label={t("stats.saved")} value={studioStats.savedCount} />
-          </MetricRow>
-        </Section>
-      )}
     </PageShell>
   );
 }

@@ -38,6 +38,9 @@ _Last updated: 26 September 2026 — security, report filters/PDF, logging turn.
 Approving "Sign the 2026 CBAM declaration" records your signature on that exact draft in Vuneli (fingerprinted). It does **not** submit anything to the EU CBAM Registry. Submission still needs the importer's own authorised-declarant account (applied for through the Cyprus Customs Department). Decide with a lawyer how you describe this to customers.
 
 
+## 2026-09-26 (Report Visuals rebuild)
+- Making images needs the same AI service key (`LOVABLE_API_KEY`) and the image storage bucket `generated-media`. Without the key the page says so and charges nothing.
+
 ## 2026-09-26 (Learn rebuild)
 - Course creation needs the AI service key (`LOVABLE_API_KEY`) on the live site. Without it the generator says so and charges nothing.
 - New courses stay private to their creator. To share one with every account, an admin must publish it, so give at least one real person the admin role (see scripts/sql/0022).
