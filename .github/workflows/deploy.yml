@@ -25,7 +25,7 @@ jobs:
         run: npx tsc --noEmit
       - name: Tests with coverage floor
         run: npm run test:coverage
-      - name: Dependency audit (high and critical)
+      - name: Dependency audit (critical)
         run: npm audit --omit=dev --audit-level=critical
 
   deploy:
