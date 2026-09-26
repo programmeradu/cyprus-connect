@@ -8,6 +8,7 @@
 
 import { Suspense, useEffect, useMemo } from "react";
 import { toast } from "sonner";
+import { Link } from "@/i18n/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { ConsolePage, Plate, Reading, ReadingRail, Btn, Bar } from "@/components/app/console/kit";
@@ -99,7 +100,7 @@ function IntegrationsContent() {
       );
     }
     if (c.id === "energy-charts" && d?.grid) {
-      return <Btn href="/app/insights">{L("Open today's grid", "Το σημερινό δίκτυο")}</Btn>;
+      return <Link href="/app/insights" className="vck-btn vck-btn-quiet">{L("Open today's grid", "Το σημερινό δίκτυο")}</Link>;
     }
     return null;
   };
@@ -165,7 +166,8 @@ function IntegrationsContent() {
       title={t("title")}
       purpose={L("Every figure in the workspace comes from one of these sources.", "Κάθε αριθμός στην πλατφόρμα προέρχεται από μία από αυτές τις πηγές.")}
       loading={res.loading}
-      error={res.error ?? undefined}
+      error={res.error}
+      onRetry={res.reload}
     >
       <ReadingRail>
         <Reading label={L("Live feeds", "Ενεργές ροές")} value={liveCount} note={L("no account needed", "χωρίς σύνδεση λογαριασμού")} />
