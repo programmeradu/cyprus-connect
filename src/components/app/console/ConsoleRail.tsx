@@ -42,7 +42,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
   {
     title: "Autonomy",
     items: [
-      { href: "/app/insights", label: "Agents", icon: IcoAgents },
+      { href: "/app/agents", label: "Agents", icon: IcoAgents },
       { href: "/app/cbam", label: "CBAM", icon: IcoShield },
       { href: "/app/integrations", label: "Connections", icon: IcoPlug },
       { href: "/app/studio", label: "Studio", icon: IcoSpark },

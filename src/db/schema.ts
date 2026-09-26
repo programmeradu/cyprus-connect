@@ -1,4 +1,4 @@
-import { pgTable, serial, text, real, integer, boolean, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey } from 'drizzle-orm/pg-core';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
   id: serial('id').primaryKey(),
