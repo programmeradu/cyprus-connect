@@ -6,7 +6,7 @@
  * policy blocked. Every row comes from the step ledger; nothing is invented.
  */
 
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Btn, ConsolePage, Empty, Plate, State } from "@/components/app/console/kit";
 import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import {

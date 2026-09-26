@@ -5,7 +5,7 @@
  * figure below is the Border agent's stored draft. Nothing is invented here.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Btn,
   ConsolePage,
@@ -123,13 +123,8 @@ export default function CbamPage() {
       try {
         if (file.size > 1_000_000) throw new Error("The file is over 1 MB. Split it and upload the parts.");
         const csv = await file.text();
-        let b: { inserted?: number; duplicates?: number; errors?: string[] };
-        try {
-          b = await workspaceRequest(CBAM, { method: "POST", body: { csv } });
-        } catch (e) {
-          // A file where every row is wrong comes back refused, with the row errors listed.
-          throw e;
-        }
+        // A file where no row could be read still answers, with each row's problem listed.
+        const b = await workspaceRequest<{ inserted?: number; duplicates?: number; errors?: string[] }>(CBAM, { method: "POST", body: { csv } });
         const errs: string[] = b.errors ?? [];
         setNote({
           tone: errs.length || !b.inserted ? "warn" : "good",
