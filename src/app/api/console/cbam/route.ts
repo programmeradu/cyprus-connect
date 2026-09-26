@@ -126,7 +126,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: `Up to ${MAX_ROWS} lines per file.` }, { status: 400 });
   }
   if (rows.length === 0) {
-    return NextResponse.json({ inserted: 0, duplicates: 0, errors }, { status: errors.length ? 422 : 200 });
+    return NextResponse.json({ inserted: 0, duplicates: 0, errors });
   }
 
   const values = await Promise.all(

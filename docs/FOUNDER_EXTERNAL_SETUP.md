@@ -65,3 +65,6 @@ Approving "Sign the 2026 CBAM declaration" records your signature on that exact 
 ## Integrations page (2026-09-26)
 - QuickBooks: set `QB_CLIENT_ID`, `QB_CLIENT_SECRET`, `QB_ENVIRONMENT` in Cloudflare and register the redirect `https://vuneli.com/api/oauth/quickbooks/callback` in the Intuit developer app. Until then the card honestly says "Not set up yet" and shows no button.
 - No key needed for the live grid feed (Energy-Charts, Fraunhofer ISE). Industry benchmarks stay off until real Cyprus sector data is licensed.
+
+## Agents and CBAM pages (2026-09-26)
+- Nothing new to set up. Every app page now shares one copy of the workspace data.
