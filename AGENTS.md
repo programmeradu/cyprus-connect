@@ -9,3 +9,4 @@
 
 - Approval tasks store the exact tool call (`pending_tool`, `pending_input`, SHA-256 `pending_input_hash`); approving re-checks the fingerprint and runs it via `src/lib/agents/approvals.ts`. Why: a person signs exactly what the agent showed, nothing else.
 - CBAM declarations are deterministic (`cbam-calc.ts`, no AI) and a signature is void if the draft hash changes. Why: legal act must be reproducible.
+- A per-agent pause lives in `agent_switches` (scripts/sql/0020); the workspace kill switch in `agent_controls` still wins, and both are checked in `runJob` before any step. Why: stop one agent without stopping the rest, enforced in one place.

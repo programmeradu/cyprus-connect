@@ -17,6 +17,7 @@ import {
   activityEvents,
   agentControls,
   agentJobs,
+  agentSwitches,
   agentRuns,
   agents,
   autonomyPolicies,
@@ -172,6 +173,16 @@ async function runJob(job: Awaited<ReturnType<typeof claim>>[number]): Promise<J
     await finishJob(job.id, { status: "skipped", error: reason, finishedAt: new Date() });
     return { ...base, status: "skipped", runId: null, summary: reason };
   }
+  const [agentSwitch] = await db
+    .select()
+    .from(agentSwitches)
+    .where(and(eq(agentSwitches.workspaceId, job.workspace_id), eq(agentSwitches.agentKey, job.agent_key)))
+    .limit(1);
+  if (agentSwitch?.paused) {
+    const reason = `Skipped: this agent is paused${agentSwitch.reason ? ` (${agentSwitch.reason})` : ""}.`;
+    await finishJob(job.id, { status: "skipped", error: reason, finishedAt: new Date() });
+    return { ...base, status: "skipped", runId: null, summary: reason };
+  }
 
   const policies = await loadPolicies(job.workspace_id);
   const started = Date.now();
@@ -269,13 +280,52 @@ export async function setPaused(workspaceId: string, paused: boolean, reason: st
   });
 }
 
+export async function setAgentPaused(
+  workspaceId: string,
+  agentKey: string,
+  paused: boolean,
+  reason: string | null,
+  by: string,
+) {
+  await db
+    .insert(agentSwitches)
+    .values({ workspaceId, agentKey, paused, reason, updatedBy: by, updatedAt: new Date() })
+    .onConflictDoUpdate({
+      target: [agentSwitches.workspaceId, agentSwitches.agentKey],
+      set: { paused, reason, updatedBy: by, updatedAt: new Date() },
+    });
+  const [agentRow] = await db.select({ name: agents.name }).from(agents).where(eq(agents.key, agentKey)).limit(1);
+  await db.insert(activityEvents).values({
+    workspaceId,
+    actorType: "human",
+    actorName: by,
+    verb: paused ? "paused an agent" : "resumed an agent",
+    object: agentRow?.name ?? agentKey,
+    detail: reason,
+  });
+}
+
 export async function getControls(workspaceId: string) {
   const c = await loadControls(workspaceId);
-  const recent = await db
-    .select()
-    .from(agentJobs)
-    .where(and(eq(agentJobs.workspaceId, workspaceId)))
-    .orderBy(sql`id desc`)
-    .limit(10);
-  return { paused: c.paused, pauseReason: c.pauseReason, maxStepsPerRun: c.maxStepsPerRun, recentJobs: recent };
+  const [recent, switches] = await Promise.all([
+    db
+      .select()
+      .from(agentJobs)
+      .where(and(eq(agentJobs.workspaceId, workspaceId)))
+      .orderBy(sql`id desc`)
+      .limit(10),
+    db.select().from(agentSwitches).where(eq(agentSwitches.workspaceId, workspaceId)),
+  ]);
+  const agentPaused: Record<string, { paused: boolean; reason: string | null; by: string | null; at: string }> = {};
+  for (const s of switches) {
+    agentPaused[s.agentKey] = { paused: s.paused, reason: s.reason, by: s.updatedBy, at: s.updatedAt.toISOString() };
+  }
+  return {
+    paused: c.paused,
+    pauseReason: c.pauseReason,
+    maxStepsPerRun: c.maxStepsPerRun,
+    agentPaused,
+    runnable: Object.keys(RUNNABLE_AGENTS),
+    recentJobs: recent,
+  };
 }

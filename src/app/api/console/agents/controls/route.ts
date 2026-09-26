@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { resolveConsoleSession } from "@/lib/console-session";
-import { getControls, setPaused } from "@/lib/agents/orchestrator";
+import { getControls, isRunnable, setAgentPaused, setPaused } from "@/lib/agents/orchestrator";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +23,9 @@ export async function POST(req: Request) {
   const { workspace, account } = resolved.session;
   let paused: unknown;
   let reason: unknown;
+  let agentKey: unknown;
   try {
-    ({ paused, reason } = (await req.json()) as { paused?: unknown; reason?: unknown });
+    ({ paused, reason, agentKey } = (await req.json()) as { paused?: unknown; reason?: unknown; agentKey?: unknown });
   } catch {
     /* handled below */
   }
@@ -32,6 +33,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "bad_request", message: "Send paused: true or false." }, { status: 400 });
   }
   const note = typeof reason === "string" && reason.trim() ? reason.trim().slice(0, 300) : null;
-  await setPaused(workspace.id, paused, note, account.name || account.email || account.id);
+  const by = account.name || account.email || account.id;
+  if (agentKey !== undefined && agentKey !== null) {
+    // Only agents with real work can be switched; others never run anyway.
+    if (typeof agentKey !== "string" || !isRunnable(agentKey)) {
+      return NextResponse.json({ error: "bad_request", message: "Unknown or not-yet-runnable agent." }, { status: 400 });
+    }
+    await setAgentPaused(workspace.id, agentKey, paused, note, by);
+  } else {
+    await setPaused(workspace.id, paused, note, by);
+  }
   return NextResponse.json(await getControls(workspace.id));
 }
