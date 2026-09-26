@@ -18,7 +18,6 @@ const NOT_YET_MOVED: Record<string, string> = {
   "learn/[id]/page.tsx": "phase 4",
   "learn/generate/page.tsx": "phase 4",
   "learn/page.tsx": "phase 4",
-  "onboarding/page.tsx": "phase 3",
   "studio/page.tsx": "phase 4",
   "agents/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",
   "cbam/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",
