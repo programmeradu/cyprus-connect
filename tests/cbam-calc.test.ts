@@ -65,3 +65,19 @@ describe("CBAM CSV", () => {
     expect(parseImportCsv("a,b\n1,2").errors[0]).toMatch(/import_date/);
   });
 });
+
+describe("import dates", () => {
+  it("rejects dates that do not exist", async () => {
+    const { parseImportCsv, isRealDate } = await import("@/lib/agents/cbam-calc");
+    expect(isRealDate("2026-02-28")).toBe(true);
+    expect(isRealDate("2028-02-29")).toBe(true);
+    expect(isRealDate("2026-02-30")).toBe(false);
+    expect(isRealDate("2026-13-40")).toBe(false);
+    const csv =
+      "import_date,cn_code,description,origin_country,supplier,installation_id,net_mass,direct_see,indirect_see,customs_ref\n" +
+      "2026-13-40,7208 51,Plate,TR,S,,5,,,R1\n";
+    const { rows, errors } = parseImportCsv(csv);
+    expect(rows).toHaveLength(0);
+    expect(errors[0]).toMatch(/not a real calendar date/);
+  });
+});
