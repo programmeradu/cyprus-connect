@@ -1,5 +1,14 @@
 # Roadmap
 
+## App build (audit 2026-09-26, docs/APP_AUDIT_2026-09-26.md)
+- [x] Full app + repo-quality audit
+- [ ] P0 lock down API routes (session-derived userId, remove/guard admin routes, zod)
+- [ ] P1 remove random/hard-coded figures, merge duplicate systems
+- [ ] P2 quality gates: vitest+coverage, CI verify gate, healthz, logger, env parity, split big files
+- [ ] P3 console Release 2 (actions), then Release 3 CBAM agent
+
+(Research paused by founder.)
+
 - [x] Keep-alive ping moved to a daily Cloudflare cron (GitHub kept as weekly backup)
 - [x] Remove invented figures in Integrations benchmarks (revenue, team-size fallback)
 - [x] Re-enable "finish your setup" redirect without the sign-in loop
