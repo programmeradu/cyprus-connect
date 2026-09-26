@@ -277,9 +277,9 @@ export default function ConsolePage() {
   }
 
   const weakConnection = [...connections]
-    .filter((connection) => connection.status !== "available")
-    .sort((a, b) => a.coveragePct - b.coveragePct)[0];
-  if (weakConnection && weakConnection.coveragePct < 85) {
+    .filter((connection) => connection.status !== "available" && connection.coveragePct !== null)
+    .sort((a, b) => (a.coveragePct ?? 0) - (b.coveragePct ?? 0))[0];
+  if (weakConnection && weakConnection.coveragePct !== null && weakConnection.coveragePct < 85) {
     insights.push({
       id: "coverage",
       tone: weakConnection.coveragePct < 60 ? "warn" : "info",
@@ -666,7 +666,7 @@ export default function ConsolePage() {
                           data-tone={STATUS_TONE[connection.status] ?? "idle"}
                         />
                         <span>{connection.provider}</span>
-                        <strong>{Math.round(connection.coveragePct)}%</strong>
+                        <strong>{connection.coveragePct === null ? titleCase(connection.status === "live" ? "connected" : connection.status === "available" ? "not linked" : connection.status) : `${Math.round(connection.coveragePct)}%`}</strong>
                       </p>
                     ))}
                   </div>
@@ -770,7 +770,7 @@ export default function ConsolePage() {
             <div className="vc-plate-grid vc-plate-grid-2">
               <section className="vc-plate">
                 <header>
-                  <span>Coverage by connection</span>
+                  <span>Connections</span>
                   <strong>{Math.round(coverage?.current ?? 0)}% overall</strong>
                 </header>
                 <div className="vc-bar-list">
@@ -778,11 +778,13 @@ export default function ConsolePage() {
                     <div key={connection.id}>
                       <p>
                         <strong>{connection.provider}</strong>
-                        <em>{Math.round(connection.coveragePct)}%</em>
+                        <em>{connection.coveragePct === null ? titleCase(connection.status) : `${Math.round(connection.coveragePct)}%`}</em>
                       </p>
-                      <Rule pct={connection.coveragePct} tone={connection.status === "error" ? "warn" : "accent"} />
+                      {connection.coveragePct !== null && (
+                        <Rule pct={connection.coveragePct} tone={connection.status === "error" ? "warn" : "accent"} />
+                      )}
                       <small>
-                        {titleCase(connection.category)} · synced {relativeTime(connection.lastSyncAt)}
+                        {titleCase(connection.category)} · {connection.lastSyncAt ? `updated ${relativeTime(connection.lastSyncAt)}` : connection.note ?? "no data yet"}
                       </small>
                     </div>
                   ))}
@@ -849,7 +851,7 @@ export default function ConsolePage() {
                   <div className="vc-agent-lead">
                     <span>
                       <strong>{connection.provider}</strong>
-                      <small>synced {relativeTime(connection.lastSyncAt)}</small>
+                      <small>{connection.lastSyncAt ? `updated ${relativeTime(connection.lastSyncAt)}` : "no data yet"}</small>
                     </span>
                     <i
                       className={`vc-dot ${connection.status === "live" ? "vc-live" : ""}`}
@@ -857,8 +859,12 @@ export default function ConsolePage() {
                     />
                   </div>
                   {connection.note && <p className="vc-agent-mission">{connection.note}</p>}
-                  <Rule pct={connection.coveragePct} tone={connection.status === "error" ? "warn" : "accent"} />
-                  <small className="vc-plate-foot">{Math.round(connection.coveragePct)}% of records covered</small>
+                  {connection.coveragePct !== null && (
+                    <>
+                      <Rule pct={connection.coveragePct} tone={connection.status === "error" ? "warn" : "accent"} />
+                      <small className="vc-plate-foot">{Math.round(connection.coveragePct)}% of records covered</small>
+                    </>
+                  )}
                 </section>
               ))}
             </div>
