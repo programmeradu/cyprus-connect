@@ -5,7 +5,8 @@
 - [ ] P0 lock down API routes (session-derived userId, remove/guard admin routes, zod)
 - [x] P1a invented figures removed (upload parsing, compliance score/dates/SEC, forecast noise)
 - [x] P1b merge duplicate systems (unused /api/lms removed; one Gemini library)
-- [ ] P2 quality gates: vitest+coverage, CI verify gate, healthz, logger, env parity, split big files
+- [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
+- [ ] P2b structured logger, split files over 500 lines, broaden test coverage
 - [ ] P3 console Release 2 (actions), then Release 3 CBAM agent
 
 (Research paused by founder.)
