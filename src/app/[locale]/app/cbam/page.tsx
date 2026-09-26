@@ -19,7 +19,7 @@ import {
   type Column,
 } from "@/components/app/console/kit";
 import { useConsole } from "@/components/app/console/ConsoleData";
-import { RegistryPlate, SupplierContactsPlate, type Declarant, type SentRequest, type SupplierContact } from "@/components/app/console/CbamContacts";
+import { PendingEmailsPlate, RegistryPlate, SupplierContactsPlate, type PendingEmail, type Declarant, type SentRequest, type SupplierContact } from "@/components/app/console/CbamContacts";
 
 interface Line {
   id: number;
@@ -64,6 +64,7 @@ interface Data {
   declarant: Declarant;
   requests: SentRequest[];
   exportGaps: string[] | null;
+  pendingEmails: PendingEmail[];
 }
 
 const TEMPLATE =
@@ -283,6 +284,8 @@ export default function CbamPage() {
                 </Plate>
               </PlateGrid>
             )}
+
+            <PendingEmailsPlate emails={data.pendingEmails} onDecided={(text, tone) => { setNote({ tone, text }); load(year); refresh(); }} />
 
             <SupplierContactsPlate
               supplierNames={[...new Set(data.lines.map((l) => l.supplierName))].sort((a, b) => a.localeCompare(b))}

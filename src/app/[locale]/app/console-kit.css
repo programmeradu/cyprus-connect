@@ -1482,3 +1482,4 @@
 @media (max-width: 640px) {
   .vc .vck-cbam-fields, .vc .vck-cbam-fields-2 { grid-template-columns: minmax(0, 1fr); }
 }
+.vc .vck-cbam-mail { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--vc-well); border: 1px solid var(--vc-rule); color: var(--vc-ink); font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; }

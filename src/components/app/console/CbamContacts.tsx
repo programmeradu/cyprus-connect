@@ -150,3 +150,46 @@ export function RegistryPlate({ year, declarant, gaps, hasDraft, onSaved }: {
     </Plate>
   );
 }
+
+export interface PendingEmail { taskId: number; supplierName: string; to: string; replyTo: string | null; subject: string; body: string; lastError: string | null }
+
+/** The exact emails waiting for a person. Approve sends this text and nothing else. */
+export function PendingEmailsPlate({ emails, onDecided }: { emails: PendingEmail[]; onDecided: (text: string, tone: "good" | "warn") => void }) {
+  const [busy, setBusy] = useState<number | null>(null);
+  if (emails.length === 0) return null;
+  const decide = async (e: PendingEmail, decision: "approve" | "reject") => {
+    setBusy(e.taskId);
+    try {
+      const res = await fetch(`/api/console/tasks/${e.taskId}`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ decision }),
+      });
+      const b = await res.json().catch(() => ({}));
+      if (!res.ok) onDecided(b.error ?? "The decision was not saved.", "warn");
+      else onDecided(decision === "approve" ? `Sent to ${e.to}.` : `Email to ${e.supplierName} rejected. Border will not send it.`, decision === "approve" ? "good" : "warn");
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <Plate label="Emails waiting for your approval" meta={String(emails.length)} metaTone="warn"
+      foot="Approving sends exactly this text. If the import lines change, Border withdraws this email and drafts a new one.">
+      <ul className="vck-cbam-contacts">
+        {emails.map((e) => (
+          <li key={e.taskId} className="vck-cbam-contact">
+            <div className="vck-cbam-contact-head"><strong>{e.subject}</strong></div>
+            <p className="vck-cbam-note">To {e.to}{e.replyTo ? ` · replies go to ${e.replyTo}` : " · no reply-to set, replies go to the sender address"}</p>
+            <pre className="vck-cbam-mail">{e.body}</pre>
+            {e.lastError && <p className="vck-cbam-note" data-tone="warn">{e.lastError}</p>}
+            <div className="vck-cbam-actions">
+              <Btn variant="primary" disabled={busy !== null} onClick={() => decide(e, "approve")}>{busy === e.taskId ? "Working…" : "Approve and send"}</Btn>
+              <Btn variant="quiet" disabled={busy !== null} onClick={() => decide(e, "reject")}>Reject</Btn>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Plate>
+  );
+}
