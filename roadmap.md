@@ -2,11 +2,12 @@
 
 ## App build (audit 2026-09-26, docs/APP_AUDIT_2026-09-26.md)
 - [x] Full app + repo-quality audit
-- [ ] P0 lock down API routes (session-derived userId, remove/guard admin routes, zod)
+- [x] P0 lock down API routes (session-derived userId, admin role table + gates, every body through validate.ts; guard test enforces it)
 - [x] P1a invented figures removed (upload parsing, compliance score/dates/SEC, forecast noise)
 - [x] P1b merge duplicate systems (unused /api/lms removed; one Gemini library)
 - [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
-- [ ] P2b structured logger, split files over 500 lines, broaden test coverage
+- [x] P2b structured logger (src/lib/log.ts, error refs) + tests for validation/admin/log/PDF/filters
+- [ ] P2c split files over 500 lines (app/page 837, studio 801, calculator 758, integrations 737, compliance 622, insights 599)
 - [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
 - [x] P3b CSV export per console section
 - [x] P3c Approve runs the exact act the agent asked for (fingerprint-checked); first act: CBAM signature
@@ -26,7 +27,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Step 4 research gates on I-25 (Grid Surplus) and I-26 (Upgrade Club) — blocked: TSO/EAC curtailment + tariff data, pilot SMEs, licence checks
 - [ ] Steps 5-6 pilots, Upgrade Club, agent-to-agent exchange — depend on step 4
 - [ ] Founder: set CRON_SECRET in Cloudflare (heartbeat skips without it); sign off Postgres queue vs Queues/Durable Objects
-- [ ] P3e period/site filter, PDF export; then Release 3 CBAM agent
+- [x] P3e period/site filter, PDF export (site filter shows data once readings carry a site)
 
 (Research paused by founder.)
 
@@ -35,7 +36,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Re-enable "finish your setup" redirect without the sign-in loop
 - [x] Rebuild Onboarding in the console design
 - [x] Remove the old-styling layer (app.css + app-* bridge) from all 19 pages
-- [ ] Rewrite pages from the shell adapters to direct kit imports (visual parity already)
+- [x] Rewrite pages from the shell adapters to direct kit imports (shell folder deleted)
 - [ ] Collect company revenue in Settings so per-revenue benchmarks can return
 
 - [x] Research pipeline plan: fold in user review (Cyprus grid/doc realism, negative prior art, pre-registration lock, stress tests, tax/grant compliance, dual-track S6), then re-review
