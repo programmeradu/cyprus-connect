@@ -4,6 +4,11 @@ import { db } from '@/db';
 import { documents, user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { z } from "zod";
+import { checkUpload, readJson, readUpload } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("documents.upload");
 
 const MAX_FILE_SIZE = 10485760; // 10MB
 const ALLOWED_TYPES = ['csv', 'pdf', 'xlsx'];
@@ -72,63 +77,50 @@ function parseCSV(buffer: Buffer): ParsedEmissionsData {
   return { columns, mappings, rowCount: lines.length - 1 };
 }
 
+const UPLOAD_KINDS = ["csv", "pdf", "xlsx"] as const;
+
+const JsonUpload = z.object({
+  // base64 of at most 10 MB of bytes
+  file: z.string().min(1).max(Math.ceil((MAX_FILE_SIZE * 4) / 3) + 8).regex(/^[A-Za-z0-9+/=\s]+$/, "file must be base64"),
+  fileName: z.string().trim().min(1).max(255),
+  fileType: z.string().max(100).optional(),
+  userId: z.string().max(200).optional(),
+  uploadSource: z.enum(["manual", "email", "integration", "api"]).optional().default("manual"),
+});
+
+const SOURCES = new Set(["manual", "email", "integration", "api"]);
+
+/** The file's type comes from its bytes; the name and browser type are ignored. */
 async function handleMultipartUpload(request: NextRequest) {
-  const formData = await request.formData();
-  const file = formData.get('file') as File;
-  const userId = formData.get('userId');
-  const uploadSource = (formData.get('uploadSource') as string) || 'manual';
-
-  if (!file) {
-    return NextResponse.json(
-      { error: 'File is required', code: 'MISSING_FILE' },
-      { status: 400 }
-    );
-  }
-
-  if (!userId) {
-    return NextResponse.json(
-      { error: 'User ID is required', code: 'MISSING_USER_ID' },
-      { status: 400 }
-    );
-  }
-
-  const fileBuffer = await file.arrayBuffer();
-  const fileSize = fileBuffer.byteLength;
-  const fileName = file.name;
-  const mimeType = file.type;
-
+  const upload = await readUpload(request, "file", UPLOAD_KINDS, MAX_FILE_SIZE);
+  if (!upload.ok) return upload.response;
+  const claimed = upload.form.get("userId");
+  const source = String(upload.form.get("uploadSource") ?? "manual");
   return {
-    fileName,
-    fileSize,
-    fileType: extractFileType(fileName, mimeType),
-    userId: userId as string,
-    uploadSource,
-    fileBuffer: Buffer.from(fileBuffer)
+    fileName: upload.file.name.slice(0, 255) || `upload.${upload.kind}`,
+    fileSize: upload.bytes.byteLength,
+    fileType: upload.kind as string,
+    userId: typeof claimed === "string" ? claimed : undefined,
+    uploadSource: SOURCES.has(source) ? source : "manual",
+    fileBuffer: Buffer.from(upload.bytes),
   };
 }
 
 async function handleJSONUpload(request: NextRequest) {
-  const body = await request.json();
-  const { file, fileName, fileType, userId, uploadSource = 'manual' } = body;
-
-  if (!file || !fileName || !userId) {
-    return NextResponse.json(
-      { error: 'File, fileName, and userId are required', code: 'MISSING_REQUIRED_FIELDS' },
-      { status: 400 }
-    );
+  const parsed = await readJson(request, JsonUpload, Math.ceil((MAX_FILE_SIZE * 4) / 3) + 64 * 1024);
+  if (!parsed.ok) return parsed.response;
+  const fileBuffer = Buffer.from(parsed.data.file, "base64");
+  const verdict = checkUpload(new Uint8Array(fileBuffer), UPLOAD_KINDS, MAX_FILE_SIZE);
+  if (!verdict.ok) {
+    return NextResponse.json({ error: verdict.error, code: verdict.code }, { status: verdict.status });
   }
-
-  const fileBuffer = Buffer.from(file, 'base64');
-  const fileSize = fileBuffer.length;
-  const detectedFileType = extractFileType(fileName, fileType);
-
   return {
-    fileName,
-    fileSize,
-    fileType: detectedFileType,
-    userId: userId as string,
-    uploadSource,
-    fileBuffer
+    fileName: parsed.data.fileName,
+    fileSize: fileBuffer.length,
+    fileType: verdict.kind as string,
+    userId: parsed.data.userId,
+    uploadSource: parsed.data.uploadSource,
+    fileBuffer,
   };
 }
 
