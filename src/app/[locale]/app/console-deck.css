@@ -1473,12 +1473,12 @@
   cursor: pointer;
 }
 .vc-pop-actions button[data-kind="approve"] {
-  background: var(--vc-ink);
-  color: var(--vc-bg, var(--vc-paper));
-  border-color: var(--vc-ink);
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  border-color: var(--vc-lime);
 }
 .vc-pop-actions button:disabled { opacity: 0.5; cursor: progress; }
-.vc-pop-actions button:focus-visible { outline: 2px solid var(--vc-accent, var(--vc-ink)); outline-offset: 2px; }
+.vc-pop-actions button:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 2px; }
 .vc-pop-error {
   grid-column: 2;
   margin: 4px 0 0;
