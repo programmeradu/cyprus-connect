@@ -281,6 +281,7 @@ export default function CbamPage() {
 
             {draft && draft.bySupplier.length > 0 && (
               <Plate label="By supplier" flush>
+                <div className="vck-cbam-table">
                 <ConsoleTable
                   rows={draft.bySupplier}
                   rowKey={(r) => r.supplierName}
@@ -291,12 +292,15 @@ export default function CbamPage() {
                     { key: "e", header: "Embedded tCO₂e", numeric: true, render: (r) => n(r.embeddedT, 2) },
                   ]}
                 />
+                </div>
               </Plate>
             )}
 
             <Plate label={`Import lines ${data.year}`} meta={String(data.lines.length)} action={<Btn variant="text" onClick={downloadTemplate}>CSV template</Btn>} flush
               foot="Default values are indicative, not the Commission's definitive table. Replace them with supplier actual data before you sign.">
-              <ConsoleTable rows={data.lines} rowKey={(l) => String(l.id)} columns={columns} empty="No lines for this year." />
+              <div className="vck-cbam-table vck-cbam-table-wide">
+                <ConsoleTable rows={data.lines} rowKey={(l) => String(l.id)} columns={columns} empty="No lines for this year." />
+              </div>
             </Plate>
           </>
         )

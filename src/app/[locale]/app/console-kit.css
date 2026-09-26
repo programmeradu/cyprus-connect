@@ -1413,3 +1413,7 @@
 .vc .vck-cbam-note[data-tone="warn"] { color: var(--vc-warn, var(--vc-ink)); }
 .vc .vck-cbam-hash { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; color: var(--vc-ink-3); }
 .vc .vck-cbam-year { min-height: 38px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--vc-rule); background: var(--vc-well); color: var(--vc-ink); font-size: 14px; }
+/* CBAM tables scroll sideways on phones instead of splitting words mid-name. */
+.vc .vck-cbam-table .vck-table td { overflow-wrap: normal; word-break: normal; }
+.vc .vck-cbam-table .vck-table { min-width: 520px; }
+.vc .vck-cbam-table-wide .vck-table { min-width: 760px; }
