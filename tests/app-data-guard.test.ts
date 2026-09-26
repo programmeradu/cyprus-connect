@@ -1,0 +1,60 @@
+import { describe, expect, it } from "vitest";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
+
+/**
+ * Every /app page reads and writes workspace data through the shared store
+ * (src/components/app/console/workspace-store.ts), never with its own fetch.
+ * Pages not yet moved are listed with the plan phase that moves them; the
+ * list may only shrink.
+ */
+const ROOT = join(process.cwd(), "src/app/[locale]/app");
+
+const NOT_YET_MOVED: Record<string, string> = {
+  "actions/page.tsx": "phase 3",
+  "analytics/page.tsx": "phase 2",
+  "calculator/page.tsx": "phase 4",
+  "compliance/page.tsx": "phase 3",
+  "grant-alerts/page.tsx": "phase 2",
+  "insights/page.tsx": "phase 4",
+  "integrations/page.tsx": "phase 4",
+  "learn/[id]/lesson/[lessonId]/page.tsx": "phase 4",
+  "learn/[id]/page.tsx": "phase 4",
+  "learn/generate/page.tsx": "phase 4",
+  "learn/page.tsx": "phase 4",
+  "marketplace/[id]/page.tsx": "phase 3",
+  "marketplace/admin/page.tsx": "phase 3",
+  "marketplace/page.tsx": "phase 3",
+  "onboarding/page.tsx": "phase 3",
+  "settings/page.tsx": "phase 2",
+  "settings/privacy/page.tsx": "phase 2",
+  "studio/page.tsx": "phase 4",
+  "agents/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",
+  "cbam/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",
+};
+
+function pages(dir: string): string[] {
+  return readdirSync(dir).flatMap((name) => {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) return pages(p);
+    return name.endsWith(".tsx") ? [p] : [];
+  });
+}
+
+describe("app pages use the shared workspace store", () => {
+  const files = pages(ROOT).map((p) => relative(ROOT, p).split("\\").join("/"));
+
+  it("no moved page calls fetch directly", () => {
+    const offenders = files.filter(
+      (f) => !(f in NOT_YET_MOVED) && /\bfetch\s*\(/.test(readFileSync(join(ROOT, f), "utf8")),
+    );
+    expect(offenders).toEqual([]);
+  });
+
+  it("the not-yet-moved list only names pages that still fetch", () => {
+    const stale = Object.keys(NOT_YET_MOVED).filter(
+      (f) => !files.includes(f) || !/\bfetch\s*\(/.test(readFileSync(join(ROOT, f), "utf8")),
+    );
+    expect(stale).toEqual([]);
+  });
+});

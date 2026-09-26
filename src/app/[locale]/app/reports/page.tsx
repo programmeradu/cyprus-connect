@@ -7,8 +7,8 @@
  * is the proof that an approval produced something a person can open.
  */
 
-import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { ConsolePage, Plate, ConsoleTable, State, Empty } from "@/components/app/console/kit";
 import type { Column } from "@/components/app/console/kit";
 
@@ -29,11 +29,6 @@ const TONE: Record<string, "good" | "warn" | "idle"> = {
   draft: "idle",
 };
 
-function authHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
 function formatDay(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
@@ -41,34 +36,8 @@ function formatDay(value: string): string {
 }
 
 export default function ReportsPage() {
-  const [rows, setRows] = useState<ReportRow[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setError(null);
-    try {
-      const res = await fetch("/api/console/reports", {
-        headers: { Accept: "application/json", ...authHeaders() },
-        credentials: "include",
-        cache: "no-store",
-      });
-      if (res.status === 401) {
-        window.location.href = "/auth";
-        return;
-      }
-      const text = await res.text();
-      if (!res.ok) throw new Error(text.slice(0, 160) || String(res.status));
-      const body = JSON.parse(text) as { reports: ReportRow[] };
-      setRows(body.reports ?? []);
-    } catch {
-      setRows([]);
-      setError("The console could not read your deliverables. Try again in a moment.");
-    }
-  }, []);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const { data, error, reload } = useWorkspaceResource<{ reports: ReportRow[] }>("/api/console/reports");
+  const rows = data ? data.reports ?? [] : error ? [] : null;
 
   const columns: Column<ReportRow>[] = [
     {
@@ -113,7 +82,7 @@ export default function ReportsPage() {
       purpose="Every report an agent drafted for this workspace. Open one to review it, then export it."
       loading={rows === null}
       error={error}
-      onRetry={() => void load()}
+      onRetry={reload}
     >
       <Plate label="Reports" meta={rows ? `${rows.length}` : undefined} flush>
         {rows && rows.length === 0 ? (

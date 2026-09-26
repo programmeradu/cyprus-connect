@@ -1,7 +1,7 @@
 "use client";
 
 import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
-import { useState, useEffect } from "react";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/lib/user-context";
 import {
@@ -28,30 +28,9 @@ interface LeaderboardEntry {
 export default function LeaderboardPage() {
   const t = useTranslations("dashboard.leaderboard");
   const { user } = useUser();
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadLeaderboard();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  const loadLeaderboard = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/leaderboard?limit=50");
-      if (!response.ok) throw new Error("Failed to load leaderboard");
-      const data = await response.json();
-      setLeaderboard(data);
-    } catch (e) {
-      console.error("Failed to load leaderboard:", e);
-      setError("Could not load the leaderboard. Check your connection and try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data, error, loading: isLoading, reload: loadLeaderboard } =
+    useWorkspaceResource<LeaderboardEntry[]>("/api/leaderboard?limit=50");
+  const leaderboard = data ?? [];
 
   const currentUser = user ? leaderboard.find((entry) => entry.userId === user.id) : null;
   const topThree = leaderboard.slice(0, 3);

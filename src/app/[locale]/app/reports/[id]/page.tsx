@@ -8,9 +8,10 @@
  * gap stated in the open. A person moves it to review, then to final.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { ConsolePage, Plate, Btn, State } from "@/components/app/console/kit";
 
 interface Figure {
@@ -46,68 +47,28 @@ const TONE: Record<string, "good" | "warn" | "idle"> = {
   draft: "idle",
 };
 
-function authHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
-
 export default function ReportPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id;
-  const [report, setReport] = useState<Report | null>(null);
-  const [workspaceName, setWorkspaceName] = useState("This workspace");
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const path = id ? `/api/console/reports/${id}` : null;
+  const resource = useWorkspaceResource<{ report: Report; workspace: { name: string } }>(path);
+  const action = useWorkspaceAction();
+  const [exporting, setExporting] = useState(false);
+  const report = resource.data?.report ?? null;
+  const workspaceName = resource.data?.workspace?.name ?? "This workspace";
+  const error = resource.error ?? action.error;
+  const busy = action.busy || exporting;
+  const load = resource.reload;
 
-  const load = useCallback(async () => {
-    if (!id) return;
-    setError(null);
-    try {
-      const res = await fetch(`/api/console/reports/${id}`, {
-        headers: { Accept: "application/json", ...authHeaders() },
-        credentials: "include",
-        cache: "no-store",
-      });
-      if (res.status === 401) {
-        window.location.href = "/auth";
-        return;
-      }
-      const text = await res.text();
-      if (!res.ok) throw new Error(text.slice(0, 160) || String(res.status));
-      const body = JSON.parse(text) as { report: Report; workspace: { name: string } };
-      setReport(body.report);
-      setWorkspaceName(body.workspace?.name ?? "This workspace");
-    } catch {
-      setError("This report could not be read. It may belong to another workspace.");
-    }
-  }, [id]);
-
-  useEffect(() => {
-    void load();
-  }, [load]);
-
+  // Moving a report changes the list, the dashboard and the activity feed.
   const setStatus = async (status: string) => {
-    if (!id) return;
-    setBusy(true);
-    try {
-      const res = await fetch(`/api/console/reports/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", ...authHeaders() },
-        credentials: "include",
-        body: JSON.stringify({ status }),
-      });
-      if (res.ok) {
-        const body = (await res.json()) as { report: Report };
-        setReport(body.report);
-      }
-    } finally {
-      setBusy(false);
-    }
+    if (!path) return;
+    await action.run(path, { method: "PATCH", body: { status }, invalidates: ["/api/console/reports"] });
   };
 
   const exportPdf = async () => {
     if (!report) return;
-    setBusy(true);
+    setExporting(true);
     try {
       const { buildReportPdf } = await import("@/lib/pdf/report-document");
       const doc = buildReportPdf({
@@ -122,7 +83,7 @@ export default function ReportPage() {
       });
       doc.save(`${report.framework}-report-${report.periodLabel}.pdf`.replace(/\s+/g, "-"));
     } finally {
-      setBusy(false);
+      setExporting(false);
     }
   };
 
