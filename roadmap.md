@@ -52,5 +52,6 @@
 - [x] 42 account-data endpoints bound to the signed-in account (403 on someone else's ID)
 - [x] Deleted codebase-download, Stripe reset, credit-award and schema-setup endpoints
 - [x] Leaderboard no longer returns emails; AI stream rate-limited
-- [ ] Manual review of remaining non-account endpoints (e.g. `/api/ocr/parse` 500s) and admin-only routes
+- [x] Deleted migration endpoint (had a password written in code); receipt reading fixed (PDF + photo), tied to signed-in account
+- [ ] Receipt reading: photos need GEMINI_API_KEY; bill parser misses kWh/account number on some layouts
 - [ ] Rotate any credentials that may have leaked while `/api/users` was open (published site too)
