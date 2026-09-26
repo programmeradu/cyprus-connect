@@ -6,6 +6,7 @@
  * it waits in the review queue until a person approves that exact text.
  */
 
+import { workspaceRequest } from "./workspace-store";
 import { useState } from "react";
 import { Btn, Plate, State } from "@/components/app/console/kit";
 
@@ -14,15 +15,12 @@ export interface SentRequest { supplierName: string; email: string; sentAt: stri
 export interface Declarant { legalName: string | null; eori: string | null; accountNumber: string | null; replyToEmail: string | null }
 
 async function put(body: unknown): Promise<string | null> {
-  const res = await fetch("/api/console/cbam/contacts", {
-    method: "PUT",
-    credentials: "include",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (res.ok) return null;
-  const b = await res.json().catch(() => ({}));
-  return b.message ?? "Could not save.";
+  try {
+    await workspaceRequest("/api/console/cbam/contacts", { method: "PUT", body });
+    return null;
+  } catch (e) {
+    return e instanceof Error && e.message ? e.message : "Could not save.";
+  }
 }
 
 const when = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -162,15 +160,10 @@ export function PendingEmailsPlate({ emails, onDecided }: { emails: PendingEmail
   const decide = async (e: PendingEmail, decision: "approve" | "reject") => {
     setBusy(e.taskId);
     try {
-      const res = await fetch(`/api/console/tasks/${e.taskId}`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ decision }),
-      });
-      const b = await res.json().catch(() => ({}));
-      if (!res.ok) onDecided(b.error ?? "The decision was not saved.", "warn");
-      else onDecided(decision === "approve" ? `Sent to ${e.to}.` : `Email to ${e.supplierName} rejected. Border will not send it.`, decision === "approve" ? "good" : "warn");
+      await workspaceRequest(`/api/console/tasks/${e.taskId}`, { method: "POST", body: { decision } });
+      onDecided(decision === "approve" ? `Sent to ${e.to}.` : `Email to ${e.supplierName} rejected. Border will not send it.`, decision === "approve" ? "good" : "warn");
+    } catch (err) {
+      onDecided(err instanceof Error && err.message ? err.message : "The decision was not saved.", "warn");
     } finally {
       setBusy(null);
     }
