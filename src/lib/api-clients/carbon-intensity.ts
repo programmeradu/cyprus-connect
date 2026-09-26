@@ -110,15 +110,15 @@ export class CarbonIntensityClient {
     const current = await this.getCarbonIntensity(zone);
     const forecast: CarbonIntensityData[] = [];
     
-    // Generate 24-hour forecast with ±10% variation
+    // No forecast source for this zone: hold the current reading flat and mark
+    // every hour as an estimate. Random noise would look like real data.
     for (let i = 0; i < 24; i++) {
-      const variation = 0.9 + Math.random() * 0.2; // 90-110% of current
       forecast.push({
         ...current,
-        carbonIntensity: Math.round(current.carbonIntensity * variation),
+        carbonIntensity: Math.round(current.carbonIntensity),
         datetime: new Date(Date.now() + i * 3600000).toISOString(),
         isEstimated: true,
-        estimationMethod: "statistical_forecast",
+        estimationMethod: "persistence",
       });
     }
 

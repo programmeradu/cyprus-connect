@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     // Calculate compliance score
     const totalRegs = regulations.length;
     const compliantRegs = regulations.filter(r => r.status === 'compliant').length;
-    const score = totalRegs > 0 ? Math.round((compliantRegs / totalRegs) * 100) : 85;
+    const score = totalRegs > 0 ? Math.round((compliantRegs / totalRegs) * 100) : null; // No regulations tracked yet: no score, not a made-up one.
 
     // Parse JSON fields
     const parsedRegulations = regulations.map(reg => ({
