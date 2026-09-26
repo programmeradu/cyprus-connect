@@ -14,6 +14,9 @@ const TOOL_LABELS: Record<string, { verb: string; kind: "read" | "write" | "outw
   record_fact: { verb: "Recorded a fact with its source", kind: "write" },
   save_cbam_draft: { verb: "Saved the CBAM declaration draft", kind: "write" },
   sign_cbam_declaration: { verb: "Signature of the CBAM declaration", kind: "legal" },
+  read_cbam_suppliers: { verb: "Read supplier contacts and past requests", kind: "read" },
+  withdraw_approval_request: { verb: "Withdrew an out-of-date request", kind: "write" },
+  send_supplier_request: { verb: "Email to a supplier asking for CBAM data", kind: "outward" },
 };
 
 export const RISK_LABELS = ["Read only", "Internal write", "Outward action", "Legal or financial"] as const;

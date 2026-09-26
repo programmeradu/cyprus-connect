@@ -8,11 +8,20 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { activityEvents, cbamDeclarations, cbamImportLines } from "@/db/schema";
+import {
+  activityEvents,
+  agentTasks,
+  cbamDeclarants,
+  cbamDeclarations,
+  cbamImportLines,
+  cbamSupplierRequests,
+  cbamSuppliers,
+} from "@/db/schema";
 import { resolveConsoleSession } from "@/lib/console-session";
-import { parseImportCsv } from "@/lib/agents/cbam-calc";
+import { parseImportCsv, type CbamDraft } from "@/lib/agents/cbam-calc";
+import { exportGaps } from "@/lib/agents/cbam-registry-xml";
 import { sha256Hex, stableStringify } from "@/lib/agents/hash";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +46,7 @@ export async function GET(req: Request) {
   const asked = Number(new URL(req.url).searchParams.get("year"));
   const year = years.includes(asked) ? asked : years[0] ?? new Date().getUTCFullYear();
 
-  const [lines, [decl]] = await Promise.all([
+  const [lines, [decl], suppliers, [declarant], requests] = await Promise.all([
     db
       .select()
       .from(cbamImportLines)
@@ -48,12 +57,45 @@ export async function GET(req: Request) {
       .from(cbamDeclarations)
       .where(and(eq(cbamDeclarations.workspaceId, ws), eq(cbamDeclarations.year, year)))
       .limit(1),
+    db.select().from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ws)).orderBy(asc(cbamSuppliers.supplierName)),
+    db.select().from(cbamDeclarants).where(eq(cbamDeclarants.workspaceId, ws)).limit(1),
+    db
+      .select({ supplierName: cbamSupplierRequests.supplierName, email: cbamSupplierRequests.email, sentAt: cbamSupplierRequests.sentAt, approvedBy: cbamSupplierRequests.approvedBy })
+      .from(cbamSupplierRequests)
+      .where(and(eq(cbamSupplierRequests.workspaceId, ws), eq(cbamSupplierRequests.year, year)))
+      .orderBy(desc(cbamSupplierRequests.sentAt))
+      .limit(200),
   ]);
+
+  const openEmails = await db
+    .select({ id: agentTasks.id, pendingInput: agentTasks.pendingInput, createdAt: agentTasks.createdAt, result: agentTasks.result })
+    .from(agentTasks)
+    .where(and(eq(agentTasks.workspaceId, ws), eq(agentTasks.status, "open"), eq(agentTasks.pendingTool, "send_supplier_request")))
+    .orderBy(asc(agentTasks.id));
+  const pendingEmails = openEmails.flatMap((t) => {
+    try {
+      const i = JSON.parse(t.pendingInput ?? "{}") as { year: number; supplierName: string; to: string; replyTo: string | null; subject: string; body: string };
+      return i.year === year ? [{ taskId: t.id, supplierName: i.supplierName, to: i.to, replyTo: i.replyTo, subject: i.subject, body: i.body, lastError: t.result }] : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const draftObj = decl ? (JSON.parse(decl.draft) as CbamDraft) : null;
+  const who = { legalName: declarant?.legalName ?? null, eori: declarant?.eori ?? null, accountNumber: declarant?.accountNumber ?? null };
 
   return NextResponse.json({
     year,
     years,
     lines,
+    suppliers: suppliers.map((c) => ({ supplierName: c.supplierName, email: c.email, contactName: c.contactName })),
+    declarant: { ...who, replyToEmail: declarant?.replyToEmail ?? null },
+    requests,
+    pendingEmails,
+    exportGaps:
+      decl && draftObj
+        ? exportGaps(draftObj, who, { status: decl.status, draftHash: decl.draftHash, signedBy: decl.signedBy, signedAt: null, signedHash: decl.signedHash })
+        : null,
     declaration: decl
       ? {
           status: decl.status,

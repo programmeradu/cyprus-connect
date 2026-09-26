@@ -98,7 +98,10 @@ export class AgentRuntime {
               agentKey: this.ctx.agentKey,
               kind: "approval",
               title,
-              detail: `${def.description} Run #${this.ctx.runId}, step ${seq}. Fingerprint ${inputHash.slice(0, 12)}.`,
+              detail: (
+                (def.approvalDetail ? `${(def.approvalDetail as (i: unknown) => string)(parsed.data)}\n\n` : "") +
+                `${def.description} Run #${this.ctx.runId}, step ${seq}. Fingerprint ${inputHash.slice(0, 12)}.`
+              ).slice(0, 20_000),
               severity: def.risk >= 3 ? "high" : "normal",
               status: "open",
               runId: this.ctx.runId,

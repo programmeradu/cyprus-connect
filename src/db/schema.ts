@@ -759,6 +759,44 @@ export const cbamDeclarations = pgTable('cbam_declarations', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+/** Who to email at each CBAM supplier. One row per supplier name in a workspace. */
+export const cbamSuppliers = pgTable('cbam_suppliers', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  supplierName: text('supplier_name').notNull(),
+  email: text('email').notNull(),
+  contactName: text('contact_name'),
+  updatedBy: text('updated_by'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/** Every supplier data request that was approved and actually sent. */
+export const cbamSupplierRequests = pgTable('cbam_supplier_requests', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  year: integer('year').notNull(),
+  supplierName: text('supplier_name').notNull(),
+  email: text('email').notNull(),
+  subject: text('subject').notNull(),
+  bodyHash: text('body_hash').notNull(),
+  provider: text('provider').notNull(),
+  providerId: text('provider_id'),
+  approvedBy: text('approved_by').notNull(),
+  runId: integer('run_id'),
+  sentAt: timestamp('sent_at').notNull().defaultNow(),
+});
+
+/** The importer's identity as it appears on the Registry export file. */
+export const cbamDeclarants = pgTable('cbam_declarants', {
+  workspaceId: text('workspace_id').primaryKey(),
+  legalName: text('legal_name'),
+  eori: text('eori'),
+  accountNumber: text('account_number'),
+  replyToEmail: text('reply_to_email'),
+  updatedBy: text('updated_by'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 export const dataConnections = pgTable('data_connections', {
   id: text('id').primaryKey(),
   workspaceId: text('workspace_id').notNull(),
