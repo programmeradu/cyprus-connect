@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 
 const PATH = "/api/grant-alerts/subscribe";
@@ -18,15 +19,11 @@ interface Match {
   notified_at: string | null;
 }
 
-const SOURCE_LABELS: Record<string, string> = {
-  "eu-funding-tenders": "EU Funding & Tenders Portal",
-  "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
-  "invest-cyprus": "Invest Cyprus",
-  "kebe-oeb": "OEB / KEBE",
-  "accelerators": "Accelerators",
-};
+const SOURCE_KEYS = ["eu-funding-tenders", "research-gov-cy", "invest-cyprus", "kebe-oeb", "accelerators"] as const;
 
 export default function GrantAlertsPage() {
+  const t = useTranslations("dashboard.grantAlerts");
+  const sourceLabel = (s: string) => ((SOURCE_KEYS as readonly string[]).includes(s) ? t(`sources.${s}`) : s);
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const feed = useWorkspaceResource<{ matches?: Match[] }>(PATH);
@@ -37,12 +34,12 @@ export default function GrantAlertsPage() {
     e.preventDefault();
     setStatus(null);
     const j = await action.run<{ subscribed: string }>(PATH, { method: "POST", body: { email }, invalidates: [PATH] });
-    if (j) setStatus(`Subscribed ${j.subscribed}. You will receive an email per new match.`);
+    if (j) setStatus(t("subscribed", { email: j.subscribed }));
   }
 
   async function unsubscribe() {
     if (!email) {
-      setStatus("Enter the email address you subscribed with.");
+      setStatus(t("enterEmail"));
       return;
     }
     setStatus(null);
@@ -50,20 +47,20 @@ export default function GrantAlertsPage() {
       method: "DELETE",
       invalidates: [PATH],
     });
-    if (j) setStatus(`Unsubscribed ${j.unsubscribed}.`);
+    if (j) setStatus(t("unsubscribed", { email: j.unsubscribed }));
   }
 
   const columns: Column<Match>[] = [
     {
       key: "title",
-      header: "Call",
+      header: t("columns.call"),
       render: (m) => (
         <div className="min-w-0">
           <a href={m.url} target="_blank" rel="noreferrer" className="font-medium hover:underline break-words">
             {m.title}
           </a>
           <p className="vck-meta mt-0.5">
-            {SOURCE_LABELS[m.source] ?? m.source}
+            {sourceLabel(m.source)}
             {m.program ? ` · ${m.program}` : ""}
           </p>
         </div>
@@ -71,18 +68,18 @@ export default function GrantAlertsPage() {
     },
     {
       key: "deadline",
-      header: "Deadline",
+      header: t("columns.deadline"),
       hideOnMobile: true,
       render: (m) => <span>{m.deadline ?? "—"}</span>
     },
     {
       key: "seen",
-      header: "First seen",
+      header: t("columns.firstSeen"),
       render: (m) => <span className="vck-num">{new Date(m.first_seen_at).toLocaleDateString()}</span>
     },
     {
       key: "score",
-      header: "Score",
+      header: t("columns.score"),
       numeric: true,
       render: (m) => <span>{m.score.toFixed(2)}</span>
     }
@@ -95,12 +92,12 @@ export default function GrantAlertsPage() {
       onRetry={feed.reload}
       header={
         <PageHeader
-          title="EU and Cyprus grant alerts"
-          purpose="Get an email the moment a new call from the EU Funding & Tenders Portal, the Cyprus Research and Innovation Foundation, Invest Cyprus, OEB / KEBE, or a climate accelerator matches Vuneli's Cyprus SME sustainability focus."
+          title={t("title")}
+          purpose={t("purpose")}
         />
       }
     >
-      <Section title="Subscribe">
+      <Section title={t("subscribe")}>
         <form onSubmit={subscribe} className="vck-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
           <input
             type="email"
@@ -108,25 +105,26 @@ export default function GrantAlertsPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@yourcompany.cy"
+            aria-label={t("emailLabel")}
             className="h-11 flex-1 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
-          <button type="submit" disabled={action.busy} className="vck-btn vck-btn-primary">Subscribe</button>
-          <button type="button" disabled={action.busy} onClick={unsubscribe} className="vck-btn">Unsubscribe</button>
+          <button type="submit" disabled={action.busy} className="vck-btn vck-btn-primary">{t("subscribe")}</button>
+          <button type="button" disabled={action.busy} onClick={unsubscribe} className="vck-btn">{t("unsubscribe")}</button>
         </form>
         {(status || action.error) && (
           <p className="vck-meta mt-3 break-words" role="status">{action.error ?? status}</p>
         )}
       </Section>
 
-      <Section title="Recent matches">
+      <Section title={t("recent")}>
         <DataTable
           columns={columns}
           rows={matches}
           rowKey={(m) => String(m.id)}
           empty={
             <Empty
-              title="No matches recorded yet"
-              body="The hourly job checks EU and Cyprus funding sources for calls that match Vuneli's SME sustainability focus. New calls will appear here as soon as they're found."
+              title={t("emptyTitle")}
+              body={t("emptyBody")}
             />
           }
         />

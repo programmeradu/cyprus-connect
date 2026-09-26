@@ -828,6 +828,32 @@
         "noSaved": "Library is empty",
         "saveHint": "Open an image and choose \"Add to library\" to keep it here."
       }
+    },
+    "grantAlerts": {
+      "title": "EU and Cyprus grant alerts",
+      "purpose": "Get an email when a new call from the EU Funding & Tenders Portal, the Cyprus Research and Innovation Foundation, Invest Cyprus, OEB / KEBE or a climate accelerator matches Vuneli's Cyprus SME sustainability focus.",
+      "subscribe": "Subscribe",
+      "unsubscribe": "Unsubscribe",
+      "emailLabel": "Email address",
+      "recent": "Recent matches",
+      "subscribed": "Subscribed {email}. You will get one email for each new match.",
+      "unsubscribed": "Unsubscribed {email}.",
+      "enterEmail": "Enter the email address you subscribed with.",
+      "columns": {
+        "call": "Call",
+        "deadline": "Deadline",
+        "firstSeen": "First seen",
+        "score": "Score"
+      },
+      "emptyTitle": "No matches recorded yet",
+      "emptyBody": "Every hour we check EU and Cyprus funding sources for calls that match Vuneli's SME sustainability focus. New calls appear here as soon as they are found.",
+      "sources": {
+        "eu-funding-tenders": "EU Funding & Tenders Portal",
+        "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
+        "invest-cyprus": "Invest Cyprus",
+        "kebe-oeb": "OEB / KEBE",
+        "accelerators": "Accelerators"
+      }
     }
   },
   "onboarding": {
