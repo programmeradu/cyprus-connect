@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
@@ -70,12 +71,11 @@ export async function POST(request: NextRequest) {
         // Add small delay between generations to avoid rate limits
         await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error: any) {
-        console.error(`Failed to generate banner for project ${project.id}:`, error);
         results.push({
           projectId: project.id,
           projectName: project.name,
           success: false,
-          error: error.message
+          error: "Banner could not be generated", ref: logger("api.marketplace.projects.bulk-generate-banners").error("banner failed", error)
         });
         failCount++;
       }
@@ -89,9 +89,8 @@ export async function POST(request: NextRequest) {
       results
     });
   } catch (error: any) {
-    console.error("Error in bulk banner generation:", error);
     return NextResponse.json(
-      { error: "Failed to bulk generate banners", details: undefined },
+      { error: "Failed to bulk generate banners", ref: logger("api.marketplace.projects.bulk-generate-banners").error('request failed', error) },
       { status: 500 }
     );
   }

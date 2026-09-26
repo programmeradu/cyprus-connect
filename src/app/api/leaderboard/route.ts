@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, userActions, actions } from '@/db/schema';
@@ -73,9 +74,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(leaderboardWithActions, { status: 200 });
   } catch (error) {
-    console.error('GET leaderboard error:', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error') },
+      { error: 'Internal server error', ref: logger("api.leaderboard").error('request failed', error) },
       { status: 500 }
     );
   }

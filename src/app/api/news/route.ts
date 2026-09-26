@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextResponse } from "next/server";
 
 export type NewsItem = {
@@ -119,9 +120,8 @@ export async function GET(request: Request) {
       },
     });
   } catch (error: any) {
-    console.error("News API error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to fetch live news" },
+      { error: "Failed to fetch live news", ref: logger("api.news").error('request failed', error) },
       { status: 500 }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 
 interface SMEMetrics {
@@ -137,7 +138,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Compliance check failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        ref: logger("api.compliance.check-requirements").error('request failed', error)
       },
       { status: 500 }
     );

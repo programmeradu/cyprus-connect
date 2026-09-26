@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserSubscription, ensureFreeSubscription } from '@/lib/stripe/utils';
 import { auth } from '@/lib/auth';
@@ -24,9 +25,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ subscription, plan });
   } catch (error: any) {
-    console.error('Get subscription error:', error);
     return NextResponse.json(
-      { error: 'Failed to get subscription', details: error.message },
+      { error: 'Failed to get subscription', ref: logger("api.stripe.subscription").error('request failed', error) },
       { status: 500 },
     );
   }
@@ -62,9 +62,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ subscription: updated, message: 'Subscription updated successfully' });
   } catch (error: any) {
-    console.error('Update subscription error:', error);
     return NextResponse.json(
-      { error: 'Failed to update subscription', details: getStripeErrorMessage(error) },
+      { error: 'Failed to update subscription', ref: logger("api.stripe.subscription").error('request failed', error) },
       { status: 500 },
     );
   }
@@ -104,9 +103,8 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ subscription: canceled, message: 'Subscription canceled' });
   } catch (error: any) {
-    console.error('Cancel subscription error:', error);
     return NextResponse.json(
-      { error: 'Failed to cancel subscription', details: getStripeErrorMessage(error) },
+      { error: 'Failed to cancel subscription', ref: logger("api.stripe.subscription").error('request failed', error) },
       { status: 500 },
     );
   }

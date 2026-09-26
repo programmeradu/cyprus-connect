@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { offsetProjects } from "@/db/schema";
@@ -47,9 +48,8 @@ export async function GET(request: NextRequest) {
       }))
     });
   } catch (error: any) {
-    console.error("Error fetching projects:", error);
     return NextResponse.json(
-      { error: "Failed to fetch projects", details: error.message },
+      { error: "Failed to fetch projects", ref: logger("api.marketplace.projects").error('request failed', error) },
       { status: 500 }
     );
   }

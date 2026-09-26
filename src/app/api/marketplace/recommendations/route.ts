@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { offsetProjects, user, emissions } from "@/db/schema";
@@ -150,9 +151,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ recommendations: topRecommendations });
   } catch (error: any) {
-    console.error("Error generating recommendations:", error);
     return NextResponse.json(
-      { error: "Failed to generate recommendations", details: error.message },
+      { error: "Failed to generate recommendations", ref: logger("api.marketplace.recommendations").error('request failed', error) },
       { status: 500 }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { documents, user } from '@/db/schema';
@@ -107,10 +108,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(userDocuments, { status: 200 });
 
   } catch (error) {
-    console.error('GET error:', error);
     return NextResponse.json(
       { 
-        error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        error: 'Internal server error', ref: logger("api.documents").error('request failed', error),
         code: 'INTERNAL_SERVER_ERROR'
       },
       { status: 500 }
