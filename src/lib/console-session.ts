@@ -11,6 +11,7 @@ import { db } from "@/db";
 import { workspaces } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { loadCompanyWorkspace } from "@/lib/company.server";
 import { QA_ACCOUNT, QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 
 export interface ConsoleSession {
@@ -61,5 +62,6 @@ export async function resolveConsoleSession(
     };
   }
 
-  return { ok: true, session: { account, workspace } };
+  // Company facts come from their one home (see company.server.ts).
+  return { ok: true, session: { account, workspace: await loadCompanyWorkspace(account.id, workspace) } };
 }
