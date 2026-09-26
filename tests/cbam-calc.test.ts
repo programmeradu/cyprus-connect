@@ -12,6 +12,8 @@ describe("CBAM maths", () => {
     expect(lookupCn("7601 10 00")?.code).toBe("7601");
     expect(lookupCn("0901")).toBeNull();
     expect(lookupCn("76")).toBeNull();
+    expect(lookupCn("2523 29")?.code).toBe("2523 29 00");
+    expect(lookupCn("2523")).toBeNull(); // ambiguous: several cement codes
   });
 
   it("uses supplier actual values and skips out-of-scope indirect", () => {

@@ -86,7 +86,11 @@ export interface CbamDraft {
 
 const digits = (code: string) => code.replace(/\D/g, "");
 
-/** Longest CN prefix in our table that the declared code starts with. */
+/**
+ * The table entry for a declared CN code. A longer declared code matches its
+ * table heading ("7601 10 00" -> "7601"); a shorter one ("2523 29") matches a
+ * longer table code only when exactly one entry fits.
+ */
 export function lookupCn(code: string): CnCode | null {
   const d = digits(code);
   if (d.length < 4) return null;
@@ -95,7 +99,9 @@ export function lookupCn(code: string): CnCode | null {
     const e = digits(entry.code);
     if (d.startsWith(e) && (!best || e.length > digits(best.code).length)) best = entry;
   }
-  return best;
+  if (best) return best;
+  const wider = CN_CODES.filter((entry) => digits(entry.code).startsWith(d));
+  return wider.length === 1 ? wider[0] : null;
 }
 
 const round = (n: number, dp = 4) => Math.round(n * 10 ** dp) / 10 ** dp;
