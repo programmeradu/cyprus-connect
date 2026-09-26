@@ -6,7 +6,7 @@
  * and one-click advice that must cite those facts. No estimates, no fillers.
  */
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
@@ -43,8 +43,6 @@ export default function InsightsPage() {
   const loc = locale === "el" ? "el-CY" : "en-GB";
   const data = useWorkspaceResource<InsightsData>(PATH);
   const advise = useWorkspaceAction();
-  const adviceRes = useWorkspaceResource<Advice>(null);
-  void adviceRes;
 
   const time = useMemo(() => new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit" }), [loc]);
   const monthFmt = useMemo(() => new Intl.DateTimeFormat(loc, { month: "short", year: "2-digit", timeZone: "UTC" }), [loc]);
@@ -73,7 +71,7 @@ export default function InsightsPage() {
   const prev = months[months.length - 2];
   const change = last && prev && prev.totalTonnes > 0 ? ((last.totalTonnes - prev.totalTonnes) / prev.totalTonnes) * 100 : null;
 
-  const [advice, setAdvice] = useAdviceState();
+  const [advice, setAdvice] = useState<Advice | null>(null);
   const writeAdvice = async () => {
     const res = await advise.run<Advice>(`${PATH}/advice`, { invalidates: [] });
     if (res) setAdvice(res);
@@ -228,7 +226,3 @@ export default function InsightsPage() {
   );
 }
 
-import { useState } from "react";
-function useAdviceState() {
-  return useState<Advice | null>(null);
-}
