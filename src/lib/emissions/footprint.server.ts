@@ -51,7 +51,9 @@ async function resolveLine(key: FootprintKey, value: number, region: string, liv
       source: f ? `Climatiq: ${f.name}, ${f.source} ${f.year} (${f.region})` : "Climatiq emission factor",
     };
   } catch (err) {
-    log.warn?.(`Climatiq factor unavailable for ${key}, using reference factor`, err);
+    log.warn(`Climatiq factor unavailable for ${key}, using reference factor`, {
+      errorMessage: err instanceof Error ? err.message : String(err),
+    });
     return referenceLine(key, value);
   }
 }
