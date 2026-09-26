@@ -40,7 +40,13 @@ export async function POST(req: Request) {
   });
   if (!jobId) return NextResponse.json({ error: "enqueue_failed", message: "Could not queue the run." }, { status: 500 });
 
-  const [report] = await tick({ maxJobs: 1, onlyJobId: jobId });
+  let report;
+  try {
+    [report] = await tick({ maxJobs: 1, onlyJobId: jobId });
+  } catch (error) {
+    console.error("manual agent run failed", error);
+    return NextResponse.json({ error: "run_failed", message: "The run could not start. It stays queued and the heartbeat will retry it." }, { status: 500 });
+  }
   if (!report) {
     return NextResponse.json({ status: "already_handled", message: "This run already started. Refresh to see it." });
   }

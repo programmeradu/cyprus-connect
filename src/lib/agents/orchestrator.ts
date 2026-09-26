@@ -91,7 +91,8 @@ export async function scheduleDue(now = new Date()): Promise<number> {
 }
 
 async function claim(limit: number, onlyJobId?: number) {
-  const leaseUntil = new Date(Date.now() + LEASE_MS);
+  // Raw SQL params must be strings for postgres-js; the column is UTC "timestamp".
+  const leaseUntil = new Date(Date.now() + LEASE_MS).toISOString();
   const filter = onlyJobId ? sql`and id = ${onlyJobId}` : sql``;
   const rows = await db.execute(sql`
     update agent_jobs set status = 'running', attempts = attempts + 1, lease_until = ${leaseUntil}
