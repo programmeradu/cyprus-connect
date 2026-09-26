@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readJson } from "@/lib/validate";
 import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
@@ -26,10 +27,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   if (!Number.isInteger(taskId) || taskId <= 0) {
     return NextResponse.json({ error: "Unknown task." }, { status: 400 });
   }
-  const parsed = Body.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Choose approve or reject." }, { status: 400 });
-  }
+  const parsed = await readJson(request, Body, 16 * 1024);
+  if (!parsed.ok) return parsed.response;
   const { decision, note } = parsed.data;
 
   const [ws] = await db
