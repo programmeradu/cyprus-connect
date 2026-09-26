@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
+import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { useTranslations } from "next-intl";
 import { ActionCard } from "@/components/app/ActionCard";
 import { BulbIcon, BoltIcon, FireIcon, WaterIcon, LeafIcon, RecycleIcon, TargetIcon } from "@/components/icons/CustomIcons";
@@ -18,307 +19,160 @@ import {
   AiUnavailable
 } from "@/components/app/console/kit";
 
+function getIconByName(name: string) {
+  const iconMap: Record<string, React.ReactNode> = {
+    bolt: <BoltIcon className="w-4 h-4" />,
+    fire: <FireIcon className="w-4 h-4" />,
+    water: <WaterIcon className="w-4 h-4" />,
+    leaf: <LeafIcon className="w-4 h-4" />,
+    recycle: <RecycleIcon className="w-4 h-4" />,
+    target: <TargetIcon className="w-4 h-4" />,
+    bulb: <BulbIcon className="w-4 h-4" />
+  };
+  return iconMap[name] ?? <LeafIcon className="w-4 h-4" />;
+}
+
 export default function ActionsPage() {
   const t = useTranslations("dashboard.actions");
   const { user, refetchUser } = useUser();
   const [filter, setFilter] = useState("all");
-  const [dbActions, setDbActions] = useState<any[]>([]);
-  const [completedActionIds, setCompletedActionIds] = useState<number[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [userEmissions, setUserEmissions] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiUnavailable, setAiUnavailable] = useState(false);
+  const writer = useWorkspaceAction();
 
-  useEffect(() => {
-    loadActions();
-    if (user) {
-      loadCompletedActions();
-      loadUserEmissions();
-    }
-  }, [user]);
+  // Shared records: the same copies the dashboard, leaderboard and agents read.
+  const q = new URLSearchParams();
+  if (filter !== "all") q.set("category", filter);
+  if (user?.id) q.set("userId", user.id);
+  const actionsRes = useWorkspaceResource<any[]>(`/api/actions${q.size ? `?${q}` : ""}`);
+  const completedRes = useWorkspaceResource<Array<{ actionId: number }>>(user?.id ? `/api/actions/user/${user.id}` : null);
+  const emissionsRes = useWorkspaceResource<Record<string, unknown> | null>(
+    user?.id ? `/api/emissions?userId=${encodeURIComponent(user.id)}&latest=true` : null
+  );
 
-  useEffect(() => {
-    loadActions();
-  }, [filter]);
-
-  const loadActions = async () => {
-    try {
-      setIsLoading(true);
-      setLoadError(null);
-      const url = filter === "all"
-        ? `/api/actions${user ? `?userId=${user.id}` : ""}`
-        : `/api/actions?category=${filter}${user ? `&userId=${user.id}` : ""}`;
-
-      const response = await fetch(url);
-      if (response.ok) {
-        const actions = await response.json();
-        const mappedActions = actions.map((action: any) => ({
-          ...action,
-          icon: getIconByName(action.iconName || "leaf"),
-          isAI: action.isCustom && action.userId
-        }));
-        setDbActions(mappedActions);
-      } else {
-        setLoadError(t("toast.loadFailed"));
-      }
-    } catch (error) {
-      console.error("Failed to load actions:", error);
-      setLoadError(t("toast.loadFailed"));
-      toast.error(t("toast.loadFailed"));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadCompletedActions = async () => {
-    if (!user) return;
-
-    try {
-      const response = await fetch(`/api/actions/user/${user.id}`);
-      if (response.ok) {
-        const completed = await response.json();
-        const ids = completed.map((c: any) => c.actionId);
-        setCompletedActionIds(ids);
-      }
-    } catch (error) {
-      console.error("Failed to load completed actions:", error);
-    }
-  };
-
-  const loadUserEmissions = async () => {
-    if (!user) return;
-
-    try {
-      const response = await fetch(`/api/emissions?userId=${user.id}&latest=true`);
-      if (response.ok) {
-        const emissions = await response.json();
-        setUserEmissions(emissions);
-      }
-    } catch (error) {
-      console.error("Failed to load emissions:", error);
-    }
-  };
-
-  const generateAIActions = async () => {
-    setIsGenerating(true);
-    setAiUnavailable(false);
-
-    try {
-      const effectiveUserId = user?.id || "preview_enterprise";
-      const existingTitles = dbActions.map((a) => a.title.toLowerCase());
-
-      const analysisData = {
-        user: {
-          id: effectiveUserId,
-          name: user?.name || "Cyprus Pilot Enterprise",
-          companyName: user?.companyName || "Mediterranean Logistics Ltd",
-          industry: user?.companyIndustry || "transportation",
-          teamSize: user?.teamSize || "25-50"
-        },
-        emissions: userEmissions || {
-          totalCo2e: 42.8,
-          electricityKwh: 36000,
-          fuelLiters: 12400,
-          wasteKg: 3200
-        },
-        completedActionsCount: completedActionIds.length,
-        totalCredits: user?.totalCredits || 120,
-        availableActionsCount: availableCount,
-        existingActionTitles: existingTitles
-      };
-
-      let generatedActions: any[] = [];
-
-      try {
-        const response = await fetch("/api/gemini/analyze", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("bearer_token") || ""}`
-          },
-          body: JSON.stringify({
-            prompt: `You are an expert sustainability advisor for Cyprus enterprises. Analyze the profile and provide 3 NEW high-impact carbon reduction recommendations.
-            Return ONLY valid JSON matching:
-            [
-              {
-                "title": "Action title (max 60 chars)",
-                "description": "Action description (max 200 chars)",
-                "impact": "high",
-                "category": "energy",
-                "points": 250,
-                "iconName": "bolt"
-              }
-            ]`,
-            context: analysisData
-          })
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const jsonMatch = result.text?.match(/\[[\s\S]*\]/);
-          if (jsonMatch) {
-            generatedActions = JSON.parse(jsonMatch[0]);
-          }
-        }
-      } catch {
-        // Fall through to Cyprus recommendation matrix
-      }
-
-      // Default high-impact Cyprus actions if AI endpoint is unconfigured or low credits
-      if (!generatedActions || generatedActions.length === 0) {
-        generatedActions = [
-          {
-            title: "Switch Warehouse Lighting to Smart High-Bay LEDs",
-            description: "Replace remaining halogen luminaires in facility depot to cut baseline electricity demand by up to 35%.",
-            impact: "high",
-            category: "energy",
-            points: 250,
-            iconName: "bolt"
-          },
-          {
-            title: "Fleet Route Optimization for Limassol-Nicosia Transit",
-            description: "Implement automated delivery grouping and idle-reduction telematics across company commercial vehicles.",
-            impact: "high",
-            category: "operations",
-            points: 350,
-            iconName: "target"
-          },
-          {
-            title: "Commercial Solar Net-Billing Application (EAC)",
-            description: "Submit rooftop PV grid connection dossier under Cyprus Renewable Energy Sources framework.",
-            impact: "high",
-            category: "energy",
-            points: 400,
-            iconName: "leaf"
-          }
-        ];
-      }
-
-      const uniqueActions = generatedActions.filter((action: any) => {
-        const titleLower = action.title.toLowerCase();
-        return !existingTitles.some(
-          (existing) => titleLower.includes(existing) || existing.includes(titleLower)
-        );
-      });
-
-      if (uniqueActions.length === 0) {
-        toast.info(t("toast.allExist"));
-        setIsGenerating(false);
-        return;
-      }
-
-      const savedActions = [];
-      for (const action of uniqueActions) {
-        try {
-          const validDifficulty = ["easy", "medium", "hard"].includes(action.impact)
-            ? action.impact
-            : "medium";
-
-          const saveResponse = await fetch("/api/actions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: user?.id || null,
-              title: action.title,
-              description: action.description,
-              category: ["energy", "waste", "water", "operations"].includes(action.category) ? action.category : "energy",
-              impact: ["high", "medium", "low"].includes(action.impact) ? action.impact : "high",
-              difficulty: validDifficulty,
-              points: typeof action.points === "number" && action.points > 0 ? action.points : 200,
-              iconName: action.iconName || "bolt"
-            })
-          });
-
-          if (saveResponse.ok) {
-            const savedAction = await saveResponse.json();
-            savedActions.push(savedAction);
-          }
-        } catch (error) {
-          console.error("Failed to save AI action:", error);
-        }
-      }
-
-      if (savedActions.length > 0) {
-        toast.success(t("toast.savedN", { count: savedActions.length }));
-        await loadActions();
-      } else {
-        // Even if DB save fails in read-only sandbox, display dynamically in-memory
-        setDbActions((prev) => [
-          ...uniqueActions.map((a, i) => ({
-            id: Date.now() + i,
-            title: a.title,
-            description: a.description,
-            category: a.category,
-            impact: a.impact,
-            difficulty: "medium",
-            points: a.points || 200,
-            iconName: a.iconName,
-            icon: getIconByName(a.iconName),
-            isCustom: true,
-            isAI: true,
-          })),
-          ...prev,
-        ]);
-        toast.success(t("toast.savedN", { count: uniqueActions.length }));
-      }
-    } catch (error) {
-      console.error("Failed to generate AI actions:", error);
-      toast.error(t("toast.generateFailed"));
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const getIconByName = (name: string) => {
-    const iconMap: any = {
-      bolt: <BoltIcon className="w-4 h-4" />,
-      fire: <FireIcon className="w-4 h-4" />,
-      water: <WaterIcon className="w-4 h-4" />,
-      leaf: <LeafIcon className="w-4 h-4" />,
-      recycle: <RecycleIcon className="w-4 h-4" />,
-      target: <TargetIcon className="w-4 h-4" />,
-      bulb: <BulbIcon className="w-4 h-4" />
-    };
-    return iconMap[name] || <LeafIcon className="w-4 h-4" />;
-  };
+  const dbActions = useMemo(
+    () =>
+      (Array.isArray(actionsRes.data) ? actionsRes.data : []).map((action: any) => ({
+        ...action,
+        icon: getIconByName(action.iconName || "leaf"),
+        isAI: !!(action.isCustom && action.userId)
+      })),
+    [actionsRes.data]
+  );
+  const completedActionIds = useMemo(
+    () => (Array.isArray(completedRes.data) ? completedRes.data.map((c) => Number(c.actionId)) : []),
+    [completedRes.data]
+  );
+  const userEmissions = emissionsRes.data && Object.keys(emissionsRes.data).length > 0 ? emissionsRes.data : null;
 
   const totalActions = dbActions.length;
   const completedCount = completedActionIds.length;
-  const availableCount = totalActions - completedCount;
+  const availableCount = Math.max(0, totalActions - completedCount);
   const aiActionsCount = dbActions.filter((a) => a.isAI).length;
 
+  const generateAIActions = async () => {
+    if (!user) {
+      toast.error(t("toast.onboardFirst"));
+      return;
+    }
+    // Suggestions must rest on this company's own numbers; without them we say so instead of guessing.
+    if (!userEmissions) {
+      toast.error("Add your first energy or fuel figures, then Vuneli can suggest actions for your company.");
+      return;
+    }
+    setIsGenerating(true);
+    setAiUnavailable(false);
+    const existingTitles = dbActions.map((a) => String(a.title).toLowerCase());
+
+    let generated: any[] = [];
+    try {
+      const context = {
+        company: {
+          name: user.companyName ?? null,
+          industry: user.companyIndustry ?? null,
+          teamSize: user.teamSize ?? null,
+          country: user.countryCode ?? null
+        },
+        latestEmissions: userEmissions,
+        completedActionsCount: completedCount,
+        existingActionTitles: existingTitles
+      };
+      const result = await workspaceRequest<{ text?: string }>("/api/gemini/analyze", {
+        method: "POST",
+        body: {
+          prompt: `You are a sustainability advisor for small and medium companies in Cyprus. Using only the company data above, suggest 3 new carbon reduction actions that are not in existingActionTitles.
+Return ONLY valid JSON:
+[{"title": "max 60 chars", "description": "max 200 chars", "impact": "high|medium|low", "difficulty": "easy|medium|hard", "category": "energy|waste|water|operations", "points": 50-500, "iconName": "bolt|fire|water|leaf|recycle|target|bulb"}]`,
+          context: JSON.stringify(context)
+        }
+      });
+      const match = result.text?.match(/\[[\s\S]*\]/);
+      generated = match ? JSON.parse(match[0]) : [];
+    } catch {
+      generated = [];
+    }
+
+    if (!Array.isArray(generated) || generated.length === 0) {
+      setAiUnavailable(true);
+      setIsGenerating(false);
+      return;
+    }
+
+    const unique = generated.filter((a: any) => {
+      if (typeof a?.title !== "string" || typeof a?.description !== "string") return false;
+      const title = a.title.toLowerCase();
+      return !existingTitles.some((e) => title.includes(e) || e.includes(title));
+    });
+    if (unique.length === 0) {
+      toast.info(t("toast.allExist"));
+      setIsGenerating(false);
+      return;
+    }
+
+    let saved = 0;
+    for (const a of unique) {
+      const ok = await writer.run("/api/actions", {
+        method: "POST",
+        body: {
+          userId: user.id,
+          title: a.title.slice(0, 120),
+          description: a.description.slice(0, 500),
+          category: ["energy", "waste", "water", "operations"].includes(a.category) ? a.category : "energy",
+          impact: ["high", "medium", "low"].includes(a.impact) ? a.impact : "medium",
+          difficulty: ["easy", "medium", "hard"].includes(a.difficulty) ? a.difficulty : "medium",
+          points: typeof a.points === "number" && a.points > 0 ? Math.min(500, Math.round(a.points)) : 200,
+          iconName: typeof a.iconName === "string" ? a.iconName : "leaf"
+        },
+        invalidates: ["/api/actions"]
+      });
+      if (ok) saved++;
+    }
+    setIsGenerating(false);
+    if (saved > 0) toast.success(t("toast.savedN", { count: saved }));
+    else toast.error(t("toast.generateFailed"));
+  };
+
+  // One click: marks the action done, credits the account, and every page (dashboard, leaderboard) updates.
   const handleCompleteAction = async (actionId: number, points: number) => {
     if (!user) {
       toast.error(t("toast.onboardFirst"));
       return;
     }
-
     if (completedActionIds.includes(actionId)) {
       toast.info(t("toast.already"));
       return;
     }
-
-    try {
-      const response = await fetch("/api/actions/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, actionId })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        toast.error(error.error || t("toast.completeFailed"));
-        return;
-      }
-
-      setCompletedActionIds([...completedActionIds, actionId]);
-      await refetchUser();
-      toast.success(t("toast.creditsEarned", { points }));
-    } catch (error) {
-      console.error("Failed to complete action:", error);
-      toast.error(t("toast.generic"));
+    const ok = await writer.run("/api/actions/complete", {
+      method: "POST",
+      body: { actionId },
+      invalidates: ["/api/actions", "/api/users", "/api/leaderboard"]
+    });
+    if (!ok) {
+      toast.error(t("toast.completeFailed"));
+      return;
     }
+    await refetchUser();
+    toast.success(t("toast.creditsEarned", { points }));
   };
 
   const aiActions = dbActions.filter((a) => a.isAI);
@@ -328,9 +182,9 @@ export default function ActionsPage() {
 
   return (
     <PageShell
-      loading={isLoading && dbActions.length === 0}
-      error={loadError}
-      onRetry={loadActions}
+      loading={actionsRes.loading}
+      error={actionsRes.error ? t("toast.loadFailed") : null}
+      onRetry={actionsRes.reload}
       header={
         <PageHeader
           title={t("title")}
@@ -367,7 +221,7 @@ export default function ActionsPage() {
         </MetricRow>
       </Section>
 
-      {isGenerating && aiUnavailable && (
+      {aiUnavailable && !isGenerating && (
         <Section>
           <AiUnavailable feature="generate personalised actions" onRetry={generateAIActions} />
         </Section>

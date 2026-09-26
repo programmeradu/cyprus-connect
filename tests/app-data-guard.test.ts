@@ -11,19 +11,13 @@ import { join, relative } from "node:path";
 const ROOT = join(process.cwd(), "src/app/[locale]/app");
 
 const NOT_YET_MOVED: Record<string, string> = {
-  "actions/page.tsx": "phase 3",
   "calculator/page.tsx": "phase 4",
-  "compliance/page.tsx": "phase 3",
   "insights/page.tsx": "phase 4",
   "integrations/page.tsx": "phase 4",
   "learn/[id]/lesson/[lessonId]/page.tsx": "phase 4",
   "learn/[id]/page.tsx": "phase 4",
   "learn/generate/page.tsx": "phase 4",
   "learn/page.tsx": "phase 4",
-  "marketplace/[id]/page.tsx": "phase 3",
-  "marketplace/admin/page.tsx": "phase 3",
-  "marketplace/page.tsx": "phase 3",
-  "onboarding/page.tsx": "phase 3",
   "studio/page.tsx": "phase 4",
   "agents/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",
   "cbam/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",

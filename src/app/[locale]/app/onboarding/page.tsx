@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { Check, Loader2, ExternalLink } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
@@ -36,32 +37,14 @@ export default function OnboardingPage() {
   const [uploadType, setUploadType] = useState<'utility' | 'manual' | null>(null);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
   const [qbConnecting, setQbConnecting] = useState(false);
-  const [detectedLocation, setDetectedLocation] = useState<{
-    countryCode: string;
-    currency: string;
-    timezone: string;
-  } | null>(null);
 
-  // Detect location on mount
-  useEffect(() => {
-    const detectLocation = async () => {
-      try {
-        const response = await fetch('/api/geolocation');
-        if (response.ok) {
-          const data = await response.json();
-          setDetectedLocation({
-            countryCode: data.countryCode || 'US',
-            currency: data.currency || 'USD',
-            timezone: data.timezone || 'America/New_York',
-          });
-        }
-      } catch (error) {
-        console.error('Failed to detect location:', error);
-      }
-    };
-
-    detectLocation();
-  }, []);
+  // Where the visitor is, from the shared record (used to preset currency and timezone).
+  const geo = useWorkspaceResource<{ countryCode?: string; currency?: string; timezone?: string }>("/api/geolocation");
+  const detectedLocation =
+    geo.data?.countryCode && geo.data.currency && geo.data.timezone
+      ? { countryCode: geo.data.countryCode, currency: geo.data.currency, timezone: geo.data.timezone }
+      : null;
+  const writer = useWorkspaceAction();
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -88,24 +71,12 @@ export default function OnboardingPage() {
     }
     
     setQbConnecting(true);
-    
     try {
-      const response = await fetch('/api/oauth/quickbooks/authorize', {
-        headers: {
-          'x-user-id': session.user.id
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to get authorization URL');
-      }
-      
-      const data = await response.json();
-      
+      const data = await workspaceRequest<{ authUrl?: string }>("/api/oauth/quickbooks/authorize");
+      if (!data.authUrl) throw new Error("no url");
       toast.success(t('toasts.qbRedirect'));
       window.location.href = data.authUrl;
-    } catch (error) {
-      console.error('QB connect error:', error);
+    } catch {
       toast.error(t('toasts.qbFail'));
       setQbConnecting(false);
     }
@@ -121,82 +92,23 @@ export default function OnboardingPage() {
     setIsSubmitting(true);
 
     try {
-      const checkResponse = await fetch(`/api/users?search=${encodeURIComponent(email)}`);
-      let existingUser = null;
-      
-      if (checkResponse.ok) {
-        const users = await checkResponse.json();
-        existingUser = users.find((u: any) => u.email.toLowerCase() === email.toLowerCase());
-      }
-
-      let userData;
-      const token = localStorage.getItem("bearer_token");
-      
-      if (existingUser) {
-        const response = await fetch(`/api/users?id=${existingUser.id}`, {
-          method: "PUT",
-          headers: { 
- "Content-Type": "application/json",
-            ...(token && { "Authorization": `Bearer ${token}` })
-          },
-          body: JSON.stringify({
-            name,
-            companyName,
-            companyIndustry: industry,
-            teamSize,
-            sustainabilityGoals: ["reduce-carbon", "energy-efficiency"],
-            onboardingCompleted: true
-          })
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          toast.error(error.error || t("toasts.updateFail"));
-          setIsSubmitting(false);
-          return;
-        }
-
-        userData = await response.json();
-      } else {
-        const response = await fetch("/api/users", {
-          method: "POST",
-          headers: { 
- "Content-Type": "application/json",
-            ...(token && { "Authorization": `Bearer ${token}` })
-          },
-          body: JSON.stringify({
-            email,
-            name,
-            companyName,
-            companyIndustry: industry,
-            teamSize,
-            sustainabilityGoals: ["reduce-carbon", "energy-efficiency"]
-          })
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          toast.error(error.error || t("toasts.createFail"));
-          setIsSubmitting(false);
-          return;
-        }
-
-        userData = await response.json();
-        
-        const updateResponse = await fetch(`/api/users?id=${userData.id}`, {
-          method: "PUT",
-          headers: { 
- "Content-Type": "application/json",
-            ...(token && { "Authorization": `Bearer ${token}` })
-          },
-          body: JSON.stringify({
-            onboardingCompleted: true
-          })
-        });
-
-        if (updateResponse.ok) {
-          userData = await updateResponse.json();
-        }
+      // The signed-in account already exists; onboarding fills in its company facts once.
+      const saved = await writer.run(`/api/users?id=${encodeURIComponent(session.user.id)}`, {
+        method: "PUT",
+        body: {
+          name,
+          companyName,
+          companyIndustry: industry,
+          teamSize,
+          sustainabilityGoals: ["reduce-carbon", "energy-efficiency"],
+          onboardingCompleted: true
+        },
+        invalidates: ["/api/users", "/api/analytics", "/api/leaderboard", "/api/actions"]
+      });
+      if (!saved) {
+        toast.error(t("toasts.updateFail"));
+        setIsSubmitting(false);
+        return;
       }
 
       // Save detected location preferences

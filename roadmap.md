@@ -21,9 +21,11 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Moved: Dashboard overview, Reports, Report detail, Leaderboard, Marketplace impact
 - [ ] Phase 1b server: company facts (location, sites, revenue) stored once; Agents + CBAM mutations through useWorkspaceAction; every page write records an activity event
 - [x] Phase 2 quick: Analytics, Grant alerts, Settings, Privacy (shared reads/writes; settings save refreshes analytics + leaderboard; analytics AI insights asked once per fresh data)
-- [ ] Phase 3 medium: Actions (drop extra AI call, one-click complete), Marketplace list/detail/admin, Onboarding, Compliance
+- [x] Phase 3 medium: Actions, Marketplace list/detail/admin, Onboarding, Compliance on the shared store. Removed: invented fallback actions/emissions/company in Actions, banner auto-generation on every Marketplace visit, account search in Onboarding. Fixed: QuickBooks connect trusted a caller-supplied user id; compliance email toggle could never be off
+- [ ] Pages that check sign-in with the client session (Compliance, Marketplace, Onboarding, Analytics) cannot be opened by the QA identity, so they are only browser-checked signed out
 - [ ] Phase 4 heavy (rebuild + split each): Studio, Learn + course creator + lesson (course generator calls its own API over HTTP and notifies every user in the database - fix), Calculator, Insights, Integrations
-- [ ] Found: exchange rates fetched ~4x per page load (CurrencyContext) - move into the shared store
+- [x] Exchange rates: one shared request per page load (was ~4; duplicate currency wrapper removed)
+- [ ] Found: analytics insights and AI recommendations call /api/learn/auto-generate over HTTP (fix with the Learn rebuild)
 - [ ] Greek translation of the 12 English-only pages, after pages settle
 
 ## Agent ecosystem (plan: .lovable/plan/vuneli-agent-ecosystem-plan-2026-09-26.md)
