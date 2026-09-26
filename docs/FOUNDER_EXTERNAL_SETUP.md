@@ -2,7 +2,9 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 26 September 2026 — CBAM agent turn._
+_Last updated: 26 September 2026 — Agents page turn._
+
+**This turn:** run the database script `scripts/sql/0020_agent_switches.sql` on the production database before deploying (it adds the per-agent pause switch; the preview database already has it). Nothing else new is needed from you.
 
 ## Needed now
 
