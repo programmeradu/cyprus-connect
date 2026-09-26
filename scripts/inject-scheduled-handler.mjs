@@ -19,6 +19,7 @@ const injection = `
 // Crons (see wrangler.jsonc → triggers.crons):
 //   "0 * * * *"  → grant-alerts scan (hourly)
 //   "15 6 * * *" → database keep-alive ping (daily)
+//   "*/15 * * * *" → agent heartbeat (enqueue + run a bounded batch)
 // Each job self-fetches its API route via the WORKER_SELF_REFERENCE binding.
 export async function scheduled(event, env, _ctx) {
   const run = async (name, url, init) => {
@@ -27,6 +28,17 @@ export async function scheduled(event, env, _ctx) {
     console.log(\`[\${name} cron] status=\${res.status} body=\${body.slice(0, 300)}\`);
     if (!res.ok) throw new Error(\`\${name} cron failed: HTTP \${res.status}\`);
   };
+  if (event.cron === "*/15 * * * *") {
+    if (!env.CRON_SECRET) {
+      console.log("[agents cron] skipped: CRON_SECRET is not set");
+      return;
+    }
+    await run("agents", "https://vuneli.com/api/cron/agents", {
+      method: "POST",
+      headers: { "x-cron-secret": env.CRON_SECRET },
+    });
+    return;
+  }
   if (event.cron === "15 6 * * *") {
     await run("keep-alive", "https://vuneli.com/api/keep-alive", { method: "GET" });
     return;
