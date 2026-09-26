@@ -8,7 +8,10 @@
 - [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
 - [ ] P2b structured logger, split files over 500 lines, broaden test coverage
 - [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
-- [ ] P3b Release 2: start agent runs, period/site filter, CSV/PDF export; then Release 3 CBAM agent
+- [x] P3b CSV export per console section
+- [ ] P3c Approve should trigger the follow-up act (sign/submit/record), not just close the task — needs real agent work behind it
+- [ ] P3d Start agent run — blocked: no agent does real work yet (runs are sample rows); decide which agent to build first (CBAM report)
+- [ ] P3e period/site filter, PDF export; then Release 3 CBAM agent
 
 (Research paused by founder.)
 
