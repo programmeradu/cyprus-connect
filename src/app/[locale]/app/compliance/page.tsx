@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -62,18 +63,13 @@ export default function CompliancePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
-  const [loading, setLoading] = useState(true);
-  const [pageError, setPageError] = useState<string | null>(null);
-  const [complianceScore, setComplianceScore] = useState<number | null>(null);
-  const [regulations, setRegulations] = useState<Regulation[]>([]);
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [settings, setSettings] = useState<Settings>({
     jurisdictions: ["European Union", "Global"],
     autoSubmit: false,
     emailNotifications: true
   });
   const [generating, setGenerating] = useState(false);
+  const writer = useWorkspaceAction();
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -81,123 +77,70 @@ export default function CompliancePage() {
     }
   }, [session, isPending, router]);
 
+  // Make sure this account has its Cyprus/EU framework rows (idempotent), then read the shared records.
+  const [ready, setReady] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
+  const initializeCompliance = useCallback(async () => {
+    setInitError(null);
+    try {
+      await workspaceRequest("/api/compliance/regulations/init", { method: "POST" });
+      setReady(true);
+    } catch {
+      setInitError(t("toasts.initFailed"));
+    }
+  }, [t]);
   useEffect(() => {
-    if (session?.user) {
-      initializeCompliance();
-    }
-  }, [session]);
+    if (session?.user && !ready) void initializeCompliance();
+  }, [session?.user, ready, initializeCompliance]);
 
-  const initializeCompliance = async () => {
-    try {
-      setLoading(true);
-      setPageError(null);
-      const token = localStorage.getItem("bearer_token");
+  const data = useWorkspaceResource<{
+    score?: number | null;
+    regulations?: Regulation[];
+    documents?: Document[];
+    settings?: Partial<Settings> | null;
+  }>(ready ? "/api/compliance/data" : null);
+  const logs = useWorkspaceResource<{ logs?: AuditLog[] }>(ready ? "/api/compliance/audit-logs" : null);
 
-      await fetch("/api/compliance/regulations/init", {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
+  const complianceScore = typeof data.data?.score === "number" ? data.data.score : null;
+  const regulations = data.data?.regulations ?? [];
+  const documents = data.data?.documents ?? [];
+  const auditLogs = logs.data?.logs ?? [];
+  const loading = !ready && !initError ? true : data.loading;
+  const pageError = initError ?? (data.error ? t("toasts.fetchFailed") : null);
 
-      await fetchComplianceData();
-    } catch (error) {
-      console.error("Error initializing compliance:", error);
-      setPageError(t("toasts.initFailed"));
-      toast.error(t("toasts.initFailed"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchComplianceData = async () => {
-    try {
-      const token = localStorage.getItem("bearer_token");
-
-      const dataResponse = await fetch("/api/compliance/data", {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-
-      if (dataResponse.ok) {
-        const data = await dataResponse.json();
-        setComplianceScore(typeof data.score === "number" ? data.score : null);
-        setRegulations(data.regulations || []);
-        setDocuments(data.documents || []);
-
-        if (data.settings) {
-          setSettings({
-            jurisdictions: data.settings.jurisdictions || ["European Union", "Global"],
-            autoSubmit: data.settings.autoSubmit || false,
-            emailNotifications: data.settings.emailNotifications || true
-          });
-        }
-      }
-
-      const logsResponse = await fetch("/api/compliance/audit-logs", {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-
-      if (logsResponse.ok) {
-        const logsData = await logsResponse.json();
-        setAuditLogs(logsData.logs || []);
-      }
-    } catch (error) {
-      console.error("Error fetching compliance data:", error);
-      toast.error(t("toasts.fetchFailed"));
-    }
-  };
+  useEffect(() => {
+    const saved = data.data?.settings;
+    if (!saved) return;
+    setSettings({
+      jurisdictions: saved.jurisdictions?.length ? saved.jurisdictions : ["European Union", "Global"],
+      autoSubmit: saved.autoSubmit ?? false,
+      emailNotifications: saved.emailNotifications ?? true
+    });
+  }, [data.data?.settings]);
 
   const handleGenerateReport = async (framework: string) => {
-    try {
-      setGenerating(true);
-      const token = localStorage.getItem("bearer_token");
-
-      toast.info(t("toasts.generating", { framework }));
-
-      const response = await fetch("/api/compliance/documents/generate", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ framework })
-      });
-
-      if (response.ok) {
-        toast.success(t("toasts.generatedSuccess", { framework }));
-        await fetchComplianceData();
-      } else {
-        const error = await response.json();
-        toast.error(error.error || t("toasts.generateFailed"));
-      }
-    } catch (error) {
-      console.error("Error generating report:", error);
-      toast.error(t("toasts.generateFailed"));
-    } finally {
-      setGenerating(false);
-    }
+    setGenerating(true);
+    toast.info(t("toasts.generating", { framework }));
+    const ok = await writer.run("/api/compliance/documents/generate", {
+      method: "POST",
+      body: { framework },
+      invalidates: ["/api/compliance", "/api/reports"]
+    });
+    setGenerating(false);
+    if (ok) toast.success(t("toasts.generatedSuccess", { framework }));
+    else toast.error(t("toasts.generateFailed"));
   };
 
   const handleSaveSettings = async (newSettings: Settings) => {
-    try {
-      const token = localStorage.getItem("bearer_token");
-
-      const response = await fetch("/api/compliance/settings", {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newSettings)
-      });
-
-      if (response.ok) {
-        setSettings(newSettings);
-        toast.success(t("toasts.settingsSaved"));
-        await fetchComplianceData();
-      } else {
-        toast.error(t("toasts.settingsFailed"));
-      }
-    } catch (error) {
-      console.error("Error saving settings:", error);
+    const ok = await writer.run("/api/compliance/settings", {
+      method: "PUT",
+      body: newSettings,
+      invalidates: ["/api/compliance"]
+    });
+    if (ok) {
+      setSettings(newSettings);
+      toast.success(t("toasts.settingsSaved"));
+    } else {
       toast.error(t("toasts.settingsFailed"));
     }
   };
@@ -215,7 +158,7 @@ export default function CompliancePage() {
       signedOut={!isPending && !session?.user}
       loading={isPending || (!!session?.user && loading)}
       error={pageError}
-      onRetry={initializeCompliance}
+      onRetry={initError ? initializeCompliance : data.reload}
       header={
         <PageHeader
           title={t("title")}

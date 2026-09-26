@@ -13,7 +13,6 @@ const ROOT = join(process.cwd(), "src/app/[locale]/app");
 const NOT_YET_MOVED: Record<string, string> = {
   "actions/page.tsx": "phase 3",
   "calculator/page.tsx": "phase 4",
-  "compliance/page.tsx": "phase 3",
   "insights/page.tsx": "phase 4",
   "integrations/page.tsx": "phase 4",
   "learn/[id]/lesson/[lessonId]/page.tsx": "phase 4",
