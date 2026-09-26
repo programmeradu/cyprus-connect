@@ -663,6 +663,16 @@ export const agentControls = pgTable('agent_controls', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+/** Pause one agent without stopping the rest. The workspace switch still wins. */
+export const agentSwitches = pgTable('agent_switches', {
+  workspaceId: text('workspace_id').notNull(),
+  agentKey: text('agent_key').notNull(),
+  paused: boolean('paused').notNull().default(false),
+  reason: text('reason'),
+  updatedBy: text('updated_by'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+}, (t) => ({ pk: primaryKey({ columns: [t.workspaceId, t.agentKey] }) }));
+
 /** Owner overrides: what an agent may do alone at each risk level. */
 export const autonomyPolicies = pgTable('autonomy_policies', {
   workspaceId: text('workspace_id').notNull(),
