@@ -2,9 +2,12 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 26 September 2026 — Agents page turn._
+_Last updated: 26 September 2026 — CBAM supplier emails and Registry file turn._
 
-**This turn:** run the database script `scripts/sql/0020_agent_switches.sql` on the production database before deploying (it adds the per-agent pause switch; the preview database already has it). Nothing else new is needed from you.
+**This turn:**
+- Run `scripts/sql/0021_cbam_suppliers.sql` (and `0020` if not done yet) on the production database before deploying. The preview database already has both.
+- Create a free Resend account, verify a sending domain (e.g. `notify.vuneli.com`), then set Cloudflare secrets `RESEND_API_KEY` and `EMAIL_FROM` (e.g. `Vuneli CBAM <cbam@notify.vuneli.com>`). Until then, approving a supplier email fails safely with "Nothing was sent".
+- Get the official CBAM Registry XML format (XSD) for annual declarations from the CBAM Registry / DG TAXUD documentation, so the export file can be matched and validated. Until then the file is marked "unvalidated".
 
 ## Needed now
 
