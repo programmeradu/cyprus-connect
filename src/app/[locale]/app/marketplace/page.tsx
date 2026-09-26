@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import {
   PageShell,
   PageHeader,
@@ -40,9 +40,6 @@ export default function MarketplacePage() {
   const t = useTranslations("dashboard.marketplace");
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<(typeof categoryIds)[number]>("all");
 
   useEffect(() => {
@@ -51,51 +48,15 @@ export default function MarketplacePage() {
     }
   }, [session, isPending, router]);
 
-  useEffect(() => {
-    if (session?.user) {
-      fetchProjects();
-    }
-  }, [selectedCategory, session]);
-
-  // Auto-generate banners in background on page visit
-  useEffect(() => {
-    if (session?.user) {
-      triggerBackgroundGeneration();
-    }
-  }, [session]);
-
-  const triggerBackgroundGeneration = async () => {
-    try {
-      await fetch("/api/marketplace/projects/auto-generate-banners", {
-        method: "POST"
-      });
-    } catch (error) {
-      // Silently fail - this is a background task
-    }
-  };
-
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const params = new URLSearchParams();
-      if (selectedCategory !== "all") {
-        params.append("category", selectedCategory);
-      }
-
-      const response = await fetch(`/api/marketplace/projects?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch projects");
-
-      const data = await response.json();
-      setProjects(data.projects);
-    } catch (err) {
-      console.error("Error fetching projects:", err);
-      setError(t("toastLoadFailed"));
-      toast.error(t("toastLoadFailed"));
-    } finally {
-      setLoading(false);
-    }
-  };
+  // One shared copy per category; admin and detail pages invalidate it when they change a project.
+  const listPath = session?.user
+    ? `/api/marketplace/projects${selectedCategory !== "all" ? `?category=${selectedCategory}` : ""}`
+    : null;
+  const list = useWorkspaceResource<{ projects: Project[] }>(listPath);
+  const projects = list.data?.projects ?? [];
+  const loading = list.loading;
+  const error = list.error ? t("toastLoadFailed") : null;
+  const fetchProjects = list.reload;
 
   const columns: Column<Project>[] = [
     {

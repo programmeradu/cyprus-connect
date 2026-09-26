@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { Link } from "@/i18n/navigation";
 import {
   PageShell,
@@ -49,10 +50,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const { id } = use(params);
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [project, setProject] = useState<Project | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
   const [purchaseTons, setPurchaseTons] = useState(1);
   const [purchasing, setPurchasing] = useState(false);
@@ -64,117 +61,58 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     }
   }, [session, isPending, router]);
 
+  const detail = useWorkspaceResource<{ project: Project }>(session?.user ? `/api/marketplace/projects/${id}` : null);
+  const project = detail.data?.project ?? null;
+  const loading = detail.loading;
+  const error = detail.error ? "This project could not be loaded." : null;
+  const fetchProject = detail.reload;
+  const writer = useWorkspaceAction();
+
+  // Recommendations are a computed read (POST on the server); ask once per signed-in visit.
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   useEffect(() => {
-    if (session?.user) {
-      fetchProject();
-      fetchRecommendations();
-    }
-  }, [id, session]);
-
-  const fetchProject = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch(`/api/marketplace/projects/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch project");
-
-      const data = await response.json();
-      setProject(data.project);
-    } catch (err) {
-      console.error("Error fetching project:", err);
-      setError("This project could not be loaded.");
-      toast.error("Failed to load project");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchRecommendations = async () => {
-    try {
-      const token = localStorage.getItem("bearer_token");
-      const response = await fetch("/api/marketplace/recommendations", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setRecommendations(data.recommendations.slice(0, 3));
-      }
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
-    }
-  };
+    if (!session?.user) return;
+    let live = true;
+    workspaceRequest<{ recommendations?: Recommendation[] }>("/api/marketplace/recommendations", { method: "POST" })
+      .then((d) => live && setRecommendations((d.recommendations ?? []).slice(0, 3)))
+      .catch(() => live && setRecommendations([]));
+    return () => {
+      live = false;
+    };
+  }, [session?.user]);
 
   const handleGenerateBanner = async () => {
     if (!project) return;
-
-    try {
-      setGeneratingBanner(true);
-      toast.info("Generating banner image...");
-
-      const response = await fetch(`/api/marketplace/projects/${project.id}/generate-banner`, {
-        method: "POST"
-      });
-
-      if (!response.ok) throw new Error("Failed to generate banner");
-
-      const data = await response.json();
-
-      setProject(prev => prev ? { ...prev, bannerImage: data.bannerImage } : null);
-      toast.success("Banner generated successfully!");
-    } catch (error: any) {
-      console.error("Banner generation error:", error);
-      toast.error("Failed to generate banner");
-    } finally {
-      setGeneratingBanner(false);
-    }
+    setGeneratingBanner(true);
+    const ok = await writer.run(`/api/marketplace/projects/${project.id}/generate-banner`, {
+      method: "POST",
+      invalidates: ["/api/marketplace/projects"]
+    });
+    setGeneratingBanner(false);
+    if (ok) toast.success("Banner created");
+    else toast.error("The banner could not be created. Please try again.");
   };
 
   const handlePurchase = async () => {
     if (!project) return;
-
-    try {
-      setPurchasing(true);
-      const token = localStorage.getItem("bearer_token");
-
-      const response = await fetch("/api/marketplace/purchase", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          projectId: project.id,
-          tons: purchaseTons
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create purchase");
-      }
-
-      const { url } = await response.json();
-
-      const isInIframe = window.self !== window.top;
-      if (isInIframe) {
-        window.parent.postMessage({ type: "OPEN_EXTERNAL_URL", data: { url } }, "*");
-      } else {
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-
-      toast.success("Redirecting to checkout...");
-    } catch (error: any) {
-      console.error("Purchase error:", error);
-      toast.error(error.message || "Failed to start purchase");
-    } finally {
-      setPurchasing(false);
-      setShowPurchaseDialog(false);
+    setPurchasing(true);
+    const res = await writer.run<{ url: string }>("/api/marketplace/purchase", {
+      method: "POST",
+      body: { projectId: project.id, tons: purchaseTons },
+      invalidates: ["/api/marketplace"]
+    });
+    setPurchasing(false);
+    setShowPurchaseDialog(false);
+    if (!res?.url) {
+      toast.error("Checkout could not be started. Please try again.");
+      return;
     }
+    if (window.self !== window.top) {
+      window.parent.postMessage({ type: "OPEN_EXTERNAL_URL", data: { url: res.url } }, "*");
+    } else {
+      window.open(res.url, "_blank", "noopener,noreferrer");
+    }
+    toast.success("Opening checkout");
   };
 
   const totalPrice = project ? (project.pricePerTon * purchaseTons).toFixed(2) : "0.00";

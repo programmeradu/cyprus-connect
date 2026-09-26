@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import {
   PageShell,
   PageHeader,
@@ -26,12 +27,11 @@ interface Project {
   bannerImage: string | null;
 }
 
+const PATH = "/api/marketplace/projects";
+
 export default function MarketplaceAdminPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<number | null>(null);
   const [generating, setGenerating] = useState<number | null>(null);
 
@@ -41,122 +41,45 @@ export default function MarketplaceAdminPage() {
     }
   }, [session, isPending, router]);
 
-  useEffect(() => {
-    if (session?.user) {
-      fetchProjects();
-    }
-  }, [session]);
+  const list = useWorkspaceResource<{ projects: Project[] }>(session?.user ? PATH : null);
+  const projects = list.data?.projects ?? [];
+  const loading = list.loading;
+  const error = list.error;
+  const fetchProjects = list.reload;
+  const writer = useWorkspaceAction();
 
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch("/api/marketplace/projects");
-      if (!response.ok) throw new Error("Failed to fetch projects");
-
-      const data = await response.json();
-      setProjects(data.projects);
-    } catch (err) {
-      console.error("Error fetching projects:", err);
-      setError("Projects could not be loaded.");
-      toast.error("Failed to load projects");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Every change re-reads the shared project list, so the marketplace and detail pages update too.
+  const change = async <T,>(path: string, method: "PATCH" | "POST", body?: unknown) =>
+    writer.run<T>(path, { method, body, invalidates: [PATH] });
 
   const toggleFeatured = async (projectId: number, currentStatus: boolean) => {
-    try {
-      setUpdating(projectId);
-      const response = await fetch(`/api/marketplace/projects/${projectId}/update-status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isFeatured: !currentStatus })
-      });
-
-      if (!response.ok) throw new Error("Failed to update status");
-
-      setProjects(prev => prev.map(p =>
-        p.id === projectId ? { ...p, isFeatured: !currentStatus } : p
-      ));
-
-      toast.success(`Project ${!currentStatus ? "featured" : "unfeatured"} successfully`);
-    } catch (error) {
-      console.error("Error updating featured status:", error);
-      toast.error("Failed to update status");
-    } finally {
-      setUpdating(null);
-    }
+    setUpdating(projectId);
+    const ok = await change(`${PATH}/${projectId}/update-status`, "PATCH", { isFeatured: !currentStatus });
+    setUpdating(null);
+    if (ok) toast.success(!currentStatus ? "Project featured" : "Project no longer featured");
+    else toast.error("The status could not be changed. Please try again.");
   };
 
   const updateVerificationStatus = async (projectId: number, status: string) => {
-    try {
-      setUpdating(projectId);
-      const response = await fetch(`/api/marketplace/projects/${projectId}/update-status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ verificationStatus: status })
-      });
-
-      if (!response.ok) throw new Error("Failed to update status");
-
-      setProjects(prev => prev.map(p =>
-        p.id === projectId ? { ...p, verificationStatus: status } : p
-      ));
-
-      toast.success(`Verification status updated to ${status}`);
-    } catch (error) {
-      console.error("Error updating verification status:", error);
-      toast.error("Failed to update status");
-    } finally {
-      setUpdating(null);
-    }
+    setUpdating(projectId);
+    const ok = await change(`${PATH}/${projectId}/update-status`, "PATCH", { verificationStatus: status });
+    setUpdating(null);
+    if (ok) toast.success(`Verification status set to ${status}`);
+    else toast.error("The status could not be changed. Please try again.");
   };
 
   const generateBanner = async (projectId: number) => {
-    try {
-      setGenerating(projectId);
-      toast.info("Generating banner image...");
-
-      const response = await fetch(`/api/marketplace/projects/${projectId}/generate-banner`, {
-        method: "POST"
-      });
-
-      if (!response.ok) throw new Error("Failed to generate banner");
-
-      const data = await response.json();
-
-      setProjects(prev => prev.map(p =>
-        p.id === projectId ? { ...p, bannerImage: data.bannerImage } : p
-      ));
-
-      toast.success("Banner generated successfully!");
-    } catch (error) {
-      console.error("Error generating banner:", error);
-      toast.error("Failed to generate banner");
-    } finally {
-      setGenerating(null);
-    }
+    setGenerating(projectId);
+    const ok = await change(`${PATH}/${projectId}/generate-banner`, "POST");
+    setGenerating(null);
+    if (ok) toast.success("Banner created");
+    else toast.error("The banner could not be created. Please try again.");
   };
 
   const bulkGenerateBanners = async () => {
-    try {
-      toast.info("Generating banners for all projects...");
-
-      const response = await fetch("/api/marketplace/projects/bulk-generate-banners", {
-        method: "POST"
-      });
-
-      if (!response.ok) throw new Error("Failed to generate banners");
-
-      const data = await response.json();
-
-      toast.success(`Generated ${data.generated} banners successfully!`);
-      fetchProjects();
-    } catch (error) {
-      console.error("Error generating banners:", error);
-      toast.error("Failed to generate banners");
-    }
+    const data = await change<{ generated: number }>(`${PATH}/bulk-generate-banners`, "POST");
+    if (data) toast.success(`Created ${data.generated} banners`);
+    else toast.error("The banners could not be created. Please try again.");
   };
 
   const projectsWithoutBanners = projects.filter(p => !p.bannerImage).length;
@@ -235,7 +158,7 @@ export default function MarketplaceAdminPage() {
           breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: "Admin" }]}
           actions={
             projectsWithoutBanners > 0 ? (
-              <button type="button" className="vck-btn vck-btn-primary" onClick={bulkGenerateBanners}>
+              <button type="button" className="vck-btn vck-btn-primary" onClick={bulkGenerateBanners} disabled={writer.busy}>
                 Generate all banners ({projectsWithoutBanners})
               </button>
             ) : undefined
