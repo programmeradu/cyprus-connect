@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { bindSessionUser } from '@/lib/api-auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,7 +32,9 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    if (!userId) {
+    // The connection is stored only on the account that is signed in now, and only if it started the flow.
+    const auth = await bindSessionUser(request, userId);
+    if (!userId || !auth.ok) {
       return NextResponse.redirect(
         new URL('/app/integrations?qb_error=missing_user', request.url)
       );
