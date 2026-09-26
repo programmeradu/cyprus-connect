@@ -1,0 +1,3836 @@
+[
+ {
+  "file": "receipt/test/receipt_test_0000.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "60000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0001.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "91000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0002.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "28000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0003.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "11000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0004.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "174600",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0005.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "31000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0006.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "46000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0007.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "111000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0008.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "50000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0009.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0010.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0011.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "230000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0012.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "120000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0013.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "51300",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0014.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "281435",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0015.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "63000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0016.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "70000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0017.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "91000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0018.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "156000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0019.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "176000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0020.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "377859",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0021.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "38000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0022.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0023.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "63000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0024.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "118000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0025.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "43000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0026.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "138000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0027.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "61600",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0028.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "426195",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0029.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "145900",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0030.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "31500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0031.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "113886",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0032.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "24000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0033.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "148127",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0034.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "93500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0035.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "54000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0036.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0037.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0038.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "664329",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0039.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0040.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "68000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0041.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "36500000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0042.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "16500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0043.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "16500000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0044.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "30000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0045.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "88000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0046.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0047.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "6300000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0048.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "25000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0049.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "23000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0050.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "19500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0051.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "334000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0052.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0053.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "123585",
+  "found": true,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0054.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "10000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0055.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "54000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0056.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "8999",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0057.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0058.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "60500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0059.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "680500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0060.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "26250",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0061.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "24500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0062.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "48000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0063.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "57000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0064.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "16000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0065.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "13000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0066.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0067.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "950000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0068.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0069.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "74000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0070.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "1565938",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0071.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "198000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0072.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0073.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "22000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0074.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "330264",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0075.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "282000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0076.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0077.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0078.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "30000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0079.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "22000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0080.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "25000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0081.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "50000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0082.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "385000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0083.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "23000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0084.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "39600",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0085.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "197450",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0086.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "22000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0087.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40150",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0088.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "47000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0089.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0090.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "29500",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0091.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "21000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0092.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "240000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0093.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17999",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0094.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "140063",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0095.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "61799",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0096.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "41000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0097.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "55000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/test/receipt_test_0098.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "250690",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/test/receipt_test_0099.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "75000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0000.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "45500",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0001.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "23000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0002.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0003.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "28000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0004.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "41000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0005.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "8000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0006.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "123000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0007.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "59500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0008.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "11700",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0009.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0010.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "60000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0011.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "89100",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0012.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "72000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0013.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "45500",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0014.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "39600",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0015.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "59400",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0016.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0017.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0018.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "25000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0019.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "42500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0020.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "16500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0021.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "224908",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0022.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "308000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0023.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0024.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "80500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0025.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "207900",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0026.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "35000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0027.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17999",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0028.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "22000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0029.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0030.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "21000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0031.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "24000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0032.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "6000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0033.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "57500",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0034.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "283338",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0035.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "304326",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0036.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "18999",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0037.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "70000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0038.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0039.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "97900",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0040.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "379500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0041.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "2352460",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0042.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "53000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0043.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "278000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0044.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17999",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0045.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "287760",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0046.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "22000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0047.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "42000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0048.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "61500",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0049.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0050.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "26000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0051.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "57200",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0052.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "56000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0053.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "31000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0054.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "40000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0055.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "60000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0056.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0057.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "288585",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0058.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "25000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0059.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "664329",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0060.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "180000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0061.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "8250",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0062.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "62000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0063.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "56800",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0064.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0065.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "54600",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0066.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "7000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0067.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "76000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0068.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "26000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0069.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "174983",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0070.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "121798",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0071.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0072.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "36000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0073.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0074.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "20000",
+  "found": true,
+  "correct": true,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0075.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "66500",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0076.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "99000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0077.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "5800000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0078.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "177870",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0079.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "72000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0080.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "25000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0081.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "276000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0082.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "35000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0083.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "17000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0084.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "52000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0085.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "15000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0086.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "26000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0087.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "29000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0088.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "170000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0089.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "29000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0090.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "7000000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0091.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "44000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0092.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "23000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0093.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "172000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0094.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "80100",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0095.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "30000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0096.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "12750",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0097.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "25000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0098.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "100000",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "receipt/validation/receipt_validation_0099.jpg",
+  "type": "receipt",
+  "ocr": true,
+  "gold": "39000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0000.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "825",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0001.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "21209",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0002.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "9673",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0003.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "105410",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0004.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "11652",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0005.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "21441",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0006.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "3715367",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0007.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "461875",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0008.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "13198",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0009.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0010.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "176734",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0011.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0012.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "20550",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0013.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "8166114",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0014.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "105733",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0015.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4938",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0016.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6816",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0017.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2750",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0018.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "491688",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0019.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "11438548",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0020.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "152345",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0021.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1871063",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0022.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "118250",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0023.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "22868",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0024.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "30258",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0025.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "743321",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0026.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "13194",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0027.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1076",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0028.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "8028",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0029.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "5866776",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0030.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "23923",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0031.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "19531",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0032.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "19920",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0033.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "21503",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0034.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "787678",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0035.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "23749",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0036.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "30910",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0037.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6049",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0038.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "12051",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0039.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "527436",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0040.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "653055",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0041.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "96980",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0042.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "88205",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0043.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "10485",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0044.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "193580",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0045.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "17776",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0046.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1398635",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0047.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "33504",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0048.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6045",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0049.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "57451",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0050.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "217239",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0051.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "8796",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0052.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "361950",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0053.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "3058880",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0054.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0055.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "165825",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0056.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "140894",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0057.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "22258",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0058.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1860453",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0059.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1055900",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0060.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "22979",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0061.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "964588",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0062.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6467",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0063.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1099",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0064.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "7691",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0065.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0066.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2894034",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0067.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "67208",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0068.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1482",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0069.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "3662338",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0070.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "12309",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0071.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "32314",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0072.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "17530",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0073.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "20106",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0074.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "30239",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0075.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "17465",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0076.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6597",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0077.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "13966",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0078.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "47575",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0079.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "23112",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0080.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "234576",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0081.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2875",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0082.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "25719",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0083.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "108008",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0084.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "66402",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0085.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1536",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0086.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "39751",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0087.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "55785",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0088.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0089.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4841663",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0090.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "49798",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0091.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "52990",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0092.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "623691",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0093.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "50747",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0094.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "11629",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0095.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "7139",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0096.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "48225",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0097.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "16594",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0098.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1874950",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0099.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "67546",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0100.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "54446",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0101.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "5748307",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0102.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "17600",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0103.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "74999",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0104.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "40325",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0105.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6757213",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0106.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1580454",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0107.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "600431",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0108.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "30329",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0109.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "601684",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0110.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "436",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0111.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6529",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0112.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1614",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0113.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4851763",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0114.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "3557200",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0115.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "309857",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0116.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "54998",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0117.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "93431",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0118.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "133232",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0119.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "39596",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0120.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4069",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0121.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "116101",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0122.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2384407",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0123.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "3621072",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0124.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1030577",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0125.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "252104",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0126.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "74824",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0127.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "89752",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0128.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "136950",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0129.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "308550",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0130.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "5307896",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0131.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "219",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0132.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "590647",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0133.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "121429",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0134.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/train/invoice_train_0135.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1856136",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0136.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1099",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0137.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "28815",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0138.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "32384",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0139.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "110290",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0140.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "372994",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0141.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "910346",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0142.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "27660",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0143.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6369",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0144.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "436",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0145.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "56969",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0146.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "11539",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0147.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "7923876",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0148.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "64015",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/train/invoice_train_0149.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "33979",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0000.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "97812",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0001.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "64012",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0002.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "935",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0003.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "6545",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0004.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "225910",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0005.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4880110",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0006.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "349029",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0007.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "13613",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0008.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "12700",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0009.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "545",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0010.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "215598",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0011.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1226198",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0012.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "705249",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0013.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "157992937",
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/test/invoice_test_0014.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "495282",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0015.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4396",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0016.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "478370",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0017.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "56849",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0018.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "31462",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0019.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1508959",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0020.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "369593",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0021.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "955658",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0022.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "114024",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0023.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "157690",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0024.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4141940",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/test/invoice_test_0025.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "439110",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0000.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "21424",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0001.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0002.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "21667",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0003.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1683000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0004.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "74796",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0005.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "474642",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0006.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "38298",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0007.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "97864",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0008.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "11107",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0009.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "711040",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0010.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "32883",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0011.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "494918",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0012.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "3665171",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0013.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "523040",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0014.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "24520",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0015.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4691041",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0016.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "62800",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0017.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1541649",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0018.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "29691",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0019.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "35196",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0020.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "13890",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0021.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "890577",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0022.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "664007",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0023.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "80273",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0024.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2200",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0025.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1509483",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0026.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "1712442",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0027.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "172239",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0028.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "15474",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0029.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": null,
+  "found": false,
+  "correct": false,
+  "textHasGold": false
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0030.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "125517",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0031.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "234903",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0032.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "4400",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0033.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "21989",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0034.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2152",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0035.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "27265",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0036.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "10406",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0037.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "12953",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0038.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "15138",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0039.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "300496",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0040.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "54998",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0041.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "18700",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0042.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "31293",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0043.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "297000",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0044.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "123750",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0045.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "35507",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0046.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "35668",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0047.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "2786296",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0048.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "728598",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ },
+ {
+  "file": "invoice/validation/invoice_validation_0049.jpg",
+  "type": "invoice",
+  "ocr": true,
+  "gold": "42125",
+  "found": false,
+  "correct": false,
+  "textHasGold": true
+ }
+]
