@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPaymentsWebhook, type StripeEnv } from '@/lib/stripe/server';
 import { db } from '@/db';
@@ -248,9 +249,8 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    console.error('[payments-webhook] handler error:', error);
     // Return 200 to avoid Stripe retry storms on our internal errors after
     // the signature is verified — we've already logged for investigation.
-    return NextResponse.json({ received: true, error: error.message });
+    return NextResponse.json({ received: true, ref: logger("api.public.payments.webhook").error("webhook handling failed", error) });
   }
 }

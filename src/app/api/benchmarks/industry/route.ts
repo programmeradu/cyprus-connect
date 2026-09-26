@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { ClimateTraceClient } from '@/lib/api-clients/climate-trace';
 
@@ -174,9 +175,8 @@ export async function GET(request: NextRequest) {
       real_time_data_used: realTimeData !== null,
     });
   } catch (error) {
-    console.error('Industry benchmark error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch benchmark data', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to fetch benchmark data', ref: logger("api.benchmarks.industry").error('request failed', error) },
       { status: 500 }
     );
   }

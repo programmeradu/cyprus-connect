@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 // Compliance Tracking API Route
 import { NextRequest, NextResponse } from "next/server";
 import { complianceTracker } from "@/lib/compliance-tracker";
@@ -96,11 +97,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error: any) {
-    console.error("Compliance API error:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch compliance data",
-        details: error.message,
+        ref: logger("api.compliance").error('request failed', error),
       },
       { status: 500 }
     );

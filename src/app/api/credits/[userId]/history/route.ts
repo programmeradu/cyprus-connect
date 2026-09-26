@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { creditsHistory, actions, user } from '@/db/schema';
@@ -103,9 +104,8 @@ export async function GET(
 
     return NextResponse.json(transformedHistory, { status: 200 });
   } catch (error) {
-    console.error('GET error:', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Internal server error', ref: logger("api.credits.userId.history").error("request failed", error) },
       { status: 500 }
     );
   }

@@ -2,7 +2,7 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 26 September 2026 — security, report filters/PDF, logging turn._
+_Last updated: 26 September 2026 — error-leak cleanup turn (nothing new for you to do this turn)._
 
 **This turn:**
 - Run `scripts/sql/0022_sites_and_roles.sql` on the production database before deploying (after `0020` and `0021` if not done). The preview database already has it. It adds a site column to readings and a separate admin-role table.

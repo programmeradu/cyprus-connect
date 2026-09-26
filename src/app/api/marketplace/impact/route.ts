@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { userImpactTracking, offsetPurchases, offsetProjects } from "@/db/schema";
@@ -55,9 +56,8 @@ export async function GET(request: NextRequest) {
       breakdown
     });
   } catch (error: any) {
-    console.error("Error fetching impact:", error);
     return NextResponse.json(
-      { error: "Failed to fetch impact", details: error.message },
+      { error: "Failed to fetch impact", ref: logger("api.marketplace.impact").error('request failed', error) },
       { status: 500 }
     );
   }

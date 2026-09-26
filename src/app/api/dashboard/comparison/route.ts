@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, dashboardMetrics, industryComparisons } from '@/db/schema';
@@ -330,10 +331,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('GET error:', error);
     return NextResponse.json(
       {
-        error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        error: 'Internal server error', ref: logger("api.dashboard.comparison").error('request failed', error),
       },
       { status: 500 }
     );

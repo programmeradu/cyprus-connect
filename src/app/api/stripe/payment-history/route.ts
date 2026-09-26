@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
@@ -45,9 +46,8 @@ export async function GET(req: NextRequest) {
       payments: enhancedPayments,
     });
   } catch (error: any) {
-    console.error('Get payment history error:', error);
     return NextResponse.json(
-      { error: 'Failed to get payment history', details: error.message },
+      { error: 'Failed to get payment history', ref: logger("api.stripe.payment-history").error('request failed', error) },
       { status: 500 }
     );
   }

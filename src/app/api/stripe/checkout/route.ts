@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeClient, resolvePriceIdFromLookupKey, getStripeErrorMessage } from '@/lib/stripe/server';
 import { resolveStripeEnvFromRequest } from '@/lib/stripe/env';
@@ -113,9 +114,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
   } catch (error: any) {
-    console.error('Checkout error:', error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session', details: getStripeErrorMessage(error) },
+      { error: 'Failed to create checkout session', ref: logger("api.stripe.checkout").error('request failed', error) },
       { status: 500 },
     );
   }

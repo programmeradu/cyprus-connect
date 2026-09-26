@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, emissions, historicalEmissions, userActions, actions, dashboardMetrics } from '@/db/schema';
@@ -458,9 +459,8 @@ export async function GET(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error: any) {
-    console.error('GET suggestions error:', error);
     return NextResponse.json({
-      error: 'Internal server error: ' + error.message
+      error: 'Internal server error', ref: logger("api.dashboard.suggestions").error('request failed', error)
     }, { status: 500 });
   }
 }

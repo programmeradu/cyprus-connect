@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { documents } from '@/db/schema';
@@ -32,9 +33,8 @@ export async function GET(
 
     return NextResponse.json(document[0], { status: 200 });
   } catch (error) {
-    console.error('GET document error:', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Internal server error', ref: logger("api.documents.id").error("request failed", error) },
       { status: 500 }
     );
   }
@@ -81,9 +81,8 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error('DELETE document error:', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Internal server error', ref: logger("api.documents.id").error("request failed", error) },
       { status: 500 }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
@@ -70,9 +71,8 @@ export async function GET(req: NextRequest) {
       purchases: { credits: totalCredits, totalSpent, lastPurchase },
     });
   } catch (error: any) {
-    console.error('Get complete billing data error:', error);
     return NextResponse.json(
-      { error: 'Failed to get billing data', details: error.message },
+      { error: 'Failed to get billing data', ref: logger("api.billing.complete").error('request failed', error) },
       { status: 500 },
     );
   }

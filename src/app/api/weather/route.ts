@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
@@ -19,9 +20,8 @@ export async function GET(req: Request) {
     
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error("Weather API error:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to fetch weather data" },
+      { error: "Failed to fetch weather data", ref: logger("api.weather").error('request failed', error) },
       { status: 500 }
     );
   }

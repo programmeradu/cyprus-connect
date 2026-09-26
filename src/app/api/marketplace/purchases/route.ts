@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { offsetPurchases, offsetProjects } from "@/db/schema";
@@ -37,9 +38,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ purchases });
   } catch (error: any) {
-    console.error("Error fetching purchases:", error);
     return NextResponse.json(
-      { error: "Failed to fetch purchases", details: error.message },
+      { error: "Failed to fetch purchases", ref: logger("api.marketplace.purchases").error('request failed', error) },
       { status: 500 }
     );
   }

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
@@ -72,9 +73,8 @@ export async function POST(
       projectId: projectId
     });
   } catch (error: any) {
-    console.error("Error generating banner:", error);
     return NextResponse.json(
-      { error: "Failed to generate banner", details: undefined },
+      { error: "Failed to generate banner", ref: logger("api.marketplace.projects.id.generate-banner").error('request failed', error) },
       { status: 500 }
     );
   }

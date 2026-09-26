@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { lmsUserProgress, courses, userLessonCompletions } from '@/db/schema';
@@ -78,9 +79,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(enrichedProgress);
 
   } catch (error) {
-    console.error('GET error:', error);
     return NextResponse.json({
-      error: 'Internal server error: ' + (error as Error).message
+      error: 'Internal server error', ref: logger("api.learn.progress").error("request failed", error)
     }, { status: 500 });
   }
 }

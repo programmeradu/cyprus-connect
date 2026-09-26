@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { createStripeClient, getStripeErrorMessage } from '@/lib/stripe/server';
 import { resolveStripeEnvFromRequest } from '@/lib/stripe/env';
@@ -28,9 +29,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: portalSession.url });
   } catch (error: any) {
-    console.error('Billing portal error:', error);
     return NextResponse.json(
-      { error: 'Failed to create billing portal session', details: getStripeErrorMessage(error) },
+      { error: 'Failed to create billing portal session', ref: logger("api.stripe.billing-portal").error('request failed', error) },
       { status: 500 },
     );
   }
