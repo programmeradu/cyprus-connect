@@ -8,7 +8,7 @@
 
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Btn, ConsolePage, Empty, Plate, State } from "@/components/app/console/kit";
-import { useConsole } from "@/components/app/console/ConsoleData";
+import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import {
   decisionLabel,
   riskLabel,
@@ -59,90 +59,70 @@ const when = (iso: string) =>
   new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const duration = (ms: number) => (ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`);
 
+const HISTORY = "/api/console/agents/history";
+/** Everything an agent run or switch can change. */
+const AGENT_DATA = ["/api/console/agents", "/api/console/cbam"];
+
 export default function AgentsPage() {
-  const { refresh } = useConsole();
-  const [data, setData] = useState<Data | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("");
   const [showSample, setShowSample] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState<{ tone: "good" | "warn"; text: string } | null>(null);
   const [open, setOpen] = useState<number | null>(null);
   const [steps, setSteps] = useState<Record<number, Step[] | "loading" | "error">>({});
+  const history = useWorkspaceResource<Data>(`${HISTORY}${filter ? `?agent=${encodeURIComponent(filter)}` : ""}`);
+  const data = history.data ?? null;
+  const error = history.error;
 
-  const load = useCallback(async (agent: string) => {
-    setError(null);
-    try {
-      const res = await fetch(`/api/console/agents/history${agent ? `?agent=${encodeURIComponent(agent)}` : ""}`, { credentials: "include" });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.message ?? "Could not load agents.");
-      setData(body);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load agents.");
-    }
-  }, []);
-
-  useEffect(() => {
-    load(filter);
-  }, [load, filter]);
-
-  const toggleRun = useCallback(async (runId: number) => {
-    if (open === runId) return setOpen(null);
-    setOpen(runId);
-    if (Array.isArray(steps[runId])) return;
+  const loadSteps = useCallback(async (runId: number) => {
     setSteps((s) => ({ ...s, [runId]: "loading" }));
     try {
-      const res = await fetch(`/api/console/agents/history?run=${runId}`, { credentials: "include" });
-      const body = await res.json();
-      if (!res.ok) throw new Error();
+      const body = await workspaceRequest<{ steps: Step[] }>(`${HISTORY}?run=${runId}`);
       setSteps((s) => ({ ...s, [runId]: body.steps }));
     } catch {
       setSteps((s) => ({ ...s, [runId]: "error" }));
     }
-  }, [open, steps]);
+  }, []);
+
+  const toggleRun = useCallback((runId: number) => {
+    if (open === runId) return setOpen(null);
+    setOpen(runId);
+    if (!Array.isArray(steps[runId])) void loadSteps(runId);
+  }, [open, steps, loadSteps]);
 
   const runAgent = useCallback(async (agentKey: string) => {
     setBusy(`run:${agentKey}`);
     setNote(null);
     try {
-      const res = await fetch("/api/console/agents/run", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ agentKey }),
-      });
-      const b = await res.json().catch(() => ({}));
-      setNote({ tone: res.ok && b.status !== "skipped" ? "good" : "warn", text: b.summary ?? b.message ?? "Run finished." });
-      await load(filter);
-      if (b.runId) toggleRun(b.runId);
-      refresh();
-    } catch {
-      setNote({ tone: "warn", text: "Could not reach the server. Try again." });
+      const b = await workspaceRequest<{ status?: string; summary?: string; runId?: number }>("/api/console/agents/run", { method: "POST", body: { agentKey } });
+      setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? "Run finished." });
+      invalidateWorkspace(AGENT_DATA);
+      if (b.runId) {
+        setOpen(b.runId);
+        void loadSteps(b.runId);
+      }
+    } catch (e) {
+      setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not reach the server. Try again." });
     } finally {
       setBusy(null);
     }
-  }, [filter, load, refresh, toggleRun]);
+  }, [loadSteps]);
 
   const setPause = useCallback(async (agentKey: string | null, paused: boolean) => {
     setBusy(`pause:${agentKey ?? "all"}`);
     try {
-      const res = await fetch("/api/console/agents/controls", {
+      await workspaceRequest("/api/console/agents/controls", {
         method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ agentKey, paused, reason: paused ? "Paused from the Agents page" : null }),
+        body: { agentKey, paused, reason: paused ? "Paused from the Agents page" : null },
       });
-      const b = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(b.message ?? "Could not change the switch.");
       setNote({ tone: paused ? "warn" : "good", text: paused ? "Paused. Scheduled runs will be skipped until you resume." : "Resumed. It runs on the next heartbeat." });
-      await load(filter);
-      refresh();
+      invalidateWorkspace(AGENT_DATA);
     } catch (e) {
       setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not change the switch." });
     } finally {
       setBusy(null);
     }
-  }, [filter, load, refresh]);
+  }, []);
 
   const c = data?.controls;
   const runnable = new Set(c?.runnable ?? []);
@@ -159,7 +139,7 @@ export default function AgentsPage() {
       purpose="Run or pause each agent, and open any run to see every step it took and why."
       loading={!data && !error}
       error={error}
-      onRetry={() => load(filter)}
+      onRetry={history.reload}
       actions={
         c ? (
           <Btn variant={c.paused ? "primary" : "quiet"} disabled={busy !== null} onClick={() => setPause(null, !c.paused)}>

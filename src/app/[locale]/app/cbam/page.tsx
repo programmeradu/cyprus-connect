@@ -18,7 +18,7 @@ import {
   State,
   type Column,
 } from "@/components/app/console/kit";
-import { useConsole } from "@/components/app/console/ConsoleData";
+import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { PendingEmailsPlate, RegistryPlate, SupplierContactsPlate, type PendingEmail, type Declarant, type SentRequest, type SupplierContact } from "@/components/app/console/CbamContacts";
 
 interface Line {
@@ -89,52 +89,32 @@ const n = (v: number, dp = 2) => v.toLocaleString("en-GB", { maximumFractionDigi
 const dateLong = (iso: string) =>
   new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
+const CBAM = "/api/console/cbam";
+
 export default function CbamPage() {
-  const { refresh } = useConsole();
-  const [data, setData] = useState<Data | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [year, setYear] = useState<number | null>(null);
   const [busy, setBusy] = useState<"run" | "upload" | number | null>(null);
   const [note, setNote] = useState<{ tone: "good" | "warn"; text: string; details?: string[] } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const load = useCallback(async (y?: number | null) => {
-    setError(null);
-    try {
-      const res = await fetch(`/api/console/cbam${y ? `?year=${y}` : ""}`, { credentials: "include" });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.message ?? "Could not load CBAM data.");
-      setData(body);
-      setYear(body.year);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load CBAM data.");
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
+  const cbam = useWorkspaceResource<Data>(`${CBAM}${year ? `?year=${year}` : ""}`);
+  const data = cbam.data ?? null;
+  const error = cbam.error;
+  const shownYear = year ?? data?.year ?? null;
+  const changed = useCallback(() => invalidateWorkspace([CBAM, "/api/console/agents"]), []);
 
   const runAgent = useCallback(async () => {
     setBusy("run");
     setNote(null);
     try {
-      const res = await fetch("/api/console/agents/run", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ agentKey: "cbam" }),
-      });
-      const b = await res.json().catch(() => ({}));
-      setNote({ tone: res.ok && b.status !== "skipped" ? "good" : "warn", text: b.summary ?? b.message ?? "Run finished." });
-      await load(year);
-      refresh();
-    } catch {
-      setNote({ tone: "warn", text: "Could not reach the server. Try again." });
+      const b = await workspaceRequest<{ status?: string; summary?: string }>("/api/console/agents/run", { method: "POST", body: { agentKey: "cbam" } });
+      setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? "Run finished." });
+      changed();
+    } catch (e) {
+      setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not reach the server. Try again." });
     } finally {
       setBusy(null);
     }
-  }, [load, refresh, year]);
+  }, [changed]);
 
   const upload = useCallback(
     async (file: File) => {
@@ -143,21 +123,20 @@ export default function CbamPage() {
       try {
         if (file.size > 1_000_000) throw new Error("The file is over 1 MB. Split it and upload the parts.");
         const csv = await file.text();
-        const res = await fetch("/api/console/cbam", {
-          method: "POST",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ csv }),
-        });
-        const b = await res.json();
-        if (!res.ok && !b.errors) throw new Error(b.message ?? "Upload failed.");
+        let b: { inserted?: number; duplicates?: number; errors?: string[] };
+        try {
+          b = await workspaceRequest(CBAM, { method: "POST", body: { csv } });
+        } catch (e) {
+          // A file where every row is wrong comes back refused, with the row errors listed.
+          throw e;
+        }
         const errs: string[] = b.errors ?? [];
         setNote({
           tone: errs.length || !b.inserted ? "warn" : "good",
           text: `Added ${b.inserted ?? 0} line(s)${b.duplicates ? `, ${b.duplicates} already there` : ""}${errs.length ? `, ${errs.length} row(s) skipped` : ""}. Run the agent to update the draft.`,
           details: errs.slice(0, 12),
         });
-        await load(year);
+        changed();
       } catch (e) {
         setNote({ tone: "warn", text: e instanceof Error ? e.message : "Upload failed." });
       } finally {
@@ -165,21 +144,22 @@ export default function CbamPage() {
         if (fileRef.current) fileRef.current.value = "";
       }
     },
-    [load, year],
+    [changed],
   );
 
   const removeLine = useCallback(
     async (id: number) => {
       setBusy(id);
       try {
-        const res = await fetch(`/api/console/cbam?id=${id}`, { method: "DELETE", credentials: "include" });
-        if (!res.ok) setNote({ tone: "warn", text: "Could not remove that line." });
-        await load(year);
+        await workspaceRequest(`${CBAM}?id=${id}`, { method: "DELETE" });
+        changed();
+      } catch (e) {
+        setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not remove that line." });
       } finally {
         setBusy(null);
       }
     },
-    [load, year],
+    [changed],
   );
 
   const downloadTemplate = () => {
@@ -225,11 +205,11 @@ export default function CbamPage() {
       purpose="Border turns your customs import lines into the annual CBAM declaration, chases missing supplier data, and asks you to sign."
       loading={!data && !error}
       error={error}
-      onRetry={() => load(year)}
+      onRetry={cbam.reload}
       actions={
         <div className="vck-cbam-actions">
           {data && data.years.length > 1 && (
-            <select className="vck-cbam-year" aria-label="Year" value={year ?? ""} onChange={(e) => load(Number(e.target.value))}>
+            <select className="vck-cbam-year" aria-label="Year" value={shownYear ?? ""} onChange={(e) => setYear(Number(e.target.value))}>
               {data.years.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
           )}
@@ -285,7 +265,7 @@ export default function CbamPage() {
               </PlateGrid>
             )}
 
-            <PendingEmailsPlate emails={data.pendingEmails} onDecided={(text, tone) => { setNote({ tone, text }); load(year); refresh(); }} />
+            <PendingEmailsPlate emails={data.pendingEmails} onDecided={(text, tone) => { setNote({ tone, text }); changed(); }} />
 
             <SupplierContactsPlate
               supplierNames={[...new Set(data.lines.map((l) => l.supplierName))].sort((a, b) => a.localeCompare(b))}
@@ -293,10 +273,10 @@ export default function CbamPage() {
               waiting={new Set(data.pendingEmails.map((e) => e.supplierName))}
               contacts={data.suppliers}
               requests={data.requests}
-              onSaved={() => load(year)}
+              onSaved={changed}
             />
 
-            <RegistryPlate key={`${data.year}|${JSON.stringify(data.declarant)}`} year={data.year} declarant={data.declarant} gaps={data.exportGaps} hasDraft={Boolean(decl)} onSaved={() => load(year)} />
+            <RegistryPlate key={`${data.year}|${JSON.stringify(data.declarant)}`} year={data.year} declarant={data.declarant} gaps={data.exportGaps} hasDraft={Boolean(decl)} onSaved={changed} />
 
             {draft && draft.bySupplier.length > 0 && (
               <Plate label="By supplier" flush>
