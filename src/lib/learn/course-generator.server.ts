@@ -135,48 +135,57 @@ export async function generateCourse(input: GenerateCourseInput): Promise<{ cour
     "21:9",
   );
 
-  const [course] = await db.insert(courses).values({
-    title: structure.title,
-    description: structure.description,
-    industry: input.industry,
-    difficultyLevel: input.difficultyLevel,
-    estimatedHours: structure.estimatedHours,
-    isPublished: false,
-    thumbnailUrl,
-    createdBy: input.userId,
-    createdAt: now(),
-    updatedAt: now(),
-  }).returning({ id: courses.id });
-
+  // Slow image calls happen first, outside the database write.
   let imagesLeft = MAX_LESSON_IMAGES;
-  for (const [mi, mod] of structure.modules.entries()) {
-    const [moduleRow] = await db.insert(courseModules).values({
-      courseId: course.id,
-      order: mi + 1,
-      title: mod.title,
-      description: mod.description,
-      estimatedMinutes: mod.estimatedMinutes,
-      createdAt: now(),
-    }).returning({ id: courseModules.id });
-
-    for (const [li, lesson] of mod.lessons.entries()) {
+  const prepared: { title: string; description: string; estimatedMinutes: number; lessons: { title: string; contentType: string; contentJson: string; estimatedMinutes: number }[] }[] = [];
+  for (const mod of structure.modules) {
+    const rows = [];
+    for (const lesson of mod.lessons) {
       const content: Record<string, unknown> = sanitizeLessonContent({ ...lesson.content });
       if (lesson.contentType === "text" && lesson.needsImage && lesson.imagePrompt && imagesLeft > 0) {
         imagesLeft--;
         const url = await tryImage(lesson.imagePrompt, "16:9");
         if (url) content.imageUrl = url;
       }
-      await db.insert(lessons).values({
-        moduleId: moduleRow.id,
-        order: li + 1,
+      rows.push({
         title: sanitizeLessonHtml(lesson.title).replace(/<[^>]*>/g, ""),
         contentType: lesson.contentType,
         contentJson: JSON.stringify(content),
         estimatedMinutes: lesson.estimatedMinutes,
-        createdAt: now(),
       });
     }
+    prepared.push({ title: mod.title, description: mod.description, estimatedMinutes: mod.estimatedMinutes, lessons: rows });
   }
+
+  // All rows in one transaction: a failure leaves no half-built course behind.
+  const course = await db.transaction(async (tx) => {
+    const [row] = await tx.insert(courses).values({
+      title: structure.title,
+      description: structure.description,
+      industry: input.industry,
+      difficultyLevel: input.difficultyLevel,
+      estimatedHours: structure.estimatedHours,
+      isPublished: false,
+      thumbnailUrl,
+      createdBy: input.userId,
+      createdAt: now(),
+      updatedAt: now(),
+    }).returning({ id: courses.id });
+    for (const [mi, mod] of prepared.entries()) {
+      const [moduleRow] = await tx.insert(courseModules).values({
+        courseId: row.id,
+        order: mi + 1,
+        title: mod.title,
+        description: mod.description,
+        estimatedMinutes: mod.estimatedMinutes,
+        createdAt: now(),
+      }).returning({ id: courseModules.id });
+      await tx.insert(lessons).values(
+        mod.lessons.map((l, li) => ({ ...l, moduleId: moduleRow.id, order: li + 1, createdAt: now() })),
+      );
+    }
+    return row;
+  });
 
   try {
     await db.insert(notifications).values({
