@@ -4,6 +4,7 @@
  * Every path writes a step, including blocked and failed ones.
  */
 
+import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { agentSteps, agentTasks } from "@/db/schema";
 import { decideStep, type PolicyMode, type RiskLevel } from "./policy";
@@ -73,19 +74,41 @@ export class AgentRuntime {
       return { decision: "blocked", output: null };
     }
     if (decision === "ask") {
-      const [task] = await db
-        .insert(agentTasks)
-        .values({
-          workspaceId: this.ctx.workspaceId,
-          agentKey: this.ctx.agentKey,
-          kind: "approval",
-          title: `Approve ${name.replace(/_/g, " ")} (risk level ${def.risk})`.slice(0, 200),
-          detail: `Run #${this.ctx.runId}, step ${seq}. Input hash ${inputHash.slice(0, 12)}. ${inputText.slice(0, 1500)}`,
-          severity: def.risk >= 3 ? "high" : "normal",
-          status: "open",
-        })
-        .returning({ id: agentTasks.id });
-      await write("queued_for_approval", { taskId: task.id });
+      // One open approval per exact call: a daily re-run does not pile up duplicates.
+      const [open] = await db
+        .select({ id: agentTasks.id })
+        .from(agentTasks)
+        .where(
+          and(
+            eq(agentTasks.workspaceId, this.ctx.workspaceId),
+            eq(agentTasks.status, "open"),
+            eq(agentTasks.pendingInputHash, inputHash),
+          ),
+        )
+        .limit(1);
+      const titleFn = def.approvalTitle as ((i: unknown) => string) | undefined;
+      const title = (titleFn ? titleFn(parsed.data) : `Approve ${name.replace(/_/g, " ")} (risk level ${def.risk})`).slice(0, 200);
+      const taskId =
+        open?.id ??
+        (
+          await db
+            .insert(agentTasks)
+            .values({
+              workspaceId: this.ctx.workspaceId,
+              agentKey: this.ctx.agentKey,
+              kind: "approval",
+              title,
+              detail: `${def.description} Run #${this.ctx.runId}, step ${seq}. Fingerprint ${inputHash.slice(0, 12)}.`,
+              severity: def.risk >= 3 ? "high" : "normal",
+              status: "open",
+              runId: this.ctx.runId,
+              pendingTool: name,
+              pendingInput: inputText,
+              pendingInputHash: inputHash,
+            })
+            .returning({ id: agentTasks.id })
+        )[0].id;
+      await write("queued_for_approval", { taskId, reused: Boolean(open) });
       return { decision: "queued_for_approval", output: null };
     }
 

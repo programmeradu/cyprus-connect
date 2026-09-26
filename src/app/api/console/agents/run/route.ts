@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "run_failed", message: "The run could not start. It stays queued and the heartbeat will retry it." }, { status: 500 });
   }
   if (!report) {
-    return NextResponse.json({ status: "already_handled", message: "The evidence check already ran in the last minute. Your review queue is up to date." });
+    return NextResponse.json({ status: "already_handled", message: "This agent already ran in the last minute. Your review queue is up to date." });
   }
   const code = report.status === "succeeded" || report.status === "skipped" ? 200 : 500;
   return NextResponse.json(report, { status: code });
