@@ -1483,3 +1483,15 @@
   .vc .vck-cbam-fields, .vc .vck-cbam-fields-2 { grid-template-columns: minmax(0, 1fr); }
 }
 .vc .vck-cbam-mail { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--vc-well); border: 1px solid var(--vc-rule); color: var(--vc-ink); font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; overflow: auto; }
+
+.vci-tile-note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--vc-ink) 4%, transparent);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--vc-ink-2);
+  overflow-wrap: anywhere;
+}
+.vci-tile-detail strong { text-align: right; overflow-wrap: anywhere; }

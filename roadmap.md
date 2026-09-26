@@ -7,7 +7,7 @@
 - [x] P1b merge duplicate systems (unused /api/lms removed; one Gemini library)
 - [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
 - [x] P2b structured logger (src/lib/log.ts, error refs) + tests for validation/admin/log/PDF/filters
-- [ ] P2c split files over 500 lines (app/page 837, studio 801, calculator 758, integrations 737, compliance 622, insights 599)
+- [ ] P2c split files over 500 lines (app/page 837, studio 801, calculator 758, compliance 622, insights 599)
 - [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
 - [x] P3b CSV export per console section
 - [x] P3c Approve runs the exact act the agent asked for (fingerprint-checked); first act: CBAM signature
@@ -27,7 +27,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Phase 4 Studio: one-step make (server reads real records per topic, no invented figures, refunds on failure), owner-scoped image routes, unsafe edit-image and stats endpoints removed, EN+EL copy
 - [x] Phase 4 Calculator: one form per month, server works out the footprint from the company country (live Climatiq per line, published factor otherwise, stated per line), one transaction writes emissions + dashboard figures + scopes + activity; replaces a month instead of duplicating; auto-saved AI actions and self-calling batch endpoint removed. Note: monthly history table (historical_emissions) needs renewable/efficiency data the form does not collect, so it is not written
 - [x] Phase 4 Insights: one server read (measured hourly grid from Energy-Charts for the company country, own recorded months, tracked obligations); one-click advice built from numbered server-side facts, uncited points dropped. Removed: fake quarterly 'you vs industry' chart, mock benchmark percentile, US $0.15 savings on a fixed 10,000 kWh, 85% default compliance score, stock 'personalised' advice; deleted industry-benchmarks and ai-recommendations endpoints
-- [ ] Phase 4 heavy: Integrations (also move its grid card off /api/energy-pricing, whose Cyprus path invents intensity and power mix, then delete that endpoint and the fake parts of carbon-intensity client)
+- [x] Phase 4 heavy: Integrations — one view on the shared store, Energy-Charts live reading, QuickBooks set-up/link state, guessed tariff + benchmark services deleted. Open: carbon-intensity client still has a Climate TRACE estimate fallback (unused by app pages)
 - [ ] Learn: click through signed in with a real generated course (needs AI key in preview)
 - [x] Exchange rates: one shared request per page load (was ~4; duplicate currency wrapper removed)
 - [x] Found: analytics insights and AI recommendations call /api/learn/auto-generate over HTTP (endpoint removed)

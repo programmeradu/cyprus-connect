@@ -21,7 +21,6 @@ export const PUBLIC_API_PREFIXES = [
   "/api/geolocation",
   "/api/exchange-rates",
   "/api/energy-prices/",
-  "/api/energy-pricing",
   "/api/climate-trace/",
   "/api/grant-alerts/subscribe",
   "/api/gemini/stream", // marketing assistant; rate-limited in the route
