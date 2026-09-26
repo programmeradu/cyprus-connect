@@ -15,6 +15,7 @@ import type { AgentRuntime } from "./runtime";
 import type { AgentOutcome } from "./orchestrator";
 import { buildDraft, dueDateFor, type CbamLineInput } from "./cbam-calc";
 import { sha256Hex, stableStringify } from "./hash";
+import { buildSupplierRequest, sentRecently, suppliersNeedingData } from "./cbam-supplier-request";
 
 export const FIRST_DEFINITIVE_YEAR = 2026;
 
@@ -33,6 +34,7 @@ export async function runCbamAgent(rt: AgentRuntime, now = new Date()): Promise<
   let processed = 0;
   let asked = 0;
   let signatureRequests = 0;
+  let emailDrafts = 0;
 
   for (const year of yearsInScope(now)) {
     const read = await rt.call("read_cbam_imports", { year });
@@ -71,7 +73,44 @@ export async function runCbamAgent(rt: AgentRuntime, now = new Date()): Promise<
       sourceHash: draftHash,
     });
 
+    // Supplier data: draft an email where we know who to ask, otherwise ask the user for a contact.
+    const who = await rt.call("read_cbam_suppliers", { year });
+    const info = who.output;
+    const contacts = new Map((info?.contacts ?? []).map((c) => [c.supplierName, c]));
+    const emailed = new Set<string>();
+    for (const supplierName of suppliersNeedingData(draft)) {
+      const contact = contacts.get(supplierName);
+      if (!contact || !info) continue;
+      emailed.add(supplierName);
+      if (sentRecently(info.lastSent[supplierName], now)) continue;
+      const req = buildSupplierRequest({
+        year,
+        supplierName,
+        contactName: contact.contactName,
+        importerName: info.importerName,
+        lines: draft.lines,
+        dueDate: draft.dueDate,
+      });
+      const callInput = {
+        year,
+        supplierName,
+        to: contact.email,
+        replyTo: info.replyTo,
+        subject: req.subject,
+        body: req.body,
+      };
+      // Same fingerprint the runtime uses; an older draft of this email is withdrawn, not left beside the new one.
+      const hash = await sha256Hex(`send_supplier_request:${stableStringify(callInput)}`);
+      for (const old of info.openRequests.filter((o) => o.supplierName === supplierName && o.inputHash !== hash)) {
+        await rt.call("withdraw_approval_request", { taskId: old.taskId, reason: "The import lines changed, so a new email replaces it." });
+      }
+      const r = await rt.call("send_supplier_request", callInput);
+      if (r.decision === "queued_for_approval") emailDrafts += 1;
+    }
+
     for (const issue of draft.issues) {
+      const supplierIssue = issue.kind === "default_values" || issue.kind === "no_installation";
+      if (supplierIssue && issue.supplierName && emailed.has(issue.supplierName)) continue;
       const title =
         issue.kind === "default_values"
           ? `Get actual CBAM emissions from ${issue.supplierName} (${year})`
@@ -82,9 +121,9 @@ export async function runCbamAgent(rt: AgentRuntime, now = new Date()): Promise<
               : `Check import dates on ${issue.lineIds.length} CBAM line(s) (${year})`;
       const r = await rt.call("create_task", {
         title,
-        detail: `${issue.message} Lines: ${issue.lineIds.join(", ")}.`,
+        detail: `${issue.message} Lines: ${issue.lineIds.join(", ")}.${supplierIssue ? " Add the supplier's email on the CBAM page and Border will draft the request for your approval." : ""}`,
         severity: issue.kind === "unknown_cn" || issue.kind === "wrong_year" ? "high" : "normal",
-        kind: issue.kind === "default_values" || issue.kind === "no_installation" ? "evidence" : "review",
+        kind: supplierIssue ? "evidence" : "review",
         dueAt: draft.dueDate,
       });
       if (r.output?.created) asked += 1;
@@ -121,7 +160,8 @@ export async function runCbamAgent(rt: AgentRuntime, now = new Date()): Promise<
     return { summary: "No CBAM import lines recorded, so there is nothing to declare.", itemsProcessed: 0, confidence: 1 };
   }
   const extras = [
-    asked ? `${asked} new supplier or data requests.` : "",
+    asked ? `${asked} new data task(s).` : "",
+    emailDrafts ? `${emailDrafts} supplier email(s) drafted for your approval.` : "",
     signatureRequests ? "Signature requested in your review queue." : "",
   ].filter(Boolean);
   return { summary: [...parts, ...extras].join(" "), itemsProcessed: processed, confidence: 1 };

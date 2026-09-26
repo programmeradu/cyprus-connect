@@ -5,18 +5,22 @@
  */
 
 import { z } from "zod";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { sha256Hex } from "./hash";
 import { db } from "@/db";
 import {
   agentTasks,
+  cbamDeclarants,
   cbamDeclarations,
   cbamImportLines,
+  cbamSupplierRequests,
+  cbamSuppliers,
   metricDefinitions,
   metricReadings,
   obligations,
   workspaceFacts,
 } from "@/db/schema";
+import { sendEmail } from "@/lib/email/send";
 import type { RiskLevel } from "./policy";
 
 export interface ToolContext {
@@ -271,6 +275,112 @@ export const signCbamDeclaration = tool({
   },
 });
 
+export const readCbamSuppliers = tool({
+  name: "read_cbam_suppliers",
+  risk: 0,
+  description: "Supplier contacts, the declarant profile, recent supplier requests and open email approvals for one year.",
+  input: z.object({ year: z.number().int().min(2026).max(2100) }),
+  run: async (ctx, input) => {
+    const [contacts, [declarant], sent, open] = await Promise.all([
+      db.select().from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ctx.workspaceId)),
+      db.select().from(cbamDeclarants).where(eq(cbamDeclarants.workspaceId, ctx.workspaceId)).limit(1),
+      db
+        .select({ supplierName: cbamSupplierRequests.supplierName, sentAt: cbamSupplierRequests.sentAt })
+        .from(cbamSupplierRequests)
+        .where(and(eq(cbamSupplierRequests.workspaceId, ctx.workspaceId), eq(cbamSupplierRequests.year, input.year)))
+        .orderBy(desc(cbamSupplierRequests.sentAt)),
+      db
+        .select({ id: agentTasks.id, pendingInput: agentTasks.pendingInput, pendingInputHash: agentTasks.pendingInputHash })
+        .from(agentTasks)
+        .where(
+          and(
+            eq(agentTasks.workspaceId, ctx.workspaceId),
+            eq(agentTasks.status, "open"),
+            eq(agentTasks.pendingTool, "send_supplier_request"),
+          ),
+        ),
+    ]);
+    const lastSent: Record<string, string> = {};
+    for (const s of sent) if (!lastSent[s.supplierName]) lastSent[s.supplierName] = s.sentAt.toISOString();
+    const openRequests = open.flatMap((t) => {
+      try {
+        const p = JSON.parse(t.pendingInput ?? "{}") as { year?: number; supplierName?: string };
+        return p.year === input.year && p.supplierName
+          ? [{ taskId: t.id, supplierName: p.supplierName, inputHash: t.pendingInputHash ?? "" }]
+          : [];
+      } catch {
+        return [];
+      }
+    });
+    return {
+      contacts: contacts.map((c) => ({ supplierName: c.supplierName, email: c.email, contactName: c.contactName })),
+      importerName: declarant?.legalName ?? null,
+      replyTo: declarant?.replyToEmail ?? null,
+      lastSent,
+      openRequests,
+    };
+  },
+});
+
+export const withdrawApprovalRequest = tool({
+  name: "withdraw_approval_request",
+  risk: 1,
+  description: "Withdraw this agent's own open approval request because the facts behind it changed.",
+  input: z.object({ taskId: z.number().int().positive(), reason: z.string().min(3).max(300) }),
+  run: async (ctx, input) => {
+    const rows = await db
+      .update(agentTasks)
+      .set({ status: "withdrawn", result: `Withdrawn by the agent: ${input.reason}` })
+      .where(
+        and(
+          eq(agentTasks.id, input.taskId),
+          eq(agentTasks.workspaceId, ctx.workspaceId),
+          eq(agentTasks.agentKey, ctx.agentKey),
+          eq(agentTasks.status, "open"),
+          eq(agentTasks.kind, "approval"),
+        ),
+      )
+      .returning({ id: agentTasks.id });
+    return { withdrawn: rows.length === 1 };
+  },
+});
+
+export const sendSupplierRequest = tool({
+  name: "send_supplier_request",
+  risk: 2,
+  description:
+    "Email a CBAM supplier and ask for installation data and actual embedded emissions. The approver sees the full email; only that exact text is sent.",
+  input: z.object({
+    year: z.number().int().min(2026).max(2100),
+    supplierName: z.string().min(1).max(200),
+    to: z.string().email().max(254),
+    replyTo: z.string().email().max(254).nullable(),
+    subject: z.string().min(3).max(200),
+    body: z.string().min(20).max(20_000),
+  }),
+  approvalTitle: (i) => `Email ${i.supplierName} for ${i.year} CBAM data`,
+  run: async (ctx, input) => {
+    if (!ctx.approvedBy) throw new Error("An outward email needs a person's approval.");
+    const sent = await sendEmail({ to: input.to, subject: input.subject, text: input.body, replyTo: input.replyTo });
+    const [row] = await db
+      .insert(cbamSupplierRequests)
+      .values({
+        workspaceId: ctx.workspaceId,
+        year: input.year,
+        supplierName: input.supplierName,
+        email: input.to,
+        subject: input.subject,
+        bodyHash: await sha256Hex(input.body),
+        provider: sent.provider,
+        providerId: sent.id,
+        approvedBy: ctx.approvedBy,
+        runId: ctx.runId,
+      })
+      .returning({ id: cbamSupplierRequests.id, sentAt: cbamSupplierRequests.sentAt });
+    return { sent: true, to: input.to, provider: sent.provider, requestId: row.id, sentAt: row.sentAt.toISOString() };
+  },
+});
+
 export const TOOLS = {
   read_metrics: readMetrics,
   read_obligations: readObligations,
@@ -279,6 +389,9 @@ export const TOOLS = {
   read_cbam_imports: readCbamImports,
   save_cbam_draft: saveCbamDraft,
   sign_cbam_declaration: signCbamDeclaration,
+  read_cbam_suppliers: readCbamSuppliers,
+  withdraw_approval_request: withdrawApprovalRequest,
+  send_supplier_request: sendSupplierRequest,
 } as const;
 
 export type ToolName = keyof typeof TOOLS;
