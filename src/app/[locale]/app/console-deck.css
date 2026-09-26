@@ -1487,3 +1487,15 @@
   color: var(--vc-bad);
   overflow-wrap: anywhere;
 }
+
+/* Phones: the bell sits mid-bar, so a right-anchored panel runs off the left edge.
+   Pin the queue to the viewport with even margins instead. */
+@media (max-width: 560px) {
+  .vc-pop.vc-pop-queue {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 64px;
+    width: auto;
+  }
+}
