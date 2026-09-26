@@ -15,18 +15,15 @@ function fail(error: string): OCRResult {
 
 export async function extractTextFromPDF(buffer: Buffer): Promise<OCRResult> {
   const startTime = Date.now();
-  let parser: import('pdf-parse').PDFParse | undefined;
   try {
-    // Loaded lazily: pdf.js breaks if evaluated at module load in the server bundle.
-    const { PDFParse } = await import('pdf-parse');
-    parser = new PDFParse({ data: new Uint8Array(buffer) });
-    const { text } = await parser.getText();
+    // unpdf ships a serverless/Workers build of pdf.js.
+    const { extractText, getDocumentProxy } = await import('unpdf');
+    const pdf = await getDocumentProxy(new Uint8Array(buffer));
+    const { text } = await extractText(pdf, { mergePages: true });
     if (!text?.trim()) return fail('No text found in PDF (it may be a scanned image — upload a photo instead).');
     return { success: true, text, confidence: 0.95, processingTime: Date.now() - startTime };
   } catch (error) {
     return fail(`PDF extraction failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  } finally {
-    await parser?.destroy().catch(() => undefined);
   }
 }
 
