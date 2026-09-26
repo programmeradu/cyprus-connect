@@ -15,6 +15,7 @@ import {
 } from "@/db/schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
+import { logger } from "@/lib/log";
 import { QA_ACCOUNT, QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 
 export const dynamic = "force-dynamic";
@@ -184,23 +185,38 @@ export async function GET() {
     /** Fold the flat reading rows into one series per metric. */
     const series: Record<
       string,
-      { label: string; periodStart: string; value: number; source: string; confidence: number }[]
+      {
+        label: string;
+        periodStart: string;
+        value: number;
+        source: string;
+        confidence: number;
+        site: string | null;
+      }[]
     > = {};
+    const siteNames = new Set<string>();
     for (const r of readings) {
+      if (r.site) siteNames.add(r.site);
       (series[r.metricKey] ??= []).push({
         label: r.periodLabel,
         periodStart: r.periodStart,
         value: r.value,
         source: r.source,
         confidence: r.confidence,
+        site: r.site ?? null,
       });
     }
 
+    // Headline figures read the whole-workspace rows; per-site rows are
+    // kept on `points` for the site filter in the console.
     const metrics = defs.map((d) => {
-      const points = series[d.key] ?? [];
-      const current = points.at(-1)?.value ?? 0;
-      const previous = points.at(-2)?.value ?? current;
-      const first = points[0]?.value ?? current;
+      const all = series[d.key] ?? [];
+      const workspaceRows = all.filter((p) => p.site === null);
+      const points = all;
+      const headline = workspaceRows.length > 0 ? workspaceRows : all;
+      const current = headline.at(-1)?.value ?? 0;
+      const previous = headline.at(-2)?.value ?? current;
+      const first = headline[0]?.value ?? current;
       const delta = previous === 0 ? 0 : ((current - previous) / previous) * 100;
       const sinceStart = first === 0 ? 0 : ((current - first) / first) * 100;
       return {
@@ -216,6 +232,7 @@ export async function GET() {
     return NextResponse.json({
       workspace,
       metrics,
+      sites: [...siteNames].sort((a, b) => a.localeCompare(b)),
       agents: roster,
       runs,
       tasks,
@@ -225,11 +242,12 @@ export async function GET() {
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("console overview read failed", error);
+    const ref = logger("console.overview").error("overview read failed", error);
     return NextResponse.json(
       {
         error: "console_unavailable",
-        message: error instanceof Error ? error.message : "Unknown database error",
+        message: `The console could not read your workspace. Reference ${ref}.`,
+        ref,
       },
       { status: 503 },
     );
