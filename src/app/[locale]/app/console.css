@@ -1578,7 +1578,7 @@
 }
 
 /* Export sits at the end of the section tabs; it is an action, not a tab. */
-.vc-tab-strip .vc-tab-export {
+.vc .vc-tab-strip button.vc-tab-export {
   margin-left: auto;
   flex: none;
   align-self: center;
@@ -1598,6 +1598,6 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.vc-tab-strip .vc-tab-export:hover { background: var(--vc-lime-soft); }
-.vc-tab-strip .vc-tab-export:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 2px; }
-.vc-tab-strip .vc-tab-export:disabled { opacity: 0.5; cursor: default; }
+.vc .vc-tab-strip button.vc-tab-export:hover { background: var(--vc-lime-soft); }
+.vc .vc-tab-strip button.vc-tab-export:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 2px; }
+.vc .vc-tab-strip button.vc-tab-export:disabled { opacity: 0.5; cursor: default; }
