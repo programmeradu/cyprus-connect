@@ -8,7 +8,10 @@ Every marketing/learn/pillar page ships with REAL context-aware generated hero +
 Never ship lazy/mediocre UI: verify full content fits, no truncation, no overflow, mobile checked.
 Innovation first: integration is not innovation. Every feature maps to a research question. See mem://reference/innovation-criteria.
 
+No shortcuts, no mocks, no fake data anywhere. All /app pages share one central workspace state. See mem://constraints/no-shortcuts.
+
 ## Memories
 - [Context-aware assets](mem://design/context-aware-assets) — Asset generation rules for all marketing/pillar/learn pages
 - [Innovation criteria + pathway](mem://reference/innovation-criteria) — DMRID/RIF 56-layer test, Frascati rules, Slush 2026 flagship thesis
 - [Strategic research](mem://reference/strategic-research) — Canonical strategy docs in docs/research/
+- [No shortcuts](mem://constraints/no-shortcuts) — Build everything properly; honest blocked states instead of mocks; one shared data source
