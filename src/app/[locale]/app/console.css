@@ -1576,3 +1576,22 @@
   align-items: center;
   gap: 9px;
 }
+
+/* Export sits at the end of the section tabs; it is an action, not a tab. */
+.vc-tab-strip .vc-tab-export {
+  margin-left: auto;
+  flex: none;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--vc-rule);
+  background: transparent;
+  color: var(--vc-ink);
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.vc-tab-strip .vc-tab-export:hover { background: var(--vc-lime-soft); }
+.vc-tab-strip .vc-tab-export:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 2px; }
+.vc-tab-strip .vc-tab-export:disabled { opacity: 0.5; cursor: default; }
