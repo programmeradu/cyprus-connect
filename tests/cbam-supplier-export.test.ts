@@ -27,7 +27,7 @@ describe("supplier requests", () => {
     expect(a.body).toContain("Dear Sir or Madam");
     expect(a.body).toContain("unique identifier of each installation");
     expect(a.body).toContain("indirect embedded emissions");
-    expect(a.body).toContain("1 July 2027");
+    expect(a.body).toContain("2 July 2027");
     expect(a.body).not.toContain("Alpha");
   });
 
