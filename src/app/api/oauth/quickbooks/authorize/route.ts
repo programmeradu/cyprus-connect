@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { nanoid } from 'nanoid';
+import { bindSessionUser } from '@/lib/api-auth';
+import { logger } from '@/lib/log';
+
+const log = logger('oauth.quickbooks.authorize');
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 401 }
-      );
-    }
+    // The account always comes from the session, never from a header the caller controls.
+    const auth = await bindSessionUser(request);
+    if (!auth.ok) return auth.response;
+    const userId = auth.userId;
     
     const clientId = process.env.QB_CLIENT_ID;
     const environment = process.env.QB_ENVIRONMENT || 'sandbox';
@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     
     if (!clientId) {
       return NextResponse.json(
-        { error: 'QuickBooks credentials not configured' },
-        { status: 500 }
+        { error: 'QuickBooks is not connected yet.', message: 'QuickBooks is not connected yet. Upload a bill or enter figures instead.' },
+        { status: 503 }
       );
     }
     
@@ -53,9 +53,9 @@ export async function GET(request: NextRequest) {
     
     return response;
   } catch (error) {
-    console.error('QuickBooks authorize error:', error);
+    const ref = log.error('authorize failed', error);
     return NextResponse.json(
-      { error: 'Authorization failed' },
+      { error: 'Authorization failed', ref },
       { status: 500 }
     );
   }
