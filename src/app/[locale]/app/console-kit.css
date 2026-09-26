@@ -1417,3 +1417,51 @@
 .vc .vck-cbam-table .vck-table td { overflow-wrap: normal; word-break: normal; }
 .vc .vck-cbam-table .vck-table { min-width: 520px; }
 .vc .vck-cbam-table-wide .vck-table { min-width: 760px; }
+
+/* Agents page: per-agent controls and the step ledger. */
+.vc .vck-agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+.vc .vck-agent-card { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.vc .vck-agent-card h3 { margin: 0; font-size: 18px; line-height: 1.3; color: var(--vc-ink); }
+.vc .vck-agent-card > p { margin: 0; font-size: 14px; line-height: 1.55; overflow-wrap: anywhere; }
+.vc .vck-agent-card dl { margin: 0; display: grid; gap: 6px; font-size: 13px; }
+.vc .vck-agent-card dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; }
+.vc .vck-agent-card dt { color: var(--vc-ink-3); }
+.vc .vck-agent-card dd { margin: 0; color: var(--vc-ink); text-align: right; overflow-wrap: anywhere; }
+.vc .vck-agent-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.vc .vck-agent-planned-lead { margin: 0 0 10px; font-size: 13px; }
+.vc .vck-agent-planned { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 8px; }
+.vc .vck-agent-planned li { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--vc-rule); border-radius: 10px; font-size: 13px; }
+.vc .vck-agent-planned span { color: var(--vc-ink-3); }
+.vc .vck-agent-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.vc .vck-agent-check { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; color: var(--vc-ink-2); cursor: pointer; }
+.vc .vck-runs { list-style: none; margin: 0; padding: 0; }
+.vc .vck-runs > li { border-top: 1px solid var(--vc-rule); }
+.vc .vck-runs > li:first-child { border-top: 0; }
+.vc .vck-run-head { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 20px; padding: 14px 18px; cursor: pointer; }
+.vc .vck-run-head:hover, .vc .vck-runs > li[data-open] .vck-run-head { background: var(--vc-well); }
+.vc .vck-run-head:focus-visible { outline: 2px solid var(--vc-lime); outline-offset: -2px; }
+.vc .vck-run-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.vc .vck-run-main strong { font-size: 14px; color: var(--vc-ink); }
+.vc .vck-run-summary { font-size: 13px; line-height: 1.5; color: var(--vc-ink-2); overflow-wrap: anywhere; }
+.vc .vck-run-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 12px; text-align: right; }
+.vc .vck-run-steps { padding: 4px 18px 18px; }
+.vc .vck-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.vc .vck-steps > li { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; padding: 10px 0; }
+.vc .vck-steps > li::before { content: ""; position: absolute; left: 13px; top: 38px; bottom: -10px; width: 1px; background: var(--vc-rule); }
+.vc .vck-steps > li:last-child::before { display: none; }
+.vc .vck-step-n { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--vc-rule); font-size: 12px; color: var(--vc-ink-2); background: var(--vc-well); }
+.vc .vck-steps > li[data-decision="queued_for_approval"] .vck-step-n { border-color: var(--vc-lime); color: var(--vc-ink); }
+.vc .vck-steps > li[data-decision="failed"] .vck-step-n, .vc .vck-steps > li[data-decision="blocked"] .vck-step-n { border-color: var(--vc-warn, var(--vc-ink-3)); }
+.vc .vck-step-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.vc .vck-step-top { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
+.vc .vck-step-top strong { font-size: 14px; color: var(--vc-ink); }
+.vc .vck-step-body p { margin: 0; font-size: 12px; }
+.vc .vck-step-out { font-size: 13px !important; color: var(--vc-ink-2); overflow-wrap: anywhere; }
+.vc .vck-step-body details summary { cursor: pointer; font-size: 12px; color: var(--vc-ink-3); }
+.vc .vck-step-body pre { margin: 6px 0 0; padding: 8px 10px; max-height: 220px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-size: 11px; line-height: 1.5; border-radius: 8px; background: var(--vc-well); color: var(--vc-ink-2); }
+@media (max-width: 640px) {
+  .vc .vck-run-head { grid-template-columns: minmax(0, 1fr); padding: 14px; }
+  .vc .vck-run-meta { align-items: flex-start; text-align: left; }
+  .vc .vck-run-steps { padding: 4px 14px 14px; }
+  .vc .vck-agent-filters { justify-content: flex-start; }
+}
