@@ -49,3 +49,16 @@ describe("decideBinding", () => {
     expect(decideBinding("me", " me ")).toEqual({ ok: true, userId: "me" });
   });
 });
+
+describe("bindSessionUser", () => {
+  it("resolves the account from the session, not the request", async () => {
+    const { requireVuneliUserId } = await import("@/lib/auth");
+    const { bindSessionUser } = await import("@/lib/api-auth");
+    vi.mocked(requireVuneliUserId).mockResolvedValueOnce("owner");
+    const headers = new Headers({ cookie: "a=1; b=2" });
+    const r = await bindSessionUser({ headers }, "intruder");
+    expect(r.ok).toBe(false);
+    vi.mocked(requireVuneliUserId).mockResolvedValueOnce("owner");
+    expect(await bindSessionUser({ headers })).toEqual({ ok: true, userId: "owner" });
+  });
+});
