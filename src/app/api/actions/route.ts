@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate points is positive integer
-    const pointsValue = parseInt(points);
+    const pointsValue = Math.trunc(points);
     if (isNaN(pointsValue) || pointsValue <= 0) {
       return NextResponse.json({ 
         error: "Points must be a positive integer",

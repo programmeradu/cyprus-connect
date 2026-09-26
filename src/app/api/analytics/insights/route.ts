@@ -6,13 +6,17 @@ import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
 
 const log = logger("analytics.insights");
+const num = z.number().finite().min(-1e9).max(1e9).optional();
+const metric = z.object({ value: num, change: num }).partial().optional();
+const share = z.object({ percentage: num }).partial().optional();
+const label = z.string().trim().max(120).optional();
 const BodySchema = z.object({
   userId: z.string().max(200).optional(),
-  metricsData: z.record(z.string().max(100), z.unknown()).optional(),
-  emissionsBreakdown: z.union([z.record(z.string().max(100), z.unknown()), z.array(z.unknown()).max(200)]).optional(),
-  monthlyTrend: z.array(z.unknown()).max(200).optional(),
-  industryComparison: z.record(z.string().max(100), z.unknown()).nullable().optional(),
-  userProfile: z.record(z.string().max(100), z.unknown()).nullable().optional(),
+  metricsData: z.object({ totalEmissions: metric, energy: metric, water: metric, waste: metric }).partial().optional(),
+  emissionsBreakdown: z.object({ electricity: share, gas: share, transportation: share, other: share }).partial().optional(),
+  monthlyTrend: z.array(z.object({ month: z.string().max(40), value: num, change: num })).max(36).optional(),
+  industryComparison: z.object({ yourPerformance: num, industryAverage: num, betterBy: z.number().finite().default(0) }).nullable().optional(),
+  userProfile: z.object({ companyName: label, companyIndustry: label, teamSize: z.union([z.string().max(40), z.number()]).optional() }).passthrough().nullable().optional(),
 });
 
 
