@@ -468,7 +468,7 @@ function DocumentsTab({
 
   return (
     <>
-      <Section title={t("documents.aiTitle")} body={t("documents.aiDescription")}>
+      <Section title={t("documents.aiTitle")} description={t("documents.aiDescription")}>
         <div className="vck-card flex flex-wrap gap-2 p-4">
           {FRAMEWORKS.map((f) => f.label).map((framework) => (
             <button
@@ -557,7 +557,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
 
   return (
     <>
-      <Section title={t("settings.jurisdictionsTitle")} body={t("settings.jurisdictionsDescription")}>
+      <Section title={t("settings.jurisdictionsTitle")} description={t("settings.jurisdictionsDescription")}>
         <div className="vck-card space-y-2 p-4">
           {jurisdictionOptions.map(({ value, label }) => (
             <label

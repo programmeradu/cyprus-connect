@@ -544,7 +544,7 @@ Generate a detailed image generation prompt (max 200 words):`;
       }
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <Section title={t("creator.title")} body={t("creator.subtitle")}>
+        <Section title={t("creator.title")} description={t("creator.subtitle")}>
           <div className="vck-card space-y-4 p-4">
             <div>
               <label className="vck-label mb-1.5 block">{t("creator.contextLabel")}</label>

@@ -508,7 +508,7 @@ Return ONLY valid JSON (no markdown, no explanations):
     >
       {!results ? (
         <>
-          <Section title={t("ai.heading")} body={t("ai.description")}>
+          <Section title={t("ai.heading")} description={t("ai.description")}>
             <div className="vck-card p-6">
               <button
                 type="button"
@@ -552,7 +552,7 @@ Return ONLY valid JSON (no markdown, no explanations):
             </div>
           </Section>
 
-          <Section title={t("manual.title")} body={t("manual.hint")}>
+          <Section title={t("manual.title")} description={t("manual.hint")}>
             <div className="vck-card p-6 max-w-xl">
               <div className="flex items-center justify-between mb-5">
                 <span className="vck-tag">{t("manual.monthly")}</span>
@@ -648,7 +648,7 @@ Return ONLY valid JSON (no markdown, no explanations):
         </>
       ) : (
         <>
-          <Section title={t("results.title")} body={t("results.subtitle")} action={<span className="vck-tag">{t("results.completed")}</span>}>
+          <Section title={t("results.title")} description={t("results.subtitle")} action={<span className="vck-tag">{t("results.completed")}</span>}>
             <MetricRow columns={2}>
               <Metric label={t("results.totalTitle")} value={results.totalEmissions.toFixed(2)} unit={t("results.totalUnit")} />
               <Metric
