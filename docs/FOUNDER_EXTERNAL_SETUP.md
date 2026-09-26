@@ -72,3 +72,4 @@ Approving "Sign the 2026 CBAM declaration" records your signature on that exact 
 ## 2026-09-26 (Dashboard connections and CBAM deletions)
 
 - Nothing new to do outside the app. Dashboard connections now show only QuickBooks and imported customs lines, from real data. Old sample connection rows are no longer read, so there is no need to delete them.
+- **Production database:** run `scripts/sql/0023_remove_sample_rows.sql` once (after 0020–0022). It removes seeded sample agent runs, tasks, figures and connection rows, and the unused demo workspace. Already applied to preview.

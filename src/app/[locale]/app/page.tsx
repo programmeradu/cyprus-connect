@@ -267,7 +267,7 @@ export default function ConsolePage() {
       id: "tasks",
       tone: highTasks.length ? "warn" : "info",
       label: "Decision",
-      headline: `${tasks.length} item${tasks.length === 1 ? "" : "s"} wait for a person`,
+      headline: `${tasks.length} ${tasks.length === 1 ? "item waits" : "items wait"} for a person`,
       detail: highTasks.length
         ? `${highTasks.length} of them are marked high. ${highTasks[0].title}.`
         : tasks[0].title,
