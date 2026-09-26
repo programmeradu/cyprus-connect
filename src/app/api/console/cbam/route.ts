@@ -166,7 +166,15 @@ export async function DELETE(req: Request) {
   const gone = await db
     .delete(cbamImportLines)
     .where(and(eq(cbamImportLines.id, id), eq(cbamImportLines.workspaceId, s.session.workspace.id)))
-    .returning({ id: cbamImportLines.id });
+    .returning({ id: cbamImportLines.id, cnCode: cbamImportLines.cnCode, year: cbamImportLines.year });
   if (!gone.length) return NextResponse.json({ message: "That line is not in your workspace." }, { status: 404 });
+  await db.insert(activityEvents).values({
+    workspaceId: s.session.workspace.id,
+    actorType: "human",
+    actorName: s.session.account.name || s.session.account.email || "Workspace member",
+    verb: "deleted",
+    object: `CBAM import line #${id}`,
+    detail: `CN ${gone[0].cnCode}, ${gone[0].year}.`,
+  });
   return NextResponse.json({ deleted: id });
 }

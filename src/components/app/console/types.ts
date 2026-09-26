@@ -88,7 +88,8 @@ export interface ConsoleConnection {
   provider: string;
   category: string;
   status: "live" | "syncing" | "error" | "available";
-  coveragePct: number;
+  /** Share of records covered, only when truly measured; null otherwise. */
+  coveragePct: number | null;
   lastSyncAt: string | null;
   note: string | null;
 }

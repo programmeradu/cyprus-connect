@@ -68,3 +68,7 @@ Approving "Sign the 2026 CBAM declaration" records your signature on that exact 
 
 ## Agents and CBAM pages (2026-09-26)
 - Nothing new to set up. Every app page now shares one copy of the workspace data.
+
+## 2026-09-26 (Dashboard connections and CBAM deletions)
+
+- Nothing new to do outside the app. Dashboard connections now show only QuickBooks and imported customs lines, from real data. Old sample connection rows are no longer read, so there is no need to delete them.
