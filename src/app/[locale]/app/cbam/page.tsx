@@ -19,6 +19,7 @@ import {
   type Column,
 } from "@/components/app/console/kit";
 import { useConsole } from "@/components/app/console/ConsoleData";
+import { RegistryPlate, SupplierContactsPlate, type Declarant, type SentRequest, type SupplierContact } from "@/components/app/console/CbamContacts";
 
 interface Line {
   id: number;
@@ -44,7 +45,7 @@ interface Draft {
   dueDate: string;
   totals: { lines: number; massTonnesCounted: number; electricityMWh: number; directT: number; indirectT: number; embeddedT: number; defaultShare: number };
   bySupplier: Array<{ supplierName: string; lines: number; embeddedT: number; defaultLines: number }>;
-  issues: Array<{ kind: string; message: string }>;
+  issues: Array<{ kind: string; message: string; supplierName?: string }>;
   lines: DraftLine[];
 }
 interface Data {
@@ -59,6 +60,10 @@ interface Data {
     signedAt: string | null;
     updatedAt: string;
   };
+  suppliers: SupplierContact[];
+  declarant: Declarant;
+  requests: SentRequest[];
+  exportGaps: string[] | null;
 }
 
 const TEMPLATE =
@@ -278,6 +283,16 @@ export default function CbamPage() {
                 </Plate>
               </PlateGrid>
             )}
+
+            <SupplierContactsPlate
+              supplierNames={[...new Set(data.lines.map((l) => l.supplierName))].sort((a, b) => a.localeCompare(b))}
+              needing={new Set((draft?.issues ?? []).filter((i) => (i.kind === "default_values" || i.kind === "no_installation") && i.supplierName).map((i) => i.supplierName!))}
+              contacts={data.suppliers}
+              requests={data.requests}
+              onSaved={() => load(year)}
+            />
+
+            <RegistryPlate key={`${data.year}|${JSON.stringify(data.declarant)}`} year={data.year} declarant={data.declarant} gaps={data.exportGaps} hasDraft={Boolean(decl)} onSaved={() => load(year)} />
 
             {draft && draft.bySupplier.length > 0 && (
               <Plate label="By supplier" flush>

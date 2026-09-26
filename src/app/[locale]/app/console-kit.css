@@ -1467,3 +1467,18 @@
 }
 .vc .vck-run-meta > * { margin: 0; line-height: 1.45; }
 .vc .vck-run-meta .vck-quiet { display: block; font-size: 12px; }
+
+/* CBAM supplier contacts and Registry file. */
+.vc .vck-cbam-contacts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.vc .vck-cbam-contact { display: flex; flex-direction: column; gap: 8px; padding-bottom: 16px; border-bottom: 1px solid var(--vc-rule); min-width: 0; }
+.vc .vck-cbam-contact:last-child { border-bottom: 0; padding-bottom: 0; }
+.vc .vck-cbam-contact-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.vc .vck-cbam-contact-head strong { color: var(--vc-ink); font-size: 15px; overflow-wrap: anywhere; }
+.vc .vck-cbam-fields { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+.vc .vck-cbam-fields-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 14px; }
+.vc .vck-cbam-fields label { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.vc .vck-cbam-fields label span { font-size: 12px; color: var(--vc-ink-3); }
+.vc .vck-cbam-fields .vck-input { width: 100%; min-width: 0; }
+@media (max-width: 640px) {
+  .vc .vck-cbam-fields, .vc .vck-cbam-fields-2 { grid-template-columns: minmax(0, 1fr); }
+}
