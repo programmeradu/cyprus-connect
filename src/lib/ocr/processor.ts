@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { OCRResult } from './types';
 
 // Native-binary OCR (sharp, tesseract) can't run on Cloudflare Workers, so images
-// are read with the Gemini vision model and PDFs with pdf-parse (pure JS).
+// are read with the Gemini vision model and PDFs with unpdf (Workers build of pdf.js).
 
 const IMAGE_MODEL = 'gemini-2.5-flash';
 const OCR_PROMPT =
