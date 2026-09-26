@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { offsetProjects } from "@/db/schema";
@@ -8,6 +9,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const admin = await requireAdmin(request);
+  if (!admin.ok) return admin.response;
   try {
     const { id } = await params;
     const projectId = parseInt(id);
@@ -71,7 +74,7 @@ export async function POST(
   } catch (error: any) {
     console.error("Error generating banner:", error);
     return NextResponse.json(
-      { error: "Failed to generate banner", details: error.message },
+      { error: "Failed to generate banner", details: undefined },
       { status: 500 }
     );
   }

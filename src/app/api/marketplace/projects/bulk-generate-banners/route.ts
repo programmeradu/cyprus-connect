@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { offsetProjects } from "@/db/schema";
@@ -5,6 +6,8 @@ import { isNull, eq } from "drizzle-orm";
 import { generateImage } from "@/lib/generators";
 
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin(request);
+  if (!admin.ok) return admin.response;
   try {
     // Fetch all projects without banner images
     const projectsWithoutBanners = await db
@@ -88,7 +91,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Error in bulk banner generation:", error);
     return NextResponse.json(
-      { error: "Failed to bulk generate banners", details: error.message },
+      { error: "Failed to bulk generate banners", details: undefined },
       { status: 500 }
     );
   }

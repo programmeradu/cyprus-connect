@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { offsetProjects } from "@/db/schema";
@@ -6,6 +7,8 @@ import { generateImage } from "@/lib/generators";
 
 // Background image generation - runs asynchronously without blocking
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin(request);
+  if (!admin.ok) return admin.response;
   try {
     // Fetch only first 3 projects without banners to avoid rate limits
     const projectsWithoutBanners = await db
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error("Error in auto-generate banners:", error);
     return NextResponse.json(
-      { error: "Failed to start auto-generation", details: error.message },
+      { error: "Failed to start auto-generation", details: undefined },
       { status: 500 }
     );
   }

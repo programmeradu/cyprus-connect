@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { bindSessionUser } from '@/lib/api-auth';
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger("api.users");
+
+const putSchema = z.object({
+  name: z.string().trim().min(1).max(200).optional(),
+  companyName: z.string().trim().max(200).nullable().optional(),
+  companyIndustry: z.string().trim().max(200).nullable().optional(),
+  teamSize: z.string().trim().max(64).nullable().optional(),
+  sustainabilityGoals: z.union([z.array(z.string().max(200)).max(50), z.string().max(5000), z.null()]).optional(),
+  onboardingCompleted: z.boolean().optional(),
+  countryCode: z.string().trim().max(10).nullable().optional(),
+}).passthrough();
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    // Only the signed-in account may be read. Listing/searching all accounts is not exposed.
     const auth = await bindSessionUser(request, searchParams.get('id'));
     if (!auth.ok) return auth.response;
 
@@ -17,13 +31,12 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json(userRecord[0], { status: 200 });
   } catch (error) {
-    console.error('GET /api/users error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const ref = log.error('GET /api/users failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function POST() {
-  // Accounts are created by the sign-in flow, never by an open endpoint.
   return NextResponse.json(
     { error: 'Accounts are created through sign-in', code: 'METHOD_NOT_ALLOWED' },
     { status: 405 }
@@ -37,10 +50,11 @@ export async function PUT(request: NextRequest) {
     if (!auth.ok) return auth.response;
     const id = auth.userId;
 
-    const body = await request.json();
+    const parsed = await readJson(request, putSchema);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.data as Record<string, unknown>;
     const { name, companyName, companyIndustry, teamSize, sustainabilityGoals, onboardingCompleted, countryCode } = body;
 
-    // Check if user exists
     const existingUser = await db
       .select()
       .from(user)
@@ -48,13 +62,9 @@ export async function PUT(request: NextRequest) {
       .limit(1);
 
     if (existingUser.length === 0) {
-      return NextResponse.json(
-        { error: 'User not found', code: 'USER_NOT_FOUND' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found', code: 'USER_NOT_FOUND' }, { status: 404 });
     }
 
-    // Validate that email and totalCredits are not being updated
     if ('email' in body) {
       return NextResponse.json(
         { error: 'Email cannot be updated through this endpoint', code: 'EMAIL_UPDATE_NOT_ALLOWED' },
@@ -69,35 +79,31 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Build update object with only provided fields
     const updates: any = {
       updatedAt: new Date(),
     };
 
     if (name !== undefined) {
-      if (!name || name.trim() === '') {
-        return NextResponse.json(
-          { error: 'Name cannot be empty', code: 'INVALID_NAME' },
-          { status: 400 }
-        );
+      if (!name || (name as string).trim() === '') {
+        return NextResponse.json({ error: 'Name cannot be empty', code: 'INVALID_NAME' }, { status: 400 });
       }
-      updates.name = name.trim();
+      updates.name = (name as string).trim();
     }
 
     if (companyName !== undefined) {
-      updates.companyName = companyName ? companyName.trim() : null;
+      updates.companyName = companyName ? (companyName as string).trim() : null;
     }
 
     if (companyIndustry !== undefined) {
-      updates.companyIndustry = companyIndustry ? companyIndustry.trim() : null;
+      updates.companyIndustry = companyIndustry ? (companyIndustry as string).trim() : null;
     }
 
     if (teamSize !== undefined) {
-      updates.teamSize = teamSize ? teamSize.trim() : null;
+      updates.teamSize = teamSize ? (teamSize as string).trim() : null;
     }
 
     if (countryCode !== undefined) {
-      updates.countryCode = countryCode ? countryCode.trim().toUpperCase() : null;
+      updates.countryCode = countryCode ? (countryCode as string).trim().toUpperCase() : null;
     }
 
     if (sustainabilityGoals !== undefined) {
@@ -135,7 +141,6 @@ export async function PUT(request: NextRequest) {
       updates.onboardingCompleted = onboardingCompleted;
     }
 
-    // Update user
     const updatedUser = await db
       .update(user)
       .set(updates)
@@ -144,11 +149,8 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json(updatedUser[0], { status: 200 });
   } catch (error) {
-    console.error('PUT error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    const ref = log.error('PUT /api/users failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
@@ -159,7 +161,6 @@ export async function DELETE(request: NextRequest) {
     if (!auth.ok) return auth.response;
     const id = auth.userId;
 
-    // Check if user exists
     const existingUser = await db
       .select()
       .from(user)
@@ -167,30 +168,20 @@ export async function DELETE(request: NextRequest) {
       .limit(1);
 
     if (existingUser.length === 0) {
-      return NextResponse.json(
-        { error: 'User not found', code: 'USER_NOT_FOUND' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found', code: 'USER_NOT_FOUND' }, { status: 404 });
     }
 
-    // Delete user (cascade will handle related records)
     const deleted = await db
       .delete(user)
       .where(eq(user.id, id))
       .returning();
 
     return NextResponse.json(
-      {
-        message: 'User deleted successfully',
-        user: deleted[0],
-      },
+      { message: 'User deleted successfully', user: deleted[0] },
       { status: 200 }
     );
   } catch (error) {
-    console.error('DELETE error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    const ref = log.error('DELETE /api/users failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
