@@ -6,7 +6,7 @@ import { useLocale } from "next-intl";
 import { useSession, authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
-import { PageShell, PageHeader, Section, EmptyState } from "@/components/app/shell";
+import { PageShell, PageHeader, Section, Empty } from "@/components/app/console/kit";
 
 const COPY = {
   en: {
@@ -100,7 +100,7 @@ export default function PrivacySettingsPage() {
   if (!session?.user?.id) {
     return (
       <PageShell header={header}>
-        <EmptyState
+        <Empty
           title={t.signInRequired}
           action={{ label: t.signIn, href: "/auth" }}
         />
@@ -160,7 +160,7 @@ export default function PrivacySettingsPage() {
 
   return (
     <PageShell header={header}>
-      <Section title={t.exportTitle} description={t.exportBody}>
+      <Section title={t.exportTitle} body={t.exportBody}>
         <div className="vck-card p-4">
           <button className="vck-btn vck-btn-primary" onClick={handleExport} disabled={exporting}>
             {exporting ? t.exporting : t.exportCta}
@@ -168,7 +168,7 @@ export default function PrivacySettingsPage() {
         </div>
       </Section>
 
-      <Section title={t.deleteTitle} description={t.deleteBody}>
+      <Section title={t.deleteTitle} body={t.deleteBody}>
         <div className="vck-card p-4 border-[var(--destructive)]">
           {!confirming ? (
             <button

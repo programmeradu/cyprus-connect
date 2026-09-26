@@ -1,8 +1,23 @@
 import { bindSessionUser } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('users.[id].preferences');
+
+const updateSchema = z.object({
+  preferredCurrency: z.string().trim().regex(/^[A-Z]{3}$/, 'Preferred currency must be a valid 3-letter uppercase currency code').optional(),
+  countryCode: z.string().trim().regex(/^[A-Z]{2}$/, 'Country code must be a valid 2-letter uppercase ISO country code').optional(),
+  timezone: z.string().trim().regex(/^[A-Za-z_]+\/[A-Za-z_]+$/, 'Timezone must be a valid IANA timezone format (e.g., America/New_York)').optional(),
+  energyZone: z.string().trim().min(1).max(100).optional(),
+}).refine(
+  (v) => v.preferredCurrency || v.countryCode || v.timezone || v.energyZone,
+  { message: 'At least one field must be provided for update' }
+);
 
 export async function GET(
   request: NextRequest,
@@ -13,13 +28,6 @@ export async function GET(
     const __auth = await bindSessionUser(request, claimedId);
     if (!__auth.ok) return __auth.response;
     const id = __auth.userId;
-
-    if (!id || typeof id !== 'string' || id.trim() === '') {
-      return NextResponse.json(
-        { error: 'Valid user ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
 
     const userRecord = await db
       .select({
@@ -41,9 +49,9 @@ export async function GET(
 
     return NextResponse.json(userRecord[0], { status: 200 });
   } catch (error) {
-    console.error('GET preferences error:', error);
+    const ref = log.error('GET preferences error', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Something went wrong. Please try again.', ref },
       { status: 500 }
     );
   }
@@ -59,111 +67,9 @@ export async function PUT(
     if (!__auth.ok) return __auth.response;
     const id = __auth.userId;
 
-    if (!id || typeof id !== 'string' || id.trim() === '') {
-      return NextResponse.json(
-        { error: 'Valid user ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
-
-    const body = await request.json();
-    const { preferredCurrency, countryCode, timezone, energyZone } = body;
-
-    if (
-      !preferredCurrency &&
-      !countryCode &&
-      !timezone &&
-      !energyZone
-    ) {
-      return NextResponse.json(
-        {
-          error: 'At least one field must be provided for update',
-          code: 'NO_FIELDS_PROVIDED',
-        },
-        { status: 400 }
-      );
-    }
-
-    if (preferredCurrency !== undefined) {
-      if (
-        typeof preferredCurrency !== 'string' ||
-        preferredCurrency.trim() === ''
-      ) {
-        return NextResponse.json(
-          {
-            error: 'Preferred currency must be a non-empty string',
-            code: 'INVALID_CURRENCY',
-          },
-          { status: 400 }
-        );
-      }
-
-      if (preferredCurrency.length !== 3 || !/^[A-Z]{3}$/.test(preferredCurrency)) {
-        return NextResponse.json(
-          {
-            error: 'Preferred currency must be a valid 3-letter uppercase currency code',
-            code: 'INVALID_CURRENCY_FORMAT',
-          },
-          { status: 400 }
-        );
-      }
-    }
-
-    if (countryCode !== undefined) {
-      if (typeof countryCode !== 'string' || countryCode.trim() === '') {
-        return NextResponse.json(
-          {
-            error: 'Country code must be a non-empty string',
-            code: 'INVALID_COUNTRY_CODE',
-          },
-          { status: 400 }
-        );
-      }
-
-      if (countryCode.length !== 2 || !/^[A-Z]{2}$/.test(countryCode)) {
-        return NextResponse.json(
-          {
-            error: 'Country code must be a valid 2-letter uppercase ISO country code',
-            code: 'INVALID_COUNTRY_CODE_FORMAT',
-          },
-          { status: 400 }
-        );
-      }
-    }
-
-    if (timezone !== undefined) {
-      if (typeof timezone !== 'string' || timezone.trim() === '') {
-        return NextResponse.json(
-          {
-            error: 'Timezone must be a non-empty string',
-            code: 'INVALID_TIMEZONE',
-          },
-          { status: 400 }
-        );
-      }
-
-      if (!/^[A-Za-z_]+\/[A-Za-z_]+$/.test(timezone)) {
-        return NextResponse.json(
-          {
-            error: 'Timezone must be a valid IANA timezone format (e.g., America/New_York)',
-            code: 'INVALID_TIMEZONE_FORMAT',
-          },
-          { status: 400 }
-        );
-      }
-    }
-
-    if (energyZone !== undefined) {
-      if (typeof energyZone !== 'string' || energyZone.trim() === '') {
-        return NextResponse.json(
-          {
-            error: 'Energy zone must be a non-empty string',
-            code: 'INVALID_ENERGY_ZONE',
-          },
-          { status: 400 }
-        );
-      }
-    }
+    const bodyResult = await readJson(request, updateSchema);
+    if (!bodyResult.ok) return bodyResult.response;
+    const { preferredCurrency, countryCode, timezone, energyZone } = bodyResult.data;
 
     const existingUser = await db
       .select({ id: user.id })
@@ -188,18 +94,10 @@ export async function PUT(
       updatedAt: new Date(),
     };
 
-    if (preferredCurrency !== undefined) {
-      updates.preferredCurrency = preferredCurrency;
-    }
-    if (countryCode !== undefined) {
-      updates.countryCode = countryCode;
-    }
-    if (timezone !== undefined) {
-      updates.timezone = timezone;
-    }
-    if (energyZone !== undefined) {
-      updates.energyZone = energyZone;
-    }
+    if (preferredCurrency !== undefined) updates.preferredCurrency = preferredCurrency;
+    if (countryCode !== undefined) updates.countryCode = countryCode;
+    if (timezone !== undefined) updates.timezone = timezone;
+    if (energyZone !== undefined) updates.energyZone = energyZone;
 
     const updated = await db
       .update(user)
@@ -213,8 +111,9 @@ export async function PUT(
       });
 
     if (updated.length === 0) {
+      const ref = log.error('Failed to update user preferences');
       return NextResponse.json(
-        { error: 'Failed to update user preferences', code: 'UPDATE_FAILED' },
+        { error: 'Failed to update user preferences.', ref },
         { status: 500 }
       );
     }
@@ -228,9 +127,9 @@ export async function PUT(
       { status: 200 }
     );
   } catch (error) {
-    console.error('PUT preferences error:', error);
+    const ref = log.error('PUT preferences error', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Something went wrong. Please try again.', ref },
       { status: 500 }
     );
   }

@@ -11,9 +11,9 @@ import {
   MetricRow,
   Metric,
   DataTable,
-  EmptyState,
-  type Column
-} from "@/components/app/shell";
+  Empty,
+  type DataTableColumn as Column
+} from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Project {
@@ -258,9 +258,9 @@ export default function MarketplaceAdminPage() {
           rows={projects}
           rowKey={(p) => String(p.id)}
           empty={
-            <EmptyState
+            <Empty
               title="No projects to manage yet"
-              description="Projects will appear here once they are added to the marketplace."
+              body="Projects will appear here once they are added to the marketplace."
             />
           }
         />

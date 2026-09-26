@@ -25,9 +25,9 @@ import {
   Section,
   Metric,
   MetricRow,
-  EmptyState,
+  Empty,
   AiUnavailable
-} from "@/components/app/shell";
+} from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface EnergyPricingData {
@@ -446,9 +446,9 @@ export default function InsightsPage() {
                 </MetricRow>
               </>
             ) : (
-              <EmptyState
+              <Empty
                 title="No forecast data yet"
-                description="Carbon intensity forecasts will appear here once your energy zone data is available."
+                body="Carbon intensity forecasts will appear here once your energy zone data is available."
               />
             )}
           </div>
@@ -479,9 +479,9 @@ export default function InsightsPage() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <EmptyState
+              <Empty
                 title="No benchmark data yet"
-                description="Industry comparisons will appear once your sector benchmark data has been calculated."
+                body="Industry comparisons will appear once your sector benchmark data has been calculated."
               />
             )}
           </div>
@@ -512,7 +512,7 @@ export default function InsightsPage() {
 
       <Section
         title={t("ai.title")}
-        description={userLocation ? t("ai.personalizedFor", { country: userLocation.country }) : undefined}
+        body={userLocation ? t("ai.personalizedFor", { country: userLocation.country }) : undefined}
       >
         {aiLoading ? (
           <div className="vck-card p-6">
@@ -566,7 +566,7 @@ export default function InsightsPage() {
 
       <Section
         title={t("compliance.title")}
-        description={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
+        body={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
         action={
           <Link href="/app/compliance" className="vck-btn">
             {t("compliance.viewDashboard")}
@@ -587,9 +587,9 @@ export default function InsightsPage() {
             </MetricRow>
           </div>
         ) : (
-          <EmptyState
+          <Empty
             title="Compliance data is not loaded yet"
-            description="Once compliance regulations are initialised for your account, a summary will appear here."
+            body="Once compliance regulations are initialised for your account, a summary will appear here."
             action={{ label: t("compliance.viewDashboard"), href: "/app/compliance" }}
           />
         )}

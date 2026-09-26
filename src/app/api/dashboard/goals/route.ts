@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { sustainabilityGoalsProgress, user } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger("api.dashboard.goals");
 
 const VALID_GOAL_TYPES = ['carbon-neutral', 'reduce-energy', 'zero-waste', 'renewable-100'] as const;
 type GoalType = typeof VALID_GOAL_TYPES[number];
@@ -17,6 +22,18 @@ const GOAL_UNITS: Record<GoalType, string> = {
 const REDUCTION_GOALS: GoalType[] = ['carbon-neutral', 'reduce-energy'];
 const INCREASE_GOALS: GoalType[] = ['zero-waste', 'renewable-100'];
 
+const currentYear = new Date().getFullYear();
+
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(200).optional(),
+  goalType: z.enum(VALID_GOAL_TYPES),
+  targetValue: z.number().finite().gt(0).max(1_000_000_000),
+  currentValue: z.number().finite().min(0).max(1_000_000_000),
+  targetYear: z.number().int().min(currentYear).max(currentYear + 30),
+});
+
+const idSchema = z.coerce.number().int().positive();
+
 function calculateProgressPercentage(
   goalType: GoalType,
   currentValue: number,
@@ -26,11 +43,8 @@ function calculateProgressPercentage(
   let progress = 0;
 
   if (INCREASE_GOALS.includes(goalType)) {
-    // For increase goals: (current / target) * 100
     progress = (currentValue / targetValue) * 100;
   } else {
-    // For reduction goals: ((start - current) / (start - target)) * 100
-    // If no start value, assume current is the start
     const start = startValue ?? currentValue;
     if (start === targetValue) {
       progress = 100;
@@ -39,7 +53,6 @@ function calculateProgressPercentage(
     }
   }
 
-  // Clamp between 0 and 100
   return Math.max(0, Math.min(100, progress));
 }
 
@@ -55,7 +68,7 @@ function calculateStatus(
 
   const totalYears = targetYear - createdYear;
   const yearsElapsed = currentYear - createdYear;
-  
+
   if (totalYears <= 0) {
     return 'at-risk';
   }
@@ -78,35 +91,24 @@ export async function GET(request: NextRequest) {
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json({ 
-        error: 'userId is required',
-        code: 'MISSING_USER_ID' 
-      }, { status: 400 });
-    }
-
-    // Validate user exists
     const userRecord = await db.select()
       .from(user)
       .where(eq(user.id, userId))
       .limit(1);
 
     if (userRecord.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'User not found',
-        code: 'USER_NOT_FOUND' 
+        code: 'USER_NOT_FOUND'
       }, { status: 404 });
     }
 
-    // Fetch all goals for user
     const goals = await db.select()
       .from(sustainabilityGoalsProgress)
       .where(eq(sustainabilityGoalsProgress.userId, userId));
 
     const currentYear = new Date().getFullYear();
 
-    // Calculate additional metrics for each goal
     const enrichedGoals = goals.map(goal => {
       const createdYear = new Date(goal.createdAt).getFullYear();
       const yearsRemaining = goal.targetYear - currentYear;
@@ -116,7 +118,7 @@ export async function GET(request: NextRequest) {
       const expectedProgress = totalYears > 0 ? (yearsElapsed / totalYears) * 100 : 0;
       const isOnTrack = goal.progressPercentage >= expectedProgress;
 
-      const monthlyTargetRate = yearsRemaining > 0 
+      const monthlyTargetRate = yearsRemaining > 0
         ? (goal.targetValue - goal.currentValue) / (yearsRemaining * 12)
         : 0;
 
@@ -146,7 +148,6 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Calculate summary statistics
     const totalGoals = enrichedGoals.length;
     const completedGoals = enrichedGoals.filter(g => g.status === 'completed').length;
     const onTrackGoals = enrichedGoals.filter(g => g.status === 'on-track').length;
@@ -168,134 +169,55 @@ export async function GET(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error as Error).message 
-    }, { status: 500 });
+    const ref = log.error('GET /api/dashboard/goals failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { userId: __claimedUserId, goalType, targetValue, currentValue, targetYear } = body;
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
+    const { userId: __claimedUserId, goalType, targetValue, currentValue, targetYear } = parsed.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // Validate required fields
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json({ 
-        error: 'userId is required',
-        code: 'MISSING_USER_ID' 
-      }, { status: 400 });
-    }
-
-    if (!goalType) {
-      return NextResponse.json({ 
-        error: 'goalType is required',
-        code: 'MISSING_GOAL_TYPE' 
-      }, { status: 400 });
-    }
-
-    if (!VALID_GOAL_TYPES.includes(goalType as GoalType)) {
-      return NextResponse.json({ 
-        error: `goalType must be one of: ${VALID_GOAL_TYPES.join(', ')}`,
-        code: 'INVALID_GOAL_TYPE' 
-      }, { status: 400 });
-    }
-
-    if (targetValue === undefined || targetValue === null) {
-      return NextResponse.json({ 
-        error: 'targetValue is required',
-        code: 'MISSING_TARGET_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (targetValue <= 0) {
-      return NextResponse.json({ 
-        error: 'targetValue must be greater than 0',
-        code: 'INVALID_TARGET_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (currentValue === undefined || currentValue === null) {
-      return NextResponse.json({ 
-        error: 'currentValue is required',
-        code: 'MISSING_CURRENT_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (currentValue < 0) {
-      return NextResponse.json({ 
-        error: 'currentValue must be greater than or equal to 0',
-        code: 'INVALID_CURRENT_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (!targetYear) {
-      return NextResponse.json({ 
-        error: 'targetYear is required',
-        code: 'MISSING_TARGET_YEAR' 
-      }, { status: 400 });
-    }
-
-    const currentYear = new Date().getFullYear();
-
-    if (targetYear < currentYear) {
-      return NextResponse.json({ 
-        error: 'targetYear must be greater than or equal to current year',
-        code: 'INVALID_TARGET_YEAR' 
-      }, { status: 400 });
-    }
-
-    if (targetYear > currentYear + 30) {
-      return NextResponse.json({ 
-        error: 'targetYear must be within 30 years from now',
-        code: 'TARGET_YEAR_TOO_FAR' 
-      }, { status: 400 });
-    }
-
-    // Validate goal type logic
-    if (REDUCTION_GOALS.includes(goalType as GoalType) && targetValue >= currentValue) {
-      return NextResponse.json({ 
+    if (REDUCTION_GOALS.includes(goalType) && targetValue >= currentValue) {
+      return NextResponse.json({
         error: `For ${goalType} goals, targetValue should be less than currentValue (reduction goal)`,
-        code: 'INVALID_REDUCTION_GOAL' 
+        code: 'INVALID_REDUCTION_GOAL'
       }, { status: 400 });
     }
 
-    if (INCREASE_GOALS.includes(goalType as GoalType) && targetValue < currentValue) {
-      return NextResponse.json({ 
+    if (INCREASE_GOALS.includes(goalType) && targetValue < currentValue) {
+      return NextResponse.json({
         error: `For ${goalType} goals, targetValue should be greater than or equal to currentValue (increase goal)`,
-        code: 'INVALID_INCREASE_GOAL' 
+        code: 'INVALID_INCREASE_GOAL'
       }, { status: 400 });
     }
 
-    // Validate user exists
     const userRecord = await db.select()
       .from(user)
       .where(eq(user.id, userId))
       .limit(1);
 
     if (userRecord.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'User not found',
-        code: 'USER_NOT_FOUND' 
+        code: 'USER_NOT_FOUND'
       }, { status: 404 });
     }
 
-    // Calculate progress percentage
     const progressPercentage = calculateProgressPercentage(
-      goalType as GoalType,
+      goalType,
       currentValue,
       targetValue,
-      currentValue // Using currentValue as start for new goals
+      currentValue
     );
 
     const timestamp = new Date().toISOString();
 
-    // Check if goal already exists for this user and goal type
     const existingGoal = await db.select()
       .from(sustainabilityGoalsProgress)
       .where(
@@ -309,7 +231,6 @@ export async function POST(request: NextRequest) {
     let result;
 
     if (existingGoal.length > 0) {
-      // Update existing goal
       const updated = await db.update(sustainabilityGoalsProgress)
         .set({
           targetValue,
@@ -323,7 +244,6 @@ export async function POST(request: NextRequest) {
 
       result = updated[0];
     } else {
-      // Insert new goal
       const inserted = await db.insert(sustainabilityGoalsProgress)
         .values({
           userId,
@@ -340,7 +260,6 @@ export async function POST(request: NextRequest) {
       result = inserted[0];
     }
 
-    // Enrich with calculated fields
     const createdYear = new Date(result.createdAt).getFullYear();
     const yearsRemaining = result.targetYear - currentYear;
     const totalYears = result.targetYear - createdYear;
@@ -349,7 +268,7 @@ export async function POST(request: NextRequest) {
     const expectedProgress = totalYears > 0 ? (yearsElapsed / totalYears) * 100 : 0;
     const isOnTrack = result.progressPercentage >= expectedProgress;
 
-    const monthlyTargetRate = yearsRemaining > 0 
+    const monthlyTargetRate = yearsRemaining > 0
       ? (result.targetValue - result.currentValue) / (yearsRemaining * 12)
       : 0;
 
@@ -379,47 +298,30 @@ export async function POST(request: NextRequest) {
     }, { status: existingGoal.length > 0 ? 200 : 201 });
 
   } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error as Error).message 
-    }, { status: 500 });
+    const ref = log.error('POST /api/dashboard/goals failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const parsedId = parseValue(searchParams.get('id'), idSchema);
+    if (!parsedId.ok) return parsedId.response;
+    const goalId = parsedId.data;
 
-    if (!id) {
-      return NextResponse.json({ 
-        error: 'id is required',
-        code: 'MISSING_ID' 
-      }, { status: 400 });
-    }
-
-    const goalId = parseInt(id);
-    if (isNaN(goalId)) {
-      return NextResponse.json({ 
-        error: 'Valid ID is required',
-        code: 'INVALID_ID' 
-      }, { status: 400 });
-    }
-
-    // Check if goal exists
     const existingGoal = await db.select()
       .from(sustainabilityGoalsProgress)
       .where(eq(sustainabilityGoalsProgress.id, goalId))
       .limit(1);
 
     if (existingGoal.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'Goal not found',
-        code: 'GOAL_NOT_FOUND' 
+        code: 'GOAL_NOT_FOUND'
       }, { status: 404 });
     }
 
-    // Delete the goal
     const deleted = await db.delete(sustainabilityGoalsProgress)
       .where(eq(sustainabilityGoalsProgress.id, goalId))
       .returning();
@@ -431,9 +333,7 @@ export async function DELETE(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('DELETE error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error as Error).message 
-    }, { status: 500 });
+    const ref = log.error('DELETE /api/dashboard/goals failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }

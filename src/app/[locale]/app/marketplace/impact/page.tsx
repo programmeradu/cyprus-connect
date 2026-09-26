@@ -11,9 +11,9 @@ import {
   MetricRow,
   Metric,
   DataTable,
-  EmptyState,
-  type Column
-} from "@/components/app/shell";
+  Empty,
+  type DataTableColumn as Column
+} from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface ImpactData {
@@ -134,9 +134,9 @@ export default function ImpactPage() {
     >
       {!hasImpact ? (
         <Section>
-          <EmptyState
+          <Empty
             title="Start your impact journey"
-            description="You haven't purchased any carbon offsets yet. Browse the marketplace to find projects that align with your values."
+            body="You haven't purchased any carbon offsets yet. Browse the marketplace to find projects that align with your values."
             action={{ label: "Browse projects", href: "/app/marketplace" }}
           />
         </Section>
@@ -155,7 +155,7 @@ export default function ImpactPage() {
               columns={breakdownColumns}
               rows={breakdown}
               rowKey={(b) => b.category}
-              empty={<EmptyState title="No category breakdown yet" description="Purchase offsets across categories to see a breakdown here." />}
+              empty={<Empty title="No category breakdown yet" body="Purchase offsets across categories to see a breakdown here." />}
             />
           </Section>
 
@@ -164,7 +164,7 @@ export default function ImpactPage() {
               columns={purchaseColumns}
               rows={purchases}
               rowKey={(p) => String(p.id)}
-              empty={<EmptyState title="No purchases yet" description="Your completed offset purchases will be listed here." />}
+              empty={<Empty title="No purchases yet" body="Your completed offset purchases will be listed here." />}
             />
           </Section>
         </>

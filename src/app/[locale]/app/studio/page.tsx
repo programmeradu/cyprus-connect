@@ -14,11 +14,11 @@ import {
   PageToolbar,
   ToolbarTabs,
   Section,
-  EmptyState,
+  Empty,
   AiUnavailable,
   MetricRow,
   Metric
-} from "@/components/app/shell";
+} from "@/components/app/console/kit";
 
 type MediaType = "image" | "video";
 type ContextType = "company_data" | "progress" | "insights" | "recommendations" | "custom";
@@ -544,7 +544,7 @@ Generate a detailed image generation prompt (max 200 words):`;
       }
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <Section title={t("creator.title")} description={t("creator.subtitle")}>
+        <Section title={t("creator.title")} body={t("creator.subtitle")}>
           <div className="vck-card space-y-4 p-4">
             <div>
               <label className="vck-label mb-1.5 block">{t("creator.contextLabel")}</label>
@@ -720,9 +720,9 @@ Generate a detailed image generation prompt (max 200 words):`;
               )}
             </div>
           ) : (
-            <EmptyState
+            <Empty
               title={t("preview.empty")}
-              description={t("preview.emptyHint")}
+              body={t("preview.emptyHint")}
             />
           )}
         </Section>
@@ -730,9 +730,9 @@ Generate a detailed image generation prompt (max 200 words):`;
 
       <Section title={viewMode === "recent" ? t("recentGenerations") : t("savedLibrary")}>
         {filteredMedia.length === 0 ? (
-          <EmptyState
+          <Empty
             title={viewMode === "library" ? t("sidebar.noSaved") : t("sidebar.noGenerations")}
-            description={viewMode === "library" ? t("sidebar.saveHint") : t("sidebar.createHint")}
+            body={viewMode === "library" ? t("sidebar.saveHint") : t("sidebar.createHint")}
           />
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

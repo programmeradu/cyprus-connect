@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('integrations.[id]');
+
+const idSchema = z.string().regex(/^\d+$/, 'Valid integration ID is required');
+
+const updateSchema = z.object({
+  accessToken: z.string().trim().min(1).max(4096).optional(),
+  refreshToken: z.string().trim().min(1).max(4096).optional(),
+  tokenExpiresAt: z.string().datetime({ offset: true }).optional().or(z.string().refine((v) => !isNaN(new Date(v).getTime()), 'tokenExpiresAt must be a valid ISO timestamp string')),
+  lastSyncAt: z.string().refine((v) => !isNaN(new Date(v).getTime()), 'lastSyncAt must be a valid ISO timestamp string').nullable().optional(),
+  isActive: z.boolean().optional(),
+});
 
 export async function PUT(
   request: NextRequest,
@@ -9,17 +24,13 @@ export async function PUT(
 ) {
   try {
     const { id } = await context.params;
+    const idResult = parseValue(id, idSchema);
+    if (!idResult.ok) return idResult.response;
+    const integrationId = parseInt(idResult.data);
 
-    if (!id || isNaN(parseInt(id))) {
-      return NextResponse.json(
-        { error: 'Valid integration ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
-
-    const integrationId = parseInt(id);
-
-    const body = await request.json();
+    const bodyResult = await readJson(request, updateSchema);
+    if (!bodyResult.ok) return bodyResult.response;
+    const body = bodyResult.data;
 
     const existing = await db
       .select()
@@ -38,71 +49,11 @@ export async function PUT(
       updatedAt: new Date().toISOString(),
     };
 
-    if (body.accessToken !== undefined) {
-      if (typeof body.accessToken !== 'string' || body.accessToken.trim() === '') {
-        return NextResponse.json(
-          { error: 'accessToken must be a non-empty string', code: 'INVALID_ACCESS_TOKEN' },
-          { status: 400 }
-        );
-      }
-      updates.accessToken = body.accessToken.trim();
-    }
-
-    if (body.refreshToken !== undefined) {
-      if (typeof body.refreshToken !== 'string' || body.refreshToken.trim() === '') {
-        return NextResponse.json(
-          { error: 'refreshToken must be a non-empty string', code: 'INVALID_REFRESH_TOKEN' },
-          { status: 400 }
-        );
-      }
-      updates.refreshToken = body.refreshToken.trim();
-    }
-
-    if (body.tokenExpiresAt !== undefined) {
-      if (typeof body.tokenExpiresAt !== 'string') {
-        return NextResponse.json(
-          { error: 'tokenExpiresAt must be a valid ISO timestamp string', code: 'INVALID_TOKEN_EXPIRES_AT' },
-          { status: 400 }
-        );
-      }
-      const expiresDate = new Date(body.tokenExpiresAt);
-      if (isNaN(expiresDate.getTime())) {
-        return NextResponse.json(
-          { error: 'tokenExpiresAt must be a valid ISO timestamp string', code: 'INVALID_TOKEN_EXPIRES_AT' },
-          { status: 400 }
-        );
-      }
-      updates.tokenExpiresAt = body.tokenExpiresAt;
-    }
-
-    if (body.lastSyncAt !== undefined) {
-      if (body.lastSyncAt !== null && typeof body.lastSyncAt !== 'string') {
-        return NextResponse.json(
-          { error: 'lastSyncAt must be a valid ISO timestamp string or null', code: 'INVALID_LAST_SYNC_AT' },
-          { status: 400 }
-        );
-      }
-      if (body.lastSyncAt !== null) {
-        const syncDate = new Date(body.lastSyncAt);
-        if (isNaN(syncDate.getTime())) {
-          return NextResponse.json(
-            { error: 'lastSyncAt must be a valid ISO timestamp string', code: 'INVALID_LAST_SYNC_AT' },
-            { status: 400 }
-          );
-        }
-      }
-      updates.lastSyncAt = body.lastSyncAt;
-    }
-
-    if (body.isActive !== undefined) {
-      if (typeof body.isActive !== 'boolean') {
-        return NextResponse.json(
-          { error: 'isActive must be a boolean', code: 'INVALID_IS_ACTIVE' },
-          { status: 400 }
-        );
-      }
-      updates.isActive = body.isActive;
-    }
+    if (body.accessToken !== undefined) updates.accessToken = body.accessToken;
+    if (body.refreshToken !== undefined) updates.refreshToken = body.refreshToken;
+    if (body.tokenExpiresAt !== undefined) updates.tokenExpiresAt = body.tokenExpiresAt;
+    if (body.lastSyncAt !== undefined) updates.lastSyncAt = body.lastSyncAt;
+    if (body.isActive !== undefined) updates.isActive = body.isActive;
 
     const updated = await db
       .update(integrations)
@@ -111,8 +62,9 @@ export async function PUT(
       .returning();
 
     if (updated.length === 0) {
+      const ref = log.error('Failed to update integration');
       return NextResponse.json(
-        { error: 'Failed to update integration', code: 'UPDATE_FAILED' },
+        { error: 'Failed to update integration.', ref },
         { status: 500 }
       );
     }
@@ -125,12 +77,9 @@ export async function PUT(
       { status: 200 }
     );
   } catch (error) {
-    console.error('PUT /api/integrations/[id] error:', error);
+    const ref = log.error('PUT /api/integrations/[id] error', error);
     return NextResponse.json(
-      {
-        error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
-        code: 'INTERNAL_ERROR',
-      },
+      { error: 'Something went wrong. Please try again.', ref },
       { status: 500 }
     );
   }
@@ -142,15 +91,9 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
-
-    if (!id || isNaN(parseInt(id))) {
-      return NextResponse.json(
-        { error: 'Valid integration ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
-
-    const integrationId = parseInt(id);
+    const idResult = parseValue(id, idSchema);
+    if (!idResult.ok) return idResult.response;
+    const integrationId = parseInt(idResult.data);
 
     const { searchParams } = new URL(request.url);
     const hardDelete = searchParams.get('hardDelete') === 'true';
@@ -175,8 +118,9 @@ export async function DELETE(
         .returning();
 
       if (deleted.length === 0) {
+        const ref = log.error('Failed to delete integration');
         return NextResponse.json(
-          { error: 'Failed to delete integration', code: 'DELETE_FAILED' },
+          { error: 'Failed to delete integration.', ref },
           { status: 500 }
         );
       }
@@ -200,8 +144,9 @@ export async function DELETE(
         .returning();
 
       if (softDeleted.length === 0) {
+        const ref = log.error('Failed to delete integration');
         return NextResponse.json(
-          { error: 'Failed to delete integration', code: 'DELETE_FAILED' },
+          { error: 'Failed to delete integration.', ref },
           { status: 500 }
         );
       }
@@ -216,12 +161,9 @@ export async function DELETE(
       );
     }
   } catch (error) {
-    console.error('DELETE /api/integrations/[id] error:', error);
+    const ref = log.error('DELETE /api/integrations/[id] error', error);
     return NextResponse.json(
-      {
-        error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
-        code: 'INTERNAL_ERROR',
-      },
+      { error: 'Something went wrong. Please try again.', ref },
       { status: 500 }
     );
   }

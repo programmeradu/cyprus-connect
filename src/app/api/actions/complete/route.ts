@@ -1,54 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { user, actions, userActions, creditsHistory } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { createNotification, NotificationTemplates } from '@/lib/notifications';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("actions.complete");
+
+const bodySchema = z.object({
+  userId: z.string().trim().min(1).max(100).optional(),
+  actionId: z.union([z.number().int(), z.string().trim().min(1).max(20)]),
+  notes: z.string().max(2000).optional().nullable(),
+});
 
 export async function POST(request: NextRequest) {
+  const parsed = await readJson(request, bodySchema);
+  if (!parsed.ok) return parsed.response;
+  const { userId: __claimedUserId, actionId, notes } = parsed.data;
+
+  const __auth = await bindSessionUser(request, __claimedUserId);
+  if (!__auth.ok) return __auth.response;
+  const userId = __auth.userId;
+
+  const actionIdInt = typeof actionId === "number" ? actionId : parseInt(actionId, 10);
+  if (isNaN(actionIdInt)) {
+    return NextResponse.json(
+      { error: 'actionId must be a valid integer', code: 'INVALID_ACTION_ID' },
+      { status: 400 }
+    );
+  }
+
   try {
-    const body = await request.json();
-    const { userId: __claimedUserId, actionId, notes } = body;
-    const __auth = await bindSessionUser(request, __claimedUserId);
-    if (!__auth.ok) return __auth.response;
-    const userId = __auth.userId;
-
-
-    // Validate required fields
-    if (!userId || !actionId) {
-      return NextResponse.json(
-        { 
-          error: 'Missing required fields: userId and actionId are required',
-          code: 'MISSING_REQUIRED_FIELDS'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate userId is a non-empty string
-    if (typeof userId !== 'string' || userId.trim() === '') {
-      return NextResponse.json(
-        { 
-          error: 'userId must be a valid non-empty string',
-          code: 'INVALID_USER_ID'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate actionId is valid integer
-    const actionIdInt = parseInt(actionId);
-    if (isNaN(actionIdInt)) {
-      return NextResponse.json(
-        { 
-          error: 'actionId must be a valid integer',
-          code: 'INVALID_ACTION_ID'
-        },
-        { status: 400 }
-      );
-    }
-
-    // Step 1: Validate user exists
     const existingUser = await db.select()
       .from(user)
       .where(eq(user.id, userId))
@@ -56,17 +41,13 @@ export async function POST(request: NextRequest) {
 
     if (existingUser.length === 0) {
       return NextResponse.json(
-        { 
-          error: 'User not found',
-          code: 'USER_NOT_FOUND'
-        },
+        { error: 'User not found', code: 'USER_NOT_FOUND' },
         { status: 404 }
       );
     }
 
     const userRecord = existingUser[0];
 
-    // Step 2: Validate action exists and get points value
     const existingAction = await db.select()
       .from(actions)
       .where(eq(actions.id, actionIdInt))
@@ -74,17 +55,13 @@ export async function POST(request: NextRequest) {
 
     if (existingAction.length === 0) {
       return NextResponse.json(
-        { 
-          error: 'Action not found',
-          code: 'ACTION_NOT_FOUND'
-        },
+        { error: 'Action not found', code: 'ACTION_NOT_FOUND' },
         { status: 404 }
       );
     }
 
     const action = existingAction[0];
 
-    // Step 3: Check if user already completed this action
     const existingUserAction = await db.select()
       .from(userActions)
       .where(
@@ -97,10 +74,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUserAction.length > 0) {
       return NextResponse.json(
-        { 
-          error: 'Action already completed by this user',
-          code: 'ACTION_ALREADY_COMPLETED'
-        },
+        { error: 'Action already completed by this user', code: 'ACTION_ALREADY_COMPLETED' },
         { status: 409 }
       );
     }
@@ -109,7 +83,6 @@ export async function POST(request: NextRequest) {
     const pointsAwarded = action.points;
 
     try {
-      // Step 4: Insert into user_actions table
       const newUserAction = await db.insert(userActions)
         .values({
           userId: userId,
@@ -123,7 +96,6 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to create user action record');
       }
 
-      // Step 5: Insert into credits_history table
       const newCreditsHistory = await db.insert(creditsHistory)
         .values({
           userId: userId,
@@ -136,13 +108,11 @@ export async function POST(request: NextRequest) {
         .returning();
 
       if (newCreditsHistory.length === 0) {
-        // Rollback: Delete the user action
         await db.delete(userActions)
           .where(eq(userActions.id, newUserAction[0].id));
         throw new Error('Failed to create credits history record');
       }
 
-      // Step 6: Update user table - increment totalCredits
       const newTotalCredits = userRecord.totalCredits + pointsAwarded;
       const updatedUser = await db.update(user)
         .set({
@@ -153,7 +123,6 @@ export async function POST(request: NextRequest) {
         .returning();
 
       if (updatedUser.length === 0) {
-        // Rollback: Delete credits history and user action
         await db.delete(creditsHistory)
           .where(eq(creditsHistory.id, newCreditsHistory[0].id));
         await db.delete(userActions)
@@ -161,7 +130,6 @@ export async function POST(request: NextRequest) {
         throw new Error('Failed to update user credits');
       }
 
-      // Send notification for action completion
       await createNotification({
         userId,
         ...NotificationTemplates.actionCompleted({
@@ -171,7 +139,6 @@ export async function POST(request: NextRequest) {
         })
       });
 
-      // Return success response
       return NextResponse.json(
         {
           success: true,
@@ -183,9 +150,6 @@ export async function POST(request: NextRequest) {
       );
 
     } catch (transactionError) {
-      console.error('Transaction error:', transactionError);
-      
-      // Attempt to rollback any partial changes
       try {
         await db.delete(creditsHistory)
           .where(
@@ -195,7 +159,7 @@ export async function POST(request: NextRequest) {
               eq(creditsHistory.createdAt, completedAt)
             )
           );
-        
+
         await db.delete(userActions)
           .where(
             and(
@@ -205,25 +169,18 @@ export async function POST(request: NextRequest) {
             )
           );
       } catch (rollbackError) {
-        console.error('Rollback error:', rollbackError);
+        log.error('Rollback error', rollbackError);
       }
 
+      const ref = log.error('Transaction failed', transactionError);
       return NextResponse.json(
-        { 
-          error: 'Transaction failed: ' + (transactionError as Error).message,
-          code: 'TRANSACTION_FAILED'
-        },
+        { error: 'The action could not be completed.', ref, code: 'TRANSACTION_FAILED' },
         { status: 500 }
       );
     }
 
   } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Internal server error: ' + (error as Error).message 
-      },
-      { status: 500 }
-    );
+    const ref = log.error('POST error', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }

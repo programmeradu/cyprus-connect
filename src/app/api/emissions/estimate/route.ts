@@ -1,33 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import {
   callClimatiaqAPI,
   ClimatiaqEstimateRequest,
   ClimatiaqEstimateResponse,
 } from "@/lib/climatiq";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("emissions.estimate");
+
+const UNITS = [
+  "kWh", "kwh", "MJ", "GJ", "MMBTU", "m3", "kg", "tonne",
+  "short ton", "km", "liter", "usd", "USD", "dollar",
+] as const;
+
+const bodySchema = z.object({
+  activity_id: z.string().trim().min(1).max(200),
+  value: z.number().finite(),
+  unit: z.enum(UNITS),
+  region: z.string().trim().min(1).max(20).optional().default("US"),
+  year: z.number().int().min(1900).max(2100).optional(),
+  data_version: z.string().trim().min(1).max(20).optional().default("^3"),
+});
 
 export async function POST(request: NextRequest) {
+  const parsed = await readJson(request, bodySchema);
+  if (!parsed.ok) return parsed.response;
+  const { activity_id, value, unit, region, year, data_version } = parsed.data;
+
   try {
-    const body = await request.json();
-    const {
-      activity_id,
-      value,
-      unit,
-      region = "US",
-      year,
-      data_version = "^3",
-    } = body;
-
-    // Validate inputs
-    if (!activity_id || value === undefined || !unit) {
-      return NextResponse.json(
-        {
-          error: "Missing required fields: activity_id, value, unit",
-        },
-        { status: 400 }
-      );
-    }
-
-    // Build emission factor selector
     const emissionFactor: any = {
       activity_id,
       region,
@@ -35,7 +37,6 @@ export async function POST(request: NextRequest) {
     if (year) emissionFactor.year = year;
     if (data_version) emissionFactor.data_version = data_version;
 
-    // Build parameters based on unit type
     const parameters: any = {};
     const unitMap: Record<string, { type: string; unit: string }> = {
       kWh: { type: "energy", unit: "kWh" },
@@ -55,13 +56,6 @@ export async function POST(request: NextRequest) {
     };
 
     const mapping = unitMap[unit];
-    if (!mapping) {
-      return NextResponse.json(
-        { error: `Unsupported unit: ${unit}` },
-        { status: 400 }
-      );
-    }
-
     parameters[mapping.type] = value;
     parameters[`${mapping.type}_unit`] = mapping.unit;
 
@@ -70,14 +64,12 @@ export async function POST(request: NextRequest) {
       parameters,
     };
 
-    // Call Climatiq API
     const result = await callClimatiaqAPI<ClimatiaqEstimateResponse>(
       "/estimate",
       "POST",
       estimateRequest
     );
 
-    // Return enhanced response
     return NextResponse.json({
       success: true,
       data: {
@@ -95,12 +87,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Climatiq API error:", error);
+    const ref = log.error("Climatiq API error", error);
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Unknown error",
-        fallback: true,
-      },
+      { error: "The emission estimate could not be calculated.", ref, fallback: true },
       { status: 500 }
     );
   }

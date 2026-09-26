@@ -1,10 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { sustainabilityMetrics } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger("api.sustainability-metrics");
 
 const VALID_METRIC_TYPES = ['carbon', 'energy', 'waste', 'water'] as const;
 const VALID_TRENDS = ['up', 'down'] as const;
+
+const idSchema = z.coerce.number().int().positive();
+
+const postSchema = z.object({
+  metricType: z.enum(VALID_METRIC_TYPES),
+  value: z.number().finite().min(-1_000_000_000).max(1_000_000_000),
+  unit: z.string().trim().min(1).max(64),
+  trend: z.enum(VALID_TRENDS),
+  trendValue: z.number().finite().min(-1_000_000_000).max(1_000_000_000),
+  color: z.string().trim().min(1).max(64),
+});
+
+const putSchema = z.object({
+  metricType: z.enum(VALID_METRIC_TYPES).optional(),
+  value: z.number().finite().min(-1_000_000_000).max(1_000_000_000).optional(),
+  unit: z.string().trim().min(1).max(64).optional(),
+  trend: z.enum(VALID_TRENDS).optional(),
+  trendValue: z.number().finite().min(-1_000_000_000).max(1_000_000_000).optional(),
+  color: z.string().trim().min(1).max(64).optional(),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,27 +37,17 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
 
     if (id) {
-      if (!id || isNaN(parseInt(id))) {
-        return NextResponse.json(
-          { 
-            error: 'Valid ID is required',
-            code: 'INVALID_ID' 
-          },
-          { status: 400 }
-        );
-      }
+      const parsedId = parseValue(id, idSchema);
+      if (!parsedId.ok) return parsedId.response;
 
       const metric = await db.select()
         .from(sustainabilityMetrics)
-        .where(eq(sustainabilityMetrics.id, parseInt(id)))
+        .where(eq(sustainabilityMetrics.id, parsedId.data))
         .limit(1);
 
       if (metric.length === 0) {
         return NextResponse.json(
-          { 
-            error: 'Metric not found',
-            code: 'METRIC_NOT_FOUND' 
-          },
+          { error: 'Metric not found', code: 'METRIC_NOT_FOUND' },
           { status: 404 }
         );
       }
@@ -44,127 +59,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(metrics, { status: 200 });
 
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('GET /api/sustainability-metrics failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { metricType, value, unit, trend, trendValue, color } = body;
-
-    if (!metricType) {
-      return NextResponse.json(
-        { 
-          error: 'metricType is required',
-          code: 'MISSING_METRIC_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!VALID_METRIC_TYPES.includes(metricType)) {
-      return NextResponse.json(
-        { 
-          error: `metricType must be one of: ${VALID_METRIC_TYPES.join(', ')}`,
-          code: 'INVALID_METRIC_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (value === undefined || value === null) {
-      return NextResponse.json(
-        { 
-          error: 'value is required',
-          code: 'MISSING_VALUE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (typeof value !== 'number') {
-      return NextResponse.json(
-        { 
-          error: 'value must be a number',
-          code: 'INVALID_VALUE_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!unit) {
-      return NextResponse.json(
-        { 
-          error: 'unit is required',
-          code: 'MISSING_UNIT' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!trend) {
-      return NextResponse.json(
-        { 
-          error: 'trend is required',
-          code: 'MISSING_TREND' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!VALID_TRENDS.includes(trend)) {
-      return NextResponse.json(
-        { 
-          error: `trend must be one of: ${VALID_TRENDS.join(', ')}`,
-          code: 'INVALID_TREND' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (trendValue === undefined || trendValue === null) {
-      return NextResponse.json(
-        { 
-          error: 'trendValue is required',
-          code: 'MISSING_TREND_VALUE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (typeof trendValue !== 'number') {
-      return NextResponse.json(
-        { 
-          error: 'trendValue must be a number',
-          code: 'INVALID_TREND_VALUE_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!color) {
-      return NextResponse.json(
-        { 
-          error: 'color is required',
-          code: 'MISSING_COLOR' 
-        },
-        { status: 400 }
-      );
-    }
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
+    const { metricType, value, unit, trend, trendValue, color } = parsed.data;
 
     const newMetric = await db.insert(sustainabilityMetrics)
       .values({
-        metricType: metricType.trim(),
+        metricType,
         value,
-        unit: unit.trim(),
-        trend: trend.trim(),
+        unit,
+        trend,
         trendValue,
-        color: color.trim(),
+        color,
         updatedAt: new Date()
       })
       .returning();
@@ -172,150 +85,83 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newMetric[0], { status: 201 });
 
   } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('POST /api/sustainability-metrics failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-
-    if (!id || isNaN(parseInt(id))) {
-      return NextResponse.json(
-        { 
-          error: 'Valid ID is required',
-          code: 'INVALID_ID' 
-        },
-        { status: 400 }
-      );
-    }
+    const parsedId = parseValue(searchParams.get('id'), idSchema);
+    if (!parsedId.ok) return parsedId.response;
+    const id = parsedId.data;
 
     const existing = await db.select()
       .from(sustainabilityMetrics)
-      .where(eq(sustainabilityMetrics.id, parseInt(id)))
+      .where(eq(sustainabilityMetrics.id, id))
       .limit(1);
 
     if (existing.length === 0) {
       return NextResponse.json(
-        { 
-          error: 'Metric not found',
-          code: 'METRIC_NOT_FOUND' 
-        },
+        { error: 'Metric not found', code: 'METRIC_NOT_FOUND' },
         { status: 404 }
       );
     }
 
-    const body = await request.json();
-    const { metricType, value, unit, trend, trendValue, color } = body;
-
-    if (metricType !== undefined && !VALID_METRIC_TYPES.includes(metricType)) {
-      return NextResponse.json(
-        { 
-          error: `metricType must be one of: ${VALID_METRIC_TYPES.join(', ')}`,
-          code: 'INVALID_METRIC_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (value !== undefined && typeof value !== 'number') {
-      return NextResponse.json(
-        { 
-          error: 'value must be a number',
-          code: 'INVALID_VALUE_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (trend !== undefined && !VALID_TRENDS.includes(trend)) {
-      return NextResponse.json(
-        { 
-          error: `trend must be one of: ${VALID_TRENDS.join(', ')}`,
-          code: 'INVALID_TREND' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (trendValue !== undefined && typeof trendValue !== 'number') {
-      return NextResponse.json(
-        { 
-          error: 'trendValue must be a number',
-          code: 'INVALID_TREND_VALUE_TYPE' 
-        },
-        { status: 400 }
-      );
-    }
+    const parsed = await readJson(request, putSchema);
+    if (!parsed.ok) return parsed.response;
+    const { metricType, value, unit, trend, trendValue, color } = parsed.data;
 
     const updates: any = {
       updatedAt: new Date()
     };
 
-    if (metricType !== undefined) updates.metricType = metricType.trim();
+    if (metricType !== undefined) updates.metricType = metricType;
     if (value !== undefined) updates.value = value;
-    if (unit !== undefined) updates.unit = unit.trim();
-    if (trend !== undefined) updates.trend = trend.trim();
+    if (unit !== undefined) updates.unit = unit;
+    if (trend !== undefined) updates.trend = trend;
     if (trendValue !== undefined) updates.trendValue = trendValue;
-    if (color !== undefined) updates.color = color.trim();
+    if (color !== undefined) updates.color = color;
 
     const updated = await db.update(sustainabilityMetrics)
       .set(updates)
-      .where(eq(sustainabilityMetrics.id, parseInt(id)))
+      .where(eq(sustainabilityMetrics.id, id))
       .returning();
 
     return NextResponse.json(updated[0], { status: 200 });
 
   } catch (error) {
-    console.error('PUT error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('PUT /api/sustainability-metrics failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-
-    if (!id || isNaN(parseInt(id))) {
-      return NextResponse.json(
-        { 
-          error: 'Valid ID is required',
-          code: 'INVALID_ID' 
-        },
-        { status: 400 }
-      );
-    }
+    const parsedId = parseValue(searchParams.get('id'), idSchema);
+    if (!parsedId.ok) return parsedId.response;
+    const id = parsedId.data;
 
     const existing = await db.select()
       .from(sustainabilityMetrics)
-      .where(eq(sustainabilityMetrics.id, parseInt(id)))
+      .where(eq(sustainabilityMetrics.id, id))
       .limit(1);
 
     if (existing.length === 0) {
       return NextResponse.json(
-        { 
-          error: 'Metric not found',
-          code: 'METRIC_NOT_FOUND' 
-        },
+        { error: 'Metric not found', code: 'METRIC_NOT_FOUND' },
         { status: 404 }
       );
     }
 
     const deleted = await db.delete(sustainabilityMetrics)
-      .where(eq(sustainabilityMetrics.id, parseInt(id)))
+      .where(eq(sustainabilityMetrics.id, id))
       .returning();
 
     return NextResponse.json(
-      { 
+      {
         message: 'Metric deleted successfully',
         metric: deleted[0]
       },
@@ -323,10 +169,7 @@ export async function DELETE(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('DELETE error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('DELETE /api/sustainability-metrics failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }

@@ -1,8 +1,24 @@
 import { bindSessionUser } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("api.users.id");
+
+const patchSchema = z.object({
+  companyName: z.string().trim().max(200).nullable().optional(),
+  companyIndustry: z.string().trim().max(200).nullable().optional(),
+  teamSize: z.string().trim().max(64).nullable().optional(),
+  sustainabilityGoals: z.string().max(5000).nullable().optional(),
+  preferredCurrency: z.string().trim().length(3).nullable().optional(),
+  countryCode: z.string().trim().length(2).nullable().optional(),
+  energyZone: z.string().trim().max(64).nullable().optional(),
+  onboardingCompleted: z.boolean().optional(),
+});
 
 export async function GET(
   request: NextRequest,
@@ -15,10 +31,7 @@ export async function GET(
     const id = __auth.userId;
 
     if (!id || typeof id !== 'string' || id.trim() === '') {
-      return NextResponse.json(
-        { error: 'Valid user ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Valid user ID is required', code: 'INVALID_ID' }, { status: 400 });
     }
 
     const userRecord = await db
@@ -40,19 +53,13 @@ export async function GET(
       .limit(1);
 
     if (userRecord.length === 0) {
-      return NextResponse.json(
-        { error: 'User not found', code: 'USER_NOT_FOUND' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found', code: 'USER_NOT_FOUND' }, { status: 404 });
     }
 
     return NextResponse.json(userRecord[0], { status: 200 });
   } catch (error) {
-    console.error('GET user error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('GET /api/users/[id] failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
@@ -67,13 +74,11 @@ export async function PATCH(
     const id = __auth.userId;
 
     if (!id || typeof id !== 'string' || id.trim() === '') {
-      return NextResponse.json(
-        { error: 'Valid user ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Valid user ID is required', code: 'INVALID_ID' }, { status: 400 });
     }
 
-    const body = await request.json();
+    const parsed = await readJson(request, patchSchema);
+    if (!parsed.ok) return parsed.response;
     const {
       companyName,
       companyIndustry,
@@ -83,9 +88,8 @@ export async function PATCH(
       countryCode,
       energyZone,
       onboardingCompleted,
-    } = body;
+    } = parsed.data;
 
-    // Check if user exists
     const existingUser = await db
       .select({ id: user.id })
       .from(user)
@@ -93,10 +97,7 @@ export async function PATCH(
       .limit(1);
 
     if (existingUser.length === 0) {
-      return NextResponse.json(
-        { error: 'User not found', code: 'USER_NOT_FOUND' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found', code: 'USER_NOT_FOUND' }, { status: 404 });
     }
 
     const updates: any = {
@@ -119,25 +120,15 @@ export async function PATCH(
       .returning();
 
     if (updated.length === 0) {
-      return NextResponse.json(
-        { error: 'Failed to update user', code: 'UPDATE_FAILED' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to update user', code: 'UPDATE_FAILED' }, { status: 500 });
     }
 
     return NextResponse.json(
-      {
-        success: true,
-        user: updated[0],
-        message: 'User updated successfully',
-      },
+      { success: true, user: updated[0], message: 'User updated successfully' },
       { status: 200 }
     );
   } catch (error) {
-    console.error('PATCH user error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('PATCH /api/users/[id] failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }

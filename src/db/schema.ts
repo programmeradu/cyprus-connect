@@ -575,6 +575,8 @@ export const metricReadings = pgTable('metric_readings', {
   value: real('value').notNull(),
   source: text('source').notNull().default('agent'),
   confidence: real('confidence').notNull().default(1),
+  /** Site name; NULL means the reading covers the whole workspace. */
+  site: text('site'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -900,4 +902,16 @@ export const reports = pgTable('reports', {
   createdBy: text('created_by'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/**
+ * App roles, kept apart from the profile so editing a profile can never
+ * grant a role. Only 'admin' exists today (scripts/sql/0022).
+ */
+export const userRoles = pgTable('user_roles', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  role: text('role').notNull(),
+  grantedBy: text('granted_by'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 });

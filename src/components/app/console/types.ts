@@ -9,6 +9,8 @@ export interface MetricPoint {
   value: number;
   source: string;
   confidence: number;
+  /** Site name; null when the reading covers the whole workspace. */
+  site?: string | null;
 }
 
 export interface ConsoleMetric {
@@ -116,6 +118,8 @@ export interface ConsoleEvent {
 export interface ConsoleOverviewData {
   workspace: ConsoleWorkspace;
   metrics: ConsoleMetric[];
+  /** Distinct site names found on readings. Empty when none are split by site. */
+  sites?: string[];
   agents: ConsoleAgent[];
   runs: ConsoleRun[];
   tasks: ConsoleTask[];

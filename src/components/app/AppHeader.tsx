@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { PageHeader } from "@/components/app/shell/PageHeader";
+import { PageHeader } from "@/components/app/console/kit";
 
 interface AppHeaderProps {
   title: string;
@@ -11,7 +11,7 @@ interface AppHeaderProps {
 
 /**
  * Compatibility wrapper. The workspace header is now `PageHeader` from
- * `@/components/app/shell`; the account menu moved to the sidebar footer.
+ * console kit; the account menu moved to the sidebar footer.
  * New pages should import PageHeader directly.
  */
 export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => (

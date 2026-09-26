@@ -11,9 +11,9 @@ import {
   DataTable,
   Metric,
   MetricRow,
-  EmptyState,
-  Column
-} from "@/components/app/shell";
+  Empty,
+  DataTableColumn as Column
+} from "@/components/app/console/kit";
 
 interface LeaderboardEntry {
   userId: string;
@@ -138,9 +138,9 @@ export default function LeaderboardPage() {
           rows={leaderboard}
           rowKey={(row) => row.userId}
           empty={
-            <EmptyState
+            <Empty
               title="No companies on the leaderboard yet"
-              description="Complete sustainability actions to earn green credits and appear here once other companies join."
+              body="Complete sustainability actions to earn green credits and appear here once other companies join."
             />
           }
         />

@@ -1,25 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
 
-interface EmailNotificationRequest {
-  userId: number;
-  recipientEmail: string;
-  recipientName: string;
-  notificationType: 'milestone' | 'achievement' | 'reminder' | 'report';
-  subject: string;
-  data: {
-    milestoneName?: string;
-    creditsEarned?: number;
-    currentCredits?: number;
-    achievementTitle?: string;
-    message?: string;
-    [key: string]: any;
-  };
-}
+const log = logger("api.notifications.email");
+
+const postSchema = z.object({
+  userId: z.union([z.string(), z.number()]).optional().nullable(),
+  recipientEmail: z.string().trim().email().max(320),
+  recipientName: z.string().trim().min(1).max(200),
+  notificationType: z.enum(['milestone', 'achievement', 'reminder', 'report']),
+  subject: z.string().trim().min(1).max(300),
+  data: z.object({
+    milestoneName: z.string().max(200).optional(),
+    creditsEarned: z.number().finite().optional(),
+    currentCredits: z.number().finite().optional(),
+    achievementTitle: z.string().max(200).optional(),
+    message: z.string().max(2000).optional(),
+    reportPeriod: z.string().max(100).optional(),
+    totalEmissions: z.union([z.string(), z.number()]).optional(),
+  }).passthrough(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body: EmailNotificationRequest = await request.json();
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
     const {
       userId: __claimedUserId,
       recipientEmail,
@@ -27,44 +34,17 @@ export async function POST(request: NextRequest) {
       notificationType,
       subject,
       data,
-    } = body;
-    const __auth = await bindSessionUser(request, __claimedUserId);
+    } = parsed.data;
+    const __auth = await bindSessionUser(request, __claimedUserId != null ? String(__claimedUserId) : null);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // Validate required fields
     if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required', code: 'MISSING_USER_ID' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'User ID is required', code: 'MISSING_USER_ID' }, { status: 400 });
     }
 
-    if (!recipientEmail) {
-      return NextResponse.json(
-        { error: 'Recipient email is required', code: 'MISSING_EMAIL' },
-        { status: 400 }
-      );
-    }
-
-    if (!notificationType) {
-      return NextResponse.json(
-        { error: 'Notification type is required', code: 'MISSING_TYPE' },
-        { status: 400 }
-      );
-    }
-
-    if (!subject) {
-      return NextResponse.json(
-        { error: 'Subject is required', code: 'MISSING_SUBJECT' },
-        { status: 400 }
-      );
-    }
-
-    // Generate email content based on notification type
     let emailBody = '';
-    
+
     switch (notificationType) {
       case 'milestone':
         emailBody = generateMilestoneEmail(recipientName, data);
@@ -83,14 +63,8 @@ export async function POST(request: NextRequest) {
     }
 
     // In production, integrate with email service (SendGrid, AWS SES, Resend, etc.)
-    // For now, simulate email sending
-    console.log('=== EMAIL NOTIFICATION ===');
-    console.log('To:', recipientEmail);
-    console.log('Subject:', subject);
-    console.log('Body:', emailBody);
-    console.log('========================');
+    log.info('Simulated email notification', { to: recipientEmail, subject, notificationType });
 
-    // Simulate email sending delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     return NextResponse.json(
@@ -107,14 +81,8 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Email notification error:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to send email notification',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    const ref = log.error('POST /api/notifications/email failed', error);
+    return NextResponse.json({ error: 'Failed to send email notification', ref }, { status: 500 });
   }
 }
 

@@ -1,24 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { generateSustainabilityReport, ReportData } from '@/lib/pdf/export-report';
 import { db } from '@/db';
 import { user, emissions, userProgress, emissionsHistory } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('reports.export');
+
+const bodySchema = z.object({
+  userId: z.string().trim().min(1).max(128).optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const __auth = await bindSessionUser(request, (body).userId);
+    const bodyResult = await readJson(request, bodySchema);
+    if (!bodyResult.ok) return bodyResult.response;
+    const __auth = await bindSessionUser(request, bodyResult.data.userId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
-
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
-    }
 
     // Fetch user data
     const [userData] = await db
@@ -156,9 +158,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Report export error:', error);
+    const ref = log.error('Report export error', error);
     return NextResponse.json(
-      { error: 'Failed to generate report' },
+      { error: 'Failed to generate report.', ref },
       { status: 500 }
     );
   }

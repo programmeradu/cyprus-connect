@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { notificationPreferences, user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('notifications.preferences');
 
 const DEFAULT_PREFERENCES = {
   emissionAlerts: true,
@@ -14,20 +19,23 @@ const DEFAULT_PREFERENCES = {
   systemAlerts: true,
 };
 
+const putSchema = z.object({
+  userId: z.string().trim().min(1).max(128).optional(),
+  emissionAlerts: z.boolean().optional(),
+  goalAlerts: z.boolean().optional(),
+  leaderboardAlerts: z.boolean().optional(),
+  actionAlerts: z.boolean().optional(),
+  insightAlerts: z.boolean().optional(),
+  complianceAlerts: z.boolean().optional(),
+  systemAlerts: z.boolean().optional(),
+});
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const __auth = await bindSessionUser(request, searchParams.get('userId'));
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
-
-
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json(
-        { error: 'userId is required and must be a non-empty string', code: 'MISSING_USER_ID' },
-        { status: 400 }
-      );
-    }
 
     const userExists = await db
       .select()
@@ -57,9 +65,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(preferences[0]);
   } catch (error) {
-    console.error('GET error:', error);
+    const ref = log.error('GET notification preferences failed', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Something went wrong. Please try again.', ref },
       { status: 500 }
     );
   }
@@ -67,7 +75,8 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const body = await request.json();
+    const bodyResult = await readJson(request, putSchema);
+    if (!bodyResult.ok) return bodyResult.response;
     const {
       userId: __claimedUserId,
       emissionAlerts,
@@ -77,37 +86,10 @@ export async function PUT(request: NextRequest) {
       insightAlerts,
       complianceAlerts,
       systemAlerts,
-    } = body;
+    } = bodyResult.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
-
-
-    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
-      return NextResponse.json(
-        { error: 'userId is required and must be a non-empty string', code: 'MISSING_USER_ID' },
-        { status: 400 }
-      );
-    }
-
-    const booleanFields = {
-      emissionAlerts,
-      goalAlerts,
-      leaderboardAlerts,
-      actionAlerts,
-      insightAlerts,
-      complianceAlerts,
-      systemAlerts,
-    };
-
-    for (const [field, value] of Object.entries(booleanFields)) {
-      if (value !== undefined && typeof value !== 'boolean') {
-        return NextResponse.json(
-          { error: `${field} must be a boolean value`, code: 'INVALID_FIELD_TYPE' },
-          { status: 400 }
-        );
-      }
-    }
 
     const userExists = await db
       .select()
@@ -172,9 +154,9 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(created[0], { status: 201 });
     }
   } catch (error) {
-    console.error('PUT error:', error);
+    const ref = log.error('PUT notification preferences failed', error);
     return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
+      { error: 'Something went wrong. Please try again.', ref },
       { status: 500 }
     );
   }

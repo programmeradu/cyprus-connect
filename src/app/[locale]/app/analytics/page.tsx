@@ -13,9 +13,9 @@ import {
   DataTable,
   Metric,
   MetricRow,
-  EmptyState,
+  Empty,
   AiUnavailable
-} from "@/components/app/shell";
+} from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface AnalyticsData {
@@ -240,7 +240,7 @@ export default function AnalyticsPage() {
               ]}
               rows={breakdownRows}
               rowKey={(r) => r.label}
-              empty={<EmptyState title="No breakdown available yet" description={t("noBreakdown")} />}
+              empty={<Empty title="No breakdown available yet" body={t("noBreakdown")} />}
             />
           </Section>
 
@@ -278,7 +278,7 @@ export default function AnalyticsPage() {
                 />
               </MetricRow>
             ) : (
-              <EmptyState title="Industry comparison not available yet" description={t("profilePrompt")} />
+              <Empty title="Industry comparison not available yet" body={t("profilePrompt")} />
             )}
           </Section>
 
@@ -309,9 +309,9 @@ export default function AnalyticsPage() {
                 </div>
               </div>
             ) : aiLoading ? (
-              <EmptyState title="Generating insights" description="Vuneli is analyzing your latest metrics for observations and recommendations." />
+              <Empty title="Generating insights" body="Vuneli is analyzing your latest metrics for observations and recommendations." />
             ) : (
-              <EmptyState title="No insights yet" description="Insights are generated automatically once analytics data is available." />
+              <Empty title="No insights yet" body="Insights are generated automatically once analytics data is available." />
             )}
           </Section>
         </>

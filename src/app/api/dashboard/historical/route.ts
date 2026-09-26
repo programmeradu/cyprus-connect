@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { historicalEmissions, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('dashboard.historical');
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -23,6 +28,23 @@ function calculateChangePercentage(current: number, previous: number | null): nu
   return ((current - previous) / previous) * 100;
 }
 
+const monthsSchema = z.coerce.number().int().min(1).max(24);
+
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(128).optional(),
+  year: z.number().int().min(2020).max(2050),
+  month: z.number().int().min(1).max(12),
+  electricityKwh: z.number().finite().min(0).max(10_000_000),
+  gasM3: z.number().finite().min(0).max(10_000_000),
+  waterLiters: z.number().finite().min(0).max(1_000_000_000),
+  wasteKg: z.number().finite().min(0).max(10_000_000),
+  transportKm: z.number().finite().min(0).max(10_000_000),
+  totalCo2e: z.number().finite().min(0).max(10_000_000),
+  renewablePercentage: z.number().finite().min(0).max(100),
+  efficiencyScore: z.number().finite().min(0).max(100),
+  wasteDiversionRate: z.number().finite().min(0).max(100),
+});
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -30,46 +52,28 @@ export async function GET(request: NextRequest) {
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-    const monthsParam = searchParams.get('months') ?? '6';
+    const monthsResult = parseValue(searchParams.get('months') ?? '6', monthsSchema);
+    if (!monthsResult.ok) return monthsResult.response;
+    const months = monthsResult.data;
 
-    // Validate userId
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json({ 
-        error: "userId is required and cannot be empty",
-        code: "MISSING_USER_ID" 
-      }, { status: 400 });
-    }
-
-    // Validate months parameter
-    const months = parseInt(monthsParam);
-    if (isNaN(months) || months < 1 || months > 24) {
-      return NextResponse.json({ 
-        error: "months must be an integer between 1 and 24",
-        code: "INVALID_MONTHS" 
-      }, { status: 400 });
-    }
-
-    // Check if user exists
     const userRecord = await db.select()
       .from(user)
       .where(eq(user.id, userId))
       .limit(1);
 
     if (userRecord.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'User not found',
-        code: "USER_NOT_FOUND" 
+        code: "USER_NOT_FOUND"
       }, { status: 404 });
     }
 
-    // Fetch historical emissions for user, ordered by year DESC, month DESC
     const records = await db.select()
       .from(historicalEmissions)
       .where(eq(historicalEmissions.userId, userId))
       .orderBy(desc(historicalEmissions.year), desc(historicalEmissions.month))
       .limit(months);
 
-    // If no data exists, return empty array with summary
     if (records.length === 0) {
       return NextResponse.json({
         success: true,
@@ -84,7 +88,6 @@ export async function GET(request: NextRequest) {
       }, { status: 200 });
     }
 
-    // Calculate month-over-month changes
     const dataWithTrends = records.map((record, index) => {
       const previousRecord = index < records.length - 1 ? records[index + 1] : null;
       const previousMonthCo2e = previousRecord ? previousRecord.totalCo2e : null;
@@ -111,7 +114,6 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Calculate summary statistics
     const totalCo2e = records.reduce((sum, r) => sum + r.totalCo2e, 0);
     const averageCo2e = totalCo2e / records.length;
     const averageRenewablePercentage = records.reduce((sum, r) => sum + r.renewablePercentage, 0) / records.length;
@@ -130,16 +132,18 @@ export async function GET(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error')
+    const ref = log.error('GET dashboard historical error', error);
+    return NextResponse.json({
+      error: 'Something went wrong. Please try again.',
+      ref
     }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const bodyResult = await readJson(request, postSchema);
+    if (!bodyResult.ok) return bodyResult.response;
     const {
       userId: __claimedUserId,
       year,
@@ -153,111 +157,23 @@ export async function POST(request: NextRequest) {
       renewablePercentage,
       efficiencyScore,
       wasteDiversionRate
-    } = body;
+    } = bodyResult.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // Validate required fields
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json({ 
-        error: "userId is required and cannot be empty",
-        code: "MISSING_USER_ID" 
-      }, { status: 400 });
-    }
-
-    if (typeof year !== 'number' || year < 2020 || year > 2050) {
-      return NextResponse.json({ 
-        error: "year must be a number between 2020 and 2050",
-        code: "INVALID_YEAR" 
-      }, { status: 400 });
-    }
-
-    if (typeof month !== 'number' || month < 1 || month > 12) {
-      return NextResponse.json({ 
-        error: "month must be a number between 1 and 12",
-        code: "INVALID_MONTH" 
-      }, { status: 400 });
-    }
-
-    if (typeof electricityKwh !== 'number' || electricityKwh < 0) {
-      return NextResponse.json({ 
-        error: "electricityKwh must be a non-negative number",
-        code: "INVALID_ELECTRICITY" 
-      }, { status: 400 });
-    }
-
-    if (typeof gasM3 !== 'number' || gasM3 < 0) {
-      return NextResponse.json({ 
-        error: "gasM3 must be a non-negative number",
-        code: "INVALID_GAS" 
-      }, { status: 400 });
-    }
-
-    if (typeof waterLiters !== 'number' || waterLiters < 0) {
-      return NextResponse.json({ 
-        error: "waterLiters must be a non-negative number",
-        code: "INVALID_WATER" 
-      }, { status: 400 });
-    }
-
-    if (typeof wasteKg !== 'number' || wasteKg < 0) {
-      return NextResponse.json({ 
-        error: "wasteKg must be a non-negative number",
-        code: "INVALID_WASTE" 
-      }, { status: 400 });
-    }
-
-    if (typeof transportKm !== 'number' || transportKm < 0) {
-      return NextResponse.json({ 
-        error: "transportKm must be a non-negative number",
-        code: "INVALID_TRANSPORT" 
-      }, { status: 400 });
-    }
-
-    if (typeof totalCo2e !== 'number' || totalCo2e < 0) {
-      return NextResponse.json({ 
-        error: "totalCo2e must be a non-negative number",
-        code: "INVALID_TOTAL_CO2E" 
-      }, { status: 400 });
-    }
-
-    if (typeof renewablePercentage !== 'number' || renewablePercentage < 0 || renewablePercentage > 100) {
-      return NextResponse.json({ 
-        error: "renewablePercentage must be a number between 0 and 100",
-        code: "INVALID_RENEWABLE_PERCENTAGE" 
-      }, { status: 400 });
-    }
-
-    if (typeof efficiencyScore !== 'number' || efficiencyScore < 0 || efficiencyScore > 100) {
-      return NextResponse.json({ 
-        error: "efficiencyScore must be a number between 0 and 100",
-        code: "INVALID_EFFICIENCY_SCORE" 
-      }, { status: 400 });
-    }
-
-    if (typeof wasteDiversionRate !== 'number' || wasteDiversionRate < 0 || wasteDiversionRate > 100) {
-      return NextResponse.json({ 
-        error: "wasteDiversionRate must be a number between 0 and 100",
-        code: "INVALID_WASTE_DIVERSION_RATE" 
-      }, { status: 400 });
-    }
-
-    // Check if user exists
     const userRecord = await db.select()
       .from(user)
       .where(eq(user.id, userId))
       .limit(1);
 
     if (userRecord.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'User not found',
-        code: "USER_NOT_FOUND" 
+        code: "USER_NOT_FOUND"
       }, { status: 404 });
     }
 
-    // Check if record already exists for this userId + year + month
     const existingRecord = await db.select()
       .from(historicalEmissions)
       .where(
@@ -271,7 +187,6 @@ export async function POST(request: NextRequest) {
 
     const timestamp = new Date().toISOString();
 
-    // Update if exists, insert if not
     if (existingRecord.length > 0) {
       const updated = await db.update(historicalEmissions)
         .set({
@@ -313,9 +228,10 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error')
+    const ref = log.error('POST dashboard historical error', error);
+    return NextResponse.json({
+      error: 'Something went wrong. Please try again.',
+      ref
     }, { status: 500 });
   }
 }

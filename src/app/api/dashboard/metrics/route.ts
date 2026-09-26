@@ -1,8 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { dashboardMetrics, historicalEmissions, sustainabilityGoalsProgress, emissions, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('dashboard.metrics');
+
+const METRIC_TYPES = ['carbon_footprint', 'resource_efficiency', 'renewable_share', 'waste_diversion'] as const;
+
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(128).optional(),
+  metricType: z.enum(METRIC_TYPES),
+  currentValue: z.number().finite().min(-1_000_000).max(1_000_000),
+  previousValue: z.number().finite().min(-1_000_000).max(1_000_000),
+  periodStart: z.string().trim().min(1).max(64),
+  periodEnd: z.string().trim().min(1).max(64),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,35 +27,23 @@ export async function GET(request: NextRequest) {
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // Validate userId parameter
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json({ 
-        error: 'userId is required and must be a non-empty string',
-        code: 'MISSING_USER_ID' 
-      }, { status: 400 });
-    }
-
-    // Validate user exists
     const userExists = await db.select()
       .from(user)
       .where(eq(user.id, userId))
       .limit(1);
 
     if (userExists.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'User not found',
-        code: 'USER_NOT_FOUND' 
+        code: 'USER_NOT_FOUND'
       }, { status: 404 });
     }
 
-    // Fetch LATEST dashboard metrics for each metric type (ordered by updatedAt DESC)
     const metricsData = await db.select()
       .from(dashboardMetrics)
       .where(eq(dashboardMetrics.userId, userId))
       .orderBy(desc(dashboardMetrics.updatedAt));
 
-    // Get the latest metric for each type
     const latestMetricsByType = new Map();
     for (const metric of metricsData) {
       if (!latestMetricsByType.has(metric.metricType)) {
@@ -48,7 +52,6 @@ export async function GET(request: NextRequest) {
     }
     const latestMetrics = Array.from(latestMetricsByType.values());
 
-    // Fetch latest emissions
     const latestEmissionsData = await db.select()
       .from(emissions)
       .where(eq(emissions.userId, userId))
@@ -57,23 +60,19 @@ export async function GET(request: NextRequest) {
 
     const latestEmission = latestEmissionsData.length > 0 ? latestEmissionsData[0] : null;
 
-    // Fetch last 6 months of historical emissions
     const historicalData = await db.select()
       .from(historicalEmissions)
       .where(eq(historicalEmissions.userId, userId))
       .orderBy(desc(historicalEmissions.year), desc(historicalEmissions.month))
       .limit(6);
 
-    // Fetch all sustainability goals progress
     const goalsData = await db.select()
       .from(sustainabilityGoalsProgress)
       .where(eq(sustainabilityGoalsProgress.userId, userId));
 
-    // Calculate additional metrics if no dashboard metrics exist
-    let calculatedMetrics = [];
-    
+    let calculatedMetrics: any[] = [];
+
     if (latestMetrics.length === 0 && latestEmission) {
-      // Carbon footprint from latest emission
       calculatedMetrics.push({
         metricType: 'carbon_footprint',
         currentValue: parseFloat(latestEmission.totalCo2e.toFixed(2)),
@@ -84,12 +83,11 @@ export async function GET(request: NextRequest) {
         updatedAt: new Date().toISOString()
       });
 
-      // Resource efficiency calculation
-      const totalResources = latestEmission.electricity + latestEmission.gas + 
-                            latestEmission.water + latestEmission.waste + 
+      const totalResources = latestEmission.electricity + latestEmission.gas +
+                            latestEmission.water + latestEmission.waste +
                             latestEmission.transport;
       const resourceEfficiency = parseFloat((100 - (totalResources / 100)).toFixed(2));
-      
+
       calculatedMetrics.push({
         metricType: 'resource_efficiency',
         currentValue: resourceEfficiency,
@@ -100,12 +98,11 @@ export async function GET(request: NextRequest) {
         updatedAt: new Date().toISOString()
       });
 
-      // Calculate renewable share from last 3 months
       if (historicalData.length > 0) {
         const last3Months = historicalData.slice(0, 3);
-        const avgRenewable = last3Months.reduce((sum, record) => 
+        const avgRenewable = last3Months.reduce((sum, record) =>
           sum + record.renewablePercentage, 0) / last3Months.length;
-        
+
         calculatedMetrics.push({
           metricType: 'renewable_share',
           currentValue: parseFloat(avgRenewable.toFixed(2)),
@@ -116,10 +113,9 @@ export async function GET(request: NextRequest) {
           updatedAt: new Date().toISOString()
         });
 
-        // Calculate waste diversion from last 3 months
-        const avgWasteDiversion = last3Months.reduce((sum, record) => 
+        const avgWasteDiversion = last3Months.reduce((sum, record) =>
           sum + record.wasteDiversionRate, 0) / last3Months.length;
-        
+
         calculatedMetrics.push({
           metricType: 'waste_diversion',
           currentValue: parseFloat(avgWasteDiversion.toFixed(2)),
@@ -132,7 +128,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Format metrics data
     const formattedMetrics = latestMetrics.map(metric => ({
       metricType: metric.metricType,
       currentValue: parseFloat(metric.currentValue.toFixed(2)),
@@ -143,7 +138,6 @@ export async function GET(request: NextRequest) {
       updatedAt: metric.updatedAt
     }));
 
-    // Format historical trends
     const formattedHistorical = historicalData.map(record => ({
       year: record.year,
       month: record.month,
@@ -153,7 +147,6 @@ export async function GET(request: NextRequest) {
       efficiencyScore: parseFloat(record.efficiencyScore.toFixed(2))
     }));
 
-    // Format goals progress
     const formattedGoals = goalsData.map(goal => ({
       goalType: goal.goalType,
       targetValue: parseFloat(goal.targetValue.toFixed(2)),
@@ -162,7 +155,6 @@ export async function GET(request: NextRequest) {
       progressPercentage: parseFloat(goal.progressPercentage.toFixed(2))
     }));
 
-    // Format latest emissions
     const formattedLatestEmissions = latestEmission ? {
       electricity: parseFloat(latestEmission.electricity.toFixed(2)),
       gas: parseFloat(latestEmission.gas.toFixed(2)),
@@ -183,111 +175,41 @@ export async function GET(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('GET dashboard metrics error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
-      code: 'INTERNAL_ERROR'
+    const ref = log.error('GET dashboard metrics error', error);
+    return NextResponse.json({
+      error: 'Something went wrong. Please try again.',
+      ref
     }, { status: 500 });
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { userId: __claimedUserId, metricType, currentValue, previousValue, periodStart, periodEnd } = body;
+    const bodyResult = await readJson(request, postSchema);
+    if (!bodyResult.ok) return bodyResult.response;
+    const { userId: __claimedUserId, metricType, currentValue, previousValue, periodStart, periodEnd } = bodyResult.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // Validate required fields
-    if (!userId || userId.trim() === '') {
-      return NextResponse.json({ 
-        error: 'userId is required and must be a non-empty string',
-        code: 'MISSING_USER_ID' 
-      }, { status: 400 });
-    }
-
-    if (!metricType || metricType.trim() === '') {
-      return NextResponse.json({ 
-        error: 'metricType is required',
-        code: 'MISSING_METRIC_TYPE' 
-      }, { status: 400 });
-    }
-
-    if (currentValue === undefined || currentValue === null) {
-      return NextResponse.json({ 
-        error: 'currentValue is required',
-        code: 'MISSING_CURRENT_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (previousValue === undefined || previousValue === null) {
-      return NextResponse.json({ 
-        error: 'previousValue is required',
-        code: 'MISSING_PREVIOUS_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (!periodStart || periodStart.trim() === '') {
-      return NextResponse.json({ 
-        error: 'periodStart is required',
-        code: 'MISSING_PERIOD_START' 
-      }, { status: 400 });
-    }
-
-    if (!periodEnd || periodEnd.trim() === '') {
-      return NextResponse.json({ 
-        error: 'periodEnd is required',
-        code: 'MISSING_PERIOD_END' 
-      }, { status: 400 });
-    }
-
-    // Validate metricType
-    const validMetricTypes = ['carbon_footprint', 'resource_efficiency', 'renewable_share', 'waste_diversion'];
-    if (!validMetricTypes.includes(metricType)) {
-      return NextResponse.json({ 
-        error: `metricType must be one of: ${validMetricTypes.join(', ')}`,
-        code: 'INVALID_METRIC_TYPE' 
-      }, { status: 400 });
-    }
-
-    // Validate data types
-    if (typeof currentValue !== 'number' || isNaN(currentValue)) {
-      return NextResponse.json({ 
-        error: 'currentValue must be a valid number',
-        code: 'INVALID_CURRENT_VALUE' 
-      }, { status: 400 });
-    }
-
-    if (typeof previousValue !== 'number' || isNaN(previousValue)) {
-      return NextResponse.json({ 
-        error: 'previousValue must be a valid number',
-        code: 'INVALID_PREVIOUS_VALUE' 
-      }, { status: 400 });
-    }
-
-    // Validate user exists
     const userExists = await db.select()
       .from(user)
       .where(eq(user.id, userId))
       .limit(1);
 
     if (userExists.length === 0) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         error: 'User not found',
-        code: 'USER_NOT_FOUND' 
+        code: 'USER_NOT_FOUND'
       }, { status: 404 });
     }
 
-    // Calculate trend percentage
-    const trendPercentage = previousValue !== 0 
+    const trendPercentage = previousValue !== 0
       ? parseFloat((((currentValue - previousValue) / previousValue) * 100).toFixed(2))
       : 0;
 
     const now = new Date().toISOString();
 
-    // Check if metric already exists for userId + metricType + periodEnd
     const existingMetric = await db.select()
       .from(dashboardMetrics)
       .where(
@@ -302,7 +224,6 @@ export async function POST(request: NextRequest) {
     let result;
 
     if (existingMetric.length > 0) {
-      // Update existing metric
       const updated = await db.update(dashboardMetrics)
         .set({
           currentValue: parseFloat(currentValue.toFixed(2)),
@@ -316,7 +237,6 @@ export async function POST(request: NextRequest) {
 
       result = updated[0];
     } else {
-      // Insert new metric
       const inserted = await db.insert(dashboardMetrics)
         .values({
           userId: userId,
@@ -351,10 +271,10 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('POST dashboard metrics error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
-      code: 'INTERNAL_ERROR'
+    const ref = log.error('POST dashboard metrics error', error);
+    return NextResponse.json({
+      error: 'Something went wrong. Please try again.',
+      ref
     }, { status: 500 });
   }
 }

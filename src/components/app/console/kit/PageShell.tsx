@@ -1,8 +1,8 @@
 "use client";
 
 import { ReactNode } from "react";
-import { DeckSkeleton } from "@/components/app/console/kit/Skeleton";
-import { Empty } from "@/components/app/console/kit/Empty";
+import { DeckSkeleton } from "./Skeleton";
+import { Empty } from "./Empty";
 
 interface PageShellProps {
   children: ReactNode;

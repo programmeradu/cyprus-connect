@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { toast } from "sonner";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
-import { PageShell, PageHeader, Section, AiUnavailable } from "@/components/app/shell";
+import { PageShell, PageHeader, Section, AiUnavailable } from "@/components/app/console/kit";
 
 export default function GenerateCoursePage() {
   const { data: session, isPending } = useSession();
