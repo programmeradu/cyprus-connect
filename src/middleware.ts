@@ -18,7 +18,7 @@ async function guardApi(request: NextRequest, pathname: string) {
   if (isDevOnlyApi(pathname) && process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  if (request.method === "OPTIONS" || isPublicApi(pathname)) return NextResponse.next();
+  if (request.method === "OPTIONS" || isPublicApi(pathname)) return NextResponse.next({ headers: { "x-api-gate": "public" } });
 
   const qa = isQaRequest({
     cookie: request.cookies.get(QA_COOKIE)?.value ?? null,
