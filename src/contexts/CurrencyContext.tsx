@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { usePathname } from "next/navigation";
 import type { ExchangeRates } from "@/lib/exchange-rates";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 
 const LOCALE_MAP: Record<string, string> = {
@@ -110,26 +111,11 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     }
   }, [session?.user?.id, initializeCurrency]);
 
-  // Fetch exchange rates when selected currency changes
+  // Exchange rates come from the shared workspace cache: one request per currency, shared by every page.
+  const rates = useWorkspaceResource<ExchangeRates>(selectedCurrency ? `/api/exchange-rates?base=${selectedCurrency}` : null);
   useEffect(() => {
-    if (!selectedCurrency) return;
-
-    const fetchRates = async () => {
-      try {
-        const ratesResponse = await fetch(
-          `/api/exchange-rates?base=${selectedCurrency}`
-        );
-        if (ratesResponse.ok) {
-          const data = await ratesResponse.json();
-          setExchangeRates(data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch rates:", error);
-      }
-    };
-
-    fetchRates();
-  }, [selectedCurrency]);
+    if (rates.data) setExchangeRates(rates.data);
+  }, [rates.data]);
 
   const setCurrency = useCallback(async (_currency: string) => {
     const upperCurrency = "EUR";
