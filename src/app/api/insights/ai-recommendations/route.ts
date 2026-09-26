@@ -1,18 +1,23 @@
 import { aiChat, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 import { NextRequest, NextResponse } from "next/server";
 import { convertCurrency } from "@/lib/exchange-rates";
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      userId,
+      userId: __claimedUserId,
       energyData,
       benchmarkData,
       complianceData,
       userProfile,
       userLocation,
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // If AI is not configured or fails, we generate intelligent localized SME recommendations
     const generateFallbackRecommendations = (currencySym: string, savingsAmt: number) => ({

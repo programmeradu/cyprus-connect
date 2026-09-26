@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { courses, courseModules, lessons, lmsUserProgress } from '@/db/schema';
 import { eq, and, like, or, desc, sql } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get('id');
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Single course fetch
     if (id) {

@@ -3,11 +3,15 @@ import { generateSustainabilityReport, ReportData } from '@/lib/pdf/export-repor
 import { db } from '@/db';
 import { user, emissions, userProgress, emissionsHistory } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId } = body;
+    const __auth = await bindSessionUser(request, (body).userId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId) {
       return NextResponse.json(

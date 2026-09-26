@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { notifications, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const VALID_NOTIFICATION_TYPES = [
   'emission_entry',
@@ -16,7 +17,10 @@ const VALID_NOTIFICATION_TYPES = [
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const limitParam = searchParams.get('limit');
     const unreadOnlyParam = searchParams.get('unreadOnly');
 
@@ -85,7 +89,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, type, title, message, link, metadata } = body;
+    const { userId: __claimedUserId, type, title, message, link, metadata } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId || typeof userId !== 'string' || userId.trim() === '') {

@@ -3,11 +3,15 @@ import { db } from '@/db';
 import { emissions, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import { createNotification, NotificationTemplates } from '@/lib/notifications';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const latest = searchParams.get('latest');
     const year = searchParams.get('year');
     const month = searchParams.get('month');
@@ -130,7 +134,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      userId,
+      userId: __claimedUserId,
       electricity,
       gas,
       water,
@@ -140,6 +144,10 @@ export async function POST(request: NextRequest) {
       periodMonth,
       periodYear
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId) {

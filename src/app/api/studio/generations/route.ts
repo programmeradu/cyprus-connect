@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, mediaGenerations } from '@/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 // Helper function to extract Bearer token
 function extractBearerToken(request: NextRequest): string | null {
@@ -40,7 +41,11 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { userId, type, url, prompt, enhancedPrompt, model, modelReason, contextType, aspectRatio, saved } = body;
+    const { userId: __claimedUserId, type, url, prompt, enhancedPrompt, model, modelReason, contextType, aspectRatio, saved } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId) {
@@ -144,7 +149,10 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const limit = Math.min(parseInt(searchParams.get('limit') ?? '50'), 100);
     const type = searchParams.get('type');
 

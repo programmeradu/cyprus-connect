@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, creditsHistory, actions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, amount, source, description, actionId } = body;
+    const { userId: __claimedUserId, amount, source, description, actionId } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId) {

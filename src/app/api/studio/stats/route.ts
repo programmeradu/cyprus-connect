@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, mediaGenerations } from '@/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 interface StatsResponse {
   totalGenerations: number;
@@ -41,7 +42,10 @@ export async function GET(request: NextRequest) {
 
     // Get userId from query params
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId) {
       return NextResponse.json(

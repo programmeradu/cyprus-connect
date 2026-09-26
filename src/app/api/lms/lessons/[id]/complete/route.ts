@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { lessons, userLessonCompletions, lmsUserProgress, courseModules } from '@/db/schema';
 import { eq, and, sql } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(
   request: NextRequest,
@@ -19,7 +20,11 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { userId, timeSpent, score, passed } = body;
+    const { userId: __claimedUserId, timeSpent, score, passed } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId || typeof userId !== 'string') {
       return NextResponse.json({

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, emissions, historicalEmissions, userActions, actions, dashboardMetrics } from '@/db/schema';
 import { eq, desc, and, inArray } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 interface Suggestion {
   id: string;
@@ -36,7 +37,10 @@ interface SuggestionSummary {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validation: userId required
     if (!userId || userId.trim() === '') {

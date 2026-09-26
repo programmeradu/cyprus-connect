@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -7,13 +8,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { 
-      userId,
+      userId: __claimedUserId,
       metricsData,
       emissionsBreakdown,
       monthlyTrend,
       industryComparison,
       userProfile 
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId) {
       return NextResponse.json({ 
