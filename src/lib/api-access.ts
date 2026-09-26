@@ -12,7 +12,6 @@ export const PUBLIC_API_PREFIXES = [
   "/api/auth/", // sign-in flow
   "/api/oauth/", // provider callbacks
   "/api/cron/", // guarded by CRON_SECRET
-  "/api/admin/migrate", // guarded by its migration secret
   "/api/keep-alive",
   "/api/qa/enter", // off in production builds
   "/api/stripe/webhook", // signature-verified
