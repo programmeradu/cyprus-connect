@@ -8,6 +8,7 @@ import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+import type { CompanyRecord } from "@/app/api/console/company/route";
 
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import { PricingTable } from "@/components/billing/PricingTable";
@@ -44,6 +45,9 @@ function SettingsContent() {
   const [industry, setIndustry] = useState("");
   const [teamSize, setTeamSize] = useState("");
   const [countryCode, setCountryCode] = useState("");
+  const [sites, setSites] = useState("1");
+  const [revenue, setRevenue] = useState("");
+  const [formError, setFormError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [avatarStyle, setAvatarStyle] = useAvatarStyle();
 
@@ -62,14 +66,24 @@ function SettingsContent() {
     systemAlerts: true
   });
 
+  // The one shared company record (name, industry, size, country, sites, revenue).
+  const company = useWorkspaceResource<CompanyRecord>(session?.user?.id ? "/api/console/company" : null);
+
+  useEffect(() => {
+    const c = company.data;
+    if (!c) return;
+    setCompanyName(c.companyName || "");
+    setIndustry(c.industry || "");
+    setTeamSize(c.teamSize || "");
+    setCountryCode(c.country || "");
+    setSites(String(c.sites ?? 1));
+    setRevenue(c.revenueEur === null || c.revenueEur === undefined ? "" : String(c.revenueEur));
+  }, [company.data]);
+
   useEffect(() => {
     if (user) {
       setName(user.name || "");
       setEmail(user.email || "");
-      setCompanyName(user.companyName || "");
-      setIndustry(user.companyIndustry || "");
-      setTeamSize(user.teamSize || "");
-      setCountryCode(user.countryCode || "");
     } else if (session?.user) {
       setName(session.user.name || "");
       setEmail(session.user.email || "");
@@ -105,31 +119,57 @@ function SettingsContent() {
 
     setIsSaving(true);
 
+    setFormError(null);
+    const siteCount = Number(sites);
+    if (!Number.isInteger(siteCount) || siteCount < 1) {
+      setFormError("Enter a whole number of sites, at least 1.");
+      setIsSaving(false);
+      return;
+    }
+    const revenueText = revenue.replace(/[\s,]/g, "");
+    const revenueEur = revenueText === "" ? null : Number(revenueText);
+    if (revenueEur !== null && (!Number.isFinite(revenueEur) || revenueEur < 0)) {
+      setFormError("Enter yearly revenue as a number in euro, or leave it empty.");
+      setIsSaving(false);
+      return;
+    }
+
     try {
-      // Company facts are stored once on the user record; every page reads them from there.
-      const saved = await writer.run(`/api/users?id=${user.id}`, {
-        method: "PUT",
+      if (name.trim() && name.trim() !== (user.name || "")) {
+        const nameSaved = await writer.run(`/api/users?id=${user.id}`, {
+          method: "PUT",
+          body: { name: name.trim() },
+          invalidates: ["/api/users"]
+        });
+        if (!nameSaved) {
+          toast.error(t("toast.saveFail"));
+          return;
+        }
+      }
+      // Company facts go through the one company record; every page reads it.
+      const saved = await writer.run(`/api/console/company`, {
+        method: "PATCH",
         body: {
-          name,
           companyName,
-          companyIndustry: industry,
-          teamSize,
-          countryCode: countryCode || null
+          industry: industry || null,
+          teamSize: teamSize || null,
+          ...(countryCode ? { country: countryCode } : {}),
+          sites: siteCount,
+          revenueEur
         },
-        invalidates: ["/api/users", "/api/analytics", "/api/leaderboard"]
+        invalidates: ["/api/console", "/api/users", "/api/analytics", "/api/leaderboard"]
       });
       if (!saved) {
+        setFormError(writer.error ?? null);
         toast.error(t("toast.saveFail"));
         return;
       }
-      const prefsSaved = await writer.run(`/api/users/${user.id}/preferences`, {
-        method: "PUT",
-        body: { countryCode: countryCode || null },
-        invalidates: ["/api/users"]
-      });
-      if (!prefsSaved) {
-        toast.error(t("toast.saveFail"));
-        return;
+      if (countryCode) {
+        await writer.run(`/api/users/${user.id}/preferences`, {
+          method: "PUT",
+          body: { countryCode },
+          invalidates: ["/api/users"]
+        });
       }
 
       await refetchUser();
@@ -229,6 +269,10 @@ function SettingsContent() {
                     <option value="hospitality">{t("industries.hospitality")}</option>
                     <option value="healthcare">{t("industries.healthcare")}</option>
                     <option value="finance">{t("industries.finance")}</option>
+                    {industry &&
+                      !["technology", "manufacturing", "retail", "hospitality", "healthcare", "finance"].includes(industry) && (
+                        <option value={industry}>{industry}</option>
+                      )}
                   </select>
                 </div>
                 <div>
@@ -243,6 +287,38 @@ function SettingsContent() {
                   </select>
                 </div>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="vck-label block mb-1.5" htmlFor="company-sites">Number of sites</label>
+                  <input
+                    id="company-sites"
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    step={1}
+                    value={sites}
+                    onChange={(e) => setSites(e.target.value)}
+                    className={inputClass}
+                  />
+                  <p className="vck-meta mt-1.5">Offices, shops, plants or warehouses you run.</p>
+                </div>
+                <div>
+                  <label className="vck-label block mb-1.5" htmlFor="company-revenue">Yearly revenue (EUR)</label>
+                  <input
+                    id="company-revenue"
+                    type="text"
+                    inputMode="decimal"
+                    value={revenue}
+                    onChange={(e) => setRevenue(e.target.value)}
+                    placeholder="Optional, e.g. 850000"
+                    className={inputClass}
+                  />
+                  <p className="vck-meta mt-1.5">Used for emissions per euro of revenue. Leave empty if you prefer.</p>
+                </div>
+              </div>
+              {formError && (
+                <p role="alert" className="text-sm text-destructive break-words">{formError}</p>
+              )}
             </div>
           </Section>
 

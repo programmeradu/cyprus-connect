@@ -19,7 +19,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 ## One shared workspace (plan: .lovable/plan/one-shared-workspace-for-every-app-page-2026-09-26.md)
 - [x] Phase 1a shared store (workspace-store.ts): one cache + one transport for all pages, writes invalidate every page + overview; guard test (tests/app-data-guard.test.ts)
 - [x] Moved: Dashboard overview, Reports, Report detail, Leaderboard, Marketplace impact
-- [ ] Phase 1b server: company facts (location, sites, revenue) stored once; Agents + CBAM mutations through useWorkspaceAction; every page write records an activity event
+- [x] Company facts stored once (profile: name/industry/size/country; workspace: sites/revenue) via /api/console/company with audit event; dashboard agent status is real
+- [ ] Phase 1b server (rest): Agents + CBAM mutations through useWorkspaceAction; every page write records an activity event
 - [x] Phase 2 quick: Analytics, Grant alerts, Settings, Privacy (shared reads/writes; settings save refreshes analytics + leaderboard; analytics AI insights asked once per fresh data)
 - [x] Phase 3 medium: Actions, Marketplace list/detail/admin, Onboarding, Compliance on the shared store. Removed: invented fallback actions/emissions/company in Actions, banner auto-generation on every Marketplace visit, account search in Onboarding. Fixed: QuickBooks connect trusted a caller-supplied user id; compliance email toggle could never be off
 - [ ] Pages that check sign-in with the client session (Compliance, Marketplace, Onboarding, Analytics) cannot be opened by the QA identity, so they are only browser-checked signed out
@@ -55,7 +56,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Rebuild Onboarding in the console design
 - [x] Remove the old-styling layer (app.css + app-* bridge) from all 19 pages
 - [x] Rewrite pages from the shell adapters to direct kit imports (shell folder deleted)
-- [ ] Collect company revenue in Settings so per-revenue benchmarks can return
+- [x] Collect company revenue in Settings (per-revenue figures can now be built on it)
 
 - [x] Research pipeline plan: fold in user review (Cyprus grid/doc realism, negative prior art, pre-registration lock, stress tests, tax/grant compliance, dual-track S6), then re-review
 - [x] Fold refinements 2 (citations, raw-data SHA-256 manifest, FTO in S2, KS/Wasserstein synthetic validation) into plan + research README

@@ -16,6 +16,8 @@ import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/log";
 import { liveConnections } from "@/lib/console/connections.server";
+import { loadCompanyWorkspace, rosterFor } from "@/lib/company.server";
+import { RUNNABLE_AGENTS } from "@/lib/agents/orchestrator";
 import { QA_ACCOUNT, QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 
 export const dynamic = "force-dynamic";
@@ -140,6 +142,8 @@ export async function GET() {
       );
     }
 
+    // Company facts come from their one home (see company.server.ts).
+    workspace = await loadCompanyWorkspace(account.id, workspace);
     const workspaceId = workspace.id;
 
 
@@ -230,7 +234,7 @@ export async function GET() {
       workspace,
       metrics,
       sites: [...siteNames].sort((a, b) => a.localeCompare(b)),
-      agents: roster,
+      agents: await rosterFor(workspaceId, roster, Object.keys(RUNNABLE_AGENTS)),
       runs,
       tasks,
       connections,

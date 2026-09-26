@@ -366,7 +366,7 @@ export default function ConsolePage() {
                 <span>
                   <small>
                     {[
-                      workspace.sector,
+                      titleCase(workspace.sector),
                       workspace.country,
                       `${workspace.sites} site${workspace.sites === 1 ? "" : "s"}`,
                     ]
