@@ -1,599 +1,234 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { CurrencyDisplay } from "@/components/ui/CurrencyDisplay";
-import { useSession } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
-import {
-  PageShell,
-  PageHeader,
-  Section,
-  Metric,
-  MetricRow,
-  Empty,
-  AiUnavailable
-} from "@/components/app/console/kit";
-import { APP_OPEN_ACCESS } from "@/lib/open-access";
+/**
+ * Insights: what real sources say about the company today.
+ * Grid (measured, Energy-Charts), own recorded months, tracked obligations,
+ * and one-click advice that must cite those facts. No estimates, no fillers.
+ */
 
-interface EnergyPricingData {
-  zone: string;
-  carbonIntensity: any;
-  powerBreakdown: any;
-  utilityRates: any;
-  costSavings: any;
-  forecast: any[];
-}
+import { useMemo } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+import { PageShell, PageHeader, Section, Metric, MetricRow, Empty } from "@/components/app/console/kit";
+import { shiftGain, type GridToday } from "@/lib/insights/grid";
+import type { AdvicePoint, Fact } from "@/lib/insights/advice";
+import type { ComplianceSummary, FootprintMonth } from "@/lib/insights/insights.server";
 
-interface BenchmarkData {
-  sector: string;
+const PATH = "/api/console/insights";
+
+interface InsightsData {
   country: string;
-  sectorBenchmarks: any;
-  peerComparison: any;
-  insights: string[];
+  grid: GridToday | null;
+  gridReason: "unsupported" | "unavailable" | null;
+  months: FootprintMonth[];
+  compliance: ComplianceSummary;
 }
 
-interface ComplianceData {
-  score: number;
-  regulations: Array<{
-    id: number;
-    name: string;
-    status: string;
-    nextDeadline: string;
-    jurisdiction: string;
-  }>;
-  documents: Array<{
-    id: number;
-    title: string;
-    framework: string;
-    status: string;
-  }>;
-  urgentCount: number;
-  upcomingCount: number;
+interface Advice {
+  points: AdvicePoint[];
+  facts: Fact[];
 }
 
-interface UserPreferences {
-  energyZone: string | null;
-  countryCode: string | null;
-  preferredCurrency: string | null;
-}
-
-interface UserData {
-  companyIndustry: string | null;
-  totalCredits: number;
-  companyName: string | null;
-  teamSize: string | null;
-}
-
-interface AIRecommendations {
-  complianceRecommendations: string[];
-  industryInsights: string[];
-  energyOptimizationTips: string[];
-}
+const tooltipStyle = {
+  backgroundColor: "var(--vc-well)",
+  border: "1px solid var(--vc-rule-soft)",
+  borderRadius: "6px",
+  fontSize: "12px",
+};
 
 export default function InsightsPage() {
   const t = useTranslations("dashboard.insights");
-  const [energyData, setEnergyData] = useState<EnergyPricingData | null>(null);
-  const [benchmarkData, setBenchmarkData] = useState<BenchmarkData | null>(null);
-  const [complianceData, setComplianceData] = useState<ComplianceData | null>(null);
-  const [aiRecommendations, setAiRecommendations] = useState<AIRecommendations | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiFailed, setAiFailed] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { data: session, isPending } = useSession();
-  const router = useRouter();
+  const locale = useLocale();
+  const loc = locale === "el" ? "el-CY" : "en-GB";
+  const data = useWorkspaceResource<InsightsData>(PATH);
+  const advise = useWorkspaceAction();
+  const adviceRes = useWorkspaceResource<Advice>(null);
+  void adviceRes;
 
-  const [userLocation, setUserLocation] = useState<{
-    country: string;
-    countryCode: string;
-  } | null>(null);
-
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    if (!isPending && !session?.user) {
-      if (!APP_OPEN_ACCESS) router.push("/auth?redirect=" + encodeURIComponent(window.location.pathname));
-    }
-  }, [session, isPending, router]);
-
-  useEffect(() => {
-    if (session?.user?.id) {
-      fetchAllData();
-    }
-  }, [session?.user?.id]);
-
-  const fetchAllData = async () => {
-    if (refreshing) return;
-
-    setLoading(true);
-    setError(null);
-
+  const time = useMemo(() => new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit" }), [loc]);
+  const monthFmt = useMemo(() => new Intl.DateTimeFormat(loc, { month: "short", year: "2-digit", timeZone: "UTC" }), [loc]);
+  const fullMonth = useMemo(() => new Intl.DateTimeFormat(loc, { month: "long", year: "numeric", timeZone: "UTC" }), [loc]);
+  const dateFmt = useMemo(() => new Intl.DateTimeFormat(loc, { day: "numeric", month: "short", year: "numeric" }), [loc]);
+  const countryName = useMemo(() => {
     try {
-      const userId = session?.user?.id;
-
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
-      const [preferencesRes, geoRes, userRes] = await Promise.all([
-        fetch(`/api/users/${userId}/preferences`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("bearer_token")}` }
-        }),
-        fetch("/api/geolocation"),
-        fetch(`/api/users/${userId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("bearer_token")}` }
-        })
-      ]);
-
-      let preferences: UserPreferences = {
-        energyZone: null,
-        countryCode: null,
-        preferredCurrency: null
-      };
-
-      let geoData: any = { countryCode: "US", country: "United States" };
-      let userDataRes: any = { companyIndustry: "technology", totalCredits: 0 };
-
-      if (preferencesRes.ok) {
-        preferences = await preferencesRes.json();
-      }
-
-      if (geoRes.ok) {
-        geoData = await geoRes.json();
-      }
-
-      if (userRes.ok) {
-        userDataRes = await userRes.json();
-        setUserData(userDataRes);
-      }
-
-      const countryCode = preferences.countryCode || geoData.countryCode;
-      const country = preferences.countryCode ? getCountryName(preferences.countryCode) : geoData.country;
-
-      setUserLocation({ country, countryCode });
-
-      let energyZone = preferences.energyZone || getDefaultEnergyZone(countryCode);
-      const zoneCountry = energyZone.split("-")[0];
-      if (zoneCountry !== countryCode && !energyZone.includes(countryCode)) {
-        energyZone = getDefaultEnergyZone(countryCode);
-      }
-
-      const sector = userDataRes.companyIndustry || "technology";
-      const token = localStorage.getItem("bearer_token");
-
-      const [energyPricingRes, benchmarksRes, complianceRes] = await Promise.all([
-        fetch(`/api/energy-pricing?zone=${energyZone}&energyUsageKwh=10000`),
-        fetch(
-          `/api/industry-benchmarks?sector=${sector}&country=${countryCode}&companyEmissions=${userDataRes.totalCredits || 500}`
-        ),
-        fetch(`/api/compliance/data`, { headers: { Authorization: `Bearer ${token}` } })
-      ]);
-
-      let energyDataRes = null;
-      let benchmarkDataRes = null;
-      let complianceDataRes = null;
-
-      if (energyPricingRes.ok) {
-        energyDataRes = await energyPricingRes.json();
-        setEnergyData(energyDataRes);
-      }
-
-      if (benchmarksRes.ok) {
-        benchmarkDataRes = await benchmarksRes.json();
-        setBenchmarkData(benchmarkDataRes);
-      }
-
-      if (complianceRes.ok) {
-        complianceDataRes = await complianceRes.json();
-
-        const regulations = complianceDataRes.regulations || [];
-        const documents = complianceDataRes.documents || [];
-        const urgentCount = regulations.filter((r: any) => r.status === "action_required").length;
-        const upcomingCount = regulations.filter((r: any) => {
-          const daysUntil = Math.floor((new Date(r.nextDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-          return daysUntil <= 30 && daysUntil > 0;
-        }).length;
-
-        setComplianceData({
-          score: complianceDataRes.score || 85,
-          regulations,
-          documents,
-          urgentCount,
-          upcomingCount
-        });
-      }
-
-      await generateAIRecommendations({
-        energyData: energyDataRes,
-        benchmarkData: benchmarkDataRes,
-        complianceData: complianceDataRes,
-        userProfile: userDataRes,
-        userLocation: { country, countryCode }
-      });
-    } catch (error: any) {
-      console.error("Failed to fetch insights data:", error);
-      setError(error.message || t("loadFailed"));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      return new Intl.DisplayNames([loc], { type: "region" });
+    } catch {
+      return null;
     }
+  }, [loc]);
+
+  const d = data.data;
+  const country = d ? (countryName?.of(d.country) ?? d.country) : "";
+  const grid = d?.grid ?? null;
+  const months = d?.months ?? [];
+  const c = d?.compliance;
+
+  const gridChart = grid?.hours.map((h) => ({ time: time.format(new Date(h.at)), grams: Math.round(h.grams) })) ?? [];
+  const monthChart = months.map((m) => ({
+    label: monthFmt.format(new Date(Date.UTC(m.year, m.month - 1, 1))),
+    tonnes: Math.round(m.totalTonnes * 1000) / 1000,
+  }));
+  const last = months[months.length - 1];
+  const prev = months[months.length - 2];
+  const change = last && prev && prev.totalTonnes > 0 ? ((last.totalTonnes - prev.totalTonnes) / prev.totalTonnes) * 100 : null;
+
+  const [advice, setAdvice] = useAdviceState();
+  const writeAdvice = async () => {
+    const res = await advise.run<Advice>(`${PATH}/advice`, { invalidates: [] });
+    if (res) setAdvice(res);
   };
-
-  const generateAIRecommendations = async (context: any) => {
-    setAiLoading(true);
-    setAiFailed(false);
-    try {
-      const userId = session?.user?.id;
-
-      const response = await fetch("/api/insights/ai-recommendations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          energyData: context.energyData,
-          benchmarkData: context.benchmarkData,
-          complianceData: context.complianceData,
-          userProfile: context.userProfile,
-          userLocation: context.userLocation
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAiRecommendations(data.recommendations);
-        if (!data.recommendations) setAiFailed(true);
-      } else {
-        setAiFailed(true);
-        console.error("Failed to generate AI recommendations");
-      }
-    } catch (error) {
-      setAiFailed(true);
-      console.error("AI recommendations error:", error);
-    } finally {
-      setAiLoading(false);
-    }
-  };
-
-  const handleRefresh = () => {
-    setRefreshing(true);
-    fetchAllData();
-  };
-
-  const getCountryName = (code: string): string => {
-    const countryMap: Record<string, string> = {
-      CY: "Cyprus", GR: "Greece", GB: "United Kingdom", DE: "Germany", FR: "France",
-      ES: "Spain", IT: "Italy", NL: "Netherlands", BE: "Belgium", LU: "Luxembourg",
-      IE: "Ireland", PT: "Portugal", AT: "Austria", PL: "Poland", SE: "Sweden",
-      DK: "Denmark", FI: "Finland", NO: "Norway", IS: "Iceland", SA: "Saudi Arabia",
-      SG: "Singapore", MY: "Malaysia", TH: "Thailand", ID: "Indonesia", PH: "Philippines",
-      VN: "Vietnam", CZ: "Czech Republic", RO: "Romania", HU: "Hungary", SK: "Slovakia",
-      SI: "Slovenia", HR: "Croatia", BG: "Bulgaria", MT: "Malta", EE: "Estonia",
-      LV: "Latvia", LT: "Lithuania"
-    };
-    return countryMap[code] || code;
-  };
-
-  const getDefaultEnergyZone = (countryCode: string): string => {
-    const zoneMap: Record<string, string> = {
-      CY: "CY", GR: "GR", DE: "DE", FR: "FR", ES: "ES", IT: "IT", NL: "NL",
-      GB: "GB", SE: "SE", NO: "NO", DK: "DK-DK1"
-    };
-    return zoneMap[countryCode] || countryCode;
-  };
-
-  const mapCountryToRegion = (countryCode: string): string => {
-    const euCountries = ["AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
-    if (euCountries.includes(countryCode)) return "EU";
-    if (countryCode === "US") return "US";
-    if (countryCode === "GB") return "UK";
-    return "Global";
-  };
-
-  const forecastChartData =
-    energyData?.forecast?.slice(0, 12).map((f: any) => ({
-      time: new Date(f.datetime).toLocaleDateString("en-GB", { month: "numeric", day: "numeric" }),
-      carbon: f.carbonIntensity,
-      target: energyData?.carbonIntensity?.current * 0.8 || 220
-    })) || [];
-
-  const performanceData = benchmarkData
-    ? [
-        {
-          month: "Q1",
-          you: benchmarkData.peerComparison?.companyEmissions * 0.7 || 35,
-          industry: benchmarkData.sectorBenchmarks?.globalAverage * 0.7 || 42
-        },
-        {
-          month: "Q2",
-          you: benchmarkData.peerComparison?.companyEmissions * 0.76 || 38,
-          industry: benchmarkData.sectorBenchmarks?.globalAverage * 0.8 || 55
-        },
-        {
-          month: "Q3",
-          you: benchmarkData.peerComparison?.companyEmissions * 0.84 || 42,
-          industry: benchmarkData.sectorBenchmarks?.globalAverage * 0.9 || 65
-        },
-        {
-          month: "Q4",
-          you: benchmarkData.peerComparison?.companyEmissions || 52,
-          industry: benchmarkData.sectorBenchmarks?.globalAverage || 68
-        }
-      ]
-    : [];
 
   return (
     <PageShell
-      signedOut={!isPending && !session?.user}
-      loading={isPending || (!!session?.user && loading)}
-      error={error}
-      onRetry={handleRefresh}
+      loading={data.loading}
+      error={data.error}
+      onRetry={data.reload}
       header={
         <PageHeader
           title={t("title")}
-          purpose={`${t("subtitle")}${userLocation ? ` — ${userLocation.country}` : ""}`}
+          purpose={country ? t("subtitleFor", { country }) : t("subtitle")}
           actions={
-            <button type="button" onClick={handleRefresh} disabled={refreshing} className="vck-btn vck-btn-primary">
-              {t("refresh")}
+            <button type="button" onClick={data.reload} disabled={data.refreshing} className="vck-btn">
+              {data.refreshing ? t("refreshing") : t("refresh")}
             </button>
           }
         />
       }
     >
-      <Section title={t("title")}>
-        <MetricRow columns={4}>
-          <Metric
-            label={t("metrics.carbonIntensity")}
-            value={energyData?.carbonIntensity?.current?.toFixed(0) || "N/A"}
-            unit="gCO2/kWh"
-            note={t("metrics.fossilPercent", { pct: energyData?.carbonIntensity?.fossilFuelPercentage?.toFixed(0) || 0 })}
-          />
-          <Metric
-            label={t("metrics.potentialSavings")}
-            value={<CurrencyDisplay amount={energyData?.costSavings?.costSavingsUSD || 0} fromCurrency="USD" />}
-            note={t("metrics.reduction", { pct: energyData?.costSavings?.percentageReduction?.toFixed(1) || 0 })}
-          />
-          <Metric
-            label={t("metrics.industryRank")}
-            value={benchmarkData?.peerComparison?.percentile ?? "N/A"}
-            unit="%"
-            note={benchmarkData?.peerComparison?.interpretation || t("metrics.calculating")}
-          />
-          <Metric
-            label={t("metrics.complianceScore")}
-            value={complianceData?.score?.toFixed(0) || "0"}
-            unit="%"
-            note={t("metrics.regsSummary", {
-              urgent: complianceData?.urgentCount ?? 0,
-              total: complianceData?.regulations?.length ?? 0
-            })}
-          />
-        </MetricRow>
-      </Section>
-
-      <Section title={t("energySection.title")}>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <div className="vck-card p-4">
-            <h3 className="text-sm font-semibold mb-3">{t("energySection.forecastTitle")}</h3>
-
-            {forecastChartData.length > 0 ? (
-              <>
-                <div className="h-48 mb-4">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={forecastChartData}>
-                      <defs>
-                        <linearGradient id="carbonGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.25} />
-                          <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--vc-rule-soft)" />
-                      <XAxis dataKey="time" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--vc-well)",
-                          border: "1px solid var(--vc-rule-soft)",
-                          borderRadius: "6px",
-                          fontSize: "12px"
-                        }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="carbon"
-                        stroke="var(--primary)"
-                        strokeWidth={2}
-                        fill="url(#carbonGradient)"
-                        name={t("energySection.carbonIntensityLegend")}
-                      />
-                      <Line
-                        type="monotone"
-                        dataKey="target"
-                        stroke="var(--muted-foreground)"
-                        strokeWidth={1.5}
-                        strokeDasharray="5 5"
-                        dot={false}
-                        name={t("energySection.targetLegend")}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <MetricRow columns={2}>
-                  <Metric
-                    label={t("energySection.renewableEnergy")}
-                    value={`${(energyData?.carbonIntensity?.renewablePercentage || 0).toFixed(0)}%`}
-                  />
-                  <Metric
-                    label={t("energySection.fossilFree")}
-                    value={`${(100 - (energyData?.carbonIntensity?.fossilFuelPercentage || 100)).toFixed(0)}%`}
-                  />
-                </MetricRow>
-              </>
-            ) : (
-              <Empty
-                title="No forecast data yet"
-                body="Carbon intensity forecasts will appear here once your energy zone data is available."
+      <Section title={t("grid.title", { country })} description={t("grid.description")}>
+        {grid ? (
+          <>
+            <MetricRow>
+              <Metric label={t("grid.now")} value={Math.round(grid.latest.grams)} unit="g/kWh" note={t("grid.at", { time: time.format(new Date(grid.latest.at)) })} />
+              <Metric label={t("grid.cleanest")} value={time.format(new Date(grid.cleanest.at))} note={`${Math.round(grid.cleanest.grams)} g/kWh`} />
+              <Metric label={t("grid.dirtiest")} value={time.format(new Date(grid.dirtiest.at))} note={`${Math.round(grid.dirtiest.grams)} g/kWh`} />
+              <Metric
+                label={t("grid.renewable")}
+                value={grid.renewableShare === null ? "—" : grid.renewableShare.toFixed(1)}
+                unit={grid.renewableShare === null ? undefined : "%"}
+                note={grid.renewableShare === null ? t("grid.notPublished") : t("grid.latestHour")}
               />
-            )}
-          </div>
-
-          <div className="vck-card p-4">
-            <h3 className="text-sm font-semibold mb-3">
-              {t("energySection.performanceTitle")} <span className="text-muted-foreground">{t("energySection.vs")}</span> {t("energySection.industry")}
-            </h3>
-
-            {performanceData.length > 0 ? (
-              <div className="h-64">
+            </MetricRow>
+            <div className="vck-card p-4 mt-4">
+              <div className="h-56">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={performanceData} barGap={2}>
+                  <AreaChart data={gridChart} margin={{ left: -12, right: 4, top: 4, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="gridFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--vc-rule-soft)" />
-                    <XAxis dataKey="month" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "var(--vc-well)",
-                        border: "1px solid var(--vc-rule-soft)",
-                        borderRadius: "6px",
-                        fontSize: "12px"
-                      }}
-                    />
-                    <Bar dataKey="you" fill="var(--primary)" radius={[4, 4, 0, 0]} barSize={16} name={t("energySection.yourCompany")} />
-                    <Bar dataKey="industry" fill="var(--muted-foreground)" radius={[4, 4, 0, 0]} barSize={16} name={t("energySection.industryAverage")} />
-                  </BarChart>
+                    <XAxis dataKey="time" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} minTickGap={24} />
+                    <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={44} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v} g/kWh`, t("grid.intensity")]} />
+                    <Area type="monotone" dataKey="grams" stroke="var(--primary)" strokeWidth={2} fill="url(#gridFill)" />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
-            ) : (
-              <Empty
-                title="No benchmark data yet"
-                body="Industry comparisons will appear once your sector benchmark data has been calculated."
-              />
-            )}
-          </div>
-        </div>
-
-        {energyData?.costSavings && (
-          <div className="mt-4">
-            <MetricRow columns={3}>
-              <Metric
-                label={t("energySection.monthlySavings")}
-                value={<CurrencyDisplay amount={energyData.costSavings.costSavingsUSD || 0} fromCurrency="USD" />}
-                note={t("energySection.monthlySavingsSub")}
-              />
-              <Metric
-                label={t("energySection.carbonReduction")}
-                value={`${energyData.costSavings.carbonSavingsKg?.toFixed(1) || 0} kg`}
-                note={t("energySection.carbonReductionSub")}
-              />
-              <Metric
-                label={t("energySection.gridStatus")}
-                value={`${energyData.carbonIntensity?.renewablePercentage?.toFixed(1) || 0}%`}
-                note={t("energySection.gridStatusSub")}
-              />
-            </MetricRow>
-          </div>
-        )}
-      </Section>
-
-      <Section
-        title={t("ai.title")}
-        description={userLocation ? t("ai.personalizedFor", { country: userLocation.country }) : undefined}
-      >
-        {aiLoading ? (
-          <div className="vck-card p-6">
-            <p className="vck-meta">{t("ai.generating")}</p>
-          </div>
-        ) : aiRecommendations ? (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            {aiRecommendations.energyOptimizationTips?.length > 0 && (
-              <div className="vck-card p-4">
-                <h3 className="text-sm font-semibold mb-3">{t("ai.energyOptimization")}</h3>
-                <ul className="space-y-2">
-                  {aiRecommendations.energyOptimizationTips.map((tip, index) => (
-                    <li key={index} className="vck-inset px-3 py-2 text-sm">
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {aiRecommendations.complianceRecommendations?.length > 0 && (
-              <div className="vck-card p-4">
-                <h3 className="text-sm font-semibold mb-3">{t("ai.complianceGuidance")}</h3>
-                <ul className="space-y-2">
-                  {aiRecommendations.complianceRecommendations.map((rec, index) => (
-                    <li key={index} className="vck-inset px-3 py-2 text-sm">
-                      {rec}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {aiRecommendations.industryInsights?.length > 0 && (
-              <div className="vck-card p-4">
-                <h3 className="text-sm font-semibold mb-3">{t("ai.industryInsights")}</h3>
-                <ul className="space-y-2">
-                  {aiRecommendations.industryInsights.map((insight, index) => (
-                    <li key={index} className="vck-inset px-3 py-2 text-sm">
-                      {insight}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : (
-          <AiUnavailable feature="write insights from your data" onRetry={handleRefresh} />
-        )}
-      </Section>
-
-      <Section
-        title={t("compliance.title")}
-        description={userLocation ? t("compliance.regionSuffix", { region: mapCountryToRegion(userLocation.countryCode) }) : undefined}
-        action={
-          <Link href="/app/compliance" className="vck-btn">
-            {t("compliance.viewDashboard")}
-          </Link>
-        }
-      >
-        {complianceData ? (
-          <div className="vck-card p-4">
-            <MetricRow columns={4}>
-              <Metric label={t("compliance.health")} value={`${complianceData.score}%`} note={t("compliance.regsTracked", { count: complianceData.regulations.length })} />
-              {complianceData.urgentCount > 0 && (
-                <Metric label={t("compliance.urgent")} value={complianceData.urgentCount} />
-              )}
-              {complianceData.upcomingCount > 0 && (
-                <Metric label={t("compliance.dueSoon")} value={complianceData.upcomingCount} />
-              )}
-              <Metric label={t("compliance.reports")} value={complianceData.documents.length} />
-            </MetricRow>
-          </div>
+              <p className="text-sm mt-3 break-words">
+                {t("grid.shift", {
+                  grams: Math.round(shiftGain(grid)),
+                  from: time.format(new Date(grid.dirtiest.at)),
+                  to: time.format(new Date(grid.cleanest.at)),
+                })}
+              </p>
+              <p className="vck-meta mt-1 break-words">{t("grid.source", { source: grid.source })}</p>
+            </div>
+          </>
         ) : (
           <Empty
-            title="Compliance data is not loaded yet"
-            body="Once compliance regulations are initialised for your account, a summary will appear here."
-            action={{ label: t("compliance.viewDashboard"), href: "/app/compliance" }}
+            title={d?.gridReason === "unsupported" ? t("grid.unsupportedTitle") : t("grid.unavailableTitle")}
+            body={d?.gridReason === "unsupported" ? t("grid.unsupportedBody") : t("grid.unavailableBody")}
           />
         )}
+      </Section>
+
+      <Section title={t("footprint.title")} description={months.length ? t("footprint.description") : undefined}>
+        {months.length === 0 ? (
+          <Empty title={t("footprint.emptyTitle")} body={t("footprint.emptyBody")} action={{ label: t("footprint.record"), href: "/app/calculator" }} />
+        ) : (
+          <>
+            <MetricRow>
+              <Metric
+                label={t("footprint.latest")}
+                value={last.totalTonnes.toFixed(2)}
+                unit="t CO₂e"
+                note={fullMonth.format(new Date(Date.UTC(last.year, last.month - 1, 1)))}
+                delta={change === null ? undefined : `${change > 0 ? "+" : ""}${change.toFixed(1)}%`}
+                deltaTone={change === null ? undefined : change > 0 ? "negative" : change < 0 ? "positive" : "neutral"}
+              />
+              <Metric label={t("footprint.months")} value={months.length} note={t("footprint.monthsNote")} />
+            </MetricRow>
+            {months.length > 1 && (
+              <div className="vck-card p-4 mt-4">
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={monthChart} margin={{ left: -12, right: 4, top: 4, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--vc-rule-soft)" />
+                      <XAxis dataKey="label" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} minTickGap={8} />
+                      <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={44} />
+                      <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v} t CO₂e`, t("footprint.total")]} />
+                      <Bar dataKey="tonnes" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </Section>
+
+      <Section title={t("obligations.title")}>
+        {!c || c.tracked === 0 ? (
+          <Empty title={t("obligations.emptyTitle")} body={t("obligations.emptyBody")} action={{ label: t("obligations.open"), href: "/app/compliance" }} />
+        ) : (
+          <MetricRow>
+            <Metric label={t("obligations.tracked")} value={c.tracked} note={t("obligations.compliant", { count: c.compliant })} />
+            <Metric label={t("obligations.action")} value={c.actionRequired} />
+            <Metric label={t("obligations.due30")} value={c.dueWithin30Days} />
+            <Metric
+              label={t("obligations.next")}
+              value={c.next ? t("obligations.days", { count: c.next.daysLeft }) : "—"}
+              note={c.next ? `${c.next.name} · ${dateFmt.format(new Date(c.next.deadline))}` : t("obligations.none")}
+            />
+          </MetricRow>
+        )}
+      </Section>
+
+      <Section title={t("advice.title")} description={t("advice.description")}>
+        <div className="vck-card p-4 sm:p-5">
+          {advice ? (
+            <ol className="space-y-3">
+              {advice.points.map((p, i) => (
+                <li key={i} className="vck-inset px-4 py-3">
+                  <p className="text-sm break-words">{p.text}</p>
+                  <p className="vck-meta mt-1.5 break-words">
+                    {t("advice.basedOn")} {p.facts.map((id) => advice.facts.find((f) => f.id === id)?.text).filter(Boolean).join(" · ")}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="vck-meta break-words">{t("advice.idle")}</p>
+          )}
+          {advise.error && (
+            <p className="text-sm mt-3 break-words" role="alert" style={{ color: "var(--vc-negative, var(--destructive))" }}>
+              {advise.error}
+            </p>
+          )}
+          <button type="button" className="vck-btn vck-btn-primary mt-4 w-full sm:w-auto justify-center" onClick={writeAdvice} disabled={advise.busy}>
+            {advise.busy ? t("advice.writing") : advice ? t("advice.again") : t("advice.write")}
+          </button>
+        </div>
       </Section>
     </PageShell>
   );
+}
+
+import { useState } from "react";
+function useAdviceState() {
+  return useState<Advice | null>(null);
 }
