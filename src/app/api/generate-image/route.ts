@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { generateImage } from "@/lib/generators";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
