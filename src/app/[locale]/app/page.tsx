@@ -12,6 +12,7 @@ import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
+import { downloadSectionCsv } from "@/components/app/console/export-csv";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
   IcoAlert,
@@ -499,6 +500,15 @@ export default function ConsolePage() {
               <i>{item.count}</i>
             </button>
           ))}
+          <button
+            type="button"
+            className="vc-tab-export"
+            onClick={() => data && downloadSectionCsv(data, section)}
+            disabled={!data}
+            aria-label={`Download ${SECTIONS.find((s) => s.key === section)?.label ?? section} as CSV`}
+          >
+            Export CSV
+          </button>
         </div>
 
         <div className="vc-deck" role="tabpanel" aria-label={`${section} records`}>
