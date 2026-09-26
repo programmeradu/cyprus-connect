@@ -136,33 +136,7 @@ Format your response as JSON with these fields:
 
     // 🎓 AUTO-GENERATE COURSES based on insights
     if (userId) {
-      try {
-        const emissionsData = {
-          electricity: emissionsBreakdown?.electricity?.percentage || 0,
-          gas: emissionsBreakdown?.gas?.percentage || 0,
-          transportation: emissionsBreakdown?.transportation?.percentage || 0,
-          waste: emissionsBreakdown?.other?.percentage || 0
-        };
-
-        console.log('🎓 Triggering auto-course generation from analytics insights...');
-        
-        // Fire and forget - don't wait for course generation
-        fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/learn/auto-generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId,
-            insights: [
-              ...(insights.observations || []),
-              ...(insights.recommendations || [])
-            ],
-            emissionsData,
-            trigger: 'insight'
-          })
-        }).catch(err => console.error('Auto-course generation failed:', err));
-      } catch (autoGenError) {
-        console.error('Failed to trigger auto-course generation:', autoGenError);
-      }
+      // Courses are created on request in Learn; nothing is generated in the background.
     }
 
     return NextResponse.json({

@@ -171,30 +171,7 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
     }
 
     if (userId) {
-      try {
-        const allRecommendations = [
-          ...(recommendations.complianceRecommendations || []),
-          ...(recommendations.industryInsights || []),
-          ...(recommendations.energyOptimizationTips || [])
-        ];
-
-        const complianceGaps = complianceData?.highPriority?.map((item: any) => item.name) || [];
-
-        log.info('Triggering auto-course generation from recommendations');
-
-        fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/learn/auto-generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId,
-            recommendations: allRecommendations,
-            complianceGaps,
-            trigger: 'recommendation'
-          })
-        }).catch(err => log.error('Auto-course generation failed', err));
-      } catch (autoGenError) {
-        log.error('Failed to trigger auto-course generation', autoGenError);
-      }
+      // Courses are created on request in Learn; nothing is generated in the background.
     }
 
     return NextResponse.json({
