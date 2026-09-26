@@ -334,17 +334,17 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                             data-kind="approve"
                             disabled={deciding !== null}
                             onClick={() => decide(task.id, "approve")}
-                            aria-label={`Approve: ${task.title}`}
+                            aria-label={`${task.kind === "evidence" ? "Mark done" : "Approve"}: ${task.title}`}
                           >
-                            {deciding === task.id ? "Saving…" : "Approve"}
+                            {deciding === task.id ? "Saving…" : task.kind === "evidence" ? "Mark done" : "Approve"}
                           </button>
                           <button
                             type="button"
                             disabled={deciding !== null}
                             onClick={() => decide(task.id, "reject")}
-                            aria-label={`Reject: ${task.title}`}
+                            aria-label={`${task.kind === "evidence" ? "Dismiss" : "Reject"}: ${task.title}`}
                           >
-                            Reject
+                            {task.kind === "evidence" ? "Dismiss" : "Reject"}
                           </button>
                         </div>
                         {decideError?.id === task.id && (
