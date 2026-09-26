@@ -12,10 +12,8 @@ const ROOT = join(process.cwd(), "src/app/[locale]/app");
 
 const NOT_YET_MOVED: Record<string, string> = {
   "actions/page.tsx": "phase 3",
-  "analytics/page.tsx": "phase 2",
   "calculator/page.tsx": "phase 4",
   "compliance/page.tsx": "phase 3",
-  "grant-alerts/page.tsx": "phase 2",
   "insights/page.tsx": "phase 4",
   "integrations/page.tsx": "phase 4",
   "learn/[id]/lesson/[lessonId]/page.tsx": "phase 4",
@@ -26,8 +24,6 @@ const NOT_YET_MOVED: Record<string, string> = {
   "marketplace/admin/page.tsx": "phase 3",
   "marketplace/page.tsx": "phase 3",
   "onboarding/page.tsx": "phase 3",
-  "settings/page.tsx": "phase 2",
-  "settings/privacy/page.tsx": "phase 2",
   "studio/page.tsx": "phase 4",
   "agents/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",
   "cbam/page.tsx": "phase 1b (console routes, move mutations to useWorkspaceAction)",

@@ -38,5 +38,8 @@ _Last updated: 26 September 2026 — security, report filters/PDF, logging turn.
 Approving "Sign the 2026 CBAM declaration" records your signature on that exact draft in Vuneli (fingerprinted). It does **not** submit anything to the EU CBAM Registry. Submission still needs the importer's own authorised-declarant account (applied for through the Cyprus Customs Department). Decide with a lawyer how you describe this to customers.
 
 
+## 2026-09-26 (shared workspace, phase 2)
+- Nothing new for you. Analytics, Grant alerts, Settings and Privacy now use the one shared workspace data.
+
 ## 2026-09-26 (shared workspace, phase 1)
 - Nothing new to set up outside the app this turn. Earlier items (database update 0022, admin grant, CRON_SECRET, email account, Registry XSD) are still open.
