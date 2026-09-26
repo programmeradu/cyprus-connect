@@ -38,6 +38,10 @@ _Last updated: 26 September 2026 — security, report filters/PDF, logging turn.
 Approving "Sign the 2026 CBAM declaration" records your signature on that exact draft in Vuneli (fingerprinted). It does **not** submit anything to the EU CBAM Registry. Submission still needs the importer's own authorised-declarant account (applied for through the Cyprus Customs Department). Decide with a lawyer how you describe this to customers.
 
 
+## 2026-09-26 (Insights rebuild)
+- Nothing new to set up. Grid data comes from Energy-Charts (free, no key). Advice uses the same AI key (`LOVABLE_API_KEY`) already listed; without it the page says so.
+- There is no honest industry benchmark source yet, so no comparison with other companies is shown. If you get access to real sector data for Cyprus (CYSTAT or an industry body), tell me and I can add it.
+
 ## 2026-09-26 (Monthly footprint rebuild)
 - Optional: `CLIMATIQ_API_KEY` in Cloudflare gives live factors. Electricity already resolves live for Cyprus in preview; gas, waste and car travel fall back to published DEFRA factors, and the page says which were used.
 

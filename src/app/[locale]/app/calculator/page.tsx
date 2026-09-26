@@ -89,7 +89,7 @@ export default function CalculatorPage() {
     const body = { year: period.year, month: period.month, ...Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, toNumber(amounts[k])])) };
     const saved = await save.run<SavedFootprint>(PATH, {
       body,
-      invalidates: [PATH, "/api/emissions", "/api/dashboard", "/api/analytics", "/api/actions", "/api/studio"],
+      invalidates: [PATH, "/api/console/insights", "/api/emissions", "/api/dashboard", "/api/analytics", "/api/actions", "/api/studio"],
     });
     if (saved) {
       setResult(saved);
