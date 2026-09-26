@@ -155,7 +155,8 @@ export async function GET() {
         db
           .select()
           .from(agentRuns)
-          .where(eq(agentRuns.workspaceId, workspaceId))
+          // Seed rows are never shown as agent activity.
+          .where(and(eq(agentRuns.workspaceId, workspaceId), ne(agentRuns.trigger, "sample")))
           .orderBy(desc(agentRuns.startedAt))
           .limit(20),
         db
