@@ -519,7 +519,14 @@ export default function ConsolePage() {
                 <span data-tone={focusTone}>{fmtSigned(focus.delta)} on last period</span>
               </div>
 
-              <SignalChart metric={focus} />
+              <SignalChart
+                metric={focus}
+                emptyNote={
+                  isDefaultFilter(filter)
+                    ? undefined
+                    : `Fewer than two readings of this metric fall in ${describeFilter(filter)}. Widen the period or pick another site.`
+                }
+              />
             </main>
           </div>
         </div>

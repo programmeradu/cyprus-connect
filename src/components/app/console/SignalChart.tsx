@@ -84,7 +84,7 @@ export function SignalChart({ metric }: { metric: ConsoleMetric }) {
   if (points.length < 2) {
     return (
       <div className="vc-signal vc-signal-empty">
-        <p>This metric has no series yet. It appears when the first period closes.</p>
+        <p>{emptyNote ?? "This metric has no series yet. It appears when the first period closes."}</p>
       </div>
     );
   }

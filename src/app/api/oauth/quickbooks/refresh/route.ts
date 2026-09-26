@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("oauth.quickbooks.refresh");
+
+const bodySchema = z.object({
+  userId: z.string().trim().min(1).max(100),
+});
 
 export async function POST(request: NextRequest) {
+  const parsed = await readJson(request, bodySchema);
+  if (!parsed.ok) return parsed.response;
+  const { userId } = parsed.data;
+
   try {
-    const body = await request.json();
-    const { userId } = body;
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 400 }
-      );
-    }
-    
-    // Get existing integration
     const existing = await db
       .select()
       .from(integrations)
@@ -26,24 +28,23 @@ export async function POST(request: NextRequest) {
         )
       )
       .limit(1);
-    
+
     if (existing.length === 0) {
       return NextResponse.json(
         { error: 'QuickBooks integration not found' },
         { status: 404 }
       );
     }
-    
+
     const integration = existing[0];
-    
+
     if (!integration.refreshToken) {
       return NextResponse.json(
         { error: 'No refresh token available' },
         { status: 400 }
       );
     }
-    
-    // Refresh the access token
+
     const tokenResponse = await fetch('https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer', {
       method: 'POST',
       headers: {
@@ -56,12 +57,11 @@ export async function POST(request: NextRequest) {
         refresh_token: integration.refreshToken
       })
     });
-    
+
     if (!tokenResponse.ok) {
-      const errorData = await tokenResponse.json();
-      console.error('Token refresh error:', errorData);
-      
-      // If refresh token is expired, mark integration as disconnected
+      const errorData = await tokenResponse.json().catch(() => undefined);
+      log.warn('Token refresh error', { errorData });
+
       await db
         .update(integrations)
         .set({
@@ -69,19 +69,18 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date().toISOString()
         })
         .where(eq(integrations.id, integration.id));
-      
+
       return NextResponse.json(
-        { error: 'Failed to refresh token', details: errorData },
+        { error: 'Failed to refresh token' },
         { status: 401 }
       );
     }
-    
+
     const tokenData = await tokenResponse.json();
-    
+
     const now = new Date();
     const accessTokenExpiry = new Date(now.getTime() + tokenData.expires_in * 1000);
-    
-    // Update tokens
+
     await db
       .update(integrations)
       .set({
@@ -93,15 +92,15 @@ export async function POST(request: NextRequest) {
         updatedAt: now.toISOString()
       })
       .where(eq(integrations.id, integration.id));
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       success: true,
       message: 'Token refreshed successfully'
     });
   } catch (error) {
-    console.error('Refresh token error:', error);
+    const ref = log.error('Refresh token error', error);
     return NextResponse.json(
-      { error: 'Failed to refresh token' },
+      { error: 'Failed to refresh token', ref },
       { status: 500 }
     );
   }
