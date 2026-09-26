@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { userActions, actions } from '@/db/schema';
@@ -50,10 +51,9 @@ export async function GET(
 
     return NextResponse.json(completedActions, { status: 200 });
   } catch (error) {
-    console.error('GET error:', error);
     return NextResponse.json(
       {
-        error: 'Internal server error: ' + (error as Error).message,
+        error: 'Internal server error', ref: logger("api.actions.user.userId").error("request failed", error),
       },
       { status: 500 }
     );

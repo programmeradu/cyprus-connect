@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { bindSessionUser } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
@@ -58,10 +59,9 @@ export async function GET(
       email: userRecord[0].email,
     }, { status: 200 });
   } catch (error) {
-    console.error('GET error:', error);
     return NextResponse.json(
       {
-        error: 'Internal server error: ' + (error as Error).message,
+        error: 'Internal server error', ref: logger("api.users.id.credits").error("request failed", error),
       },
       { status: 500 }
     );

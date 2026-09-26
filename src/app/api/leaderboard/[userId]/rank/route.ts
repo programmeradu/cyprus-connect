@@ -1,3 +1,4 @@
+import { logger } from "@/lib/log";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user } from '@/db/schema';
@@ -89,10 +90,9 @@ export async function GET(
     }, { status: 200 });
 
   } catch (error) {
-    console.error('GET user rank error:', error);
     return NextResponse.json(
       { 
-        error: 'Internal server error: ' + (error as Error).message 
+        error: 'Internal server error', ref: logger("api.leaderboard.userId.rank").error("request failed", error) 
       },
       { status: 500 }
     );
