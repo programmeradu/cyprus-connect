@@ -65,3 +65,6 @@ next-env.d.ts
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# Downloaded OCR sample docs (re-fetch with research/datasets/fetch_samples.py)
+research/datasets/samples/
