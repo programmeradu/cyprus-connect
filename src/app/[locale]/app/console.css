@@ -1614,10 +1614,10 @@
   flex: 1 1 auto;
   min-height: 36px;
   padding: 8px 12px;
-  border: 1px solid var(--vc-ink);
+  border: 1px solid transparent;
   border-radius: 10px;
-  background: var(--vc-ink);
-  color: var(--vc-bg, #fff);
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
   font: inherit;
   font-size: 12px;
   font-weight: 800;
