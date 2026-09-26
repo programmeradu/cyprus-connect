@@ -3,6 +3,10 @@ import { db } from '@/db';
 import { courses, courseModules, lessons, lmsUserProgress, userLessonCompletions } from '@/db/schema';
 import { eq, asc, inArray, and, sql } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { gateCourse } from "@/lib/learn/course-access.server";
+import { requireAdmin } from "@/lib/admin-auth";
+import { canPublish } from "@/lib/learn/access";
+
 import { z } from "zod";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
@@ -41,23 +45,10 @@ export async function GET(
       );
     }
 
-    const courseId = parseInt(id);
-
-    // Fetch course
-    const courseResult = await db
-      .select()
-      .from(courses)
-      .where(eq(courses.id, courseId))
-      .limit(1);
-
-    if (courseResult.length === 0) {
-      return NextResponse.json(
-        { error: 'Course not found', code: 'COURSE_NOT_FOUND' },
-        { status: 404 }
-      );
-    }
-
-    const course = courseResult[0];
+    const gate = await gateCourse(parseInt(id), userId, "view");
+    if (!gate.ok) return gate.response;
+    const course = gate.course;
+    const courseId = course.id;
 
     // Check enrollment and progress if userId provided
     let isEnrolled = false;
@@ -187,21 +178,12 @@ export async function PATCH(
       );
     }
 
-    const courseId = parseInt(id);
-
-    // Check if course exists
-    const existingCourse = await db
-      .select()
-      .from(courses)
-      .where(eq(courses.id, courseId))
-      .limit(1);
-
-    if (existingCourse.length === 0) {
-      return NextResponse.json(
-        { error: 'Course not found', code: 'COURSE_NOT_FOUND' },
-        { status: 404 }
-      );
-    }
+    const auth = await bindSessionUser(request);
+    if (!auth.ok) return auth.response;
+    const gate = await gateCourse(parseInt(id), auth.userId, "edit");
+    if (!gate.ok) return gate.response;
+    const courseId = gate.course.id;
+    const existingCourse = [gate.course];
 
     const parsedBody = await readJson(request, BodySchema);
     if (!parsedBody.ok) return parsedBody.response;
@@ -219,6 +201,11 @@ export async function PATCH(
           { status: 400 }
         );
       }
+    }
+
+    // Publishing shows a course to every account, so only an admin may change it.
+    if (body.isPublished !== undefined && !canPublish(gate.admin)) {
+      return NextResponse.json({ error: "Only an admin can publish or unpublish a course.", code: "FORBIDDEN" }, { status: 403 });
     }
 
     // Prepare update data
@@ -308,21 +295,12 @@ export async function DELETE(
       );
     }
 
-    const courseId = parseInt(id);
-
-    // Check if course exists
-    const existingCourse = await db
-      .select()
-      .from(courses)
-      .where(eq(courses.id, courseId))
-      .limit(1);
-
-    if (existingCourse.length === 0) {
-      return NextResponse.json(
-        { error: 'Course not found', code: 'COURSE_NOT_FOUND' },
-        { status: 404 }
-      );
-    }
+    const auth = await bindSessionUser(request);
+    if (!auth.ok) return auth.response;
+    const gate = await gateCourse(parseInt(id), auth.userId, "edit");
+    if (!gate.ok) return gate.response;
+    const courseId = gate.course.id;
+    const existingCourse = [gate.course];
 
     // Delete course (cascade will handle related records)
     const deleted = await db
