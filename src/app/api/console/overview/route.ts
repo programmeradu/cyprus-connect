@@ -8,7 +8,6 @@ import {
   agents,
   agentRuns,
   agentTasks,
-  dataConnections,
   obligations,
   activityEvents,
   user as userTable,
@@ -16,6 +15,7 @@ import {
 import { and, asc, desc, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/log";
+import { liveConnections } from "@/lib/console/connections.server";
 import { QA_ACCOUNT, QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 
 export const dynamic = "force-dynamic";
@@ -164,11 +164,7 @@ export async function GET() {
           .where(and(eq(agentTasks.workspaceId, workspaceId), eq(agentTasks.status, "open")))
           .orderBy(asc(agentTasks.dueAt))
           .limit(20),
-        db
-          .select()
-          .from(dataConnections)
-          .where(eq(dataConnections.workspaceId, workspaceId))
-          .orderBy(asc(dataConnections.sortOrder)),
+        liveConnections(account.id, workspaceId),
         db
           .select()
           .from(obligations)
