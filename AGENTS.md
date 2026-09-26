@@ -6,3 +6,6 @@
 - Every tool call writes an `agent_steps` row with a SHA-256 hash of its input, including blocked and failed calls. Why: complete, replayable audit trail.
 - `agent_runs.trigger = 'sample'` marks seed data; only cron/manual/event runs are real work. Why: never present sample rows as agent activity.
 - Database changes that the app needs are kept as plain SQL in `scripts/sql/` (the drizzle folder is read-only here) and mirrored in `src/db/schema.ts`. Why: reproducible schema without a second migration tool.
+
+- Approval tasks store the exact tool call (`pending_tool`, `pending_input`, SHA-256 `pending_input_hash`); approving re-checks the fingerprint and runs it via `src/lib/agents/approvals.ts`. Why: a person signs exactly what the agent showed, nothing else.
+- CBAM declarations are deterministic (`cbam-calc.ts`, no AI) and a signature is void if the draft hash changes. Why: legal act must be reproducible.
