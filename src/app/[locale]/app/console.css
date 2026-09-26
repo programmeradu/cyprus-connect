@@ -1581,7 +1581,13 @@
 .vc-tab-strip .vc-tab-export {
   margin-left: auto;
   flex: none;
-  min-height: 32px;
+  align-self: center;
+  height: 32px;
+  /* Stays in view while the tabs scroll sideways on phones. */
+  position: sticky;
+  right: 0;
+  background: var(--vc-bg, transparent);
+  backdrop-filter: blur(8px);
   padding: 0 12px;
   border-radius: 8px;
   border: 1px solid var(--vc-rule);
