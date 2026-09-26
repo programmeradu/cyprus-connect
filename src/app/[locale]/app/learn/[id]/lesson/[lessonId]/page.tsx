@@ -107,6 +107,10 @@ export default function LessonViewerPage() {
     if (ok) toast.success("Lesson completed");
   };
 
+  useEffect(() => {
+    if (writer.error) toast.error(writer.error);
+  }, [writer.error]);
+
   const goToNextLesson = () => {
     if (nextLessonId) {
       router.push(`/app/learn/${courseId}/lesson/${nextLessonId}`);
