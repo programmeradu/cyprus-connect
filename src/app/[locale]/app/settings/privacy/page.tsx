@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { useSession, authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { invalidateWorkspace, workspaceRequest } from "@/components/app/console/workspace-store";
 import { Link } from "@/i18n/navigation";
 import { PageShell, PageHeader, Section, Empty } from "@/components/app/console/kit";
 
@@ -113,12 +114,8 @@ export default function PrivacySettingsPage() {
   const handleExport = async () => {
     setExporting(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
-      const res = await fetch(`/api/users/${userId}/export`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      const blob = await res.blob();
+      const data = await workspaceRequest<unknown>(`/api/users/${userId}/export`);
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -139,12 +136,8 @@ export default function PrivacySettingsPage() {
     if (confirmText !== "DELETE") return;
     setDeleting(true);
     try {
-      const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
-      const res = await fetch(`/api/users?id=${encodeURIComponent(userId)}`, {
-        method: "DELETE",
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-      if (!res.ok) throw new Error(String(res.status));
+      await workspaceRequest(`/api/users?id=${encodeURIComponent(userId)}`, { method: "DELETE" });
+      invalidateWorkspace(["/api"]);
       await authClient.signOut().catch(() => {});
       try {
         localStorage.removeItem("bearer_token");

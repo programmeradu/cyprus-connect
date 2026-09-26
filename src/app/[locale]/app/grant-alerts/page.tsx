@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+
+const PATH = "/api/grant-alerts/subscribe";
 import { PageShell, PageHeader, Section, DataTable, Empty, DataTableColumn as Column } from "@/components/app/console/kit";
 
 interface Match {
@@ -26,41 +29,28 @@ const SOURCE_LABELS: Record<string, string> = {
 export default function GrantAlertsPage() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<string | null>(null);
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const load = () => {
-    setLoading(true);
-    setError(null);
-    fetch("/api/grant-alerts/subscribe")
-      .then((r) => r.json())
-      .then((j) => setMatches(j.matches ?? []))
-      .catch(() => setError("Could not load grant matches. Try again."))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    load();
-  }, []);
+  const feed = useWorkspaceResource<{ matches?: Match[] }>(PATH);
+  const action = useWorkspaceAction();
+  const matches = feed.data?.matches ?? [];
 
   async function subscribe(e: React.FormEvent) {
     e.preventDefault();
     setStatus(null);
-    const res = await fetch("/api/grant-alerts/subscribe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const j = await res.json();
-    setStatus(res.ok ? `Subscribed ${j.subscribed}. You will receive an email per new match.` : `Error: ${j.error}`);
+    const j = await action.run<{ subscribed: string }>(PATH, { method: "POST", body: { email }, invalidates: [PATH] });
+    if (j) setStatus(`Subscribed ${j.subscribed}. You will receive an email per new match.`);
   }
 
   async function unsubscribe() {
-    if (!email) return;
-    const res = await fetch(`/api/grant-alerts/subscribe?email=${encodeURIComponent(email)}`, { method: "DELETE" });
-    const j = await res.json();
-    setStatus(res.ok ? `Unsubscribed ${j.unsubscribed}.` : `Error: ${j.error}`);
+    if (!email) {
+      setStatus("Enter the email address you subscribed with.");
+      return;
+    }
+    setStatus(null);
+    const j = await action.run<{ unsubscribed: string }>(`${PATH}?email=${encodeURIComponent(email)}`, {
+      method: "DELETE",
+      invalidates: [PATH],
+    });
+    if (j) setStatus(`Unsubscribed ${j.unsubscribed}.`);
   }
 
   const columns: Column<Match>[] = [
@@ -100,9 +90,9 @@ export default function GrantAlertsPage() {
 
   return (
     <PageShell
-      loading={loading}
-      error={error}
-      onRetry={load}
+      loading={feed.loading}
+      error={feed.error}
+      onRetry={feed.reload}
       header={
         <PageHeader
           title="EU and Cyprus grant alerts"
@@ -120,10 +110,12 @@ export default function GrantAlertsPage() {
             placeholder="you@yourcompany.cy"
             className="h-11 flex-1 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
-          <button type="submit" className="vck-btn vck-btn-primary">Subscribe</button>
-          <button type="button" onClick={unsubscribe} className="vck-btn">Unsubscribe</button>
+          <button type="submit" disabled={action.busy} className="vck-btn vck-btn-primary">Subscribe</button>
+          <button type="button" disabled={action.busy} onClick={unsubscribe} className="vck-btn">Unsubscribe</button>
         </form>
-        {status && <p className="vck-meta mt-3">{status}</p>}
+        {(status || action.error) && (
+          <p className="vck-meta mt-3 break-words" role="status">{action.error ?? status}</p>
+        )}
       </Section>
 
       <Section title="Recent matches">

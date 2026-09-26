@@ -7,6 +7,7 @@ import { useSession } from "@/lib/auth-client";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import { PricingTable } from "@/components/billing/PricingTable";
@@ -60,7 +61,6 @@ function SettingsContent() {
     complianceAlerts: true,
     systemAlerts: true
   });
-  const [prefsLoading, setPrefsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -76,44 +76,26 @@ function SettingsContent() {
     }
   }, [user, session]);
 
+  const prefsPath = session?.user?.id
+    ? `/api/notifications/preferences?userId=${encodeURIComponent(session.user.id)}`
+    : null;
+  const prefsResource = useWorkspaceResource<Partial<typeof notificationPrefs>>(prefsPath);
+  const prefsLoading = prefsResource.loading;
+  const writer = useWorkspaceAction();
+
   useEffect(() => {
-    if (session?.user?.id) {
-      fetchNotificationPreferences();
-    }
-  }, [session?.user?.id]);
-
-  const fetchNotificationPreferences = async () => {
-    if (!session?.user?.id) return;
-
-    try {
-      setPrefsLoading(true);
-      const response = await fetch(
-        `/api/notifications/preferences?userId=${session.user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("bearer_token")}`
-          }
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setNotificationPrefs({
-          emissionAlerts: data.emissionAlerts ?? true,
-          goalAlerts: data.goalAlerts ?? true,
-          leaderboardAlerts: data.leaderboardAlerts ?? false,
-          actionAlerts: data.actionAlerts ?? true,
-          insightAlerts: data.insightAlerts ?? true,
-          complianceAlerts: data.complianceAlerts ?? true,
-          systemAlerts: data.systemAlerts ?? true
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch notification preferences:", error);
-    } finally {
-      setPrefsLoading(false);
-    }
-  };
+    const data = prefsResource.data;
+    if (!data) return;
+    setNotificationPrefs({
+      emissionAlerts: data.emissionAlerts ?? true,
+      goalAlerts: data.goalAlerts ?? true,
+      leaderboardAlerts: data.leaderboardAlerts ?? false,
+      actionAlerts: data.actionAlerts ?? true,
+      insightAlerts: data.insightAlerts ?? true,
+      complianceAlerts: data.complianceAlerts ?? true,
+      systemAlerts: data.systemAlerts ?? true
+    });
+  }, [prefsResource.data]);
 
   const handleSave = async () => {
     if (!user?.id) {
@@ -124,41 +106,29 @@ function SettingsContent() {
     setIsSaving(true);
 
     try {
-      const userResponse = await fetch(`/api/users?id=${user.id}`, {
+      // Company facts are stored once on the user record; every page reads them from there.
+      const saved = await writer.run(`/api/users?id=${user.id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("bearer_token")}`
-        },
-        body: JSON.stringify({
+        body: {
           name,
           companyName,
           companyIndustry: industry,
           teamSize,
           countryCode: countryCode || null
-        })
+        },
+        invalidates: ["/api/users", "/api/analytics", "/api/leaderboard"]
       });
-
-      if (!userResponse.ok) {
-        const error = await userResponse.json();
-        toast.error(error.error || t("toast.saveFail"));
+      if (!saved) {
+        toast.error(t("toast.saveFail"));
         return;
       }
-
-      const preferencesResponse = await fetch(`/api/users/${user.id}/preferences`, {
+      const prefsSaved = await writer.run(`/api/users/${user.id}/preferences`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("bearer_token")}`
-        },
-        body: JSON.stringify({
-          countryCode: countryCode || null
-        })
+        body: { countryCode: countryCode || null },
+        invalidates: ["/api/users"]
       });
-
-      if (!preferencesResponse.ok) {
-        const error = await preferencesResponse.json();
-        toast.error(error.error || t("toast.saveFail"));
+      if (!prefsSaved) {
+        toast.error(t("toast.saveFail"));
         return;
       }
 
@@ -181,19 +151,13 @@ function SettingsContent() {
     setNotificationPrefs((prev) => ({ ...prev, [key]: newValue }));
 
     try {
-      const response = await fetch("/api/notifications/preferences", {
+      const response = await writer.run("/api/notifications/preferences", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("bearer_token")}`
-        },
-        body: JSON.stringify({
-          userId: session.user.id,
-          [key]: newValue
-        })
+        body: { userId: session.user.id, [key]: newValue },
+        invalidates: ["/api/notifications"]
       });
 
-      if (!response.ok) {
+      if (!response) {
         setNotificationPrefs((prev) => ({ ...prev, [key]: !newValue }));
         toast.error(t("toast.prefsFail"));
       } else {
