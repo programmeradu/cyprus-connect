@@ -1499,3 +1499,11 @@
     width: auto;
   }
 }
+
+/* Many months on a narrow screen: keep the first, last and selected labels so
+   none overlap or push past the edge. */
+.vc-signal-axis { overflow: hidden; gap: 4px; }
+.vc-signal-axis span { white-space: nowrap; }
+@media (max-width: 640px) {
+  .vc-signal-axis span:not(:first-child):not(:last-child):not([data-active="true"]) { display: none; }
+}
