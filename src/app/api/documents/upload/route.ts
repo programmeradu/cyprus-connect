@@ -30,21 +30,6 @@ interface ParsedEmissionsData {
   rowCount: number;
 }
 
-function extractFileType(fileName: string, mimeType?: string): string | null {
-  const extension = fileName.split('.').pop()?.toLowerCase();
-  if (extension && ALLOWED_TYPES.includes(extension)) {
-    return extension;
-  }
-  
-  if (mimeType) {
-    if (mimeType.includes('pdf')) return 'pdf';
-    if (mimeType.includes('csv')) return 'csv';
-    if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) return 'xlsx';
-  }
-  
-  return null;
-}
-
 /**
  * Reads the real header row and row count from a CSV file.
  * Columns are matched to known measures by name; nothing is guessed.
@@ -144,10 +129,12 @@ export async function POST(request: NextRequest) {
       return uploadData;
     }
 
-    const { fileName, fileSize, fileType, userId: __claimedUserId, uploadSource, fileBuffer } = uploadData;
+    const { fileName: rawName, fileSize, fileType, userId: __claimedUserId, uploadSource, fileBuffer } = uploadData;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
+    // No path separators or control characters in a stored name.
+    const fileName = rawName.replace(/[\\/\x00-\x1f]+/g, "_").slice(0, 255);
 
 
     // Validate file size
@@ -199,7 +186,7 @@ export async function POST(request: NextRequest) {
         processingStatus = 'pending';
       }
     } catch (error) {
-      console.error('File processing error:', error);
+      log.warn('file processing failed', { fileType, ...(error instanceof Error ? { errorMessage: error.message } : {}) });
       processingStatus = 'failed';
     }
 
@@ -238,12 +225,9 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('POST error:', error);
+    const ref = log.error('upload failed', error);
     return NextResponse.json(
-      { 
-        error: 'Internal server error: ' + (error instanceof Error ? error.message : 'Unknown error'),
-        code: 'INTERNAL_ERROR'
-      },
+      { error: 'The file could not be saved. Try again.', code: 'INTERNAL_ERROR', ref },
       { status: 500 }
     );
   }
