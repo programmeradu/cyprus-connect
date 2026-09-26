@@ -18,6 +18,7 @@ import {
 } from "@/components/app/shell";
 import type { Column } from "@/components/app/shell";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { FRAMEWORKS } from "@/lib/compliance/frameworks";
 
 interface Regulation {
   id: number;

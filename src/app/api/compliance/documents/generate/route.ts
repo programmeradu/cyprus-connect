@@ -66,7 +66,7 @@ Format the report professionally with clear sections.`;
     const def = frameworkByLabel(framework);
     const config = {
       status: 'draft',
-      dueDate: def ? def.nextDeadline() : null,
+      dueDate: def ? def.nextDeadline() : `${new Date().getUTCFullYear()}-12-31`,
       regulationId: def ? def.regulationId : 'custom',
     };
 
