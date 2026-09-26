@@ -15,3 +15,5 @@
 - Every API route reads its body through `src/lib/validate.ts` (`readJson` with a zod schema, `readUpload`/`checkUpload` which identify files by their bytes); `tests/api-input-guard.test.ts` fails on direct `request.json()`/`formData()`. Why: size caps and schema checks in one place.
 - Admin rights live only in `user_roles` (scripts/sql/0022), checked server-side by `src/lib/admin-auth.ts`; the QA identity is never admin. Why: a profile edit can never grant admin.
 - Server errors go through `logger(scope).error(...)` (`src/lib/log.ts`), which redacts sensitive keys and returns a short ref; routes return the ref, never the raw error. Why: findable logs without leaking internals.
+
+- Every /app page reads and writes workspace data through `src/components/app/console/workspace-store.ts` (`useWorkspaceResource`, `useWorkspaceAction`), never its own fetch; `tests/app-data-guard.test.ts` enforces it and its not-yet-moved list may only shrink. Why: one shared copy of the data, so a change on any page shows everywhere.
