@@ -1586,8 +1586,8 @@
   /* Stays in view while the tabs scroll sideways on phones. */
   position: sticky;
   right: 0;
-  background: var(--vc-bg, transparent);
-  backdrop-filter: blur(8px);
+  background: var(--vc-pill-bg);
+  box-shadow: var(--vc-shadow-pill);
   padding: 0 12px;
   border-radius: 8px;
   border: 1px solid var(--vc-rule);
