@@ -1,11 +1,26 @@
 import { aiChat, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { convertCurrency } from "@/lib/exchange-rates";
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("api.insights.ai-recommendations");
+
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(128).optional().nullable(),
+  energyData: z.record(z.string(), z.any()).optional().nullable(),
+  benchmarkData: z.record(z.string(), z.any()).optional().nullable(),
+  complianceData: z.record(z.string(), z.any()).optional().nullable(),
+  userProfile: z.record(z.string(), z.any()).optional().nullable(),
+  userLocation: z.record(z.string(), z.any()).optional().nullable(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
     const {
       userId: __claimedUserId,
       energyData,
@@ -13,13 +28,11 @@ export async function POST(request: NextRequest) {
       complianceData,
       userProfile,
       userLocation,
-    } = body;
-    const __auth = await bindSessionUser(request, __claimedUserId);
+    } = parsed.data;
+    const __auth = await bindSessionUser(request, __claimedUserId ?? null);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // If AI is not configured or fails, we generate intelligent localized SME recommendations
     const generateFallbackRecommendations = (currencySym: string, savingsAmt: number) => ({
       complianceRecommendations: [
         `Align Scope 1 and Scope 2 reporting with EU CSRD / VSME standards for your regional operations.`,
@@ -38,22 +51,19 @@ export async function POST(request: NextRequest) {
       ]
     });
 
-    // Get user's preferred currency from userProfile
     const userCurrency = userProfile?.preferredCurrency || "EUR";
     const countryCurrencyMap: Record<string, string> = {
-      CY: "EUR", GR: "EUR", GH: "GHS", NG: "NGN", ZA: "ZAR", KE: "KES", US: "USD", 
+      CY: "EUR", GR: "EUR", GH: "GHS", NG: "NGN", ZA: "ZAR", KE: "KES", US: "USD",
       GB: "GBP", EU: "EUR", CA: "CAD", AU: "AUD"
     };
     const detectedCurrency = countryCurrencyMap[userLocation?.countryCode] || userCurrency;
-    
-    // Currency symbols for display
+
     const currencySymbols: Record<string, string> = {
       GHS: "GH₵", NGN: "₦", ZAR: "R", KES: "KSh", USD: "$",
       GBP: "£", EUR: "€", CAD: "C$", AUD: "A$"
     };
     const currencySymbol = currencySymbols[detectedCurrency] || detectedCurrency;
 
-    // Convert USD savings to user's currency
     let savingsInUserCurrency = energyData?.costSavings?.costSavingsUSD || 0;
     if (detectedCurrency !== "USD" && savingsInUserCurrency > 0) {
       const converted = await convertCurrency(savingsInUserCurrency, "USD", detectedCurrency);
@@ -71,7 +81,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Build comprehensive context from user data
     const dataContext = `
 You are a sustainability advisor for Vuneli, providing personalized insights for SMEs.
 
@@ -141,20 +150,17 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
       messages: [{ role: "user", content: dataContext + "\n\n" + prompt }],
       temperature: 0.7,
     });
-    
-    // Extract JSON from markdown code blocks if present
+
     let jsonText = text;
     const jsonMatch = text.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
     if (jsonMatch) {
       jsonText = jsonMatch[1];
     }
 
-    // Parse the JSON response
     let recommendations;
     try {
       recommendations = JSON.parse(jsonText);
     } catch (parseError) {
-      // Fallback: try to extract JSON from the text
       const startIdx = jsonText.indexOf('{');
       const endIdx = jsonText.lastIndexOf('}');
       if (startIdx !== -1 && endIdx !== -1) {
@@ -164,7 +170,6 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
       }
     }
 
-    // 🎓 AUTO-GENERATE COURSES based on recommendations
     if (userId) {
       try {
         const allRecommendations = [
@@ -175,9 +180,8 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
 
         const complianceGaps = complianceData?.highPriority?.map((item: any) => item.name) || [];
 
-        console.log('🎓 Triggering auto-course generation from recommendations...');
-        
-        // Fire and forget - don't wait for course generation
+        log.info('Triggering auto-course generation from recommendations');
+
         fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/learn/auto-generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -187,9 +191,9 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
             complianceGaps,
             trigger: 'recommendation'
           })
-        }).catch(err => console.error('Auto-course generation failed:', err));
+        }).catch(err => log.error('Auto-course generation failed', err));
       } catch (autoGenError) {
-        console.error('Failed to trigger auto-course generation:', autoGenError);
+        log.error('Failed to trigger auto-course generation', autoGenError);
       }
     }
 
@@ -199,7 +203,7 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
       generatedAt: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error("AI recommendations error:", error);
+    log.error("AI recommendations error", error);
     return NextResponse.json({
       success: true,
       recommendations: {
