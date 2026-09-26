@@ -26,7 +26,7 @@ import {
 import { SignalChart } from "@/components/app/console/SignalChart";
 import { IcoClock, IcoPulse } from "@/components/app/console/icons";
 import { Spark } from "@/components/app/console/charts";
-import { fmtNumber, fmtSigned, toneFor } from "@/components/app/console/types";
+import { fmtNumber, fmtSigned, relativeTime, toneFor } from "@/components/app/console/types";
 import {
   CATEGORY_ICON,
   CATEGORY_LABEL,
