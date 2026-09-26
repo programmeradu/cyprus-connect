@@ -24,7 +24,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Phase 3 medium: Actions, Marketplace list/detail/admin, Onboarding, Compliance on the shared store. Removed: invented fallback actions/emissions/company in Actions, banner auto-generation on every Marketplace visit, account search in Onboarding. Fixed: QuickBooks connect trusted a caller-supplied user id; compliance email toggle could never be off
 - [ ] Pages that check sign-in with the client session (Compliance, Marketplace, Onboarding, Analytics) cannot be opened by the QA identity, so they are only browser-checked signed out
 - [x] Phase 4 Learn: library, course, lesson and generator on the shared store; generated courses private until an admin publishes; owner/admin-only edits; lesson HTML cleaned; all-or-nothing course save; creator-only notification; duplicate course endpoints removed
-- [ ] Phase 4 heavy (rebuild + split each): Studio, Calculator, Insights (check ai-recommendations for invented fallback advice), Integrations
+- [x] Phase 4 Studio: one-step make (server reads real records per topic, no invented figures, refunds on failure), owner-scoped image routes, unsafe edit-image and stats endpoints removed, EN+EL copy
+- [ ] Phase 4 heavy (rebuild + split each): Calculator, Insights (check ai-recommendations for invented fallback advice), Integrations
 - [ ] Learn: click through signed in with a real generated course (needs AI key in preview)
 - [x] Exchange rates: one shared request per page load (was ~4; duplicate currency wrapper removed)
 - [x] Found: analytics insights and AI recommendations call /api/learn/auto-generate over HTTP (endpoint removed)
