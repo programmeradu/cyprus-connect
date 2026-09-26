@@ -14,7 +14,7 @@ interface Lesson {
   order: number;
   title: string;
   contentType: string;
-  contentJson: string;
+  contentJson: unknown;
   videoUrl: string | null;
   estimatedMinutes: number;
   completion: { completedAt: string; timeSpent: number; score: number } | null;
@@ -61,7 +61,7 @@ export default function LessonViewerPage() {
 
   const uid = session?.user?.id;
   // Shared records: the course page and this lesson read the same copies.
-  const lessonRes = useWorkspaceResource<Lesson & { contentJson: unknown }>(uid && lessonId ? `/api/learn/lessons/${lessonId}` : null);
+  const lessonRes = useWorkspaceResource<Lesson>(uid && lessonId ? `/api/learn/lessons/${lessonId}` : null);
   const courseRes = useWorkspaceResource<CourseData>(uid && courseId ? `/api/learn/courses/${courseId}` : null);
   const writer = useWorkspaceAction();
   const lesson = lessonRes.data ?? null;
