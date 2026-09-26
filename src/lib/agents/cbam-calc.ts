@@ -324,6 +324,7 @@ export function parseImportCsv(text: string): { rows: ParsedImportRow[]; errors:
     const supplier = get(r, "supplier");
     const problems: string[] = [];
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) problems.push("import_date must be YYYY-MM-DD");
+    else if (!isRealDate(date)) problems.push("import_date is not a real calendar date");
     if (digits(cn).length < 4) problems.push("cn_code needs at least 4 digits");
     if (mass === null || mass <= 0) problems.push("net_mass must be a positive number");
     if (dRaw && (d === null || d < 0)) problems.push("direct_see must be a number ≥ 0");
@@ -349,4 +350,11 @@ export function parseImportCsv(text: string): { rows: ParsedImportRow[]; errors:
     });
   });
   return { rows, errors };
+}
+
+/** True when a YYYY-MM-DD string names a day that exists (no 2026-02-30). */
+export function isRealDate(iso: string): boolean {
+  const [y, m, d] = iso.split("-").map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === m - 1 && t.getUTCDate() === d;
 }
