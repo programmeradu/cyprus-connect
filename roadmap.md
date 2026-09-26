@@ -8,7 +8,7 @@
 - [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
 - [x] P2b structured logger (src/lib/log.ts, error refs) + tests for validation/admin/log/PDF/filters
 - [x] P2d every API error answer returns a short log reference, never the raw error (31 routes fixed; tests/api-error-leak-guard.test.ts)
-- [ ] P2c split files over 500 lines: dashboard done (908 → 429, logic tested); left: studio, calculator, compliance, insights
+- [x] P2c split files over 500 lines: dashboard (908 → 429), compliance (565 → 151, fake per-rule % removed); studio/calculator/insights were already under 310
 - [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
 - [x] P3b CSV export per console section
 - [x] P3c Approve runs the exact act the agent asked for (fingerprint-checked); first act: CBAM signature
@@ -34,7 +34,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Learn: click through signed in with a real generated course (needs AI key in preview)
 - [x] Exchange rates: one shared request per page load (was ~4; duplicate currency wrapper removed)
 - [x] Found: analytics insights and AI recommendations call /api/learn/auto-generate over HTTP (endpoint removed)
-- [ ] Greek translation of the 12 English-only pages, after pages settle
+- [ ] Greek translation: compliance, grant alerts, agents done. Left: CBAM, marketplace item/impact/admin, learn generate/course, leaderboard, settings, reports, analytics; agent names and step labels
 
 ## Agent ecosystem (plan: .lovable/plan/vuneli-agent-ecosystem-plan-2026-09-26.md)
 - [x] Step 1 runtime: job queue + lease, step ledger (SHA-256), tool contract with risk levels, autonomy policy (L3 always human), kill switch, retries/dead jobs, 15-min cron heartbeat
