@@ -7,6 +7,7 @@
 - [x] P1b merge duplicate systems (unused /api/lms removed; one Gemini library)
 - [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
 - [x] P2b structured logger (src/lib/log.ts, error refs) + tests for validation/admin/log/PDF/filters
+- [x] P2d every API error answer returns a short log reference, never the raw error (31 routes fixed; tests/api-error-leak-guard.test.ts)
 - [ ] P2c split files over 500 lines (app/page 837, studio 801, calculator 758, compliance 622, insights 599)
 - [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
 - [x] P3b CSV export per console section
