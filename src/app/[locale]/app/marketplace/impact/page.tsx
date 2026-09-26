@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import {
   PageShell,
   PageHeader,
@@ -44,54 +44,28 @@ interface Purchase {
 export default function ImpactPage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [impact, setImpact] = useState<ImpactData | null>(null);
-  const [breakdown, setBreakdown] = useState<Breakdown[]>([]);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const signedIn = !!session?.user;
+  const impactRes = useWorkspaceResource<{ impact: ImpactData | null; breakdown: Breakdown[] }>(
+    signedIn ? "/api/marketplace/impact" : null,
+  );
+  const purchasesRes = useWorkspaceResource<{ purchases: Purchase[] }>(
+    signedIn ? "/api/marketplace/purchases" : null,
+  );
+  const impact = impactRes.data?.impact ?? null;
+  const breakdown = impactRes.data?.breakdown ?? [];
+  const purchases = purchasesRes.data?.purchases ?? [];
+  const loading = impactRes.loading || purchasesRes.loading;
+  const error = impactRes.error || purchasesRes.error ? "Your impact data could not be loaded." : null;
+  const fetchData = () => {
+    impactRes.reload();
+    purchasesRes.reload();
+  };
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       if (!APP_OPEN_ACCESS) router.push("/auth?redirect=/app/marketplace/impact");
     }
   }, [session, isPending, router]);
-
-  useEffect(() => {
-    if (session?.user) {
-      fetchData();
-    }
-  }, [session]);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const token = localStorage.getItem("bearer_token");
-
-      const impactResponse = await fetch("/api/marketplace/impact", {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (impactResponse.ok) {
-        const impactData = await impactResponse.json();
-        setImpact(impactData.impact);
-        setBreakdown(impactData.breakdown);
-      }
-
-      const purchasesResponse = await fetch("/api/marketplace/purchases", {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (purchasesResponse.ok) {
-        const purchasesData = await purchasesResponse.json();
-        setPurchases(purchasesData.purchases);
-      }
-    } catch (err) {
-      console.error("Error fetching impact data:", err);
-      setError("Your impact data could not be loaded.");
-      toast.error("Failed to load impact data");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const hasImpact = impact && impact.totalTonsOffset > 0;
 
