@@ -11,7 +11,7 @@ interface AppHeaderProps {
 
 /**
  * Compatibility wrapper. The workspace header is now `PageHeader` from
- * `@/components/app/shell`; the account menu moved to the sidebar footer.
+ * console kit; the account menu moved to the sidebar footer.
  * New pages should import PageHeader directly.
  */
 export const AppHeader = ({ title, subtitle, actions }: AppHeaderProps) => (

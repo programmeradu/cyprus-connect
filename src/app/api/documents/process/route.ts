@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import { aiChatRaw, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChatRaw, hasLovableAi } from "@/lib/lovable-ai";
+import { readUpload } from "@/lib/validate";
+import { logger } from "@/lib/log";
 
 export const maxDuration = 60;
+
+const log = logger("documents.process");
 
 interface ExtractedData {
   electricity?: number;
@@ -14,14 +18,12 @@ interface ExtractedData {
 
 async function processWithGemini(
   file: File,
-  fileType: string
+  mimeType: string
 ): Promise<ExtractedData> {
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
-    const mimeType = fileType;
+  const arrayBuffer = await file.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-    const prompt = `You are an expert data extraction AI. Analyze this document (utility bill, report, or invoice) and extract monthly consumption data.
+  const prompt = `You are an expert data extraction AI. Analyze this document (utility bill, report, or invoice) and extract monthly consumption data.
 
 CRITICAL INSTRUCTIONS:
 1. Extract ONLY numerical values for these categories:
@@ -62,41 +64,34 @@ Return format (only include fields with valid data):
 
 If you cannot find data for a category, omit that field entirely.`;
 
-    // A picture goes in as an image block. A PDF goes in as a file block.
-    const dataUrl = `data:${mimeType};base64,${base64}`;
-    const attachment = mimeType.startsWith("image/")
-      ? { type: "image_url", image_url: { url: dataUrl } }
-      : { type: "file", file: { filename: "document.pdf", file_data: dataUrl } };
+  const dataUrl = `data:${mimeType};base64,${base64}`;
+  const attachment = mimeType.startsWith("image/")
+    ? { type: "image_url", image_url: { url: dataUrl } }
+    : { type: "file", file: { filename: "document.pdf", file_data: dataUrl } };
 
-    const text = await aiChatRaw(
-      [{ role: "user", content: [{ type: "text", text: prompt }, attachment] }],
-      0.1,
-    );
+  const text = await aiChatRaw(
+    [{ role: "user", content: [{ type: "text", text: prompt }, attachment] }],
+    0.1,
+  );
 
-    // Parse JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const extracted = JSON.parse(jsonMatch[0]);
-      // Ensure all values are numbers
-      const cleaned: ExtractedData = {};
-      if (extracted.electricity && !isNaN(extracted.electricity))
-        cleaned.electricity = Number(extracted.electricity);
-      if (extracted.gas && !isNaN(extracted.gas))
-        cleaned.gas = Number(extracted.gas);
-      if (extracted.water && !isNaN(extracted.water))
-        cleaned.water = Number(extracted.water);
-      if (extracted.waste && !isNaN(extracted.waste))
-        cleaned.waste = Number(extracted.waste);
-      if (extracted.transport && !isNaN(extracted.transport))
-        cleaned.transport = Number(extracted.transport);
-      return cleaned;
-    }
-
-    return {};
-  } catch (error) {
-    console.error("Gemini processing error:", error);
-    throw error;
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    const extracted = JSON.parse(jsonMatch[0]);
+    const cleaned: ExtractedData = {};
+    if (extracted.electricity && !isNaN(extracted.electricity))
+      cleaned.electricity = Number(extracted.electricity);
+    if (extracted.gas && !isNaN(extracted.gas))
+      cleaned.gas = Number(extracted.gas);
+    if (extracted.water && !isNaN(extracted.water))
+      cleaned.water = Number(extracted.water);
+    if (extracted.waste && !isNaN(extracted.waste))
+      cleaned.waste = Number(extracted.waste);
+    if (extracted.transport && !isNaN(extracted.transport))
+      cleaned.transport = Number(extracted.transport);
+    return cleaned;
   }
+
+  return {};
 }
 
 async function processCSV(file: File): Promise<ExtractedData> {
@@ -164,18 +159,15 @@ async function processExcel(file: File): Promise<ExtractedData> {
   const arrayBuffer = await file.arrayBuffer();
   const workbook = XLSX.read(arrayBuffer, { type: "array" });
 
-  // Get first sheet
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];
 
-  // Convert to JSON
   const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
 
   if (jsonData.length < 2) {
     throw new Error("Excel file is empty or invalid");
   }
 
-  // First row as headers
   const headers = (jsonData[0] as string[]).map((h) =>
     String(h || "").toLowerCase().trim()
   );
@@ -187,7 +179,6 @@ async function processExcel(file: File): Promise<ExtractedData> {
   let wasteTotal = 0;
   let transportTotal = 0;
 
-  // Process data rows
   for (let i = 1; i < jsonData.length; i++) {
     const row = jsonData[i];
 
@@ -230,46 +221,27 @@ async function processExcel(file: File): Promise<ExtractedData> {
 }
 
 export async function POST(request: NextRequest) {
+  if (!hasLovableAi()) {
+    return NextResponse.json(
+      { error: "AI is not configured on this deployment." },
+      { status: 503 }
+    );
+  }
+
+  const upload = await readUpload(request, "file", ["csv", "xlsx", "pdf", "png", "jpeg"]);
+  if (!upload.ok) return upload.response;
+  const { file, kind } = upload;
+
   try {
-    if (!hasLovableAi()) {
-      return NextResponse.json(
-        { error: "AI is not configured on this deployment." },
-        { status: 503 }
-      );
-    }
-
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-
-    if (!file) {
-      return NextResponse.json(
-        { error: "No file provided" },
-        { status: 400 }
-      );
-    }
-
     let extractedData: ExtractedData = {};
 
-    // Route to appropriate processor based on file type
-    if (file.type === "text/csv") {
+    if (kind === "csv") {
       extractedData = await processCSV(file);
-    } else if (
-      file.type === "application/vnd.ms-excel" ||
-      file.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    ) {
+    } else if (kind === "xlsx") {
       extractedData = await processExcel(file);
-    } else if (
-      file.type === "application/pdf" ||
-      file.type.startsWith("image/")
-    ) {
-      // Use Gemini for PDFs and images
-      extractedData = await processWithGemini(file, file.type);
     } else {
-      return NextResponse.json(
-        { error: "Unsupported file type" },
-        { status: 400 }
-      );
+      const mimeType = kind === "pdf" ? "application/pdf" : kind === "png" ? "image/png" : "image/jpeg";
+      extractedData = await processWithGemini(file, mimeType);
     }
 
     if (Object.keys(extractedData).length === 0) {
@@ -289,14 +261,9 @@ export async function POST(request: NextRequest) {
       fileType: file.type,
     });
   } catch (error) {
-    console.error("Document processing error:", error);
+    const ref = log.error("Document processing error", error);
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to process document",
-      },
+      { error: "The document could not be processed.", ref },
       { status: 500 }
     );
   }

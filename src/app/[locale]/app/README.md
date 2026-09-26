@@ -93,6 +93,4 @@ with a comment saying why, then use it.
 the kit classes `vck-card`, `vck-inset`, `vck-label`, `vck-meta`, `vck-tag`,
 `vck-btn` (+ `vck-btn-primary`) and `vck-num`.
 
-Some routes still import `@/components/app/shell`. Those files draw kit markup
-from the earlier props. When a page is next touched, import from the kit
-directly and drop the `shell` import.
+All routes now import directly from `@/components/app/console/kit`.
