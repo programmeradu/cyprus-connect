@@ -21,7 +21,7 @@ export function AuditTab({ logs }: { logs: AuditLog[] }) {
     },
     {
       key: "createdAt",
-      header: "",
+      header: t("columns.when"),
       numeric: true,
       render: (log) => new Date(log.createdAt).toLocaleString()
     }
@@ -36,7 +36,7 @@ export function AuditTab({ logs }: { logs: AuditLog[] }) {
         empty={
           <Empty
             title={t("audit.noActivity")}
-            body="Actions you take on this page, like generating reports or changing settings, will be recorded here."
+            body={t("empty.noActivityBody")}
           />
         }
       />

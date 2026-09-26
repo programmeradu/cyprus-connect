@@ -24,7 +24,7 @@ export function DocumentsTab({
   const columns: Column<ComplianceDocument>[] = [
     {
       key: "title",
-      header: t("documents.framework"),
+      header: t("columns.document"),
       render: (doc) => (
         <div>
           <p className="font-medium break-words">{doc.title}</p>
@@ -34,7 +34,7 @@ export function DocumentsTab({
     },
     {
       key: "status",
-      header: t("status.ready"),
+      header: t("columns.status"),
       render: (doc) => (
         <span className="vck-tag" data-tone={statusTone(doc.status)}>
           {statusLabel(doc.status)}
@@ -54,6 +54,7 @@ export function DocumentsTab({
         <button
           type="button"
           className="vck-btn"
+          disabled={!doc.content}
           onClick={() => {
             if (doc.content) {
               const blob = new Blob([doc.content], { type: "text/markdown" });

@@ -31,7 +31,7 @@ export function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
     },
     {
       key: "status",
-      header: t("status.compliant"),
+      header: t("columns.status"),
       render: (reg) => (
         <span className="vck-tag" data-tone={statusTone(reg.status)}>
           {statusLabel(reg.status)}
@@ -43,14 +43,12 @@ export function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
       header: t("regulations.nextDeadline"),
       hideOnMobile: true,
       render: (reg) => {
-        const daysUntil = Math.floor(
-          (new Date(reg.nextDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-        );
+        const days = daysUntil(reg.nextDeadline);
         return (
           <div>
             <p>{new Date(reg.nextDeadline).toLocaleDateString()}</p>
             <p className="vck-meta">
-              {daysUntil > 0 ? t("regulations.daysRemaining", { days: daysUntil }) : t("regulations.overdue")}
+              {days > 0 ? t("regulations.daysRemaining", { days }) : t("regulations.overdue")}
             </p>
           </div>
         );
@@ -66,8 +64,8 @@ export function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
         rowKey={(r) => String(r.id)}
         empty={
           <Empty
-            title="No regulations to review"
-            body="Regulations relevant to your jurisdiction will be listed here once initialised."
+            title={t("empty.noRegulationsTitle")}
+            body={t("empty.noRegulationsBody")}
           />
         }
       />

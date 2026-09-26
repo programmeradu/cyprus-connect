@@ -527,7 +527,8 @@
         "noComplianceData": "No compliance data available yet",
         "recentUpdates": "Recent Regulatory Updates",
         "nextDeadlinePrefix": "Next deadline",
-        "noRecentUpdates": "No recent updates available"
+        "noRecentUpdates": "No recent updates available",
+        "summary": "Summary"
       },
       "regulations": {
         "nextDeadline": "Next Deadline",
@@ -581,6 +582,18 @@
         "settingsSaved": "Settings saved successfully",
         "settingsFailed": "Failed to save settings",
         "downloaded": "Document downloaded"
+      },
+      "columns": {
+        "status": "Status",
+        "document": "Document",
+        "when": "When"
+      },
+      "empty": {
+        "noRegulationsTitle": "No regulations tracked yet",
+        "noRegulationsBody": "The Cyprus and EU rules that apply to you will be listed here once they are set up for your account.",
+        "noUpdatesTitle": "No upcoming deadlines",
+        "noUpdatesBody": "The next deadlines of the rules you track will show here.",
+        "noActivityBody": "Actions you take on this page, such as making a report or changing settings, are recorded here."
       }
     },
     "insights": {
