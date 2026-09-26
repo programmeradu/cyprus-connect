@@ -80,6 +80,9 @@ export function summarizeOutput(decision: string, output: string | null): string
   }
   if (v && typeof v === "object" && !Array.isArray(v)) {
     const o = v as Record<string, unknown>;
+    if ("taskId" in o && "created" in o) {
+      return o.created ? `Opened task #${o.taskId}.` : `Task #${o.taskId} was already open, so it was kept, not duplicated.`;
+    }
     if (typeof o.error === "string") return o.error;
     if (typeof o.reason === "string") return o.reason;
   }

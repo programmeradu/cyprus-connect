@@ -1465,3 +1465,5 @@
   .vc .vck-run-steps { padding: 4px 14px 14px; }
   .vc .vck-agent-filters { justify-content: flex-start; }
 }
+.vc .vck-run-meta > * { margin: 0; line-height: 1.45; }
+.vc .vck-run-meta .vck-quiet { display: block; font-size: 12px; }

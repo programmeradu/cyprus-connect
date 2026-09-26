@@ -18,6 +18,8 @@ describe("step labels", () => {
     expect(summarizeOutput("queued_for_approval", '{"taskId":7,"reused":false}')).toBe("Opened approval task #7.");
     expect(summarizeOutput("queued_for_approval", '{"taskId":7,"reused":true}')).toMatch(/already waiting/);
     expect(summarizeOutput("failed", '{"error":"Invalid input: x"}')).toBe("Invalid input: x");
+    expect(summarizeOutput("executed", '{"created":true,"taskId":4}')).toBe("Opened task #4.");
+    expect(summarizeOutput("executed", '{"created":false,"taskId":4}')).toMatch(/already open/);
     expect(summarizeOutput("executed", "[1,2,3]")).toBe("3 items returned.");
     expect(summarizeOutput("executed", '{"a":1,"b":"x","c":[1],"d":2}')).toBe("a: 1 · b: x · c: 1 items · …");
     expect(summarizeOutput("executed", '{"broken')!.length).toBeLessThanOrEqual(141);
