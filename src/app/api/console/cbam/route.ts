@@ -12,6 +12,7 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   activityEvents,
+  agentTasks,
   cbamDeclarants,
   cbamDeclarations,
   cbamImportLines,
@@ -66,6 +67,20 @@ export async function GET(req: Request) {
       .limit(200),
   ]);
 
+  const openEmails = await db
+    .select({ id: agentTasks.id, pendingInput: agentTasks.pendingInput, createdAt: agentTasks.createdAt, result: agentTasks.result })
+    .from(agentTasks)
+    .where(and(eq(agentTasks.workspaceId, ws), eq(agentTasks.status, "open"), eq(agentTasks.pendingTool, "send_supplier_request")))
+    .orderBy(asc(agentTasks.id));
+  const pendingEmails = openEmails.flatMap((t) => {
+    try {
+      const i = JSON.parse(t.pendingInput ?? "{}") as { year: number; supplierName: string; to: string; replyTo: string | null; subject: string; body: string };
+      return i.year === year ? [{ taskId: t.id, supplierName: i.supplierName, to: i.to, replyTo: i.replyTo, subject: i.subject, body: i.body, lastError: t.result }] : [];
+    } catch {
+      return [];
+    }
+  });
+
   const draftObj = decl ? (JSON.parse(decl.draft) as CbamDraft) : null;
   const who = { legalName: declarant?.legalName ?? null, eori: declarant?.eori ?? null, accountNumber: declarant?.accountNumber ?? null };
 
@@ -76,6 +91,7 @@ export async function GET(req: Request) {
     suppliers: suppliers.map((c) => ({ supplierName: c.supplierName, email: c.email, contactName: c.contactName })),
     declarant: { ...who, replyToEmail: declarant?.replyToEmail ?? null },
     requests,
+    pendingEmails,
     exportGaps:
       decl && draftObj
         ? exportGaps(draftObj, who, { status: decl.status, draftHash: decl.draftHash, signedBy: decl.signedBy, signedAt: null, signedHash: decl.signedHash })
