@@ -10,7 +10,17 @@
 - [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
 - [x] P3b CSV export per console section
 - [ ] P3c Approve should trigger the follow-up act (sign/submit/record), not just close the task — needs real agent work behind it
-- [ ] P3d Start agent run — blocked: no agent does real work yet (runs are sample rows); decide which agent to build first (CBAM report)
+- [x] P3d Start agent run — real for Ledger (evidence sweep) via /api/console/agents/run; other agents still sample
+- [ ] P3f Console UI: "Run now" button on runnable agent cards, pause switch, step ledger view per run
+
+## Agent ecosystem (plan: .lovable/plan/vuneli-agent-ecosystem-plan-2026-09-26.md)
+- [x] Step 1 runtime: job queue + lease, step ledger (SHA-256), tool contract with risk levels, autonomy policy (L3 always human), kill switch, retries/dead jobs, 15-min cron heartbeat
+- [x] Step 2 (first part) Evidence sweep agent: asks for missing bills/receipts, flags obligations at risk, records coverage fact
+- [ ] Step 2 (rest) pull bills automatically from connectors — blocked: no EAC/bank connector access yet
+- [ ] Step 3 CBAM agent (L3 signature) — next build
+- [ ] Step 4 research gates on I-25 (Grid Surplus) and I-26 (Upgrade Club) — blocked: TSO/EAC curtailment + tariff data, pilot SMEs, licence checks
+- [ ] Steps 5-6 pilots, Upgrade Club, agent-to-agent exchange — depend on step 4
+- [ ] Founder: set CRON_SECRET in Cloudflare (heartbeat skips without it); sign off Postgres queue vs Queues/Durable Objects
 - [ ] P3e period/site filter, PDF export; then Release 3 CBAM agent
 
 (Research paused by founder.)

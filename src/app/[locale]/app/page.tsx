@@ -12,6 +12,7 @@ import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
+import { AgentPulse } from "@/components/app/console/AgentPulse";
 import { downloadSectionCsv } from "@/components/app/console/export-csv";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
@@ -578,6 +579,7 @@ export default function ConsolePage() {
                       </p>
                     ))}
                   </div>
+                  <AgentPulse />
                 </section>
 
 

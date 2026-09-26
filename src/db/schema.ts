@@ -603,6 +603,90 @@ export const agentRuns = pgTable('agent_runs', {
   itemsProcessed: integer('items_processed').notNull().default(0),
   confidence: real('confidence').notNull().default(1),
   durationMs: integer('duration_ms').notNull().default(0),
+  /** sample | cron | manual | event. "sample" rows are seed data, not real work. */
+  trigger: text('trigger').notNull().default('sample'),
+  jobId: integer('job_id'),
+});
+
+/* ------------------------------------------------------------------ */
+/* Agent runtime (see src/lib/agents). Real work only.                  */
+/* ------------------------------------------------------------------ */
+
+/** The durable queue. One row per unit of agent work. */
+export const agentJobs = pgTable('agent_jobs', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  agentKey: text('agent_key').notNull(),
+  trigger: text('trigger').notNull().default('cron'),
+  /** queued | running | succeeded | failed | dead | skipped */
+  status: text('status').notNull().default('queued'),
+  attempts: integer('attempts').notNull().default(0),
+  maxAttempts: integer('max_attempts').notNull().default(3),
+  runAfter: timestamp('run_after').notNull().defaultNow(),
+  leaseUntil: timestamp('lease_until'),
+  idempotencyKey: text('idempotency_key').notNull().unique(),
+  runId: integer('run_id'),
+  error: text('error'),
+  requestedBy: text('requested_by'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  finishedAt: timestamp('finished_at'),
+});
+
+/** The step ledger. Every tool call an agent makes, with its input hash. */
+export const agentSteps = pgTable('agent_steps', {
+  id: serial('id').primaryKey(),
+  runId: integer('run_id').notNull(),
+  workspaceId: text('workspace_id').notNull(),
+  agentKey: text('agent_key').notNull(),
+  seq: integer('seq').notNull(),
+  tool: text('tool').notNull(),
+  riskLevel: integer('risk_level').notNull(),
+  /** executed | queued_for_approval | blocked | failed */
+  decision: text('decision').notNull(),
+  inputHash: text('input_hash').notNull(),
+  input: text('input').notNull(),
+  output: text('output'),
+  costUsd: real('cost_usd').notNull().default(0),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/** Kill switch and spending cap for one workspace. */
+export const agentControls = pgTable('agent_controls', {
+  workspaceId: text('workspace_id').primaryKey(),
+  paused: boolean('paused').notNull().default(false),
+  pauseReason: text('pause_reason'),
+  dailyBudgetUsd: real('daily_budget_usd').notNull().default(1),
+  spentUsd: real('spent_usd').notNull().default(0),
+  spentOn: text('spent_on'),
+  maxStepsPerRun: integer('max_steps_per_run').notNull().default(25),
+  updatedBy: text('updated_by'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/** Owner overrides: what an agent may do alone at each risk level. */
+export const autonomyPolicies = pgTable('autonomy_policies', {
+  workspaceId: text('workspace_id').notNull(),
+  riskLevel: integer('risk_level').notNull(),
+  /** auto | ask | deny */
+  mode: text('mode').notNull(),
+  updatedBy: text('updated_by'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+/** Facts agents share. Every value carries where it came from. */
+export const workspaceFacts = pgTable('workspace_facts', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  key: text('key').notNull(),
+  value: text('value').notNull(),
+  unit: text('unit'),
+  sourceKind: text('source_kind').notNull(),
+  sourceHash: text('source_hash').notNull(),
+  agentKey: text('agent_key'),
+  runId: integer('run_id'),
+  validFrom: timestamp('valid_from').notNull().defaultNow(),
+  validTo: timestamp('valid_to'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
 /** Human in the loop. Anything an agent may not do alone lands here. */

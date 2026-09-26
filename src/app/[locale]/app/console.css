@@ -1598,3 +1598,49 @@
 .vc .vc-tab-strip button.vc-tab-export:hover { background: var(--vc-lime-soft); }
 .vc .vc-tab-strip button.vc-tab-export:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 2px; }
 .vc .vc-tab-strip button.vc-tab-export:disabled { opacity: 0.5; cursor: default; }
+
+/* Real agent controls (AgentPulse) */
+.vc-agent-pulse {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--vc-rule);
+}
+.vc-agent-pulse-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vc-agent-pulse button {
+  flex: 1 1 auto;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--vc-lime);
+  color: var(--vc-lime-ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: normal;
+  cursor: pointer;
+}
+.vc-agent-pulse button[data-variant="quiet"] {
+  background: transparent;
+  color: var(--vc-ink);
+  border-color: var(--vc-rule);
+}
+.vc-agent-pulse button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.vc-agent-pulse p {
+  margin: 10px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--vc-ink-2);
+  overflow-wrap: anywhere;
+}
+.vc-agent-pulse p[data-tone="good"] { color: var(--vc-good); }
+.vc-agent-pulse p[data-tone="warn"] { color: var(--vc-warn); }
