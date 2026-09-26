@@ -5,9 +5,49 @@ import { routing } from "@/i18n/routing";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { QA_COOKIE, QA_HEADER, isQaRequest } from "@/lib/qa-bypass";
 import { getSupabaseServerConfig } from "@/lib/supabase/server";
-
+import { isDevOnlyApi, isPublicApi } from "@/lib/api-access";
 
 const intlMiddleware = createIntlMiddleware(routing);
+
+/**
+ * API gate: every non-public /api path needs a valid session (cookie or
+ * bearer). Routes that touch account data additionally bind the account
+ * with `bindSessionUser`, so this is the outer wall, not the only one.
+ */
+async function guardApi(request: NextRequest, pathname: string) {
+  if (isDevOnlyApi(pathname) && process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (request.method === "OPTIONS" || isPublicApi(pathname)) return NextResponse.next();
+
+  const qa = isQaRequest({
+    cookie: request.cookies.get(QA_COOKIE)?.value ?? null,
+    header: request.headers.get(QA_HEADER),
+  });
+  if (qa) return NextResponse.next();
+
+  const { url, publishableKey } = getSupabaseServerConfig();
+  const response = NextResponse.next();
+  const supabase = createServerClient(url, publishableKey, {
+    cookies: {
+      getAll: () => request.cookies.getAll(),
+      setAll: (cookiesToSet) => {
+        cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+      },
+    },
+  });
+  const authz = request.headers.get("authorization");
+  const bearer = authz?.startsWith("Bearer ") ? authz.slice(7).trim() : "";
+  const { data } =
+    bearer && bearer !== "null" && bearer !== "undefined"
+      ? await supabase.auth.getClaims(bearer)
+      : await supabase.auth.getClaims();
+
+  if (!data?.claims) {
+    return NextResponse.json({ error: "Please sign in.", code: "UNAUTHENTICATED" }, { status: 401 });
+  }
+  return response;
+}
 
 // Protected route suffixes (after locale prefix)
 const protectedSuffixes = [
@@ -26,9 +66,8 @@ const protectedSuffixes = [
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip API routes entirely
   if (pathname.startsWith("/api")) {
-    return NextResponse.next();
+    return guardApi(request, pathname);
   }
 
   // Strip locale prefix to check protection
