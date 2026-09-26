@@ -6,6 +6,7 @@ import { UtilityBillData, OCRResult } from '@/lib/ocr/types';
 import { db } from '@/db';
 import { documents } from '@/db/schema';
 import { uploadFileToStorage } from '@/lib/supabase/storage';
+import { bindSessionUser } from '@/lib/api-auth';
 
 export const maxDuration = 60;
 
@@ -33,6 +34,8 @@ async function readFileFromRequest(request: NextRequest): Promise<{
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<ParseResponse>> {
+  const auth = await bindSessionUser(request, null);
+  if (!auth.ok) return auth.response as NextResponse<ParseResponse>;
   try {
     const { file, buffer } = await readFileFromRequest(request);
     const validation = validateFile(file);
@@ -77,8 +80,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ParseResp
 
     const billData = extractUtilityBillData(ocrResult.text);
 
-    // Get userId from request (from localStorage or session)
-    const userId = request.headers.get('x-user-id');
+    // Documents always belong to the signed-in account (never a client-supplied ID).
+    const userId = auth.userId;
     let documentId: number | undefined;
     let fileUrl = 'local'; // Default fallback
 
