@@ -49,9 +49,8 @@ export const FRAMEWORKS: FrameworkDef[] = [
     requirements: ["Authorised declarant status", "Embedded emissions per import", "Annual declaration"],
     nextDeadline: (now = new Date()) => {
       const y = now.getUTCFullYear();
-      const due = new Date(Date.UTC(y, 8, 30));
-      const year = Math.max(y, 2027);
-      return now > due || y < 2027 ? `${year === y ? y + 1 : year}-09-30` : `${y}-09-30`;
+      if (y < 2027) return "2027-09-30";
+      return now <= new Date(Date.UTC(y, 8, 30, 23, 59)) ? `${y}-09-30` : `${y + 1}-09-30`;
     },
     legalDeadline: true,
   },

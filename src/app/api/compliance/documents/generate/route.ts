@@ -1,3 +1,4 @@
+import { frameworkByLabel } from '@/lib/compliance/frameworks';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { complianceDocuments, complianceAuditLogs, emissions, user } from '@/db/schema';
@@ -61,15 +62,13 @@ Format the report professionally with clear sections.`;
     const reportContent = result.response.text();
 
 
-    // Determine status and due date based on framework
-    const frameworkMap: Record<string, { status: string; dueDate: string; regulationId: string }> = {
-      'CSRD': { status: 'draft', dueDate: '2025-12-31', regulationId: 'csrd' },
-      'CDP': { status: 'ready', dueDate: '2025-07-31', regulationId: 'cdp' },
-      'GHG Protocol': { status: 'ready', dueDate: '2025-06-30', regulationId: 'ghg' },
-      'SEC': { status: 'draft', dueDate: '2026-03-31', regulationId: 'sec' }
+    // Due date comes from the shared framework list; every new report starts as a draft.
+    const def = frameworkByLabel(framework);
+    const config = {
+      status: 'draft',
+      dueDate: def ? def.nextDeadline() : null,
+      regulationId: def ? def.regulationId : 'custom',
     };
-
-    const config = frameworkMap[framework] || { status: 'draft', dueDate: '2025-12-31', regulationId: 'custom' };
 
     // Save document
     const document = await db.insert(complianceDocuments).values({

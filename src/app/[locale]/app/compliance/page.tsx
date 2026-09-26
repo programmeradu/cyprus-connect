@@ -63,7 +63,7 @@ export default function CompliancePage() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
-  const [complianceScore, setComplianceScore] = useState(85);
+  const [complianceScore, setComplianceScore] = useState<number | null>(null);
   const [regulations, setRegulations] = useState<Regulation[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
@@ -117,7 +117,7 @@ export default function CompliancePage() {
 
       if (dataResponse.ok) {
         const data = await dataResponse.json();
-        setComplianceScore(data.score || 85);
+        setComplianceScore(typeof data.score === "number" ? data.score : null);
         setRegulations(data.regulations || []);
         setDocuments(data.documents || []);
 
@@ -219,7 +219,7 @@ export default function CompliancePage() {
         <PageHeader
           title={t("title")}
           purpose={t("subtitle")}
-          meta={`${t("healthLabel")}: ${complianceScore}%`}
+          meta={complianceScore === null ? `${t("healthLabel")}: —` : `${t("healthLabel")}: ${complianceScore}%`}
         />
       }
       toolbar={
@@ -246,7 +246,7 @@ function OverviewTab({
   regulations,
   documents
 }: {
-  complianceScore: number;
+  complianceScore: number | null;
   regulations: Regulation[];
   documents: Document[];
 }) {
@@ -469,7 +469,7 @@ function DocumentsTab({
     <>
       <Section title={t("documents.aiTitle")} description={t("documents.aiDescription")}>
         <div className="vck-card flex flex-wrap gap-2 p-4">
-          {["CSRD", "CDP", "GHG Protocol", "SEC"].map((framework) => (
+          {FRAMEWORKS.map((f) => f.label).map((framework) => (
             <button
               key={framework}
               type="button"
