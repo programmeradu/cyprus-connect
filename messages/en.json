@@ -427,81 +427,69 @@
       }
     },
     "calculator": {
-      "title": "Carbon Footprint Calculator",
-      "subtitle": "AI-powered document analysis or manual data entry for accurate carbon footprint calculations",
-      "subtitleShort": "Calculate your business's monthly carbon emissions",
-      "ai": {
-        "heading": "AI-Powered Intelligent Document Analysis",
-        "description": "Upload utility bills, transportation reports, or spreadsheets for instant data extraction",
-        "uploadTitle": "Upload Documents for Analysis",
-        "uploadDescription": "Our advanced AI automatically extracts consumption data from any document format, even custom layouts and handwritten notes",
-        "uploadCta": "Select Documents to Upload",
-        "types": {
-          "pdf": "PDF Bills",
-          "excel": "Excel/CSV",
-          "images": "Images",
-          "gas": "Gas Bills",
-          "water": "Water Bills",
-          "transport": "Transport Reports"
-        },
-        "features": {
-          "smartTitle": "Smart Recognition",
-          "smartDesc": "Powered by Gemini 2.5 Flash for instant data extraction from any format",
-          "multiTitle": "Multi-Document",
-          "multiDesc": "Upload multiple documents at once for comprehensive analysis",
-          "autoTitle": "Auto-Fill",
-          "autoDesc": "Extracted data automatically populates the calculation form"
-        }
+      "title": "Monthly footprint",
+      "subtitle": "Record one month of energy, water, waste and travel. The footprint is worked out and shows on the dashboard at once.",
+      "subtitleShort": "Record your monthly carbon footprint",
+      "form": {
+        "title": "Record a month",
+        "description": "Enter the amounts from your bills for one month. Leave a field empty if it does not apply.",
+        "month": "Month",
+        "year": "Year",
+        "upload": "Fill from a bill",
+        "uploadHint": "Read the amounts from a PDF or photo of a bill. Check them before you save.",
+        "replaceNotice": "You already recorded {period}. Saving replaces those figures.",
+        "save": "Work out and save",
+        "saving": "Working out…",
+        "needValue": "Enter at least one amount above zero.",
+        "region": "Factors for {country}"
       },
-      "manual": {
-        "title": "Manual Entry",
-        "monthly": "Monthly",
-        "electricity": "Electricity (kWh)",
-        "gas": "Natural Gas (m³)",
-        "water": "Water (L)",
-        "waste": "Waste (kg)",
-        "transport": "Transportation (km)",
-        "climatiq": "Climatiq API",
-        "calculating": "Calculating...",
-        "calculate": "Calculate Emissions",
-        "hint": "Enter values for at least one category to calculate"
-      },
-      "results": {
-        "title": "Calculation Results",
-        "subtitle": "Your monthly carbon footprint analysis",
-        "completed": "Completed",
-        "totalTitle": "Total Monthly Emissions",
-        "totalUnit": "tonnes CO2e",
-        "breakdownTitle": "Emissions Breakdown",
-        "detailTitle": "Detailed Breakdown",
-        "aiRecs": "AI-Generated Recommendations",
-        "addedToActions": "Added to Actions",
-        "new": "NEW",
-        "impactSuffix": "Impact",
-        "creditsSuffix": "credits",
-        "viewAllActions": "View All Actions & Complete Recommendations",
-        "noRecs": "No new recommendations at this time",
-        "noRecsSub": "Your emissions profile looks good! Check the Actions page for more ways to improve.",
-        "calcAgain": "Calculate Again",
-        "goDashboard": "Go to Dashboard"
-      },
-      "categories": {
+      "fields": {
         "electricity": "Electricity",
-        "gas": "Natural Gas",
+        "gas": "Natural gas",
         "water": "Water",
-        "waste": "Waste",
-        "transport": "Transportation"
+        "waste": "Waste to landfill",
+        "transport": "Car travel"
+      },
+      "units": {
+        "electricity": "kWh",
+        "gas": "m³",
+        "water": "litres",
+        "waste": "kg",
+        "transport": "km"
+      },
+      "result": {
+        "title": "Footprint for {period}",
+        "total": "Total",
+        "scope1": "Scope 1",
+        "scope2": "Scope 2",
+        "scope3": "Scope 3",
+        "unit": "t CO₂e",
+        "vsPrevious": "against {period}",
+        "noPrevious": "No earlier month to compare",
+        "replaced": "This replaced the figures saved earlier for this month.",
+        "basisLive": "All lines use live Climatiq factors for {country}.",
+        "basisMixed": "Some lines use live Climatiq factors for {country}; the others use published reference factors.",
+        "basisReference": "All lines use published reference factors. Live factors are not available right now.",
+        "line": "Activity",
+        "amount": "Amount",
+        "emissions": "Emissions",
+        "source": "Factor source",
+        "actions": "See actions for this footprint",
+        "another": "Record another month"
+      },
+      "history": {
+        "title": "Recorded months",
+        "description": "Newest first. Choose Edit to correct a month.",
+        "month": "Month",
+        "total": "Total",
+        "change": "Change",
+        "edit": "Edit",
+        "emptyTitle": "No months recorded yet",
+        "emptyBody": "Record your first month above. The dashboard, actions and agents use it straight away."
       },
       "toasts": {
-        "loginRequired": "Please log in to continue",
-        "enterValue": "Please enter at least one value",
-        "calcOk": "Emissions calculated with Climatiq API!",
-        "calcFallback": "Using estimated calculations (API unavailable)",
-        "saveFail": "Failed to calculate emissions. Please try again.",
-        "extracted": "Data extracted from documents!",
-        "generatingRecs": "Generating personalized recommendations...",
-        "doneWithRecs": "Carbon footprint calculated! {count} personalized recommendations added to your actions.",
-        "doneNoRecs": "Carbon footprint calculated successfully!"
+        "saved": "Footprint saved for {period}.",
+        "extracted": "Amounts filled in from the bill. Check them before you save."
       }
     },
     "compliance": {
