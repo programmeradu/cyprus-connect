@@ -13,6 +13,7 @@ export const PUBLIC_API_PREFIXES = [
   "/api/oauth/", // provider callbacks
   "/api/cron/", // guarded by CRON_SECRET
   "/api/keep-alive",
+  "/api/healthz", // uptime probe; returns no data
   "/api/qa/enter", // off in production builds
   "/api/stripe/webhook", // signature-verified
   "/api/news",
