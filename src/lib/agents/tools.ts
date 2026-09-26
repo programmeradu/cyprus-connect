@@ -38,6 +38,8 @@ export interface ToolDef<I extends z.ZodType = z.ZodType, O = unknown> {
   input: I;
   /** Plain title for the review queue when this call needs a person. */
   approvalTitle?: (input: z.infer<I>) => string;
+  /** What the approver must read before deciding, e.g. the full email text. */
+  approvalDetail?: (input: z.infer<I>) => string;
   run: (ctx: ToolContext, input: z.infer<I>) => Promise<O>;
 }
 
@@ -359,6 +361,7 @@ export const sendSupplierRequest = tool({
     body: z.string().min(20).max(20_000),
   }),
   approvalTitle: (i) => `Email ${i.supplierName} for ${i.year} CBAM data`,
+  approvalDetail: (i) => `To: ${i.to}${i.replyTo ? ` (replies to ${i.replyTo})` : ""}\nSubject: ${i.subject}\n\n${i.body}`,
   run: async (ctx, input) => {
     if (!ctx.approvedBy) throw new Error("An outward email needs a person's approval.");
     const sent = await sendEmail({ to: input.to, subject: input.subject, text: input.body, replyTo: input.replyTo });
