@@ -7,6 +7,7 @@
  */
 
 import { Fragment, useCallback, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Btn, ConsolePage, Empty, Plate, State } from "@/components/app/console/kit";
 import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import {
@@ -55,8 +56,6 @@ interface Data {
   };
 }
 
-const when = (iso: string) =>
-  new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const duration = (ms: number) => (ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`);
 
 const HISTORY = "/api/console/agents/history";
@@ -64,6 +63,10 @@ const HISTORY = "/api/console/agents/history";
 const AGENT_DATA = ["/api/console/agents", "/api/console/cbam"];
 
 export default function AgentsPage() {
+  const tr = useTranslations("dashboard.agents");
+  const dateLocale = useLocale() === "el" ? "el-CY" : "en-GB";
+  const when = (iso: string) =>
+    new Date(iso).toLocaleString(dateLocale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   const [filter, setFilter] = useState<string>("");
   const [showSample, setShowSample] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
@@ -95,14 +98,14 @@ export default function AgentsPage() {
     setNote(null);
     try {
       const b = await workspaceRequest<{ status?: string; summary?: string; runId?: number }>("/api/console/agents/run", { method: "POST", body: { agentKey } });
-      setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? "Run finished." });
+      setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? tr("runFinished") });
       invalidateWorkspace(AGENT_DATA);
       if (b.runId) {
         setOpen(b.runId);
         void loadSteps(b.runId);
       }
     } catch (e) {
-      setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not reach the server. Try again." });
+      setNote({ tone: "warn", text: e instanceof Error ? e.message : tr("unreachable") });
     } finally {
       setBusy(null);
     }
@@ -115,10 +118,10 @@ export default function AgentsPage() {
         method: "POST",
         body: { agentKey, paused, reason: paused ? "Paused from the Agents page" : null },
       });
-      setNote({ tone: paused ? "warn" : "good", text: paused ? "Paused. Scheduled runs will be skipped until you resume." : "Resumed. It runs on the next heartbeat." });
+      setNote({ tone: paused ? "warn" : "good", text: paused ? tr("pausedNote") : tr("resumedNote") });
       invalidateWorkspace(AGENT_DATA);
     } catch (e) {
-      setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not change the switch." });
+      setNote({ tone: "warn", text: e instanceof Error ? e.message : tr("switchFailed") });
     } finally {
       setBusy(null);
     }
@@ -135,15 +138,15 @@ export default function AgentsPage() {
 
   return (
     <ConsolePage
-      title="Agents"
-      purpose="Run or pause each agent, and open any run to see every step it took and why."
+      title={tr("title")}
+      purpose={tr("purpose")}
       loading={!data && !error}
       error={error}
       onRetry={history.reload}
       actions={
         c ? (
           <Btn variant={c.paused ? "primary" : "quiet"} disabled={busy !== null} onClick={() => setPause(null, !c.paused)}>
-            {busy === "pause:all" ? "Saving…" : c.paused ? "Resume all agents" : "Pause all agents"}
+            {busy === "pause:all" ? tr("saving") : c.paused ? tr("resumeAll") : tr("pauseAll")}
           </Btn>
         ) : null
       }
@@ -151,7 +154,7 @@ export default function AgentsPage() {
       {note && <p role="status" className="vck-cbam-note" data-tone={note.tone}>{note.text}</p>}
       {c?.paused && (
         <p role="status" className="vck-cbam-note" data-tone="warn">
-          Every agent is paused{c.pauseReason ? `: ${c.pauseReason}` : ""}. Nothing runs until you resume.
+          {c.pauseReason ? tr("allPausedReason", { reason: c.pauseReason }) : tr("allPaused")}
         </p>
       )}
 
@@ -161,28 +164,28 @@ export default function AgentsPage() {
           const paused = Boolean(sw?.paused);
           const last = realRuns.find((r) => r.agentKey === a.key);
           const tone = c?.paused || paused ? "warn" : last?.status === "failed" ? "bad" : "good";
-          const stateText = c?.paused ? "Paused (all)" : paused ? "Paused" : "Active";
+          const stateText = c?.paused ? tr("state.pausedAll") : paused ? tr("state.paused") : tr("state.active");
           return (
             <Plate key={a.key} label={a.role} action={<State tone={tone}>{stateText}</State>}>
               <div className="vck-agent-card">
                 <h3>{a.name}</h3>
                 <p className="vck-quiet">{a.mission}</p>
                 <dl>
-                  <div><dt>Schedule</dt><dd>Once a day, checked every 15 min</dd></div>
+                  <div><dt>{tr("schedule")}</dt><dd>{tr("scheduleValue")}</dd></div>
                   <div>
-                    <dt>Last real run</dt>
-                    <dd>{last ? `${when(last.startedAt)} · ${runStatusLabel(last.status).label}` : "Not run yet"}</dd>
+                    <dt>{tr("lastRun")}</dt>
+                    <dd>{last ? `${when(last.startedAt)} · ${runStatusLabel(last.status).label}` : tr("notRunYet")}</dd>
                   </div>
                   {paused && sw && (
-                    <div><dt>Paused by</dt><dd>{sw.by ?? "—"} · {when(sw.at)}</dd></div>
+                    <div><dt>{tr("pausedBy")}</dt><dd>{sw.by ?? "—"} · {when(sw.at)}</dd></div>
                   )}
                 </dl>
                 <div className="vck-agent-actions">
                   <Btn variant="primary" disabled={busy !== null || paused || c?.paused} onClick={() => runAgent(a.key)}>
-                    {busy === `run:${a.key}` ? "Running…" : "Run now"}
+                    {busy === `run:${a.key}` ? tr("running") : tr("runNow")}
                   </Btn>
                   <Btn disabled={busy !== null} onClick={() => setPause(a.key, !paused)}>
-                    {busy === `pause:${a.key}` ? "Saving…" : paused ? "Resume" : "Pause"}
+                    {busy === `pause:${a.key}` ? tr("saving") : paused ? tr("resume") : tr("pause")}
                   </Btn>
                 </div>
               </div>
@@ -192,8 +195,8 @@ export default function AgentsPage() {
       </div>
 
       {plannedAgents.length > 0 && (
-        <Plate label="Not running yet" meta={`${plannedAgents.length}`}>
-          <p className="vck-quiet vck-agent-planned-lead">These agents are planned but have no real work behind them, so they cannot be started.</p>
+        <Plate label={tr("plannedTitle")} meta={`${plannedAgents.length}`}>
+          <p className="vck-quiet vck-agent-planned-lead">{tr("plannedLead")}</p>
           <ul className="vck-agent-planned">
             {plannedAgents.map((a) => (
               <li key={a.key}><strong>{a.name}</strong><span>{a.role}</span></li>
@@ -203,18 +206,18 @@ export default function AgentsPage() {
       )}
 
       <Plate
-        label="Run history"
+        label={tr("history")}
         flush
         action={
           <div className="vck-agent-filters">
-            <select aria-label="Filter by agent" className="vck-cbam-year" value={filter} onChange={(e) => { setFilter(e.target.value); setOpen(null); }}>
-              <option value="">All agents</option>
+            <select aria-label={tr("filter")} className="vck-cbam-year" value={filter} onChange={(e) => { setFilter(e.target.value); setOpen(null); }}>
+              <option value="">{tr("allAgents")}</option>
               {liveAgents.map((a) => <option key={a.key} value={a.key}>{a.name}</option>)}
             </select>
             {sampleCount > 0 && (
               <label className="vck-agent-check">
                 <input type="checkbox" checked={showSample} onChange={(e) => setShowSample(e.target.checked)} />
-                Show {sampleCount} sample
+                {tr("showSample", { count: sampleCount })}
               </label>
             )}
           </div>
@@ -222,8 +225,8 @@ export default function AgentsPage() {
       >
         {shownRuns.length === 0 ? (
           <Empty
-            title="No real runs yet"
-            body={c?.paused ? "Agents are paused. Resume them, then press Run now on an agent." : "Press Run now on an agent above, or wait for the next scheduled run."}
+            title={tr("emptyTitle")}
+            body={c?.paused ? tr("emptyPaused") : tr("emptyBody")}
           />
         ) : (
           <ol className="vck-runs">
@@ -235,29 +238,29 @@ export default function AgentsPage() {
                 <li key={r.id} data-open={isOpen || undefined}>
                   <button type="button" className="vck-run-head" aria-expanded={isOpen} onClick={() => toggleRun(r.id)}>
                     <span className="vck-run-main">
-                      <strong>{nameOf(r.agentKey)} · Run #{r.id}</strong>
+                      <strong>{nameOf(r.agentKey)} · {tr("runNumber", { id: r.id })}</strong>
                       <span className="vck-run-summary">{r.summary}</span>
                     </span>
                     <span className="vck-run-meta">
                       <State tone={st.tone}>{st.label}</State>
-                      {r.sample && <State tone="idle">Sample data</State>}
+                      {r.sample && <State tone="idle">{tr("sampleData")}</State>}
                       <span className="vck-quiet">{when(r.startedAt)} · {triggerLabel(r.trigger)} · {duration(r.durationMs)}</span>
                       <span className="vck-quiet">
-                        {r.steps.total} step{r.steps.total === 1 ? "" : "s"}
-                        {r.steps.waiting ? ` · ${r.steps.waiting} waiting for you` : ""}
-                        {r.steps.blocked ? ` · ${r.steps.blocked} blocked` : ""}
-                        {r.steps.failed ? ` · ${r.steps.failed} failed` : ""}
+                        {tr("steps", { count: r.steps.total })}
+                        {r.steps.waiting ? ` · ${tr("waiting", { count: r.steps.waiting })}` : ""}
+                        {r.steps.blocked ? ` · ${tr("blocked", { count: r.steps.blocked })}` : ""}
+                        {r.steps.failed ? ` · ${tr("failed", { count: r.steps.failed })}` : ""}
                       </span>
                     </span>
                   </button>
                   {isOpen && (
                     <div className="vck-run-steps">
                       {s === "loading" || s === undefined ? (
-                        <p className="vck-quiet">Loading steps…</p>
+                        <p className="vck-quiet">{tr("loadingSteps")}</p>
                       ) : s === "error" ? (
-                        <p className="vck-cbam-note" data-tone="warn">Could not load the steps for this run.</p>
+                        <p className="vck-cbam-note" data-tone="warn">{tr("stepsFailed")}</p>
                       ) : s.length === 0 ? (
-                        <p className="vck-quiet">{r.sample ? "Sample runs have no recorded steps." : "This run made no tool calls."}</p>
+                        <p className="vck-quiet">{r.sample ? tr("sampleNoSteps") : tr("noToolCalls")}</p>
                       ) : (
                         <ol className="vck-steps">
                           {s.map((step) => {
@@ -273,10 +276,10 @@ export default function AgentsPage() {
                                       <strong>{t.verb}</strong>
                                       <State tone={d.tone}>{d.label}</State>
                                     </div>
-                                    <p className="vck-quiet">{riskLabel(step.riskLevel)} · {new Date(step.createdAt).toLocaleTimeString("en-GB")}</p>
+                                    <p className="vck-quiet">{riskLabel(step.riskLevel)} · {new Date(step.createdAt).toLocaleTimeString(dateLocale)}</p>
                                     {out && <p className="vck-step-out">{out}</p>}
                                     <details>
-                                      <summary>Exact input and fingerprint</summary>
+                                      <summary>{tr("exactInput")}</summary>
                                       <p className="vck-cbam-hash">SHA-256 {step.inputHash}</p>
                                       <pre>{step.input}</pre>
                                       {step.output && <pre>{step.output}</pre>}
