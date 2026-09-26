@@ -701,6 +701,52 @@ export const agentTasks = pgTable('agent_tasks', {
   status: text('status').notNull().default('open'),
   dueAt: text('due_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  runId: integer('run_id'),
+  /** For approval tasks: the exact tool call that runs when a person approves. */
+  pendingTool: text('pending_tool'),
+  pendingInput: text('pending_input'),
+  pendingInputHash: text('pending_input_hash'),
+  /** What happened when the approved act ran. */
+  result: text('result'),
+});
+
+/** Customs import lines of CBAM goods. One row per declared line. */
+export const cbamImportLines = pgTable('cbam_import_lines', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  year: integer('year').notNull(),
+  importDate: text('import_date').notNull(),
+  cnCode: text('cn_code').notNull(),
+  description: text('description'),
+  originCountry: text('origin_country').notNull(),
+  supplierName: text('supplier_name').notNull(),
+  installationId: text('installation_id'),
+  /** Tonnes, or MWh for electricity. */
+  netMass: real('net_mass').notNull(),
+  /** Supplier's actual specific embedded emissions, tCO2e per unit. Null means use the default. */
+  directSee: real('direct_see'),
+  indirectSee: real('indirect_see'),
+  customsRef: text('customs_ref'),
+  sourceKind: text('source_kind').notNull().default('csv'),
+  sourceHash: text('source_hash').notNull(),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/** The CBAM agent's declaration draft for one year, and its signature. */
+export const cbamDeclarations = pgTable('cbam_declarations', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  year: integer('year').notNull(),
+  /** draft | needs_data | below_threshold | awaiting_signature | signed */
+  status: text('status').notNull().default('draft'),
+  draft: text('draft').notNull(),
+  draftHash: text('draft_hash').notNull(),
+  runId: integer('run_id'),
+  signedBy: text('signed_by'),
+  signedAt: timestamp('signed_at'),
+  signedHash: text('signed_hash'),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const dataConnections = pgTable('data_connections', {

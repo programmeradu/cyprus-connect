@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { activityEvents, agentTasks, user as userTable, workspaces } from "@/db/schema";
 import { bindSessionUser } from "@/lib/api-auth";
+import { executeApprovedTask, reopenTask } from "@/lib/agents/approvals";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       .update(agentTasks)
       .set({ status })
       .where(and(eq(agentTasks.id, taskId), eq(agentTasks.workspaceId, ws.id), eq(agentTasks.status, "open")))
-      .returning({ id: agentTasks.id, title: agentTasks.title });
+      .returning({
+        id: agentTasks.id,
+        title: agentTasks.title,
+        workspaceId: agentTasks.workspaceId,
+        agentKey: agentTasks.agentKey,
+        runId: agentTasks.runId,
+        pendingTool: agentTasks.pendingTool,
+        pendingInput: agentTasks.pendingInput,
+        pendingInputHash: agentTasks.pendingInputHash,
+      });
     if (!closed) return null;
     await tx.insert(activityEvents).values({
       workspaceId: ws.id,
@@ -68,6 +78,35 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       { error: "This task is already decided or does not belong to your workspace." },
       { status: 409 },
     );
+  }
+  // Approving an agent's request runs the act it asked for, on the exact input it showed.
+  if (decision === "approve" && result.pendingTool) {
+    const approver = actor?.name?.trim() || "Workspace owner";
+    const outcome = await executeApprovedTask(result, approver);
+    if (outcome.ran && !outcome.ok) {
+      await reopenTask(result.id, ws.id, outcome.error);
+      await db.insert(activityEvents).values({
+        workspaceId: ws.id,
+        actorType: "agent",
+        actorName: result.agentKey,
+        verb: "could not carry out",
+        object: result.title,
+        detail: outcome.error,
+      });
+      return NextResponse.json({ error: outcome.error, reopened: true }, { status: 409 });
+    }
+    if (outcome.ran && outcome.ok) {
+      await db.update(agentTasks).set({ result: JSON.stringify(outcome.output).slice(0, 2000) }).where(eq(agentTasks.id, result.id));
+      await db.insert(activityEvents).values({
+        workspaceId: ws.id,
+        actorType: "agent",
+        actorName: result.agentKey,
+        verb: "carried out",
+        object: result.title,
+        detail: `Approved by ${approver}.`,
+      });
+      return NextResponse.json({ id: result.id, status, acted: true, result: outcome.output });
+    }
   }
   return NextResponse.json({ id: result.id, status });
 }

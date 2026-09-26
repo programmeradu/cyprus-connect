@@ -25,6 +25,7 @@ import {
 import { isPolicyMode, retryDelayMs, type PolicyMode, type RiskLevel } from "./policy";
 import { AgentRuntime } from "./runtime";
 import { runEvidenceSweep } from "./evidence-sweep";
+import { runCbamAgent } from "./cbam-agent";
 
 const LEASE_MS = 5 * 60_000;
 
@@ -38,6 +39,7 @@ type AgentHandler = (rt: AgentRuntime) => Promise<AgentOutcome>;
 /** Agents with real work behind them. Others in the registry are not runnable yet. */
 export const RUNNABLE_AGENTS: Record<string, { handler: AgentHandler; cadence: "daily" }> = {
   ingest: { handler: (rt) => runEvidenceSweep(rt), cadence: "daily" },
+  cbam: { handler: (rt) => runCbamAgent(rt), cadence: "daily" },
 };
 
 export function isRunnable(agentKey: string): boolean {
