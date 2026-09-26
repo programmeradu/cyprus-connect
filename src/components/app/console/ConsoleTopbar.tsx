@@ -23,6 +23,7 @@ import {
   IcoSpark,
 } from "./icons";
 import { ConsoleAvatar } from "./ConsoleAvatar";
+import { useConsole } from "./ConsoleData";
 import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
 export const NAV_ITEMS = [
@@ -165,7 +166,37 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  const tasks = data?.tasks ?? [];
+  const { refresh } = useConsole();
+  const [deciding, setDeciding] = useState<number | null>(null);
+  const [decided, setDecided] = useState<Set<number>>(() => new Set());
+  const [decideError, setDecideError] = useState<{ id: number; message: string } | null>(null);
+
+  const decide = async (id: number, decision: "approve" | "reject") => {
+    setDeciding(id);
+    setDecideError(null);
+    try {
+      const token = localStorage.getItem("bearer_token");
+      const res = await fetch(`/api/console/tasks/${id}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ decision }),
+      });
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) throw new Error(body?.error ?? "The decision was not saved. Try again.");
+      setDecided((prev) => new Set(prev).add(id));
+      refresh();
+    } catch (err) {
+      setDecideError({ id, message: err instanceof Error ? err.message : "The decision was not saved." });
+    } finally {
+      setDeciding(null);
+    }
+  };
+
+  const tasks = (data?.tasks ?? []).filter((task) => !decided.has(task.id));
   const workspace = data?.workspace ?? null;
   const avatarSeed = workspace?.ownerName ?? workspace?.name ?? "Vuneli";
   const open = (href: string) => {
@@ -297,6 +328,28 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                         <em>
                           {task.kind} · raised {relativeTime(task.createdAt)}
                         </em>
+                        <div className="vc-pop-actions">
+                          <button
+                            type="button"
+                            data-kind="approve"
+                            disabled={deciding !== null}
+                            onClick={() => decide(task.id, "approve")}
+                            aria-label={`${task.kind === "evidence" ? "Mark done" : "Approve"}: ${task.title}`}
+                          >
+                            {deciding === task.id ? "Saving…" : task.kind === "evidence" ? "Mark done" : "Approve"}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={deciding !== null}
+                            onClick={() => decide(task.id, "reject")}
+                            aria-label={`${task.kind === "evidence" ? "Dismiss" : "Reject"}: ${task.title}`}
+                          >
+                            {task.kind === "evidence" ? "Dismiss" : "Reject"}
+                          </button>
+                        </div>
+                        {decideError?.id === task.id && (
+                          <p className="vc-pop-error" role="alert">{decideError.message}</p>
+                        )}
                       </li>
                     ))}
                   </ul>

@@ -7,7 +7,8 @@
 - [x] P1b merge duplicate systems (unused /api/lms removed; one Gemini library)
 - [x] P2a CI verify gate (typecheck+tests+coverage+audit before deploy), /api/healthz, env parity + test
 - [ ] P2b structured logger, split files over 500 lines, broaden test coverage
-- [ ] P3 console Release 2 (actions), then Release 3 CBAM agent
+- [x] P3a Release 2: approve/reject tasks from the queue (writes audit trail)
+- [ ] P3b Release 2: start agent runs, period/site filter, CSV/PDF export; then Release 3 CBAM agent
 
 (Research paused by founder.)
 
