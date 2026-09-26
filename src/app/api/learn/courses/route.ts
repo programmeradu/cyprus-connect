@@ -1,478 +1,89 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db';
-import { courses, courseModules, lessons, lmsUserProgress } from '@/db/schema';
-import { eq, and, like, or, desc, sql } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { and, count, desc, eq, inArray, or } from "drizzle-orm";
+import { db } from "@/db";
+import { courseModules, courses, lessons, lmsUserProgress } from "@/db/schema";
 import { bindSessionUser } from "@/lib/api-auth";
-import { z } from "zod";
-import { readJson } from "@/lib/validate";
+import { isAdmin } from "@/lib/admin-auth";
 import { logger } from "@/lib/log";
 
 const log = logger("learn.courses");
-const BodySchema = z.object({
-  title: z.string().trim().min(1).max(200).optional(),
-  description: z.string().trim().max(5000).optional(),
-  industry: z.string().trim().max(100).optional(),
-  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-  estimatedHours: z.number().finite().min(0).max(1000).optional(),
-  isPublished: z.boolean().optional(),
-  thumbnailUrl: z.string().url().max(2000).nullable().optional(),
-  prerequisites: z.array(z.string().trim().max(300)).max(50).optional(),
-  learningObjectives: z.array(z.string().trim().max(300)).max(50).optional(),
-  tags: z.array(z.string().trim().max(60)).max(30).optional(),
-}).strict();
 
-
+/**
+ * The course library for the signed-in account: every published course plus
+ * the account's own private (generated) courses. Admins also see other
+ * accounts' unpublished courses with `?admin=true`.
+ *
+ * Single-course reads, edits and deletes live in /api/learn/courses/[id];
+ * course creation is /api/learn/generate-course.
+ */
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id');
-    const __auth = await bindSessionUser(request, searchParams.get('userId'));
-    if (!__auth.ok) return __auth.response;
-    const userId = __auth.userId;
+    const params = request.nextUrl.searchParams;
+    const auth = await bindSessionUser(request, params.get("userId"));
+    if (!auth.ok) return auth.response;
+    const userId = auth.userId;
 
+    const limit = Math.min(Math.max(parseInt(params.get("limit") ?? "50") || 50, 1), 100);
+    const offset = Math.max(parseInt(params.get("offset") ?? "0") || 0, 0);
+    const adminAll = params.get("admin") === "true" && (await isAdmin(userId));
 
-    // Single course fetch
-    if (id) {
-      if (!id || isNaN(parseInt(id))) {
-        return NextResponse.json({ 
-          error: "Valid ID is required",
-          code: "INVALID_ID" 
-        }, { status: 400 });
-      }
+    const rows = await db
+      .select({
+        id: courses.id,
+        title: courses.title,
+        description: courses.description,
+        industry: courses.industry,
+        difficultyLevel: courses.difficultyLevel,
+        estimatedHours: courses.estimatedHours,
+        isPublished: courses.isPublished,
+        thumbnailUrl: courses.thumbnailUrl,
+        createdBy: courses.createdBy,
+        createdAt: courses.createdAt,
+        updatedAt: courses.updatedAt,
+      })
+      .from(courses)
+      .where(adminAll ? undefined : or(eq(courses.isPublished, true), eq(courses.createdBy, userId)))
+      .orderBy(desc(courses.createdAt))
+      .limit(limit)
+      .offset(offset);
 
-      const course = await db.select()
-        .from(courses)
-        .where(eq(courses.id, parseInt(id)))
-        .limit(1);
+    if (rows.length === 0) return NextResponse.json([]);
+    const ids = rows.map((c) => c.id);
 
-      if (course.length === 0) {
-        return NextResponse.json({ 
-          error: 'Course not found',
-          code: 'COURSE_NOT_FOUND' 
-        }, { status: 404 });
-      }
-
-      // Get module and lesson counts
-      const modulesCount = await db.select({ count: sql<number>`count(*)` })
+    // Counts and enrolments in three grouped queries instead of two per course.
+    const [moduleCounts, lessonCounts, enrollments] = await Promise.all([
+      db
+        .select({ courseId: courseModules.courseId, n: count() })
         .from(courseModules)
-        .where(eq(courseModules.courseId, parseInt(id)));
-
-      const lessonsCount = await db.select({ count: sql<number>`count(*)` })
+        .where(inArray(courseModules.courseId, ids))
+        .groupBy(courseModules.courseId),
+      db
+        .select({ courseId: courseModules.courseId, n: count() })
         .from(lessons)
         .innerJoin(courseModules, eq(lessons.moduleId, courseModules.id))
-        .where(eq(courseModules.courseId, parseInt(id)));
-
-      // Check enrollment status if userId provided
-      let isEnrolled = false;
-      let progress = 0;
-      
-      if (userId) {
-        const enrollment = await db.select()
-          .from(lmsUserProgress)
-          .where(
-            and(
-              eq(lmsUserProgress.userId, userId),
-              eq(lmsUserProgress.courseId, parseInt(id))
-            )
-          )
-          .limit(1);
-        
-        if (enrollment.length > 0) {
-          isEnrolled = true;
-          progress = enrollment[0].progressPercentage || 0;
-        }
-      }
-
-      const enrichedCourse = {
-        ...course[0],
-        moduleCount: modulesCount[0]?.count || 0,
-        lessonCount: lessonsCount[0]?.count || 0,
-        isEnrolled,
-        progress
-      };
-
-      return NextResponse.json(enrichedCourse, { status: 200 });
-    }
-
-    // List courses with filters
-    const industry = searchParams.get('industry');
-    const difficultyLevel = searchParams.get('difficultyLevel');
-    const adminMode = searchParams.get('admin') === 'true';
-    const limit = Math.min(parseInt(searchParams.get('limit') ?? '50'), 100);
-    const offset = parseInt(searchParams.get('offset') ?? '0');
-
-    // Fetch all courses with counts
-    const results = await db.select({
-      id: courses.id,
-      title: courses.title,
-      description: courses.description,
-      industry: courses.industry,
-      difficultyLevel: courses.difficultyLevel,
-      estimatedHours: courses.estimatedHours,
-      isPublished: courses.isPublished,
-      thumbnailUrl: courses.thumbnailUrl,
-      createdAt: courses.createdAt,
-      updatedAt: courses.updatedAt,
-    }).from(courses)
-    .where(adminMode ? undefined : eq(courses.isPublished, true))
-    .orderBy(desc(courses.createdAt))
-    .limit(limit)
-    .offset(offset);
-
-    // Get enrollments for the user if userId provided
-    let userEnrollments: Record<number, any> = {};
-    
-    if (userId && results.length > 0) {
-      const courseIds = results.map(c => c.id);
-      const enrollments = await db.select()
+        .where(inArray(courseModules.courseId, ids))
+        .groupBy(courseModules.courseId),
+      db
+        .select({ courseId: lmsUserProgress.courseId, progress: lmsUserProgress.progressPercentage })
         .from(lmsUserProgress)
-        .where(
-          and(
-            eq(lmsUserProgress.userId, userId),
-            sql`${lmsUserProgress.courseId} IN ${courseIds}`
-          )
-        );
-      
-      enrollments.forEach(enrollment => {
-        userEnrollments[enrollment.courseId] = enrollment;
-      });
-    }
+        .where(and(eq(lmsUserProgress.userId, userId), inArray(lmsUserProgress.courseId, ids))),
+    ]);
+    const modulesBy = new Map(moduleCounts.map((r) => [r.courseId, Number(r.n)]));
+    const lessonsBy = new Map(lessonCounts.map((r) => [r.courseId, Number(r.n)]));
+    const enrolledBy = new Map(enrollments.map((r) => [r.courseId, r.progress ?? 0]));
 
-    const enrichedResults = await Promise.all(results.map(async (course) => {
-      const modulesCountResult = await db.select({ count: sql<number>`count(*)` })
-        .from(courseModules)
-        .where(eq(courseModules.courseId, course.id));
-
-      const lessonsCountResult = await db.select({ count: sql<number>`count(*)` })
-        .from(lessons)
-        .innerJoin(courseModules, eq(lessons.moduleId, courseModules.id))
-        .where(eq(courseModules.courseId, course.id));
-
-      const enrollment = userEnrollments[course.id];
-
-      return {
+    return NextResponse.json(
+      rows.map(({ createdBy, ...course }) => ({
         ...course,
-        moduleCount: Number(modulesCountResult[0]?.count) || 0,
-        lessonCount: Number(lessonsCountResult[0]?.count) || 0,
-        isEnrolled: !!enrollment,
-        progress: enrollment?.progressPercentage || 0
-      };
-    }));
-
-    return NextResponse.json(enrichedResults, { status: 200 });
-  } catch (error: any) {
-    const ref = log.error('GET error:', error);
-    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const parsedBody = await readJson(request, BodySchema);
-    if (!parsedBody.ok) return parsedBody.response;
-    const body = parsedBody.data;
-    const { 
-      title, 
-      description, 
-      industry, 
-      difficultyLevel, 
-      estimatedHours, 
-      isPublished, 
-      thumbnailUrl
-    } = body;
-
-    // Validate required fields
-    if (!title || title.trim() === '') {
-      return NextResponse.json({ 
-        error: "Title is required and cannot be empty",
-        code: "MISSING_TITLE" 
-      }, { status: 400 });
-    }
-
-    if (!difficultyLevel) {
-      return NextResponse.json({ 
-        error: "Difficulty level is required",
-        code: "MISSING_DIFFICULTY_LEVEL" 
-      }, { status: 400 });
-    }
-
-    // Validate difficulty level enum
-    const validDifficultyLevels = ['beginner', 'intermediate', 'advanced'];
-    if (!validDifficultyLevels.includes(difficultyLevel.toLowerCase())) {
-      return NextResponse.json({ 
-        error: "Difficulty level must be one of: beginner, intermediate, advanced",
-        code: "INVALID_DIFFICULTY_LEVEL" 
-      }, { status: 400 });
-    }
-
-    // Validate estimatedHours if provided
-    if (estimatedHours !== undefined && estimatedHours !== null) {
-      const hours = Number(estimatedHours);
-      if (isNaN(hours) || hours <= 0) {
-        return NextResponse.json({ 
-          error: "Estimated hours must be a positive number",
-          code: "INVALID_ESTIMATED_HOURS" 
-        }, { status: 400 });
-      }
-    }
-
-    // Prepare insert data
-    const now = new Date().toISOString();
-    const insertData: any = {
-      title: title.trim(),
-      difficultyLevel: difficultyLevel.toLowerCase(),
-      isPublished: isPublished ?? false,
-      createdAt: now,
-      updatedAt: now
-    };
-
-    // Add optional fields
-    if (description) {
-      insertData.description = description.trim();
-    }
-
-    if (industry) {
-      insertData.industry = industry.trim();
-    }
-
-    if (estimatedHours !== undefined && estimatedHours !== null) {
-      insertData.estimatedHours = Number(estimatedHours);
-    }
-
-    if (thumbnailUrl) {
-      insertData.thumbnailUrl = thumbnailUrl.trim();
-    }
-
-    // Insert course
-    const newCourse = await db.insert(courses)
-      .values(insertData)
-      .returning();
-
-    if (newCourse.length === 0) {
-      return NextResponse.json({ 
-        error: 'Failed to create course',
-        code: 'CREATION_FAILED'
-      }, { status: 500 });
-    }
-
-    // Enrich response with counts (will be 0 for new course)
-    const enrichedCourse = {
-      ...newCourse[0],
-      moduleCount: 0,
-      lessonCount: 0
-    };
-
-    return NextResponse.json(enrichedCourse, { status: 201 });
-  } catch (error: any) {
-    const ref = log.error('POST error:', error);
-    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
-  }
-}
-
-export async function PUT(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id');
-
-    if (!id || isNaN(parseInt(id))) {
-      return NextResponse.json({ 
-        error: "Valid ID is required",
-        code: "INVALID_ID" 
-      }, { status: 400 });
-    }
-
-    // Check if course exists
-    const existingCourse = await db.select()
-      .from(courses)
-      .where(eq(courses.id, parseInt(id)))
-      .limit(1);
-
-    if (existingCourse.length === 0) {
-      return NextResponse.json({ 
-        error: 'Course not found',
-        code: 'COURSE_NOT_FOUND' 
-      }, { status: 404 });
-    }
-
-    const parsedBody = await readJson(request, BodySchema);
-    if (!parsedBody.ok) return parsedBody.response;
-    const body = parsedBody.data;
-    const { 
-      title, 
-      description, 
-      industry, 
-      difficultyLevel, 
-      estimatedHours, 
-      isPublished, 
-      thumbnailUrl,
-      prerequisites,
-      learningObjectives,
-      tags
-    } = body;
-
-    const updates: any = {};
-
-    // Validate and add fields to update
-    if (title !== undefined) {
-      if (title.trim() === '') {
-        return NextResponse.json({ 
-          error: "Title cannot be empty",
-          code: "INVALID_TITLE" 
-        }, { status: 400 });
-      }
-      updates.title = title.trim();
-    }
-
-    if (difficultyLevel !== undefined) {
-      const validDifficultyLevels = ['beginner', 'intermediate', 'advanced'];
-      if (!validDifficultyLevels.includes(difficultyLevel.toLowerCase())) {
-        return NextResponse.json({ 
-          error: "Difficulty level must be one of: beginner, intermediate, advanced",
-          code: "INVALID_DIFFICULTY_LEVEL" 
-        }, { status: 400 });
-      }
-      updates.difficultyLevel = difficultyLevel.toLowerCase();
-    }
-
-    if (estimatedHours !== undefined && estimatedHours !== null) {
-      const hours = Number(estimatedHours);
-      if (isNaN(hours) || hours <= 0) {
-        return NextResponse.json({ 
-          error: "Estimated hours must be a positive number",
-          code: "INVALID_ESTIMATED_HOURS" 
-        }, { status: 400 });
-      }
-      updates.estimatedHours = hours;
-    }
-
-    if (description !== undefined) {
-      updates.description = description ? description.trim() : null;
-    }
-
-    if (industry !== undefined) {
-      updates.industry = industry ? industry.trim() : null;
-    }
-
-    if (isPublished !== undefined) {
-      updates.isPublished = Boolean(isPublished);
-    }
-
-    if (thumbnailUrl !== undefined) {
-      updates.thumbnailUrl = thumbnailUrl ? thumbnailUrl.trim() : null;
-    }
-
-    // Validate JSON array fields
-    if (prerequisites !== undefined && !Array.isArray(prerequisites)) {
-      return NextResponse.json({ 
-        error: "Prerequisites must be an array",
-        code: "INVALID_PREREQUISITES_FORMAT" 
-      }, { status: 400 });
-    }
-
-    if (learningObjectives !== undefined && !Array.isArray(learningObjectives)) {
-      return NextResponse.json({ 
-        error: "Learning objectives must be an array",
-        code: "INVALID_LEARNING_OBJECTIVES_FORMAT" 
-      }, { status: 400 });
-    }
-
-    if (tags !== undefined && !Array.isArray(tags)) {
-      return NextResponse.json({ 
-        error: "Tags must be an array",
-        code: "INVALID_TAGS_FORMAT" 
-      }, { status: 400 });
-    }
-
-    if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ 
-        error: "No valid fields to update",
-        code: "NO_UPDATES" 
-      }, { status: 400 });
-    }
-
-    // Update course
-    const updatedCourse = await db.update(courses)
-      .set(updates)
-      .where(eq(courses.id, parseInt(id)))
-      .returning();
-
-    if (updatedCourse.length === 0) {
-      return NextResponse.json({ 
-        error: 'Failed to update course',
-        code: 'UPDATE_FAILED'
-      }, { status: 500 });
-    }
-
-    // Get module and lesson counts
-    const modulesCount = await db.select({ count: sql<number>`count(*)` })
-      .from(courseModules)
-      .where(eq(courseModules.courseId, parseInt(id)));
-
-    const lessonsCount = await db.select({ count: sql<number>`count(*)` })
-      .from(lessons)
-      .innerJoin(courseModules, eq(lessons.moduleId, courseModules.id))
-      .where(eq(courseModules.courseId, parseInt(id)));
-
-    // Enrich response
-    const enrichedCourse = {
-      ...updatedCourse[0],
-      moduleCount: modulesCount[0]?.count || 0,
-      lessonCount: lessonsCount[0]?.count || 0,
-      prerequisites: prerequisites || (updatedCourse[0].prerequisites ? JSON.parse(updatedCourse[0].prerequisites) : null),
-      learningObjectives: learningObjectives || (updatedCourse[0].learningObjectives ? JSON.parse(updatedCourse[0].learningObjectives) : null),
-      tags: tags || (updatedCourse[0].tags ? JSON.parse(updatedCourse[0].tags) : null)
-    };
-
-    return NextResponse.json(enrichedCourse, { status: 200 });
-  } catch (error: any) {
-    const ref = log.error('PUT error:', error);
-    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
-  }
-}
-
-export async function DELETE(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id');
-
-    if (!id || isNaN(parseInt(id))) {
-      return NextResponse.json({ 
-        error: "Valid ID is required",
-        code: "INVALID_ID" 
-      }, { status: 400 });
-    }
-
-    // Check if course exists
-    const existingCourse = await db.select()
-      .from(courses)
-      .where(eq(courses.id, parseInt(id)))
-      .limit(1);
-
-    if (existingCourse.length === 0) {
-      return NextResponse.json({ 
-        error: 'Course not found',
-        code: 'COURSE_NOT_FOUND' 
-      }, { status: 404 });
-    }
-
-    // Delete course (cascade will handle related records)
-    const deleted = await db.delete(courses)
-      .where(eq(courses.id, parseInt(id)))
-      .returning();
-
-    if (deleted.length === 0) {
-      return NextResponse.json({ 
-        error: 'Failed to delete course',
-        code: 'DELETION_FAILED'
-      }, { status: 500 });
-    }
-
-    return NextResponse.json({ 
-      message: 'Course deleted successfully',
-      course: deleted[0]
-    }, { status: 200 });
-  } catch (error: any) {
-    const ref = log.error('DELETE error:', error);
-    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
+        isMine: createdBy === userId,
+        moduleCount: modulesBy.get(course.id) ?? 0,
+        lessonCount: lessonsBy.get(course.id) ?? 0,
+        isEnrolled: enrolledBy.has(course.id),
+        progress: enrolledBy.get(course.id) ?? 0,
+      })),
+    );
+  } catch (error) {
+    const ref = log.error("list failed", error);
+    return NextResponse.json({ error: "Something went wrong. Try again.", code: "INTERNAL_ERROR", ref }, { status: 500 });
   }
 }
