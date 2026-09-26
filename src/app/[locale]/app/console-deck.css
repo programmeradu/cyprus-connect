@@ -1452,3 +1452,38 @@
     justify-self: start;
   }
 }
+
+/* Approve / reject row inside the approval queue. Buttons wrap on narrow screens. */
+.vc-pop-actions {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.vc-pop-actions button {
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--vc-rule);
+  background: transparent;
+  color: var(--vc-ink);
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.vc-pop-actions button[data-kind="approve"] {
+  background: var(--vc-ink);
+  color: var(--vc-bg, var(--vc-paper));
+  border-color: var(--vc-ink);
+}
+.vc-pop-actions button:disabled { opacity: 0.5; cursor: progress; }
+.vc-pop-actions button:focus-visible { outline: 2px solid var(--vc-accent, var(--vc-ink)); outline-offset: 2px; }
+.vc-pop-error {
+  grid-column: 2;
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vc-bad);
+  overflow-wrap: anywhere;
+}
