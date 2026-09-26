@@ -30,7 +30,6 @@ export const PUBLIC_API_PREFIXES = [
 /** Tools that only admins run; closed on the published site. */
 export const DEV_ONLY_API_PREFIXES = [
   "/api/marketplace/projects/bulk-generate-banners",
-  "/api/marketplace/projects/auto-generate-banners",
   "/api/climate-trace/admin/",
 ] as const;
 
