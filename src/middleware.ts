@@ -15,6 +15,7 @@ const intlMiddleware = createIntlMiddleware(routing);
  * with `bindSessionUser`, so this is the outer wall, not the only one.
  */
 async function guardApi(request: NextRequest, pathname: string) {
+  console.log("[api-gate-debug]", pathname);
   if (isDevOnlyApi(pathname) && process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
