@@ -20,7 +20,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Phase 1a shared store (workspace-store.ts): one cache + one transport for all pages, writes invalidate every page + overview; guard test (tests/app-data-guard.test.ts)
 - [x] Moved: Dashboard overview, Reports, Report detail, Leaderboard, Marketplace impact
 - [ ] Phase 1b server: company facts (location, sites, revenue) stored once; Agents + CBAM mutations through useWorkspaceAction; every page write records an activity event
-- [ ] Phase 2 quick: Analytics, Grant alerts, Settings, Privacy
+- [x] Phase 2 quick: Analytics, Grant alerts, Settings, Privacy (shared reads/writes; settings save refreshes analytics + leaderboard; analytics AI insights asked once per fresh data)
 - [ ] Phase 3 medium: Actions (drop extra AI call, one-click complete), Marketplace list/detail/admin, Onboarding, Compliance
 - [ ] Phase 4 heavy (rebuild + split each): Studio, Learn + course creator + lesson (course generator calls its own API over HTTP and notifies every user in the database - fix), Calculator, Insights, Integrations
 - [ ] Found: exchange rates fetched ~4x per page load (CurrencyContext) - move into the shared store
