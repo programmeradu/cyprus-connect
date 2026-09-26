@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ExportReportButton } from "@/components/app/ExportReportButton";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import {
   PageShell,
   PageHeader,
@@ -52,13 +52,18 @@ export default function AnalyticsPage() {
   const tc = useTranslations("common");
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+  const userId = session?.user?.id ?? null;
+
+  // Shared records: the same copies the dashboard and settings read.
+  const analytics = useWorkspaceResource<{ data: AnalyticsData }>(
+    userId ? `/api/analytics?userId=${encodeURIComponent(userId)}` : null,
+  );
+  const profile = useWorkspaceResource<Record<string, unknown>>(userId ? `/api/users/${userId}` : null);
+  const analyticsData = analytics.data?.data ?? null;
+
   const [aiInsights, setAiInsights] = useState<AIInsights | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -66,101 +71,47 @@ export default function AnalyticsPage() {
     }
   }, [session, isPending, router]);
 
-  useEffect(() => {
-    if (session?.user?.id) {
-      fetchAnalyticsData();
-    }
-  }, [session?.user?.id]);
-
-  const fetchAnalyticsData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-
-      // Fetch analytics data
-      const analyticsResponse = await fetch(`/api/analytics?userId=${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
-        },
-      });
-
-      if (!analyticsResponse.ok) {
-        const errorData = await analyticsResponse.json();
-        throw new Error(errorData.error || "Failed to fetch analytics data");
-      }
-
-      const analyticsResult = await analyticsResponse.json();
-      setAnalyticsData(analyticsResult.data);
-
-      // Fetch AI insights
-      fetchAIInsights(analyticsResult.data);
-    } catch (error: any) {
-      console.error("Failed to fetch analytics data:", error);
-      setError(error.message || t("loadFailed"));
-      toast.error(t("toastFailed"));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const fetchAIInsights = async (data: AnalyticsData) => {
-    try {
+  const fetchAIInsights = useCallback(
+    async (data: AnalyticsData) => {
       setAiLoading(true);
       setAiError(false);
-
-      const userId = session?.user?.id;
-      if (!userId) return;
-
-      // Fetch user profile
-      const userResponse = await fetch(`/api/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
-        },
-      });
-
-      let userProfile = {};
-      if (userResponse.ok) {
-        userProfile = await userResponse.json();
-      }
-
-      const insightsResponse = await fetch("/api/analytics/insights", {
-        method: "POST",
-        headers: {
- "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          metricsData: data.metrics,
-          emissionsBreakdown: data.emissionsBreakdown,
-          monthlyTrend: data.monthlyTrend,
-          industryComparison: data.industryComparison,
-          userProfile,
-        }),
-      });
-
-      if (insightsResponse.ok) {
-        const insightsData = await insightsResponse.json();
-        setAiInsights(insightsData.insights);
-      } else {
+      try {
+        const p = profile.data ?? {};
+        const res = await workspaceRequest<{ insights: AIInsights }>("/api/analytics/insights", {
+          method: "POST",
+          body: {
+            metricsData: data.metrics,
+            emissionsBreakdown: data.emissionsBreakdown,
+            monthlyTrend: data.monthlyTrend,
+            industryComparison: data.industryComparison,
+            userProfile: {
+              companyName: typeof p.companyName === "string" ? p.companyName : undefined,
+              companyIndustry: typeof p.companyIndustry === "string" ? p.companyIndustry : undefined,
+              teamSize: typeof p.teamSize === "string" || typeof p.teamSize === "number" ? p.teamSize : undefined,
+            },
+          },
+        });
+        setAiInsights(res.insights);
+      } catch {
         setAiError(true);
+      } finally {
+        setAiLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to fetch AI insights:", error);
-      setAiError(true);
-    } finally {
-      setAiLoading(false);
-    }
-  };
+    },
+    [profile.data],
+  );
 
+  // Ask for insights once per fresh copy of the numbers (and once the profile is known).
+  const insightsFor = useRef<AnalyticsData | null>(null);
+  useEffect(() => {
+    if (!analyticsData || profile.loading || insightsFor.current === analyticsData) return;
+    insightsFor.current = analyticsData;
+    void fetchAIInsights(analyticsData);
+  }, [analyticsData, profile.loading, fetchAIInsights]);
+
+  const refreshing = analytics.refreshing;
   const handleRefresh = () => {
-    setRefreshing(true);
-    fetchAnalyticsData();
+    analytics.reload();
   };
 
   const breakdownRows = analyticsData?.emissionsBreakdown
