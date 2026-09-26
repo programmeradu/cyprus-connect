@@ -4,7 +4,6 @@ import { courses, courseModules, lessons, lmsUserProgress, userLessonCompletions
 import { eq, asc, inArray, and, sql } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
 import { gateCourse } from "@/lib/learn/course-access.server";
-import { requireAdmin } from "@/lib/admin-auth";
 import { canPublish } from "@/lib/learn/access";
 
 import { z } from "zod";
