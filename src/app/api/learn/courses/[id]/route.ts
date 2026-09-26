@@ -202,7 +202,7 @@ export async function PATCH(
 
     const parsedBody = await readJson(request, BodySchema);
     if (!parsedBody.ok) return parsedBody.response;
-    const body = parsedBody.data;
+    const body: Record<string, unknown> = parsedBody.data;
 
     // Validate difficultyLevel if provided
     if (body.difficultyLevel) {

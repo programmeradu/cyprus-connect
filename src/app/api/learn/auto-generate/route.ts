@@ -10,9 +10,9 @@ import { logger } from "@/lib/log";
 const log = logger("learn.auto_generate");
 const BodySchema = z.object({
   userId: z.string().max(200).optional(),
-  recommendations: z.array(z.unknown()).max(200).optional(),
-  insights: z.array(z.unknown()).max(200).optional(),
-  complianceGaps: z.array(z.unknown()).max(200).optional(),
+  recommendations: z.array(z.string().max(500)).max(200).optional(),
+  insights: z.array(z.string().max(500)).max(200).optional(),
+  complianceGaps: z.array(z.string().max(500)).max(200).optional(),
   emissionsData: z.unknown().optional(),
   trigger: z.enum(["manual", "recommendation", "insight", "compliance"]).optional(),
 });

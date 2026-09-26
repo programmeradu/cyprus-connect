@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
 
     // Validate estimatedHours if provided
     if (estimatedHours !== undefined && estimatedHours !== null) {
-      const hours = parseFloat(estimatedHours);
+      const hours = Number(estimatedHours);
       if (isNaN(hours) || hours <= 0) {
         return NextResponse.json({ 
           error: "Estimated hours must be a positive number",
@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (estimatedHours !== undefined && estimatedHours !== null) {
-      insertData.estimatedHours = parseFloat(estimatedHours);
+      insertData.estimatedHours = Number(estimatedHours);
     }
 
     if (thumbnailUrl) {
@@ -332,7 +332,7 @@ export async function PUT(request: NextRequest) {
     }
 
     if (estimatedHours !== undefined && estimatedHours !== null) {
-      const hours = parseFloat(estimatedHours);
+      const hours = Number(estimatedHours);
       if (isNaN(hours) || hours <= 0) {
         return NextResponse.json({ 
           error: "Estimated hours must be a positive number",
