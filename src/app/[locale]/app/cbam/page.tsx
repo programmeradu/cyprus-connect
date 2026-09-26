@@ -290,6 +290,7 @@ export default function CbamPage() {
             <SupplierContactsPlate
               supplierNames={[...new Set(data.lines.map((l) => l.supplierName))].sort((a, b) => a.localeCompare(b))}
               needing={new Set((draft?.issues ?? []).filter((i) => (i.kind === "default_values" || i.kind === "no_installation") && i.supplierName).map((i) => i.supplierName!))}
+              waiting={new Set(data.pendingEmails.map((e) => e.supplierName))}
               contacts={data.suppliers}
               requests={data.requests}
               onSaved={() => load(year)}

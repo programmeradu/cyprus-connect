@@ -27,8 +27,8 @@ async function put(body: unknown): Promise<string | null> {
 
 const when = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
-function SupplierRow({ name, contact, lastSent, needsData, onSaved }: {
-  name: string; contact?: SupplierContact; lastSent?: SentRequest; needsData: boolean; onSaved: () => void;
+function SupplierRow({ name, contact, lastSent, needsData, waiting, onSaved }: {
+  name: string; contact?: SupplierContact; lastSent?: SentRequest; needsData: boolean; waiting: boolean; onSaved: () => void;
 }) {
   const [email, setEmail] = useState(contact?.email ?? "");
   const [person, setPerson] = useState(contact?.contactName ?? "");
@@ -49,7 +49,9 @@ function SupplierRow({ name, contact, lastSent, needsData, onSaved }: {
     <li className="vck-cbam-contact">
       <div className="vck-cbam-contact-head">
         <strong>{name}</strong>
-        {lastSent ? (
+        {waiting ? (
+          <State tone="live">Email waiting for approval</State>
+        ) : lastSent ? (
           <State tone="good">Emailed {when(lastSent.sentAt)}</State>
         ) : needsData ? (
           <State tone={contact ? "live" : "warn"}>{contact ? "Email drafted on next run" : "Needs an email"}</State>
@@ -74,8 +76,8 @@ function SupplierRow({ name, contact, lastSent, needsData, onSaved }: {
   );
 }
 
-export function SupplierContactsPlate({ supplierNames, needing, contacts, requests, onSaved }: {
-  supplierNames: string[]; needing: Set<string>; contacts: SupplierContact[]; requests: SentRequest[]; onSaved: () => void;
+export function SupplierContactsPlate({ supplierNames, needing, waiting, contacts, requests, onSaved }: {
+  supplierNames: string[]; needing: Set<string>; waiting: Set<string>; contacts: SupplierContact[]; requests: SentRequest[]; onSaved: () => void;
 }) {
   if (supplierNames.length === 0) return null;
   const byName = new Map(contacts.map((c) => [c.supplierName, c]));
@@ -91,7 +93,7 @@ export function SupplierContactsPlate({ supplierNames, needing, contacts, reques
     >
       <ul className="vck-cbam-contacts">
         {supplierNames.map((n) => (
-          <SupplierRow key={`${n}|${byName.get(n)?.email ?? ""}`} name={n} contact={byName.get(n)} lastSent={last.get(n)} needsData={needing.has(n)} onSaved={onSaved} />
+          <SupplierRow key={`${n}|${byName.get(n)?.email ?? ""}`} name={n} contact={byName.get(n)} lastSent={last.get(n)} needsData={needing.has(n)} waiting={waiting.has(n)} onSaved={onSaved} />
         ))}
       </ul>
     </Plate>
