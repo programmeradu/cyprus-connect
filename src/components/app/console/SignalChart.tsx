@@ -46,7 +46,7 @@ function scaleTicks(min: number, max: number, precision: number) {
   });
 }
 
-export function SignalChart({ metric }: { metric: ConsoleMetric }) {
+export function SignalChart({ metric, emptyNote }: { metric: ConsoleMetric; emptyNote?: string }) {
   const host = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<number | null>(null);
 

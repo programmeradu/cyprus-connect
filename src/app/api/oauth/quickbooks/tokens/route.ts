@@ -1,24 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { integrations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger("api.oauth.quickbooks.tokens");
+
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(200).optional(),
+  realmId: z.string().trim().min(1).max(200),
+  accessToken: z.string().trim().min(1).max(4000),
+  refreshToken: z.string().trim().min(1).max(4000),
+  expiresIn: z.number().finite().min(0).max(100_000_000),
+  refreshTokenExpiresIn: z.number().finite().min(0).max(100_000_000).optional(),
+});
 
 // Store QuickBooks tokens
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { userId, realmId, accessToken, refreshToken, expiresIn, refreshTokenExpiresIn } = body;
-    
-    if (!userId || !realmId || !accessToken || !refreshToken) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
-    
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
+    const { userId: __claimedUserId, realmId, accessToken, refreshToken, expiresIn } = parsed.data;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const now = new Date();
     const accessTokenExpiry = new Date(now.getTime() + expiresIn * 1000);
-    
+
     // Check if integration already exists
     const existing = await db
       .select()
@@ -30,7 +42,7 @@ export async function POST(request: NextRequest) {
         )
       )
       .limit(1);
-    
+
     if (existing.length > 0) {
       // Update existing integration
       await db
@@ -46,9 +58,9 @@ export async function POST(request: NextRequest) {
           updatedAt: now.toISOString()
         })
         .where(eq(integrations.id, existing[0].id));
-      
-      return NextResponse.json({ 
-        success: true, 
+
+      return NextResponse.json({
+        success: true,
         message: 'QuickBooks integration updated',
         integrationId: existing[0].id
       });
@@ -69,44 +81,27 @@ export async function POST(request: NextRequest) {
           updatedAt: now.toISOString()
         })
         .returning();
-      
-      return NextResponse.json({ 
-        success: true, 
+
+      return NextResponse.json({
+        success: true,
         message: 'QuickBooks integration created',
         integrationId: newIntegration.id
       });
     }
   } catch (error) {
-    console.error('Store tokens error:', error);
-    return NextResponse.json(
-      { error: 'Failed to store tokens' },
-      { status: 500 }
-    );
+    const ref = log.error('POST /api/oauth/quickbooks/tokens failed', error);
+    return NextResponse.json({ error: 'Failed to store tokens', ref }, { status: 500 });
   }
 }
 
 // Get QuickBooks tokens for a user
 export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 400 }
-      );
-    }
-    
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const integration = await db
       .select()
       .from(integrations)
@@ -117,20 +112,20 @@ export async function GET(request: NextRequest) {
         )
       )
       .limit(1);
-    
+
     if (integration.length === 0) {
       return NextResponse.json(
         { connected: false },
         { status: 200 }
       );
     }
-    
+
     const data = integration[0];
-    
+
     // Check if access token is expired
     const now = new Date();
     const isExpired = data.tokenExpiresAt && new Date(data.tokenExpiresAt) <= now;
-    
+
     // Don't send actual tokens to client, just status
     return NextResponse.json({
       connected: true,
@@ -141,36 +136,19 @@ export async function GET(request: NextRequest) {
       environment: process.env.QB_ENVIRONMENT || 'sandbox'
     });
   } catch (error) {
-    console.error('Get tokens error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get tokens' },
-      { status: 500 }
-    );
+    const ref = log.error('GET /api/oauth/quickbooks/tokens failed', error);
+    return NextResponse.json({ error: 'Failed to get tokens', ref }, { status: 500 });
   }
 }
 
 // Delete QuickBooks integration
 export async function DELETE(request: NextRequest) {
   try {
-    const token = request.headers.get('Authorization')?.replace('Bearer ', '');
-    
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 400 }
-      );
-    }
-    
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     await db
       .delete(integrations)
       .where(
@@ -179,16 +157,13 @@ export async function DELETE(request: NextRequest) {
           eq(integrations.providerName, 'quickbooks')
         )
       );
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       success: true,
       message: 'QuickBooks integration disconnected'
     });
   } catch (error) {
-    console.error('Delete integration error:', error);
-    return NextResponse.json(
-      { error: 'Failed to disconnect integration' },
-      { status: 500 }
-    );
+    const ref = log.error('DELETE /api/oauth/quickbooks/tokens failed', error);
+    return NextResponse.json({ error: 'Failed to disconnect integration', ref }, { status: 500 });
   }
 }

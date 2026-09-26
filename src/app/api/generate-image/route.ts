@@ -1,17 +1,22 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { generateImage } from "@/lib/generators";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
+import { readJson } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger('generate-image');
+
+const bodySchema = z.object({
+  prompt: z.string().trim().min(1).max(2000),
+  aspectRatio: z.enum(["1:1", "16:9", "9:16", "4:3", "3:4"]).optional().default("1:1"),
+});
 
 export async function POST(request: Request) {
   try {
-    const { prompt, aspectRatio = "1:1" } = await request.json();
-
-    if (!prompt) {
-      return NextResponse.json(
-        { error: "Prompt is required" },
-        { status: 400 }
-      );
-    }
+    const result = await readJson(request, bodySchema);
+    if (!result.ok) return result.response;
+    const { prompt, aspectRatio } = result.data;
 
     // Get authorization token
     const authHeader = request.headers.get('authorization');
@@ -22,36 +27,19 @@ export async function POST(request: Request) {
       );
     }
 
-    const token = authHeader.split(' ')[1];
-
     // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
     const creditGate = await checkAndDeductAiCredits(request, 1, 'image');
     if (!creditGate.ok) {
       return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
 
-    const result = await generateImage(prompt, aspectRatio);
+    const generated = await generateImage(prompt, aspectRatio);
 
-
-    return NextResponse.json(result);
-    
-  } catch (error: any) {
-    console.error("Image generation error:", error);
-    
-    let errorMessage = "Failed to generate image";
-    if (error.message) {
-      errorMessage = error.message;
-    }
-
-    // Handle common errors
-    if (error.message?.includes("Generative Language API has not been used") || error.message?.includes("SERVICE_DISABLED")) {
-      errorMessage = "Google Generative AI API is not enabled. Please enable it in the Google Cloud Console.";
-    } else if (error.message?.includes("quota")) {
-      errorMessage = "API quota exceeded. Please try again later.";
-    }
-
+    return NextResponse.json(generated);
+  } catch (error) {
+    const ref = log.error("Image generation error", error);
     return NextResponse.json(
-      { error: errorMessage },
+      { error: "Failed to generate image.", ref },
       { status: 500 }
     );
   }
