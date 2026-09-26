@@ -109,7 +109,7 @@ export async function runEvidenceSweep(rt: AgentRuntime, now = new Date()) {
 
   return {
     summary: `Checked ${sourced.length} document-based metrics and ${open.length} obligations. ${stale.length} need new evidence, ${atRisk.length} obligations at risk. ${created} new tasks.`,
-    itemsProcessed: metrics.length + open.length,
+    itemsProcessed: sourced.length + open.length,
     confidence: 1,
   };
 }
