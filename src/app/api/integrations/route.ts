@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { integrations, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const integrationType = searchParams.get('integrationType');
 
     // Validate userId is provided and is a valid string
@@ -72,13 +76,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      userId,
+      userId: __claimedUserId,
       integrationType,
       providerName,
       accessToken,
       refreshToken,
       tokenExpiresAt
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId) {

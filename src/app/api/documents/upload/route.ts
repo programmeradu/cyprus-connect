@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { documents, user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const MAX_FILE_SIZE = 10485760; // 10MB
 const ALLOWED_TYPES = ['csv', 'pdf', 'xlsx'];
@@ -174,7 +175,11 @@ export async function POST(request: NextRequest) {
       return uploadData;
     }
 
-    const { fileName, fileSize, fileType, userId, uploadSource, fileBuffer } = uploadData;
+    const { fileName, fileSize, fileType, userId: __claimedUserId, uploadSource, fileBuffer } = uploadData;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate file size
     if (fileSize > MAX_FILE_SIZE) {

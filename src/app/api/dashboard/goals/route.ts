@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { sustainabilityGoalsProgress, user } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const VALID_GOAL_TYPES = ['carbon-neutral', 'reduce-energy', 'zero-waste', 'renewable-100'] as const;
 type GoalType = typeof VALID_GOAL_TYPES[number];
@@ -73,7 +74,10 @@ function calculateStatus(
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId || userId.trim() === '') {
       return NextResponse.json({ 
@@ -174,7 +178,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, goalType, targetValue, currentValue, targetYear } = body;
+    const { userId: __claimedUserId, goalType, targetValue, currentValue, targetYear } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId || userId.trim() === '') {

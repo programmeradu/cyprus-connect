@@ -2,13 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user } from '@/db/schema';
 import { eq, gt, count as drizzleCount, sql } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ userId: string }> }
 ) {
   try {
-    const { userId } = await context.params;
+    const __auth = await bindSessionUser(request, (await context.params).userId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate user ID
     if (!userId) {

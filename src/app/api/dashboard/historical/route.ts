@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { historicalEmissions, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -25,7 +26,10 @@ function calculateChangePercentage(current: number, previous: number | null): nu
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
     const monthsParam = searchParams.get('months') ?? '6';
 
     // Validate userId
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      userId,
+      userId: __claimedUserId,
       year,
       month,
       electricityKwh,
@@ -150,6 +154,10 @@ export async function POST(request: NextRequest) {
       efficiencyScore,
       wasteDiversionRate
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId || userId.trim() === '') {

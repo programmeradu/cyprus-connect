@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
       .select({
         userId: user.id,
         name: user.name,
-        email: user.email,
         companyName: user.companyName,
         totalCredits: user.totalCredits,
       })

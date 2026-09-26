@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { notifications, user } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId } = body;
+    const __auth = await bindSessionUser(request, (body).userId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate userId
     if (!userId || typeof userId !== 'string' || userId.trim() === '') {

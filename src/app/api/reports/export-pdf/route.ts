@@ -4,11 +4,15 @@ import { db } from '@/db';
 import { user, historicalEmissions, emissions, industryComparisons } from '@/db/schema';
 import { eq, and, sql, desc } from 'drizzle-orm';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId } = body;
+    const __auth = await bindSessionUser(request, (body).userId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId || userId.trim() === '') {
       return NextResponse.json(

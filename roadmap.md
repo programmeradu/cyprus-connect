@@ -45,3 +45,12 @@
 - [ ] Patent white-space scan (BLANC method) + EPO OPS claim sets — needs EPO API key
 - [ ] Idea generation run: Open Coscientist grounded on OpenAlex → I-14+ (unproven until gated) — needs an LLM API key
 - [x] I-14 prereg locked + E03 run → killed on power (reports/S4_I14_RESULTS.md)
+
+## Security pass (2026-09-26)
+- [x] Sign-in wall now covers all data endpoints (was skipping every `/api` path); public allowlist in `src/lib/api-access.ts`
+- [x] Account list/search endpoint removed; own-account-only on `/api/users*`; open account creation disabled
+- [x] 42 account-data endpoints bound to the signed-in account (403 on someone else's ID)
+- [x] Deleted codebase-download, Stripe reset, credit-award and schema-setup endpoints
+- [x] Leaderboard no longer returns emails; AI stream rate-limited
+- [ ] Manual review of remaining non-account endpoints (e.g. `/api/ocr/parse` 500s) and admin-only routes
+- [ ] Rotate any credentials that may have leaked while `/api/users` was open (published site too)

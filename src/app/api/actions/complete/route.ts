@@ -3,11 +3,16 @@ import { db } from '@/db';
 import { user, actions, userActions, creditsHistory } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { createNotification, NotificationTemplates } from '@/lib/notifications';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, actionId, notes } = body;
+    const { userId: __claimedUserId, actionId, notes } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId || !actionId) {

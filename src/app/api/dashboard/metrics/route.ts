@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { dashboardMetrics, historicalEmissions, sustainabilityGoalsProgress, emissions, user } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate userId parameter
     if (!userId || userId.trim() === '') {
@@ -190,7 +194,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, metricType, currentValue, previousValue, periodStart, periodEnd } = body;
+    const { userId: __claimedUserId, metricType, currentValue, previousValue, periodStart, periodEnd } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId || userId.trim() === '') {

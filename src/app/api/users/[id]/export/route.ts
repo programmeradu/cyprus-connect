@@ -1,3 +1,4 @@
+import { bindSessionUser } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { user } from "@/db/schema";
@@ -11,7 +12,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await params;
+    const { id: claimedId } = await params;
+    const __auth = await bindSessionUser(request, claimedId);
+    if (!__auth.ok) return __auth.response;
+    const id = __auth.userId;
 
     // Authenticate the caller and ensure they own this record.
     const session = await auth.api.getSession({ headers: request.headers });

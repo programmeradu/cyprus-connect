@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { notificationPreferences, user } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const DEFAULT_PREFERENCES = {
   emissionAlerts: true,
@@ -16,7 +17,10 @@ const DEFAULT_PREFERENCES = {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId || userId.trim() === '') {
       return NextResponse.json(
@@ -65,7 +69,7 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const {
-      userId,
+      userId: __claimedUserId,
       emissionAlerts,
       goalAlerts,
       leaderboardAlerts,
@@ -74,6 +78,10 @@ export async function PUT(request: NextRequest) {
       complianceAlerts,
       systemAlerts,
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId || typeof userId !== 'string' || userId.trim() === '') {
       return NextResponse.json(

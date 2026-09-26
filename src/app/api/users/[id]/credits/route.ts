@@ -1,3 +1,4 @@
+import { bindSessionUser } from "@/lib/api-auth";
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user } from '@/db/schema';
@@ -9,7 +10,10 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const { id: claimedId } = await context.params;
+    const __auth = await bindSessionUser(request, claimedId);
+    if (!__auth.ok) return __auth.response;
+    const id = __auth.userId;
 
     if (!id || id.trim() === '') {
       return NextResponse.json(

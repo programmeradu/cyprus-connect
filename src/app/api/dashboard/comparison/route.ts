@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, dashboardMetrics, industryComparisons } from '@/db/schema';
 import { eq, and, desc } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 interface MetricComparison {
   value: number;
@@ -189,7 +190,10 @@ function generateInsights(
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId || userId.trim() === '') {
       return NextResponse.json(

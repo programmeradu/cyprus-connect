@@ -4,6 +4,7 @@ import { courses, courseModules, lessons, notifications, user } from "@/db/schem
 import { eq } from "drizzle-orm";
 import { generateImage } from "@/lib/generators";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,9 +13,13 @@ export async function POST(request: NextRequest) {
       topic,
       industry,
       difficultyLevel,
-      userId,
+      userId: __claimedUserId,
       companyContext
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Get authorization token
     const authHeader = request.headers.get('authorization');

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { certificates, courses, lmsUserProgress, user } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,10 @@ export async function GET(
     const { courseId: courseIdParam } = await params;
     const courseId = parseInt(courseIdParam);
     const searchParams = request.nextUrl.searchParams;
-    const userId = searchParams.get("userId");
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     if (!userId) {
       return NextResponse.json(

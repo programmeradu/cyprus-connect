@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { bindSessionUser } from "@/lib/api-auth";
 
 interface EmailNotificationRequest {
   userId: number;
@@ -20,13 +21,17 @@ export async function POST(request: NextRequest) {
   try {
     const body: EmailNotificationRequest = await request.json();
     const {
-      userId,
+      userId: __claimedUserId,
       recipientEmail,
       recipientName,
       notificationType,
       subject,
       data,
     } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!userId) {

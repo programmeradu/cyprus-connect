@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { actions } from '@/db/schema';
 import { eq, like, and, or, desc, asc, isNull } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 const VALID_CATEGORIES = ['energy', 'waste', 'water', 'operations'];
 const VALID_IMPACTS = ['high', 'medium', 'low'];
@@ -11,7 +12,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Single record by ID
     if (id) {
@@ -107,7 +111,11 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, description, category, impact, difficulty, points, iconName, userId } = body;
+    const { title, description, category, impact, difficulty, points, iconName, userId: __claimedUserId } = body;
+    const __auth = await bindSessionUser(request, __claimedUserId);
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate required fields
     if (!title) {

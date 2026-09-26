@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { lessons, userLessonCompletions } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { bindSessionUser } from "@/lib/api-auth";
 
 export async function GET(
   request: NextRequest,
@@ -10,7 +11,10 @@ export async function GET(
   try {
     const { id } = await params;
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const __auth = await bindSessionUser(request, searchParams.get('userId'));
+    if (!__auth.ok) return __auth.response;
+    const userId = __auth.userId;
+
 
     // Validate ID is a valid integer
     if (!id || isNaN(parseInt(id))) {
