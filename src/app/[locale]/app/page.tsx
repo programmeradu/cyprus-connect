@@ -478,8 +478,10 @@ export default function ConsolePage() {
                     {greetingFor(hour)}, {workspace.ownerName ?? "there"}
                   </h1>
                   <p>
-                    {runsToday.length} agent runs closed today. {tasks.length} items need a human
-                    decision.
+                    {runsToday.length} agent {runsToday.length === 1 ? "run" : "runs"} closed today.{" "}
+                    {tasks.length === 0
+                      ? "Nothing needs a human decision."
+                      : `${tasks.length} ${tasks.length === 1 ? "item needs" : "items need"} a human decision.`}
                   </p>
                 </div>
                 <span className="vc-history" title={`Console data read at ${new Date(data.generatedAt).toLocaleTimeString("en-GB")}`}>
@@ -696,7 +698,7 @@ export default function ConsolePage() {
                       <span>No regulatory date is open.</span>
                     </div>
                   )}
-                  {gridIntensity && (
+                  {gridIntensity && gridIntensity.points.length > 0 && (
                     <div className="vc-grid-chip">
                       <span>Cyprus grid</span>
                       <strong>
