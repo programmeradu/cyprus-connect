@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { mediaGenerations } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { bindSessionUser } from '@/lib/api-auth';
 import { readJson, parseValue } from '@/lib/validate';
 import { logger } from '@/lib/log';
 
@@ -10,170 +11,64 @@ const log = logger("api.studio.generations.id");
 
 const idSchema = z.coerce.number().int().positive();
 
-function validateBearerToken(request: NextRequest): string | null {
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-  return authHeader.substring(7);
-}
-
-const editParametersSchema = z.string().max(20000).refine((s) => {
-  try {
-    JSON.parse(s);
-    return true;
-  } catch {
-    return false;
-  }
-}, { message: 'editParameters must be valid JSON' });
-
 const patchSchema = z.object({
-  edited: z.boolean().optional(),
-  editParameters: editParametersSchema.nullable().optional(),
-  saved: z.boolean().optional(),
+  saved: z.boolean(),
 });
 
-// GET - Get single generation
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+type Ctx = { params: Promise<{ id: string }> };
+
+/** Resolves the caller and the id; every query below is scoped to both. */
+async function scope(request: NextRequest, params: Ctx['params']) {
+  const auth = await bindSessionUser(request);
+  if (!auth.ok) return { ok: false as const, response: auth.response };
+  const parsedId = parseValue((await params).id, idSchema);
+  if (!parsedId.ok) return { ok: false as const, response: parsedId.response };
+  return {
+    ok: true as const,
+    where: and(eq(mediaGenerations.id, parsedId.data), eq(mediaGenerations.userId, auth.userId)),
+  };
+}
+
+const notFound = () => NextResponse.json({ message: 'That image is not in your library.' }, { status: 404 });
+
+export async function GET(request: NextRequest, { params }: Ctx) {
+  const s = await scope(request, params);
+  if (!s.ok) return s.response;
   try {
-    const token = validateBearerToken(request);
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
-
-    const { id } = await params;
-    const parsedId = parseValue(id, idSchema);
-    if (!parsedId.ok) return parsedId.response;
-    const generationId = parsedId.data;
-
-    const generation = await db.select()
-      .from(mediaGenerations)
-      .where(eq(mediaGenerations.id, generationId))
-      .limit(1);
-
-    if (generation.length === 0) {
-      return NextResponse.json(
-        { error: 'Generation not found', code: 'NOT_FOUND' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(generation[0], { status: 200 });
-
+    const [row] = await db.select().from(mediaGenerations).where(s.where).limit(1);
+    return row ? NextResponse.json(row) : notFound();
   } catch (error) {
-    const ref = log.error('GET /api/studio/generations/[id] failed', error);
-    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
+    const ref = log.error('GET failed', error);
+    return NextResponse.json({ message: 'Could not read this image.', ref }, { status: 500 });
   }
 }
 
-// PATCH - Update generation
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: Ctx) {
+  const s = await scope(request, params);
+  if (!s.ok) return s.response;
+  const parsed = await readJson(request, patchSchema);
+  if (!parsed.ok) return parsed.response;
   try {
-    const token = validateBearerToken(request);
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
-
-    const { id } = await params;
-    const parsedId = parseValue(id, idSchema);
-    if (!parsedId.ok) return parsedId.response;
-    const generationId = parsedId.data;
-
-    const parsed = await readJson(request, patchSchema);
-    if (!parsed.ok) return parsed.response;
-    const { edited, editParameters, saved } = parsed.data;
-
-    const existing = await db.select()
-      .from(mediaGenerations)
-      .where(eq(mediaGenerations.id, generationId))
-      .limit(1);
-
-    if (existing.length === 0) {
-      return NextResponse.json(
-        { error: 'Generation not found', code: 'NOT_FOUND' },
-        { status: 404 }
-      );
-    }
-
-    const updates: Record<string, any> = {
-      updatedAt: new Date().toISOString()
-    };
-
-    if (edited !== undefined) updates.edited = edited;
-    if (editParameters !== undefined) updates.editParameters = editParameters;
-    if (saved !== undefined) updates.saved = saved;
-
-    const updated = await db.update(mediaGenerations)
-      .set(updates)
-      .where(eq(mediaGenerations.id, generationId))
+    const [row] = await db
+      .update(mediaGenerations)
+      .set({ saved: parsed.data.saved, updatedAt: new Date().toISOString() })
+      .where(s.where)
       .returning();
-
-    return NextResponse.json(updated[0], { status: 200 });
-
+    return row ? NextResponse.json(row) : notFound();
   } catch (error) {
-    const ref = log.error('PATCH /api/studio/generations/[id] failed', error);
-    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
+    const ref = log.error('PATCH failed', error);
+    return NextResponse.json({ message: 'Could not update this image.', ref }, { status: 500 });
   }
 }
 
-// DELETE - Delete generation
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: NextRequest, { params }: Ctx) {
+  const s = await scope(request, params);
+  if (!s.ok) return s.response;
   try {
-    const token = validateBearerToken(request);
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Authentication required', code: 'UNAUTHORIZED' },
-        { status: 401 }
-      );
-    }
-
-    const { id } = await params;
-    const parsedId = parseValue(id, idSchema);
-    if (!parsedId.ok) return parsedId.response;
-    const generationId = parsedId.data;
-
-    const existing = await db.select()
-      .from(mediaGenerations)
-      .where(eq(mediaGenerations.id, generationId))
-      .limit(1);
-
-    if (existing.length === 0) {
-      return NextResponse.json(
-        { error: 'Generation not found', code: 'NOT_FOUND' },
-        { status: 404 }
-      );
-    }
-
-    const deleted = await db.delete(mediaGenerations)
-      .where(eq(mediaGenerations.id, generationId))
-      .returning();
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Generation deleted successfully',
-        generation: deleted[0]
-      },
-      { status: 200 }
-    );
-
+    const [row] = await db.delete(mediaGenerations).where(s.where).returning({ id: mediaGenerations.id });
+    return row ? NextResponse.json({ deleted: row.id }) : notFound();
   } catch (error) {
-    const ref = log.error('DELETE /api/studio/generations/[id] failed', error);
-    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
+    const ref = log.error('DELETE failed', error);
+    return NextResponse.json({ message: 'Could not delete this image.', ref }, { status: 500 });
   }
 }

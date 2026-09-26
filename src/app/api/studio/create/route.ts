@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { and, desc, eq, isNull, notInArray, or } from "drizzle-orm";
+import { and, desc, eq, notInArray } from "drizzle-orm";
 import { db } from "@/db";
 import { actions, emissions, mediaGenerations, user, userActions } from "@/db/schema";
 import { bindSessionUser } from "@/lib/api-auth";
@@ -62,8 +62,7 @@ async function loadSource(userId: string): Promise<StudioSource> {
     .from(actions)
     .where(
       and(
-        or(eq(actions.userId, userId), isNull(actions.userId)),
-        eq(actions.isCustom, true),
+        eq(actions.userId, userId),
         doneIds.length ? notInArray(actions.id, doneIds) : undefined,
       ),
     )
