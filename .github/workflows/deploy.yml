@@ -11,7 +11,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    name: Verify (typecheck, test, audit)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - run: npm ci --prefer-offline
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Tests with coverage floor
+        run: npm run test:coverage
+      - name: Dependency audit (high and critical)
+        run: npm audit --omit=dev --audit-level=critical
+
   deploy:
+    needs: verify
     runs-on: ubuntu-latest
     name: Build & Deploy
     steps:
