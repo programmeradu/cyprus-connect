@@ -542,6 +542,8 @@ export const workspaces = pgTable('workspaces', {
   sector: text('sector').notNull(),
   employees: integer('employees').notNull().default(0),
   sites: integer('sites').notNull().default(1),
+  /** Yearly revenue in euro, entered by the owner in Settings. Null = not given. */
+  revenueEur: real('revenue_eur'),
   country: text('country').notNull().default('CY'),
   baselineYear: integer('baseline_year').notNull().default(2025),
   framework: text('framework').notNull().default('VSME'),
