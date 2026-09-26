@@ -28,9 +28,22 @@ export interface ObligationState {
 
 const DAY = 86_400_000;
 
+/**
+ * Only metrics that come straight from a document can be fixed by uploading
+ * one. Derived figures (totals, Scope 2, grid factor, coverage) update when
+ * their inputs do, so asking for "evidence" for them would be noise.
+ */
+export const EVIDENCE_SOURCES: Record<string, string> = {
+  electricity_kwh: "the latest EAC electricity bill",
+  cost_eur: "the latest energy bills (electricity and fuel)",
+  scope1: "fuel receipts or fuel card statements for company vehicles and generators",
+  scope3: "supplier invoices for the main purchased goods",
+};
+
 /** Pure: which metrics lack recent evidence. */
 export function findStaleMetrics(metrics: MetricState[], now: Date): MetricState[] {
   return metrics.filter((m) => {
+    if (!(m.key in EVIDENCE_SOURCES)) return false;
     if (!m.latestPeriod) return true;
     const t = Date.parse(m.latestPeriod);
     return !Number.isFinite(t) || now.getTime() - t > STALE_DAYS * DAY;
@@ -63,8 +76,8 @@ export async function runEvidenceSweep(rt: AgentRuntime, now = new Date()) {
     const r = await rt.call("create_task", {
       title: `Upload evidence for ${m.label}`,
       detail: m.latestPeriod
-        ? `Last reading is for ${m.latestPeriod}, more than ${STALE_DAYS} days ago. Upload the latest bill or record.`
-        : "No reading exists yet. Upload a bill or record to start this series.",
+        ? `The last ${m.label} reading is for ${m.latestPeriod}, more than ${STALE_DAYS} days ago. Upload ${EVIDENCE_SOURCES[m.key]}.`
+        : `No ${m.label} reading exists yet. Upload ${EVIDENCE_SOURCES[m.key]} to start this series.`,
       severity: "normal",
       kind: "evidence",
       dueAt: null,
@@ -83,19 +96,19 @@ export async function runEvidenceSweep(rt: AgentRuntime, now = new Date()) {
     if (r.decision === "executed" && r.output?.created) created += 1;
   }
 
-  const covered = metrics.length - stale.length;
-  const coverage = metrics.length === 0 ? 0 : covered / metrics.length;
+  const sourced = metrics.filter((m) => m.key in EVIDENCE_SOURCES);
+  const coverage = sourced.length === 0 ? 0 : (sourced.length - stale.length) / sourced.length;
   const basis = stableStringify({ metrics, open, at: now.toISOString().slice(0, 10) });
   await rt.call("record_fact", {
     key: "evidence_coverage",
     value: coverage.toFixed(3),
-    unit: "share of metrics with a reading in the last 60 days",
+    unit: "share",
     sourceKind: "derived",
     sourceHash: await sha256Hex(basis),
   });
 
   return {
-    summary: `Checked ${metrics.length} metrics and ${open.length} obligations. ${stale.length} metrics need evidence, ${atRisk.length} obligations at risk. ${created} new tasks.`,
+    summary: `Checked ${sourced.length} document-based metrics and ${open.length} obligations. ${stale.length} need new evidence, ${atRisk.length} obligations at risk. ${created} new tasks.`,
     itemsProcessed: metrics.length + open.length,
     confidence: 1,
   };

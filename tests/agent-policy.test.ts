@@ -45,13 +45,14 @@ describe("evidence sweep rules", () => {
   it("flags missing and stale metrics", () => {
     const out = findStaleMetrics(
       [
-        { key: "a", label: "A", latestPeriod: "2026-09-01" },
-        { key: "b", label: "B", latestPeriod: "2026-06-01" },
-        { key: "c", label: "C", latestPeriod: null },
+        { key: "electricity_kwh", label: "A", latestPeriod: "2026-09-01" },
+        { key: "cost_eur", label: "B", latestPeriod: "2026-06-01" },
+        { key: "scope1", label: "C", latestPeriod: null },
+        { key: "co2e_total", label: "Derived", latestPeriod: null },
       ],
       now,
     );
-    expect(out.map((m) => m.key)).toEqual(["b", "c"]);
+    expect(out.map((m) => m.key)).toEqual(["cost_eur", "scope1"]);
   });
   it("flags due-soon and overdue obligations under 50%", () => {
     const base = { title: "t", framework: "VSME", status: "on_track" };
