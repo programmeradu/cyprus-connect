@@ -12,7 +12,7 @@ import {
   activityEvents,
   user as userTable,
 } from "@/db/schema";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/log";
 import { liveConnections } from "@/lib/console/connections.server";
