@@ -170,10 +170,6 @@ Keep each item concise (1-2 sentences), actionable, and personalized to their sp
       }
     }
 
-    if (userId) {
-      // Courses are created on request in Learn; nothing is generated in the background.
-    }
-
     return NextResponse.json({
       success: true,
       recommendations,

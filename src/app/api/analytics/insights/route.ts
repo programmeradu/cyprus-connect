@@ -134,11 +134,6 @@ Format your response as JSON with these fields:
       };
     }
 
-    // 🎓 AUTO-GENERATE COURSES based on insights
-    if (userId) {
-      // Courses are created on request in Learn; nothing is generated in the background.
-    }
-
     return NextResponse.json({
       success: true,
       insights,
