@@ -17,3 +17,5 @@
 - Server errors go through `logger(scope).error(...)` (`src/lib/log.ts`), which redacts sensitive keys and returns a short ref; routes return the ref, never the raw error. Why: findable logs without leaking internals.
 
 - Every /app page reads and writes workspace data through `src/components/app/console/workspace-store.ts` (`useWorkspaceResource`, `useWorkspaceAction`), never its own fetch; `tests/app-data-guard.test.ts` enforces it and its not-yet-moved list may only shrink. Why: one shared copy of the data, so a change on any page shows everywhere.
+- Company facts have one home each: name/industry/team size/country on the account profile, sites/revenue on the workspace; console reads overlay them via `src/lib/company.server.ts` and writes go through `/api/console/company` (one transaction, one audit event). Why: every page sees the same company, and the old copied workspace columns are never trusted.
+- Dashboard agent status is computed per workspace (`rosterFor`: planned unless runnable, paused by switch/kill switch), and sample runs (`trigger='sample'`) are excluded from the overview. Why: never show seeded activity as real.

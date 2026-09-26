@@ -387,7 +387,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                 <strong>{workspace?.ownerName ?? "Signed in"}</strong>
               </header>
               <p className="vc-pop-empty">
-                {workspace ? `${workspace.name} · ${workspace.sector} · ${workspace.sites} sites` : "Loading the workspace"}
+                {workspace ? `${workspace.name} · ${workspace.sector.charAt(0).toUpperCase()}${workspace.sector.slice(1)} · ${workspace.sites} ${workspace.sites === 1 ? "site" : "sites"}` : "Loading the workspace"}
               </p>
               <Link href={"/app/settings" as never} role="menuitem" onClick={() => setAccount(false)}>
                 Workspace settings
