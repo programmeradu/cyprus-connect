@@ -3,6 +3,21 @@ import { db } from '@/db';
 import { courses, courseModules, lessons, lmsUserProgress, userLessonCompletions } from '@/db/schema';
 import { eq, asc, inArray, and, sql } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { z } from "zod";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("learn.course");
+const BodySchema = z.object({
+  title: z.string().trim().min(1).max(200).optional(),
+  description: z.string().trim().max(5000).optional(),
+  industry: z.string().trim().max(100).optional(),
+  difficultyLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
+  estimatedHours: z.number().finite().min(0).max(1000).optional(),
+  isPublished: z.boolean().optional(),
+  thumbnailUrl: z.string().url().max(2000).nullable().optional(),
+}).strict();
+
 
 export async function GET(
   request: NextRequest,
@@ -150,11 +165,8 @@ export async function GET(
       { status: 200 }
     );
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('GET error:', error);
+    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
   }
 }
 
@@ -188,7 +200,9 @@ export async function PATCH(
       );
     }
 
-    const body = await request.json();
+    const parsedBody = await readJson(request, BodySchema);
+    if (!parsedBody.ok) return parsedBody.response;
+    const body = parsedBody.data;
 
     // Validate difficultyLevel if provided
     if (body.difficultyLevel) {
@@ -272,11 +286,8 @@ export async function PATCH(
 
     return NextResponse.json(updated[0], { status: 200 });
   } catch (error) {
-    console.error('PATCH error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('PATCH error:', error);
+    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
   }
 }
 
@@ -324,10 +335,7 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
-    console.error('DELETE error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('DELETE error:', error);
+    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
   }
 }

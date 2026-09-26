@@ -3,6 +3,20 @@ import { db } from "@/db";
 import { courses, courseModules, lessons, notifications, user, emissions } from "@/db/schema";
 import { eq, and, desc, like } from "drizzle-orm";
 import { bindSessionUser } from "@/lib/api-auth";
+import { z } from "zod";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("learn.auto_generate");
+const BodySchema = z.object({
+  userId: z.string().max(200).optional(),
+  recommendations: z.array(z.unknown()).max(200).optional(),
+  insights: z.array(z.unknown()).max(200).optional(),
+  complianceGaps: z.array(z.unknown()).max(200).optional(),
+  emissionsData: z.unknown().optional(),
+  trigger: z.enum(["manual", "recommendation", "insight", "compliance"]).optional(),
+});
+
 
 /**
  * Intelligent Course Auto-Generation System
@@ -12,7 +26,9 @@ import { bindSessionUser } from "@/lib/api-auth";
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsedBody = await readJson(request, BodySchema);
+    if (!parsedBody.ok) return parsedBody.response;
+    const body = parsedBody.data;
     const {
       userId: __claimedUserId,
       recommendations = [],
@@ -108,11 +124,8 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("Auto-generation error:", error);
-    return NextResponse.json(
-      { error: "Failed to auto-generate courses", details: error.message },
-      { status: 500 }
-    );
+    const ref = log.error("Auto-generation error:", error);
+    return NextResponse.json({ error: 'Something went wrong. Try again.', code: 'INTERNAL_ERROR', ref }, { status: 500 });
   }
 }
 

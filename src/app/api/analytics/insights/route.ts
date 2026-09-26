@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { bindSessionUser } from "@/lib/api-auth";
+import { z } from "zod";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
+
+const log = logger("analytics.insights");
+const BodySchema = z.object({
+  userId: z.string().max(200).optional(),
+  metricsData: z.record(z.string().max(100), z.unknown()).optional(),
+  emissionsBreakdown: z.union([z.record(z.string().max(100), z.unknown()), z.array(z.unknown()).max(200)]).optional(),
+  monthlyTrend: z.array(z.unknown()).max(200).optional(),
+  industryComparison: z.record(z.string().max(100), z.unknown()).nullable().optional(),
+  userProfile: z.record(z.string().max(100), z.unknown()).nullable().optional(),
+});
+
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const parsedBody = await readJson(request, BodySchema);
+    if (!parsedBody.ok) return parsedBody.response;
+    const body = parsedBody.data;
     const { 
       userId: __claimedUserId,
       metricsData,
