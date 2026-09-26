@@ -8,7 +8,7 @@ export default defineConfig({
     include: ["tests/**/*.test.ts"],
     coverage: {
       provider: "v8",
-      include: ["src/lib/api-access.ts", "src/lib/api-auth.ts"],
+      include: ["src/lib/api-access.ts", "src/lib/api-auth.ts", "src/lib/agents/cbam-calc.ts"],
       thresholds: { lines: 70, functions: 70, branches: 70, statements: 70 },
     },
   },
