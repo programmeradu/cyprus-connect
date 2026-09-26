@@ -13,7 +13,17 @@ import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { AgentPulse } from "@/components/app/console/AgentPulse";
-import { downloadSectionCsv } from "@/components/app/console/export-csv";
+import { downloadSectionCsv, exportFileName, sectionTable } from "@/components/app/console/export-csv";
+import { ConsoleFilterBar } from "@/components/app/console/ConsoleFilterBar";
+import {
+  DEFAULT_FILTER,
+  applyFilter,
+  describeFilter,
+  filterSlug,
+  isDefaultFilter,
+  yearsInData,
+  type ConsoleFilter,
+} from "@/components/app/console/filters";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import {
   IcoAlert,
@@ -104,7 +114,13 @@ const TONE_RANK: Record<Insight["tone"], number> = { bad: 0, warn: 1, info: 2, g
 export default function ConsolePage() {
   /* The workspace read lives in the layout, so the top bar, the palette
      and every page share one set of records. */
-  const { data, error, refresh } = useConsole();
+  const { data: raw, error, refresh } = useConsole();
+  const [filter, setFilter] = useState<ConsoleFilter>(DEFAULT_FILTER);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  /* Every figure below reads the filtered copy, so the screen, the CSV and
+     the PDF always agree. */
+  const data = useMemo(() => (raw ? applyFilter(raw, filter) : null), [raw, filter]);
+  const years = useMemo(() => (raw ? yearsInData(raw) : []), [raw]);
   const [category, setCategory] = useState<string | null>(null);
   const [focusKey, setFocusKey] = useState<string | null>(null);
   const [section, setSection] = useState<SectionKey>("overview");
@@ -314,6 +330,27 @@ export default function ConsolePage() {
     { key: "audit", label: "Audit trail", count: events.length },
   ];
 
+  const sectionLabel = SECTIONS.find((s) => s.key === section)?.label ?? section;
+  const readingsInView = metrics.reduce((n, m) => n + m.points.length, 0);
+
+  /* The PDF library is large; it loads only when someone asks for a file. */
+  const exportPdf = async () => {
+    if (!data) return;
+    setPdfBusy(true);
+    try {
+      const { buildSectionPdf } = await import("@/lib/pdf/console-section-pdf");
+      const doc = buildSectionPdf({
+        workspaceName: data.workspace.name || "Workspace",
+        sectionLabel,
+        filterLabel: describeFilter(filter),
+        table: sectionTable(data, section),
+      });
+      doc.save(exportFileName(data, section, "pdf", filterSlug(filter)));
+    } finally {
+      setPdfBusy(false);
+    }
+  };
+
   return (
     <div className="vc vc-fit">
       <section className="vc-window" aria-label="Vuneli autonomous ESG console">
@@ -487,6 +524,14 @@ export default function ConsolePage() {
           </div>
         </div>
 
+        <ConsoleFilterBar
+          filter={filter}
+          onChange={setFilter}
+          years={years}
+          sites={raw?.sites ?? []}
+          readingsInView={readingsInView}
+        />
+
         <div className="vc-tab-strip" role="tablist" aria-label="Workspace sections">
           {SECTIONS.map((item) => (
             <button
@@ -501,15 +546,26 @@ export default function ConsolePage() {
               <i>{item.count}</i>
             </button>
           ))}
-          <button
-            type="button"
-            className="vc-tab-export"
-            onClick={() => data && downloadSectionCsv(data, section)}
-            disabled={!data}
-            aria-label={`Download ${SECTIONS.find((s) => s.key === section)?.label ?? section} as CSV`}
-          >
-            Export CSV
-          </button>
+          <span className="vc-tab-exports">
+            <button
+              type="button"
+              className="vc-tab-export"
+              onClick={() => data && downloadSectionCsv(data, section, filterSlug(filter))}
+              disabled={!data}
+              aria-label={`Download ${sectionLabel} as CSV`}
+            >
+              Export CSV
+            </button>
+            <button
+              type="button"
+              className="vc-tab-export"
+              onClick={() => void exportPdf()}
+              disabled={!data || pdfBusy}
+              aria-label={`Download ${sectionLabel} as PDF`}
+            >
+              {pdfBusy ? "Preparing…" : "Export PDF"}
+            </button>
+          </span>
         </div>
 
         <div className="vc-deck" role="tabpanel" aria-label={`${section} records`}>
