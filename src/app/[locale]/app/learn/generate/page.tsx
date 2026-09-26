@@ -73,8 +73,6 @@ export default function GenerateCoursePage() {
         />
       }
     >
-      {true && (
-
         <Section title="Course details">
           <div className="vck-card space-y-5 p-5">
             <div>
@@ -174,7 +172,6 @@ export default function GenerateCoursePage() {
             </button>
           </div>
         </Section>
-      )}
     </PageShell>
   );
 }
