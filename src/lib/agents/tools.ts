@@ -5,7 +5,7 @@
  */
 
 import { z } from "zod";
-import { and, asc, eq, gte } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import {
   agentTasks,
@@ -154,7 +154,7 @@ export const recordFact = tool({
         and(
           eq(workspaceFacts.workspaceId, ctx.workspaceId),
           eq(workspaceFacts.key, input.key),
-          gte(workspaceFacts.validFrom, new Date(0)),
+          isNull(workspaceFacts.validTo),
         ),
       );
     const [row] = await db
