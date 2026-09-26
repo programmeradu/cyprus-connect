@@ -16,6 +16,9 @@ const BodySchema = z.object({
   estimatedHours: z.number().finite().min(0).max(1000).optional(),
   isPublished: z.boolean().optional(),
   thumbnailUrl: z.string().url().max(2000).nullable().optional(),
+  prerequisites: z.array(z.string().trim().max(300)).max(50).optional(),
+  learningObjectives: z.array(z.string().trim().max(300)).max(50).optional(),
+  tags: z.array(z.string().trim().max(60)).max(30).optional(),
 }).strict();
 
 
