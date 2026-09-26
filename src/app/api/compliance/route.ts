@@ -163,9 +163,6 @@ function generateComplianceRecommendations(
 
   // Universal best practices
   recommendations.push(
-    "Regular compliance audits reduce last-minute reporting stress by 60%."
-  );
-  recommendations.push(
     "Implement automated data collection to streamline reporting across all frameworks."
   );
 

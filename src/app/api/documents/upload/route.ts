@@ -1,3 +1,4 @@
+import { processDocument } from '@/lib/ocr/processor';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { documents, user } from '@/db/schema';
@@ -39,60 +40,36 @@ function extractFileType(fileName: string, mimeType?: string): string | null {
   return null;
 }
 
-function simulatePDFOCR(): string {
-  return "Energy consumption: 1500 kWh. Natural gas usage: 250 m³. Water consumption: 45,000 liters. Total CO2 emissions: 2.8 tons. Reporting period: November 2024. Carbon footprint analysis shows 15% reduction compared to previous quarter. Renewable energy sources accounted for 30% of total consumption. Waste management efficiency improved by 12%. Transportation emissions decreased by 8% through fleet optimization.";
-}
-
-function simulateCSVParsing(fileName: string): ParsedEmissionsData {
-  const possibleColumns = [
-    'date', 'timestamp', 'period',
-    'energy', 'energy_kwh', 'power_consumption',
-    'electricity', 'electric', 'electricity_kwh',
-    'gas', 'natural_gas', 'gas_m3',
-    'water', 'water_consumption', 'water_liters',
-    'emissions', 'co2_emissions', 'carbon',
-    'co2', 'co2e', 'carbon_dioxide',
-    'waste', 'waste_kg', 'solid_waste',
-    'transport', 'transportation', 'vehicle_emissions'
-  ];
-
-  const detectedColumns = possibleColumns.slice(0, Math.floor(Math.random() * 5) + 5);
-  
-  const mappings: ParsedEmissionsData['mappings'] = {};
-  
-  if (detectedColumns.some(col => col.includes('date') || col.includes('timestamp'))) {
-    mappings.date = detectedColumns.find(col => col.includes('date') || col.includes('timestamp'));
-  }
-  if (detectedColumns.some(col => col.includes('energy') && !col.includes('electricity'))) {
-    mappings.energy = detectedColumns.find(col => col.includes('energy') && !col.includes('electricity'));
-  }
-  if (detectedColumns.some(col => col.includes('electric'))) {
-    mappings.electricity = detectedColumns.find(col => col.includes('electric'));
-  }
-  if (detectedColumns.some(col => col.includes('gas'))) {
-    mappings.gas = detectedColumns.find(col => col.includes('gas'));
-  }
-  if (detectedColumns.some(col => col.includes('water'))) {
-    mappings.water = detectedColumns.find(col => col.includes('water'));
-  }
-  if (detectedColumns.some(col => col.includes('emission') || col.includes('carbon'))) {
-    mappings.emissions = detectedColumns.find(col => col.includes('emission') || col.includes('carbon'));
-  }
-  if (detectedColumns.some(col => col.includes('co2'))) {
-    mappings.co2 = detectedColumns.find(col => col.includes('co2'));
-  }
-  if (detectedColumns.some(col => col.includes('waste'))) {
-    mappings.waste = detectedColumns.find(col => col.includes('waste'));
-  }
-  if (detectedColumns.some(col => col.includes('transport'))) {
-    mappings.transport = detectedColumns.find(col => col.includes('transport'));
-  }
-
-  return {
-    columns: detectedColumns,
-    mappings,
-    rowCount: Math.floor(Math.random() * 100) + 20
+/**
+ * Reads the real header row and row count from a CSV file.
+ * Columns are matched to known measures by name; nothing is guessed.
+ */
+function parseCSV(buffer: Buffer): ParsedEmissionsData {
+  const text = buffer.toString('utf8').replace(/^\uFEFF/, '');
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length === 0) return { columns: [], mappings: {}, rowCount: 0 };
+  const sep = (lines[0].match(/;/g)?.length ?? 0) > (lines[0].match(/,/g)?.length ?? 0) ? ';' : ',';
+  const columns = lines[0].split(sep).map((c) => c.trim().replace(/^"|"$/g, '')).filter(Boolean);
+  const lower = columns.map((c) => c.toLowerCase());
+  const find = (test: (c: string) => boolean) => {
+    const i = lower.findIndex(test);
+    return i >= 0 ? columns[i] : undefined;
   };
+  const mappings: ParsedEmissionsData['mappings'] = {
+    date: find((c) => c.includes('date') || c.includes('timestamp') || c.includes('period')),
+    energy: find((c) => c.includes('energy') && !c.includes('electric')),
+    electricity: find((c) => c.includes('electric') || c.includes('kwh')),
+    gas: find((c) => c.includes('gas')),
+    water: find((c) => c.includes('water')),
+    emissions: find((c) => c.includes('emission') || c.includes('carbon')),
+    co2: find((c) => c.includes('co2')),
+    waste: find((c) => c.includes('waste')),
+    transport: find((c) => c.includes('transport') || c.includes('vehicle') || c.includes('fuel')),
+  };
+  for (const k of Object.keys(mappings) as (keyof typeof mappings)[]) {
+    if (!mappings[k]) delete mappings[k];
+  }
+  return { columns, mappings, rowCount: lines.length - 1 };
 }
 
 async function handleMultipartUpload(request: NextRequest) {
@@ -217,10 +194,17 @@ export async function POST(request: NextRequest) {
 
     try {
       if (fileType === 'pdf') {
-        ocrText = simulatePDFOCR();
-      } else if (fileType === 'csv' || fileType === 'xlsx') {
-        const parsed = simulateCSVParsing(fileName);
-        parsedData = JSON.stringify(parsed);
+        const result = await processDocument(fileBuffer, 'application/pdf');
+        if (result.success) {
+          ocrText = result.text;
+        } else {
+          processingStatus = 'failed';
+        }
+      } else if (fileType === 'csv') {
+        parsedData = JSON.stringify(parseCSV(fileBuffer));
+      } else {
+        // Spreadsheets are stored but not read yet; say so instead of inventing columns.
+        processingStatus = 'pending';
       }
     } catch (error) {
       console.error('File processing error:', error);
