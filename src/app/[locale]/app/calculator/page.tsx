@@ -232,7 +232,7 @@ export default function CalculatorPage() {
                       className="w-full min-w-0 px-3 py-2.5 rounded-l-md text-sm"
                       aria-describedby={`unit-${k}`}
                     />
-                    <span id={`unit-${k}`} className="vck-inset px-3 flex items-center text-sm rounded-r-md whitespace-nowrap">
+                    <span id={`unit-${k}`} className="vck-inset px-3 min-w-[4.75rem] flex items-center justify-center text-sm rounded-r-md whitespace-nowrap">
                       {t(`units.${k}`)}
                     </span>
                   </div>
