@@ -1,9 +1,28 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { aiChatStream, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { checkRateLimit, createRateLimitHeaders, getRequestIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
+
+// Public (marketing assistant), so input is bounded and callers are rate-limited.
+const StreamInput = z.object({
+  prompt: z.string().trim().min(1).max(4000),
+  context: z.string().max(8000).optional(),
+});
 
 export async function POST(req: Request) {
   try {
-    const { prompt, context } = await req.json();
+    const limit = checkRateLimit(`ai-stream:${getRequestIdentifier(req)}`, RATE_LIMITS.AI_GENERATION);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a minute." },
+        { status: 429, headers: createRateLimitHeaders(limit) }
+      );
+    }
+    const parsed = StreamInput.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    }
+    const { prompt, context } = parsed.data;
 
     if (!hasLovableAi()) {
       return NextResponse.json(
