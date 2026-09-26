@@ -19,7 +19,7 @@ const DOCK_ITEMS = [
   { href: "/app/analytics", label: "Measure", icon: IcoPulse },
   { href: "/app/compliance", label: "Report", icon: IcoDoc },
   { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
-  { href: "/app/insights", label: "Agents", icon: IcoSpark },
+  { href: "/app/agents", label: "Agents", icon: IcoSpark },
 ];
 
 const SHEET_ITEMS = [

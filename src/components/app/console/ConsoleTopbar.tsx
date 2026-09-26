@@ -31,7 +31,7 @@ export const NAV_ITEMS = [
   { href: "/app/analytics", label: "Measure", icon: IcoPulse },
   { href: "/app/compliance", label: "Report", icon: IcoDoc },
   { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
-  { href: "/app/insights", label: "Agents", icon: IcoSpark },
+  { href: "/app/agents", label: "Agents", icon: IcoSpark },
   { href: "/app/integrations", label: "Connect", icon: IcoPlug },
 ];
 
@@ -96,7 +96,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
 
     if (!data) return list;
     for (const agent of data.agents) {
-      list.push({ href: "/app/insights", group: "Agents", title: agent.name, detail: agent.role });
+      list.push({ href: "/app/agents", group: "Agents", title: agent.name, detail: agent.role });
     }
     for (const obligation of data.obligations) {
       list.push({
