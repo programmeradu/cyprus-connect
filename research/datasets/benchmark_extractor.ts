@@ -1,3 +1,6 @@
+import { dirname as __dn } from "node:path";
+import { fileURLToPath as __fu } from "node:url";
+const __here = __dn(__fu(import.meta.url));
 /**
  * Scores the app's bill/receipt field extractor (src/lib/ocr/extract-bill-data.ts)
  * against labelled sample documents. Input text comes from local Tesseract
@@ -9,7 +12,7 @@ import { join } from 'path';
 import { extractUtilityBillData } from '../../src/lib/ocr/extract-bill-data';
 
 const txtDir = process.argv[2] ?? '/tmp/ocrtxt';
-const root = join(import.meta.dir, 'samples');
+const root = join(__here, 'samples');
 const manifest: { file: string; type: string }[] = JSON.parse(readFileSync(join(root, 'manifest.json'), 'utf8'));
 
 // Compare on digits only: "60.000" (IDR), "$ 8,25" (EU decimal) and 8.25 all reduce comparably.
@@ -41,4 +44,4 @@ for (const type of ['receipt', 'invoice']) {
   out.push(`${type}: n=${s.length} | text contains true total: ${pct(s.filter((r) => r.textHasGold).length)} | extractor returned a total: ${pct(s.filter((r) => r.found).length)} | total correct: ${pct(s.filter((r) => r.correct).length)}`);
 }
 console.log(out.join('\n'));
-writeFileSync(join(import.meta.dir, 'benchmark_results.json'), JSON.stringify(rows, null, 1));
+writeFileSync(join(__here, 'benchmark_results.json'), JSON.stringify(rows, null, 1));

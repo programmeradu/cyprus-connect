@@ -3,7 +3,8 @@
 ## App build (audit 2026-09-26, docs/APP_AUDIT_2026-09-26.md)
 - [x] Full app + repo-quality audit
 - [ ] P0 lock down API routes (session-derived userId, remove/guard admin routes, zod)
-- [ ] P1 remove random/hard-coded figures, merge duplicate systems
+- [x] P1a invented figures removed (upload parsing, compliance score/dates/SEC, forecast noise)
+- [ ] P1b merge duplicate systems (learn/lms courses, two Gemini SDKs)
 - [ ] P2 quality gates: vitest+coverage, CI verify gate, healthz, logger, env parity, split big files
 - [ ] P3 console Release 2 (actions), then Release 3 CBAM agent
 
