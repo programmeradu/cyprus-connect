@@ -12,9 +12,9 @@ import {
   MetricRow,
   Metric,
   DataTable,
-  EmptyState,
-  type Column
-} from "@/components/app/shell";
+  Empty,
+  type DataTableColumn as Column
+} from "@/components/app/console/kit";
 
 interface Lesson {
   id: number;
@@ -183,7 +183,7 @@ export default function CourseDetailsPage() {
               rows={allLessons}
               rowKey={(l) => String(l.id)}
               onRowClick={(l) => startLesson(l.id)}
-              empty={<EmptyState title="No lessons yet" description="This course does not have any published lessons yet." />}
+              empty={<Empty title="No lessons yet" body="This course does not have any published lessons yet." />}
             />
           </Section>
         </>

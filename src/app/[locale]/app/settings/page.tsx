@@ -17,7 +17,7 @@ import {
   ToolbarTabs,
   Section,
   SkeletonMetricRow
-} from "@/components/app/shell";
+} from "@/components/app/console/kit";
 import {
   AVATAR_STYLES,
   ConsoleAvatar,

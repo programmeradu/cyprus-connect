@@ -14,9 +14,9 @@ import {
   Section,
   Metric,
   MetricRow,
-  EmptyState,
+  Empty,
   AiUnavailable
-} from "@/components/app/shell";
+} from "@/components/app/console/kit";
 
 export default function ActionsPage() {
   const t = useTranslations("dashboard.actions");
@@ -374,13 +374,13 @@ export default function ActionsPage() {
       )}
 
       {aiActions.length > 0 && (
-        <Section title={t("aiSection")} description={t("aiBadge")}>
+        <Section title={t("aiSection")} body={t("aiBadge")}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {aiActions.map((action) => (
               <ActionCard
                 key={action.id}
                 title={action.title}
-                description={action.description}
+                body={action.description}
                 impact={action.impact}
                 difficulty={action.difficulty}
                 points={action.points}
@@ -394,9 +394,9 @@ export default function ActionsPage() {
 
       <Section title={aiActions.length > 0 ? t("standardSection") : t("title")}>
         {regularActions.length === 0 && aiActions.length === 0 ? (
-          <EmptyState
+          <Empty
             title="No actions available yet"
-            description="Complete onboarding and connect your emissions data so Vuneli can suggest actions tailored to your company."
+            body="Complete onboarding and connect your emissions data so Vuneli can suggest actions tailored to your company."
           />
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -404,7 +404,7 @@ export default function ActionsPage() {
               <ActionCard
                 key={action.id}
                 title={action.title}
-                description={action.description}
+                body={action.description}
                 impact={action.impact}
                 difficulty={action.difficulty}
                 points={action.points}

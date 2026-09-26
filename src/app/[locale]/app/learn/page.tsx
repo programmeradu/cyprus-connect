@@ -15,9 +15,9 @@ import {
   MetricRow,
   Metric,
   DataTable,
-  EmptyState,
-  type Column
-} from "@/components/app/shell";
+  Empty,
+  type DataTableColumn as Column
+} from "@/components/app/console/kit";
 
 interface Course {
   id: number;
@@ -311,9 +311,9 @@ export default function LearnPage() {
           rowKey={(c) => String(c.id)}
           onRowClick={(c) => router.push(`/app/learn/${c.id}`)}
           empty={
-            <EmptyState
+            <Empty
               title={t("noCourses")}
-              description="Generate a course tailored to your industry, or adjust your filters to see more results."
+              body="Generate a course tailored to your industry, or adjust your filters to see more results."
               action={
                 hasActiveFilters
                   ? { label: t("clearFilters"), onClick: () => { setSearchQuery(""); setSelectedDifficulty("all"); } }

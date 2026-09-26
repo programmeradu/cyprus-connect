@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { mediaGenerations } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
 
-// Bearer token validation helper
+const log = logger("api.studio.generations.id");
+
+const idSchema = z.coerce.number().int().positive();
+
 function validateBearerToken(request: NextRequest): string | null {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -12,13 +18,27 @@ function validateBearerToken(request: NextRequest): string | null {
   return authHeader.substring(7);
 }
 
+const editParametersSchema = z.string().max(20000).refine((s) => {
+  try {
+    JSON.parse(s);
+    return true;
+  } catch {
+    return false;
+  }
+}, { message: 'editParameters must be valid JSON' });
+
+const patchSchema = z.object({
+  edited: z.boolean().optional(),
+  editParameters: editParametersSchema.nullable().optional(),
+  saved: z.boolean().optional(),
+});
+
 // GET - Get single generation
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Validate Bearer token
     const token = validateBearerToken(request);
     if (!token) {
       return NextResponse.json(
@@ -28,17 +48,10 @@ export async function GET(
     }
 
     const { id } = await params;
+    const parsedId = parseValue(id, idSchema);
+    if (!parsedId.ok) return parsedId.response;
+    const generationId = parsedId.data;
 
-    // Validate ID
-    const generationId = parseInt(id);
-    if (!id || isNaN(generationId)) {
-      return NextResponse.json(
-        { error: 'Valid ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
-
-    // Query the generation
     const generation = await db.select()
       .from(mediaGenerations)
       .where(eq(mediaGenerations.id, generationId))
@@ -54,11 +67,8 @@ export async function GET(
     return NextResponse.json(generation[0], { status: 200 });
 
   } catch (error) {
-    console.error('GET generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('GET /api/studio/generations/[id] failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
@@ -68,7 +78,6 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Validate Bearer token
     const token = validateBearerToken(request);
     if (!token) {
       return NextResponse.json(
@@ -78,48 +87,14 @@ export async function PATCH(
     }
 
     const { id } = await params;
+    const parsedId = parseValue(id, idSchema);
+    if (!parsedId.ok) return parsedId.response;
+    const generationId = parsedId.data;
 
-    // Validate ID
-    const generationId = parseInt(id);
-    if (!id || isNaN(generationId)) {
-      return NextResponse.json(
-        { error: 'Valid ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
+    const parsed = await readJson(request, patchSchema);
+    if (!parsed.ok) return parsed.response;
+    const { edited, editParameters, saved } = parsed.data;
 
-    const body = await request.json();
-    const { edited, editParameters, saved } = body;
-
-    // Validate editParameters is valid JSON if provided
-    if (editParameters !== undefined && editParameters !== null) {
-      try {
-        JSON.parse(editParameters);
-      } catch {
-        return NextResponse.json(
-          { error: 'editParameters must be valid JSON', code: 'INVALID_JSON' },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Validate edited is boolean if provided
-    if (edited !== undefined && typeof edited !== 'boolean') {
-      return NextResponse.json(
-        { error: 'edited must be a boolean', code: 'INVALID_TYPE' },
-        { status: 400 }
-      );
-    }
-
-    // Validate saved is boolean if provided
-    if (saved !== undefined && typeof saved !== 'boolean') {
-      return NextResponse.json(
-        { error: 'saved must be a boolean', code: 'INVALID_TYPE' },
-        { status: 400 }
-      );
-    }
-
-    // Check if generation exists
     const existing = await db.select()
       .from(mediaGenerations)
       .where(eq(mediaGenerations.id, generationId))
@@ -132,24 +107,14 @@ export async function PATCH(
       );
     }
 
-    // Build update object
     const updates: Record<string, any> = {
       updatedAt: new Date().toISOString()
     };
 
-    if (edited !== undefined) {
-      updates.edited = edited;
-    }
+    if (edited !== undefined) updates.edited = edited;
+    if (editParameters !== undefined) updates.editParameters = editParameters;
+    if (saved !== undefined) updates.saved = saved;
 
-    if (editParameters !== undefined) {
-      updates.editParameters = editParameters;
-    }
-
-    if (saved !== undefined) {
-      updates.saved = saved;
-    }
-
-    // Update the generation
     const updated = await db.update(mediaGenerations)
       .set(updates)
       .where(eq(mediaGenerations.id, generationId))
@@ -158,11 +123,8 @@ export async function PATCH(
     return NextResponse.json(updated[0], { status: 200 });
 
   } catch (error) {
-    console.error('PATCH generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('PATCH /api/studio/generations/[id] failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
@@ -172,7 +134,6 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Validate Bearer token
     const token = validateBearerToken(request);
     if (!token) {
       return NextResponse.json(
@@ -182,17 +143,10 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    const parsedId = parseValue(id, idSchema);
+    if (!parsedId.ok) return parsedId.response;
+    const generationId = parsedId.data;
 
-    // Validate ID
-    const generationId = parseInt(id);
-    if (!id || isNaN(generationId)) {
-      return NextResponse.json(
-        { error: 'Valid ID is required', code: 'INVALID_ID' },
-        { status: 400 }
-      );
-    }
-
-    // Check if generation exists
     const existing = await db.select()
       .from(mediaGenerations)
       .where(eq(mediaGenerations.id, generationId))
@@ -205,7 +159,6 @@ export async function DELETE(
       );
     }
 
-    // Delete the generation
     const deleted = await db.delete(mediaGenerations)
       .where(eq(mediaGenerations.id, generationId))
       .returning();
@@ -220,10 +173,7 @@ export async function DELETE(
     );
 
   } catch (error) {
-    console.error('DELETE generation error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('DELETE /api/studio/generations/[id] failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }

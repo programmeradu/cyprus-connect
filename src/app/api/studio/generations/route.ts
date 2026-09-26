@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { user, mediaGenerations } from '@/db/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger("api.studio.generations");
 
 // Helper function to extract Bearer token
 function extractBearerToken(request: NextRequest): string | null {
@@ -13,16 +18,30 @@ function extractBearerToken(request: NextRequest): string | null {
   return authHeader.substring(7);
 }
 
-// Helper function to validate Bearer token (basic validation)
-async function validateBearerToken(token: string): Promise<boolean> {
-  // In a real application, validate against session or JWT
-  // For this implementation, we just check if token exists and has reasonable length
+function validateBearerToken(token: string): boolean {
   return token.length > 10;
 }
 
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(200).optional(),
+  type: z.enum(['image', 'video']),
+  url: z.string().trim().min(1).max(4000),
+  prompt: z.string().trim().min(1).max(10000),
+  enhancedPrompt: z.string().trim().max(10000).nullable().optional(),
+  model: z.string().trim().max(200).nullable().optional(),
+  modelReason: z.string().trim().max(2000).nullable().optional(),
+  contextType: z.string().trim().max(200).nullable().optional(),
+  aspectRatio: z.string().trim().max(32).nullable().optional(),
+  saved: z.boolean().optional(),
+});
+
+const listQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(50),
+  type: z.enum(['image', 'video']).optional(),
+});
+
 export async function POST(request: NextRequest) {
   try {
-    // Authentication check
     const token = extractBearerToken(request);
     if (!token) {
       return NextResponse.json(
@@ -31,60 +50,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const isValidToken = await validateBearerToken(token);
-    if (!isValidToken) {
+    if (!validateBearerToken(token)) {
       return NextResponse.json(
         { error: 'Invalid authentication token', code: 'INVALID_TOKEN' },
         { status: 401 }
       );
     }
 
-    // Parse request body
-    const body = await request.json();
-    const { userId: __claimedUserId, type, url, prompt, enhancedPrompt, model, modelReason, contextType, aspectRatio, saved } = body;
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
+    const { userId: __claimedUserId, type, url, prompt, enhancedPrompt, model, modelReason, contextType, aspectRatio, saved } = parsed.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-
-    // Validate required fields
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId is required', code: 'MISSING_USER_ID' },
-        { status: 400 }
-      );
-    }
-
-    if (!type) {
-      return NextResponse.json(
-        { error: 'type is required', code: 'MISSING_TYPE' },
-        { status: 400 }
-      );
-    }
-
-    if (!url) {
-      return NextResponse.json(
-        { error: 'url is required', code: 'MISSING_URL' },
-        { status: 400 }
-      );
-    }
-
-    if (!prompt) {
-      return NextResponse.json(
-        { error: 'prompt is required', code: 'MISSING_PROMPT' },
-        { status: 400 }
-      );
-    }
-
-    // Validate type is either "image" or "video"
-    if (type !== 'image' && type !== 'video') {
-      return NextResponse.json(
-        { error: 'type must be either "image" or "video"', code: 'INVALID_TYPE' },
-        { status: 400 }
-      );
-    }
-
-    // Validate userId exists in user table
     const existingUser = await db.select()
       .from(user)
       .where(eq(user.id, userId))
@@ -97,19 +76,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new media generation
     const timestamp = new Date().toISOString();
     const newGeneration = await db.insert(mediaGenerations)
       .values({
-        userId: userId.trim(),
-        type: type.trim(),
-        url: url.trim(),
-        prompt: prompt.trim(),
-        enhancedPrompt: enhancedPrompt ? enhancedPrompt.trim() : null,
-        model: model ? model.trim() : null,
-        modelReason: modelReason ? modelReason.trim() : null,
-        contextType: contextType ? contextType.trim() : null,
-        aspectRatio: aspectRatio ? aspectRatio.trim() : null,
+        userId,
+        type,
+        url,
+        prompt,
+        enhancedPrompt: enhancedPrompt ?? null,
+        model: model ?? null,
+        modelReason: modelReason ?? null,
+        contextType: contextType ?? null,
+        aspectRatio: aspectRatio ?? null,
         edited: false,
         editParameters: null,
         saved: saved ?? false,
@@ -120,17 +98,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newGeneration[0], { status: 201 });
   } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('POST /api/studio/generations failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // Authentication check
     const token = extractBearerToken(request);
     if (!token) {
       return NextResponse.json(
@@ -139,32 +113,25 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const isValidToken = await validateBearerToken(token);
-    if (!isValidToken) {
+    if (!validateBearerToken(token)) {
       return NextResponse.json(
         { error: 'Invalid authentication token', code: 'INVALID_TOKEN' },
         { status: 401 }
       );
     }
 
-    // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
     const __auth = await bindSessionUser(request, searchParams.get('userId'));
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
 
-    const limit = Math.min(parseInt(searchParams.get('limit') ?? '50'), 100);
-    const type = searchParams.get('type');
+    const parsedQuery = parseValue(
+      { limit: searchParams.get('limit') ?? undefined, type: searchParams.get('type') ?? undefined },
+      listQuerySchema
+    );
+    if (!parsedQuery.ok) return parsedQuery.response;
+    const { limit, type } = parsedQuery.data;
 
-    // Validate required userId parameter
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId query parameter is required', code: 'MISSING_USER_ID' },
-        { status: 400 }
-      );
-    }
-
-    // Validate userId exists in user table
     const existingUser = await db.select()
       .from(user)
       .where(eq(user.id, userId))
@@ -177,23 +144,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Validate type if provided
-    if (type && type !== 'image' && type !== 'video') {
-      return NextResponse.json(
-        { error: 'type must be either "image" or "video"', code: 'INVALID_TYPE' },
-        { status: 400 }
-      );
-    }
-
-    // Build query
-    let whereConditions = eq(mediaGenerations.userId, userId);
-    
-    if (type) {
-      whereConditions = and(
-        eq(mediaGenerations.userId, userId),
-        eq(mediaGenerations.type, type)
-      ) as any;
-    }
+    const whereConditions = type
+      ? and(eq(mediaGenerations.userId, userId), eq(mediaGenerations.type, type))
+      : eq(mediaGenerations.userId, userId);
 
     const generations = await db.select()
       .from(mediaGenerations)
@@ -203,10 +156,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(generations, { status: 200 });
   } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error: ' + (error as Error).message },
-      { status: 500 }
-    );
+    const ref = log.error('GET /api/studio/generations failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }

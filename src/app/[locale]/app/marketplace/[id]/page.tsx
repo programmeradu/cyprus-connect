@@ -12,9 +12,9 @@ import {
   Metric,
   MetricRow,
   DataTable,
-  EmptyState,
-  type Column
-} from "@/components/app/shell";
+  Empty,
+  type DataTableColumn as Column
+} from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Project {
@@ -220,7 +220,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
           <Section title="Impact metrics">
             {Object.keys(project.impactMetrics ?? {}).length === 0 ? (
-              <EmptyState title="No impact metrics recorded yet" description="This project has not published measured impact data." />
+              <Empty title="No impact metrics recorded yet" body="This project has not published measured impact data." />
             ) : (
               <div className="vck-card grid grid-cols-2 gap-4 p-4 sm:grid-cols-4">
                 {Object.entries(project.impactMetrics).map(([key, value]) => (
@@ -248,7 +248,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           )}
 
           {!project.bannerImage && (
-            <Section title="Banner image" description="Generate a banner image for this listing.">
+            <Section title="Banner image" body="Generate a banner image for this listing.">
               <button type="button" className="vck-btn" onClick={handleGenerateBanner} disabled={generatingBanner}>
                 {generatingBanner ? "Generating\u2026" : "Generate banner"}
               </button>
@@ -262,9 +262,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               rowKey={(r) => String(r.id)}
               onRowClick={(r) => router.push(`/app/marketplace/${r.id}`)}
               empty={
-                <EmptyState
+                <Empty
                   title="No recommendations yet"
-                  description="Purchase or browse a few projects so Vuneli can tailor recommendations to your goals."
+                  body="Purchase or browse a few projects so Vuneli can tailor recommendations to your goals."
                 />
               }
             />

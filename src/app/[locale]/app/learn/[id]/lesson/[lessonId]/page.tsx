@@ -5,7 +5,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
-import { PageShell, PageHeader, Section, EmptyState } from "@/components/app/shell";
+import { PageShell, PageHeader, Section, Empty } from "@/components/app/console/kit";
 
 interface Lesson {
   id: number;
@@ -389,7 +389,7 @@ export default function LessonViewerPage() {
 
       {lesson && !contentData && (
         <Section>
-          <EmptyState title="This lesson has no content yet" description="Check back later once content has been generated." />
+          <Empty title="This lesson has no content yet" body="Check back later once content has been generated." />
         </Section>
       )}
     </PageShell>

@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { SME_EMISSION_FACTORS, convertGasM3ToKWh, convertLitersToUSD } from "@/lib/emissionFactors";
+import { readJson } from "@/lib/validate";
+import { logger } from "@/lib/log";
 
-interface EmissionInput {
-  electricity_kwh?: number;
-  gas_m3?: number;
-  water_liters?: number;
-  waste_kg?: number;
-  transport_km?: number;
-  region?: string;
-}
+const log = logger("emissions.batch");
 
 interface EmissionResult {
   category: string;
@@ -19,22 +15,31 @@ interface EmissionResult {
   activity_id: string;
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body: EmissionInput = await request.json();
-    const {
-      electricity_kwh = 0,
-      gas_m3 = 0,
-      water_liters = 0,
-      waste_kg = 0,
-      transport_km = 0,
-      region = "US",
-    } = body;
+const bodySchema = z.object({
+  electricity_kwh: z.number().finite().min(0).max(1_000_000_000).optional().default(0),
+  gas_m3: z.number().finite().min(0).max(1_000_000_000).optional().default(0),
+  water_liters: z.number().finite().min(0).max(1_000_000_000).optional().default(0),
+  waste_kg: z.number().finite().min(0).max(1_000_000_000).optional().default(0),
+  transport_km: z.number().finite().min(0).max(1_000_000_000).optional().default(0),
+  region: z.string().trim().min(1).max(20).optional().default("US"),
+});
 
+export async function POST(request: NextRequest) {
+  const parsed = await readJson(request, bodySchema);
+  if (!parsed.ok) return parsed.response;
+  const {
+    electricity_kwh,
+    gas_m3,
+    water_liters,
+    waste_kg,
+    transport_km,
+    region,
+  } = parsed.data;
+
+  try {
     const results: EmissionResult[] = [];
     const errors: string[] = [];
 
-    // Helper function to call estimate endpoint
     const estimateEmissions = async (
       activity_id: string,
       value: number,
@@ -61,8 +66,7 @@ export async function POST(request: NextRequest) {
         );
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `Failed to estimate ${category}`);
+          throw new Error(`Failed to estimate ${category}`);
         }
 
         const { data } = await response.json();
@@ -80,7 +84,6 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    // Calculate emissions for each category
     const calculations = await Promise.all([
       estimateEmissions(
         SME_EMISSION_FACTORS.ELECTRICITY_GRID.id,
@@ -118,11 +121,9 @@ export async function POST(request: NextRequest) {
       ),
     ]);
 
-    // Filter out null results
     const validResults = calculations.filter((r) => r !== null) as EmissionResult[];
     results.push(...validResults);
 
-    // Calculate total emissions
     const totalCo2eKg = results.reduce((sum, r) => sum + r.co2e_kg, 0);
     const totalCo2eTonnes = totalCo2eKg / 1000;
 
@@ -138,11 +139,9 @@ export async function POST(request: NextRequest) {
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {
-    console.error("Batch emission calculation error:", error);
+    const ref = log.error("Batch emission calculation error", error);
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "The batch emission calculation failed.", ref },
       { status: 500 }
     );
   }

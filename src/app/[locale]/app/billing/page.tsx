@@ -9,7 +9,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
-import { PageShell, PageHeader, PageToolbar, ToolbarTabs, Section } from "@/components/app/shell";
+import { PageShell, PageHeader, PageToolbar, ToolbarTabs, Section } from "@/components/app/console/kit";
 
 export default function BillingPage() {
   const { data: session, isPending } = useSession();

@@ -14,9 +14,9 @@ import {
   DataTable,
   Metric,
   MetricRow,
-  EmptyState
-} from "@/components/app/shell";
-import type { Column } from "@/components/app/shell";
+  Empty
+} from "@/components/app/console/kit";
+import type { DataTableColumn as Column } from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { FRAMEWORKS } from "@/lib/compliance/frameworks";
 
@@ -302,9 +302,9 @@ function OverviewTab({
             ))}
           </div>
         ) : (
-          <EmptyState
+          <Empty
             title="No regulations tracked yet"
-            description="Once regulations are initialised for your account, their compliance health will appear here."
+            body="Once regulations are initialised for your account, their compliance health will appear here."
           />
         )}
       </Section>
@@ -320,9 +320,9 @@ function OverviewTab({
             ))}
           </div>
         ) : (
-          <EmptyState
+          <Empty
             title="No recent regulatory activity"
-            description="Updates to your tracked regulations will show up here as they happen."
+            body="Updates to your tracked regulations will show up here as they happen."
           />
         )}
       </Section>
@@ -390,9 +390,9 @@ function RegulationsTab({ regulations }: { regulations: Regulation[] }) {
         rows={regulations}
         rowKey={(r) => String(r.id)}
         empty={
-          <EmptyState
+          <Empty
             title="No regulations to review"
-            description="Regulations relevant to your jurisdiction will be listed here once initialised."
+            body="Regulations relevant to your jurisdiction will be listed here once initialised."
           />
         }
       />
@@ -468,7 +468,7 @@ function DocumentsTab({
 
   return (
     <>
-      <Section title={t("documents.aiTitle")} description={t("documents.aiDescription")}>
+      <Section title={t("documents.aiTitle")} body={t("documents.aiDescription")}>
         <div className="vck-card flex flex-wrap gap-2 p-4">
           {FRAMEWORKS.map((f) => f.label).map((framework) => (
             <button
@@ -490,9 +490,9 @@ function DocumentsTab({
           rows={documents}
           rowKey={(d) => String(d.id)}
           empty={
-            <EmptyState
+            <Empty
               title={t("documents.noDocuments")}
-              description={t("documents.noDocumentsHint")}
+              body={t("documents.noDocumentsHint")}
             />
           }
         />
@@ -530,9 +530,9 @@ function AuditTab({ logs }: { logs: AuditLog[] }) {
         rows={logs}
         rowKey={(l) => String(l.id)}
         empty={
-          <EmptyState
+          <Empty
             title={t("audit.noActivity")}
-            description="Actions you take on this page, like generating reports or changing settings, will be recorded here."
+            body="Actions you take on this page, like generating reports or changing settings, will be recorded here."
           />
         }
       />
@@ -557,7 +557,7 @@ function SettingsTab({ settings, onSave }: { settings: Settings; onSave: (settin
 
   return (
     <>
-      <Section title={t("settings.jurisdictionsTitle")} description={t("settings.jurisdictionsDescription")}>
+      <Section title={t("settings.jurisdictionsTitle")} body={t("settings.jurisdictionsDescription")}>
         <div className="vck-card space-y-2 p-4">
           {jurisdictionOptions.map(({ value, label }) => (
             <label

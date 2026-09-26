@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageShell, PageHeader, Section, DataTable, EmptyState, Column } from "@/components/app/shell";
+import { PageShell, PageHeader, Section, DataTable, Empty, DataTableColumn as Column } from "@/components/app/console/kit";
 
 interface Match {
   id: number;
@@ -132,9 +132,9 @@ export default function GrantAlertsPage() {
           rows={matches}
           rowKey={(m) => String(m.id)}
           empty={
-            <EmptyState
+            <Empty
               title="No matches recorded yet"
-              description="The hourly job checks EU and Cyprus funding sources for calls that match Vuneli's SME sustainability focus. New calls will appear here as soon as they're found."
+              body="The hourly job checks EU and Cyprus funding sources for calls that match Vuneli's SME sustainability focus. New calls will appear here as soon as they're found."
             />
           }
         />

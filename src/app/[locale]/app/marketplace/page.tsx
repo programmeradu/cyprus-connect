@@ -13,9 +13,9 @@ import {
   ToolbarTabs,
   Section,
   DataTable,
-  EmptyState,
-  type Column
-} from "@/components/app/shell";
+  Empty,
+  type DataTableColumn as Column
+} from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface Project {
@@ -172,9 +172,9 @@ export default function MarketplacePage() {
           rowKey={(p) => String(p.id)}
           onRowClick={(p) => router.push(`/app/marketplace/${p.id}`)}
           empty={
-            <EmptyState
+            <Empty
               title="No projects match this filter"
-              description={t("empty")}
+              body={t("empty")}
               action={{ label: "View all categories", onClick: () => setSelectedCategory("all") }}
             />
           }

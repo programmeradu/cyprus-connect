@@ -1,8 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { db } from '@/db';
 import { lessons, courseModules, lmsUserProgress, userLessonCompletions } from '@/db/schema';
-import { eq, and, count, inArray, sql } from 'drizzle-orm';
+import { eq, and, count, inArray } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { readJson, parseValue } from '@/lib/validate';
+import { logger } from '@/lib/log';
+
+const log = logger("api.learn.lessons.complete");
+
+const idSchema = z.coerce.number().int().positive();
+
+const postSchema = z.object({
+  userId: z.string().trim().min(1).max(200).optional(),
+  timeSpent: z.number().int().min(0).max(1_000_000).nullable().optional(),
+  score: z.number().int().min(0).max(100).nullable().optional(),
+  passed: z.boolean().nullable().optional(),
+});
 
 export async function POST(
   request: NextRequest,
@@ -10,62 +24,16 @@ export async function POST(
 ) {
   try {
     const { id: lessonId } = await params;
+    const parsedLessonIdResult = parseValue(lessonId, idSchema);
+    if (!parsedLessonIdResult.ok) return parsedLessonIdResult.response;
+    const parsedLessonId = parsedLessonIdResult.data;
 
-    // Validate lessonId
-    if (!lessonId || isNaN(parseInt(lessonId))) {
-      return NextResponse.json({
-        error: 'Valid lesson ID is required',
-        code: 'INVALID_LESSON_ID'
-      }, { status: 400 });
-    }
-
-    const parsedLessonId = parseInt(lessonId);
-
-    // Parse request body
-    const body = await request.json();
-    const { userId: __claimedUserId, timeSpent, score, passed } = body;
+    const parsed = await readJson(request, postSchema);
+    if (!parsed.ok) return parsed.response;
+    const { userId: __claimedUserId, timeSpent, score, passed } = parsed.data;
     const __auth = await bindSessionUser(request, __claimedUserId);
     if (!__auth.ok) return __auth.response;
     const userId = __auth.userId;
-
-
-    // Validate userId
-    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
-      return NextResponse.json({
-        error: 'User ID is required',
-        code: 'MISSING_USER_ID'
-      }, { status: 400 });
-    }
-
-    // Validate timeSpent if provided
-    if (timeSpent !== undefined && timeSpent !== null) {
-      if (!Number.isInteger(timeSpent) || timeSpent < 0) {
-        return NextResponse.json({
-          error: 'Time spent must be a positive integer',
-          code: 'INVALID_TIME_SPENT'
-        }, { status: 400 });
-      }
-    }
-
-    // Validate score if provided
-    if (score !== undefined && score !== null) {
-      if (!Number.isInteger(score) || score < 0 || score > 100) {
-        return NextResponse.json({
-          error: 'Score must be an integer between 0 and 100',
-          code: 'INVALID_SCORE'
-        }, { status: 400 });
-      }
-    }
-
-    // Validate passed if provided
-    if (passed !== undefined && passed !== null) {
-      if (typeof passed !== 'boolean') {
-        return NextResponse.json({
-          error: 'Passed must be a boolean value',
-          code: 'INVALID_PASSED'
-        }, { status: 400 });
-      }
-    }
 
     // Check if lesson exists and get moduleId
     const lessonResult = await db.select({
@@ -158,7 +126,6 @@ export async function POST(
       .returning();
 
     // Calculate progress
-    // Get all lesson IDs in the course
     const courseLessonsResult = await db.select({ lessonId: lessons.id })
       .from(lessons)
       .innerJoin(courseModules, eq(lessons.moduleId, courseModules.id))
@@ -167,7 +134,6 @@ export async function POST(
     const totalLessons = courseLessonsResult.length;
     const courseLessonIds = courseLessonsResult.map(l => l.lessonId);
 
-    // Get completed lessons count for this user in this course
     const completedLessonsResult = await db.select({ count: count() })
       .from(userLessonCompletions)
       .where(
@@ -180,13 +146,11 @@ export async function POST(
     const completedLessons = completedLessonsResult[0]?.count ?? 0;
     const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
-    // Update lmsUserProgress
     const updateData: any = {
       progressPercentage: Math.round(progressPercentage * 100) / 100,
       updatedAt: new Date().toISOString()
     };
 
-    // Set startedAt if null
     if (!userProgress.startedAt) {
       updateData.startedAt = new Date().toISOString();
     }
@@ -213,9 +177,7 @@ export async function POST(
     }, { status: 201 });
 
   } catch (error) {
-    console.error('POST lesson completion error:', error);
-    return NextResponse.json({
-      error: 'Internal server error: ' + (error as Error).message
-    }, { status: 500 });
+    const ref = log.error('POST /api/learn/lessons/[id]/complete failed', error);
+    return NextResponse.json({ error: 'Internal server error', ref }, { status: 500 });
   }
 }
