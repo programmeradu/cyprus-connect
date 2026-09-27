@@ -5,6 +5,7 @@ import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { PageShell, PageHeader, Section } from "@/components/app/console/kit";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
@@ -13,6 +14,8 @@ export default function GenerateCoursePage() {
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const { user } = useUser();
+  const t = useTranslations("dashboard.learnPages.generate");
+  const tl = useTranslations("dashboard.learn");
 
   const writer = useWorkspaceAction();
   const isGenerating = writer.busy;
@@ -32,7 +35,7 @@ export default function GenerateCoursePage() {
   const generateCourse = async () => {
     const topic = formData.topic.trim();
     if (!topic) {
-      toast.error("Please enter a course topic");
+      toast.error(t("needTopic"));
       return;
     }
     // Company facts come from the shared profile; the server trusts only the session for identity.
@@ -50,7 +53,7 @@ export default function GenerateCoursePage() {
       invalidates: ["/api/learn/courses", "/api/notifications"],
     });
     if (data?.courseId) {
-      toast.success("Course created. It stays private to you until an admin publishes it.");
+      toast.success(t("created"));
       router.push(`/app/learn/${data.courseId}`);
     }
   };
@@ -64,56 +67,56 @@ export default function GenerateCoursePage() {
       loading={isPending}
       header={
         <PageHeader
-          title="AI course generator"
-          purpose="Generate a personalised sustainability course tailored to your business."
+          title={t("title")}
+          purpose={t("purpose")}
           breadcrumb={[
-            { label: "Learn", href: "/app/learn" },
-            { label: "Generate" }
+            { label: t("crumbLearn"), href: "/app/learn" },
+            { label: t("crumbGenerate") }
           ]}
         />
       }
     >
-        <Section title="Course details">
+        <Section title={t("details")}>
           <div className="vck-card space-y-5 p-5">
             <div>
               <label className="vck-label mb-2 block">
-                Course topic <span className="text-destructive">*</span>
+                {t("topic")} <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
                 value={formData.topic}
                 onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                placeholder="e.g., Carbon footprint reduction strategies"
+                placeholder={t("topicPh")}
                 maxLength={300}
                 disabled={isGenerating}
                 className="w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               />
-              <p className="vck-meta mt-1">What sustainability topic would you like to learn about?</p>
+              <p className="vck-meta mt-1">{t("topicHint")}</p>
             </div>
 
             <div>
-              <label className="vck-label mb-2 block">Industry</label>
+              <label className="vck-label mb-2 block">{t("industry")}</label>
               <select
                 value={formData.industry}
                 onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
                 disabled={isGenerating}
                 className="w-full rounded-[0.375rem] border border-[var(--vc-rule-soft)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--vc-rule)]"
               >
-                <option value="">General</option>
-                <option value="manufacturing">Manufacturing</option>
-                <option value="retail">Retail</option>
-                <option value="technology">Technology</option>
-                <option value="hospitality">Hospitality</option>
-                <option value="healthcare">Healthcare</option>
-                <option value="construction">Construction</option>
-                <option value="agriculture">Agriculture</option>
-                <option value="finance">Finance</option>
+                <option value="">{t("industries.general")}</option>
+                <option value="manufacturing">{t("industries.manufacturing")}</option>
+                <option value="retail">{t("industries.retail")}</option>
+                <option value="technology">{t("industries.technology")}</option>
+                <option value="hospitality">{t("industries.hospitality")}</option>
+                <option value="healthcare">{t("industries.healthcare")}</option>
+                <option value="construction">{t("industries.construction")}</option>
+                <option value="agriculture">{t("industries.agriculture")}</option>
+                <option value="finance">{t("industries.finance")}</option>
               </select>
-              <p className="vck-meta mt-1">The course will be tailored to your industry.</p>
+              <p className="vck-meta mt-1">{t("industryHint")}</p>
             </div>
 
             <div>
-              <label className="vck-label mb-2 block">Difficulty level</label>
+              <label className="vck-label mb-2 block">{t("level")}</label>
               <div className="grid grid-cols-3 gap-2">
                 {["beginner", "intermediate", "advanced"].map((level) => (
                   <button
@@ -121,22 +124,22 @@ export default function GenerateCoursePage() {
                     type="button"
                     onClick={() => setFormData({ ...formData, difficultyLevel: level })}
                     disabled={isGenerating}
-                    className={`vck-btn vck-btn-primary capitalize ${
+                    className={`vck-btn vck-btn-primary ${
                       formData.difficultyLevel === level ? "vck-btn-primary" : ""
                     }`}
                   >
-                    {level}
+                    {tl(level as "beginner" | "intermediate" | "advanced")}
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className="vck-label mb-2 block">Additional context (optional)</label>
+              <label className="vck-label mb-2 block">{t("context")}</label>
               <textarea
                 value={formData.customContext}
                 onChange={(e) => setFormData({ ...formData, customContext: e.target.value })}
-                placeholder="Any specific topics or challenges you'd like the course to address..."
+                placeholder={t("contextPh")}
                 rows={4}
                 maxLength={1000}
                 disabled={isGenerating}
@@ -145,15 +148,15 @@ export default function GenerateCoursePage() {
             </div>
 
             <div className="border-t border-[var(--vc-rule-soft)] pt-4">
-              <p className="vck-label mb-2">What's included</p>
+              <p className="vck-label mb-2">{t("included")}</p>
               <ul className="space-y-1.5 text-sm leading-relaxed text-muted-foreground">
-                <li>AI-generated course structure with 3-4 comprehensive modules</li>
-                <li>3-5 lessons per module with varied content types</li>
-                <li>Interactive quizzes and practical exercises</li>
-                <li>Industry-specific examples and case studies</li>
-                <li>Certificate upon completion</li>
+                <li>{t("inc1")}</li>
+                <li>{t("inc2")}</li>
+                <li>{t("inc3")}</li>
+                <li>{t("inc4")}</li>
+                <li>{t("inc5")}</li>
               </ul>
-              <p className="vck-meta mt-2">Uses one AI credit (returned if nothing usable is made). The course is private to you until an admin publishes it.</p>
+              <p className="vck-meta mt-2">{t("cost")}</p>
             </div>
 
             {writer.error && (
@@ -168,7 +171,7 @@ export default function GenerateCoursePage() {
               disabled={!formData.topic.trim() || isGenerating}
               className="vck-btn vck-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {isGenerating ? "Writing your course\u2026 this can take a minute" : "Generate course with AI"}
+              {isGenerating ? t("making") : t("make")}
             </button>
           </div>
         </Section>
