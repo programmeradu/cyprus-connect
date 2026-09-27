@@ -5,6 +5,7 @@ import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/conso
 import { useSession } from "@/lib/auth-client";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import {
   PageShell,
@@ -56,11 +57,13 @@ export default function CourseDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const courseId = params.id as string;
+  const t = useTranslations("dashboard.learnPages.course");
+  const locale = useLocale();
 
   // Shared record: the library, this page and each lesson read the same copy.
   const courseRes = useWorkspaceResource<Course>(session?.user?.id && courseId ? `/api/learn/courses/${courseId}` : null);
   const course = courseRes.data ?? null;
-  const error = courseRes.error ? "This course could not be loaded." : null;
+  const error = courseRes.error ? t("loadError") : null;
   const writer = useWorkspaceAction();
 
   useEffect(() => {
@@ -103,7 +106,7 @@ export default function CourseDetailsPage() {
   const lessonColumns: Column<Lesson & { moduleTitle: string }>[] = [
     {
       key: "title",
-      header: "Lesson",
+      header: t("colLesson"),
       render: (l) => (
         <div>
           <p className="font-medium break-words">{l.title}</p>
@@ -111,9 +114,9 @@ export default function CourseDetailsPage() {
         </div>
       )
     },
-    { key: "type", header: "Type", hideOnMobile: true, render: (l) => <span className="vck-tag capitalize">{l.contentType}</span> },
-    { key: "minutes", header: "Minutes", numeric: true, render: (l) => l.estimatedMinutes },
-    { key: "status", header: "Status", numeric: true, render: (l) => (l.isCompleted ? "Done" : "\u2013") }
+    { key: "type", header: t("colType"), hideOnMobile: true, render: (l) => <span className="vck-tag capitalize">{l.contentType}</span> },
+    { key: "minutes", header: t("colMinutes"), numeric: true, render: (l) => l.estimatedMinutes },
+    { key: "status", header: t("colStatus"), numeric: true, render: (l) => (l.isCompleted ? t("done") : "\u2013") }
   ];
 
   return (
@@ -124,13 +127,13 @@ export default function CourseDetailsPage() {
       onRetry={courseRes.reload}
       header={
         <PageHeader
-          title={course?.title ?? "Course"}
+          title={course?.title ?? t("fallbackTitle")}
           purpose={course?.description}
-          breadcrumb={[{ label: "Learn", href: "/app/learn" }, { label: course?.title ?? "" }]}
+          breadcrumb={[{ label: t("crumbLearn"), href: "/app/learn" }, { label: course?.title ?? "" }]}
           actions={
             !course || totalLessons === 0 ? undefined : !course.isEnrolled ? (
               <button type="button" className="vck-btn vck-btn-primary" disabled={writer.busy} onClick={startCourse}>
-                {writer.busy ? "Starting\u2026" : "Start course"}
+                {writer.busy ? t("starting") : t("start")}
               </button>
             ) : progressPercentage < 100 ? (
               <button
@@ -141,7 +144,7 @@ export default function CourseDetailsPage() {
                   if (next) startLesson(next);
                 }}
               >
-                Continue learning
+                {t("continue")}
               </button>
             ) : undefined
           }
@@ -150,25 +153,27 @@ export default function CourseDetailsPage() {
     >
       {course && (
         <>
-          <Section title="Overview">
+          <Section title={t("overview")}>
             <MetricRow columns={4}>
-              <Metric label="Modules" value={course.modules.length} />
-              <Metric label="Lessons" value={totalLessons} />
-              <Metric label="Completed" value={completedCount} />
-              <Metric label="Total time" value={`${totalHours}h`} />
+              <Metric label={t("modules")} value={course.modules.length} />
+              <Metric label={t("lessons")} value={totalLessons} />
+              <Metric label={t("completed")} value={completedCount} />
+              <Metric label={t("totalTime")} value={t("hoursShort", { count: totalHours })} />
             </MetricRow>
             {course.isEnrolled && (
-              <p className="vck-meta mt-3">{Math.round(progressPercentage)}% complete {"\u00b7"} {completedCount} / {totalLessons} lessons</p>
+              <p className="vck-meta mt-3">{t("progress", { percent: Math.round(progressPercentage), done: completedCount, total: totalLessons })}</p>
             )}
           </Section>
 
-          <Section title="Curriculum">
+          {locale === "el" && <p className="vck-meta">{t("aiNote")}</p>}
+
+          <Section title={t("curriculum")}>
             <DataTable
               columns={lessonColumns}
               rows={allLessons}
               rowKey={(l) => String(l.id)}
               onRowClick={(l) => startLesson(l.id)}
-              empty={<Empty title="No lessons yet" body="This course does not have any published lessons yet." />}
+              empty={<Empty title={t("noLessons")} body={t("noLessonsBody")} />}
             />
           </Section>
         </>
