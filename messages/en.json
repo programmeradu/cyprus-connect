@@ -1027,6 +1027,46 @@
         "approve": "Approve and send",
         "reject": "Reject"
       }
+    },
+    "reports": {
+      "title": "Deliverables",
+      "purpose": "Every report an agent drafted for this workspace. Open one to review it, then export it.",
+      "col": {
+        "document": "Document",
+        "framework": "Framework",
+        "period": "Period",
+        "author": "Drafted by",
+        "status": "Status",
+        "created": "Created"
+      },
+      "noSummaryRow": "No summary recorded.",
+      "agent": "Reporting agent",
+      "reports": "Reports",
+      "status": {
+        "draft": "Draft",
+        "in_review": "In review",
+        "final": "Final"
+      },
+      "emptyTitle": "No deliverable yet",
+      "emptyBody": "Ask the copilot for a report, for example 'draft the VSME report for 2026'. When you approve the proposal, the agent writes the draft and it appears here.",
+      "d": {
+        "report": "Report",
+        "thisWorkspace": "This workspace",
+        "purpose": "{framework} draft for {workspace}, reporting period {period}. Drafted by {agent}.",
+        "theAgent": "the reporting agent",
+        "reading": "Reading the document.",
+        "all": "All deliverables",
+        "toReview": "Send to review",
+        "final": "Mark final",
+        "pdf": "Export PDF",
+        "summary": "Summary",
+        "gaps": "{count, plural, one {# data gap needs} other {# data gaps need}} a person to complete them before you file this report.",
+        "noGaps": "No data gap was recorded in this draft. Review it before you file it.",
+        "noSummary": "No summary was recorded for this draft.",
+        "disclosures": "{framework} disclosures",
+        "dataGaps": "Data gaps",
+        "contentNote": "The agent writes report content in English."
+      }
     }
   },
   "onboarding": {

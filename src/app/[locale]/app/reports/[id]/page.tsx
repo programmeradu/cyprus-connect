@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { ConsolePage, Plate, Btn, State } from "@/components/app/console/kit";
@@ -48,6 +49,8 @@ const TONE: Record<string, "good" | "warn" | "idle"> = {
 };
 
 export default function ReportPage() {
+  const t = useTranslations("dashboard.reports");
+  const english = useLocale() !== "el";
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const path = id ? `/api/console/reports/${id}` : null;
@@ -55,7 +58,7 @@ export default function ReportPage() {
   const action = useWorkspaceAction();
   const [exporting, setExporting] = useState(false);
   const report = resource.data?.report ?? null;
-  const workspaceName = resource.data?.workspace?.name ?? "This workspace";
+  const workspaceName = resource.data?.workspace?.name ?? t("d.thisWorkspace");
   const error = resource.error ?? action.error;
   const busy = action.busy || exporting;
   const load = resource.reload;
@@ -94,11 +97,11 @@ export default function ReportPage() {
 
   return (
     <ConsolePage
-      title={report?.title ?? "Report"}
+      title={report?.title ?? t("d.report")}
       purpose={
         report
-          ? `${report.framework} draft for ${workspaceName}, reporting period ${report.periodLabel}. Drafted by ${report.agentName ?? "the reporting agent"}.`
-          : "Reading the document."
+          ? t("d.purpose", { framework: report.framework, workspace: workspaceName, period: report.periodLabel, agent: report.agentName ?? t("d.theAgent") })
+          : t("d.reading")
       }
       loading={!report && !error}
       error={error}
@@ -107,20 +110,20 @@ export default function ReportPage() {
         report ? (
           <div className="vck-actions">
             <Link href={"/app/reports" as never} className="vck-link">
-              All deliverables
+              {t("d.all")}
             </Link>
             {report.status !== "in_review" && report.status !== "final" && (
               <Btn disabled={busy} onClick={() => void setStatus("in_review")}>
-                Send to review
+                {t("d.toReview")}
               </Btn>
             )}
             {report.status === "in_review" && (
               <Btn disabled={busy} onClick={() => void setStatus("final")}>
-                Mark final
+                {t("d.final")}
               </Btn>
             )}
             <Btn variant="primary" disabled={busy} onClick={() => void exportPdf()}>
-              Export PDF
+              {t("d.pdf")}
             </Btn>
           </div>
         ) : null
@@ -129,18 +132,19 @@ export default function ReportPage() {
       {report && (
         <>
           <Plate
-            label="Summary"
-            action={<State tone={TONE[report.status] ?? "idle"}>{report.status.replace("_", " ")}</State>}
+            label={t("d.summary")}
+            action={<State tone={TONE[report.status] ?? "idle"}>{report.status in TONE ? t(`status.${report.status}` as "status.draft") : report.status.replace("_", " ")}</State>}
             foot={
               gapCount > 0
-                ? `${gapCount} data gap${gapCount === 1 ? "" : "s"} need a person to complete them before you file this report.`
-                : "No data gap was recorded in this draft. Review it before you file it."
+                ? t("d.gaps", { count: gapCount })
+                : t("d.noGaps")
             }
           >
-            <p className="vcr-lede">{report.summary ?? "No summary was recorded for this draft."}</p>
+            <p className="vcr-lede">{report.summary ?? t("d.noSummary")}</p>
+            {!english && <p className="vck-quiet">{t("d.contentNote")}</p>}
           </Plate>
 
-          <Plate label={`${report.framework} disclosures`}>
+          <Plate label={t("d.disclosures", { framework: report.framework })}>
             <article className="vcr-doc">
               {report.sections.map((section) => (
                 <section key={section.code} className="vcr-sec">
@@ -166,7 +170,7 @@ export default function ReportPage() {
 
                   {section.gaps.length > 0 && (
                     <div className="vcr-gaps">
-                      <span>Data gaps</span>
+                      <span>{t("d.dataGaps")}</span>
                       <ul>
                         {section.gaps.map((gap, index) => (
                           <li key={`${section.code}-g${index}`}>{gap}</li>
