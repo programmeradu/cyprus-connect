@@ -93,3 +93,11 @@ Verify each date on the official page before you apply.
 - [ ] CyEC Accelerator 2027 – expect June.
 - [ ] RIF PRE-SEED / SEED 2027 – expect May–June.
 - [ ] Ask DMRID which accelerator or grant evidence counts for renewal.
+
+## Startup Visa re-evaluation (March) - revenue plan (added 2026-09-27)
+- [ ] Email DMRID now: ask in writing how the growth test (>=15% revenue growth in audited N-1/N-2 accounts, or >=EUR150k invested in Cyprus) applies to a company incorporated late 2026 with no prior-year accounts. Ask if management accounts, signed contracts or a new-company exemption are accepted.
+- [ ] Incorporate ASAP; open a Cyprus business bank account; hire a Cyprus auditor early so accounts can be audited fast.
+- [ ] Record every euro spent in Cyprus from your own funds as a founder loan or share capital, with receipts (can count toward the EUR150k investment route).
+- [ ] Before SLUSH: get 3-5 paid pilots (CBAM report service for Cyprus importers, fixed price e.g. EUR500-1,500), invoiced by the Cyprus company.
+- [ ] Record monthly revenue from launch so growth from month to month can be shown alongside the audited figures.
+- [ ] At/after SLUSH: pursue angel/pre-seed or grant money (RIF) paid into the Cyprus company to strengthen the investment route.
