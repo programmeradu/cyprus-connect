@@ -74,3 +74,15 @@ Approving "Sign the 2026 CBAM declaration" records your signature on that exact 
 - Nothing new to do outside the app. Dashboard connections now show only QuickBooks and imported customs lines, from real data. Old sample connection rows are no longer read, so there is no need to delete them.
 - **Production database:** run `scripts/sql/0023_remove_sample_rows.sql` once (after 0020–0022). It removes seeded sample agent runs, tasks, figures and connection rows, and the unused demo workspace. Already applied to preview.
 - **Production database:** also run `scripts/sql/0024_workspace_revenue.sql` (adds yearly revenue; applied to preview).
+
+## Accelerators to check before the March 2027 Startup Visa re-evaluation (added 27 Sep 2026)
+Verify each date on the official page before you apply.
+- [ ] Founder Institute Cyprus (Nicosia) – rolling 2026/27 intake. https://fi.co/insight/build-a-great-startup-in-2026-with-the-fi-cyprus-startup-accelerator
+- [ ] EUC Startup Programme powered by Microsoft – 5th call opened May 2026; watch for the next call. https://euc.ac.cy/en/grow-your-start-up-may26/
+- [ ] Plug and Play Cyprus – ask about the next batch. https://www.plugandplaytechcenter.com/innovation-services/our-programs/cyprus-accelerator-program
+- [ ] Women TechEU 2 (EIC) – deadline 14 Jun 2027 (only if a woman leads the company). https://www.climate-kic.org/get-involved/open-calls/
+- [ ] EIT Jumpstarter 2027 – expect a spring call (2026 closed 17 May).
+- [ ] Startups4Peace 2027 – expect a June call (2026 closed 10 Aug).
+- [ ] CyEC Accelerator 2027 – expect June.
+- [ ] RIF PRE-SEED / SEED 2027 – expect May–June.
+- [ ] Ask DMRID which accelerator or grant evidence counts for renewal.
