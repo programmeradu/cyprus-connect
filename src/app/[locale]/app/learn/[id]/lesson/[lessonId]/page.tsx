@@ -143,7 +143,7 @@ export default function LessonViewerPage() {
       header={
         <PageHeader
           title={lesson?.title ?? t("fallbackTitle")}
-          purpose={lesson ? `${typeLabel(lesson.contentType)} \u00b7 ${t("minutes", { count: lesson.estimatedMinutes })}` : undefined}
+          purpose={lesson ? `${typeLabel(lesson.contentType)} \u00b7 ${t("minutes", { count: lesson.estimatedMinutes })}${locale === "el" ? ` \u00b7 ${t("aiNote")}` : ""}` : undefined}
           breadcrumb={[
             { label: t("crumbLearn"), href: "/app/learn" },
             { label: t("crumbCourse"), href: `/app/learn/${courseId}` },
