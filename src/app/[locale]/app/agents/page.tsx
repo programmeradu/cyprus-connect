@@ -64,7 +64,10 @@ const AGENT_DATA = ["/api/console/agents", "/api/console/cbam"];
 
 export default function AgentsPage() {
   const tr = useTranslations("dashboard.agents");
-  const dateLocale = useLocale() === "el" ? "el-CY" : "en-GB";
+  const lang = useLocale() === "el" ? "el" : "en";
+  const dateLocale = lang === "el" ? "el-CY" : "en-GB";
+  const roleOf = (a: RosterAgent) => (tr.has(`roster.${a.key}.role` as any) ? tr(`roster.${a.key}.role` as any) : a.role);
+  const missionOf = (a: RosterAgent) => (tr.has(`roster.${a.key}.mission` as any) ? tr(`roster.${a.key}.mission` as any) : a.mission);
   const when = (iso: string) =>
     new Date(iso).toLocaleString(dateLocale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   const [filter, setFilter] = useState<string>("");
@@ -109,7 +112,7 @@ export default function AgentsPage() {
     } finally {
       setBusy(null);
     }
-  }, [loadSteps]);
+  }, [loadSteps, tr]);
 
   const setPause = useCallback(async (agentKey: string | null, paused: boolean) => {
     setBusy(`pause:${agentKey ?? "all"}`);
@@ -166,15 +169,15 @@ export default function AgentsPage() {
           const tone = c?.paused || paused ? "warn" : last?.status === "failed" ? "bad" : "good";
           const stateText = c?.paused ? tr("state.pausedAll") : paused ? tr("state.paused") : tr("state.active");
           return (
-            <Plate key={a.key} label={a.role} action={<State tone={tone}>{stateText}</State>}>
+            <Plate key={a.key} label={roleOf(a)} action={<State tone={tone}>{stateText}</State>}>
               <div className="vck-agent-card">
                 <h3>{a.name}</h3>
-                <p className="vck-quiet">{a.mission}</p>
+                <p className="vck-quiet">{missionOf(a)}</p>
                 <dl>
                   <div><dt>{tr("schedule")}</dt><dd>{tr("scheduleValue")}</dd></div>
                   <div>
                     <dt>{tr("lastRun")}</dt>
-                    <dd>{last ? `${when(last.startedAt)} · ${runStatusLabel(last.status).label}` : tr("notRunYet")}</dd>
+                    <dd>{last ? `${when(last.startedAt)} · ${runStatusLabel(last.status, lang).label}` : tr("notRunYet")}</dd>
                   </div>
                   {paused && sw && (
                     <div><dt>{tr("pausedBy")}</dt><dd>{sw.by ?? "—"} · {when(sw.at)}</dd></div>
@@ -199,7 +202,7 @@ export default function AgentsPage() {
           <p className="vck-quiet vck-agent-planned-lead">{tr("plannedLead")}</p>
           <ul className="vck-agent-planned">
             {plannedAgents.map((a) => (
-              <li key={a.key}><strong>{a.name}</strong><span>{a.role}</span></li>
+              <li key={a.key}><strong>{a.name}</strong><span>{roleOf(a)}</span></li>
             ))}
           </ul>
         </Plate>
@@ -231,7 +234,7 @@ export default function AgentsPage() {
         ) : (
           <ol className="vck-runs">
             {shownRuns.map((r) => {
-              const st = runStatusLabel(r.status);
+              const st = runStatusLabel(r.status, lang);
               const isOpen = open === r.id;
               const s = steps[r.id];
               return (
@@ -244,7 +247,7 @@ export default function AgentsPage() {
                     <span className="vck-run-meta">
                       <State tone={st.tone}>{st.label}</State>
                       {r.sample && <State tone="idle">{tr("sampleData")}</State>}
-                      <span className="vck-quiet">{when(r.startedAt)} · {triggerLabel(r.trigger)} · {duration(r.durationMs)}</span>
+                      <span className="vck-quiet">{when(r.startedAt)} · {triggerLabel(r.trigger, lang)} · {duration(r.durationMs)}</span>
                       <span className="vck-quiet">
                         {tr("steps", { count: r.steps.total })}
                         {r.steps.waiting ? ` · ${tr("waiting", { count: r.steps.waiting })}` : ""}
@@ -264,9 +267,9 @@ export default function AgentsPage() {
                       ) : (
                         <ol className="vck-steps">
                           {s.map((step) => {
-                            const d = decisionLabel(step.decision);
-                            const t = toolLabel(step.tool);
-                            const out = summarizeOutput(step.decision, step.output);
+                            const d = decisionLabel(step.decision, lang);
+                            const t = toolLabel(step.tool, lang);
+                            const out = summarizeOutput(step.decision, step.output, lang);
                             return (
                               <Fragment key={step.id}>
                                 <li data-decision={step.decision}>
@@ -276,7 +279,7 @@ export default function AgentsPage() {
                                       <strong>{t.verb}</strong>
                                       <State tone={d.tone}>{d.label}</State>
                                     </div>
-                                    <p className="vck-quiet">{riskLabel(step.riskLevel)} · {new Date(step.createdAt).toLocaleTimeString(dateLocale)}</p>
+                                    <p className="vck-quiet">{riskLabel(step.riskLevel, lang)} · {new Date(step.createdAt).toLocaleTimeString(dateLocale)}</p>
                                     {out && <p className="vck-step-out">{out}</p>}
                                     <details>
                                       <summary>{tr("exactInput")}</summary>
