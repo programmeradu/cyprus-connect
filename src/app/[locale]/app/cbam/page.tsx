@@ -5,7 +5,8 @@
  * figure below is the Border agent's stored draft. Nothing is invented here.
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   Btn,
   ConsolePage,
@@ -71,27 +72,31 @@ const TEMPLATE =
   "import_date,cn_code,description,origin_country,supplier,installation_id,net_mass,direct_see,indirect_see,customs_ref\n" +
   "2026-03-14,7208 51,Hot-rolled steel plate,TR,Example Steel AS,TR-INST-001,24.5,1.9,,CY26IM000123\n";
 
-const STATUS: Record<string, { tone: "good" | "warn" | "bad" | "idle" | "live"; label: string }> = {
-  signed: { tone: "good", label: "Signed" },
-  awaiting_signature: { tone: "live", label: "Ready" },
-  below_threshold: { tone: "idle", label: "Below 50 t threshold" },
-  needs_data: { tone: "bad", label: "Needs data fixes" },
+const STATUS_TONE: Record<string, "good" | "warn" | "bad" | "idle" | "live"> = {
+  signed: "good",
+  awaiting_signature: "live",
+  below_threshold: "idle",
+  needs_data: "bad",
 };
 
-const BASIS: Record<DraftLine["basis"], { tone: "good" | "warn" | "bad"; label: string }> = {
-  actual: { tone: "good", label: "Supplier actual" },
-  mixed: { tone: "warn", label: "Part default" },
-  default: { tone: "warn", label: "Default value" },
-  unknown_cn: { tone: "bad", label: "Not a CBAM code" },
+const BASIS_TONE: Record<DraftLine["basis"], "good" | "warn" | "bad"> = {
+  actual: "good",
+  mixed: "warn",
+  default: "warn",
+  unknown_cn: "bad",
 };
-
-const n = (v: number, dp = 2) => v.toLocaleString("en-GB", { maximumFractionDigits: dp });
-const dateLong = (iso: string) =>
-  new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 const CBAM = "/api/console/cbam";
 
 export default function CbamPage() {
+  const t = useTranslations("dashboard.cbam");
+  const loc = useLocale() === "el" ? "el-CY" : "en-GB";
+  const n = useCallback((v: number, dp = 2) => v.toLocaleString(loc, { maximumFractionDigits: dp }), [loc]);
+  const dateLong = useCallback(
+    (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00Z`).toLocaleDateString(loc, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }),
+    [loc],
+  );
+  const statusLabel = useMemo(() => (s: string) => (s in STATUS_TONE ? t(`status.${s}` as "status.signed") : s), [t]);
   const [year, setYear] = useState<number | null>(null);
   const [busy, setBusy] = useState<"run" | "upload" | number | null>(null);
   const [note, setNote] = useState<{ tone: "good" | "warn"; text: string; details?: string[] } | null>(null);
@@ -107,39 +112,39 @@ export default function CbamPage() {
     setNote(null);
     try {
       const b = await workspaceRequest<{ status?: string; summary?: string }>("/api/console/agents/run", { method: "POST", body: { agentKey: "cbam" } });
-      setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? "Run finished." });
+      setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? t("runFinished") });
       changed();
     } catch (e) {
-      setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not reach the server. Try again." });
+      setNote({ tone: "warn", text: e instanceof Error ? e.message : t("noServer") });
     } finally {
       setBusy(null);
     }
-  }, [changed]);
+  }, [changed, t]);
 
   const upload = useCallback(
     async (file: File) => {
       setBusy("upload");
       setNote(null);
       try {
-        if (file.size > 1_000_000) throw new Error("The file is over 1 MB. Split it and upload the parts.");
+        if (file.size > 1_000_000) throw new Error(t("tooBig"));
         const csv = await file.text();
         // A file where no row could be read still answers, with each row's problem listed.
         const b = await workspaceRequest<{ inserted?: number; duplicates?: number; errors?: string[] }>(CBAM, { method: "POST", body: { csv } });
         const errs: string[] = b.errors ?? [];
         setNote({
           tone: errs.length || !b.inserted ? "warn" : "good",
-          text: `Added ${b.inserted ?? 0} line(s)${b.duplicates ? `, ${b.duplicates} already there` : ""}${errs.length ? `, ${errs.length} row(s) skipped` : ""}. Run the agent to update the draft.`,
+          text: [t("added", { inserted: b.inserted ?? 0 }), b.duplicates ? t("addedDup", { count: b.duplicates }) : "", errs.length ? t("addedSkipped", { count: errs.length }) : "", t("runToUpdate")].filter(Boolean).join(" "),
           details: errs.slice(0, 12),
         });
         changed();
       } catch (e) {
-        setNote({ tone: "warn", text: e instanceof Error ? e.message : "Upload failed." });
+        setNote({ tone: "warn", text: e instanceof Error ? e.message : t("uploadFailed") });
       } finally {
         setBusy(null);
         if (fileRef.current) fileRef.current.value = "";
       }
     },
-    [changed],
+    [changed, t],
   );
 
   const removeLine = useCallback(
@@ -149,12 +154,12 @@ export default function CbamPage() {
         await workspaceRequest(`${CBAM}?id=${id}`, { method: "DELETE" });
         changed();
       } catch (e) {
-        setNote({ tone: "warn", text: e instanceof Error ? e.message : "Could not remove that line." });
+        setNote({ tone: "warn", text: e instanceof Error ? e.message : t("removeFailed") });
       } finally {
         setBusy(null);
       }
     },
-    [changed],
+    [changed, t],
   );
 
   const downloadTemplate = () => {
@@ -173,46 +178,46 @@ export default function CbamPage() {
   const nowYear = new Date().getUTCFullYear();
 
   const columns: Column<Line>[] = [
-    { key: "date", header: "Date", render: (l) => l.importDate },
-    { key: "cn", header: "CN code", render: (l) => <>{l.cnCode}{l.description ? <><br /><span className="vck-quiet">{l.description}</span></> : null}</> },
-    { key: "supplier", header: "Supplier", render: (l) => <>{l.supplierName} · {l.originCountry}{l.installationId ? <><br /><span className="vck-quiet">{l.installationId}</span></> : null}</> },
-    { key: "mass", header: "Mass", numeric: true, render: (l) => `${n(l.netMass, 3)} ${basisById.get(l.id)?.unit ?? "t"}` },
-    { key: "emb", header: "Embedded tCO₂e", numeric: true, render: (l) => (basisById.has(l.id) ? n(basisById.get(l.id)!.embeddedT, 3) : "Run agent") },
-    { key: "basis", header: "Basis", render: (l) => { const b = basisById.get(l.id); return b ? <State tone={BASIS[b.basis].tone}>{BASIS[b.basis].label}</State> : <State tone="idle">Not drafted yet</State>; } },
-    { key: "x", header: "", render: (l) => <Btn variant="text" disabled={busy !== null} onClick={() => removeLine(l.id)} aria-label={`Remove line ${l.id}`}>{busy === l.id ? "Removing…" : "Remove"}</Btn> },
+    { key: "date", header: t("col.date"), render: (l) => l.importDate },
+    { key: "cn", header: t("col.cn"), render: (l) => <>{l.cnCode}{l.description ? <><br /><span className="vck-quiet">{l.description}</span></> : null}</> },
+    { key: "supplier", header: t("col.supplier"), render: (l) => <>{l.supplierName} · {l.originCountry}{l.installationId ? <><br /><span className="vck-quiet">{l.installationId}</span></> : null}</> },
+    { key: "mass", header: t("col.mass"), numeric: true, render: (l) => `${n(l.netMass, 3)} ${basisById.get(l.id)?.unit ?? "t"}` },
+    { key: "emb", header: t("col.embedded"), numeric: true, render: (l) => (basisById.has(l.id) ? n(basisById.get(l.id)!.embeddedT, 3) : t("runAgentCell")) },
+    { key: "basis", header: t("col.basis"), render: (l) => { const b = basisById.get(l.id); return b ? <State tone={BASIS_TONE[b.basis]}>{t(`basis.${b.basis}`)}</State> : <State tone="idle">{t("notDrafted")}</State>; } },
+    { key: "x", header: "", render: (l) => <Btn variant="text" disabled={busy !== null} onClick={() => removeLine(l.id)} aria-label={t("removeLine", { id: l.id })}>{busy === l.id ? t("removing") : t("remove")}</Btn> },
   ];
 
   const signatureText = !decl
     ? null
     : decl.status === "signed"
-      ? `Signed by ${decl.signedBy} on ${decl.signedAt ? new Date(decl.signedAt).toLocaleString("en-GB") : "—"}. Submission to the EU CBAM Registry is still done by you, in your own declarant account.`
+      ? t("sig.signed", { name: decl.signedBy ?? "—", when: decl.signedAt ? new Date(decl.signedAt).toLocaleString(loc) : "—" })
       : decl.status === "awaiting_signature"
         ? data!.year < nowYear
-          ? "The agent has asked for your signature. Approve “Sign the " + data!.year + " CBAM declaration” in your review queue; it signs this exact version only."
-          : `This is a running tally. The agent asks for your signature after 31 December ${data!.year}.`
+          ? t("sig.askPast", { year: data!.year })
+          : t("sig.running", { year: data!.year })
         : decl.status === "below_threshold"
-          ? "Your imports are under 50 tonnes this year, so no declaration is needed unless that changes."
-          : "Fix the flagged lines first. The agent will not ask for a signature while lines are invalid.";
+          ? t("sig.below")
+          : t("sig.fix");
 
   return (
     <ConsolePage
-      title="CBAM declaration"
-      purpose="Border turns your customs import lines into the annual CBAM declaration, chases missing supplier data, and asks you to sign."
+      title={t("title")}
+      purpose={t("purpose")}
       loading={!data && !error}
       error={error}
       onRetry={cbam.reload}
       actions={
         <div className="vck-cbam-actions">
           {data && data.years.length > 1 && (
-            <select className="vck-cbam-year" aria-label="Year" value={shownYear ?? ""} onChange={(e) => setYear(Number(e.target.value))}>
+            <select className="vck-cbam-year" aria-label={t("year")} value={shownYear ?? ""} onChange={(e) => setYear(Number(e.target.value))}>
               {data.years.map((y) => <option key={y} value={y}>{y}</option>)}
             </select>
           )}
           <label className="vck-btn vck-btn-quiet">
-            {busy === "upload" ? "Uploading…" : "Upload import CSV"}
+            {busy === "upload" ? t("uploading") : t("upload")}
             <input ref={fileRef} type="file" accept=".csv,text/csv" disabled={busy !== null} onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
           </label>
-          <Btn variant="primary" onClick={runAgent} disabled={busy !== null}>{busy === "run" ? "Running…" : "Run CBAM agent"}</Btn>
+          <Btn variant="primary" onClick={runAgent} disabled={busy !== null}>{busy === "run" ? t("running") : t("run")}</Btn>
         </div>
       }
     >
@@ -225,36 +230,39 @@ export default function CbamPage() {
 
       {data && data.lines.length === 0 && !decl ? (
         <Empty
-          title="No CBAM imports yet"
-          body="Upload your customs import lines for iron and steel, aluminium, cement, fertilisers, hydrogen or electricity. Border builds the declaration from them. Add supplier actual values where you have them; empty cells use indicative defaults and get flagged."
-          action={{ label: "Download the CSV template", onClick: downloadTemplate }}
+          title={t("emptyTitle")}
+          body={t("emptyBody")}
+          action={{ label: t("downloadTemplate"), onClick: downloadTemplate }}
         />
       ) : (
         data && (
           <>
             {draft ? (
               <ReadingRail>
-                <Reading label={`Embedded emissions ${data.year}`} value={n(draft.totals.embeddedT, 1)} unit="tCO₂e" note={`${n(draft.totals.directT, 1)} direct · ${n(draft.totals.indirectT, 1)} indirect`} />
-                <Reading label="Mass counted" value={n(draft.totals.massTonnesCounted, 1)} unit="t" tone={draft.totals.massTonnesCounted >= 50 ? "warn" : "flat"} delta={draft.totals.massTonnesCounted >= 50 ? "Above 50 t" : "Under 50 t"} note="threshold, excl. electricity & hydrogen" />
-                <Reading label="On default values" value={n(draft.totals.defaultShare * 100, 0)} unit="%" tone={draft.totals.defaultShare > 0 ? "warn" : "good"} note="of embedded emissions" />
-                <Reading label="Declaration due" value={dateLong(draft.dueDate)} note={STATUS[decl!.status]?.label ?? decl!.status} />
+                <Reading label={t("r.embedded", { year: data.year })} value={n(draft.totals.embeddedT, 1)} unit="tCO₂e" note={t("r.split", { direct: n(draft.totals.directT, 1), indirect: n(draft.totals.indirectT, 1) })} />
+                <Reading label={t("r.mass")} value={n(draft.totals.massTonnesCounted, 1)} unit="t" tone={draft.totals.massTonnesCounted >= 50 ? "warn" : "flat"} delta={draft.totals.massTonnesCounted >= 50 ? t("r.above") : t("r.under")} note={t("r.massNote")} />
+                <Reading label={t("r.defaults")} value={n(draft.totals.defaultShare * 100, 0)} unit="%" tone={draft.totals.defaultShare > 0 ? "warn" : "good"} note={t("r.defaultsNote")} />
+                <Reading label={t("r.due")} value={dateLong(draft.dueDate)} note={statusLabel(decl!.status)} />
               </ReadingRail>
             ) : (
-              <Empty title="No draft yet" body="Run the CBAM agent to build the declaration from these lines." />
+              <Empty title={t("noDraftTitle")} body={t("noDraftBody")} />
             )}
 
             {decl && (
               <PlateGrid columns={2}>
-                <Plate label="Signature" meta={<State tone={STATUS[decl.status]?.tone ?? "idle"}>{STATUS[decl.status]?.label ?? decl.status}</State>}
-                  foot={<span className="vck-cbam-hash">Draft fingerprint {decl.draftHash}</span>}>
+                <Plate label={t("signature")} meta={<State tone={STATUS_TONE[decl.status] ?? "idle"}>{statusLabel(decl.status)}</State>}
+                  foot={<span className="vck-cbam-hash">{t("fingerprint", { hash: decl.draftHash })}</span>}>
                   <p className="vck-cbam-note">{signatureText}</p>
-                  {stale && <p className="vck-cbam-note" data-tone="warn">Lines changed since the last run. Run the agent to refresh the draft.</p>}
+                  {stale && <p className="vck-cbam-note" data-tone="warn">{t("stale")}</p>}
                 </Plate>
-                <Plate label="What Border needs" meta={draft?.issues.length ? String(draft.issues.length) : "Nothing"} metaTone={draft?.issues.length ? "warn" : "good"}>
+                <Plate label={t("needs")} meta={draft?.issues.length ? String(draft.issues.length) : t("nothing")} metaTone={draft?.issues.length ? "warn" : "good"}>
                   {draft && draft.issues.length ? (
-                    <ul className="vck-list">{draft.issues.map((i) => <li key={i.message}>{i.message}</li>)}</ul>
+                    <>
+                      <ul className="vck-list">{draft.issues.map((i) => <li key={i.message}>{i.message}</li>)}</ul>
+                      {loc !== "en-GB" && <p className="vck-cbam-note vck-quiet">{t("issuesNote")}</p>}
+                    </>
                   ) : (
-                    <p className="vck-cbam-note">Every line has supplier actual values and a valid CN code.</p>
+                    <p className="vck-cbam-note">{t("allGood")}</p>
                   )}
                 </Plate>
               </PlateGrid>
@@ -274,26 +282,26 @@ export default function CbamPage() {
             <RegistryPlate key={`${data.year}|${JSON.stringify(data.declarant)}`} year={data.year} declarant={data.declarant} gaps={data.exportGaps} hasDraft={Boolean(decl)} onSaved={changed} />
 
             {draft && draft.bySupplier.length > 0 && (
-              <Plate label="By supplier" flush>
+              <Plate label={t("bySupplier")} flush>
                 <div className="vck-cbam-table">
                 <ConsoleTable
                   rows={draft.bySupplier}
                   rowKey={(r) => r.supplierName}
                   columns={[
-                    { key: "s", header: "Supplier", render: (r) => r.supplierName },
-                    { key: "l", header: "Lines", numeric: true, render: (r) => r.lines },
-                    { key: "d", header: "On defaults", numeric: true, render: (r) => r.defaultLines },
-                    { key: "e", header: "Embedded tCO₂e", numeric: true, render: (r) => n(r.embeddedT, 2) },
+                    { key: "s", header: t("col.supplier"), render: (r) => r.supplierName },
+                    { key: "l", header: t("col.lines"), numeric: true, render: (r) => r.lines },
+                    { key: "d", header: t("col.onDefaults"), numeric: true, render: (r) => r.defaultLines },
+                    { key: "e", header: t("col.embedded"), numeric: true, render: (r) => n(r.embeddedT, 2) },
                   ]}
                 />
                 </div>
               </Plate>
             )}
 
-            <Plate label={`Import lines ${data.year}`} meta={String(data.lines.length)} action={<Btn variant="text" onClick={downloadTemplate}>CSV template</Btn>} flush
-              foot="Default values are indicative, not the Commission's definitive table. Replace them with supplier actual data before you sign.">
+            <Plate label={t("importLines", { year: data.year })} meta={String(data.lines.length)} action={<Btn variant="text" onClick={downloadTemplate}>{t("template")}</Btn>} flush
+              foot={t("linesFoot")}>
               <div className="vck-cbam-table vck-cbam-table-wide">
-                <ConsoleTable rows={data.lines} rowKey={(l) => String(l.id)} columns={columns} empty="No lines for this year." />
+                <ConsoleTable rows={data.lines} rowKey={(l) => String(l.id)} columns={columns} empty={t("noLines")} />
               </div>
             </Plate>
           </>
