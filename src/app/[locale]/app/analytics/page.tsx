@@ -186,23 +186,23 @@ export default function AnalyticsPage() {
           <Section title={t("byCategory")}>
             <DataTable
               columns={[
-                { key: "label", header: "Category", render: (r) => r.label },
-                { key: "pct", header: "Share", numeric: true, render: (r) => `${r.percentage.toFixed(0)}%` }
+                { key: "label", header: t("x.category"), render: (r) => r.label },
+                { key: "pct", header: t("x.share"), numeric: true, render: (r) => `${r.percentage.toFixed(0)}%` }
               ]}
               rows={breakdownRows}
               rowKey={(r) => r.label}
-              empty={<Empty title="No breakdown available yet" body={t("noBreakdown")} />}
+              empty={<Empty title={t("x.noBreakdown")} body={t("noBreakdown")} />}
             />
           </Section>
 
           <Section title={t("monthlyTrend")}>
             <DataTable
               columns={[
-                { key: "month", header: "Month", render: (r) => r.month },
-                { key: "value", header: "Emissions", numeric: true, render: (r) => t("tons", { value: r.value.toFixed(1) }) },
+                { key: "month", header: t("x.month"), render: (r) => r.month },
+                { key: "value", header: t("x.emissions"), numeric: true, render: (r) => t("tons", { value: r.value.toFixed(1) }) },
                 {
                   key: "change",
-                  header: "Change",
+                  header: t("x.change"),
                   numeric: true,
                   render: (r) => (
                     <span className="vck-tag" data-tone={r.change < 0 ? "positive" : "caution"}>
@@ -229,7 +229,7 @@ export default function AnalyticsPage() {
                 />
               </MetricRow>
             ) : (
-              <Empty title="Industry comparison not available yet" body={t("profilePrompt")} />
+              <Empty title={t("x.noIndustry")} body={t("profilePrompt")} />
             )}
           </Section>
 
@@ -260,9 +260,9 @@ export default function AnalyticsPage() {
                 </div>
               </div>
             ) : aiLoading ? (
-              <Empty title="Generating insights" body="Vuneli is analyzing your latest metrics for observations and recommendations." />
+              <Empty title={t("x.generating")} body={t("x.generatingBody")} />
             ) : (
-              <Empty title="No insights yet" body="Insights are generated automatically once analytics data is available." />
+              <Empty title={t("x.noInsights")} body={t("x.noInsightsBody")} />
             )}
           </Section>
         </>

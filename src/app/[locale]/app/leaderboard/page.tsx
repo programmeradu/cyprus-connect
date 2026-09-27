@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
     },
     {
       key: "name",
-      header: "Company",
+      header: t("x.company"),
       render: (row) => (
         <div className="flex min-w-0 items-center gap-2.5">
           <ConsoleAvatar seed={row.companyName || row.name || "vuneli"} size={28} styleKey="shapes" alt="" />
@@ -60,13 +60,13 @@ export default function LeaderboardPage() {
     },
     {
       key: "credits",
-      header: "Credits",
+      header: t("x.credits"),
       numeric: true,
       render: (row) => <span>{row.totalCredits.toLocaleString()}</span>
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("x.actions"),
       numeric: true,
       hideOnMobile: true,
       render: (row) => <span>{row.actionsCompleted}</span>
@@ -81,12 +81,12 @@ export default function LeaderboardPage() {
       header={<PageHeader title={t("title")} purpose={t("subtitle")} />}
     >
       {currentUser && (
-        <Section title="Your standing">
+        <Section title={t("x.standing")}>
           <MetricRow columns={3}>
-            <Metric label="Rank" value={`#${currentUser.rank}`} note={t("globally")} />
-            <Metric label="Credits" value={currentUser.totalCredits.toLocaleString()} />
+            <Metric label={t("x.rank")} value={`#${currentUser.rank}`} note={t("globally")} />
+            <Metric label={t("x.credits")} value={currentUser.totalCredits.toLocaleString()} />
             <Metric
-              label="Top percentile"
+              label={t("x.percentile")}
               value={t("topPercent", { percent: Math.round((currentUser.rank / leaderboard.length) * 100) })}
             />
           </MetricRow>
@@ -94,7 +94,7 @@ export default function LeaderboardPage() {
       )}
 
       {topThree.length >= 3 && (
-        <Section title="Top three">
+        <Section title={t("x.topThree")}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {topThree.map((entry) => (
               <div key={entry.userId} className="vck-card p-4">
@@ -118,8 +118,8 @@ export default function LeaderboardPage() {
           rowKey={(row) => row.userId}
           empty={
             <Empty
-              title="No companies on the leaderboard yet"
-              body="Complete sustainability actions to earn green credits and appear here once other companies join."
+              title={t("x.emptyTitle")}
+              body={t("x.emptyBody")}
             />
           }
         />
