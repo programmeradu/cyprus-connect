@@ -5,6 +5,7 @@ import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/conso
 import { useSession } from "@/lib/auth-client";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { PageShell, PageHeader, Section, Empty } from "@/components/app/console/kit";
 
@@ -58,6 +59,9 @@ export default function LessonViewerPage() {
   const params = useParams();
   const courseId = params.id as string;
   const lessonId = params.lessonId as string;
+  const t = useTranslations("dashboard.learnPages.lesson");
+  const locale = useLocale();
+  const typeLabel = (k: string) => (t.has(`types.${k}`) ? t(`types.${k}` as "types.text") : k);
 
   const uid = session?.user?.id;
   // Shared records: the course page and this lesson read the same copies.
@@ -65,7 +69,7 @@ export default function LessonViewerPage() {
   const courseRes = useWorkspaceResource<CourseData>(uid && courseId ? `/api/learn/courses/${courseId}` : null);
   const writer = useWorkspaceAction();
   const lesson = lessonRes.data ?? null;
-  const error = lessonRes.error ? "This lesson could not be loaded." : null;
+  const error = lessonRes.error ? t("loadError") : null;
   const isCompleting = writer.busy;
   const [startTime] = useState(Date.now());
 
@@ -104,7 +108,7 @@ export default function LessonViewerPage() {
       body: { timeSpent, score: score ?? null, passed: score !== undefined ? score >= 70 : null },
       invalidates: ["/api/learn/lessons", "/api/learn/courses", "/api/learn/certificates"],
     });
-    if (ok) toast.success("Lesson completed");
+    if (ok) toast.success(t("completedToast"));
   };
 
   useEffect(() => {
@@ -138,11 +142,11 @@ export default function LessonViewerPage() {
       onRetry={lessonRes.reload}
       header={
         <PageHeader
-          title={lesson?.title ?? "Lesson"}
-          purpose={lesson ? `${lesson.contentType} \u00b7 ${lesson.estimatedMinutes} min` : undefined}
+          title={lesson?.title ?? t("fallbackTitle")}
+          purpose={lesson ? `${typeLabel(lesson.contentType)} \u00b7 ${t("minutes", { count: lesson.estimatedMinutes })}${locale === "el" ? ` \u00b7 ${t("aiNote")}` : ""}` : undefined}
           breadcrumb={[
-            { label: "Learn", href: "/app/learn" },
-            { label: "Course", href: `/app/learn/${courseId}` },
+            { label: t("crumbLearn"), href: "/app/learn" },
+            { label: t("crumbCourse"), href: `/app/learn/${courseId}` },
             { label: lesson?.title ?? "" }
           ]}
         />
@@ -174,13 +178,13 @@ export default function LessonViewerPage() {
                 {!showResults ? (
                   <>
                     <div>
-                      <h2 className="text-[1.0625rem] font-semibold">Quiz assessment</h2>
-                      <p className="vck-meta mt-1">Answer all questions below to complete this lesson. You need 70% or higher to pass.</p>
+                      <h2 className="text-[1.0625rem] font-semibold">{t("quizTitle")}</h2>
+                      <p className="vck-meta mt-1">{t("quizHint")}</p>
                     </div>
 
                     {contentData.questions.map((question, qIndex) => (
                       <div key={qIndex} className="vck-inset p-4">
-                        <p className="vck-label mb-2">Question {qIndex + 1} of {contentData.questions?.length ?? 0}</p>
+                        <p className="vck-label mb-2">{t("questionOf", { n: qIndex + 1, total: contentData.questions?.length ?? 0 })}</p>
                         <p className="mb-4 text-sm font-medium">{question.question}</p>
                         <div className="space-y-2">
                           {question.options.map((option, oIndex) => (
@@ -211,7 +215,7 @@ export default function LessonViewerPage() {
                         disabled={Object.keys(selectedAnswers).length < (contentData.questions?.length ?? 0) || isCompleting}
                         className="vck-btn vck-btn-primary"
                       >
-                        {isCompleting ? "Submitting\u2026" : "Submit quiz"}
+                        {isCompleting ? t("submitting") : t("submit")}
                       </button>
                     </div>
                   </>
@@ -220,23 +224,23 @@ export default function LessonViewerPage() {
                     <div className="vck-inset p-6 text-center">
                       <p className="vck-num text-3xl">{quizScore}%</p>
                       <h3 className="mt-2 text-[1.0625rem] font-semibold">
-                        {quizScore >= 70 ? "You passed this quiz" : "Keep learning"}
+                        {quizScore >= 70 ? t("passed") : t("keepLearning")}
                       </h3>
                       <p className="vck-meta mt-1">
                         {quizScore >= 70
-                          ? "You've passed this quiz and completed the lesson."
-                          : "You need 70% to pass. Review the material and try again."}
+                          ? t("passedBody")
+                          : t("failedBody")}
                       </p>
                     </div>
 
                     <div>
-                      <h3 className="mb-3 text-[1.0625rem] font-semibold">Review your answers</h3>
+                      <h3 className="mb-3 text-[1.0625rem] font-semibold">{t("review")}</h3>
                       <div className="space-y-3">
                         {contentData.questions.map((question, qIndex) => {
                           const isCorrect = selectedAnswers[qIndex] === question.correctAnswer;
                           return (
                             <div key={qIndex} className="vck-inset p-4">
-                              <p className="vck-label mb-1">Question {qIndex + 1} \u00b7 {isCorrect ? "Correct" : "Incorrect"}</p>
+                              <p className="vck-label mb-1">{t("questionResult", { n: qIndex + 1, result: isCorrect ? t("correct") : t("incorrect") })}</p>
                               <p className="mb-3 text-sm font-medium">{question.question}</p>
                               <div className="space-y-1.5">
                                 {question.options.map((option, oIndex) => {
@@ -272,8 +276,8 @@ export default function LessonViewerPage() {
             {lesson.contentType === "exercise" && contentData.exercises && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-[1.0625rem] font-semibold">Practical exercises</h2>
-                  <p className="vck-meta mt-1">Complete these hands-on exercises to apply what you've learned.</p>
+                  <h2 className="text-[1.0625rem] font-semibold">{t("exercises")}</h2>
+                  <p className="vck-meta mt-1">{t("exercisesHint")}</p>
                 </div>
                 {contentData.exercises.map((exercise, index) => (
                   <div key={index} className="vck-inset p-4">
@@ -291,24 +295,24 @@ export default function LessonViewerPage() {
 
             {!lesson.completion && lesson.contentType !== "quiz" && (
               <button type="button" onClick={() => completeLesson()} disabled={isCompleting} className="vck-btn vck-btn-primary mt-6">
-                {isCompleting ? "Saving\u2026" : "Mark as complete"}
+                {isCompleting ? t("saving") : t("markComplete")}
               </button>
             )}
 
-            <div className="mt-8 flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-5">
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--vc-rule-soft)] pt-5">
               <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn">
-                Back to course
+                {t("back")}
               </button>
 
               {lesson.completion && nextLessonId && (
                 <button type="button" onClick={goToNextLesson} className="vck-btn vck-btn-primary">
-                  Next lesson
+                  {t("next")}
                 </button>
               )}
 
               {lesson.completion && !nextLessonId && (
                 <button type="button" onClick={() => router.push(`/app/learn/${courseId}`)} className="vck-btn vck-btn-primary">
-                  Course complete
+                  {t("courseComplete")}
                 </button>
               )}
             </div>
@@ -318,7 +322,7 @@ export default function LessonViewerPage() {
 
       {lesson && !contentData && (
         <Section>
-          <Empty title="This lesson has no content yet" body="Check back later once content has been generated." />
+          <Empty title={t("noContent")} body={t("noContentBody")} />
         </Section>
       )}
     </PageShell>
