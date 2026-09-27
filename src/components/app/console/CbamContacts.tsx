@@ -8,26 +8,33 @@
 
 import { workspaceRequest } from "./workspace-store";
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Btn, Plate, State } from "@/components/app/console/kit";
 
 export interface SupplierContact { supplierName: string; email: string; contactName: string | null }
 export interface SentRequest { supplierName: string; email: string; sentAt: string; approvedBy: string }
 export interface Declarant { legalName: string | null; eori: string | null; accountNumber: string | null; replyToEmail: string | null }
 
-async function put(body: unknown): Promise<string | null> {
+async function put(body: unknown, fallback: string): Promise<string | null> {
   try {
     await workspaceRequest("/api/console/cbam/contacts", { method: "PUT", body });
     return null;
   } catch (e) {
-    return e instanceof Error && e.message ? e.message : "Could not save.";
+    return e instanceof Error && e.message ? e.message : fallback;
   }
 }
 
-const when = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+function useCbamText() {
+  const t = useTranslations("dashboard.cbam.c");
+  const loc = useLocale() === "el" ? "el-CY" : "en-GB";
+  return { t, loc };
+}
 
 function SupplierRow({ name, contact, lastSent, needsData, waiting, onSaved }: {
   name: string; contact?: SupplierContact; lastSent?: SentRequest; needsData: boolean; waiting: boolean; onSaved: () => void;
 }) {
+  const { t, loc } = useCbamText();
+  const when = (iso: string) => new Date(iso).toLocaleDateString(loc, { day: "numeric", month: "short", year: "numeric" });
   const [email, setEmail] = useState(contact?.email ?? "");
   const [person, setPerson] = useState(contact?.contactName ?? "");
   const [busy, setBusy] = useState(false);
@@ -37,9 +44,9 @@ function SupplierRow({ name, contact, lastSent, needsData, waiting, onSaved }: {
   const save = async () => {
     setBusy(true);
     setMsg(null);
-    const err = await put({ kind: "supplier", supplierName: name, email, contactName: person || null });
+    const err = await put({ kind: "supplier", supplierName: name, email, contactName: person || null }, t("saveFailed"));
     setBusy(false);
-    setMsg(err ?? "Saved. Border drafts the email on its next run.");
+    setMsg(err ?? t("savedSupplier"));
     if (!err) onSaved();
   };
 
@@ -48,28 +55,28 @@ function SupplierRow({ name, contact, lastSent, needsData, waiting, onSaved }: {
       <div className="vck-cbam-contact-head">
         <strong>{name}</strong>
         {waiting ? (
-          <State tone="live">Email waiting for approval</State>
+          <State tone="live">{t("waiting")}</State>
         ) : lastSent ? (
-          <State tone="good">Emailed {when(lastSent.sentAt)}</State>
+          <State tone="good">{t("emailed", { date: when(lastSent.sentAt) })}</State>
         ) : needsData ? (
-          <State tone={contact ? "live" : "warn"}>{contact ? "Email drafted on next run" : "Needs an email"}</State>
+          <State tone={contact ? "live" : "warn"}>{contact ? t("nextRun") : t("needsEmail")}</State>
         ) : (
-          <State tone="idle">Data complete</State>
+          <State tone="idle">{t("complete")}</State>
         )}
       </div>
       <div className="vck-cbam-fields">
         <label>
-          <span>Email</span>
+          <span>{t("email")}</span>
           <input type="email" className="vck-input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="emissions@supplier.com" autoComplete="off" />
         </label>
         <label>
-          <span>Contact name (optional)</span>
-          <input type="text" className="vck-input" value={person} onChange={(e) => setPerson(e.target.value)} placeholder="Name of the person" autoComplete="off" />
+          <span>{t("contactName")}</span>
+          <input type="text" className="vck-input" value={person} onChange={(e) => setPerson(e.target.value)} placeholder={t("personPh")} autoComplete="off" />
         </label>
-        <Btn variant="quiet" onClick={save} disabled={busy || !dirty || !email.trim()}>{busy ? "Saving…" : "Save"}</Btn>
+        <Btn variant="quiet" onClick={save} disabled={busy || !dirty || !email.trim()}>{busy ? t("saving") : t("save")}</Btn>
       </div>
       {msg && <p className="vck-cbam-note" role="status">{msg}</p>}
-      {lastSent && <p className="vck-cbam-note vck-quiet">Last request to {lastSent.email}, approved by {lastSent.approvedBy}.</p>}
+      {lastSent && <p className="vck-cbam-note vck-quiet">{t("lastSent", { email: lastSent.email, by: lastSent.approvedBy })}</p>}
     </li>
   );
 }
@@ -77,6 +84,7 @@ function SupplierRow({ name, contact, lastSent, needsData, waiting, onSaved }: {
 export function SupplierContactsPlate({ supplierNames, needing, waiting, contacts, requests, onSaved }: {
   supplierNames: string[]; needing: Set<string>; waiting: Set<string>; contacts: SupplierContact[]; requests: SentRequest[]; onSaved: () => void;
 }) {
+  const { t } = useCbamText();
   if (supplierNames.length === 0) return null;
   const byName = new Map(contacts.map((c) => [c.supplierName, c]));
   const last = new Map<string, SentRequest>();
@@ -84,10 +92,10 @@ export function SupplierContactsPlate({ supplierNames, needing, waiting, contact
   const missing = supplierNames.filter((n) => needing.has(n) && !byName.has(n)).length;
   return (
     <Plate
-      label="Supplier data requests"
-      meta={missing ? `${missing} need an email` : "Contacts set"}
+      label={t("plate")}
+      meta={missing ? t("missing", { count: missing }) : t("set")}
       metaTone={missing ? "warn" : "good"}
-      foot="Border writes each email from your import lines. It waits in your review queue; nothing is sent until you approve that exact text. Suppliers reply to your reply-to address."
+      foot={t("plateFoot")}
     >
       <ul className="vck-cbam-contacts">
         {supplierNames.map((n) => (
@@ -101,6 +109,7 @@ export function SupplierContactsPlate({ supplierNames, needing, waiting, contact
 export function RegistryPlate({ year, declarant, gaps, hasDraft, onSaved }: {
   year: number; declarant: Declarant; gaps: string[] | null; hasDraft: boolean; onSaved: () => void;
 }) {
+  const { t } = useCbamText();
   const [f, setF] = useState({
     legalName: declarant.legalName ?? "",
     eori: declarant.eori ?? "",
@@ -114,38 +123,38 @@ export function RegistryPlate({ year, declarant, gaps, hasDraft, onSaved }: {
   const save = async () => {
     setBusy(true);
     setMsg(null);
-    const err = await put({ kind: "declarant", ...Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v.trim() || null])) });
+    const err = await put({ kind: "declarant", ...Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v.trim() || null])) }, t("saveFailed"));
     setBusy(false);
-    setMsg(err ? { tone: "warn", text: err } : { tone: "good", text: "Saved." });
+    setMsg(err ? { tone: "warn", text: err } : { tone: "good", text: t("saved") });
     if (!err) onSaved();
   };
 
   const final = gaps !== null && gaps.length === 0;
   return (
     <Plate
-      label="EU CBAM Registry file"
-      meta={<State tone={final ? "good" : "warn"}>{final ? "Final" : "Draft only"}</State>}
-      foot="The file follows the declaration's fields but is not yet checked against the Commission's official format. Check it in the Registry before you submit. Submission stays in your own declarant account."
+      label={t("registry")}
+      meta={<State tone={final ? "good" : "warn"}>{final ? t("final") : t("draftOnly")}</State>}
+      foot={t("registryFoot")}
     >
       <div className="vck-cbam-fields vck-cbam-fields-2">
-        <label><span>Declarant legal name</span><input type="text" className="vck-input" value={f.legalName} onChange={set("legalName")} autoComplete="organization" /></label>
-        <label><span>EORI number</span><input type="text" className="vck-input" value={f.eori} onChange={set("eori")} placeholder="CY12345678X" autoComplete="off" /></label>
-        <label><span>CBAM account number</span><input type="text" className="vck-input" value={f.accountNumber} onChange={set("accountNumber")} autoComplete="off" /></label>
-        <label><span>Reply-to email for suppliers</span><input type="email" className="vck-input" value={f.replyToEmail} onChange={set("replyToEmail")} placeholder="compliance@yourcompany.cy" autoComplete="email" /></label>
+        <label><span>{t("legalName")}</span><input type="text" className="vck-input" value={f.legalName} onChange={set("legalName")} autoComplete="organization" /></label>
+        <label><span>{t("eori")}</span><input type="text" className="vck-input" value={f.eori} onChange={set("eori")} placeholder="CY12345678X" autoComplete="off" /></label>
+        <label><span>{t("account")}</span><input type="text" className="vck-input" value={f.accountNumber} onChange={set("accountNumber")} autoComplete="off" /></label>
+        <label><span>{t("replyTo")}</span><input type="email" className="vck-input" value={f.replyToEmail} onChange={set("replyToEmail")} placeholder="compliance@yourcompany.cy" autoComplete="email" /></label>
       </div>
       <div className="vck-cbam-actions">
-        <Btn variant="quiet" onClick={save} disabled={busy}>{busy ? "Saving…" : "Save details"}</Btn>
+        <Btn variant="quiet" onClick={save} disabled={busy}>{busy ? t("saving") : t("saveDetails")}</Btn>
         {hasDraft ? (
           <a className={`vck-btn ${final ? "vck-btn-primary" : "vck-btn-quiet"}`} href={`/api/console/cbam/export?year=${year}`} download>
-            {final ? `Download ${year} Registry file` : `Download ${year} draft file`}
+            {final ? t("downloadFinal", { year }) : t("downloadDraft", { year })}
           </a>
         ) : (
-          <span className="vck-cbam-note">Run the agent to create the draft first.</span>
+          <span className="vck-cbam-note">{t("runFirst")}</span>
         )}
       </div>
       {msg && <p className="vck-cbam-note" role="status" data-tone={msg.tone}>{msg.text}</p>}
       {gaps && gaps.length > 0 && (
-        <p className="vck-cbam-note" data-tone="warn">Still needed for a final file: {gaps.join(", ")}.</p>
+        <p className="vck-cbam-note" data-tone="warn">{t("gaps", { gaps: gaps.join(", ") })}</p>
       )}
     </Plate>
   );
@@ -155,32 +164,33 @@ export interface PendingEmail { taskId: number; supplierName: string; to: string
 
 /** The exact emails waiting for a person. Approve sends this text and nothing else. */
 export function PendingEmailsPlate({ emails, onDecided }: { emails: PendingEmail[]; onDecided: (text: string, tone: "good" | "warn") => void }) {
+  const { t, loc } = useCbamText();
   const [busy, setBusy] = useState<number | null>(null);
   if (emails.length === 0) return null;
   const decide = async (e: PendingEmail, decision: "approve" | "reject") => {
     setBusy(e.taskId);
     try {
       await workspaceRequest(`/api/console/tasks/${e.taskId}`, { method: "POST", body: { decision } });
-      onDecided(decision === "approve" ? `Sent to ${e.to}.` : `Email to ${e.supplierName} rejected. Border will not send it.`, decision === "approve" ? "good" : "warn");
+      onDecided(decision === "approve" ? t("sent", { to: e.to }) : t("rejected", { name: e.supplierName }), decision === "approve" ? "good" : "warn");
     } catch (err) {
-      onDecided(err instanceof Error && err.message ? err.message : "The decision was not saved.", "warn");
+      onDecided(err instanceof Error && err.message ? err.message : t("notSaved"), "warn");
     } finally {
       setBusy(null);
     }
   };
   return (
-    <Plate label="Emails waiting for your approval" meta={String(emails.length)} metaTone="warn"
-      foot="Approving sends exactly this text. If the import lines change, Border withdraws this email and drafts a new one.">
+    <Plate label={t("pending")} meta={String(emails.length)} metaTone="warn"
+      foot={<>{t("pendingFoot")}{loc !== "en-GB" ? ` ${t("mailNote")}` : ""}</>}>
       <ul className="vck-cbam-contacts">
         {emails.map((e) => (
           <li key={e.taskId} className="vck-cbam-contact">
             <div className="vck-cbam-contact-head"><strong>{e.subject}</strong></div>
-            <p className="vck-cbam-note">To {e.to}{e.replyTo ? ` · replies go to ${e.replyTo}` : " · no reply-to set, replies go to the sender address"}</p>
+            <p className="vck-cbam-note">{t("to", { to: e.to })} · {e.replyTo ? t("repliesTo", { email: e.replyTo }) : t("noReplyTo")}</p>
             <pre className="vck-cbam-mail">{e.body}</pre>
             {e.lastError && <p className="vck-cbam-note" data-tone="warn">{e.lastError}</p>}
             <div className="vck-cbam-actions">
-              <Btn variant="primary" disabled={busy !== null} onClick={() => decide(e, "approve")}>{busy === e.taskId ? "Working…" : "Approve and send"}</Btn>
-              <Btn variant="quiet" disabled={busy !== null} onClick={() => decide(e, "reject")}>Reject</Btn>
+              <Btn variant="primary" disabled={busy !== null} onClick={() => decide(e, "approve")}>{busy === e.taskId ? t("working") : t("approve")}</Btn>
+              <Btn variant="quiet" disabled={busy !== null} onClick={() => decide(e, "reject")}>{t("reject")}</Btn>
             </div>
           </li>
         ))}
