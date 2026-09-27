@@ -25,3 +25,15 @@ describe("step labels", () => {
     expect(summarizeOutput("executed", '{"broken')!.length).toBeLessThanOrEqual(141);
   });
 });
+
+describe("Greek step labels", () => {
+  it("translates known labels and keeps tones", async () => {
+    const m = await import("../src/lib/agents/step-labels");
+    expect(m.decisionLabel("blocked", "el")).toEqual({ label: "Μπλοκαρίστηκε από πολιτική", tone: "warn" });
+    expect(m.toolLabel("create_task", "el").kind).toBe("write");
+    expect(m.riskLabel(3, "el")).toBe("Νομική ή οικονομική");
+    expect(m.triggerLabel("cron", "el")).toBe("Προγραμματισμένη");
+    expect(m.summarizeOutput("executed", "[1,2]", "el")).toBe("Επιστράφηκαν 2 στοιχεία.");
+    expect(m.toolLabel("unknown_tool", "el").verb).toBe("Unknown tool");
+  });
+});
