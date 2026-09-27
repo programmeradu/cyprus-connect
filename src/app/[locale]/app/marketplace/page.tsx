@@ -2,7 +2,7 @@
 
 import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useWorkspaceResource } from "@/components/app/console/workspace-store";
@@ -38,6 +38,7 @@ const categoryIds = ["all", "forestry", "renewable_energy", "carbon_capture", "o
 
 export default function MarketplacePage() {
   const t = useTranslations("dashboard.marketplace");
+  const numLocale = useLocale() === "el" ? "el-CY" : "en-GB";
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<(typeof categoryIds)[number]>("all");
@@ -61,7 +62,7 @@ export default function MarketplacePage() {
   const columns: Column<Project>[] = [
     {
       key: "name",
-      header: "Project",
+      header: t("colProject"),
       render: (p) => (
         <div className="flex min-w-0 items-center gap-2.5">
           <ConsoleAvatar seed={p.name} size={30} styleKey="shapes" alt="" />
@@ -74,25 +75,25 @@ export default function MarketplacePage() {
     },
     {
       key: "category",
-      header: "Category",
+      header: t("colCategory"),
       hideOnMobile: true,
-      render: (p) => <span className="vck-tag capitalize">{p.category.replace("_", " ")}</span>
+      render: (p) => <span className="vck-tag">{t.has(`categories.${p.category}` as any) ? t(`categories.${p.category}` as any) : p.category.replace(/_/g, " ")}</span>
     },
     {
       key: "certification",
-      header: "Certification",
+      header: t("colCertification"),
       hideOnMobile: true,
       render: (p) => p.certification
     },
     {
       key: "available",
-      header: "Available",
+      header: t("colAvailable"),
       numeric: true,
-      render: (p) => `${p.availableTons.toLocaleString()} t`
+      render: (p) => `${p.availableTons.toLocaleString(numLocale)} ${t("tons")}`
     },
     {
       key: "price",
-      header: "Price / ton",
+      header: t("colPrice"),
       numeric: true,
       render: (p) => `\u20ac${p.pricePerTon}`
     }
@@ -118,7 +119,7 @@ export default function MarketplacePage() {
       toolbar={
         <PageToolbar>
           <ToolbarTabs
-            ariaLabel="Category"
+            ariaLabel={t("categoryLabel")}
             value={selectedCategory}
             onChange={setSelectedCategory}
             options={categoryIds.map((id) => ({ value: id, label: t(`categories.${id}` as any) }))}
@@ -126,7 +127,7 @@ export default function MarketplacePage() {
         </PageToolbar>
       }
     >
-      <Section title="Verified carbon offset projects">
+      <Section title={t("listTitle")}>
         <DataTable
           columns={columns}
           rows={projects}
@@ -134,9 +135,9 @@ export default function MarketplacePage() {
           onRowClick={(p) => router.push(`/app/marketplace/${p.id}`)}
           empty={
             <Empty
-              title="No projects match this filter"
+              title={t("emptyFilterTitle")}
               body={t("empty")}
-              action={{ label: "View all categories", onClick: () => setSelectedCategory("all") }}
+              action={{ label: t("viewAll"), onClick: () => setSelectedCategory("all") }}
             />
           }
         />
