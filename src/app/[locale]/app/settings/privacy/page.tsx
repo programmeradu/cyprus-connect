@@ -36,7 +36,8 @@ const COPY = {
     signIn: "Sign in",
     docs: "See our Privacy Policy for details on retention and your rights.",
     privacyLink: "Privacy Policy",
-    back: "Back to settings"
+    back: "Back to settings",
+    settings: "Settings"
   },
   el: {
     title: "Απόρρητο & δεδομένα",
@@ -64,7 +65,8 @@ const COPY = {
     signIn: "Σύνδεση",
     docs: "Δείτε την Πολιτική Απορρήτου για λεπτομέρειες.",
     privacyLink: "Πολιτική Απορρήτου",
-    back: "Πίσω στις ρυθμίσεις"
+    back: "Πίσω στις ρυθμίσεις",
+    settings: "Ρυθμίσεις"
   }
 } as const;
 
@@ -86,7 +88,7 @@ export default function PrivacySettingsPage() {
     <PageHeader
       title={t.title}
       purpose={t.subtitle}
-      breadcrumb={[{ label: "Settings", href: "/app/settings" }, { label: t.title }]}
+      breadcrumb={[{ label: t.settings, href: "/app/settings" }, { label: t.title }]}
     />
   );
 

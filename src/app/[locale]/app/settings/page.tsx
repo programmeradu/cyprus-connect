@@ -122,14 +122,14 @@ function SettingsContent() {
     setFormError(null);
     const siteCount = Number(sites);
     if (!Number.isInteger(siteCount) || siteCount < 1) {
-      setFormError("Enter a whole number of sites, at least 1.");
+      setFormError(t("x.sitesError"));
       setIsSaving(false);
       return;
     }
     const revenueText = revenue.replace(/[\s,]/g, "");
     const revenueEur = revenueText === "" ? null : Number(revenueText);
     if (revenueEur !== null && (!Number.isFinite(revenueEur) || revenueEur < 0)) {
-      setFormError("Enter yearly revenue as a number in euro, or leave it empty.");
+      setFormError(t("x.revenueError"));
       setIsSaving(false);
       return;
     }
@@ -289,7 +289,7 @@ function SettingsContent() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="vck-label block mb-1.5" htmlFor="company-sites">Number of sites</label>
+                  <label className="vck-label block mb-1.5" htmlFor="company-sites">{t("x.sites")}</label>
                   <input
                     id="company-sites"
                     type="number"
@@ -300,10 +300,10 @@ function SettingsContent() {
                     onChange={(e) => setSites(e.target.value)}
                     className={inputClass}
                   />
-                  <p className="vck-meta mt-1.5">Offices, shops, plants or warehouses you run.</p>
+                  <p className="vck-meta mt-1.5">{t("x.sitesHint")}</p>
                 </div>
                 <div>
-                  <label className="vck-label block mb-1.5" htmlFor="company-revenue">Yearly revenue (EUR)</label>
+                  <label className="vck-label block mb-1.5" htmlFor="company-revenue">{t("x.revenue")}</label>
                   <input
                     id="company-revenue"
                     type="text"
@@ -313,7 +313,7 @@ function SettingsContent() {
                     placeholder="Optional, e.g. 850000"
                     className={inputClass}
                   />
-                  <p className="vck-meta mt-1.5">Used for emissions per euro of revenue. Leave empty if you prefer.</p>
+                  <p className="vck-meta mt-1.5">{t("x.revenueHint")}</p>
                 </div>
               </div>
               {formError && (
@@ -323,21 +323,21 @@ function SettingsContent() {
           </Section>
 
           <Section
-            title="Avatar character"
-            description="Your avatar is drawn from your name. Pick the character family you like."
+            title={t("x.avatarTitle")}
+            description={t("x.avatarBody")}
           >
             <div className="vck-card p-4">
               <div className="flex items-center gap-3 mb-4">
                 <ConsoleAvatar seed={name || user?.name || "vuneli"} size={48} styleKey={avatarStyle} alt="" />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium break-words">{name || user?.name || "Your avatar"}</p>
-                  <p className="vck-meta mt-0.5">{AVATAR_STYLES[avatarStyle]?.label ?? "Sketch people"}</p>
+                  <p className="text-sm font-medium break-words">{name || user?.name || t("x.yourAvatar")}</p>
+                  <p className="vck-meta mt-0.5">{t.has(`x.avatars.${avatarStyle}`) ? t(`x.avatars.${avatarStyle}` as "x.avatars.notionists") : AVATAR_STYLES[avatarStyle]?.label ?? t("x.avatars.notionists")}</p>
                 </div>
               </div>
               <div
                 className="grid gap-2.5 grid-cols-3 sm:grid-cols-5"
                 role="radiogroup"
-                aria-label="Avatar character family"
+                aria-label={t("x.avatarFamily")}
               >
                 {Object.entries(AVATAR_STYLES).map(([key, entry]) => {
                   const selected = key === avatarStyle;
@@ -360,7 +360,7 @@ function SettingsContent() {
                         styleKey={key as AvatarStyleKey}
                         alt=""
                       />
-                      <span className="vck-meta leading-tight break-words">{entry.label}</span>
+                      <span className="vck-meta leading-tight break-words">{t.has(`x.avatars.${key}`) ? t(`x.avatars.${key}` as "x.avatars.notionists") : entry.label}</span>
                     </button>
                   );
                 })}
@@ -373,7 +373,7 @@ function SettingsContent() {
               <div className="vck-inset p-3">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium">Cyprus (CY)</p>
+                    <p className="text-sm font-medium">{t("x.cyprus")}</p>
                     <p className="vck-meta mt-0.5">Asia/Nicosia · el-CY / en-CY</p>
                   </div>
                   <span className="vck-tag" data-tone="positive">EUR €</span>
@@ -439,7 +439,7 @@ function SettingsContent() {
                       notificationPrefs[item.key] ? "bg-[var(--vc-rail-active)]" : ""
                     }`}
                   >
-                    {notificationPrefs[item.key] ? "On" : "Off"}
+                    {notificationPrefs[item.key] ? t("x.on") : t("x.off")}
                   </button>
                 </div>
               ))}

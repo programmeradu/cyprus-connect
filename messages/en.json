@@ -153,7 +153,18 @@
       "empty": "No users on the leaderboard yet. Complete actions to be the first!",
       "creditsActions": "{credits} credits • {actions} actions completed",
       "podiumCredits": "{credits} credits",
-      "podiumActions": "{actions} actions"
+      "podiumActions": "{actions} actions",
+      "x": {
+        "company": "Company",
+        "credits": "Credits",
+        "actions": "Actions",
+        "standing": "Your standing",
+        "rank": "Rank",
+        "percentile": "Top percentile",
+        "topThree": "Top three",
+        "emptyTitle": "No companies on the leaderboard yet",
+        "emptyBody": "Complete sustainability actions to earn green credits and appear here once other companies join."
+      }
     },
     "analytics": {
       "title": "Analytics",
@@ -187,7 +198,20 @@
       "aiTitle": "AI-Powered Insights",
       "topRecommendations": "Top Recommendations",
       "keyHighlights": "Key Highlights",
-      "loadFailed": "Failed to load analytics data"
+      "loadFailed": "Failed to load analytics data",
+      "x": {
+        "category": "Category",
+        "share": "Share",
+        "month": "Month",
+        "emissions": "Emissions",
+        "change": "Change",
+        "noBreakdown": "No breakdown available yet",
+        "noIndustry": "Industry comparison not available yet",
+        "generating": "Generating insights",
+        "generatingBody": "Vuneli is analysing your latest figures for observations and recommendations.",
+        "noInsights": "No insights yet",
+        "noInsightsBody": "Insights are written automatically once analytics data is available."
+      }
     },
     "marketplace": {
       "titleA": "Carbon Offset",
@@ -374,6 +398,32 @@
         "northAmerica": "North America",
         "oceania": "Oceania",
         "southAmerica": "South America"
+      },
+      "x": {
+        "sitesError": "Enter a whole number of sites, at least 1.",
+        "revenueError": "Enter yearly revenue as a number in euro, or leave it empty.",
+        "sites": "Number of sites",
+        "sitesHint": "Offices, shops, plants or warehouses you run.",
+        "revenue": "Yearly revenue (EUR)",
+        "revenueHint": "Used for emissions per euro of revenue. Leave empty if you prefer.",
+        "avatarTitle": "Avatar character",
+        "avatarBody": "Your avatar is drawn from your name. Pick the character family you like.",
+        "yourAvatar": "Your avatar",
+        "avatarFamily": "Avatar character family",
+        "cyprus": "Cyprus (CY)",
+        "on": "On",
+        "off": "Off",
+        "avatars": {
+          "notionists": "Sketch people",
+          "notionistsNeutral": "Sketch heads",
+          "lorelei": "Line portraits",
+          "adventurerNeutral": "Adventurer",
+          "thumbs": "Thumbs",
+          "funEmoji": "Emoji faces",
+          "botttsNeutral": "Robots",
+          "shapes": "Shapes",
+          "initials": "Initials"
+        }
       }
     },
     "learn": {
