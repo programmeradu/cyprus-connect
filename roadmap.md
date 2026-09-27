@@ -34,7 +34,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Learn: click through signed in with a real generated course (needs AI key in preview)
 - [x] Exchange rates: one shared request per page load (was ~4; duplicate currency wrapper removed)
 - [x] Found: analytics insights and AI recommendations call /api/learn/auto-generate over HTTP (endpoint removed)
-- [ ] Greek translation: compliance, grant alerts, agents, CBAM, reports done (agent-written notes, report content, PDF and supplier emails stay English). Left: marketplace item/impact/admin, learn generate/course/lesson, leaderboard, settings + privacy, analytics; agent names and step labels
+- [ ] Greek translation: compliance, grant alerts, agents, CBAM, reports, leaderboard, settings + privacy, analytics done (agent-written notes, report content, PDF and supplier emails stay English). Left: marketplace item/impact/admin, learn generate/course/lesson; agent names and step labels
 
 ## Agent ecosystem (plan: .lovable/plan/vuneli-agent-ecosystem-plan-2026-09-26.md)
 - [x] Step 1 runtime: job queue + lease, step ledger (SHA-256), tool contract with risk levels, autonomy policy (L3 always human), kill switch, retries/dead jobs, 15-min cron heartbeat
