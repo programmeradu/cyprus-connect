@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -48,6 +49,10 @@ interface Recommendation {
 
 export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const t = useTranslations("dashboard.marketplace.detail");
+  const tm = useTranslations("dashboard.marketplace");
+  const nl = useLocale() === "el" ? "el-CY" : "en-GB";
+  const catLabel = (c: string) => (tm.has(`categories.${c}` as any) ? tm(`categories.${c}` as any) : c.replace(/_/g, " "));
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [showPurchaseDialog, setShowPurchaseDialog] = useState(false);
@@ -64,7 +69,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const detail = useWorkspaceResource<{ project: Project }>(session?.user ? `/api/marketplace/projects/${id}` : null);
   const project = detail.data?.project ?? null;
   const loading = detail.loading;
-  const error = detail.error ? "This project could not be loaded." : null;
+  const error = detail.error ? t("loadFailed") : null;
   const fetchProject = detail.reload;
   const writer = useWorkspaceAction();
 
@@ -89,8 +94,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       invalidates: ["/api/marketplace/projects"]
     });
     setGeneratingBanner(false);
-    if (ok) toast.success("Banner created");
-    else toast.error("The banner could not be created. Please try again.");
+    if (ok) toast.success(t("bannerOk"));
+    else toast.error(t("bannerFail"));
   };
 
   const handlePurchase = async () => {
@@ -104,7 +109,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     setPurchasing(false);
     setShowPurchaseDialog(false);
     if (!res?.url) {
-      toast.error("Checkout could not be started. Please try again.");
+      toast.error(t("checkoutFail"));
       return;
     }
     if (window.self !== window.top) {
@@ -112,7 +117,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     } else {
       window.open(res.url, "_blank", "noopener,noreferrer");
     }
-    toast.success("Opening checkout");
+    toast.success(t("checkoutOpen"));
   };
 
   const totalPrice = project ? (project.pricePerTon * purchaseTons).toFixed(2) : "0.00";
@@ -121,9 +126,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     : "0";
 
   const recColumns: Column<Recommendation>[] = [
-    { key: "name", header: "Project", render: (r) => r.name },
-    { key: "category", header: "Category", hideOnMobile: true, render: (r) => <span className="vck-tag capitalize">{r.category.replace("_", " ")}</span> },
-    { key: "price", header: "Price / ton", numeric: true, render: (r) => `\u20ac${r.pricePerTon}` }
+    { key: "name", header: t("project"), render: (r) => r.name },
+    { key: "category", header: tm("colCategory"), hideOnMobile: true, render: (r) => <span className="vck-tag">{catLabel(r.category)}</span> },
+    { key: "price", header: tm("colPrice"), numeric: true, render: (r) => `\u20ac${r.pricePerTon}` }
   ];
 
   return (
@@ -134,12 +139,12 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       onRetry={fetchProject}
       header={
         <PageHeader
-          title={project?.name ?? "Project"}
+          title={project?.name ?? t("project")}
           purpose={project?.description}
-          breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: project?.name ?? "" }]}
+          breadcrumb={[{ label: t("marketplace"), href: "/app/marketplace" }, { label: project?.name ?? "" }]}
           actions={
             <button type="button" className="vck-btn vck-btn-primary" onClick={() => setShowPurchaseDialog(true)} disabled={!project}>
-              Purchase offsets
+              {t("purchase")}
             </button>
           }
         />
@@ -147,24 +152,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     >
       {project && (
         <>
-          <Section title="Overview">
+          <Section title={t("overview")}>
             <MetricRow columns={4}>
-              <Metric label="Price per ton CO\u2082" value={`\u20ac${project.pricePerTon}`} />
-              <Metric label="Available capacity" value={project.availableTons.toLocaleString()} unit="tons" />
-              <Metric label="Capacity utilised" value={`${utilizationPercent}%`} note={`${project.totalCapacityTons.toLocaleString()} tons total`} />
-              <Metric label="Verification" value={project.verificationStatus} note={project.certification} />
+              <Metric label={t("pricePerTon")} value={`\u20ac${project.pricePerTon}`} />
+              <Metric label={t("available")} value={project.availableTons.toLocaleString(nl)} unit={t("tonsUnit")} />
+              <Metric label={t("utilised")} value={`${utilizationPercent}%`} note={t("tonsTotal", { total: project.totalCapacityTons.toLocaleString(nl) })} />
+              <Metric label={t("verification")} value={project.verificationStatus} note={project.certification} />
             </MetricRow>
           </Section>
 
-          <Section title="Impact metrics">
+          <Section title={t("impact")}>
             {Object.keys(project.impactMetrics ?? {}).length === 0 ? (
-              <Empty title="No impact metrics recorded yet" body="This project has not published measured impact data." />
+              <Empty title={t("noImpactTitle")} body={t("noImpactBody")} />
             ) : (
               <div className="vck-card grid grid-cols-2 gap-4 p-4 sm:grid-cols-4">
                 {Object.entries(project.impactMetrics).map(([key, value]) => (
                   <div key={key}>
                     <p className="vck-num text-lg font-semibold">
-                      {typeof value === "number" ? value.toLocaleString() : String(value ?? "")}
+                      {typeof value === "number" ? value.toLocaleString(nl) : String(value ?? "")}
                     </p>
                     <p className="vck-meta capitalize">{key.replace(/_/g, " ")}</p>
                   </div>
@@ -174,7 +179,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Section>
 
           {project.sdgGoals && project.sdgGoals.length > 0 && (
-            <Section title="UN Sustainable Development Goals">
+            <Section title={t("sdg")}>
               <div className="flex flex-wrap gap-1.5">
                 {project.sdgGoals.map((goal) => (
                   <span key={goal} className="vck-tag vck-num">
@@ -186,14 +191,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           )}
 
           {!project.bannerImage && (
-            <Section title="Banner image" description="Generate a banner image for this listing.">
+            <Section title={t("banner")} description={t("bannerDesc")}>
               <button type="button" className="vck-btn" onClick={handleGenerateBanner} disabled={generatingBanner}>
-                {generatingBanner ? "Generating\u2026" : "Generate banner"}
+                {generatingBanner ? t("generating") : t("generateBanner")}
               </button>
             </Section>
           )}
 
-          <Section title="Recommended for you">
+          <Section title={t("recommended")}>
             <DataTable
               columns={recColumns}
               rows={recommendations}
@@ -201,8 +206,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               onRowClick={(r) => router.push(`/app/marketplace/${r.id}`)}
               empty={
                 <Empty
-                  title="No recommendations yet"
-                  body="Purchase or browse a few projects so Vuneli can tailor recommendations to your goals."
+                  title={t("noRecTitle")}
+                  body={t("noRecBody")}
                 />
               }
             />
@@ -216,32 +221,33 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           onClick={() => setShowPurchaseDialog(false)}
         >
           <div className="vck-overlay w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-[1.0625rem] font-semibold leading-snug">Purchase carbon offsets</h3>
+            <h3 className="text-[1.0625rem] font-semibold leading-snug">{t("dialogTitle")}</h3>
 
             <div className="mt-4 space-y-3">
               <div>
-                <label className="vck-label mb-1.5 block">Number of tons</label>
+                <label htmlFor="purchase-tons" className="vck-label mb-1.5 block">{t("tonsInput")}</label>
                 <input
+                  id="purchase-tons"
                   type="number"
                   min="1"
                   max={project.availableTons}
                   value={purchaseTons}
-                  onChange={(e) => setPurchaseTons(Math.max(1, parseInt(e.target.value) || 1))}
+                  onChange={(e) => setPurchaseTons(Math.min(Math.max(1, project.availableTons), Math.max(1, parseInt(e.target.value) || 1)))}
                   className="w-full rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
 
               <div className="vck-inset space-y-2 p-3.5">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Price per ton</span>
+                  <span className="text-muted-foreground">{t("priceRow")}</span>
                   <span className="vck-num font-medium">\u20ac{project.pricePerTon}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Quantity</span>
-                  <span className="vck-num font-medium">{purchaseTons} tons CO\u2082</span>
+                  <span className="text-muted-foreground">{t("quantity")}</span>
+                  <span className="vck-num font-medium">{t("quantityValue", { count: purchaseTons.toLocaleString(nl) })}</span>
                 </div>
                 <div className="flex items-center justify-between border-t border-[var(--vc-rule-soft)] pt-2">
-                  <span className="text-sm font-semibold">Total amount</span>
+                  <span className="text-sm font-semibold">{t("total")}</span>
                   <span className="vck-num text-lg">\u20ac{totalPrice}</span>
                 </div>
               </div>
@@ -254,7 +260,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 onClick={() => setShowPurchaseDialog(false)}
                 disabled={purchasing}
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 type="button"
@@ -262,7 +268,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 onClick={handlePurchase}
                 disabled={purchasing}
               >
-                {purchasing ? "Processing\u2026" : "Proceed to payment"}
+                {purchasing ? t("processing") : t("pay")}
               </button>
             </div>
           </div>

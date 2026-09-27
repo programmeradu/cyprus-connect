@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -25,7 +26,7 @@ interface ImpactData {
 }
 
 interface Breakdown {
-  category: string;
+  category: string | null;
   totalTons: number;
   totalSpent: number;
   purchaseCount: number;
@@ -42,6 +43,11 @@ interface Purchase {
 }
 
 export default function ImpactPage() {
+  const t = useTranslations("dashboard.marketplace.impact");
+  const tm = useTranslations("dashboard.marketplace");
+  const nl = useLocale() === "el" ? "el-CY" : "en-GB";
+  const catLabel = (c: string | null) => (c && tm.has(`categories.${c}` as any) ? tm(`categories.${c}` as any) : (c ?? "—").replace(/_/g, " "));
+  const eur = (n: number) => Number(n).toLocaleString(nl, { style: "currency", currency: "EUR" });
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const signedIn = !!session?.user;
@@ -55,7 +61,7 @@ export default function ImpactPage() {
   const breakdown = impactRes.data?.breakdown ?? [];
   const purchases = purchasesRes.data?.purchases ?? [];
   const loading = impactRes.loading || purchasesRes.loading;
-  const error = impactRes.error || purchasesRes.error ? "Your impact data could not be loaded." : null;
+  const error = impactRes.error || purchasesRes.error ? t("loadFailed") : null;
   const fetchData = () => {
     impactRes.reload();
     purchasesRes.reload();
@@ -70,16 +76,16 @@ export default function ImpactPage() {
   const hasImpact = impact && impact.totalTonsOffset > 0;
 
   const breakdownColumns: Column<Breakdown>[] = [
-    { key: "category", header: "Category", render: (b) => <span className="capitalize">{b.category.replace("_", " ")}</span> },
-    { key: "purchases", header: "Purchases", numeric: true, render: (b) => b.purchaseCount },
-    { key: "tons", header: "Tons offset", numeric: true, render: (b) => b.totalTons.toLocaleString() },
-    { key: "spent", header: "Spent", numeric: true, render: (b) => `\u20ac${b.totalSpent.toLocaleString()}` }
+    { key: "category", header: tm("colCategory"), render: (b) => catLabel(b.category) },
+    { key: "purchases", header: t("colPurchases"), numeric: true, render: (b) => Number(b.purchaseCount).toLocaleString(nl) },
+    { key: "tons", header: t("colTons"), numeric: true, render: (b) => Number(b.totalTons).toLocaleString(nl) },
+    { key: "spent", header: t("colSpent"), numeric: true, render: (b) => eur(b.totalSpent) }
   ];
 
   const purchaseColumns: Column<Purchase>[] = [
     {
       key: "project",
-      header: "Project",
+      header: tm("colProject"),
       render: (p) => (
         <div>
           <p className="font-medium break-words">{p.projectName}</p>
@@ -87,9 +93,9 @@ export default function ImpactPage() {
         </div>
       )
     },
-    { key: "date", header: "Date", hideOnMobile: true, render: (p) => new Date(p.purchasedAt).toLocaleDateString() },
-    { key: "tons", header: "Tons", numeric: true, render: (p) => p.tonsPurchased },
-    { key: "paid", header: "Paid", numeric: true, render: (p) => `\u20ac${p.pricePaid.toLocaleString()}` }
+    { key: "date", header: t("colDate"), hideOnMobile: true, render: (p) => new Date(p.purchasedAt).toLocaleDateString(nl) },
+    { key: "tons", header: t("colTonsShort"), numeric: true, render: (p) => Number(p.tonsPurchased).toLocaleString(nl) },
+    { key: "paid", header: t("colPaid"), numeric: true, render: (p) => eur(p.pricePaid) }
   ];
 
   return (
@@ -100,45 +106,45 @@ export default function ImpactPage() {
       onRetry={fetchData}
       header={
         <PageHeader
-          title="Your impact"
-          purpose="Track your contribution to global carbon reduction."
-          breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: "Your impact" }]}
+          title={t("title")}
+          purpose={t("purpose")}
+          breadcrumb={[{ label: tm("detail.marketplace"), href: "/app/marketplace" }, { label: t("title") }]}
         />
       }
     >
       {!hasImpact ? (
         <Section>
           <Empty
-            title="Start your impact journey"
-            body="You haven't purchased any carbon offsets yet. Browse the marketplace to find projects that align with your values."
-            action={{ label: "Browse projects", href: "/app/marketplace" }}
+            title={t("emptyTitle")}
+            body={t("emptyBody")}
+            action={{ label: t("browse"), href: "/app/marketplace" }}
           />
         </Section>
       ) : (
         <>
-          <Section title="Summary">
+          <Section title={t("summary")}>
             <MetricRow columns={3}>
-              <Metric label="Tons CO\u2082 offset" value={impact!.totalTonsOffset.toLocaleString()} />
-              <Metric label="Total investment" value={`\u20ac${impact!.totalSpent.toLocaleString()}`} />
-              <Metric label="Projects supported" value={impact!.projectsSupported} />
+              <Metric label={t("tonsOffset")} value={Number(impact!.totalTonsOffset).toLocaleString(nl)} />
+              <Metric label={t("investment")} value={eur(impact!.totalSpent)} />
+              <Metric label={t("supported")} value={impact!.projectsSupported} />
             </MetricRow>
           </Section>
 
-          <Section title="Impact by category">
+          <Section title={t("byCategory")}>
             <DataTable
               columns={breakdownColumns}
               rows={breakdown}
-              rowKey={(b) => b.category}
-              empty={<Empty title="No category breakdown yet" body="Purchase offsets across categories to see a breakdown here." />}
+              rowKey={(b) => b.category ?? "none"}
+              empty={<Empty title={t("noBreakdownTitle")} body={t("noBreakdownBody")} />}
             />
           </Section>
 
-          <Section title="Purchase history">
+          <Section title={t("history")}>
             <DataTable
               columns={purchaseColumns}
               rows={purchases}
               rowKey={(p) => String(p.id)}
-              empty={<Empty title="No purchases yet" body="Your completed offset purchases will be listed here." />}
+              empty={<Empty title={t("noPurchasesTitle")} body={t("noPurchasesBody")} />}
             />
           </Section>
         </>

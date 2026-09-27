@@ -21,15 +21,55 @@ const TOOL_LABELS: Record<string, { verb: string; kind: "read" | "write" | "outw
 
 export const RISK_LABELS = ["Read only", "Internal write", "Outward action", "Legal or financial"] as const;
 
-export function toolLabel(tool: string): { verb: string; kind: string } {
+export type LabelLocale = "en" | "el";
+
+const EL_VERBS: Record<string, string> = {
+  read_metrics: "Διάβασε το ιστορικό δεικτών",
+  read_obligations: "Διάβασε τις ανοιχτές υποχρεώσεις",
+  read_cbam_imports: "Διάβασε τις γραμμές εισαγωγών CBAM",
+  create_task: "Πρόσθεσε εργασία στην ουρά ελέγχου σας",
+  record_fact: "Κατέγραψε στοιχείο μαζί με την πηγή του",
+  save_cbam_draft: "Αποθήκευσε το σχέδιο δήλωσης CBAM",
+  sign_cbam_declaration: "Υπογραφή της δήλωσης CBAM",
+  read_cbam_suppliers: "Διάβασε επαφές προμηθευτών και προηγούμενα αιτήματα",
+  withdraw_approval_request: "Απέσυρε ένα παρωχημένο αίτημα",
+  send_supplier_request: "Email σε προμηθευτή για δεδομένα CBAM",
+};
+const EL_RISK = ["Μόνο ανάγνωση", "Εσωτερική εγγραφή", "Ενέργεια προς τα έξω", "Νομική ή οικονομική"] as const;
+const EL_DECISION: Record<string, string> = {
+  executed: "Ολοκληρώθηκε",
+  queued_for_approval: "Περιμένει εσάς",
+  blocked: "Μπλοκαρίστηκε από πολιτική",
+  failed: "Απέτυχε",
+};
+const EL_STATUS: Record<string, string> = { succeeded: "Ολοκληρώθηκε", running: "Σε εξέλιξη", failed: "Απέτυχε" };
+const EL_TRIGGER: Record<string, string> = {
+  cron: "Προγραμματισμένη",
+  manual: "Ξεκίνησε από άνθρωπο",
+  event: "Από συμβάν",
+  approval: "Μετά από έγκριση",
+};
+
+export function toolLabel(tool: string, locale: LabelLocale = "en"): { verb: string; kind: string } {
+  const base = toolLabel_(tool);
+  return locale === "el" && EL_VERBS[tool] ? { ...base, verb: EL_VERBS[tool] } : base;
+}
+
+function toolLabel_(tool: string): { verb: string; kind: string } {
   return TOOL_LABELS[tool] ?? { verb: tool.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()), kind: "other" };
 }
 
-export function riskLabel(level: number): string {
+export function riskLabel(level: number, locale: LabelLocale = "en"): string {
+  if (locale === "el") return EL_RISK[level] ?? `Επίπεδο κινδύνου ${level}`;
   return RISK_LABELS[level] ?? `Risk level ${level}`;
 }
 
-export function decisionLabel(decision: string): { label: string; tone: Tone } {
+export function decisionLabel(decision: string, locale: LabelLocale = "en"): { label: string; tone: Tone } {
+  const r = decisionLabel_(decision);
+  return locale === "el" && EL_DECISION[decision] ? { ...r, label: EL_DECISION[decision] } : r;
+}
+
+function decisionLabel_(decision: string): { label: string; tone: Tone } {
   switch (decision) {
     case "executed":
       return { label: "Done", tone: "good" };
@@ -44,7 +84,12 @@ export function decisionLabel(decision: string): { label: string; tone: Tone } {
   }
 }
 
-export function runStatusLabel(status: string): { label: string; tone: Tone } {
+export function runStatusLabel(status: string, locale: LabelLocale = "en"): { label: string; tone: Tone } {
+  const r = runStatusLabel_(status);
+  return locale === "el" && EL_STATUS[status] ? { ...r, label: EL_STATUS[status] } : r;
+}
+
+function runStatusLabel_(status: string): { label: string; tone: Tone } {
   switch (status) {
     case "succeeded":
       return { label: "Finished", tone: "good" };
@@ -57,7 +102,8 @@ export function runStatusLabel(status: string): { label: string; tone: Tone } {
   }
 }
 
-export function triggerLabel(trigger: string): string {
+export function triggerLabel(trigger: string, locale: LabelLocale = "en"): string {
+  if (locale === "el" && EL_TRIGGER[trigger]) return EL_TRIGGER[trigger];
   if (trigger === "cron") return "Scheduled";
   if (trigger === "manual") return "Started by a person";
   if (trigger === "event") return "Triggered by an event";
@@ -69,7 +115,8 @@ export function triggerLabel(trigger: string): string {
  * One short sentence about what a step returned. Never throws on odd JSON;
  * the ledger stores text that may be truncated at 8000 characters.
  */
-export function summarizeOutput(decision: string, output: string | null): string | null {
+export function summarizeOutput(decision: string, output: string | null, locale: LabelLocale = "en"): string | null {
+  const el = locale === "el";
   if (!output) return null;
   let v: unknown;
   try {
@@ -79,20 +126,23 @@ export function summarizeOutput(decision: string, output: string | null): string
   }
   if (decision === "queued_for_approval" && v && typeof v === "object" && "taskId" in v) {
     const o = v as { taskId: unknown; reused?: unknown };
+    if (el) return o.reused ? `Το ίδιο αίτημα περιμένει ήδη ως εργασία #${o.taskId}.` : `Άνοιξε εργασία έγκρισης #${o.taskId}.`;
     return o.reused ? `Same request already waiting as task #${o.taskId}.` : `Opened approval task #${o.taskId}.`;
   }
   if (v && typeof v === "object" && !Array.isArray(v)) {
     const o = v as Record<string, unknown>;
     if ("taskId" in o && "created" in o) {
+      if (el) return o.created ? `Άνοιξε εργασία #${o.taskId}.` : `Η εργασία #${o.taskId} ήταν ήδη ανοιχτή και διατηρήθηκε χωρίς διπλότυπο.`;
       return o.created ? `Opened task #${o.taskId}.` : `Task #${o.taskId} was already open, so it was kept, not duplicated.`;
     }
     if (typeof o.error === "string") return o.error;
     if (typeof o.reason === "string") return o.reason;
   }
+  if (Array.isArray(v) && el) return v.length === 1 ? "Επιστράφηκε 1 στοιχείο." : `Επιστράφηκαν ${v.length} στοιχεία.`;
   if (Array.isArray(v)) return v.length === 1 ? "1 item returned." : `${v.length} items returned.`;
   if (v && typeof v === "object") {
     const keys = Object.keys(v as object);
-    if (!keys.length) return "No result.";
+    if (!keys.length) return el ? "Κανένα αποτέλεσμα." : "No result.";
     const parts = keys.slice(0, 3).map((k) => {
       const val = (v as Record<string, unknown>)[k];
       const shown = typeof val === "string" || typeof val === "number" || typeof val === "boolean" ? String(val) : Array.isArray(val) ? `${val.length} items` : "…";

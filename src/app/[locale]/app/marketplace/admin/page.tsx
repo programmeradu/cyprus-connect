@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -30,6 +31,10 @@ interface Project {
 const PATH = "/api/marketplace/projects";
 
 export default function MarketplaceAdminPage() {
+  const t = useTranslations("dashboard.marketplace.admin");
+  const tm = useTranslations("dashboard.marketplace");
+  const catLabel = (c: string) => (tm.has(`categories.${c}` as any) ? tm(`categories.${c}` as any) : c.replace(/_/g, " "));
+  const statusLabel = (s: string) => (t.has(`status.${s}` as any) ? t(`status.${s}` as any) : s);
   const { data: session, isPending } = useSession();
   const router = useRouter();
   const [updating, setUpdating] = useState<number | null>(null);
@@ -56,7 +61,7 @@ export default function MarketplaceAdminPage() {
     setUpdating(projectId);
     const ok = await change(`${PATH}/${projectId}/update-status`, "PATCH", { isFeatured: !currentStatus });
     setUpdating(null);
-    if (ok) toast.success(!currentStatus ? "Project featured" : "Project no longer featured");
+    if (ok) toast.success(!currentStatus ? t("featuredOn") : t("featuredOff"));
     else toast.error("The status could not be changed. Please try again.");
   };
 
@@ -64,7 +69,7 @@ export default function MarketplaceAdminPage() {
     setUpdating(projectId);
     const ok = await change(`${PATH}/${projectId}/update-status`, "PATCH", { verificationStatus: status });
     setUpdating(null);
-    if (ok) toast.success(`Verification status set to ${status}`);
+    if (ok) toast.success(t("statusSet", { status: statusLabel(status) }));
     else toast.error("The status could not be changed. Please try again.");
   };
 
@@ -72,14 +77,14 @@ export default function MarketplaceAdminPage() {
     setGenerating(projectId);
     const ok = await change(`${PATH}/${projectId}/generate-banner`, "POST");
     setGenerating(null);
-    if (ok) toast.success("Banner created");
-    else toast.error("The banner could not be created. Please try again.");
+    if (ok) toast.success(tm("detail.bannerOk"));
+    else toast.error(tm("detail.bannerFail"));
   };
 
   const bulkGenerateBanners = async () => {
     const data = await change<{ generated: number }>(`${PATH}/bulk-generate-banners`, "POST");
-    if (data) toast.success(`Created ${data.generated} banners`);
-    else toast.error("The banners could not be created. Please try again.");
+    if (data) toast.success(t("bulkOk", { count: data.generated }));
+    else toast.error(t("bulkFail"));
   };
 
   const projectsWithoutBanners = projects.filter(p => !p.bannerImage).length;
@@ -87,17 +92,17 @@ export default function MarketplaceAdminPage() {
   const columns: Column<Project>[] = [
     {
       key: "name",
-      header: "Project",
+      header: tm("colProject"),
       render: (p) => (
         <div>
           <p className="font-medium break-words">{p.name}</p>
-          <p className="vck-meta mt-0.5 break-words capitalize">{p.category.replace("_", " ")} \u00b7 {p.location}</p>
+          <p className="vck-meta mt-0.5 break-words">{catLabel(p.category)} · {p.location}</p>
         </div>
       )
     },
     {
       key: "featured",
-      header: "Featured",
+      header: t("colFeatured"),
       render: (p) => (
         <button
           type="button"
@@ -105,33 +110,33 @@ export default function MarketplaceAdminPage() {
           disabled={updating === p.id}
           className="vck-btn"
         >
-          {p.isFeatured ? "Featured" : "Feature"}
+          {p.isFeatured ? t("featured") : t("feature")}
         </button>
       )
     },
     {
       key: "verification",
-      header: "Verification",
+      header: t("colVerification"),
       render: (p) => (
         <select
+          aria-label={t("colVerification")}
           value={p.verificationStatus}
           onChange={(e) => updateVerificationStatus(p.id, e.target.value)}
           disabled={updating === p.id}
           className="rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] px-2 py-1.5 text-sm"
         >
-          <option value="verified">Verified</option>
-          <option value="pending">Pending</option>
-          <option value="in_review">In review</option>
-          <option value="rejected">Rejected</option>
+          {(["verified", "pending", "in_review", "rejected"] as const).map((s) => (
+            <option key={s} value={s}>{t(`status.${s}`)}</option>
+          ))}
         </select>
       )
     },
     {
       key: "banner",
-      header: "Banner",
+      header: t("colBanner"),
       render: (p) =>
         p.bannerImage ? (
-          <span className="vck-tag" data-tone="positive">Has banner</span>
+          <span className="vck-tag" data-tone="positive">{t("hasBanner")}</span>
         ) : (
           <button
             type="button"
@@ -139,7 +144,7 @@ export default function MarketplaceAdminPage() {
             disabled={generating === p.id}
             className="vck-btn"
           >
-            {generating === p.id ? "Generating\u2026" : "Generate banner"}
+            {generating === p.id ? tm("detail.generating") : tm("detail.generateBanner")}
           </button>
         )
     }
@@ -153,37 +158,37 @@ export default function MarketplaceAdminPage() {
       onRetry={fetchProjects}
       header={
         <PageHeader
-          title="Marketplace admin"
-          purpose="Manage project badges, verification status, and banner images."
-          breadcrumb={[{ label: "Marketplace", href: "/app/marketplace" }, { label: "Admin" }]}
+          title={t("title")}
+          purpose={t("purpose")}
+          breadcrumb={[{ label: tm("detail.marketplace"), href: "/app/marketplace" }, { label: t("crumb") }]}
           actions={
             projectsWithoutBanners > 0 ? (
               <button type="button" className="vck-btn vck-btn-primary" onClick={bulkGenerateBanners} disabled={writer.busy}>
-                Generate all banners ({projectsWithoutBanners})
+                {t("generateAll", { count: projectsWithoutBanners })}
               </button>
             ) : undefined
           }
         />
       }
     >
-      <Section title="Overview">
+      <Section title={t("overview")}>
         <MetricRow columns={4}>
-          <Metric label="Total projects" value={projects.length} />
-          <Metric label="Featured" value={projects.filter(p => p.isFeatured).length} />
-          <Metric label="Verified" value={projects.filter(p => p.verificationStatus === "verified").length} />
-          <Metric label="Without banners" value={projectsWithoutBanners} />
+          <Metric label={t("total")} value={projects.length} />
+          <Metric label={t("featured")} value={projects.filter(p => p.isFeatured).length} />
+          <Metric label={t("verified")} value={projects.filter(p => p.verificationStatus === "verified").length} />
+          <Metric label={t("noBanner")} value={projectsWithoutBanners} />
         </MetricRow>
       </Section>
 
-      <Section title="Projects">
+      <Section title={t("projects")}>
         <DataTable
           columns={columns}
           rows={projects}
           rowKey={(p) => String(p.id)}
           empty={
             <Empty
-              title="No projects to manage yet"
-              body="Projects will appear here once they are added to the marketplace."
+              title={t("emptyTitle")}
+              body={t("emptyBody")}
             />
           }
         />

@@ -229,6 +229,109 @@
         "renewable_energy": "Renewable Energy",
         "carbon_capture": "Carbon Capture",
         "ocean_conservation": "Ocean Conservation"
+      },
+      "colProject": "Project",
+      "colCategory": "Category",
+      "colCertification": "Certification",
+      "colAvailable": "Available",
+      "colPrice": "Price / ton",
+      "tons": "t",
+      "listTitle": "Verified carbon offset projects",
+      "emptyFilterTitle": "No projects match this filter",
+      "viewAll": "View all categories",
+      "categoryLabel": "Category",
+      "detail": {
+        "loadFailed": "This project could not be loaded.",
+        "project": "Project",
+        "marketplace": "Marketplace",
+        "purchase": "Purchase offsets",
+        "overview": "Overview",
+        "pricePerTon": "Price per ton CO₂",
+        "available": "Available capacity",
+        "tonsUnit": "tons",
+        "utilised": "Capacity utilised",
+        "tonsTotal": "{total} tons total",
+        "verification": "Verification",
+        "impact": "Impact metrics",
+        "noImpactTitle": "No impact metrics recorded yet",
+        "noImpactBody": "This project has not published measured impact data.",
+        "sdg": "UN Sustainable Development Goals",
+        "banner": "Banner image",
+        "bannerDesc": "Generate a banner image for this listing.",
+        "generating": "Generating…",
+        "generateBanner": "Generate banner",
+        "bannerOk": "Banner created",
+        "bannerFail": "The banner could not be created. Please try again.",
+        "recommended": "Recommended for you",
+        "noRecTitle": "No recommendations yet",
+        "noRecBody": "Purchase or browse a few projects so Vuneli can tailor recommendations to your goals.",
+        "dialogTitle": "Purchase carbon offsets",
+        "tonsInput": "Number of tons",
+        "quantity": "Quantity",
+        "quantityValue": "{count} tons CO₂",
+        "priceRow": "Price per ton",
+        "total": "Total amount",
+        "cancel": "Cancel",
+        "processing": "Processing…",
+        "pay": "Proceed to payment",
+        "checkoutFail": "Checkout could not be started. Please try again.",
+        "checkoutOpen": "Opening checkout",
+        "maxNote": "Up to {max} tons available."
+      },
+      "impact": {
+        "title": "Your impact",
+        "purpose": "Track your contribution to global carbon reduction.",
+        "loadFailed": "Your impact data could not be loaded.",
+        "emptyTitle": "Start your impact journey",
+        "emptyBody": "You haven't purchased any carbon offsets yet. Browse the marketplace to find projects that align with your values.",
+        "browse": "Browse projects",
+        "summary": "Summary",
+        "tonsOffset": "Tons CO₂ offset",
+        "investment": "Total investment",
+        "supported": "Projects supported",
+        "byCategory": "Impact by category",
+        "colPurchases": "Purchases",
+        "colTons": "Tons offset",
+        "colSpent": "Spent",
+        "noBreakdownTitle": "No category breakdown yet",
+        "noBreakdownBody": "Purchase offsets across categories to see a breakdown here.",
+        "history": "Purchase history",
+        "colDate": "Date",
+        "colTonsShort": "Tons",
+        "colPaid": "Paid",
+        "noPurchasesTitle": "No purchases yet",
+        "noPurchasesBody": "Your completed offset purchases will be listed here."
+      },
+      "admin": {
+        "title": "Marketplace admin",
+        "purpose": "Manage project badges, verification status, and banner images.",
+        "crumb": "Admin",
+        "generateAll": "Generate all banners ({count})",
+        "overview": "Overview",
+        "total": "Total projects",
+        "featured": "Featured",
+        "verified": "Verified",
+        "noBanner": "Without banners",
+        "projects": "Projects",
+        "emptyTitle": "No projects to manage yet",
+        "emptyBody": "Projects will appear here once they are added to the marketplace.",
+        "colFeatured": "Featured",
+        "feature": "Feature",
+        "colVerification": "Verification",
+        "colBanner": "Banner",
+        "hasBanner": "Has banner",
+        "status": {
+          "verified": "Verified",
+          "pending": "Pending",
+          "in_review": "In review",
+          "rejected": "Rejected"
+        },
+        "featuredOn": "Project featured",
+        "featuredOff": "Project no longer featured",
+        "statusSet": "Verification status set to {status}",
+        "statusFail": "The status could not be changed. Please try again.",
+        "bulkOk": "Created {count} banners",
+        "bulkFail": "The banners could not be created. Please try again."
       }
     },
     "billing": {
@@ -951,7 +1054,41 @@
       "stepsFailed": "Could not load the steps for this run.",
       "sampleNoSteps": "Sample runs have no recorded steps.",
       "noToolCalls": "This run made no tool calls.",
-      "exactInput": "Exact input and fingerprint"
+      "exactInput": "Exact input and fingerprint",
+      "roster": {
+        "ingest": {
+          "role": "Data ingestion",
+          "mission": "Reads EAC bills, bank feeds and invoices, then writes clean activity data."
+        },
+        "factors": {
+          "role": "Emission factors",
+          "mission": "Keeps factor sets current and re-states past periods when a factor changes."
+        },
+        "cbam": {
+          "role": "CBAM reporting",
+          "mission": "Prepares the quarterly CBAM declaration from customs and supplier data."
+        },
+        "vsme": {
+          "role": "VSME and CSRD drafting",
+          "mission": "Drafts the disclosure narrative and cites every figure to its evidence."
+        },
+        "reduce": {
+          "role": "Reduction planning",
+          "mission": "Finds the cheapest next tonne and models the payback for each measure."
+        },
+        "assure": {
+          "role": "Assurance and audit",
+          "mission": "Checks every figure against its evidence and flags what an auditor will ask."
+        },
+        "grants": {
+          "role": "Funding watch",
+          "mission": "Watches EU and Cyprus calls and matches them to your reduction plan."
+        },
+        "supply": {
+          "role": "Supplier engagement",
+          "mission": "Collects supplier data for Scope 3 and chases the missing responses."
+        }
+      }
     },
     "cbam": {
       "title": "CBAM declaration",
