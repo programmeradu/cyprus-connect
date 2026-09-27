@@ -75,6 +75,13 @@ Approving "Sign the 2026 CBAM declaration" records your signature on that exact 
 - **Production database:** run `scripts/sql/0023_remove_sample_rows.sql` once (after 0020–0022). It removes seeded sample agent runs, tasks, figures and connection rows, and the unused demo workspace. Already applied to preview.
 - **Production database:** also run `scripts/sql/0024_workspace_revenue.sql` (adds yearly revenue; applied to preview).
 
+## Startup Visa re-evaluation checklist (official guide, DMRID Dec 2024, section 11)
+Source: https://www.gov.cy/media/2024/06/Practical-Guide-Startup-Visa.pdf. Apply 2 months before the permit expires.
+- [ ] **Growth (hardest):** audited statements for year N-1 or N-2 showing revenue up at least 15%, OR at least €150k invested during operation in Cyprus. Book an auditor now. Invoice real revenue this year, even small, so there is a base to grow from.
+- [ ] **Contribution (any ONE):** 3 new jobs in Cyprus, OR joining a local incubator/accelerator, OR launching at least 1 new product/service. The live CBAM agent may count as the new product; ask DMRID to confirm.
+- [ ] **Digital skills:** individual visa needs 2 recognised certificates (IT, digital marketing, data/ML, design/UX, project management, new product development); team visa needs 1 per member.
+- [ ] Email DMRID to confirm the rule version that applies to your permit and whether a first year with no revenue can use the investment route.
+
 ## Accelerators to check before the March 2027 Startup Visa re-evaluation (added 27 Sep 2026)
 Verify each date on the official page before you apply.
 - [ ] Founder Institute Cyprus (Nicosia) – rolling 2026/27 intake. https://fi.co/insight/build-a-great-startup-in-2026-with-the-fi-cyprus-startup-accelerator
