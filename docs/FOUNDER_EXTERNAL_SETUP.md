@@ -100,4 +100,10 @@ Verify each date on the official page before you apply.
 - [ ] Record every euro spent in Cyprus from your own funds as a founder loan or share capital, with receipts (can count toward the EUR150k investment route).
 - [ ] Before SLUSH: get 3-5 paid pilots (CBAM report service for Cyprus importers, fixed price e.g. EUR500-1,500), invoiced by the Cyprus company.
 - [ ] Record monthly revenue from launch so growth from month to month can be shown alongside the audited figures.
+
+## WikiEXPO partnership and Section 12 (added 2026-09-28)
+- [ ] WikiEXPO Cyprus (November 2026): get the partnership in writing (letter or agreement on letterhead, with dates and what each side does). A signed partnership and any leads or pilots from the event can go in the DMRID evidence pack.
+- [ ] Plan WikiEXPO and SLUSH together: one CBAM pilot offer, one demo, one way to capture leads for both events.
+- [ ] Section 12 of the guide (as you read it): incorporation can be optional for projects with a positive evaluation, but the founder then gets only a 1-year renewal. Ask DMRID in the same email: (a) does this apply to your permit, (b) if you renew for 1 year without incorporating, does the growth test move to the next re-evaluation, (c) can you incorporate later without losing the route. Keep in mind that paid pilots need a legal entity to invoice from, so incorporating is still likely the better choice.
+
 - [ ] At/after SLUSH: pursue angel/pre-seed or grant money (RIF) paid into the Cyprus company to strengthen the investment route.
