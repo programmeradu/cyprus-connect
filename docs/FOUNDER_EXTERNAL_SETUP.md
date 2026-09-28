@@ -130,3 +130,11 @@ Official guide now saved at docs/sources/Practical-Guide-Startup-Visa.pdf (+ .tx
 - [ ] Get the Slush visa invitation letter / ticket confirmation; get the RIF letter that says who pays travel costs (must match field 32).
 - [ ] 3 months of Cyprus bank statements, no unexplained large deposits; paid return flight; confirmed hotel; EUR 30,000 Schengen insurance.
 - [ ] Write a one-page cover letter (who you are, why Slush, why you will return to Cyprus). Apply now.
+
+## INSPIRE 2026, Nicosia, 7-8 Oct 2026 (added 2026-09-28)
+Registration confirmed by email (Makarios Avenue). Use it as a lead source before WikiEXPO and SLUSH.
+- [ ] Save the confirmation email as a PDF (DMRID evidence of Cyprus ecosystem activity; also useful for the Finland visa pack).
+- [ ] Check the speaker line-up; pick 5-10 people to meet (banks, importers, accountants, customs brokers, investors, CyEC/RIF people).
+- [ ] Bring a one-line pitch and a short CBAM pilot offer (fixed price) with a QR code to a contact form or calendar.
+- [ ] Goal: 2-3 follow-up meetings and at least 1 letter of intent. Send follow-ups within 48 hours.
+- [ ] Take dated photos at the event and write down who you met (name, company, next step).
