@@ -107,3 +107,8 @@ Verify each date on the official page before you apply.
 - [ ] Section 12 checked against the official guide (DMRID, Dec 2024, sections 11-12): the 'no registered company' case applies only AFTER a positive re-evaluation. It does not skip the section 11 tests. Section 11 still asks for the company's audited N-1 or N-2 accounts (15% revenue growth or EUR 150k invested). Without a company there are no company accounts, so this route does not help with the growth test. With or without a company, self-employed founders get a 1-year renewal (Regulation 12, 1972 Aliens and Immigration Regulations); paid employees of a registered company can get 2 years. Plan: incorporate soon and pay yourself as an employee of the company if you want the 2-year permit. Ask DMRID to confirm.
 
 - [ ] At/after SLUSH: pursue angel/pre-seed or grant money (RIF) paid into the Cyprus company to strengthen the investment route.
+
+## No-company route for March (added 2026-09-28)
+- [ ] Put the founder's reading to DMRID in writing: "I received my permit 7 months before re-evaluation and had no activity before. Can the re-evaluation be positive without a registered company, using evidence such as letters of intent, pilots and the launched product, instead of audited N-1/N-2 accounts?" Keep the reply as evidence.
+- [ ] Until DMRID answers: do not incorporate. Register as self-employed (Tax Department + Social Insurance) so you can invoice small paid pilots cheaply; this gives real revenue without company costs.
+- [ ] Collect signed letters of intent and pilot agreements (WikiEXPO, SLUSH, Cyprus CBAM importers), dated and on the other party's letterhead.
