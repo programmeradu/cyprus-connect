@@ -122,3 +122,11 @@ Official guide now saved at docs/sources/Practical-Guide-Startup-Visa.pdf (+ .tx
 - [ ] Get the 2026 minimum-contribution table for your category from Social Insurance (mlsi.gov.cy, "Self Employed Persons Categories") before registering; this is the real monthly cost.
 - [ ] Take your residence permit and Initial Approval letter to Social Insurance and ask them to confirm they will register you on it. Still confirm with DMRID that sole-trader revenue counts at re-evaluation.
 - Official 2026 table saved at docs/sources/Occupational_categories_and_ins_earnings_of_SE_2026.xlsx (valid 5.1.2026-3.1.2027). Minimums are WEEKLY; you cannot declare below your category's minimum. Tech founder likely category 2a/15/16: EUR 485.67/week (~EUR 2,105/month) -> social insurance 16.6% ~= EUR 349/month (~EUR 4,190/year) even with zero income. Avoid category 3 "Directors (Entrepreneurs)": EUR 982.38/week -> ~EUR 707/month. GESY 4% is on actual income. Ask Social Insurance which category applies before registering.
+
+## Finland (Schengen) visa for SLUSH, 14-21 Nov 2026 (added 2026-09-28)
+- [ ] Field 24: keep "RIF delegate / government approved" ONLY if RIF or the Deputy Ministry gives you a signed letter saying so. Otherwise write "Attending Slush 2026 as founder of a startup approved under the Cyprus Startup Visa scheme".
+- [ ] Field 22: say "Self-employed founder under Cyprus Startup Visa scheme (company not yet incorporated)". Do not imply a registered company.
+- [ ] Replace missing employment proof with: Startup Visa Notification of Initial Approval, residence permit (valid to 14-05-2027), Nicosia lease, WikiEXPO partnership letter, any LOIs, March re-evaluation date.
+- [ ] Get the Slush visa invitation letter / ticket confirmation; get the RIF letter that says who pays travel costs (must match field 32).
+- [ ] 3 months of Cyprus bank statements, no unexplained large deposits; paid return flight; confirmed hotel; EUR 30,000 Schengen insurance.
+- [ ] Write a one-page cover letter (who you are, why Slush, why you will return to Cyprus). Apply now.
