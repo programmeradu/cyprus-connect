@@ -114,3 +114,10 @@ Verify each date on the official page before you apply.
 - [ ] Collect signed letters of intent and pilot agreements (WikiEXPO, SLUSH, Cyprus CBAM importers), dated and on the other party's letterhead.
 - [ ] Download the official guide (https://www.gov.cy/media/2024/06/Practical-Guide-Startup-Visa.pdf) and upload it in chat so it can be saved in the repo under docs/sources/.
 - [ ] Self-employed status: the scheme gives "the right to economic activity" and Section 12 mentions self-employed founders, but no official text found says you may register as a sole trader outside a company. Add this question to the DMRID email and ask the Migration Department too; register only after a written yes.
+
+## Self-employed registration under the Startup Visa (researched 2026-09-28)
+Official guide now saved at docs/sources/Practical-Guide-Startup-Visa.pdf (+ .txt).
+- Allowed: guide section 3 gives founders the "right to self-employment or paid employment in their registered company"; section 12.a.ii covers re-evaluation with no registered company (self-employed founder, 1-year renewal).
+- Steps: (1) Tax Department TIC via Tax For All (free); (2) Social Insurance self-employed registration, form ΥΚΑ 1-008, choosing your occupation category (sets minimum contributions: 16.6% SI + 4% GESY on that category's minimum insurable income); (3) optional business-name registration at the Registrar of Companies if trading as "Vuneli"; (4) VAT only above EUR 15,600 turnover; (5) separate bank account.
+- [ ] Get the 2026 minimum-contribution table for your category from Social Insurance (mlsi.gov.cy, "Self Employed Persons Categories") before registering; this is the real monthly cost.
+- [ ] Take your residence permit and Initial Approval letter to Social Insurance and ask them to confirm they will register you on it. Still confirm with DMRID that sole-trader revenue counts at re-evaluation.
