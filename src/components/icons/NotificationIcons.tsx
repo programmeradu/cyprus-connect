@@ -243,21 +243,6 @@ export const InsightAvailableIcon = ({ className = "w-5 h-5" }: IconProps) => (
       animate={{ pathLength: 1 }}
       transition={{ duration: 0.3, delay: 0.4 }}
     />
-    {/* Sparkles */}
-    {[
-      { d: "M6 6l.5 1-.5 1-.5-1z", delay: 0.6 },
-      { d: "M18 6l.5 1-.5 1-.5-1z", delay: 0.7 },
-      { d: "M19 12l.5 1-.5 1-.5-1z", delay: 0.8 }
-    ].map((sparkle, i) => (
-      <motion.path
-        key={i}
-        d={sparkle.d}
-        fill="url(#insight-grad)"
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: sparkle.delay, type: "spring" }}
-      />
-    ))}
   </svg>
 );
 
