@@ -1507,3 +1507,13 @@
 @media (max-width: 640px) {
   .vc-signal-axis span:not(:first-child):not(:last-child):not([data-active="true"]) { display: none; }
 }
+
+/* Legend rows at every width: dot, label, value pinned right, optional
+   "Open" after the value. Keeps all three numbers in one column. */
+.vc .vc-legend { display: grid; gap: 10px; }
+.vc .vc-legend p { justify-content: flex-start; gap: 10px; min-height: 26px; }
+.vc .vc-legend p i { width: 14px; }
+.vc .vc-legend p i:not([data-tone="lime"]) { width: 5px; margin: 0 4.5px; }
+.vc .vc-legend p span { min-width: 0; overflow-wrap: anywhere; }
+.vc .vc-legend p strong { margin-left: auto; font-variant-numeric: tabular-nums; }
+.vc .vc-legend p span + a, .vc .vc-legend p span + button { margin-left: 2px; }

@@ -261,14 +261,15 @@ export default function ConsolePage() {
 
               <div className="vc-legend">
                 <p>
-                  <i data-tone="lime" /> Automated <strong>{Math.round(automation?.current ?? 0)}%</strong>
+                  <i data-tone="lime" /> <span>Automated</span> <strong>{Math.round(automation?.current ?? 0)}%</strong>
                 </p>
                 <p>
-                  <i /> Evidence <strong>{Math.round(coverage?.current ?? 0)}%</strong>
-                    <PlateOpen href="/app/analytics" label="Open evidence coverage" />
+                  <i /> <span>Evidence</span>
+                  <PlateOpen href="/app/analytics" label="Open evidence coverage" />
+                  <strong>{Math.round(coverage?.current ?? 0)}%</strong>
                 </p>
                 <p>
-                  <i data-tone="soft" /> Human tasks <strong>{tasks.length}</strong>
+                  <i data-tone="soft" /> <span>Human tasks</span> <strong>{tasks.length}</strong>
                 </p>
               </div>
 

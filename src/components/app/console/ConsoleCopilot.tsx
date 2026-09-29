@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useConsole } from "./ConsoleData";
 import { IcoClose, IcoCheck, IcoVuneliAi } from "./icons";
+import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
 
 type Role = "user" | "assistant";
 
@@ -529,33 +530,7 @@ function ProposalCard({
  * The copilot mark: a measurement arc closing around a sprout. It reads as
  * instrument plus growth, which is what this panel does. It is not a sparkle.
  */
+/** The copilot wears the Vuneli two-leaf mark in brand colours, never a generic glyph. */
 function CopilotMark({ small }: { small?: boolean }) {
-  const size = small ? 17 : 24;
-  return (
-    <svg viewBox="0 0 28 28" width={size} height={size} fill="none" aria-hidden>
-      <path
-        d="M4.4 18.6a10.4 10.4 0 1 1 19.2 0"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        opacity="0.5"
-      />
-      <path
-        d="M14 22.4V12.9"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M14 13.4c-.2-2.6-1.9-4.2-4.6-4.5-.1 2.8 1.5 4.5 4.6 4.5Z"
-        fill="currentColor"
-        opacity="0.55"
-      />
-      <path
-        d="M14.2 15.1c.3-3 2.2-4.8 5.3-5.1.2 3.1-1.8 5.1-5.3 5.1Z"
-        fill="var(--vc-lime)"
-      />
-      <circle cx="14" cy="23.2" r="1.7" fill="var(--vc-lime)" />
-    </svg>
-  );
+  return <VuneliAiIcon size={small ? 18 : 24} brand />;
 }
