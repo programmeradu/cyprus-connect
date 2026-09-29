@@ -1516,4 +1516,4 @@
 .vc .vc-legend p i:not([data-tone="lime"]) { width: 5px; margin: 0 4.5px; }
 .vc .vc-legend p span { min-width: 0; overflow-wrap: anywhere; }
 .vc .vc-legend p strong { margin-left: auto; font-variant-numeric: tabular-nums; }
-.vc .vc-legend p > :last-child:not(strong) { margin-left: 4px; }
+.vc .vc-legend p span + a, .vc .vc-legend p span + button { margin-left: 2px; }

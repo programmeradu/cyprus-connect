@@ -264,8 +264,9 @@ export default function ConsolePage() {
                   <i data-tone="lime" /> <span>Automated</span> <strong>{Math.round(automation?.current ?? 0)}%</strong>
                 </p>
                 <p>
-                  <i /> <span>Evidence</span> <strong>{Math.round(coverage?.current ?? 0)}%</strong>
+                  <i /> <span>Evidence</span>
                   <PlateOpen href="/app/analytics" label="Open evidence coverage" />
+                  <strong>{Math.round(coverage?.current ?? 0)}%</strong>
                 </p>
                 <p>
                   <i data-tone="soft" /> <span>Human tasks</span> <strong>{tasks.length}</strong>
