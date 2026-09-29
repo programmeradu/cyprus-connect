@@ -20,7 +20,7 @@ import {
   IcoPlug,
   IcoPulse,
   IcoSearch,
-  IcoSpark,
+  IcoVuneliAi,
 } from "./icons";
 import { ConsoleAvatar } from "./ConsoleAvatar";
 import { useConsole } from "./ConsoleData";
@@ -31,7 +31,7 @@ export const NAV_ITEMS = [
   { href: "/app/analytics", label: "Measure", icon: IcoPulse },
   { href: "/app/compliance", label: "Report", icon: IcoDoc },
   { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
-  { href: "/app/agents", label: "Agents", icon: IcoSpark },
+  { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
   { href: "/app/integrations", label: "Connect", icon: IcoPlug },
 ];
 

@@ -3,13 +3,13 @@
  */
 
 import { Link } from "@/i18n/navigation";
-import { IcoDoc, IcoLeaf, IcoPlug, IcoPulse, IcoSpark } from "@/components/app/console/icons";
+import { IcoDoc, IcoLeaf, IcoPlug, IcoPulse, IcoCoin } from "@/components/app/console/icons";
 
 export const CATEGORY_ICON: Record<string, typeof IcoPulse> = {
   emissions: IcoLeaf,
   energy: IcoPulse,
   assurance: IcoDoc,
-  finance: IcoSpark,
+  finance: IcoCoin,
   operations: IcoPlug,
 };
 

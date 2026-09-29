@@ -6,6 +6,7 @@
  */
 
 import type { ReactNode } from "react";
+import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
 
 type IcoProps = { size?: number; className?: string; sw?: number };
 
@@ -79,10 +80,15 @@ export const IcoDoc = (p: IcoProps) => (
   </S>
 );
 
-export const IcoSpark = (p: IcoProps) => (
+/** AI mark from the Vuneli logo (leaf-dotted "i"). Use wherever AI acts. */
+export const IcoVuneliAi = (p: IcoProps) => <VuneliAiIcon size={p.size} className={p.className} sw={p.sw} />;
+
+/** A stacked coin, for cost/finance. */
+export const IcoCoin = (p: IcoProps) => (
   <S {...p}>
-    <path d="M12 3.2 13.8 9l5.8 1.8-5.8 1.8L12 18.4 10.2 12.6 4.4 10.8 10.2 9Z" />
-    <path d="M18.6 3.4v3M20.1 4.9h-3" />
+    <ellipse cx="12" cy="7" rx="7" ry="3" />
+    <path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7" />
+    <path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5" />
   </S>
 );
 
