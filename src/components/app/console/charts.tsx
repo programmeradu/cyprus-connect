@@ -307,6 +307,28 @@ export const BarRow = ({
 }) => {
   const [hover, setHover] = useState<number | null>(null);
   const peak = Math.max(...points.map((p) => p.value), 1);
+  // A trend needs two periods. One bar stretched across the card reads as a
+  // broken chart, so show the single reading plainly instead.
+  if (points.length < 2) {
+    const only = points[0];
+    return (
+      <div
+        className="flex w-full flex-col justify-center gap-1 rounded-[10px] border border-dashed px-3 py-2 text-[11.5px] font-semibold leading-snug"
+        style={{ minHeight: height, borderColor: "var(--vc-rule)" }}
+      >
+        {only ? (
+          <>
+            <span>
+              {only.label}: {only.value.toLocaleString("en-GB", { maximumFractionDigits: 1 })}
+            </span>
+            <span className="opacity-60">The trend appears once a second month is recorded.</span>
+          </>
+        ) : (
+          <span className="opacity-60">No months recorded yet.</span>
+        )}
+      </div>
+    );
+  }
   return (
     <div className="w-full">
       <div className="flex items-end gap-[3px]" style={{ height }}>
