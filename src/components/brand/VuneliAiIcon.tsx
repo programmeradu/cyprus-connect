@@ -1,6 +1,6 @@
 /**
- * The Vuneli AI mark. Drawn from the logo: the stem of the final "i" with the
- * veined leaf that dots it. Replaces generic sparkle/star glyphs everywhere
+ * The Vuneli AI mark. The leaf from the logo, centred and balanced, with a
+ * "V" chevron on its midrib. Replaces generic sparkle/star glyphs everywhere
  * AI is signalled (copilot, agents, studio, AI credits).
  *
  * Single stroke, currentColor, 24 grid, so it sits beside the console icons.
@@ -31,15 +31,16 @@ export function VuneliAiIcon({ size = 16, className, sw = 1.7, filled = false, t
       aria-hidden={title ? undefined : true}
     >
       {title ? <title>{title}</title> : null}
-      {/* stem of the "i" */}
-      <path d="M8.5 11.5v9" />
-      {/* the leaf that dots it */}
+      {/* the logo's leaf, centred on the diagonal */}
       <path
-        d="M10.6 10.4c-.3-4.6 2.6-7.4 9.4-7.9.3 6.6-2.7 9.6-7.3 9.4a2.2 2.2 0 0 1-2.1-1.5Z"
+        d="M4.5 19.5C4.5 10.5 10.5 4.5 19.5 4.5 19.5 13.5 13.5 19.5 4.5 19.5Z"
         fill={filled ? "currentColor" : "none"}
       />
-      {/* vein */}
-      <path d="M11.4 11.2 17.4 5.3" stroke={filled ? "var(--vuneli-ai-vein, #fff)" : "currentColor"} />
+      {/* midrib with a "V" for Vuneli */}
+      <g stroke={filled ? "var(--vuneli-ai-vein, #fff)" : "currentColor"}>
+        <path d="M8 16 16 8" />
+        <path d="M10 11.2v2.8h2.8" />
+      </g>
     </svg>
   );
 }
