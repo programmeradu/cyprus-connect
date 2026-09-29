@@ -15,3 +15,4 @@ No shortcuts, no mocks, no fake data anywhere. All /app pages share one central 
 - [Innovation criteria + pathway](mem://reference/innovation-criteria) — DMRID/RIF 56-layer test, Frascati rules, Slush 2026 flagship thesis
 - [Strategic research](mem://reference/strategic-research) — Canonical strategy docs in docs/research/
 - [No shortcuts](mem://constraints/no-shortcuts) — Build everything properly; honest blocked states instead of mocks; one shared data source
+- [Brand AI icon](mem://constraints/no-sparkles-ai-icon) — AI uses the Vuneli leaf-"i" mark, never sparkles/stars/wands
