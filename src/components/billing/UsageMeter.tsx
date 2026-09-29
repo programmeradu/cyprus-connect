@@ -8,7 +8,7 @@ import { TrendingUp } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
 
-import { VuneliAiGlyph as SparklesIcon } from "@/components/brand/VuneliAiIcon";
+import { VuneliAiGlyph } from "@/components/brand/VuneliAiIcon";
 
 interface UsageMeterProps {
   title: string;
@@ -111,7 +111,7 @@ export const UsageMeter = ({
 
       {unlimited && (
         <div className="flex items-center gap-1 text-xs text-primary">
-          <SparklesIcon className="w-3 h-3" />
+          <VuneliAiGlyph className="w-3 h-3" />
           <span className="font-medium">{t("noLimits")}</span>
         </div>
       )}
@@ -161,7 +161,7 @@ export const CreditBalance = ({
             className="text-xs h-8 px-3 flex items-center justify-center gap-1.5"
             onClick={onPurchaseClick}
           >
-            <SparklesIcon className="w-3.5 h-3.5 flex-shrink-0" />
+            <VuneliAiGlyph className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="whitespace-nowrap">{t("buyMore")}</span>
           </PremiumButton>
         )}
