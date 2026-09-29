@@ -138,3 +138,11 @@ Registration confirmed by email (Makarios Avenue). Use it as a lead source befor
 - [ ] Bring a one-line pitch and a short CBAM pilot offer (fixed price) with a QR code to a contact form or calendar.
 - [ ] Goal: 2-3 follow-up meetings and at least 1 letter of intent. Send follow-ups within 48 hours.
 - [ ] Take dated photos at the event and write down who you met (name, company, next step).
+
+## SLUSH 2026 approved by RIF (added 2026-09-29) — DEADLINE 5 OCT
+Letter saved at docs/sources/SLUSH_Participation_Approval.pdf. RIF covers the EUR 395 ticket + EUR 300 expenses subsidy (de minimis aid). Slush company profile already approved (email 23 Sep).
+- [ ] Create the Enterprise Europe Network (EEN) Partnership Profile.
+- [ ] By 5 Oct 2026, email Stavros Kambanellas (skambanellas@research.org.cy, cc mchilimindri@research.org.cy): forward the Slush 23 Sep approval email + EEN profile confirmation.
+- [ ] Do NOT buy a ticket yourself — RIF issues it.
+- [ ] Finland visa: this letter is official proof. Field 24 can now truthfully say "Selected by the Research and Innovation Foundation (RIF) of Cyprus to attend Slush 2026"; field 32: RIF covers ticket + EUR 300, you cover the rest. Slush dates are 18-19 Nov.
+- [ ] Add the RIF letter to the DMRID evidence pack (government-backed selection).
