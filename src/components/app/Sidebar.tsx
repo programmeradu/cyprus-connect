@@ -18,7 +18,8 @@ import {
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { VuneliWordmark } from "@/components/brand/VuneliWordmark";
-import { Lightbulb, Plug, Wand2, GraduationCap } from "lucide-react";
+import { Lightbulb, Plug, GraduationCap } from "lucide-react";
+import { VuneliAiGlyph } from "@/components/brand/VuneliAiIcon";
 import { useSession, authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -55,7 +56,7 @@ const navItems: NavItem[] = [
   { href: "/app/marketplace", key: "marketplace", icon: MarketplaceIcon },
   { href: "/app/compliance", key: "compliance", icon: ComplianceIcon, badge: true },
   { href: "/app/learn", key: "learn", icon: GraduationCap },
-  { href: "/app/studio", key: "studio", icon: Wand2 },
+  { href: "/app/studio", key: "studio", icon: VuneliAiGlyph },
   { href: "/app/leaderboard", key: "leaderboard", icon: TrophyIcon },
   { href: "/app/analytics", key: "analytics", icon: ChartIcon },
   { href: "/app/insights", key: "insights", icon: Lightbulb },

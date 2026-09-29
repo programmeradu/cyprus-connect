@@ -12,7 +12,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useConsole } from "./ConsoleData";
-import { IcoClose, IcoCheck, IcoSpark } from "./icons";
+import { IcoClose, IcoCheck, IcoVuneliAi } from "./icons";
 
 type Role = "user" | "assistant";
 
@@ -374,7 +374,7 @@ export function ConsoleCopilot() {
                       {turn.content ||
                         (streaming && index === turns.length - 1 ? (
                           <span className="vc-copilot-thinking">
-                            <IcoSpark size={13} /> Reading the records...
+                            <IcoVuneliAi size={13} /> Reading the records...
                           </span>
                         ) : (
                           ""

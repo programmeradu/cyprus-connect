@@ -11,7 +11,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoSpark, IcoMenu } from "./icons";
+import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoVuneliAi, IcoMenu } from "./icons";
 import { MORE_ITEMS } from "./ConsoleTopbar";
 
 const DOCK_ITEMS = [
@@ -19,7 +19,7 @@ const DOCK_ITEMS = [
   { href: "/app/analytics", label: "Measure", icon: IcoPulse },
   { href: "/app/compliance", label: "Report", icon: IcoDoc },
   { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
-  { href: "/app/agents", label: "Agents", icon: IcoSpark },
+  { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
 ];
 
 const SHEET_ITEMS = [

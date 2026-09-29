@@ -212,7 +212,7 @@ export const ActionCompletedIcon = ({ className = "w-5 h-5" }: IconProps) => (
   </svg>
 );
 
-// Insight Available Icon - Lightbulb with sparkle
+// Insight Available Icon - Lightbulb
 export const InsightAvailableIcon = ({ className = "w-5 h-5" }: IconProps) => (
   <svg viewBox="0 0 24 24" className={className} fill="none">
     <defs>

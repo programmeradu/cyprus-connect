@@ -16,6 +16,7 @@
  */
 
 import type { ComponentType } from "react";
+import { VuneliAiGlyph } from "@/components/brand/VuneliAiIcon";
 import {
   Leaf,
   LayoutGrid,
@@ -26,7 +27,6 @@ import {
   Settings,
   Gauge,
   Target,
-  Sparkles,
   Flame,
   Zap,
   Droplet,
@@ -64,7 +64,10 @@ export const BulbIcon = make(Lightbulb);
 export const SettingsIcon = make(Settings);
 export const CarbonIcon = make(Gauge);
 export const TargetIcon = make(Target);
-export const SparklesIcon = make(Sparkles);
+/** Legacy name; now the Vuneli AI mark, never a sparkle. */
+export const SparklesIcon = ({ className = "w-5 h-5" }: { className?: string; animated?: boolean }) => (
+  <VuneliAiGlyph className={className} />
+);
 export const FireIcon = make(Flame);
 export const BoltIcon = make(Zap);
 export const WaterIcon = make(Droplet);

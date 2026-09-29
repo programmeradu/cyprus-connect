@@ -8,22 +8,7 @@ import { TrendingUp } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 
 
-// Custom premium sparkles icon
-const SparklesIcon = ({ className }: { className?: string }) => (
-  <svg 
-    className={className} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 3L13.5 7.5L18 9L13.5 10.5L12 15L10.5 10.5L6 9L10.5 7.5L12 3Z" fill="currentColor" stroke="none" />
-    <path d="M19 3L19.5 4.5L21 5L19.5 5.5L19 7L18.5 5.5L17 5L18.5 4.5L19 3Z" fill="currentColor" stroke="none" />
-    <path d="M19 17L19.5 18.5L21 19L19.5 19.5L19 21L18.5 19.5L17 19L18.5 18.5L19 17Z" fill="currentColor" stroke="none" />
-  </svg>
-);
+import { VuneliAiGlyph as SparklesIcon } from "@/components/brand/VuneliAiIcon";
 
 interface UsageMeterProps {
   title: string;

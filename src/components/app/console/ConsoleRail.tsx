@@ -17,7 +17,7 @@ import {
   IcoLeaf,
   IcoPlug,
   IcoDoc,
-  IcoSpark,
+  IcoVuneliAi,
   IcoGear,
   IcoMenu,
   IcoClose,
@@ -45,7 +45,7 @@ const GROUPS: { title: string; items: Item[] }[] = [
       { href: "/app/agents", label: "Agents", icon: IcoAgents },
       { href: "/app/cbam", label: "CBAM", icon: IcoShield },
       { href: "/app/integrations", label: "Connections", icon: IcoPlug },
-      { href: "/app/studio", label: "Studio", icon: IcoSpark },
+      { href: "/app/studio", label: "Studio", icon: IcoVuneliAi },
     ],
   },
   {
