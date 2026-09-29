@@ -1,51 +1,44 @@
 /**
- * The Vuneli AI mark. The leaf from the logo, centred and balanced, with a
- * "V" chevron on its midrib. Replaces generic sparkle/star glyphs everywhere
- * AI is signalled (copilot, agents, studio, AI credits).
+ * The Vuneli AI mark: the two-leaf "V" from the Vuneli logo icon, redrawn as
+ * a vector on a 24 grid. Replaces generic sparkle/star glyphs everywhere AI is
+ * signalled (copilot, agents, studio, AI credits).
  *
- * Single stroke, currentColor, 24 grid, so it sits beside the console icons.
- * `filled` gives a solid leaf for larger or emphasised placements.
+ * Monochrome (currentColor) by default so it sits beside the console icons.
+ * `brand` shows the logo colours: ink left leaf, terracotta right leaf.
  */
+
+const LEAF =
+  "M11.9 21C11 17.5 9.2 15.2 6.6 14.3 3.2 13 1.4 10 1.5 3 6 3.6 10 5.2 11.2 9 11.7 10.8 11.7 12.9 11.5 14.8 10 11.5 7.5 8.8 4.2 7.4 8 10 10.8 14.5 11.9 21Z";
 
 type Props = {
   size?: number;
   className?: string;
+  /** Kept for API parity with stroke icons; the mark is filled. */
   sw?: number;
+  /** Legacy prop; the mark is always solid. */
   filled?: boolean;
+  brand?: boolean;
   title?: string;
 };
 
-export function VuneliAiIcon({ size = 16, className, sw = 1.7, filled = false, title }: Props) {
+export function VuneliAiIcon({ size = 16, className, brand = false, title }: Props) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={sw}
-      strokeLinecap="round"
-      strokeLinejoin="round"
       className={className}
       role={title ? "img" : undefined}
       aria-hidden={title ? undefined : true}
     >
       {title ? <title>{title}</title> : null}
-      {/* the logo's leaf, centred on the diagonal */}
-      <path
-        d="M4.5 19.5C4.5 10.5 10.5 4.5 19.5 4.5 19.5 13.5 13.5 19.5 4.5 19.5Z"
-        fill={filled ? "currentColor" : "none"}
-      />
-      {/* midrib with a "V" for Vuneli */}
-      <g stroke={filled ? "var(--vuneli-ai-vein, #fff)" : "currentColor"}>
-        <path d="M8 16 16 8" />
-        <path d="M10 11.2v2.8h2.8" />
-      </g>
+      <path d={LEAF} fill="currentColor" />
+      <path d={LEAF} fill={brand ? "#B5482A" : "currentColor"} transform="matrix(-1 0 0 1 24 0)" />
     </svg>
   );
 }
 
 /** Class-name API for call sites that size icons with Tailwind (w-4 h-4). */
-export function VuneliAiGlyph({ className = "w-4 h-4", filled }: { className?: string; filled?: boolean }) {
-  return <VuneliAiIcon className={className} filled={filled} size={24} />;
+export function VuneliAiGlyph({ className = "w-4 h-4", brand }: { className?: string; filled?: boolean; brand?: boolean }) {
+  return <VuneliAiIcon className={className} brand={brand} size={24} />;
 }
