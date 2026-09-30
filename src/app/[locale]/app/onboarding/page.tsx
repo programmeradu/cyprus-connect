@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
-import { Check, Loader2, ExternalLink } from "lucide-react";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+import { Check } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
 import { useTranslations } from "next-intl";
@@ -380,6 +380,12 @@ export default function OnboardingPage() {
             </motion.div>
           </motion.div>
         )}
+      <NangoModal
+        open={accountingOpen}
+        onOpenChange={setAccountingOpen}
+        locale={locale === "el" ? "el" : "en"}
+        configured={Boolean(integrationsRes.data?.nango.configured)}
+      />
       </div>
     </div>
   );
