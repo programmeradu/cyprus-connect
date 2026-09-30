@@ -1422,7 +1422,7 @@
       },
       "accounting": {
         "title": "Expense & Accounting Software",
-        "desc": "Connect QuickBooks or Xero for automated data import",
+        "desc": "Connect Sage, SAP, NetSuite, Dynamics 365, QuickBooks, Xero, Zoho Books or FreshBooks to import supplier bills",
         "cta": "Connect Accounting",
         "connecting": "Connecting..."
       },
