@@ -2,10 +2,13 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 30 September 2026 — Bank of Cyprus link built._
+_Last updated: 30 September 2026 — saved Jotform link; BoC to be tested on vuneli.com._
+
+**Saved links:**
+- Jotform (saved 30 Sep 2026 at your request): https://form.jotform.com/261142415764353
 
 **This turn (Bank of Cyprus):**
-- [ ] In the BoC developer portal, open your app and set its **redirect / callback URL**. Right now the bank refuses the sign-in step because none is registered. For testing in the preview use `https://id-preview--a7da246b-832d-49b2-9c0f-1ab02a73b5ca.lovable.app/api/console/bank/callback`; for the live site use `https://vuneli.com/api/console/bank/callback`. If the portal allows only one, start with the preview one.
+- [ ] In the BoC developer portal, set the app's **redirect / callback URL** to `https://vuneli.com/api/console/bank/callback` (you chose to test on the live domain).
 - [ ] Run `scripts/sql/0025_bank_links.sql` on the production database before deploying (preview already has it).
 - [ ] In Cloudflare add `BOC_CLIENT_ID`, `BOC_CLIENT_SECRET` (copy from the screenshot, don't retype), and `BOC_REDIRECT_URI=https://vuneli.com/api/console/bank/callback`.
 - Test sign-in at the bank's practice system: user **999999**, passcode **112233** (from the bank's own guide).
