@@ -15,6 +15,9 @@
 - [x] P3d Start agent run — real for Ledger (evidence sweep) via /api/console/agents/run; other agents still sample
 - [x] P3f Agents page (/app/agents): run now + pause per agent, pause all, run history with step-by-step ledger per run
 
+- [x] Bank of Cyprus read-only link (sandbox): link, first 90-day read, Read again, Unlink (deletes stored payments), fuel/electricity/water/freight sorting with matched rule; on Integrations
+- [ ] Bank link end-to-end with the bank's sign-in: blocked until the redirect URL is registered on the BoC app (founder)
+
 External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every turn)
 
 ## One shared workspace (plan: .lovable/plan/one-shared-workspace-for-every-app-page-2026-09-26.md)
