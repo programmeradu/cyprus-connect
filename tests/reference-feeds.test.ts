@@ -64,6 +64,10 @@ describe("EAC bill check", () => {
     expect(checkEacAnswer({ ...good, is_eac_bill: false }).ok).toBe(false);
     expect(checkEacAnswer(null).ok).toBe(false);
   });
+  it("drops a masked account number instead of storing the mask", () => {
+    const r = checkEacAnswer({ ...good, account_number: "XXXXXXXXXXX" });
+    expect(r.ok && r.bill.accountNumber).toBeNull();
+  });
   it("keeps a missing amount as null", () => {
     const r = checkEacAnswer({ ...good, amount_eur: null });
     expect(r.ok && r.bill.amountEur).toBeNull();

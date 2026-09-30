@@ -186,3 +186,8 @@ The bank picker lists only what Salt Edge's Cyprus coverage page shows today: Eu
 3. Note the **client ID** and **client secret**. Tell the agent when ready; they are saved as `BOC_CLIENT_ID` / `BOC_CLIENT_SECRET` (never pasted in chat).
 4. Live (non-sandbox) bank data under PSD2 needs a licensed provider (AISP) or a partner that holds one. Ask BoC how a startup can pilot without its own licence.
 Use: read business account transactions to find fuel, electricity and freight spend automatically.
+
+### EAC bill reader — real-bill test (2026-09-30)
+- Tested with a real (redacted, 2009) EAC bill: kWh 1,467 and period 15/09/2009–16/11/2009 read correctly. The amount payable was redacted, so it was left blank (not guessed). A Nicosia Water Board bill was correctly refused.
+- Still needed: 2–3 recent, unredacted EAC bills (current layout, incl. a photo taken on a phone) to confirm the amount and account number are read on today's bills.
+- Water bills are not read yet. Say if you want a Water Board reader (Nicosia first).
