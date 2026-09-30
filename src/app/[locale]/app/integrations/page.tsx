@@ -28,6 +28,15 @@ import type { IntegrationsData } from "@/app/api/console/integrations/route";
 
 const PATH = "/api/console/integrations";
 
+/** Board names for the bill list. Mirrors WATER_BOARDS on the server (kept client-safe here). */
+const WATER_BOARD_LABEL: Record<string, { en: string; el: string }> = {
+  nicosia: { en: "Water Board of Nicosia", el: "ΣΥ Λευκωσίας" },
+  limassol: { en: "Water Board of Limassol", el: "ΣΥ Λεμεσού" },
+  larnaca: { en: "Water Board of Larnaca", el: "ΣΥ Λάρνακας" },
+  paphos: { en: "Paphos water supply", el: "Υδατοπρομήθεια Πάφου" },
+  other: { en: "Other water supplier", el: "Άλλος πάροχος νερού" },
+};
+
 function IntegrationsContent() {
   const t = useTranslations("dashboard.integrations");
   const locale = (useLocale() === "el" ? "el" : "en") as "en" | "el";
@@ -41,6 +50,8 @@ function IntegrationsContent() {
   const nangoAction = useWorkspaceAction();
   const eacAction = useWorkspaceAction();
   const eacInput = useRef<HTMLInputElement>(null);
+  const waterAction = useWorkspaceAction();
+  const waterInput = useRef<HTMLInputElement>(null);
   const [saltEdgeModalOpen, setSaltEdgeModalOpen] = useState(false);
   const [nangoModalOpen, setNangoModalOpen] = useState(false);
   const d = res.data;
@@ -96,6 +107,9 @@ function IntegrationsContent() {
   useEffect(() => {
     if (eacAction.error) toast.error(eacAction.error);
   }, [eacAction.error]);
+  useEffect(() => {
+    if (waterAction.error) toast.error(waterAction.error);
+  }, [waterAction.error]);
 
   const uploadEac = async (file: File | undefined) => {
     if (!file) return;
@@ -113,6 +127,24 @@ function IntegrationsContent() {
   const removeEac = async (id: number) => {
     if (!window.confirm(L("Remove this bill and its figures?", "Αφαίρεση αυτού του λογαριασμού και των στοιχείων του;"))) return;
     const r = await eacAction.run(`/api/console/integrations/eac/bill?id=${id}`, { method: "DELETE", invalidates: [PATH, "/api/console/overview"] });
+    if (r) toast.success(L("Bill removed.", "Ο λογαριασμός αφαιρέθηκε."));
+  };
+  const uploadWater = async (file: File | undefined) => {
+    if (!file) return;
+    const form = new FormData();
+    form.append("file", file);
+    const r = await waterAction.run<{ bill: { m3: number }; duplicate: boolean }>(
+      "/api/console/integrations/water/bill",
+      { body: form, invalidates: [PATH, "/api/console/overview"] },
+    );
+    if (waterInput.current) waterInput.current.value = "";
+    if (!r) return;
+    if (r.duplicate) toast.info(L("This bill was already added.", "Αυτός ο λογαριασμός έχει ήδη προστεθεί."));
+    else toast.success(L(`Bill read: ${r.bill.m3} m³.`, `Ο λογαριασμός διαβάστηκε: ${r.bill.m3} m³.`));
+  };
+  const removeWater = async (id: number) => {
+    if (!window.confirm(L("Remove this bill and its figures?", "Αφαίρεση αυτού του λογαριασμού και των στοιχείων του;"))) return;
+    const r = await waterAction.run(`/api/console/integrations/water/bill?id=${id}`, { method: "DELETE", invalidates: [PATH, "/api/console/overview"] });
     if (r) toast.success(L("Bill removed.", "Ο λογαριασμός αφαιρέθηκε."));
   };
 
@@ -190,7 +222,8 @@ function IntegrationsContent() {
     (bank?.status === "active" ? 1 : 0) +
     (saltedge?.status === "active" ? 1 : 0) +
     (nango?.connected ? 1 : 0) +
-    ((d?.eac?.bills.length ?? 0) > 0 ? 1 : 0);
+    ((d?.eac?.bills.length ?? 0) > 0 ? 1 : 0) +
+    ((d?.water?.bills.length ?? 0) > 0 ? 1 : 0);
   const num = new Intl.NumberFormat(loc, { maximumFractionDigits: 0 });
   const num1 = new Intl.NumberFormat(loc, { maximumFractionDigits: 1 });
   const CT_SECTOR: Record<string, [string, string]> = {
@@ -206,6 +239,10 @@ function IntegrationsContent() {
   const coverage = Math.round((inUse / CONNECTORS.length) * 100);
 
   const statusFor = (c: Connector) => {
+    if (c.id === "water" && d?.water) {
+      if (d.water.bills.length > 0) return { word: L(`${d.water.bills.length === 1 ? "1 bill" : `${d.water.bills.length} bills`}`, `Λογαριασμοί: ${d.water.bills.length}`), tone: "good" as const };
+      if (!d.water.readerReady) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+    }
     if (c.id === "eac" && d?.eac) {
       if (d.eac.bills.length > 0) return { word: L(`${d.eac.bills.length === 1 ? "1 bill" : `${d.eac.bills.length} bills`}`, `Λογαριασμοί: ${d.eac.bills.length}`), tone: "good" as const };
       if (!d.eac.readerReady) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
@@ -304,6 +341,28 @@ function IntegrationsContent() {
             {eacAction.busy
               ? L("Reading the bill…", "Ανάγνωση λογαριασμού…")
               : d.eac.bills.length > 0
+                ? L("Add another bill", "Προσθήκη λογαριασμού")
+                : L("Upload a bill", "Ανέβασμα λογαριασμού")}
+          </Btn>
+        </>
+      );
+    }
+    if (c.id === "water" && d?.water) {
+      return (
+        <>
+          <input
+            ref={waterInput}
+            type="file"
+            accept="application/pdf,image/png,image/jpeg,image/webp"
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden="true"
+            onChange={(e) => uploadWater(e.target.files?.[0])}
+          />
+          <Btn variant="primary" onClick={() => waterInput.current?.click()} disabled={waterAction.busy || !d.water.readerReady}>
+            {waterAction.busy
+              ? L("Reading the bill…", "Ανάγνωση λογαριασμού…")
+              : d.water.bills.length > 0
                 ? L("Add another bill", "Προσθήκη λογαριασμού")
                 : L("Upload a bill", "Ανέβασμα λογαριασμού")}
           </Btn>
@@ -459,6 +518,54 @@ function IntegrationsContent() {
             "Για Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, QuickBooks Online, Xero, Zoho Books και FreshBooks. Μόνο ανάγνωση: το Vuneli διαβάζει τιμολόγια προμηθευτών και δεν αλλάζει ποτέ τα βιβλία σας.",
           )}
         </p>
+      );
+    }
+    if (c.id === "water" && d?.water) {
+      const w = d.water;
+      if (w.bills.length === 0) {
+        return (
+          <p className="vci-tile-note">
+            {w.readerReady
+              ? L("PDF or photo, up to 10 MB. A bill whose m³ or period cannot be read is refused, never guessed. Sewerage bills are not water bills.", "PDF ή φωτογραφία, έως 10 MB. Λογαριασμός χωρίς αναγνώσιμα m³ ή περίοδο απορρίπτεται, χωρίς εικασίες. Οι λογαριασμοί αποχέτευσης δεν είναι λογαριασμοί νερού.")
+              : L("Bill reading opens once the workspace owner adds the AI reader key.", "Η ανάγνωση λογαριασμών ανοίγει όταν ο ιδιοκτήτης προσθέσει το κλειδί ανάγνωσης.")}
+          </p>
+        );
+      }
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Water on your bills", "Νερό στους λογαριασμούς")}</span>
+              <strong className="vck-num">{num1.format(w.totalM3)} m³</strong>
+            </div>
+            <div>
+              <span>{L("Scope 3", "Scope 3")}</span>
+              <strong className="vck-num">{num1.format(w.totalKgCo2e)} kg CO₂e</strong>
+            </div>
+          </div>
+          <ul className="vci-bank-lines" aria-label={L("Latest bills", "Τελευταίοι λογαριασμοί")}>
+            {w.bills.map((b) => (
+              <li key={b.id}>
+                <span className="vci-bank-line-what">
+                  {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
+                </span>
+                <span className="vci-bank-line-why">
+                  {WATER_BOARD_LABEL[b.board]?.[locale] ?? WATER_BOARD_LABEL.other[locale]}
+                  {" · "}
+                  {num1.format(b.m3)} m³{b.amountEur !== null ? ` · ${eur.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}
+                  {" · "}
+                  <button type="button" className="vci-link-btn" onClick={() => removeWater(b.id)} disabled={waterAction.busy}>
+                    {L("Remove", "Αφαίρεση")}
+                  </button>
+                </span>
+                <strong className="vck-num">{num1.format(b.kgCo2e)} kg</strong>
+              </li>
+            ))}
+          </ul>
+          <p className="vci-tile-note">
+            {L(`Factor: ${w.factor.kgPerM3} kg CO₂e per m³, ${w.factor.source}, ${w.factor.vintage}.`, `Συντελεστής: ${w.factor.kgPerM3} kg CO₂e ανά m³, ${w.factor.source}, ${w.factor.vintage}.`)}
+          </p>
+        </>
       );
     }
     if (c.id === "eac" && d?.eac) {
