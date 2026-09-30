@@ -157,6 +157,11 @@ Letter saved at docs/sources/SLUSH_Participation_Approval.pdf. RIF covers the EU
 - [ ] Finland visa: this letter is official proof. Field 24 can now truthfully say "Selected by the Research and Innovation Foundation (RIF) of Cyprus to attend Slush 2026"; field 32: RIF covers ticket + EUR 300, you cover the rest. Slush dates are 18-19 Nov.
 - [ ] Add the RIF letter to the DMRID evidence pack (government-backed selection).
 
+## Integrations tiles wired — added 30 Sep 2026
+- **WikiRate:** sign up free at wikirate.org → your profile → Account → Generate key. Add it in Cloudflare as `WIKIRATE_API_KEY`. Until then the tile says "Not set up yet". Untested with a real key.
+- **EAC bills:** upload works through the AI reader (needs the AI key already used by the app). Please upload one or two real EAC bills (Greek and English if you have both) and check the kWh, period and amount it reads. Not yet tested with a real bill.
+- **Climate TRACE and CyStat:** no action. Both are public and answered with real Cyprus figures on 30 Sep 2026.
+
 ## Nango (accounting connections) — added 30 Sep 2026
 1. Create a free account at https://app.nango.dev (EU data region if offered).
 2. Environment Settings → copy the **Secret key** (dev environment first).

@@ -306,7 +306,9 @@ export async function saltEdgeSummary(workspaceId: string): Promise<SaltEdgeSumm
     configured: true,
     environment: cfg.environment,
     status: (link.status as SaltEdgeSummary["status"]) || "none",
-    banks: link.accountIds.length > 0 ? ["Connected Bank via Salt Edge"] : [],
+    accounts: link.accountIds.length,
+    // The bank name is only known after a sync reports it; never a stand-in label.
+    banks: [],
     lastSyncAt: link.lastSyncAt ? new Date(link.lastSyncAt).toISOString() : null,
   };
 }
@@ -356,7 +358,9 @@ async function ensureSaltEdgeCustomer(cfg: SaltEdgeConfig, workspaceId: string):
     log.warn("Salt Edge customer setup returned non-200", { status: custRes.status, body: errText });
     return workspaceId;
   } catch (err) {
-    log.warn("Error registering Salt Edge customer, falling back to identifier", err);
+    log.warn("Error registering Salt Edge customer, falling back to identifier", {
+      errorMessage: err instanceof Error ? err.message : String(err),
+    });
     return workspaceId;
   }
 }

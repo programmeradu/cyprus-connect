@@ -1495,6 +1495,7 @@
   overflow-wrap: anywhere;
 }
 .vci-tile-detail strong { text-align: right; overflow-wrap: anywhere; }
+.vci-tile-detail strong.vck-num { overflow-wrap: normal; white-space: nowrap; }
 
 /* Bank of Cyprus: latest matched payments. Long bank descriptions wrap, never clip. */
 .vci-bank-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -1507,6 +1508,9 @@
 }
 .vci-bank-line-what { color: var(--vc-ink); overflow-wrap: anywhere; }
 .vci-bank-line-why { grid-column: 1; color: var(--vc-ink-2); font-size: 12px; overflow-wrap: anywhere; }
+.vci-link-btn { background: none; border: 0; padding: 0; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.vci-link-btn:disabled { opacity: .5; cursor: default; }
+.vci-link-btn:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
 .vci-bank-lines strong { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--vc-ink); font-weight: 600; white-space: nowrap; }
 
 /* =====================================================================

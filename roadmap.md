@@ -16,6 +16,8 @@
 - [x] P3f Agents page (/app/agents): run now + pause per agent, pause all, run history with step-by-step ledger per run
 
 - [x] Bank of Cyprus read-only link (sandbox): link, first 90-day read, Read again, Unlink (deletes stored payments), fuel/electricity/water/freight sorting with matched rule; on Integrations
+- [x] Integrations tiles wired: Climate TRACE (Cyprus total, world share, top sectors), CyStat (establishments in your sector, all Cyprus), EAC (bill upload, read, Scope 2, remove), WikiRate (key-gated)
+- [ ] EAC bill reading checked on real bills (founder to upload); WikiRate needs WIKIRATE_API_KEY
 - [ ] Bank link end-to-end with the bank's sign-in: blocked until the redirect URL is registered on the BoC app (founder)
 
 External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every turn)
