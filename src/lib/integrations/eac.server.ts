@@ -58,7 +58,9 @@ export function checkEacAnswer(raw: unknown): { ok: true; bill: EacBill } | { ok
   const days = (Date.parse(end) - Date.parse(start)) / 86_400_000;
   if (days > 400) return { ok: false, reason: "The billing period on the bill is longer than a year." };
   const amount = r.amount_eur === null || r.amount_eur === undefined ? null : Number(r.amount_eur);
-  const account = typeof r.account_number === "string" ? r.account_number.replace(/[^\w-]/g, "").slice(0, 32) : "";
+  const cleanedAccount = typeof r.account_number === "string" ? r.account_number.replace(/[^\w-]/g, "").slice(0, 32) : "";
+  // A masked or blacked-out number ("XXXXXXXX") is not an account number: it must contain a digit.
+  const account = /\d/.test(cleanedAccount) ? cleanedAccount : "";
   return {
     ok: true,
     bill: {
