@@ -35,23 +35,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const session = await createNangoConnectSession(account.id, integrationId);
-
-    // Record or update integration intent
-    const existing = await db
-      .select({ id: integrations.id })
-      .from(integrations)
-      .where(and(eq(integrations.userId, account.id), eq(integrations.providerName, integrationId)))
-      .limit(1);
-
-    if (existing.length === 0) {
-      await db.insert(integrations).values({
-        userId: account.id,
-        integrationType: "nango",
-        providerName: integrationId,
-        isActive: false,
-      });
-    }
-
     return NextResponse.json({ connectUrl: session.connectUrl, integrationId });
   } catch (error) {
     const ref = log.error("Nango connect initiation failed", error);

@@ -77,8 +77,53 @@ export interface SaltEdgeConnectSessionResult {
   expiresAt?: string;
 }
 
+async function ensureSaltEdgeCustomer(cfg: SaltEdgeConfig, workspaceId: string): Promise<string> {
+  try {
+    const custRes = await fetch("https://www.saltedge.com/api/v6/customers", {
+      method: "POST",
+      headers: {
+        "App-id": cfg.appId,
+        Secret: cfg.secret,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          identifier: workspaceId,
+        },
+      }),
+    });
+
+    if (custRes.ok) {
+      const custData = (await custRes.json()) as { data?: { customer_id?: string; id?: string } };
+      return custData.data?.customer_id || custData.data?.id || workspaceId;
+    }
+
+    if (custRes.status === 409) {
+      const getRes = await fetch(`https://www.saltedge.com/api/v6/customers/${encodeURIComponent(workspaceId)}`, {
+        headers: {
+          "App-id": cfg.appId,
+          Secret: cfg.secret,
+          Accept: "application/json",
+        },
+      });
+      if (getRes.ok) {
+        const existing = (await getRes.json()) as { data?: { customer_id?: string; id?: string } };
+        return existing.data?.customer_id || existing.data?.id || workspaceId;
+      }
+    }
+
+    const errText = await custRes.text().catch(() => "");
+    log.warn("Salt Edge customer setup returned non-200", { status: custRes.status, body: errText });
+    return workspaceId;
+  } catch (err) {
+    log.warn("Error registering Salt Edge customer, falling back to identifier", err);
+    return workspaceId;
+  }
+}
+
 /**
- * Creates a Salt Edge connect session URL for secure user authorization.
+ * Creates a Salt Edge connect session URL for secure user authorization (API v6).
  */
 export async function createSaltEdgeConnectSession(
   workspaceId: string,
@@ -94,28 +139,31 @@ export async function createSaltEdgeConnectSession(
   }
 
   try {
-    const res = await fetch("https://www.saltedge.com/api/v5/connect_sessions/create", {
+    const customerId = await ensureSaltEdgeCustomer(cfg, workspaceId);
+
+    const payload: Record<string, unknown> = {
+      customer_id: customerId,
+      consent: {
+        scopes: ["accounts", "transactions"],
+      },
+      attempt: {
+        return_to: returnUrl,
+      },
+    };
+
+    if (bankCode) {
+      payload.provider_code = bankCode;
+    }
+
+    const res = await fetch("https://www.saltedge.com/api/v6/connections/connect", {
       method: "POST",
       headers: {
         "App-id": cfg.appId,
         Secret: cfg.secret,
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        data: {
-          customer_id: workspaceId,
-          consent: {
-            scopes: ["account_details", "transactions_details"],
-            from_date: new Date(Date.now() - 90 * 86_400_000).toISOString().slice(0, 10),
-          },
-          attempt: {
-            return_to: returnUrl,
-            fetch_scopes: ["accounts", "transactions"],
-          },
-          provider_code: bankCode || undefined,
-          country_code: "CY",
-        },
-      }),
+      body: JSON.stringify({ data: payload }),
     });
 
     if (!res.ok) {
