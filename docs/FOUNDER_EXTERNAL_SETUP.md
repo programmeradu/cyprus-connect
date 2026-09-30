@@ -155,6 +155,10 @@ Letter saved at docs/sources/SLUSH_Participation_Approval.pdf. RIF covers the EU
 Note: SoftOne is not in Nango's catalogue (checked 30 Sep). It would need a custom connection or a CSV import.
 
 ## Bank of Cyprus developer access — added 30 Sep 2026
+**Status 30 Sep:** sandbox app created; `BOC_CLIENT_ID` / `BOC_CLIENT_SECRET` saved in the preview.
+- [ ] Also add both as secrets in Cloudflare (Workers → vuneli → Settings → Variables) so the live site has them.
+- [ ] Delete the screenshot of the keys from your phone and chat apps, or regenerate the secret in the BoC portal if it was shared anywhere else.
+
 1. Register at the Bank of Cyprus developer portal (developer.bankofcyprus.com) and create a sandbox app.
 2. Subscribe it to the Accounts (AIS) API; payments are not needed.
 3. Note the **client ID** and **client secret**. Tell the agent when ready; they are saved as `BOC_CLIENT_ID` / `BOC_CLIENT_SECRET` (never pasted in chat).
