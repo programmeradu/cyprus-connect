@@ -1,152 +1,126 @@
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
 import { Btn } from "@/components/app/console/kit";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
-import { CYPRUS_BANKS, type CyprusBankInstitution } from "@/lib/bank/saltedge";
-import { ShieldCheck, Landmark, Check, ArrowRight } from "lucide-react";
+import { CYPRUS_BANKS } from "@/lib/bank/saltedge";
+import { ConnectDialog, ConnectTerms } from "./ConnectDialog";
 import { toast } from "sonner";
 
 interface SaltEdgeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   locale: "en" | "el";
+  /** Salt Edge keys are present on the server. */
+  configured: boolean;
+  environment: "sandbox" | "live" | null;
 }
 
-export function SaltEdgeModal({ open, onOpenChange, locale }: SaltEdgeModalProps) {
-  const [selectedBank, setSelectedBank] = useState<string>("hellenic_bank_cy");
+export function SaltEdgeModal({ open, onOpenChange, locale, configured, environment }: SaltEdgeModalProps) {
+  const [selected, setSelected] = useState<string | null>(null);
   const action = useWorkspaceAction();
+  const L = (en: string, el: string) => (locale === "el" ? el : en);
 
-  const isEl = locale === "el";
+  useEffect(() => {
+    if (!open) setSelected(null);
+  }, [open]);
+
+  const bank = CYPRUS_BANKS.find((b) => b.code === selected) ?? null;
+  const bankName = bank ? (locale === "el" ? bank.name.el : bank.name.en) : "";
 
   const handleConnect = async () => {
-    const res = await action.run<{ connectUrl?: string }>(
-      "/api/console/integrations/saltedge/connect",
-      {
-        method: "POST",
-        body: { bankCode: selectedBank },
-        invalidates: ["/api/console/integrations"],
-      },
-    );
-
+    if (!bank) return;
+    const res = await action.run<{ connectUrl?: string }>("/api/console/integrations/saltedge/connect", {
+      method: "POST",
+      body: { bankCode: bank.code },
+      invalidates: ["/api/console/integrations"],
+    });
     if (res?.connectUrl) {
-      toast.info(
-        isEl
-          ? "Μετάβαση στην πύλη της τράπεζας για έγκριση..."
-          : "Redirecting to bank authorization portal...",
-      );
       window.location.href = res.connectUrl;
     } else {
-      toast.error(
-        isEl
-          ? "Αδυναμία έναρξης σύνδεσης. Ελέγξτε τις ρυθμίσεις."
-          : "Unable to initiate connection. Please check configuration.",
-      );
+      toast.error(L("Vuneli could not open the bank page. Try again in a minute.", "Το Vuneli δεν μπόρεσε να ανοίξει τη σελίδα της τράπεζας. Δοκιμάστε ξανά σε ένα λεπτό."));
     }
   };
 
+  const cta = action.busy
+    ? L(`Opening ${bankName}…`, `Άνοιγμα ${bankName}…`)
+    : bank
+      ? L(`Continue to ${bankName}`, `Συνέχεια στην ${bankName}`)
+      : L("Choose your bank", "Επιλέξτε τράπεζα");
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl p-0 overflow-hidden border-border/40 bg-background/95 backdrop-blur-xl shadow-2xl rounded-2xl">
-        {/* Header Ribbon */}
-        <div className="relative px-6 pt-6 pb-4 border-b border-border/30 bg-muted/20">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              <Landmark className="h-5 w-5" />
-            </div>
-            <div>
-              <DialogTitle className="text-lg font-semibold tracking-tight text-foreground">
-                {isEl ? "Σύνδεση Κυπριακής Τράπεζας (Salt Edge)" : "Link Cyprus Bank (Salt Edge AISP)"}
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                {isEl
-                  ? "Ασφαλής ανάγνωση κινήσεων υπό την ευρωπαϊκή οδηγία PSD2."
-                  : "Regulated read-only account feeds under European PSD2 compliance."}
-              </DialogDescription>
-            </div>
+    <ConnectDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      locale={locale}
+      title={L("Link a Cyprus bank account", "Σύνδεση κυπριακού τραπεζικού λογαριασμού")}
+      description={L(
+        "Choose your bank. You approve access on the bank's own page, then Vuneli reads your business payments to find fuel, electricity, water and freight spending.",
+        "Επιλέξτε την τράπεζά σας. Εγκρίνετε την πρόσβαση στη σελίδα της τράπεζας και το Vuneli διαβάζει τις επαγγελματικές πληρωμές για να βρει έξοδα καυσίμων, ρεύματος, νερού και μεταφορών.",
+      )}
+      provider={{ name: "Salt Edge", light: "/integrations/saltedge-light.svg", dark: "/integrations/saltedge-dark.svg", height: 18 }}
+      footer={
+        <>
+          <p className="vcm-foot-note" role={configured ? undefined : "status"}>
+            {!configured
+              ? L("Bank linking opens once the workspace owner adds the Salt Edge keys.", "Η σύνδεση τράπεζας ανοίγει μόλις ο κάτοχος του χώρου εργασίας προσθέσει τα κλειδιά Salt Edge.")
+              : environment === "sandbox"
+                ? L("Test mode: Salt Edge shows practice banks, not real accounts.", "Δοκιμαστική λειτουργία: το Salt Edge δείχνει δοκιμαστικές τράπεζες, όχι πραγματικούς λογαριασμούς.")
+                : L("You leave Vuneli for a moment and come back here when the bank is done.", "Φεύγετε για λίγο από το Vuneli και επιστρέφετε εδώ μόλις τελειώσει η τράπεζα.")}
+          </p>
+          <div className="vcm-foot-actions">
+            <Btn variant="quiet" onClick={() => onOpenChange(false)}>
+              {L("Cancel", "Ακύρωση")}
+            </Btn>
+            <Btn variant="primary" onClick={handleConnect} disabled={!configured || !bank || action.busy} aria-busy={action.busy || undefined}>
+              {cta}
+            </Btn>
           </div>
-
-          <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs">
-            <ShieldCheck className="h-4 w-4 shrink-0" />
-            <span>
-              {isEl
-                ? "Μόνο ανάγνωση: καμία πρόσβαση σε κωδικούς, καμία δυνατότητα μεταφοράς χρημάτων."
-                : "Read-only guarantee: zero payment power, zero credential storage, 90-day sync."}
-            </span>
-          </div>
+        </>
+      }
+    >
+      <fieldset className="vcm-group">
+        <legend className="vcm-label">{L("Your bank", "Η τράπεζά σας")}</legend>
+        <div className="vcm-list">
+          {CYPRUS_BANKS.map((b) => (
+            <label key={b.code} className="vcm-option vcm-option-row">
+              <input
+                type="radio"
+                name="saltedge-bank"
+                value={b.code}
+                checked={selected === b.code}
+                onChange={() => setSelected(b.code)}
+                className="vcm-sr"
+              />
+              <img className="vcm-app-icon" src={b.icon} alt="" aria-hidden="true" />
+              <span className="vcm-option-text">
+                <span className="vcm-option-name">{locale === "el" ? b.name.el : b.name.en}</span>
+                <span className="vcm-option-sub">{locale === "el" ? b.system.el : b.system.en}</span>
+              </span>
+              <span className="vcm-radio" aria-hidden="true" />
+            </label>
+          ))}
         </div>
+        <p className="vcm-aside">
+          <img className="vcm-app-icon vcm-app-icon-sm" src="/integrations/banks/boc.png" alt="" aria-hidden="true" />
+          <span>
+            {L(
+              "Bank of Cyprus has its own direct link on the Integrations page, so it is not listed here.",
+              "Η Τράπεζα Κύπρου έχει δική της απευθείας σύνδεση στη σελίδα Συνδέσεων, γι' αυτό δεν εμφανίζεται εδώ.",
+            )}
+          </span>
+        </p>
+      </fieldset>
 
-        {/* Bank Selection List */}
-        <div className="p-6 space-y-4">
-          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
-            {isEl ? "Επιλέξτε Τραπεζικό Ίδρυμα" : "Select Financial Institution"}
-          </div>
-
-          <div className="grid gap-2">
-            {CYPRUS_BANKS.map((b: CyprusBankInstitution) => {
-              const active = selectedBank === b.code;
-              return (
-                <button
-                  key={b.code}
-                  type="button"
-                  onClick={() => setSelectedBank(b.code)}
-                  className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
-                    active
-                      ? "border-primary bg-primary/5 shadow-sm"
-                      : "border-border/40 hover:border-border hover:bg-muted/30"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`h-5 w-5 rounded-full border flex items-center justify-center transition-colors ${
-                        active
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-muted-foreground/40"
-                      }`}
-                    >
-                      {active && <Check className="h-3 w-3 stroke-[3]" />}
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-foreground">
-                        {isEl ? b.name.el : b.name.en}
-                      </div>
-                      <div className="text-[11px] text-muted-foreground">
-                        BIC: {b.bic} {b.popular && (isEl ? "· Δημοφιλές" : "· Popular")}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xs text-muted-foreground font-mono">PSD2 AISP</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div className="px-6 py-4 border-t border-border/30 bg-muted/10 flex items-center justify-between">
-          <Btn variant="quiet" onClick={() => onOpenChange(false)}>
-            {isEl ? "Ακύρωση" : "Cancel"}
-          </Btn>
-          <Btn
-            variant="primary"
-            onClick={handleConnect}
-            disabled={action.busy}
-            className="flex items-center gap-1.5"
-          >
-            <span>
-              {action.busy
-                ? isEl
-                  ? "Έναρξη..."
-                  : "Connecting..."
-                : isEl
-                  ? "Συνέχεια στην Τράπεζα"
-                  : "Continue to Bank Portal"}
-            </span>
-            <ArrowRight className="h-4 w-4" />
-          </Btn>
-        </div>
-      </DialogContent>
-    </Dialog>
+      <ConnectTerms
+        label={L("What this link allows", "Τι επιτρέπει η σύνδεση")}
+        rows={[
+          [L("Vuneli reads", "Το Vuneli διαβάζει"), L("Account names, balances and the last 90 days of payments.", "Ονόματα λογαριασμών, υπόλοιπα και πληρωμές των τελευταίων 90 ημερών.")],
+          [L("Vuneli cannot", "Το Vuneli δεν μπορεί"), L("Move money or make payments. Access is read-only.", "Να μεταφέρει χρήματα ή να κάνει πληρωμές. Η πρόσβαση είναι μόνο για ανάγνωση.")],
+          [L("Your passcode", "Ο κωδικός σας"), L("You type it on your bank's page. Vuneli never sees it.", "Τον πληκτρολογείτε στη σελίδα της τράπεζας. Το Vuneli δεν τον βλέπει ποτέ.")],
+          [L("To stop", "Για διακοπή"), L("Unlink here at any time, or withdraw consent in your bank app.", "Αποσυνδέστε εδώ οποιαδήποτε στιγμή ή ανακαλέστε τη συγκατάθεση στην εφαρμογή της τράπεζας.")],
+        ]}
+      />
+    </ConnectDialog>
   );
 }
