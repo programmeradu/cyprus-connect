@@ -1,0 +1,9 @@
+# Agent runtime rules
+
+- Jobs run only via the Postgres queue (`agent_jobs`, SKIP LOCKED + lease), driven by the 15-min Cloudflare cron (`/api/cron/agents`). Why: durable, retryable, no new vendor. Queues/Durable Objects need founder sign-off.
+- Agents act only through typed tools in `tools.ts` with fixed risk levels (0 read, 1 internal, 2 outward, 3 legal/financial); level 3 always needs a human (`decideStep`). Why: one policy point; EU AI Act oversight.
+- Every tool call (incl. blocked/failed) writes an `agent_steps` row with a SHA-256 input hash. Why: replayable audit trail.
+- Approval tasks store the exact call (`pending_tool`, `pending_input`, hash); approving re-checks it via `approvals.ts`. Outward acts (supplier emails) show full text and send exactly that via `src/lib/email/send.ts` (Resend). Why: a person signs exactly what leaves.
+- Per-agent pause (`agent_switches`) and workspace kill switch (`agent_controls`, wins) are both checked in `runJob`. Why: one enforcement point.
+- CBAM declarations are deterministic (`cbam-calc.ts`); a signature is void if the draft hash changes. Registry XML stays `schemaStatus="unvalidated"`, `final` only when signed with full declarant. Why: reproducible legal act, no false Registry-ready claim.
+- `agent_runs.trigger='sample'` is seed data, excluded from overview/roster (`rosterFor`). Why: never show seeded activity as real.

@@ -1,4 +1,4 @@
-import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date } from 'drizzle-orm/pg-core';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
   id: serial('id').primaryKey(),
@@ -811,6 +811,41 @@ export const dataConnections = pgTable('data_connections', {
   lastSyncAt: timestamp('last_sync_at'),
   note: text('note'),
   sortOrder: integer('sort_order').notNull().default(0),
+});
+
+/** Read-only bank links (PSD2 account information). scripts/sql/0025. */
+export const bankLinks = pgTable('bank_links', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  provider: text('provider').notNull().default('boc'),
+  environment: text('environment').notNull().default('sandbox'),
+  subscriptionId: text('subscription_id').notNull(),
+  /** pending | active | expired | revoked */
+  status: text('status').notNull().default('pending'),
+  accountIds: jsonb('account_ids').$type<string[]>().notNull().default([]),
+  consentExpiresOn: text('consent_expires_on'),
+  lastSyncAt: timestamp('last_sync_at'),
+  lastError: text('last_error'),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+/** Payments read from a bank link, each sorted into a spend category. */
+export const bankTransactions = pgTable('bank_transactions', {
+  id: serial('id').primaryKey(),
+  linkId: text('link_id').notNull().references(() => bankLinks.id, { onDelete: 'cascade' }),
+  workspaceId: text('workspace_id').notNull(),
+  accountId: text('account_id').notNull(),
+  providerTxId: text('provider_tx_id').notNull(),
+  bookedOn: date('booked_on', { mode: 'string' }).notNull(),
+  amount: real('amount').notNull(),
+  currency: text('currency').notNull().default('EUR'),
+  /** debit | credit | unknown */
+  direction: text('direction').notNull().default('unknown'),
+  description: text('description'),
+  category: text('category').notNull().default('other'),
+  matchedRule: text('matched_rule'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
 export const obligations = pgTable('obligations', {

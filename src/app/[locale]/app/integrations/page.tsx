@@ -35,6 +35,7 @@ function IntegrationsContent() {
   const searchParams = useSearchParams();
   const res = useWorkspaceResource<IntegrationsData>(PATH);
   const qbAction = useWorkspaceAction();
+  const bankAction = useWorkspaceAction();
   const d = res.data;
 
   const time = useMemo(() => new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }), [loc]);
@@ -56,9 +57,37 @@ function IntegrationsContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
+  // Result of the Bank of Cyprus sign-in round trip.
+  useEffect(() => {
+    const outcome = searchParams.get("bank");
+    if (!outcome) return;
+    const messages: Record<string, [string, string]> = {
+      declined: ["The bank link was cancelled at the bank. Nothing was saved.", "Η σύνδεση ακυρώθηκε στην τράπεζα. Δεν αποθηκεύτηκε τίποτα."],
+      missing_code: ["The bank did not send the approval back. Please try again.", "Η τράπεζα δεν επέστρεψε την έγκριση. Δοκιμάστε ξανά."],
+      expired_request: ["That link request timed out. Please start again.", "Το αίτημα σύνδεσης έληξε. Ξεκινήστε ξανά."],
+      signed_out: ["You were signed out during the link. Sign in and start again.", "Αποσυνδεθήκατε κατά τη σύνδεση. Συνδεθείτε και ξεκινήστε ξανά."],
+      not_configured: ["Bank linking is not set up yet.", "Η σύνδεση τράπεζας δεν έχει ρυθμιστεί ακόμη."],
+      activation_failed: ["The bank did not confirm the link. Please try again.", "Η τράπεζα δεν επιβεβαίωσε τη σύνδεση. Δοκιμάστε ξανά."],
+      no_accounts: ["No account was selected at the bank, so nothing was linked.", "Δεν επιλέχθηκε λογαριασμός στην τράπεζα, οπότε δεν έγινε σύνδεση."],
+      connected_unread: ["Account linked. The first read did not finish; use Read again.", "Ο λογαριασμός συνδέθηκε. Η πρώτη ανάγνωση δεν ολοκληρώθηκε· πατήστε Ανάγνωση ξανά."],
+    };
+    if (outcome === "connected") {
+      toast.success(L("Bank of Cyprus account linked and read.", "Ο λογαριασμός Τράπεζας Κύπρου συνδέθηκε και διαβάστηκε."));
+    } else {
+      const m = messages[outcome] ?? ["The bank link did not finish. Please try again.", "Η σύνδεση τράπεζας δεν ολοκληρώθηκε. Δοκιμάστε ξανά."];
+      (outcome === "connected_unread" ? toast.warning : toast.error)(L(m[0], m[1]));
+    }
+    res.reload();
+    router.replace("/app/integrations");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   useEffect(() => {
     if (qbAction.error) toast.error(qbAction.error);
   }, [qbAction.error]);
+  useEffect(() => {
+    if (bankAction.error) toast.error(bankAction.error);
+  }, [bankAction.error]);
 
   const connectQb = async () => {
     const r = await qbAction.run<{ authUrl?: string }>("/api/oauth/quickbooks/authorize", { method: "GET", invalidates: [] });
@@ -69,10 +98,39 @@ function IntegrationsContent() {
     if (r) toast.success(t("toasts.qbDisconnected"));
   };
 
+  const connectBank = async () => {
+    const r = await bankAction.run<{ authUrl?: string }>("/api/console/bank/connect", { invalidates: [] });
+    if (r?.authUrl) window.location.href = r.authUrl;
+  };
+  const syncBank = async () => {
+    const r = await bankAction.run<{ read: number; added: number }>("/api/console/bank/sync", { invalidates: [PATH, "/api/console/overview"] });
+    if (r) toast.success(L(`Read ${r.read} payments, ${r.added} new.`, `Διαβάστηκαν ${r.read} πληρωμές, ${r.added} νέες.`));
+  };
+  const unlinkBank = async () => {
+    const ok = window.confirm(
+      L(
+        "Unlink Bank of Cyprus? Vuneli deletes the link and every payment it read. You can also withdraw consent in 1Bank.",
+        "Αποσύνδεση Τράπεζας Κύπρου; Η Vuneli διαγράφει τη σύνδεση και όλες τις πληρωμές που διάβασε. Μπορείτε επίσης να ανακαλέσετε τη συγκατάθεση στο 1Bank.",
+      ),
+    );
+    if (!ok) return;
+    const r = await bankAction.run("/api/console/bank/disconnect", { invalidates: [PATH, "/api/console/overview"] });
+    if (r) toast.success(L("Bank link removed.", "Η σύνδεση τράπεζας αφαιρέθηκε."));
+  };
+
+  const bank = d?.bank;
+  const eur = useMemo(() => new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }), [loc]);
+  const CAT: Record<string, [string, string]> = {
+    electricity: ["Electricity", "Ρεύμα"],
+    fuel: ["Fuel", "Καύσιμα"],
+    water: ["Water", "Νερό"],
+    freight: ["Freight and courier", "Μεταφορές"],
+    other: ["Other", "Άλλο"],
+  };
   const qb = d?.quickbooks;
   const liveCount = CONNECTORS.filter((c) => c.state === "live").length;
   const linkableCount = CONNECTORS.filter((c) => c.state === "oauth").length;
-  const linkedCount = qb?.connected ? 1 : 0;
+  const linkedCount = (qb?.connected ? 1 : 0) + (bank?.status === "active" ? 1 : 0);
   const scheduledCount = CONNECTORS.filter((c) => c.state === "scheduled").length;
   const inUse = liveCount + linkedCount;
   const coverage = Math.round((inUse / CONNECTORS.length) * 100);
@@ -81,6 +139,11 @@ function IntegrationsContent() {
     if (c.id === "quickbooks" && qb) {
       if (qb.connected) return qb.expired ? { word: L("Link expired", "Η σύνδεση έληξε"), tone: "bad" as const } : { word: t("quickbooks.connected"), tone: "good" as const };
       if (!qb.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+    }
+    if (c.id === "bankofcyprus" && bank) {
+      if (!bank.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+      if (bank.status === "active") return bank.failed ? { word: L("Last read failed", "Η τελευταία ανάγνωση απέτυχε"), tone: "warn" as const } : { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
+      if (bank.status === "expired") return { word: L("Consent ended", "Η συγκατάθεση έληξε"), tone: "bad" as const };
     }
     if (c.id === "energy-charts" && d && !d.grid) return { word: L("No answer today", "Χωρίς απάντηση σήμερα"), tone: "warn" as const };
     return undefined;
@@ -97,6 +160,31 @@ function IntegrationsContent() {
         <Btn variant="primary" onClick={connectQb} disabled={qbAction.busy}>
           {qbAction.busy ? t("quickbooks.connecting") : t("quickbooks.connect")}
         </Btn>
+      );
+    }
+    if (c.id === "bankofcyprus") {
+      if (!bank || !bank.configured) return null;
+      if (bank.status === "active") {
+        return (
+          <>
+            <Btn variant="primary" onClick={syncBank} disabled={bankAction.busy}>
+              {bankAction.busy ? L("Working…", "Σε εξέλιξη…") : L("Read again", "Ανάγνωση ξανά")}
+            </Btn>
+            <Btn onClick={unlinkBank} disabled={bankAction.busy}>{L("Unlink", "Αποσύνδεση")}</Btn>
+          </>
+        );
+      }
+      return (
+        <>
+          <Btn variant="primary" onClick={connectBank} disabled={bankAction.busy}>
+            {bankAction.busy
+              ? L("Opening the bank…", "Άνοιγμα τράπεζας…")
+              : bank.status === "expired"
+                ? L("Link again", "Νέα σύνδεση")
+                : L("Link account", "Σύνδεση λογαριασμού")}
+          </Btn>
+          {bank.status === "expired" && <Btn onClick={unlinkBank} disabled={bankAction.busy}>{L("Delete stored payments", "Διαγραφή πληρωμών")}</Btn>}
+        </>
       );
     }
     if (c.id === "energy-charts" && d?.grid) {
@@ -123,6 +211,88 @@ function IntegrationsContent() {
           </div>
           {qb.expired && <div>{t("quickbooks.tokenExpired")}</div>}
         </div>
+      );
+    }
+    if (c.id === "bankofcyprus" && bank) {
+      if (!bank.configured) {
+        return <p className="vci-tile-note">{L("Bank linking opens once the workspace owner adds the Bank of Cyprus app keys.", "Η σύνδεση τράπεζας ανοίγει όταν ο ιδιοκτήτης προσθέσει τα κλειδιά της Τράπεζας Κύπρου.")}</p>;
+      }
+      const testNote = bank.environment === "sandbox" && (
+        <p className="vci-tile-note">
+          {L("Test mode: this uses the bank's practice system with sample accounts, not real money data.", "Δοκιμαστική λειτουργία: χρησιμοποιεί το δοκιμαστικό σύστημα της τράπεζας με δείγματα λογαριασμών, όχι πραγματικά δεδομένα.")}
+        </p>
+      );
+      if (bank.status !== "active") {
+        return (
+          <>
+            <p className="vci-tile-note">
+              {bank.status === "expired"
+                ? L("The bank consent has ended (it lasts up to 180 days). Link again to keep reading payments.", "Η συγκατάθεση της τράπεζας έληξε (διαρκεί έως 180 ημέρες). Συνδέστε ξανά για να συνεχίσει η ανάγνωση.")
+                : L("You sign in at Bank of Cyprus and choose which accounts Vuneli may read. Vuneli never sees your passcode and cannot make payments.", "Συνδέεστε στην Τράπεζα Κύπρου και επιλέγετε ποιους λογαριασμούς μπορεί να διαβάσει η Vuneli. Η Vuneli δεν βλέπει τον κωδικό σας και δεν μπορεί να κάνει πληρωμές.")}
+            </p>
+            {testNote}
+          </>
+        );
+      }
+      const found = bank.categories.filter((c) => c.count > 0);
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Accounts read", "Λογαριασμοί")}</span>
+              <strong className="vck-num">{bank.accounts}</strong>
+            </div>
+            <div>
+              <span>{L(`Payments, last ${bank.windowDays} days`, `Πληρωμές, τελευταίες ${bank.windowDays} ημέρες`)}</span>
+              <strong className="vck-num">{bank.paymentsRead}</strong>
+            </div>
+            <div>
+              <span>{L("Last read", "Τελευταία ανάγνωση")}</span>
+              <strong className="vck-num">{bank.lastSyncAt ? time.format(new Date(bank.lastSyncAt)) : L("Not yet", "Όχι ακόμη")}</strong>
+            </div>
+            {bank.consentEndsOn && (
+              <div>
+                <span>{L("Consent ends", "Λήξη συγκατάθεσης")}</span>
+                <strong className="vck-num">{date.format(new Date(bank.consentEndsOn))}</strong>
+              </div>
+            )}
+          </div>
+          {found.length > 0 ? (
+            <div className="vci-tile-detail">
+              {found.map((c) => (
+                <div key={c.category}>
+                  <span>{L(CAT[c.category][0], CAT[c.category][1])} · {c.count}</span>
+                  <strong className="vck-num">{eur.format(c.total)}</strong>
+                </div>
+              ))}
+            </div>
+          ) : (
+            bank.paymentsRead > 0 && (
+              <p className="vci-tile-note">
+                {L("No fuel, electricity, water or freight payments were recognised yet. Unrecognised payments are left out, never guessed.", "Δεν αναγνωρίστηκαν ακόμη πληρωμές για καύσιμα, ρεύμα, νερό ή μεταφορές. Όσες δεν αναγνωρίζονται μένουν εκτός, χωρίς εικασίες.")}
+              </p>
+            )
+          )}
+          {bank.recent.length > 0 && (
+            <ul className="vci-bank-lines" aria-label={L("Latest matched payments", "Τελευταίες πληρωμές που ταίριαξαν")}>
+              {bank.recent.map((r, i) => (
+                <li key={i}>
+                  <span className="vci-bank-line-what">{r.description || L(CAT[r.category][0], CAT[r.category][1])}</span>
+                  <span className="vci-bank-line-why">
+                    {date.format(new Date(r.bookedOn))} · {L(CAT[r.category][0], CAT[r.category][1])}{r.rule ? ` · ${r.rule}` : ""}
+                  </span>
+                  <strong className="vck-num">{new Intl.NumberFormat(loc, { style: "currency", currency: r.currency || "EUR" }).format(r.amount)}</strong>
+                </li>
+              ))}
+            </ul>
+          )}
+          {bank.unmarked > 0 && (
+            <p className="vci-tile-note">
+              {L(`${bank.unmarked} payment(s) came without an in/out marker from the bank, so they are not counted as spend.`, `${bank.unmarked} πληρωμή(ές) ήρθαν χωρίς ένδειξη εισερχόμενης/εξερχόμενης, οπότε δεν μετρώνται ως δαπάνη.`)}
+            </p>
+          )}
+          {testNote}
+        </>
       );
     }
     if (c.id === "energy-charts" && d) {

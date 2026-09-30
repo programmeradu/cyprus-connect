@@ -2,7 +2,17 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 26 September 2026 — error-leak cleanup turn (nothing new for you to do this turn)._
+_Last updated: 30 September 2026 — saved Jotform link; BoC to be tested on vuneli.com._
+
+**Saved links:**
+- Jotform (saved 30 Sep 2026 at your request): https://form.jotform.com/261142415764353
+
+**This turn (Bank of Cyprus):**
+- [ ] In the BoC developer portal, set the app's **redirect / callback URL** to `https://vuneli.com/api/console/bank/callback` (you chose to test on the live domain).
+- [ ] Run `scripts/sql/0025_bank_links.sql` on the production database before deploying (preview already has it).
+- [ ] In Cloudflare add `BOC_CLIENT_ID`, `BOC_CLIENT_SECRET` (copy from the screenshot, don't retype), and `BOC_REDIRECT_URI=https://vuneli.com/api/console/bank/callback`.
+- Test sign-in at the bank's practice system: user **999999**, passcode **112233** (from the bank's own guide).
+- Real customer accounts need a licensed AISP or a BoC partnership (see below); until then this is test mode and the app says so.
 
 **This turn:**
 - Run `scripts/sql/0022_sites_and_roles.sql` on the production database before deploying (after `0020` and `0021` if not done). The preview database already has it. It adds a site column to readings and a separate admin-role table.
@@ -146,3 +156,21 @@ Letter saved at docs/sources/SLUSH_Participation_Approval.pdf. RIF covers the EU
 - [ ] Do NOT buy a ticket yourself — RIF issues it.
 - [ ] Finland visa: this letter is official proof. Field 24 can now truthfully say "Selected by the Research and Innovation Foundation (RIF) of Cyprus to attend Slush 2026"; field 32: RIF covers ticket + EUR 300, you cover the rest. Slush dates are 18-19 Nov.
 - [ ] Add the RIF letter to the DMRID evidence pack (government-backed selection).
+
+## Nango (accounting connections) — added 30 Sep 2026
+1. Create a free account at https://app.nango.dev (EU data region if offered).
+2. Environment Settings → copy the **Secret key** (dev environment first).
+3. Tell the agent when ready; it will open a secure form to save it as `NANGO_SECRET_KEY`.
+4. Later, per provider (Xero, QuickBooks/Intuit): create your own developer app and paste its client ID/secret into Nango, not into Vuneli.
+Note: SoftOne is not in Nango's catalogue (checked 30 Sep). It would need a custom connection or a CSV import.
+
+## Bank of Cyprus developer access — added 30 Sep 2026
+**Status 30 Sep:** sandbox app created; `BOC_CLIENT_ID` / `BOC_CLIENT_SECRET` saved in the preview.
+- [ ] Also add both as secrets in Cloudflare (Workers → vuneli → Settings → Variables) so the live site has them.
+- [ ] Delete the screenshot of the keys from your phone and chat apps, or regenerate the secret in the BoC portal if it was shared anywhere else.
+
+1. Register at the Bank of Cyprus developer portal (developer.bankofcyprus.com) and create a sandbox app.
+2. Subscribe it to the Accounts (AIS) API; payments are not needed.
+3. Note the **client ID** and **client secret**. Tell the agent when ready; they are saved as `BOC_CLIENT_ID` / `BOC_CLIENT_SECRET` (never pasted in chat).
+4. Live (non-sandbox) bank data under PSD2 needs a licensed provider (AISP) or a partner that holds one. Ask BoC how a startup can pilot without its own licence.
+Use: read business account transactions to find fuel, electricity and freight spend automatically.
