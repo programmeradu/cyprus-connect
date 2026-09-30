@@ -1,6 +1,6 @@
 /**
- * Starts a Nango Unified ERP/Accounting connection session.
- * Supports Sage, SAP Business One, NetSuite, Xero, QuickBooks, Zoho Books.
+ * Starts a Nango connection for one system in ERP_SYSTEMS.
+ * QuickBooks is linked directly, not through Nango.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -10,7 +10,8 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { readJson } from "@/lib/validate";
 import { db } from "@/db";
 import { integrations } from "@/db/schema";
-import { createNangoConnectSession } from "@/lib/integrations/nango.server";
+import { createNangoConnectSession, nangoConfig } from "@/lib/integrations/nango.server";
+import { ERP_SYSTEM_IDS } from "@/lib/integrations/erp-catalog";
 import { logger } from "@/lib/log";
 import { eq, and } from "drizzle-orm";
 
@@ -31,10 +32,47 @@ export async function POST(request: NextRequest) {
   if (!parsed.ok) return parsed.response;
 
   const { account } = resolved.session;
-  const integrationId = parsed.data.integrationId || "sage-intacct";
+  if (!nangoConfig()) {
+    return NextResponse.json(
+      { error: "not_configured", message: "Accounting links are not set up yet." },
+      { status: 503 },
+    );
+  }
+  const integrationId = parsed.data.integrationId;
+  if (!integrationId || !(ERP_SYSTEM_IDS as readonly string[]).includes(integrationId)) {
+    return NextResponse.json({ error: "system_required", message: "Choose a supported system first." }, { status: 400 });
+  }
 
   try {
     const session = await createNangoConnectSession(account.id, integrationId);
+    // Record or update integration intent
+    const existing = await db
+      .select({ id: integrations.id })
+      .from(integrations)
+      .where(
+        and(
+          eq(integrations.userId, account.id),
+          eq(integrations.integrationType, "nango"),
+          eq(integrations.providerName, integrationId),
+        ),
+      )
+      .limit(1);
+
+    if (existing.length === 0) {
+      // Nango holds the provider credentials; Vuneli stores no tokens for it.
+      const now = new Date().toISOString();
+      await db.insert(integrations).values({
+        userId: account.id,
+        integrationType: "nango",
+        providerName: integrationId,
+        accessToken: "",
+        refreshToken: "",
+        tokenExpiresAt: "",
+        isActive: false,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
     return NextResponse.json({ connectUrl: session.connectUrl, integrationId });
   } catch (error) {
     const ref = log.error("Nango connect initiation failed", error);
@@ -62,7 +100,13 @@ export async function DELETE(request: NextRequest) {
       await db
         .update(integrations)
         .set({ isActive: false })
-        .where(and(eq(integrations.userId, account.id), eq(integrations.providerName, integrationId)));
+        .where(
+        and(
+          eq(integrations.userId, account.id),
+          eq(integrations.integrationType, "nango"),
+          eq(integrations.providerName, integrationId),
+        ),
+      );
     } else {
       await db
         .update(integrations)

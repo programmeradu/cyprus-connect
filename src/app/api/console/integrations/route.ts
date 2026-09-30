@@ -7,9 +7,6 @@
 
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { and, eq } from "drizzle-orm";
-import { db } from "@/db";
-import { integrations } from "@/db/schema";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { logger } from "@/lib/log";
 import { gridToday } from "@/lib/insights/insights.server";
@@ -22,14 +19,6 @@ const log = logger("api.console.integrations");
 
 export interface IntegrationsData {
   country: string;
-  quickbooks: {
-    /** The operator has set up the QuickBooks app keys. Without them no link can be made. */
-    configured: boolean;
-    connected: boolean;
-    environment: string | null;
-    lastSyncedAt: string | null;
-    expired: boolean;
-  };
   saltedge: SaltEdgeSummary;
   nango: NangoSummary;
   grid: {
@@ -52,28 +41,14 @@ export async function GET() {
   const { account, workspace } = resolved.session;
   const country = (workspace.country || "CY").toUpperCase();
   try {
-    const [grid, qbRows, bank, saltedge, nango] = await Promise.all([
+    const [grid, bank, saltedge, nango] = await Promise.all([
       gridToday(country),
-      db
-        .select({ isActive: integrations.isActive, tokenExpiresAt: integrations.tokenExpiresAt, lastSyncAt: integrations.lastSyncAt })
-        .from(integrations)
-        .where(and(eq(integrations.userId, account.id), eq(integrations.providerName, "quickbooks")))
-        .limit(1),
       bankSummary(workspace.id),
       saltEdgeSummary(workspace.id),
       nangoSummary(account.id),
     ]);
-    const qb = qbRows[0];
-    const connected = !!qb?.isActive;
     const body: IntegrationsData = {
       country,
-      quickbooks: {
-        configured: !!process.env.QB_CLIENT_ID,
-        connected,
-        environment: connected ? process.env.QB_ENVIRONMENT || "sandbox" : null,
-        lastSyncedAt: connected ? (qb.lastSyncAt ?? null) : null,
-        expired: connected && !!qb.tokenExpiresAt && new Date(qb.tokenExpiresAt) <= new Date(),
-      },
       saltedge,
       nango,
       grid: grid.grid

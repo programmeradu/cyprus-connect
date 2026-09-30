@@ -1,183 +1,163 @@
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useEffect, useId, useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { Btn } from "@/components/app/console/kit";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
-import { Database, Check, ArrowRight, Layers } from "lucide-react";
+import { ERP_SYSTEMS } from "@/lib/integrations/erp-catalog";
+import { ConnectDialog, ConnectTerms, DualMark } from "./ConnectDialog";
 import { toast } from "sonner";
 
 interface NangoModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   locale: "en" | "el";
+  /** Nango key is present on the server. */
+  configured: boolean;
 }
 
-interface ErpOption {
-  id: string;
-  name: string;
-  category: string;
-  popular?: boolean;
-}
+const fold = (s: string) => s.toLocaleLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
 
-const ERP_OPTIONS: ErpOption[] = [
-  { id: "sage-intacct", name: "Sage (Intacct / 50 / Business Cloud)", category: "Enterprise ERP", popular: true },
-  { id: "sap-business-one", name: "SAP (Business One / S/4HANA)", category: "Enterprise ERP", popular: true },
-  { id: "netsuite", name: "Oracle NetSuite", category: "Cloud ERP", popular: true },
-  { id: "xero", name: "Xero Accounting", category: "SME Cloud", popular: true },
-  { id: "quickbooks", name: "Intuit QuickBooks Online", category: "SME Cloud" },
-  { id: "zoho-books", name: "Zoho Books", category: "Cloud Accounting" },
-  { id: "freshbooks", name: "FreshBooks", category: "Invoicing & Spend" },
-  { id: "microsoft-dynamics-365", name: "Microsoft Dynamics 365", category: "Enterprise ERP" },
-];
-
-export function NangoModal({ open, onOpenChange, locale }: NangoModalProps) {
-  const [selectedErp, setSelectedErp] = useState<string>("sage-intacct");
-  const [search, setSearch] = useState<string>("");
+export function NangoModal({ open, onOpenChange, locale, configured }: NangoModalProps) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
   const action = useWorkspaceAction();
+  const searchId = useId();
+  const labelId = useId();
+  const L = (en: string, el: string) => (locale === "el" ? el : en);
 
-  const isEl = locale === "el";
+  useEffect(() => {
+    if (!open) {
+      setSelected(null);
+      setQuery("");
+    }
+  }, [open]);
 
-  const filtered = ERP_OPTIONS.filter((e) =>
-    e.name.toLowerCase().includes(search.toLowerCase()) || e.category.toLowerCase().includes(search.toLowerCase())
+  const q = fold(query.trim());
+  const shown = useMemo(
+    () => (q ? ERP_SYSTEMS.filter((s) => fold(`${s.name} ${s.fit.en} ${s.fit.el}`).includes(q)) : ERP_SYSTEMS),
+    [q],
   );
+  const system = ERP_SYSTEMS.find((s) => s.id === selected) ?? null;
 
   const handleConnect = async () => {
-    const res = await action.run<{ connectUrl?: string }>(
-      "/api/console/integrations/nango/connect",
-      {
-        method: "POST",
-        body: { integrationId: selectedErp },
-        invalidates: ["/api/console/integrations"],
-      },
-    );
-
+    if (!system) return;
+    const res = await action.run<{ connectUrl?: string }>("/api/console/integrations/nango/connect", {
+      method: "POST",
+      body: { integrationId: system.id },
+      invalidates: ["/api/console/integrations"],
+    });
     if (res?.connectUrl) {
-      toast.info(
-        isEl
-          ? "Μετάβαση στην ασφαλή πύλη Nango Connect..."
-          : "Opening secure Nango Connect dialog...",
-      );
       window.location.href = res.connectUrl;
     } else {
-      toast.error(
-        isEl
-          ? "Αδυναμία έναρξης σύνδεσης ERP. Ελέγξτε τις ρυθμίσεις."
-          : "Unable to initiate ERP connection. Please check configuration.",
-      );
+      toast.error(L(`Vuneli could not open the ${system.name} sign-in. Try again in a minute.`, `Το Vuneli δεν μπόρεσε να ανοίξει τη σύνδεση ${system.name}. Δοκιμάστε ξανά σε ένα λεπτό.`));
     }
   };
 
+  const cta = action.busy
+    ? L(`Opening ${system?.name ?? ""}…`, `Άνοιγμα ${system?.name ?? ""}…`)
+    : system
+      ? L(`Continue to ${system.name}`, `Συνέχεια στο ${system.name}`)
+      : L("Choose your system", "Επιλέξτε σύστημα");
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl p-0 overflow-hidden border-border/40 bg-background/95 backdrop-blur-xl shadow-2xl rounded-2xl">
-        {/* Header Ribbon */}
-        <div className="relative px-6 pt-6 pb-4 border-b border-border/30 bg-muted/20">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-              <Database className="h-5 w-5" />
-            </div>
-            <div>
-              <DialogTitle className="text-lg font-semibold tracking-tight text-foreground">
-                {isEl ? "Σύνδεση ERP & Λογιστικού Συστήματος (Nango)" : "Link Unified ERP & Accounting (Nango)"}
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                {isEl
-                  ? "Αυτόματος συγχρονισμός τιμολογίων, παραστατικών και αναλυτικού καθολικού."
-                  : "Automated two-way sync for bills, purchase ledger, and general ledger accounts."}
-              </DialogDescription>
-            </div>
+    <ConnectDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      locale={locale}
+      title={L("Connect your accounting system", "Σύνδεση λογιστικού συστήματος")}
+      description={L(
+        "Pick the system your books live in. You sign in there, then Vuneli reads supplier bills and ledger accounts to work out spend-based supply-chain (Scope 3) emissions.",
+        "Επιλέξτε το σύστημα όπου τηρούνται τα βιβλία σας. Συνδέεστε εκεί και το Vuneli διαβάζει τιμολόγια προμηθευτών και λογαριασμούς καθολικού για να υπολογίσει τις εκπομπές της εφοδιαστικής αλυσίδας (Scope 3).",
+      )}
+      provider={{ name: "Nango", light: "/integrations/nango-light.svg", dark: "/integrations/nango-dark.svg", height: 18 }}
+      footer={
+        <>
+          <p className="vcm-foot-note" role={configured ? undefined : "status"}>
+            {configured
+              ? L("You leave Vuneli for a moment and come back here after signing in.", "Φεύγετε για λίγο από το Vuneli και επιστρέφετε εδώ μετά τη σύνδεση.")
+              : L("Accounting links open once the workspace owner adds the Nango key.", "Οι λογιστικές συνδέσεις ανοίγουν μόλις ο κάτοχος του χώρου εργασίας προσθέσει το κλειδί Nango.")}
+          </p>
+          <div className="vcm-foot-actions">
+            <Btn variant="quiet" onClick={() => onOpenChange(false)}>
+              {L("Cancel", "Ακύρωση")}
+            </Btn>
+            <Btn variant="primary" onClick={handleConnect} disabled={!configured || !system || action.busy} aria-busy={action.busy || undefined}>
+              {cta}
+            </Btn>
           </div>
-
-          <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs">
-            <Layers className="h-4 w-4 shrink-0" />
-            <span>
-              {isEl
-                ? "Υποστηρίζει 150+ συστήματα: Sage, SAP, NetSuite, Zoho, Dynamics 365 και Xero."
-                : "150+ native connectors with automated Scope 3 supplier carbon mapping."}
-            </span>
-          </div>
-        </div>
-
-        {/* Search & Selector */}
-        <div className="p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
-              {isEl ? "Επιλέξτε Σύστημα" : "Select Platform"}
-            </span>
+        </>
+      }
+    >
+      <section className="vcm-group">
+        <div className="vcm-group-head">
+          <h3 className="vcm-label" id={labelId}>{L("Your system", "Το σύστημά σας")}</h3>
+          <div className="vcm-search">
+            <Search aria-hidden="true" strokeWidth={1.75} />
+            <label htmlFor={searchId} className="vcm-sr">
+              {L("Find your system", "Βρείτε το σύστημά σας")}
+            </label>
             <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={isEl ? "Αναζήτηση ERP..." : "Filter ERP..."}
-              className="px-2.5 py-1 text-xs rounded-lg border border-border/40 bg-background/60 focus:outline-none focus:border-primary w-40"
+              id={searchId}
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={L("Find your system", "Βρείτε το σύστημά σας")}
+              autoComplete="off"
+              spellCheck={false}
             />
           </div>
+        </div>
 
-          <div className="grid gap-2 max-h-64 overflow-y-auto pr-1">
-            {filtered.map((e) => {
-              const active = selectedErp === e.id;
-              return (
-                <button
-                  key={e.id}
-                  type="button"
-                  onClick={() => setSelectedErp(e.id)}
-                  className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
-                    active
-                      ? "border-primary bg-primary/5 shadow-sm"
-                      : "border-border/40 hover:border-border hover:bg-muted/30"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`h-5 w-5 rounded-full border flex items-center justify-center transition-colors ${
-                        active
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-muted-foreground/40"
-                      }`}
-                    >
-                      {active && <Check className="h-3 w-3 stroke-[3]" />}
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-foreground">{e.name}</div>
-                      <div className="text-[11px] text-muted-foreground">{e.category}</div>
-                    </div>
-                  </div>
-                  {e.popular && (
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
-                      {isEl ? "Δημοφιλές" : "Popular"}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+        {shown.length > 0 ? (
+          <div className="vcm-grid" role="radiogroup" aria-labelledby={labelId}>
+            {shown.map((s) => (
+              <label key={s.id} className="vcm-option vcm-option-card">
+                <input
+                  type="radio"
+                  name="nango-system"
+                  value={s.id}
+                  checked={selected === s.id}
+                  onChange={() => setSelected(s.id)}
+                  className="vcm-sr"
+                />
+                <span className="vcm-card-mark">
+                  <DualMark light={s.light} dark={s.dark} alt="" height={s.markHeight} />
+                </span>
+                <span className="vcm-card-foot">
+                  <span className="vcm-option-text">
+                    <span className="vcm-option-name">{s.name}</span>
+                    <span className="vcm-option-sub">{locale === "el" ? s.fit.el : s.fit.en}</span>
+                  </span>
+                  <span className="vcm-radio" aria-hidden="true" />
+                </span>
+              </label>
+            ))}
           </div>
-        </div>
+        ) : (
+          <div className="vcm-empty" role="status">
+            <p>{L(`No system in the list matches “${query.trim()}”.`, `Κανένα σύστημα δεν ταιριάζει με «${query.trim()}».`)}</p>
+            <Btn variant="text" onClick={() => setQuery("")}>
+              {L("Show all systems", "Εμφάνιση όλων")}
+            </Btn>
+          </div>
+        )}
 
-        {/* Footer Actions */}
-        <div className="px-6 py-4 border-t border-border/30 bg-muted/10 flex items-center justify-between">
-          <Btn variant="quiet" onClick={() => onOpenChange(false)}>
-            {isEl ? "Ακύρωση" : "Cancel"}
-          </Btn>
-          <Btn
-            variant="primary"
-            onClick={handleConnect}
-            disabled={action.busy}
-            className="flex items-center gap-1.5"
-          >
-            <span>
-              {action.busy
-                ? isEl
-                  ? "Σύνδεση..."
-                  : "Connecting..."
-                : isEl
-                  ? "Έναρξη Σύνδεσης"
-                  : "Connect with Nango"}
-            </span>
-            <ArrowRight className="h-4 w-4" />
-          </Btn>
-        </div>
-      </DialogContent>
-    </Dialog>
+        {selected && !shown.some((s) => s.id === selected) && system && (
+          <p className="vcm-aside">{L(`${system.name} stays selected.`, `Το ${system.name} παραμένει επιλεγμένο.`)}</p>
+        )}
+
+      </section>
+
+      <ConnectTerms
+        label={L("What this link allows", "Τι επιτρέπει η σύνδεση")}
+        rows={[
+          [L("Vuneli reads", "Το Vuneli διαβάζει"), L("Supplier bills, bill lines and your chart of accounts.", "Τιμολόγια προμηθευτών, γραμμές τιμολογίων και το λογιστικό σχέδιο.")],
+          [L("Vuneli never", "Το Vuneli ποτέ"), L("Posts, edits or deletes entries in your books.", "Δεν καταχωρεί, αλλάζει ή διαγράφει εγγραφές στα βιβλία σας.")],
+          [L("Your password", "Ο κωδικός σας"), L(`You sign in at ${system?.name ?? "your system"}. Vuneli never sees it.`, `Συνδέεστε στο ${system?.name ?? "σύστημά σας"}. Το Vuneli δεν τον βλέπει ποτέ.`)],
+          [L("To stop", "Για διακοπή"), L("Disconnect here at any time.", "Αποσυνδέστε εδώ οποιαδήποτε στιγμή.")],
+        ]}
+      />
+    </ConnectDialog>
   );
 }

@@ -1,7 +1,7 @@
 /**
  * Salt Edge AISP Open Banking integration (saltedge.com).
- * Aggregates all non-BoC Cyprus banks under PSD2 read-only account information:
- * Hellenic Bank, Eurobank Cyprus, Alpha Bank CY, AstroBank, Ancoria Bank.
+ * Read-only PSD2 account information for the banks in CYPRUS_BANKS
+ * (see src/lib/bank/saltedge.ts for the coverage source and merger notes).
  * Follows src/lib/bank/AGENTS.md strictly: zero payment rights, read-only statements.
  */
 
@@ -306,7 +306,6 @@ export async function saltEdgeSummary(workspaceId: string): Promise<SaltEdgeSumm
     configured: true,
     environment: cfg.environment,
     status: (link.status as SaltEdgeSummary["status"]) || "none",
-    accounts: link.accountIds.length,
     banks: link.accountIds.length > 0 ? ["Connected Bank via Salt Edge"] : [],
     lastSyncAt: link.lastSyncAt ? new Date(link.lastSyncAt).toISOString() : null,
   };
@@ -372,10 +371,8 @@ export async function createSaltEdgeConnectSession(
 ): Promise<SaltEdgeConnectSessionResult> {
   const cfg = saltEdgeConfig();
   if (!cfg) {
-    // Return graceful preview connect URL if credentials are not yet entered
-    return {
-      connectUrl: `https://www.saltedge.com/dashboard/connect?preview=true&provider=${encodeURIComponent(bankCode || "hellenic_bank_cy")}&return_to=${encodeURIComponent(returnUrl)}`,
-    };
+    // Never hand out a made-up URL; the route answers 503 before this point.
+    throw new Error("Salt Edge is not configured");
   }
 
   try {

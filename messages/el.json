@@ -1422,7 +1422,7 @@
       },
       "accounting": {
         "title": "Λογισμικό Εξόδων & Λογιστικής",
-        "desc": "Συνδέστε QuickBooks ή Xero για αυτόματη εισαγωγή δεδομένων",
+        "desc": "Συνδέστε Sage, SAP, NetSuite, Dynamics 365, QuickBooks, Xero, Zoho Books ή FreshBooks για εισαγωγή τιμολογίων προμηθευτών",
         "cta": "Σύνδεση Λογιστικής",
         "connecting": "Σύνδεση..."
       },

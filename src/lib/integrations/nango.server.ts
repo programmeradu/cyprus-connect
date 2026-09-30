@@ -75,10 +75,8 @@ export async function createNangoConnectSession(
 ): Promise<NangoConnectSessionResult> {
   const cfg = nangoConfig();
   if (!cfg) {
-    // If keys aren't configured yet, provide preview connect modal response
-    return {
-      connectUrl: `https://connect.nango.dev?preview=true&integration=${encodeURIComponent(integrationId || "accounting")}`,
-    };
+    // Never hand out a made-up URL; the route answers 503 before this point.
+    throw new Error("Nango is not configured");
   }
 
   try {

@@ -7,20 +7,14 @@
 
 import { and, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { bankLinks, cbamImportLines, integrations } from "@/db/schema";
+import { bankLinks, cbamImportLines } from "@/db/schema";
+import { nangoSummary } from "@/lib/integrations/nango.server";
+import { ERP_SYSTEMS } from "@/lib/integrations/erp-catalog";
 import type { ConsoleConnection } from "@/components/app/console/types";
 
 export async function liveConnections(accountId: string, workspaceId: string): Promise<ConsoleConnection[]> {
-  const [qbRows, customs, seLink, bocLink] = await Promise.all([
-    db
-      .select({
-        isActive: integrations.isActive,
-        tokenExpiresAt: integrations.tokenExpiresAt,
-        lastSyncAt: integrations.lastSyncAt,
-      })
-      .from(integrations)
-      .where(and(eq(integrations.userId, accountId), eq(integrations.providerName, "quickbooks")))
-      .limit(1),
+  const [accounting, customs, seLink, bocLink] = await Promise.all([
+    nangoSummary(accountId),
     db
       .select({
         count: sql<number>`count(*)::int`,
@@ -42,9 +36,6 @@ export async function liveConnections(accountId: string, workspaceId: string): P
       .limit(1),
   ]);
 
-  const qb = qbRows[0];
-  const qbExpired = !!qb?.isActive && !!qb.tokenExpiresAt && new Date(qb.tokenExpiresAt) <= new Date();
-  const qbConfigured = !!process.env.QB_CLIENT_ID;
   const lines = customs[0]?.count ?? 0;
   const toIso = (v: unknown) => (v ? new Date(v as string).toISOString() : null);
 
@@ -53,19 +44,19 @@ export async function liveConnections(accountId: string, workspaceId: string): P
 
   const results: ConsoleConnection[] = [
     {
-      id: "quickbooks",
-      provider: "QuickBooks",
+      id: "accounting",
+      provider: accounting.providers.length
+        ? accounting.providers.map((id) => ERP_SYSTEMS.find((e) => e.id === id)?.name ?? id).join(", ")
+        : "Accounting system",
       category: "accounting",
-      status: qbExpired ? "error" : qb?.isActive ? "live" : "available",
+      status: accounting.connected ? "live" : "available",
       coveragePct: null,
-      lastSyncAt: qb?.isActive ? toIso(qb.lastSyncAt) : null,
-      note: qbExpired
-        ? "The link has expired. Reconnect it on the Integrations page."
-        : qb?.isActive
-          ? "Linked to your QuickBooks company."
-          : qbConfigured
-            ? "Not linked yet."
-            : "Not available yet on this workspace.",
+      lastSyncAt: accounting.connected ? toIso(accounting.lastSyncAt) : null,
+      note: accounting.connected
+        ? "Linked through the Integrations page."
+        : accounting.configured
+          ? "Not linked yet."
+          : "Not available yet on this workspace.",
     },
   ];
 
