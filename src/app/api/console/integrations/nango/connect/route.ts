@@ -54,11 +54,18 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (existing.length === 0) {
+      // Nango holds the provider credentials; Vuneli stores no tokens for it.
+      const now = new Date().toISOString();
       await db.insert(integrations).values({
         userId: account.id,
         integrationType: "nango",
         providerName: integrationId,
+        accessToken: "",
+        refreshToken: "",
+        tokenExpiresAt: "",
         isActive: false,
+        createdAt: now,
+        updatedAt: now,
       });
     }
 
