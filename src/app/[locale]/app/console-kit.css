@@ -1653,7 +1653,11 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
   .vcm-title { font-size: 20px; }
   .vcm-body { padding: 18px; }
   .vcm-grid { grid-template-columns: minmax(0, 1fr); }
-  .vcm-card-mark { height: 64px; }
+  .vcm-desc { font-size: 14px; }
+  .vcm-option-card { display: grid; grid-template-columns: 104px minmax(0, 1fr); }
+  .vcm-card-mark { height: auto; min-height: 72px; padding: 0 10px; border-bottom: 0; border-right: 1px solid var(--vc-rule); }
+  .vcm-card-mark img { max-width: 100%; }
+  .vcm-card-foot { align-items: center; }
   .vcm-search { flex: 1 1 100%; }
   .vcm-terms dl > div { grid-template-columns: minmax(0, 1fr); }
   .vcm-foot { padding: 12px 18px 14px; }
