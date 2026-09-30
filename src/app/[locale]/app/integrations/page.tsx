@@ -6,7 +6,7 @@
  * links show whether they are set up and made. One view, no guessed numbers.
  */
 
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,6 +14,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { ConsolePage, Plate, Reading, ReadingRail, Btn, Bar } from "@/components/app/console/kit";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { ConnectorTile } from "@/components/app/integrations/ConnectorTile";
+import { SaltEdgeModal } from "@/components/app/integrations/SaltEdgeModal";
+import { NangoModal } from "@/components/app/integrations/NangoModal";
 import {
   CONNECTORS,
   CATEGORY_LABEL,
@@ -36,6 +38,10 @@ function IntegrationsContent() {
   const res = useWorkspaceResource<IntegrationsData>(PATH);
   const qbAction = useWorkspaceAction();
   const bankAction = useWorkspaceAction();
+  const saltEdgeAction = useWorkspaceAction();
+  const nangoAction = useWorkspaceAction();
+  const [saltEdgeModalOpen, setSaltEdgeModalOpen] = useState(false);
+  const [nangoModalOpen, setNangoModalOpen] = useState(false);
   const d = res.data;
 
   const time = useMemo(() => new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }), [loc]);
@@ -82,12 +88,29 @@ function IntegrationsContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
+  // Result of Salt Edge sign-in return trip.
+  useEffect(() => {
+    const prov = searchParams.get("provider");
+    const st = searchParams.get("status");
+    if (prov === "saltedge" && st === "connected") {
+      toast.success(L("Cyprus bank linked successfully via Salt Edge.", "Η κυπριακή τράπεζα συνδέθηκε επιτυχώς μέσω Salt Edge."));
+      res.reload();
+      router.replace("/app/integrations");
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     if (qbAction.error) toast.error(qbAction.error);
   }, [qbAction.error]);
   useEffect(() => {
     if (bankAction.error) toast.error(bankAction.error);
   }, [bankAction.error]);
+  useEffect(() => {
+    if (saltEdgeAction.error) toast.error(saltEdgeAction.error);
+  }, [saltEdgeAction.error]);
+  useEffect(() => {
+    if (nangoAction.error) toast.error(nangoAction.error);
+  }, [nangoAction.error]);
 
   const connectQb = async () => {
     const r = await qbAction.run<{ authUrl?: string }>("/api/oauth/quickbooks/authorize", { method: "GET", invalidates: [] });
@@ -118,7 +141,39 @@ function IntegrationsContent() {
     if (r) toast.success(L("Bank link removed.", "Η σύνδεση τράπεζας αφαιρέθηκε."));
   };
 
+  const unlinkSaltEdge = async () => {
+    const ok = window.confirm(
+      L(
+        "Unlink Cyprus bank connection? Vuneli will stop reading statements from this account.",
+        "Αποσύνδεση κυπριακής τράπεζας; Η Vuneli θα σταματήσει την ανάγνωση κινήσεων από αυτόν τον λογαριασμό.",
+      ),
+    );
+    if (!ok) return;
+    const r = await saltEdgeAction.run("/api/console/integrations/saltedge/connect", {
+      method: "DELETE",
+      invalidates: [PATH],
+    });
+    if (r) toast.success(L("Bank connection revoked.", "Η τραπεζική σύνδεση αφαιρέθηκε."));
+  };
+
+  const unlinkNango = async () => {
+    const ok = window.confirm(
+      L(
+        "Disconnect unified ERP integration? Synced invoices and ledger lines will remain for historical audit.",
+        "Αποσύνδεση ενοποιημένου ERP; Τα τιμολόγια και οι γραμμές καθολικού θα διατηρηθούν για ιστορικό έλεγχο.",
+      ),
+    );
+    if (!ok) return;
+    const r = await nangoAction.run("/api/console/integrations/nango/connect", {
+      method: "DELETE",
+      invalidates: [PATH],
+    });
+    if (r) toast.success(L("ERP connection disconnected.", "Η σύνδεση ERP αποσυνδέθηκε."));
+  };
+
   const bank = d?.bank;
+  const saltedge = d?.saltedge;
+  const nango = d?.nango;
   const eur = useMemo(() => new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }), [loc]);
   const CAT: Record<string, [string, string]> = {
     electricity: ["Electricity", "Ρεύμα"],
@@ -130,7 +185,11 @@ function IntegrationsContent() {
   const qb = d?.quickbooks;
   const liveCount = CONNECTORS.filter((c) => c.state === "live").length;
   const linkableCount = CONNECTORS.filter((c) => c.state === "oauth").length;
-  const linkedCount = (qb?.connected ? 1 : 0) + (bank?.status === "active" ? 1 : 0);
+  const linkedCount =
+    (qb?.connected ? 1 : 0) +
+    (bank?.status === "active" ? 1 : 0) +
+    (saltedge?.status === "active" ? 1 : 0) +
+    (nango?.connected ? 1 : 0);
   const scheduledCount = CONNECTORS.filter((c) => c.state === "scheduled").length;
   const inUse = liveCount + linkedCount;
   const coverage = Math.round((inUse / CONNECTORS.length) * 100);
@@ -144,6 +203,17 @@ function IntegrationsContent() {
       if (!bank.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
       if (bank.status === "active") return bank.failed ? { word: L("Last read failed", "Η τελευταία ανάγνωση απέτυχε"), tone: "warn" as const } : { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
       if (bank.status === "expired") return { word: L("Consent ended", "Η συγκατάθεση έληξε"), tone: "bad" as const };
+    }
+    if (c.id === "saltedge" && saltedge) {
+      if (saltedge.status === "active") return { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
+      if (saltedge.status === "pending") return { word: L("Pending authorization", "Σε εκκρεμότητα"), tone: "warn" as const };
+      if (!saltedge.configured) return { word: L("Ready (Sandbox)", "Έτοιμο (Δοκιμαστικό)"), tone: "warn" as const };
+      return { word: L("Ready to link", "Έτοιμο για σύνδεση"), tone: "warn" as const };
+    }
+    if (c.id === "nango" && nango) {
+      if (nango.connected) return { word: L("Connected", "Συνδεδεμένο"), tone: "good" as const };
+      if (!nango.configured) return { word: L("Ready (Sandbox)", "Έτοιμο (Δοκιμαστικό)"), tone: "warn" as const };
+      return { word: L("Ready to link", "Έτοιμο για σύνδεση"), tone: "warn" as const };
     }
     if (c.id === "energy-charts" && d && !d.grid) return { word: L("No answer today", "Χωρίς απάντηση σήμερα"), tone: "warn" as const };
     return undefined;
@@ -185,6 +255,34 @@ function IntegrationsContent() {
           </Btn>
           {bank.status === "expired" && <Btn onClick={unlinkBank} disabled={bankAction.busy}>{L("Delete stored payments", "Διαγραφή πληρωμών")}</Btn>}
         </>
+      );
+    }
+    if (c.id === "saltedge") {
+      if (saltedge?.status === "active") {
+        return (
+          <Btn onClick={unlinkSaltEdge} disabled={saltEdgeAction.busy}>
+            {saltEdgeAction.busy ? L("Unlinking…", "Αποσύνδεση…") : L("Unlink bank", "Αποσύνδεση")}
+          </Btn>
+        );
+      }
+      return (
+        <Btn variant="primary" onClick={() => setSaltEdgeModalOpen(true)} disabled={saltEdgeAction.busy}>
+          {saltEdgeAction.busy ? L("Opening…", "Άνοιγμα…") : L("Link Cyprus Bank", "Σύνδεση Τράπεζας")}
+        </Btn>
+      );
+    }
+    if (c.id === "nango") {
+      if (nango?.connected) {
+        return (
+          <Btn onClick={unlinkNango} disabled={nangoAction.busy}>
+            {nangoAction.busy ? L("Disconnecting…", "Αποσύνδεση…") : L("Disconnect ERP", "Αποσύνδεση")}
+          </Btn>
+        );
+      }
+      return (
+        <Btn variant="primary" onClick={() => setNangoModalOpen(true)} disabled={nangoAction.busy}>
+          {nangoAction.busy ? L("Opening…", "Άνοιγμα…") : L("Link ERP & Accounting", "Σύνδεση ERP")}
+        </Btn>
       );
     }
     if (c.id === "energy-charts" && d?.grid) {
@@ -295,6 +393,68 @@ function IntegrationsContent() {
         </>
       );
     }
+    if (c.id === "saltedge") {
+      const se = d?.saltedge;
+      if (se?.status === "active") {
+        return (
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Accounts read", "Λογαριασμοί")}</span>
+              <strong className="vck-num">{se.accounts}</strong>
+            </div>
+            <div>
+              <span>{L("Connected bank", "Συνδεδεμένη τράπεζα")}</span>
+              <strong>{se.banks.join(", ") || "Hellenic Bank"}</strong>
+            </div>
+            {se.lastSyncAt && (
+              <div>
+                <span>{L("Last sync", "Τελευταίος συγχρονισμός")}</span>
+                <strong className="vck-num">{date.format(new Date(se.lastSyncAt))}</strong>
+              </div>
+            )}
+          </div>
+        );
+      }
+      return (
+        <p className="vci-tile-note">
+          {L(
+            "Regulated AISP aggregation for Hellenic Bank, Eurobank CY, Alpha Bank, AstroBank and Ancoria. Strictly read-only under PSD2.",
+            "Εποπτευόμενη διασύνδεση AISP για Ελληνική Τράπεζα, Eurobank, Alpha Bank, AstroBank και Ancoria. Αποκλειστικά μόνο ανάγνωση βάσει PSD2.",
+          )}
+        </p>
+      );
+    }
+    if (c.id === "nango") {
+      const ng = d?.nango;
+      if (ng?.connected) {
+        return (
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Active connectors", "Ενεργές συνδέσεις")}</span>
+              <strong className="vck-num">{ng.connectionsCount}</strong>
+            </div>
+            <div>
+              <span>{L("Connected platforms", "Συστήματα")}</span>
+              <strong>{ng.providers.join(", ")}</strong>
+            </div>
+            {ng.lastSyncAt && (
+              <div>
+                <span>{L("Last sync", "Τελευταίος συγχρονισμός")}</span>
+                <strong className="vck-num">{date.format(new Date(ng.lastSyncAt))}</strong>
+              </div>
+            )}
+          </div>
+        );
+      }
+      return (
+        <p className="vci-tile-note">
+          {L(
+            "Two-way sync with Sage, SAP, NetSuite, Xero, Zoho Books and 150+ ERPs. Automated general ledger and vendor bill carbon mapping.",
+            "Αμφίδρομος συγχρονισμός με Sage, SAP, NetSuite, Xero, Zoho Books και 150+ ERPs. Αυτόματη αντιστοίχιση τιμολογίων προμηθευτών σε εκπομπές άνθρακα.",
+          )}
+        </p>
+      );
+    }
     if (c.id === "energy-charts" && d) {
       if (!d.grid) {
         return (
@@ -364,6 +524,17 @@ function IntegrationsContent() {
           </Plate>
         );
       })}
+
+      <SaltEdgeModal
+        open={saltEdgeModalOpen}
+        onOpenChange={setSaltEdgeModalOpen}
+        locale={locale}
+      />
+      <NangoModal
+        open={nangoModalOpen}
+        onOpenChange={setNangoModalOpen}
+        locale={locale}
+      />
     </ConsolePage>
   );
 }

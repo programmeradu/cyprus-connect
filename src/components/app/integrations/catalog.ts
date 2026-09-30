@@ -89,6 +89,25 @@ export const CONNECTORS: Connector[] = [
     source: "Bank of Cyprus PSD2 Accounts API",
   },
   {
+    id: "saltedge",
+    name: "Salt Edge (Cyprus Banks)",
+    desc: {
+      en: "Hellenic Bank, Eurobank CY, Alpha Bank & AstroBank account feeds. Read-only.",
+      el: "Τραπεζικοί λογαριασμοί Ελληνικής, Eurobank, Alpha Bank & AstroBank. Μόνο ανάγνωση.",
+    },
+    gives: {
+      en: "Multi-bank reconciliation and spend categorization across all Cypriot commercial banks.",
+      el: "Συμφωνία πολλαπλών τραπεζών και κατηγοριοποίηση δαπανών σε όλες τις κυπριακές τράπεζες.",
+    },
+    category: "accounting",
+    state: "oauth",
+    light: "/integrations/saltedge-light.svg",
+    dark: "/integrations/saltedge-dark.svg",
+    markHeight: 20,
+    source: "Salt Edge AISP PSD2 Gateway",
+    href: "https://www.saltedge.com",
+  },
+  {
     id: "quickbooks",
     name: "QuickBooks",
     desc: {
@@ -123,6 +142,25 @@ export const CONNECTORS: Connector[] = [
     dark: "/integrations/xero-official-dark.svg",
     markHeight: 30,
     source: "Xero Accounting API",
+  },
+  {
+    id: "nango",
+    name: "Nango (Unified ERP)",
+    desc: {
+      en: "Automated two-way sync for 150+ ERPs (Sage, SAP Business One, NetSuite, Zoho, FreshBooks).",
+      el: "Αυτόματος ενοποιημένος συγχρονισμός για 150+ ERPs (Sage, SAP, NetSuite, Zoho, FreshBooks).",
+    },
+    gives: {
+      en: "Supplier bills, accounts payable, and chart of accounts mapped directly to Scope 3 carbon categories.",
+      el: "Τιμολόγια προμηθευτών και λογαριασμοί καθολικού χαρτογραφημένα αυτόματα στις κατηγορίες Scope 3.",
+    },
+    category: "accounting",
+    state: "oauth",
+    light: "/integrations/nango-light.svg",
+    dark: "/integrations/nango-dark.svg",
+    markHeight: 18,
+    source: "Nango Unified Integration Platform",
+    href: "https://www.nango.dev",
   },
   {
     id: "eac",

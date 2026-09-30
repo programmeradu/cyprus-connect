@@ -14,6 +14,8 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { logger } from "@/lib/log";
 import { gridToday } from "@/lib/insights/insights.server";
 import { bankSummary, type BankSummary } from "@/lib/bank/bank.server";
+import { saltEdgeSummary, type SaltEdgeSummary } from "@/lib/bank/saltedge.server";
+import { nangoSummary, type NangoSummary } from "@/lib/integrations/nango.server";
 
 export const dynamic = "force-dynamic";
 const log = logger("api.console.integrations");
@@ -28,6 +30,8 @@ export interface IntegrationsData {
     lastSyncedAt: string | null;
     expired: boolean;
   };
+  saltedge: SaltEdgeSummary;
+  nango: NangoSummary;
   grid: {
     latestAt: string;
     latestGrams: number;
@@ -48,7 +52,7 @@ export async function GET() {
   const { account, workspace } = resolved.session;
   const country = (workspace.country || "CY").toUpperCase();
   try {
-    const [grid, qbRows, bank] = await Promise.all([
+    const [grid, qbRows, bank, saltedge, nango] = await Promise.all([
       gridToday(country),
       db
         .select({ isActive: integrations.isActive, tokenExpiresAt: integrations.tokenExpiresAt, lastSyncAt: integrations.lastSyncAt })
@@ -56,6 +60,8 @@ export async function GET() {
         .where(and(eq(integrations.userId, account.id), eq(integrations.providerName, "quickbooks")))
         .limit(1),
       bankSummary(workspace.id),
+      saltEdgeSummary(workspace.id),
+      nangoSummary(account.id),
     ]);
     const qb = qbRows[0];
     const connected = !!qb?.isActive;
@@ -68,6 +74,8 @@ export async function GET() {
         lastSyncedAt: connected ? (qb.lastSyncAt ?? null) : null,
         expired: connected && !!qb.tokenExpiresAt && new Date(qb.tokenExpiresAt) <= new Date(),
       },
+      saltedge,
+      nango,
       grid: grid.grid
         ? {
             latestAt: grid.grid.latest.at,
