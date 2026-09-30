@@ -46,7 +46,7 @@ export const CATEGORY_ORDER: ConnectorCategory[] = [
 
 export const CATEGORY_LABEL: Record<ConnectorCategory, { en: string; el: string }> = {
   accounting: { en: "Banking and accounting", el: "Τράπεζα και λογιστική" },
-  grid: { en: "Energy and grid", el: "Ενέργεια και δίκτυο" },
+  grid: { en: "Energy, water and grid", el: "Ενέργεια, νερό και δίκτυο" },
   reference: { en: "Reference and benchmark data", el: "Δεδομένα αναφοράς" },
   public: { en: "Cyprus public services", el: "Δημόσιες υπηρεσίες Κύπρου" },
 };
@@ -57,8 +57,8 @@ export const CATEGORY_NOTE: Record<ConnectorCategory, { en: string; el: string }
     el: "Πληρωμές και λογιστικές γραμμές δείχνουν πού πάνε τα χρήματα για ενέργεια, καύσιμα και μεταφορές, με κάθε γραμμή ως τεκμήριο.",
   },
   grid: {
-    en: "Measured grid carbon for Cyprus, and your own electricity use read from your EAC bills.",
-    el: "Μετρημένος άνθρακας δικτύου για την Κύπρο και η δική σας κατανάλωση από τους λογαριασμούς ΑΗΚ.",
+    en: "Measured grid carbon for Cyprus, and your own electricity and water use read from your EAC and water board bills.",
+    el: "Μετρημένος άνθρακας δικτύου για την Κύπρο και η δική σας κατανάλωση ρεύματος και νερού από τους λογαριασμούς ΑΗΚ και υδατοπρομήθειας.",
   },
   reference: {
     en: "Sector averages and third-party emission estimates used to test your own figures.",
