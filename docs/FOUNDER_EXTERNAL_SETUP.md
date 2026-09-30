@@ -146,3 +146,10 @@ Letter saved at docs/sources/SLUSH_Participation_Approval.pdf. RIF covers the EU
 - [ ] Do NOT buy a ticket yourself — RIF issues it.
 - [ ] Finland visa: this letter is official proof. Field 24 can now truthfully say "Selected by the Research and Innovation Foundation (RIF) of Cyprus to attend Slush 2026"; field 32: RIF covers ticket + EUR 300, you cover the rest. Slush dates are 18-19 Nov.
 - [ ] Add the RIF letter to the DMRID evidence pack (government-backed selection).
+
+## Nango (accounting connections) — added 30 Sep 2026
+1. Create a free account at https://app.nango.dev (EU data region if offered).
+2. Environment Settings → copy the **Secret key** (dev environment first).
+3. Tell the agent when ready; it will open a secure form to save it as `NANGO_SECRET_KEY`.
+4. Later, per provider (Xero, QuickBooks/Intuit): create your own developer app and paste its client ID/secret into Nango, not into Vuneli.
+Note: SoftOne is not in Nango's catalogue (checked 30 Sep). It would need a custom connection or a CSV import.
