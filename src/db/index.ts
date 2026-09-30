@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from '@/db/schema';
+import { cache } from 'react';
 
 function getConnectionString(): string {
   if (typeof process !== 'undefined' && process.env?.HYPERDRIVE_URL) {
@@ -16,70 +17,45 @@ function getConnectionString(): string {
   return (process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!;
 }
 
-function getCloudflareCtx() {
-  try {
-    const symbol = Symbol.for('__cloudflare-context__');
-    const ctx = (globalThis as unknown as Record<symbol, { ctx?: { waitUntil: (p: Promise<unknown>) => void } }>)[symbol];
-    return ctx?.ctx;
-  } catch {
-    return null;
+// React.cache scopes the database client per incoming Next.js request.
+// Each request receives its own isolated postgres-js connection, preventing
+// cross-request connection clobbering and isolate freeze socket corruption.
+const getRequestDb = cache(() => {
+  const connStr = getConnectionString();
+  const client = postgres(connStr, {
+    max: 1, // With Cloudflare Hyperdrive, 1 connection per request is optimal
+    prepare: false, // Required for pooled (pgbouncer / Hyperdrive) connections
+    idle_timeout: 20,
+    connect_timeout: 10,
+  });
+  return drizzle(client, { schema });
+});
+
+let fallbackDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
+
+function getFallbackDb(): ReturnType<typeof drizzle<typeof schema>> {
+  if (!fallbackDb) {
+    const connStr = getConnectionString();
+    const client = postgres(connStr, {
+      max: 3,
+      prepare: false,
+      idle_timeout: 20,
+      connect_timeout: 10,
+    });
+    fallbackDb = drizzle(client, { schema });
   }
+  return fallbackDb;
 }
-
-let currentRequestId = -1;
-let currentClient: ReturnType<typeof postgres> | null = null;
-let currentDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
-
-function cleanupClient(clientToClose: ReturnType<typeof postgres> | null) {
-  if (!clientToClose) return;
-  try {
-    const closePromise = clientToClose.end({ timeout: 0 }).catch(() => {});
-    const cfCtx = getCloudflareCtx();
-    if (cfCtx && typeof cfCtx.waitUntil === 'function') {
-      cfCtx.waitUntil(closePromise);
-    }
-  } catch {}
-}
-
-// Global cleanup hook callable from worker fetch lifecycle
-(globalThis as unknown as Record<string, unknown>).__CLEANUP_DB__ = async (reqId: number) => {
-  if (currentRequestId === reqId && currentClient) {
-    const client = currentClient;
-    currentClient = null;
-    currentDb = null;
-    await client.end({ timeout: 0 }).catch(() => {});
-  }
-};
 
 function getDbInstance(): ReturnType<typeof drizzle<typeof schema>> {
-  const reqId = ((globalThis as unknown as Record<string, unknown>).__CF_REQUEST_ID__ as number) ?? 0;
-
-  // If request ID has changed, close old client and instantiate fresh for this request
-  if (currentClient && currentRequestId !== reqId) {
-    cleanupClient(currentClient);
-    currentClient = null;
-    currentDb = null;
+  if (process.env.NODE_ENV === 'test') {
+    return getFallbackDb();
   }
-
-  if (!currentDb || !currentClient) {
-    currentRequestId = reqId;
-    const connStr = getConnectionString();
-    currentClient = postgres(connStr, {
-      max: 5,
-      fetch_types: false,
-      prepare: false, // required for pooled (pgbouncer-style) connections
-      connect_timeout: 10,
-      idle_timeout: 0,
-      onclose() {
-        if (currentClient) {
-          currentClient = null;
-          currentDb = null;
-        }
-      },
-    });
-    currentDb = drizzle(currentClient, { schema });
+  try {
+    return getRequestDb();
+  } catch {
+    return getFallbackDb();
   }
-  return currentDb;
 }
 
 export const db = new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {

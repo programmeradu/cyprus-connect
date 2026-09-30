@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 /**
  * Post-build script: 
- * 1. Sets request ID and process.env.HYPERDRIVE_URL in fetch handler
- * 2. Wraps handler in try...finally with ctx.waitUntil cleanup for database connections
- * 3. Injects a `scheduled` export into .open-next/worker.js
+ * 1. Sets process.env.HYPERDRIVE_URL in fetch handler
+ * 2. Injects a `scheduled` export into .open-next/worker.js
  *    so Cloudflare's cron trigger can self-fetch API routes.
  *
  * Run automatically as part of `npm run deploy` via the `build:cf` hook.
@@ -18,36 +17,19 @@ const workerPath = join(__dirname, "../.open-next/worker.js");
 
 let source = readFileSync(workerPath, "utf8");
 
-// 1. Ensure __CF_REQUEST_ID__ and HYPERDRIVE_URL are initialized on fetch
-if (!source.includes("globalThis.__CF_REQUEST_ID__ =")) {
+// 1. Ensure HYPERDRIVE_URL is initialized on fetch
+if (!source.includes("process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;")) {
   source = source.replace(
     "async fetch(request, env, ctx) {",
     `async fetch(request, env, ctx) {
-        globalThis.__CF_REQUEST_ID__ = (globalThis.__CF_REQUEST_ID__ || 0) + 1;
-        const reqId = globalThis.__CF_REQUEST_ID__;
         if (env.HYPERDRIVE?.connectionString) {
             process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;
         }`
   );
-  console.log("✅ Injected request ID and HYPERDRIVE_URL initialization");
+  console.log("✅ Injected HYPERDRIVE_URL initialization");
 }
 
-// 2. Wrap default handler call in try...finally for database connection cleanup
-if (!source.includes("ctx.waitUntil(globalThis.__CLEANUP_DB__(reqId))")) {
-  source = source.replace(
-    "return handler(reqOrResp, env, ctx, request.signal);",
-    `try {
-                return await handler(reqOrResp, env, ctx, request.signal);
-            } finally {
-                if (typeof globalThis.__CLEANUP_DB__ === "function") {
-                    ctx.waitUntil(globalThis.__CLEANUP_DB__(reqId));
-                }
-            }`
-  );
-  console.log("✅ Injected database cleanup hook into fetch handler");
-}
-
-// 3. Inject scheduled cron handler
+// 2. Inject scheduled cron handler
 const injection = `
 // ── Cloudflare Cron: scheduled event handler ──────────────────────────────────
 // Injected by scripts/inject-scheduled-handler.mjs after opennextjs build.
