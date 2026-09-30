@@ -1,6 +1,7 @@
 /**
- * Starts a read-only Salt Edge Open Banking link for non-BoC Cyprus banks:
- * Hellenic Bank, Eurobank CY, Alpha Bank CY, AstroBank, Ancoria Bank.
+ * Starts a read-only Salt Edge link for the Cyprus banks in CYPRUS_BANKS
+ * (Eurobank's two online-banking systems and Alpha Bank Cyprus).
+ * Bank of Cyprus is linked directly, not through Salt Edge.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -11,6 +12,7 @@ import { readJson } from "@/lib/validate";
 import { db } from "@/db";
 import { bankLinks } from "@/db/schema";
 import { saltEdgeConfig, createSaltEdgeConnectSession } from "@/lib/bank/saltedge.server";
+import { CYPRUS_BANK_CODES } from "@/lib/bank/saltedge";
 import { logger } from "@/lib/log";
 import { eq, and } from "drizzle-orm";
 
@@ -18,7 +20,7 @@ export const dynamic = "force-dynamic";
 const log = logger("api.console.integrations.saltedge.connect");
 
 const ConnectBodySchema = z.object({
-  bankCode: z.string().max(80).optional(),
+  bankCode: z.enum(CYPRUS_BANK_CODES).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -32,7 +34,16 @@ export async function POST(request: NextRequest) {
 
   const { account, workspace } = resolved.session;
   const cfg = saltEdgeConfig();
-  const bankCode = parsed.data.bankCode || "hellenic_bank_cy";
+  if (!cfg) {
+    return NextResponse.json(
+      { error: "not_configured", message: "Bank linking is not set up yet." },
+      { status: 503 },
+    );
+  }
+  const bankCode = parsed.data.bankCode;
+  if (!bankCode) {
+    return NextResponse.json({ error: "bank_required", message: "Choose a bank first." }, { status: 400 });
+  }
 
   try {
     const returnUrl = `${request.nextUrl.origin}/app/integrations?provider=saltedge&status=connected`;
@@ -43,7 +54,7 @@ export async function POST(request: NextRequest) {
       id,
       workspaceId: workspace.id,
       provider: "saltedge",
-      environment: cfg?.environment || "sandbox",
+      environment: cfg.environment,
       subscriptionId: `se_${crypto.randomUUID().slice(0, 16)}`,
       status: "pending",
       createdBy: account.id,

@@ -16,6 +16,7 @@ import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/conso
 import { ConnectorTile } from "@/components/app/integrations/ConnectorTile";
 import { SaltEdgeModal } from "@/components/app/integrations/SaltEdgeModal";
 import { NangoModal } from "@/components/app/integrations/NangoModal";
+import { ERP_SYSTEMS } from "@/lib/integrations/erp-catalog";
 import {
   CONNECTORS,
   CATEGORY_LABEL,
@@ -144,8 +145,8 @@ function IntegrationsContent() {
   const unlinkSaltEdge = async () => {
     const ok = window.confirm(
       L(
-        "Unlink Cyprus bank connection? Vuneli will stop reading statements from this account.",
-        "Αποσύνδεση κυπριακής τράπεζας; Η Vuneli θα σταματήσει την ανάγνωση κινήσεων από αυτόν τον λογαριασμό.",
+        "Unlink this bank? Vuneli stops reading payments from it. You can also withdraw consent in your bank app.",
+        "Αποσύνδεση αυτής της τράπεζας; Το Vuneli σταματά να διαβάζει πληρωμές. Μπορείτε επίσης να ανακαλέσετε τη συγκατάθεση στην εφαρμογή της τράπεζας.",
       ),
     );
     if (!ok) return;
@@ -159,8 +160,8 @@ function IntegrationsContent() {
   const unlinkNango = async () => {
     const ok = window.confirm(
       L(
-        "Disconnect unified ERP integration? Synced invoices and ledger lines will remain for historical audit.",
-        "Αποσύνδεση ενοποιημένου ERP; Τα τιμολόγια και οι γραμμές καθολικού θα διατηρηθούν για ιστορικό έλεγχο.",
+        "Disconnect your accounting system? Vuneli stops reading new bills. Figures already calculated stay in your history.",
+        "Αποσύνδεση λογιστικού συστήματος; Το Vuneli σταματά να διαβάζει νέα τιμολόγια. Όσα έχουν ήδη υπολογιστεί μένουν στο ιστορικό σας.",
       ),
     );
     if (!ok) return;
@@ -207,13 +208,13 @@ function IntegrationsContent() {
     if (c.id === "saltedge" && saltedge) {
       if (saltedge.status === "active") return { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
       if (saltedge.status === "pending") return { word: L("Pending authorization", "Σε εκκρεμότητα"), tone: "warn" as const };
-      if (!saltedge.configured) return { word: L("Ready (Sandbox)", "Έτοιμο (Δοκιμαστικό)"), tone: "warn" as const };
-      return { word: L("Ready to link", "Έτοιμο για σύνδεση"), tone: "warn" as const };
+      if (!saltedge.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+      return { word: saltedge.environment === "sandbox" ? L("Ready to link (test mode)", "Έτοιμο για σύνδεση (δοκιμαστικό)") : L("Ready to link", "Έτοιμο για σύνδεση"), tone: "idle" as const };
     }
     if (c.id === "nango" && nango) {
       if (nango.connected) return { word: L("Connected", "Συνδεδεμένο"), tone: "good" as const };
-      if (!nango.configured) return { word: L("Ready (Sandbox)", "Έτοιμο (Δοκιμαστικό)"), tone: "warn" as const };
-      return { word: L("Ready to link", "Έτοιμο για σύνδεση"), tone: "warn" as const };
+      if (!nango.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+      return { word: L("Ready to link", "Έτοιμο για σύνδεση"), tone: "idle" as const };
     }
     if (c.id === "energy-charts" && d && !d.grid) return { word: L("No answer today", "Χωρίς απάντηση σήμερα"), tone: "warn" as const };
     return undefined;
@@ -267,7 +268,7 @@ function IntegrationsContent() {
       }
       return (
         <Btn variant="primary" onClick={() => setSaltEdgeModalOpen(true)} disabled={saltEdgeAction.busy}>
-          {saltEdgeAction.busy ? L("Opening…", "Άνοιγμα…") : L("Link Cyprus Bank", "Σύνδεση Τράπεζας")}
+          {saltEdgeAction.busy ? L("Opening…", "Άνοιγμα…") : L("Choose a bank", "Επιλογή τράπεζας")}
         </Btn>
       );
     }
@@ -281,7 +282,7 @@ function IntegrationsContent() {
       }
       return (
         <Btn variant="primary" onClick={() => setNangoModalOpen(true)} disabled={nangoAction.busy}>
-          {nangoAction.busy ? L("Opening…", "Άνοιγμα…") : L("Link ERP & Accounting", "Σύνδεση ERP")}
+          {nangoAction.busy ? L("Opening…", "Άνοιγμα…") : L("Choose a system", "Επιλογή συστήματος")}
         </Btn>
       );
     }
@@ -404,7 +405,7 @@ function IntegrationsContent() {
             </div>
             <div>
               <span>{L("Connected bank", "Συνδεδεμένη τράπεζα")}</span>
-              <strong>{se.banks.join(", ") || "Hellenic Bank"}</strong>
+              <strong>{se.banks.join(", ") || L("Not reported yet", "Δεν έχει αναφερθεί ακόμη")}</strong>
             </div>
             {se.lastSyncAt && (
               <div>
@@ -418,8 +419,8 @@ function IntegrationsContent() {
       return (
         <p className="vci-tile-note">
           {L(
-            "Regulated AISP aggregation for Hellenic Bank, Eurobank CY, Alpha Bank, AstroBank and Ancoria. Strictly read-only under PSD2.",
-            "Εποπτευόμενη διασύνδεση AISP για Ελληνική Τράπεζα, Eurobank, Alpha Bank, AstroBank και Ancoria. Αποκλειστικά μόνο ανάγνωση βάσει PSD2.",
+            "For Eurobank (including former Hellenic Bank accounts) and Alpha Bank Cyprus. Read-only: Vuneli sees payments and cannot move money.",
+            "Για Eurobank (και πρώην λογαριασμούς Ελληνικής Τράπεζας) και Alpha Bank Κύπρου. Μόνο ανάγνωση: το Vuneli βλέπει πληρωμές και δεν μπορεί να μεταφέρει χρήματα.",
           )}
         </p>
       );
@@ -435,7 +436,7 @@ function IntegrationsContent() {
             </div>
             <div>
               <span>{L("Connected platforms", "Συστήματα")}</span>
-              <strong>{ng.providers.join(", ")}</strong>
+              <strong>{ng.providers.map((id) => ERP_SYSTEMS.find((s) => s.id === id)?.name ?? id).join(", ")}</strong>
             </div>
             {ng.lastSyncAt && (
               <div>
@@ -449,8 +450,8 @@ function IntegrationsContent() {
       return (
         <p className="vci-tile-note">
           {L(
-            "Two-way sync with Sage, SAP, NetSuite, Xero, Zoho Books and 150+ ERPs. Automated general ledger and vendor bill carbon mapping.",
-            "Αμφίδρομος συγχρονισμός με Sage, SAP, NetSuite, Xero, Zoho Books και 150+ ERPs. Αυτόματη αντιστοίχιση τιμολογίων προμηθευτών σε εκπομπές άνθρακα.",
+            "For Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, Xero, Zoho Books and FreshBooks. Read-only: Vuneli reads supplier bills and never edits your books.",
+            "Για Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, Xero, Zoho Books και FreshBooks. Μόνο ανάγνωση: το Vuneli διαβάζει τιμολόγια προμηθευτών και δεν αλλάζει ποτέ τα βιβλία σας.",
           )}
         </p>
       );
@@ -529,11 +530,14 @@ function IntegrationsContent() {
         open={saltEdgeModalOpen}
         onOpenChange={setSaltEdgeModalOpen}
         locale={locale}
+        configured={Boolean(saltedge?.configured)}
+        environment={saltedge?.environment ?? null}
       />
       <NangoModal
         open={nangoModalOpen}
         onOpenChange={setNangoModalOpen}
         locale={locale}
+        configured={Boolean(nango?.configured)}
       />
     </ConsolePage>
   );
