@@ -1,22 +1,10 @@
 # Architecture decisions
 
-- Agent work runs through `src/lib/agents` only: a Postgres job queue (`agent_jobs`, SKIP LOCKED + lease), driven by the Cloudflare cron every 15 min via `/api/cron/agents`. Why: durable, single-flight and retryable on the existing Cloudflare + Postgres stack, no new vendor. Moving to Queues/Durable Objects needs founder sign-off.
-- Agents act only through typed tools in `src/lib/agents/tools.ts`, each with a fixed risk level (0 read, 1 internal write, 2 outward, 3 legal/financial). Why: one place to enforce policy and write the ledger.
-- Risk level 3 always needs a human, whatever the workspace policy says (`decideStep`). Why: EU AI Act human oversight on legal/financial acts.
-- Every tool call writes an `agent_steps` row with a SHA-256 hash of its input, including blocked and failed calls. Why: complete, replayable audit trail.
-- `agent_runs.trigger = 'sample'` marks seed data; only cron/manual/event runs are real work. Why: never present sample rows as agent activity.
-- Database changes that the app needs are kept as plain SQL in `scripts/sql/` (the drizzle folder is read-only here) and mirrored in `src/db/schema.ts`. Why: reproducible schema without a second migration tool.
+Scoped rules: `src/lib/agents/AGENTS.md` (agent runtime, approvals, CBAM), `src/lib/bank/AGENTS.md` (bank links).
 
-- Approval tasks store the exact tool call (`pending_tool`, `pending_input`, SHA-256 `pending_input_hash`); approving re-checks the fingerprint and runs it via `src/lib/agents/approvals.ts`. Why: a person signs exactly what the agent showed, nothing else.
-- CBAM declarations are deterministic (`cbam-calc.ts`, no AI) and a signature is void if the draft hash changes. Why: legal act must be reproducible.
-- A per-agent pause lives in `agent_switches` (scripts/sql/0020); the workspace kill switch in `agent_controls` still wins, and both are checked in `runJob` before any step. Why: stop one agent without stopping the rest, enforced in one place.
-- Outward agent acts (supplier emails) are risk level 2 tools whose approval card carries the full text (`approvalDetail`); approving sends that exact text via `src/lib/email/send.ts` (Resend over HTTPS, SMTP only locally) and logs it in `cbam_supplier_requests` (scripts/sql/0021). Why: a person approves what leaves the company, and sending works on Cloudflare Workers.
-- The CBAM Registry export (`cbam-registry-xml.ts`) is marked `schemaStatus="unvalidated"` and `documentStatus="final"` only when signed on the exact draft with a full declarant. Why: never pass off an unchecked file as Registry-ready.
-- Every API route reads its body through `src/lib/validate.ts` (`readJson` with a zod schema, `readUpload`/`checkUpload` which identify files by their bytes); `tests/api-input-guard.test.ts` fails on direct `request.json()`/`formData()`. Why: size caps and schema checks in one place.
-- Admin rights live only in `user_roles` (scripts/sql/0022), checked server-side by `src/lib/admin-auth.ts`; the QA identity is never admin. Why: a profile edit can never grant admin.
-- Server errors go through `logger(scope).error(...)` (`src/lib/log.ts`), which redacts sensitive keys and returns a short ref; routes return the ref, never the raw error. Why: findable logs without leaking internals.
-
-- Every /app page reads and writes workspace data through `src/components/app/console/workspace-store.ts` (`useWorkspaceResource`, `useWorkspaceAction`), never its own fetch; `tests/app-data-guard.test.ts` enforces it and its not-yet-moved list may only shrink. Why: one shared copy of the data, so a change on any page shows everywhere.
-- Company facts have one home each: name/industry/team size/country on the account profile, sites/revenue on the workspace; console reads overlay them via `src/lib/company.server.ts` and writes go through `/api/console/company` (one transaction, one audit event). Why: every page sees the same company, and the old copied workspace columns are never trusted.
-- Dashboard agent status is computed per workspace (`rosterFor`: planned unless runnable, paused by switch/kill switch), and sample runs (`trigger='sample'`) are excluded from the overview. Why: never show seeded activity as real.
-- Bank data comes only from read-only PSD2 links in `src/lib/bank/` (Bank of Cyprus first): the app stores the bank subscription id, never a customer passcode or user token, requests payments with a zero limit, and sorts payments with deterministic rules (`categorize.ts`) that record the matched rule; unmatched or unmarked lines are never counted as spend. Why: consent-based, auditable spend evidence without any power to move money.
+- Schema changes are plain SQL in `scripts/sql/`, mirrored in `src/db/schema.ts`. Why: drizzle folder is read-only; one migration path.
+- API bodies/uploads go through `src/lib/validate.ts`; `tests/api-input-guard.test.ts` enforces it. Why: size caps and schema checks in one place.
+- Server errors use `logger(scope).error` (`src/lib/log.ts`); routes return its ref, never the raw error. Why: findable logs, no leaks.
+- Admin rights live only in `user_roles`, checked by `src/lib/admin-auth.ts`; QA identity is never admin. Why: profile edits can't grant admin.
+- /app pages read/write only via `workspace-store.ts` (`useWorkspaceResource`/`useWorkspaceAction`); `tests/app-data-guard.test.ts` enforces it. Why: one shared copy of data.
+- Company facts have one home (profile: name/industry/size/country; workspace: sites/revenue), read via `company.server.ts`, written via `/api/console/company`. Why: every page sees the same company.
