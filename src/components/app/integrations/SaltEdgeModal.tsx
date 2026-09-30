@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Btn } from "@/components/app/console/kit";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { CYPRUS_BANKS } from "@/lib/bank/saltedge";
-import { ConnectDialog, ConnectTerms } from "./ConnectDialog";
+import { ConnectDialog, ConnectTerms, DualMark } from "./ConnectDialog";
 import { toast } from "sonner";
 
 interface SaltEdgeModalProps {
@@ -58,7 +58,7 @@ export function SaltEdgeModal({ open, onOpenChange, locale, configured, environm
         "Choose your bank. You approve access on the bank's own page, then Vuneli reads your business payments to find fuel, electricity, water and freight spending.",
         "Επιλέξτε την τράπεζά σας. Εγκρίνετε την πρόσβαση στη σελίδα της τράπεζας και το Vuneli διαβάζει τις επαγγελματικές πληρωμές για να βρει έξοδα καυσίμων, ρεύματος, νερού και μεταφορών.",
       )}
-      provider={{ name: "Salt Edge", light: "/integrations/saltedge-light.svg", dark: "/integrations/saltedge-dark.svg", height: 18 }}
+      provider={{ name: "Salt Edge", light: "/integrations/saltedge-light.svg", dark: "/integrations/saltedge-dark.svg", height: 24 }}
       footer={
         <>
           <p className="vcm-foot-note" role={configured ? undefined : "status"}>
@@ -102,7 +102,9 @@ export function SaltEdgeModal({ open, onOpenChange, locale, configured, environm
           ))}
         </div>
         <p className="vcm-aside">
-          <img className="vcm-app-icon vcm-app-icon-sm" src="/integrations/banks/boc.png" alt="" aria-hidden="true" />
+          <span className="vcm-aside-mark" aria-hidden="true">
+            <DualMark light="/integrations/bankofcyprus-light.png" dark="/integrations/bankofcyprus-dark.png" alt="" height={16} />
+          </span>
           <span>
             {L(
               "Bank of Cyprus has its own direct link on the Integrations page, so it is not listed here.",
