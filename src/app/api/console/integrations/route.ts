@@ -14,6 +14,7 @@ import { bankSummary, type BankSummary } from "@/lib/bank/bank.server";
 import { saltEdgeSummary, type SaltEdgeSummary } from "@/lib/bank/saltedge.server";
 import { nangoSummary, type NangoSummary } from "@/lib/integrations/nango.server";
 import { eacSummary, type EacSummary } from "@/lib/integrations/eac.server";
+import { waterSummary, type WaterSummary } from "@/lib/integrations/water.server";
 import {
   climateTraceSummary,
   cyStatSummary,
@@ -41,6 +42,7 @@ export interface IntegrationsData {
   gridReason: "unsupported" | "unavailable" | null;
   bank: BankSummary;
   eac: EacSummary;
+  water: WaterSummary;
   climateTrace: ClimateTraceSummary | null;
   climateTraceReason: "unsupported" | "unavailable" | null;
   cystat: CyStatSummary | null;
@@ -60,12 +62,13 @@ export async function GET() {
   try {
     const profile = await readCompanyProfile(account.id);
     const industry = profile?.companyIndustry?.trim() || null;
-    const [grid, bank, saltedge, nango, eac, ct, cystat, wikirate] = await Promise.all([
+    const [grid, bank, saltedge, nango, eac, water, ct, cystat, wikirate] = await Promise.all([
       gridToday(country),
       bankSummary(workspace.id),
       saltEdgeSummary(workspace.id),
       nangoSummary(account.id),
       eacSummary(account.id),
+      waterSummary(account.id),
       climateTraceSummary(country),
       cyStatSummary(industry),
       wikiRateSummary(),
@@ -86,6 +89,7 @@ export async function GET() {
       gridReason: grid.reason,
       bank,
       eac,
+      water,
       climateTrace: ct.data,
       climateTraceReason: ct.reason,
       cystat: cystat.data,

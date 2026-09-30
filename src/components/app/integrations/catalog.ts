@@ -146,6 +146,25 @@ export const CONNECTORS: Connector[] = [
     source: "Your EAC bills (PDF or photo)",
   },
   {
+    id: "water",
+    name: "Water Board of Nicosia",
+    desc: {
+      en: "Water boards have no public connection, so you upload the bill. Vuneli reads the period, m³ and amount. Limassol, Larnaca and Paphos bills are read too.",
+      el: "Τα συμβούλια υδατοπρομήθειας δεν έχουν δημόσια σύνδεση, οπότε ανεβάζετε τον λογαριασμό. Η Vuneli διαβάζει περίοδο, m³ και ποσό. Διαβάζονται και λογαριασμοί Λεμεσού, Λάρνακας και Πάφου.",
+    },
+    gives: {
+      en: "Scope 3 water supply and treatment from each bill, at the published factor.",
+      el: "Scope 3 υδροδότησης και επεξεργασίας νερού από κάθε λογαριασμό, με τον δημοσιευμένο συντελεστή.",
+    },
+    category: "grid",
+    state: "upload",
+    light: "/integrations/wbn.png",
+    dark: "/integrations/wbn.png",
+    markHeight: 30,
+    source: "Your water board bills (PDF or photo)",
+    href: "https://www.wbn.org.cy",
+  },
+  {
     id: "energy-charts",
     name: "Energy-Charts",
     desc: {
