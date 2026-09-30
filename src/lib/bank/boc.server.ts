@@ -126,8 +126,13 @@ export async function activateSubscription(
   cfg: BocConfig,
   subscriptionId: string,
   code: string,
+  redirectUri?: string,
 ): Promise<{ accountIds: string[]; endDate: string | null; status: string }> {
-  const userToken = await token(cfg, { grant_type: "authorization_code", code, scope: "UserOAuth2Security" }, "user token");
+  const form: Record<string, string> = { grant_type: "authorization_code", code, scope: "UserOAuth2Security" };
+  if (redirectUri) {
+    form.redirect_uri = redirectUri;
+  }
+  const userToken = await token(cfg, form, "user token");
   const headers = { Authorization: `Bearer ${userToken}`, "Content-Type": "application/json" };
   const url = `${cfg.base}/v1/subscriptions/${encodeURIComponent(subscriptionId)}`;
   const got = await call<SubscriptionBody | SubscriptionBody[]>("read subscription", url, { headers: { ...headers, ...journeyHeaders() } });

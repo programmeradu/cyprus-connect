@@ -9,6 +9,10 @@ export const BANK_CALLBACK_PATH = "/api/console/bank/callback";
  * be pinned with BOC_REDIRECT_URI; otherwise it follows the site the request
  * came from.
  */
-export function bankRedirectUri(request: NextRequest): string {
-  return process.env.BOC_REDIRECT_URI || `${request.nextUrl.origin}${BANK_CALLBACK_PATH}`;
+export function bankRedirectUri(request?: NextRequest): string {
+  if (process.env.BOC_REDIRECT_URI?.trim()) {
+    return process.env.BOC_REDIRECT_URI.trim();
+  }
+  const origin = request?.nextUrl?.origin || process.env.NEXT_PUBLIC_APP_URL || "https://vuneli.com";
+  return `${origin.replace(/\/$/, "")}${BANK_CALLBACK_PATH}`;
 }

@@ -11,7 +11,7 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { db } from "@/db";
 import { bankLinks } from "@/db/schema";
 import { bocConfig, activateSubscription } from "@/lib/bank/boc.server";
-import { BANK_STATE_COOKIE } from "@/lib/bank/redirect";
+import { BANK_STATE_COOKIE, bankRedirectUri } from "@/lib/bank/redirect";
 import { logBankEvent, syncLink } from "@/lib/bank/bank.server";
 import { logger } from "@/lib/log";
 
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 
   let activated;
   try {
-    activated = await activateSubscription(cfg, link.subscriptionId, code);
+    activated = await activateSubscription(cfg, link.subscriptionId, code, bankRedirectUri(request));
   } catch (error) {
     log.error("activation failed", error);
     return back(request, "activation_failed");
