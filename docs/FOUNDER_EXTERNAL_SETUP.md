@@ -191,3 +191,8 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Tested with a real (redacted, 2009) EAC bill: kWh 1,467 and period 15/09/2009–16/11/2009 read correctly. The amount payable was redacted, so it was left blank (not guessed). A Nicosia Water Board bill was correctly refused.
 - Still needed: 2–3 recent, unredacted EAC bills (current layout, incl. a photo taken on a phone) to confirm the amount and account number are read on today's bills.
 - Water bills are not read yet. Say if you want a Water Board reader (Nicosia first).
+
+### WikiRate key + water bills (2026-09-30)
+- WIKIRATE_API_KEY is saved in the preview. Add the same value in Cloudflare (Workers → Settings → Variables, as a secret) before deploying. It now shows the 26 Cyprus companies on WikiRate (earlier filter was wrong and showed global companies).
+- Water bill reader added (Nicosia, Limassol, Larnaca, Paphos). Tested on the Bank of Cyprus sample set: Nicosia sample read correctly (1 m³, 27/11/2009–01/02/2010, €20.43). The other water samples are blank forms and were correctly refused. Sewerage and EAC bills were correctly refused.
+- Still needed: 1–2 real, recent water bills (any board) to confirm on today's layout.
