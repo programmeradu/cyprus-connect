@@ -206,7 +206,7 @@ export async function wikiRateSummary(): Promise<WikiRateSummary> {
   const key = process.env.WIKIRATE_API_KEY?.trim();
   if (!key) return { configured: false, cyprusCompanies: null, sample: [], reason: "not_configured" };
   try {
-    const rows = await cached("wikirate:cy", async () => {
+    const rows = await cached("wikirate:cy:country", async () => {
       // `filter[country]` is the filter WikiRate honours; `filter[headquarters]` is silently
       // ignored and returns the global list (BP, Apple…). 500 is well above today's Cyprus count.
       const url = "https://wikirate.org/Company.json?limit=500&filter%5Bcountry%5D=Cyprus";
