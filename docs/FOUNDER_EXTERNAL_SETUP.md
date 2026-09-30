@@ -163,6 +163,12 @@ Letter saved at docs/sources/SLUSH_Participation_Approval.pdf. RIF covers the EU
 3. Tell the agent when ready; it will open a secure form to save it as `NANGO_SECRET_KEY`.
 4. Later, per provider (Xero, QuickBooks/Intuit): create your own developer app and paste its client ID/secret into Nango, not into Vuneli.
 Note: SoftOne is not in Nango's catalogue (checked 30 Sep). It would need a custom connection or a CSV import.
+5. In Nango, create one integration per system the app offers, using exactly these integration keys (the app sends them): `sage-intacct`, `sap-business-one`, `netsuite`, `microsoft-dynamics-365`, `xero`, `zoho-books`, `freshbooks`. If Nango gives a system a different key, tell the agent so the app list matches. QuickBooks stays on its own direct link.
+
+## Salt Edge (other Cyprus banks) — added 30 Sep 2026
+The bank picker lists only what Salt Edge's Cyprus coverage page shows today: Eurobank (former Hellenic Bank online banking), Eurobank (former Eurobank Cyprus digital banking) and Alpha Bank Cyprus. AstroBank (now Alpha Bank) and Ancoria are gone; Bank of Cyprus stays on its direct link.
+- [ ] Create a Salt Edge account and copy the App ID and Secret; tell the agent so it saves them as `SALTEDGE_APP_ID` / `SALTEDGE_SECRET`. Until then the picker shows "not set up yet" and the button stays off.
+- [ ] In the Salt Edge dashboard, look up the exact provider code for each of the three banks and send them to the agent. The app currently uses `hellenic_bank_cy`, `eurobank_cy`, `alpha_bank_cy` as placeholders.
 
 ## Bank of Cyprus developer access — added 30 Sep 2026
 **Status 30 Sep:** sandbox app created; `BOC_CLIENT_ID` / `BOC_CLIENT_SECRET` saved in the preview.
