@@ -1668,3 +1668,4 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 @media (prefers-reduced-motion: reduce) {
   .vcm-option, .vcm-radio, .vcm-close { transition: none; }
 }
+.vcm-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
