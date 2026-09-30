@@ -6,7 +6,7 @@
  * links show whether they are set up and made. One view, no guessed numbers.
  */
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -39,6 +39,8 @@ function IntegrationsContent() {
   const bankAction = useWorkspaceAction();
   const saltEdgeAction = useWorkspaceAction();
   const nangoAction = useWorkspaceAction();
+  const eacAction = useWorkspaceAction();
+  const eacInput = useRef<HTMLInputElement>(null);
   const [saltEdgeModalOpen, setSaltEdgeModalOpen] = useState(false);
   const [nangoModalOpen, setNangoModalOpen] = useState(false);
   const d = res.data;
@@ -91,6 +93,28 @@ function IntegrationsContent() {
   useEffect(() => {
     if (nangoAction.error) toast.error(nangoAction.error);
   }, [nangoAction.error]);
+  useEffect(() => {
+    if (eacAction.error) toast.error(eacAction.error);
+  }, [eacAction.error]);
+
+  const uploadEac = async (file: File | undefined) => {
+    if (!file) return;
+    const form = new FormData();
+    form.append("file", file);
+    const r = await eacAction.run<{ bill: { kwh: number; periodStart: string; periodEnd: string }; duplicate: boolean }>(
+      "/api/console/integrations/eac/bill",
+      { body: form, invalidates: [PATH, "/api/console/overview"] },
+    );
+    if (eacInput.current) eacInput.current.value = "";
+    if (!r) return;
+    if (r.duplicate) toast.info(L("This bill was already added.", "Αυτός ο λογαριασμός έχει ήδη προστεθεί."));
+    else toast.success(L(`Bill read: ${r.bill.kwh} kWh.`, `Ο λογαριασμός διαβάστηκε: ${r.bill.kwh} kWh.`));
+  };
+  const removeEac = async (id: number) => {
+    if (!window.confirm(L("Remove this bill and its figures?", "Αφαίρεση αυτού του λογαριασμού και των στοιχείων του;"))) return;
+    const r = await eacAction.run(`/api/console/integrations/eac/bill?id=${id}`, { method: "DELETE", invalidates: [PATH, "/api/console/overview"] });
+    if (r) toast.success(L("Bill removed.", "Ο λογαριασμός αφαιρέθηκε."));
+  };
 
   const connectBank = async () => {
     const r = await bankAction.run<{ authUrl?: string }>("/api/console/bank/connect", { invalidates: [] });
@@ -153,17 +177,43 @@ function IntegrationsContent() {
     freight: ["Freight and courier", "Μεταφορές"],
     other: ["Other", "Άλλο"],
   };
-  const liveCount = CONNECTORS.filter((c) => c.state === "live").length;
-  const linkableCount = CONNECTORS.filter((c) => c.state === "oauth").length;
+  // A live feed counts only when it actually answered on this visit.
+  const answered: Record<string, boolean> = {
+    "energy-charts": Boolean(d?.grid),
+    "climate-trace": Boolean(d?.climateTrace),
+    cystat: Boolean(d?.cystat),
+    wikirate: d?.wikirate?.cyprusCompanies != null,
+  };
+  const liveCount = CONNECTORS.filter((c) => c.state === "live" && answered[c.id]).length;
+  const linkableCount = CONNECTORS.filter((c) => c.state === "oauth" || c.state === "upload").length;
   const linkedCount =
     (bank?.status === "active" ? 1 : 0) +
     (saltedge?.status === "active" ? 1 : 0) +
-    (nango?.connected ? 1 : 0);
+    (nango?.connected ? 1 : 0) +
+    ((d?.eac?.bills.length ?? 0) > 0 ? 1 : 0);
+  const num = new Intl.NumberFormat(loc, { maximumFractionDigits: 0 });
+  const num1 = new Intl.NumberFormat(loc, { maximumFractionDigits: 1 });
+  const CT_SECTOR: Record<string, [string, string]> = {
+    power: ["Power", "Ηλεκτροπαραγωγή"],
+    transportation: ["Transport", "Μεταφορές"],
+    buildings: ["Buildings", "Κτίρια"],
+    manufacturing: ["Manufacturing", "Μεταποίηση"],
+    waste: ["Waste", "Απόβλητα"],
+    agriculture: ["Agriculture", "Γεωργία"],
+  };
   const scheduledCount = CONNECTORS.filter((c) => c.state === "scheduled").length;
   const inUse = liveCount + linkedCount;
   const coverage = Math.round((inUse / CONNECTORS.length) * 100);
 
   const statusFor = (c: Connector) => {
+    if (c.id === "eac" && d?.eac) {
+      if (d.eac.bills.length > 0) return { word: L(`${d.eac.bills.length === 1 ? "1 bill" : `${d.eac.bills.length} bills`}`, `Λογαριασμοί: ${d.eac.bills.length}`), tone: "good" as const };
+      if (!d.eac.readerReady) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+    }
+    if (c.state === "live" && d && c.id in answered && !answered[c.id]) {
+      if (c.id === "wikirate" && !d.wikirate.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
+      return { word: L("No answer now", "Χωρίς απάντηση"), tone: "warn" as const };
+    }
     if (c.id === "bankofcyprus" && bank) {
       if (!bank.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
       if (bank.status === "active") return bank.failed ? { word: L("Last read failed", "Η τελευταία ανάγνωση απέτυχε"), tone: "warn" as const } : { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
@@ -236,6 +286,28 @@ function IntegrationsContent() {
         <Btn variant="primary" onClick={() => setNangoModalOpen(true)} disabled={nangoAction.busy}>
           {nangoAction.busy ? L("Opening…", "Άνοιγμα…") : L("Choose a system", "Επιλογή συστήματος")}
         </Btn>
+      );
+    }
+    if (c.id === "eac" && d?.eac) {
+      return (
+        <>
+          <input
+            ref={eacInput}
+            type="file"
+            accept="application/pdf,image/png,image/jpeg,image/webp"
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden="true"
+            onChange={(e) => uploadEac(e.target.files?.[0])}
+          />
+          <Btn variant="primary" onClick={() => eacInput.current?.click()} disabled={eacAction.busy || !d.eac.readerReady}>
+            {eacAction.busy
+              ? L("Reading the bill…", "Ανάγνωση λογαριασμού…")
+              : d.eac.bills.length > 0
+                ? L("Add another bill", "Προσθήκη λογαριασμού")
+                : L("Upload a bill", "Ανέβασμα λογαριασμού")}
+          </Btn>
+        </>
       );
     }
     if (c.id === "energy-charts" && d?.grid) {
@@ -387,6 +459,139 @@ function IntegrationsContent() {
             "Για Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, QuickBooks Online, Xero, Zoho Books και FreshBooks. Μόνο ανάγνωση: το Vuneli διαβάζει τιμολόγια προμηθευτών και δεν αλλάζει ποτέ τα βιβλία σας.",
           )}
         </p>
+      );
+    }
+    if (c.id === "eac" && d?.eac) {
+      const e = d.eac;
+      if (e.bills.length === 0) {
+        return (
+          <p className="vci-tile-note">
+            {e.readerReady
+              ? L("PDF or photo, up to 10 MB. A bill whose kWh or period cannot be read is refused, never guessed.", "PDF ή φωτογραφία, έως 10 MB. Λογαριασμός χωρίς αναγνώσιμα kWh ή περίοδο απορρίπτεται, χωρίς εικασίες.")
+              : L("Bill reading opens once the workspace owner adds the AI reader key.", "Η ανάγνωση λογαριασμών ανοίγει όταν ο ιδιοκτήτης προσθέσει το κλειδί ανάγνωσης.")}
+          </p>
+        );
+      }
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Electricity on your bills", "Ηλεκτρισμός στους λογαριασμούς")}</span>
+              <strong className="vck-num">{num.format(e.totalKwh)} kWh</strong>
+            </div>
+            <div>
+              <span>{L("Scope 2", "Scope 2")}</span>
+              <strong className="vck-num">{num1.format(e.totalKgCo2e / 1000)} t CO₂e</strong>
+            </div>
+          </div>
+          <ul className="vci-bank-lines" aria-label={L("Latest bills", "Τελευταίοι λογαριασμοί")}>
+            {e.bills.map((b) => (
+              <li key={b.id}>
+                <span className="vci-bank-line-what">
+                  {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
+                </span>
+                <span className="vci-bank-line-why">
+                  {num.format(b.kwh)} kWh{b.amountEur !== null ? ` · ${eur.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}
+                  {" · "}
+                  <button type="button" className="vci-link-btn" onClick={() => removeEac(b.id)} disabled={eacAction.busy}>
+                    {L("Remove", "Αφαίρεση")}
+                  </button>
+                </span>
+                <strong className="vck-num">{num1.format(b.kgCo2e)} kg</strong>
+              </li>
+            ))}
+          </ul>
+          <p className="vci-tile-note">
+            {L(`Factor: ${e.factor.kgPerKwh} kg CO₂e per kWh, ${e.factor.source}, ${e.factor.vintage}.`, `Συντελεστής: ${e.factor.kgPerKwh} kg CO₂e ανά kWh, ${e.factor.source}, ${e.factor.vintage}.`)}
+          </p>
+        </>
+      );
+    }
+    if (c.id === "climate-trace" && d) {
+      const ct = d.climateTrace;
+      if (!ct) {
+        return (
+          <p className="vci-tile-note">
+            {d.climateTraceReason === "unsupported"
+              ? L(`Country figures are not wired for ${d.country} yet.`, `Τα στοιχεία χώρας δεν είναι διαθέσιμα για ${d.country} ακόμη.`)
+              : L("Climate TRACE did not answer just now. Nothing is shown in its place.", "Το Climate TRACE δεν απάντησε. Τίποτα δεν εμφανίζεται στη θέση του.")}
+          </p>
+        );
+      }
+      const top = ct.sectors.slice(0, 3);
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L(`${ct.country} emissions, ${ct.year}`, `Εκπομπές ${ct.country}, ${ct.year}`)}</span>
+              <strong className="vck-num">{num1.format(ct.totalTonnes / 1e6)} Mt CO₂e</strong>
+            </div>
+            <div>
+              <span>{L("Share of world total", "Μερίδιο παγκοσμίως")}</span>
+              <strong className="vck-num">{ct.worldSharePct.toFixed(3)}%</strong>
+            </div>
+          </div>
+          {top.length > 0 && (
+            <div className="vci-tile-detail">
+              {top.map((s) => (
+                <div key={s.sector}>
+                  <span>{L(CT_SECTOR[s.sector][0], CT_SECTOR[s.sector][1])}</span>
+                  <strong className="vck-num">{num1.format(s.tonnes / 1e6)} Mt</strong>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="vci-tile-note">{L("Context only. These never fill your own figures.", "Μόνο πλαίσιο. Ποτέ δεν συμπληρώνουν τους δικούς σας αριθμούς.")}</p>
+        </>
+      );
+    }
+    if (c.id === "cystat" && d) {
+      const cs = d.cystat;
+      if (!cs) {
+        return <p className="vci-tile-note">{L("CyStat did not answer just now. Nothing is shown in its place.", "Η CyStat δεν απάντησε. Τίποτα δεν εμφανίζεται στη θέση της.")}</p>;
+      }
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L(`Establishments in Cyprus, ${cs.year}`, `Μονάδες στην Κύπρο, ${cs.year}`)}</span>
+              <strong className="vck-num">{num.format(cs.total)}</strong>
+            </div>
+            {cs.own && (
+              <div>
+                <span>{cs.own.code} · {cs.own.label}</span>
+                <strong className="vck-num">{num.format(cs.own.count)} ({num1.format(cs.own.sharePct)}%)</strong>
+              </div>
+            )}
+          </div>
+          {!cs.own && (
+            <p className="vci-tile-note">
+              {d.industry
+                ? L("Your sector has no single NACE match, so no peer count is shown.", "Ο κλάδος σας δεν αντιστοιχεί σε μία ενότητα NACE, οπότε δεν εμφανίζεται αριθμός.")
+                : L("Add your sector in Settings to see how many Cyprus establishments share it.", "Προσθέστε τον κλάδο σας στις Ρυθμίσεις για να δείτε πόσες μονάδες τον μοιράζονται.")}
+            </p>
+          )}
+        </>
+      );
+    }
+    if (c.id === "wikirate" && d) {
+      const w = d.wikirate;
+      if (!w.configured) {
+        return <p className="vci-tile-note">{L("Opens once the workspace owner adds a WikiRate API key.", "Ανοίγει όταν ο ιδιοκτήτης προσθέσει κλειδί WikiRate.")}</p>;
+      }
+      if (w.cyprusCompanies === null) {
+        return <p className="vci-tile-note">{L("WikiRate did not answer just now. Nothing is shown in its place.", "Το WikiRate δεν απάντησε. Τίποτα δεν εμφανίζεται στη θέση του.")}</p>;
+      }
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Cyprus companies listed", "Κυπριακές εταιρείες")}</span>
+              <strong className="vck-num">{w.cyprusCompanies}{w.cyprusCompanies >= 100 ? "+" : ""}</strong>
+            </div>
+          </div>
+          {w.sample.length > 0 && <p className="vci-tile-note">{w.sample.join(" · ")}</p>}
+        </>
       );
     }
     if (c.id === "energy-charts" && d) {

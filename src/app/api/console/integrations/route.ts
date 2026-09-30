@@ -13,6 +13,16 @@ import { gridToday } from "@/lib/insights/insights.server";
 import { bankSummary, type BankSummary } from "@/lib/bank/bank.server";
 import { saltEdgeSummary, type SaltEdgeSummary } from "@/lib/bank/saltedge.server";
 import { nangoSummary, type NangoSummary } from "@/lib/integrations/nango.server";
+import { eacSummary, type EacSummary } from "@/lib/integrations/eac.server";
+import {
+  climateTraceSummary,
+  cyStatSummary,
+  wikiRateSummary,
+  type ClimateTraceSummary,
+  type CyStatSummary,
+  type WikiRateSummary,
+} from "@/lib/integrations/reference.server";
+import { readCompanyProfile } from "@/lib/company.server";
 
 export const dynamic = "force-dynamic";
 const log = logger("api.console.integrations");
@@ -30,6 +40,13 @@ export interface IntegrationsData {
   } | null;
   gridReason: "unsupported" | "unavailable" | null;
   bank: BankSummary;
+  eac: EacSummary;
+  climateTrace: ClimateTraceSummary | null;
+  climateTraceReason: "unsupported" | "unavailable" | null;
+  cystat: CyStatSummary | null;
+  /** Onboarding sector, so the page can say when it has no NACE match. */
+  industry: string | null;
+  wikirate: WikiRateSummary;
   fetchedAt: string;
 }
 
@@ -41,11 +58,17 @@ export async function GET() {
   const { account, workspace } = resolved.session;
   const country = (workspace.country || "CY").toUpperCase();
   try {
-    const [grid, bank, saltedge, nango] = await Promise.all([
+    const profile = await readCompanyProfile(account.id);
+    const industry = profile?.companyIndustry?.trim() || null;
+    const [grid, bank, saltedge, nango, eac, ct, cystat, wikirate] = await Promise.all([
       gridToday(country),
       bankSummary(workspace.id),
       saltEdgeSummary(workspace.id),
       nangoSummary(account.id),
+      eacSummary(account.id),
+      climateTraceSummary(country),
+      cyStatSummary(industry),
+      wikiRateSummary(),
     ]);
     const body: IntegrationsData = {
       country,
@@ -62,6 +85,12 @@ export async function GET() {
         : null,
       gridReason: grid.reason,
       bank,
+      eac,
+      climateTrace: ct.data,
+      climateTraceReason: ct.reason,
+      cystat: cystat.data,
+      industry,
+      wikirate,
       fetchedAt: new Date().toISOString(),
     };
     return NextResponse.json(body);

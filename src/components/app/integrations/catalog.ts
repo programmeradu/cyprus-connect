@@ -8,12 +8,13 @@
  * `state` says what the platform can do with the service today:
  *   live       the data flows now, no account needed from the operator
  *   oauth      the operator links an account, and the link is read at runtime
+ *   upload     the operator uploads a document (a bill) and it is read
  *   scheduled  the connector is built but held for a later release
  *
  * A connector that is `scheduled` never shows a control that does nothing.
  */
 
-export type ConnectorState = "live" | "oauth" | "scheduled";
+export type ConnectorState = "live" | "oauth" | "upload" | "scheduled";
 
 export type ConnectorCategory = "accounting" | "grid" | "reference" | "public";
 
@@ -56,8 +57,8 @@ export const CATEGORY_NOTE: Record<ConnectorCategory, { en: string; el: string }
     el: "Πληρωμές και λογιστικές γραμμές δείχνουν πού πάνε τα χρήματα για ενέργεια, καύσιμα και μεταφορές, με κάθε γραμμή ως τεκμήριο.",
   },
   grid: {
-    en: "Measured grid carbon for Cyprus, and your own metered use once linked.",
-    el: "Μετρημένος άνθρακας δικτύου για την Κύπρο και η δική σας κατανάλωση μόλις συνδεθεί.",
+    en: "Measured grid carbon for Cyprus, and your own electricity use read from your EAC bills.",
+    el: "Μετρημένος άνθρακας δικτύου για την Κύπρο και η δική σας κατανάλωση από τους λογαριασμούς ΑΗΚ.",
   },
   reference: {
     en: "Sector averages and third-party emission estimates used to test your own figures.",
@@ -130,19 +131,19 @@ export const CONNECTORS: Connector[] = [
     id: "eac",
     name: "Electricity Authority of Cyprus",
     desc: {
-      en: "The Cyprus grid operator: tariffs and metered consumption.",
-      el: "Ο διαχειριστής δικτύου Κύπρου: τιμολόγια και καταναλώσεις.",
+      en: "EAC has no public connection, so you upload the bill. Vuneli reads the period, kWh and amount, and keeps the bill as evidence.",
+      el: "Η ΑΗΚ δεν έχει δημόσια σύνδεση, οπότε ανεβάζετε τον λογαριασμό. Η Vuneli διαβάζει περίοδο, kWh και ποσό, και κρατά τον λογαριασμό ως τεκμήριο.",
     },
     gives: {
-      en: "Scope 2 electricity from the bill, at the Cyprus grid factor.",
-      el: "Scope 2 ηλεκτρισμού από τον λογαριασμό, με τον κυπριακό συντελεστή.",
+      en: "Scope 2 electricity from each bill, at the published Cyprus grid factor.",
+      el: "Scope 2 ηλεκτρισμού από κάθε λογαριασμό, με τον δημοσιευμένο κυπριακό συντελεστή.",
     },
     category: "grid",
-    state: "scheduled",
+    state: "upload",
     light: "/integrations/eac-light.png",
     dark: "/integrations/eac-dark.png",
     markHeight: 30,
-    source: "EAC customer portal",
+    source: "Your EAC bills (PDF or photo)",
   },
   {
     id: "energy-charts",
@@ -190,11 +191,11 @@ export const CONNECTORS: Connector[] = [
       el: "Δημοσιευμένοι δείκτες ESG εταιρειών, ανοικτοί σε έλεγχο.",
     },
     gives: {
-      en: "Sector peer figures, once enough Cyprus companies report to compare fairly.",
-      el: "Στοιχεία ομοειδών εταιρειών, όταν αρκετές κυπριακές εταιρείες δημοσιεύουν.",
+      en: "How many Cyprus companies publish ESG figures there. Peer comparison opens once enough report to compare fairly.",
+      el: "Πόσες κυπριακές εταιρείες δημοσιεύουν στοιχεία ESG εκεί. Η σύγκριση ανοίγει όταν δημοσιεύουν αρκετές.",
     },
     category: "reference",
-    state: "scheduled",
+    state: "live",
     light: "/integrations/wikirate-light.png",
     dark: "/integrations/wikirate-dark.png",
     markHeight: 26,
@@ -209,15 +210,16 @@ export const CONNECTORS: Connector[] = [
       el: "Η Στατιστική Υπηρεσία Κύπρου.",
     },
     gives: {
-      en: "Sector output and employment, used to size a Cyprus peer group.",
-      el: "Παραγωγή και απασχόληση κλάδου, για ομάδα σύγκρισης στην Κύπρο.",
+      en: "How many establishments in Cyprus work in your sector, from the national business register.",
+      el: "Πόσες μονάδες στην Κύπρο δραστηριοποιούνται στον κλάδο σας, από το μητρώο επιχειρήσεων.",
     },
     category: "reference",
-    state: "scheduled",
+    state: "live",
     light: "/integrations/cystat-light.png",
     dark: "/integrations/cystat-dark.png",
     markHeight: 28,
-    source: "CyStat open data",
+    source: "CyStat Business Register, establishments by NACE",
+    href: "https://cystatdb.cystat.gov.cy",
   },
   {
     id: "govcy",

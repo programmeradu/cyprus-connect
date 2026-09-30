@@ -8,12 +8,14 @@ type Locale = "en" | "el";
 const STATE_WORD: Record<Connector["state"], { en: string; el: string }> = {
   live: { en: "Live", el: "Ενεργό" },
   oauth: { en: "Ready to link", el: "Έτοιμο για σύνδεση" },
+  upload: { en: "Upload a bill", el: "Ανέβασμα λογαριασμού" },
   scheduled: { en: "Scheduled", el: "Προγραμματισμένο" },
 };
 
 const STATE_TONE: Record<Connector["state"], string> = {
   live: "live",
   oauth: "warn",
+  upload: "warn",
   scheduled: "idle",
 };
 
