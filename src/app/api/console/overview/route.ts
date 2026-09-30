@@ -59,8 +59,10 @@ export async function GET() {
       header: requestHeaders.get(QA_HEADER),
     });
 
+    console.log("[overview] Step 1: getSession");
     const session = qa ? null : await auth.api.getSession({ headers: requestHeaders });
     const account = qa ? { ...QA_ACCOUNT } : session?.user;
+    console.log("[overview] Step 1 done, account:", account?.id);
 
     if (!account) {
       return NextResponse.json(
@@ -90,8 +92,7 @@ export async function GET() {
         .onConflictDoNothing();
     }
 
-
-
+    console.log("[overview] Step 2: workspace lookup");
     let [workspace] = await db
       .select()
       .from(workspaces)
@@ -100,6 +101,7 @@ export async function GET() {
 
     /** First visit after sign-up: give the account its own empty workspace. */
     if (!workspace) {
+      console.log("[overview] Step 2b: creating workspace");
       const [profile] = await db
         .select()
         .from(userTable)
@@ -142,46 +144,65 @@ export async function GET() {
       );
     }
 
+    console.log("[overview] Step 3: loadCompanyWorkspace");
     // Company facts come from their one home (see company.server.ts).
     workspace = await loadCompanyWorkspace(account.id, workspace);
     const workspaceId = workspace.id;
+    console.log("[overview] Step 3 done, workspaceId:", workspaceId);
 
-
+    console.log("[overview] Step 4: Promise.all starting");
     const [defs, readings, roster, runs, tasks, connections, obs, events] =
       await Promise.all([
-        db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder)),
-        db
-          .select()
-          .from(metricReadings)
-          .where(eq(metricReadings.workspaceId, workspaceId))
-          .orderBy(asc(metricReadings.periodStart)),
-        db.select().from(agents).orderBy(asc(agents.sortOrder)),
-        db
-          .select()
-          .from(agentRuns)
-          // Seed rows are never shown as agent activity.
-          .where(and(eq(agentRuns.workspaceId, workspaceId), ne(agentRuns.trigger, "sample")))
-          .orderBy(desc(agentRuns.startedAt))
-          .limit(20),
-        db
-          .select()
-          .from(agentTasks)
-          .where(and(eq(agentTasks.workspaceId, workspaceId), eq(agentTasks.status, "open")))
-          .orderBy(asc(agentTasks.dueAt))
-          .limit(20),
-        liveConnections(account.id, workspaceId),
-        db
-          .select()
-          .from(obligations)
-          .where(eq(obligations.workspaceId, workspaceId))
-          .orderBy(asc(obligations.dueDate)),
-        db
-          .select()
-          .from(activityEvents)
-          .where(eq(activityEvents.workspaceId, workspaceId))
-          .orderBy(desc(activityEvents.createdAt))
-          .limit(12),
+        (async () => {
+          console.log("[overview] Q: defs start");
+          const r = await db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder));
+          console.log("[overview] Q: defs done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: readings start");
+          const r = await db.select().from(metricReadings).where(eq(metricReadings.workspaceId, workspaceId)).orderBy(asc(metricReadings.periodStart));
+          console.log("[overview] Q: readings done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: roster start");
+          const r = await db.select().from(agents).orderBy(asc(agents.sortOrder));
+          console.log("[overview] Q: roster done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: runs start");
+          const r = await db.select().from(agentRuns).where(and(eq(agentRuns.workspaceId, workspaceId), ne(agentRuns.trigger, "sample"))).orderBy(desc(agentRuns.startedAt)).limit(20);
+          console.log("[overview] Q: runs done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: tasks start");
+          const r = await db.select().from(agentTasks).where(and(eq(agentTasks.workspaceId, workspaceId), eq(agentTasks.status, "open"))).orderBy(asc(agentTasks.dueAt)).limit(20);
+          console.log("[overview] Q: tasks done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: connections start");
+          const r = await liveConnections(account.id, workspaceId);
+          console.log("[overview] Q: connections done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: obs start");
+          const r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          console.log("[overview] Q: obs done");
+          return r;
+        })(),
+        (async () => {
+          console.log("[overview] Q: events start");
+          const r = await db.select().from(activityEvents).where(eq(activityEvents.workspaceId, workspaceId)).orderBy(desc(activityEvents.createdAt)).limit(12);
+          console.log("[overview] Q: events done");
+          return r;
+        })(),
       ]);
+    console.log("[overview] Step 4: Promise.all done");
 
     /** Fold the flat reading rows into one series per metric. */
     const series: Record<
@@ -230,11 +251,15 @@ export async function GET() {
       };
     });
 
+    console.log("[overview] Step 5: rosterFor start");
+    const agentsResult = await rosterFor(workspaceId, roster, Object.keys(RUNNABLE_AGENTS));
+    console.log("[overview] Step 5: rosterFor done");
+
     return NextResponse.json({
       workspace,
       metrics,
       sites: [...siteNames].sort((a, b) => a.localeCompare(b)),
-      agents: await rosterFor(workspaceId, roster, Object.keys(RUNNABLE_AGENTS)),
+      agents: agentsResult,
       runs,
       tasks,
       connections,
