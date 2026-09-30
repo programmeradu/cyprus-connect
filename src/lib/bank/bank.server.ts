@@ -3,10 +3,11 @@
  * Routes stay thin and call these.
  */
 
-import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { activityEvents, bankLinks, bankTransactions } from "@/db/schema";
 import { bocConfig, statement, BocError } from "./boc.server";
+import { syncSaltEdgeConnection } from "./saltedge.server";
 import { SPEND_CATEGORIES, categorise, consentExpired, directionOf, parseBocDate, type SpendCategory } from "./categorize";
 
 export const SYNC_DAYS = 90;
@@ -15,7 +16,7 @@ export async function currentLink(workspaceId: string) {
   const [row] = await db
     .select()
     .from(bankLinks)
-    .where(and(eq(bankLinks.workspaceId, workspaceId), eq(bankLinks.provider, "boc")))
+    .where(and(eq(bankLinks.workspaceId, workspaceId), ne(bankLinks.status, "revoked")))
     .orderBy(desc(bankLinks.createdAt))
     .limit(1);
   return row ?? null;
@@ -27,11 +28,10 @@ export async function logBankEvent(workspaceId: string, actorName: string, verb:
     actorType: "human",
     actorName,
     verb,
-    object: "Bank of Cyprus link",
+    object: "Bank link",
     detail,
   });
 }
-
 
 export interface SyncResult {
   accounts: number;
@@ -41,6 +41,11 @@ export interface SyncResult {
 
 /** Reads the last 90 days for every approved account. Re-running adds only new lines. */
 export async function syncLink(link: typeof bankLinks.$inferSelect): Promise<SyncResult> {
+  if (link.provider === "saltedge") {
+    const res = await syncSaltEdgeConnection(link.workspaceId);
+    return { accounts: res.accounts, read: res.transactionsAdded, added: res.transactionsAdded };
+  }
+
   const cfg = bocConfig();
   if (!cfg) throw new BocError("bank keys not set", 503, "config");
   if (link.status !== "active") throw new BocError("link not active", 409, "status");
@@ -119,8 +124,8 @@ export async function bankSummary(workspaceId: string): Promise<BankSummary> {
   const cfg = bocConfig();
   const link = await currentLink(workspaceId);
   const base: BankSummary = {
-    configured: !!cfg,
-    environment: cfg?.environment ?? null,
+    configured: !!cfg || link?.provider === "saltedge",
+    environment: (link?.environment as BankSummary["environment"]) ?? cfg?.environment ?? null,
     status: (link?.status as BankSummary["status"]) ?? "none",
     accounts: link?.accountIds.length ?? 0,
     lastSyncAt: link?.lastSyncAt ? new Date(link.lastSyncAt).toISOString() : null,
