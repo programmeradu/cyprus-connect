@@ -44,7 +44,7 @@ export const CATEGORY_ORDER: ConnectorCategory[] = [
 ];
 
 export const CATEGORY_LABEL: Record<ConnectorCategory, { en: string; el: string }> = {
-  accounting: { en: "Accounting and billing", el: "Λογιστική και τιμολόγηση" },
+  accounting: { en: "Banking and accounting", el: "Τράπεζα και λογιστική" },
   grid: { en: "Energy and grid", el: "Ενέργεια και δίκτυο" },
   reference: { en: "Reference and benchmark data", el: "Δεδομένα αναφοράς" },
   public: { en: "Cyprus public services", el: "Δημόσιες υπηρεσίες Κύπρου" },
@@ -52,8 +52,8 @@ export const CATEGORY_LABEL: Record<ConnectorCategory, { en: string; el: string 
 
 export const CATEGORY_NOTE: Record<ConnectorCategory, { en: string; el: string }> = {
   accounting: {
-    en: "Ledger lines become spend-based emission factors, with the invoice held as evidence.",
-    el: "Οι λογιστικές γραμμές γίνονται συντελεστές εκπομπών, με το τιμολόγιο ως τεκμήριο.",
+    en: "Payments and ledger lines show where energy, fuel and freight money goes, with each line kept as evidence.",
+    el: "Πληρωμές και λογιστικές γραμμές δείχνουν πού πάνε τα χρήματα για ενέργεια, καύσιμα και μεταφορές, με κάθε γραμμή ως τεκμήριο.",
   },
   grid: {
     en: "Measured grid carbon for Cyprus, and your own metered use once linked.",
@@ -70,6 +70,24 @@ export const CATEGORY_NOTE: Record<ConnectorCategory, { en: string; el: string }
 };
 
 export const CONNECTORS: Connector[] = [
+  {
+    id: "bankofcyprus",
+    name: "Bank of Cyprus",
+    desc: {
+      en: "Business account payments, read-only. Nothing can be paid or moved.",
+      el: "Πληρωμές επαγγελματικού λογαριασμού, μόνο ανάγνωση. Δεν γίνεται καμία πληρωμή.",
+    },
+    gives: {
+      en: "Fuel, electricity, water and freight spend found in your payments, with the rule that matched each one.",
+      el: "Δαπάνες για καύσιμα, ρεύμα, νερό και μεταφορές από τις πληρωμές σας, με τον κανόνα που ταίριαξε σε καθεμία.",
+    },
+    category: "accounting",
+    state: "oauth",
+    light: "/integrations/bankofcyprus-light.png",
+    dark: "/integrations/bankofcyprus-dark.png",
+    markHeight: 22,
+    source: "Bank of Cyprus PSD2 Accounts API",
+  },
   {
     id: "quickbooks",
     name: "QuickBooks",
