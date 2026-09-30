@@ -560,7 +560,13 @@ function IntegrationsContent() {
             {cs.own && (
               <div>
                 <span>{cs.own.code} · {cs.own.label}</span>
-                <strong className="vck-num">{num.format(cs.own.count)} ({num1.format(cs.own.sharePct)}%)</strong>
+                <strong className="vck-num">{num.format(cs.own.count)}</strong>
+              </div>
+            )}
+            {cs.own && (
+              <div>
+                <span>{L("Your sector's share", "Μερίδιο του κλάδου σας")}</span>
+                <strong className="vck-num">{num1.format(cs.own.sharePct)}%</strong>
               </div>
             )}
           </div>
