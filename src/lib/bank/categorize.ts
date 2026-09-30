@@ -82,3 +82,10 @@ export function directionOf(dcInd: unknown): "debit" | "credit" | "unknown" {
   if (v === "CREDIT" || v === "C") return "credit";
   return "unknown";
 }
+
+/** Past the bank's consent end date (dd/mm/yyyy)? */
+export function consentExpired(endDate: string | null | undefined, now = new Date()): boolean {
+  const iso = parseBocDate(endDate);
+  if (!iso) return false;
+  return new Date(`${iso}T23:59:59Z`).getTime() < now.getTime();
+}

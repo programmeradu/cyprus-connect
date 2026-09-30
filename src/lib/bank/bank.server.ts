@@ -7,7 +7,7 @@ import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { activityEvents, bankLinks, bankTransactions } from "@/db/schema";
 import { bocConfig, statement, BocError } from "./boc.server";
-import { SPEND_CATEGORIES, categorise, directionOf, parseBocDate, type SpendCategory } from "./categorize";
+import { SPEND_CATEGORIES, categorise, consentExpired, directionOf, parseBocDate, type SpendCategory } from "./categorize";
 
 export const SYNC_DAYS = 90;
 
@@ -32,12 +32,6 @@ export async function logBankEvent(workspaceId: string, actorName: string, verb:
   });
 }
 
-/** Past the bank's consent end date (dd/mm/yyyy)? */
-export function consentExpired(endDate: string | null, now = new Date()): boolean {
-  const iso = parseBocDate(endDate);
-  if (!iso) return false;
-  return new Date(`${iso}T23:59:59Z`).getTime() < now.getTime();
-}
 
 export interface SyncResult {
   accounts: number;

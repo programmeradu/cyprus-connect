@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { categorise, directionOf, formatBocDate, parseBocDate } from "@/lib/bank/categorize";
-import { consentExpired } from "@/lib/bank/bank.server";
+import { categorise, consentExpired, directionOf, formatBocDate, parseBocDate } from "@/lib/bank/categorize";
 
 describe("bank payment categories", () => {
   it.each([
