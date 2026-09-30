@@ -27,7 +27,6 @@ import {
 import type { IntegrationsData } from "@/app/api/console/integrations/route";
 
 const PATH = "/api/console/integrations";
-const QB_TOKENS = "/api/oauth/quickbooks/tokens";
 
 function IntegrationsContent() {
   const t = useTranslations("dashboard.integrations");
@@ -37,7 +36,6 @@ function IntegrationsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const res = useWorkspaceResource<IntegrationsData>(PATH);
-  const qbAction = useWorkspaceAction();
   const bankAction = useWorkspaceAction();
   const saltEdgeAction = useWorkspaceAction();
   const nangoAction = useWorkspaceAction();
@@ -47,22 +45,6 @@ function IntegrationsContent() {
 
   const time = useMemo(() => new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" }), [loc]);
   const date = useMemo(() => new Intl.DateTimeFormat(loc, { day: "numeric", month: "short", year: "numeric" }), [loc]);
-
-  // Result of the QuickBooks sign-in round trip.
-  useEffect(() => {
-    const ok = searchParams.get("qb_success");
-    const err = searchParams.get("qb_error");
-    if (!ok && !err) return;
-    if (ok === "true") {
-      toast.success(t("toasts.qbConnected"));
-      res.reload();
-    } else if (err) {
-      const known = ["missing_parameters", "invalid_state", "missing_user", "token_exchange_failed", "storage_failed", "callback_failed"];
-      toast.error(known.includes(err) ? t(`toasts.qbErrors.${err}` as never) : t("toasts.qbErrors.default"));
-    }
-    router.replace("/app/integrations");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   // Result of the Bank of Cyprus sign-in round trip.
   useEffect(() => {
@@ -101,9 +83,6 @@ function IntegrationsContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    if (qbAction.error) toast.error(qbAction.error);
-  }, [qbAction.error]);
-  useEffect(() => {
     if (bankAction.error) toast.error(bankAction.error);
   }, [bankAction.error]);
   useEffect(() => {
@@ -112,15 +91,6 @@ function IntegrationsContent() {
   useEffect(() => {
     if (nangoAction.error) toast.error(nangoAction.error);
   }, [nangoAction.error]);
-
-  const connectQb = async () => {
-    const r = await qbAction.run<{ authUrl?: string }>("/api/oauth/quickbooks/authorize", { method: "GET", invalidates: [] });
-    if (r?.authUrl) window.location.href = r.authUrl;
-  };
-  const disconnectQb = async () => {
-    const r = await qbAction.run(QB_TOKENS, { method: "DELETE", invalidates: [PATH] });
-    if (r) toast.success(t("toasts.qbDisconnected"));
-  };
 
   const connectBank = async () => {
     const r = await bankAction.run<{ authUrl?: string }>("/api/console/bank/connect", { invalidates: [] });
@@ -183,11 +153,9 @@ function IntegrationsContent() {
     freight: ["Freight and courier", "Μεταφορές"],
     other: ["Other", "Άλλο"],
   };
-  const qb = d?.quickbooks;
   const liveCount = CONNECTORS.filter((c) => c.state === "live").length;
   const linkableCount = CONNECTORS.filter((c) => c.state === "oauth").length;
   const linkedCount =
-    (qb?.connected ? 1 : 0) +
     (bank?.status === "active" ? 1 : 0) +
     (saltedge?.status === "active" ? 1 : 0) +
     (nango?.connected ? 1 : 0);
@@ -196,10 +164,6 @@ function IntegrationsContent() {
   const coverage = Math.round((inUse / CONNECTORS.length) * 100);
 
   const statusFor = (c: Connector) => {
-    if (c.id === "quickbooks" && qb) {
-      if (qb.connected) return qb.expired ? { word: L("Link expired", "Η σύνδεση έληξε"), tone: "bad" as const } : { word: t("quickbooks.connected"), tone: "good" as const };
-      if (!qb.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
-    }
     if (c.id === "bankofcyprus" && bank) {
       if (!bank.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
       if (bank.status === "active") return bank.failed ? { word: L("Last read failed", "Η τελευταία ανάγνωση απέτυχε"), tone: "warn" as const } : { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
@@ -221,18 +185,6 @@ function IntegrationsContent() {
   };
 
   const actionFor = (c: Connector) => {
-    if (c.id === "quickbooks") {
-      if (!qb || !qb.configured) return null;
-      return qb.connected ? (
-        <Btn onClick={disconnectQb} disabled={qbAction.busy}>
-          {qbAction.busy ? t("quickbooks.disconnecting") : t("quickbooks.disconnect")}
-        </Btn>
-      ) : (
-        <Btn variant="primary" onClick={connectQb} disabled={qbAction.busy}>
-          {qbAction.busy ? t("quickbooks.connecting") : t("quickbooks.connect")}
-        </Btn>
-      );
-    }
     if (c.id === "bankofcyprus") {
       if (!bank || !bank.configured) return null;
       if (bank.status === "active") {
@@ -293,25 +245,6 @@ function IntegrationsContent() {
   };
 
   const detailFor = (c: Connector) => {
-    if (c.id === "quickbooks" && qb) {
-      if (!qb.configured) {
-        return <p className="vci-tile-note">{L("QuickBooks linking opens once the workspace owner adds the QuickBooks app keys. Until then, upload bills or enter figures.", "Η σύνδεση QuickBooks ανοίγει όταν ο ιδιοκτήτης προσθέσει τα κλειδιά της εφαρμογής. Μέχρι τότε, ανεβάστε λογαριασμούς ή καταχωρίστε αριθμούς.")}</p>;
-      }
-      if (!qb.connected) return null;
-      return (
-        <div className="vci-tile-detail">
-          <div>
-            <span>{t("quickbooks.environment")}</span>
-            <strong className="capitalize">{qb.environment}</strong>
-          </div>
-          <div>
-            <span>{t("quickbooks.lastSync")}</span>
-            <strong className="vck-num">{qb.lastSyncedAt ? date.format(new Date(qb.lastSyncedAt)) : L("Not yet", "Όχι ακόμη")}</strong>
-          </div>
-          {qb.expired && <div>{t("quickbooks.tokenExpired")}</div>}
-        </div>
-      );
-    }
     if (c.id === "bankofcyprus" && bank) {
       if (!bank.configured) {
         return <p className="vci-tile-note">{L("Bank linking opens once the workspace owner adds the Bank of Cyprus app keys.", "Η σύνδεση τράπεζας ανοίγει όταν ο ιδιοκτήτης προσθέσει τα κλειδιά της Τράπεζας Κύπρου.")}</p>;
@@ -450,8 +383,8 @@ function IntegrationsContent() {
       return (
         <p className="vci-tile-note">
           {L(
-            "For Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, Xero, Zoho Books and FreshBooks. Read-only: Vuneli reads supplier bills and never edits your books.",
-            "Για Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, Xero, Zoho Books και FreshBooks. Μόνο ανάγνωση: το Vuneli διαβάζει τιμολόγια προμηθευτών και δεν αλλάζει ποτέ τα βιβλία σας.",
+            "For Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, QuickBooks Online, Xero, Zoho Books and FreshBooks. Read-only: Vuneli reads supplier bills and never edits your books.",
+            "Για Sage Intacct, SAP Business One, Oracle NetSuite, Dynamics 365 Business Central, QuickBooks Online, Xero, Zoho Books και FreshBooks. Μόνο ανάγνωση: το Vuneli διαβάζει τιμολόγια προμηθευτών και δεν αλλάζει ποτέ τα βιβλία σας.",
           )}
         </p>
       );
@@ -505,7 +438,7 @@ function IntegrationsContent() {
         <Reading
           label={L("Linked accounts", "Συνδεδεμένοι λογαριασμοί")}
           value={`${linkedCount} / ${linkableCount}`}
-          note={qb && !qb.configured ? L("linking not set up yet", "η σύνδεση δεν έχει ρυθμιστεί") : L("accounts you can link", "λογαριασμοί προς σύνδεση")}
+          note={L("accounts you can link", "λογαριασμοί προς σύνδεση")}
         />
         <Reading label={L("Planned", "Προγραμματισμένες")} value={scheduledCount} note={L("no controls until they work", "χωρίς κουμπιά μέχρι να λειτουργούν")} />
         <Reading label={L("Sources in use", "Πηγές σε χρήση")} value={`${coverage}%`} note={<Bar pct={coverage} />} />

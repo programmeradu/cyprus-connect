@@ -50,7 +50,13 @@ export async function POST(request: NextRequest) {
     const existing = await db
       .select({ id: integrations.id })
       .from(integrations)
-      .where(and(eq(integrations.userId, account.id), eq(integrations.providerName, integrationId)))
+      .where(
+        and(
+          eq(integrations.userId, account.id),
+          eq(integrations.integrationType, "nango"),
+          eq(integrations.providerName, integrationId),
+        ),
+      )
       .limit(1);
 
     if (existing.length === 0) {
@@ -96,7 +102,13 @@ export async function DELETE(request: NextRequest) {
       await db
         .update(integrations)
         .set({ isActive: false })
-        .where(and(eq(integrations.userId, account.id), eq(integrations.providerName, integrationId)));
+        .where(
+        and(
+          eq(integrations.userId, account.id),
+          eq(integrations.integrationType, "nango"),
+          eq(integrations.providerName, integrationId),
+        ),
+      );
     } else {
       await db
         .update(integrations)

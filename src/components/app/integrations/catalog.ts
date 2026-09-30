@@ -108,47 +108,11 @@ export const CONNECTORS: Connector[] = [
     href: "https://www.saltedge.com",
   },
   {
-    id: "quickbooks",
-    name: "QuickBooks",
-    desc: {
-      en: "Accounting ledger, expenses and supplier invoices.",
-      el: "Λογιστικό βιβλίο, δαπάνες και τιμολόγια προμηθευτών.",
-    },
-    gives: {
-      en: "Spend-based Scope 3 lines, utility and travel expense capture.",
-      el: "Γραμμές Scope 3 από δαπάνες, ενέργεια και ταξίδια.",
-    },
-    category: "accounting",
-    state: "oauth",
-    light: "/integrations/quickbooks-official-light.svg",
-    dark: "/integrations/quickbooks-official-dark.svg",
-    markHeight: 28,
-    source: "Intuit QuickBooks Online API",
-  },
-  {
-    id: "xero",
-    name: "Xero",
-    desc: {
-      en: "Accounting ledger for Cyprus SMEs on Xero.",
-      el: "Λογιστικό βιβλίο για κυπριακές ΜμΕ στο Xero.",
-    },
-    gives: {
-      en: "The same spend-based lines as QuickBooks, from a Xero organisation.",
-      el: "Οι ίδιες γραμμές δαπανών με το QuickBooks, από οργανισμό Xero.",
-    },
-    category: "accounting",
-    state: "scheduled",
-    light: "/integrations/xero-official-light.svg",
-    dark: "/integrations/xero-official-dark.svg",
-    markHeight: 30,
-    source: "Xero Accounting API",
-  },
-  {
     id: "nango",
     name: "ERP and accounting systems",
     desc: {
-      en: "Sage, SAP Business One, NetSuite, Dynamics 365, Xero, Zoho Books and FreshBooks, through Nango. Read-only.",
-      el: "Sage, SAP Business One, NetSuite, Dynamics 365, Xero, Zoho Books και FreshBooks, μέσω Nango. Μόνο ανάγνωση.",
+      en: "Sage, SAP Business One, NetSuite, Dynamics 365, QuickBooks, Xero, Zoho Books and FreshBooks, through Nango. Read-only.",
+      el: "Sage, SAP Business One, NetSuite, Dynamics 365, QuickBooks, Xero, Zoho Books και FreshBooks, μέσω Nango. Μόνο ανάγνωση.",
     },
     gives: {
       en: "Supplier bills and ledger accounts turned into spend-based supply-chain (Scope 3) lines.",

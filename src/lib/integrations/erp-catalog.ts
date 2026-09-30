@@ -2,8 +2,8 @@
  * Accounting and ERP systems offered through Nango. Client-safe: the modal
  * renders it and the connect route validates `integrationId` against it.
  *
- * `id` is the integration key set up in the Nango dashboard. QuickBooks is left
- * out on purpose: it has its own direct link on the Integrations page.
+ * `id` is the integration key set up in the Nango dashboard. Every accounting
+ * system, QuickBooks and Xero included, links through Nango only.
  *
  * Logos are the vendors' official marks, each with a light and a dark cut.
  * `markHeight` evens out optical size, because wordmarks differ in shape.
@@ -53,9 +53,17 @@ export const ERP_SYSTEMS: ErpSystem[] = [
     markHeight: 30,
   },
   {
+    id: "quickbooks",
+    name: "QuickBooks Online",
+    fit: { en: "Accounting for small businesses", el: "Λογιστική για μικρές επιχειρήσεις" },
+    light: "/integrations/erp/quickbooks-brand.svg",
+    dark: "/integrations/erp/quickbooks-brand.svg",
+    markHeight: 32,
+  },
+  {
     id: "xero",
     name: "Xero",
-    fit: { en: "Accounting for small businesses", el: "Λογιστική για μικρές επιχειρήσεις" },
+    fit: { en: "Accounting for small firms and their accountants", el: "Λογιστική για μικρές εταιρείες και λογιστές" },
     light: "/integrations/erp/xero-brand.svg",
     dark: "/integrations/erp/xero-brand.svg",
     markHeight: 32,

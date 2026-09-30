@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
-import { Check, Loader2, ExternalLink } from "lucide-react";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+import { Check } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
+import { NangoModal } from "@/components/app/integrations/NangoModal";
+import type { IntegrationsData } from "@/app/api/console/integrations/route";
 import step3Plant from "@/assets/onboarding-step3-plant.png";
 import step1Welcome from "@/assets/onboarding-step1-welcome.png";
 import step2Company from "@/assets/onboarding-step2-company.png";
@@ -36,7 +38,9 @@ export default function OnboardingPage() {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [uploadType, setUploadType] = useState<'utility' | 'manual' | null>(null);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
-  const [qbConnecting, setQbConnecting] = useState(false);
+  const [accountingOpen, setAccountingOpen] = useState(false);
+  const locale = useLocale();
+  const integrationsRes = useWorkspaceResource<IntegrationsData>("/api/console/integrations");
 
   // Where the visitor is, from the shared record (used to preset currency and timezone).
   const geo = useWorkspaceResource<{ countryCode?: string; currency?: string; timezone?: string }>("/api/geolocation");
@@ -63,24 +67,6 @@ export default function OnboardingPage() {
       setIsLoadingUserData(false);
     }
   }, [session, isSessionLoading]);
-
-  const handleQbConnect = async () => {
-    if (!session?.user?.id) {
-      toast.error(t('toasts.completeProfile'));
-      return;
-    }
-    
-    setQbConnecting(true);
-    try {
-      const data = await workspaceRequest<{ authUrl?: string }>("/api/oauth/quickbooks/authorize");
-      if (!data.authUrl) throw new Error("no url");
-      toast.success(t('toasts.qbRedirect'));
-      window.location.href = data.authUrl;
-    } catch {
-      toast.error(t('toasts.qbFail'));
-      setQbConnecting(false);
-    }
-  };
 
   const handleComplete = async () => {
     if (!session?.user?.id) {
@@ -146,7 +132,7 @@ export default function OnboardingPage() {
       setUploadType(type);
       setShowUploadDialog(true);
     } else if (type === 'accounting') {
-      handleQbConnect();
+      setAccountingOpen(true);
     }
   };
 
@@ -288,13 +274,8 @@ export default function OnboardingPage() {
                       <button
                         className={`vck-btn ${s.primary ? "vck-btn-primary" : ""} vco-source-btn`}
                         onClick={() => handleUploadClick(s.key)}
-                        disabled={s.key === "accounting" && qbConnecting}
                       >
-                        {s.key === "accounting" && qbConnecting ? (
-                          <><Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" aria-hidden />{t("step2.accounting.connecting")}</>
-                        ) : (
-                          <>{t(`step2.${s.key}.cta`)}{s.key === "accounting" && <ExternalLink className="ml-1 h-3.5 w-3.5" aria-hidden />}</>
-                        )}
+                        {t(`step2.${s.key}.cta`)}
                       </button>
                     </li>
                   ))}
@@ -400,6 +381,12 @@ export default function OnboardingPage() {
             </motion.div>
           </motion.div>
         )}
+      <NangoModal
+        open={accountingOpen}
+        onOpenChange={setAccountingOpen}
+        locale={locale === "el" ? "el" : "en"}
+        configured={Boolean(integrationsRes.data?.nango.configured)}
+      />
       </div>
     </div>
   );

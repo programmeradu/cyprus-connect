@@ -147,15 +147,6 @@ export function NangoModal({ open, onOpenChange, locale, configured }: NangoModa
           <p className="vcm-aside">{L(`${system.name} stays selected.`, `Το ${system.name} παραμένει επιλεγμένο.`)}</p>
         )}
 
-        <p className="vcm-aside">
-          <img className="vcm-app-icon vcm-app-icon-sm vcm-app-icon-flat" src="/integrations/erp/quickbooks-brand.svg" alt="" aria-hidden="true" />
-          <span>
-            {L(
-              "QuickBooks has its own direct link on the Integrations page, so it is not listed here.",
-              "Το QuickBooks έχει δική του απευθείας σύνδεση στη σελίδα Συνδέσεων, γι' αυτό δεν εμφανίζεται εδώ.",
-            )}
-          </span>
-        </p>
       </section>
 
       <ConnectTerms
