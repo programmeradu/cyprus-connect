@@ -1495,6 +1495,7 @@
   overflow-wrap: anywhere;
 }
 .vci-tile-detail strong { text-align: right; overflow-wrap: anywhere; }
+.vci-tile-detail strong.vck-num { overflow-wrap: normal; white-space: nowrap; }
 
 /* Bank of Cyprus: latest matched payments. Long bank descriptions wrap, never clip. */
 .vci-bank-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
