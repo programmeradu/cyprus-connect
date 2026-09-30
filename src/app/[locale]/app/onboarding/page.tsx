@@ -10,7 +10,7 @@ import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/conso
 import { Check } from "lucide-react";
 import { DocumentUpload } from "@/components/app/DocumentUpload";
 import { UtilityBillData } from "@/lib/ocr/types";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
 import { NangoModal } from "@/components/app/integrations/NangoModal";
@@ -39,6 +39,7 @@ export default function OnboardingPage() {
   const [uploadType, setUploadType] = useState<'utility' | 'manual' | null>(null);
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
   const [accountingOpen, setAccountingOpen] = useState(false);
+  const locale = useLocale();
   const integrationsRes = useWorkspaceResource<IntegrationsData>("/api/console/integrations");
 
   // Where the visitor is, from the shared record (used to preset currency and timezone).

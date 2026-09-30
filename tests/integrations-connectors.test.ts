@@ -44,10 +44,12 @@ describe("Integrations Catalog & Connectors", () => {
     }
   });
 
-  it("offers ERP systems with real light and dark logos and no QuickBooks duplicate", () => {
+  it("routes every accounting system, QuickBooks and Xero included, through the one picker", () => {
     const ids = ERP_SYSTEMS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(ids).not.toContain("quickbooks");
+    expect(ids).toContain("quickbooks");
+    expect(ids).toContain("xero");
+    expect(CONNECTORS.some((c) => c.id === "quickbooks" || c.id === "xero")).toBe(false);
     for (const s of ERP_SYSTEMS) {
       expect(existsSync(join(process.cwd(), "public", s.light))).toBe(true);
       expect(existsSync(join(process.cwd(), "public", s.dark))).toBe(true);
