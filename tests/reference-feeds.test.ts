@@ -73,3 +73,23 @@ describe("EAC bill check", () => {
     expect(r.ok && r.bill.amountEur).toBeNull();
   });
 });
+
+import { checkWaterAnswer } from "@/lib/integrations/water.server";
+describe("Water bill check", () => {
+  const good = { is_water_bill: true, board: "nicosia", account_number: "XXXXXXXX", period_start: "2009-11-27", period_end: "2010-02-01", m3: 1, amount_eur: 20.43 };
+  it("accepts the Nicosia sample and drops the masked account", () => {
+    expect(checkWaterAnswer(good)).toEqual({ ok: true, bill: { board: "nicosia", accountNumber: null, periodStart: "2009-11-27", periodEnd: "2010-02-01", m3: 1, amountEur: 20.43 } });
+  });
+  it("refuses a blank form with no m³", () => {
+    expect(checkWaterAnswer({ ...good, m3: null }).ok).toBe(false);
+    expect(checkWaterAnswer({ ...good, m3: "" }).ok).toBe(false);
+  });
+  it("refuses a non-water bill and bad periods", () => {
+    expect(checkWaterAnswer({ ...good, is_water_bill: false }).ok).toBe(false);
+    expect(checkWaterAnswer({ ...good, period_end: "2009-01-01" }).ok).toBe(false);
+  });
+  it("keeps an unknown board as other", () => {
+    const r = checkWaterAnswer({ ...good, board: "Kyrenia" });
+    expect(r.ok && r.bill.board).toBe("other");
+  });
+});
