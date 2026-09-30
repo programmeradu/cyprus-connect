@@ -2,7 +2,14 @@
 
 Updated after every build turn. Newest changes first. Tick items off here when done.
 
-_Last updated: 26 September 2026 — error-leak cleanup turn (nothing new for you to do this turn)._
+_Last updated: 30 September 2026 — Bank of Cyprus link built._
+
+**This turn (Bank of Cyprus):**
+- [ ] In the BoC developer portal, open your app and set its **redirect / callback URL**. Right now the bank refuses the sign-in step because none is registered. For testing in the preview use `https://id-preview--a7da246b-832d-49b2-9c0f-1ab02a73b5ca.lovable.app/api/console/bank/callback`; for the live site use `https://vuneli.com/api/console/bank/callback`. If the portal allows only one, start with the preview one.
+- [ ] Run `scripts/sql/0025_bank_links.sql` on the production database before deploying (preview already has it).
+- [ ] In Cloudflare add `BOC_CLIENT_ID`, `BOC_CLIENT_SECRET` (copy from the screenshot, don't retype), and `BOC_REDIRECT_URI=https://vuneli.com/api/console/bank/callback`.
+- Test sign-in at the bank's practice system: user **999999**, passcode **112233** (from the bank's own guide).
+- Real customer accounts need a licensed AISP or a BoC partnership (see below); until then this is test mode and the app says so.
 
 **This turn:**
 - Run `scripts/sql/0022_sites_and_roles.sql` on the production database before deploying (after `0020` and `0021` if not done). The preview database already has it. It adds a site column to readings and a separate admin-role table.
