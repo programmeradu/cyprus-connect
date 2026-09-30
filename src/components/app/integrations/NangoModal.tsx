@@ -23,6 +23,7 @@ export function NangoModal({ open, onOpenChange, locale, configured }: NangoModa
   const [query, setQuery] = useState("");
   const action = useWorkspaceAction();
   const searchId = useId();
+  const labelId = useId();
   const L = (en: string, el: string) => (locale === "el" ? el : en);
 
   useEffect(() => {
@@ -88,9 +89,9 @@ export function NangoModal({ open, onOpenChange, locale, configured }: NangoModa
         </>
       }
     >
-      <fieldset className="vcm-group">
+      <section className="vcm-group">
         <div className="vcm-group-head">
-          <legend className="vcm-label">{L("Your system", "Το σύστημά σας")}</legend>
+          <h3 className="vcm-label" id={labelId}>{L("Your system", "Το σύστημά σας")}</h3>
           <div className="vcm-search">
             <Search aria-hidden="true" strokeWidth={1.75} />
             <label htmlFor={searchId} className="vcm-sr">
@@ -109,7 +110,7 @@ export function NangoModal({ open, onOpenChange, locale, configured }: NangoModa
         </div>
 
         {shown.length > 0 ? (
-          <div className="vcm-grid">
+          <div className="vcm-grid" role="radiogroup" aria-labelledby={labelId}>
             {shown.map((s) => (
               <label key={s.id} className="vcm-option vcm-option-card">
                 <input
@@ -147,8 +148,7 @@ export function NangoModal({ open, onOpenChange, locale, configured }: NangoModa
         )}
 
         <p className="vcm-aside">
-          <img className="vcm-app-icon vcm-app-icon-sm vcm-app-icon-flat" src="/integrations/quickbooks-official-light.svg" alt="" aria-hidden="true" data-mode="light" />
-          <img className="vcm-app-icon vcm-app-icon-sm vcm-app-icon-flat" src="/integrations/quickbooks-official-dark.svg" alt="" aria-hidden="true" data-mode="dark" />
+          <img className="vcm-app-icon vcm-app-icon-sm vcm-app-icon-flat" src="/integrations/erp/quickbooks-brand.svg" alt="" aria-hidden="true" />
           <span>
             {L(
               "QuickBooks has its own direct link on the Integrations page, so it is not listed here.",
@@ -156,7 +156,7 @@ export function NangoModal({ open, onOpenChange, locale, configured }: NangoModa
             )}
           </span>
         </p>
-      </fieldset>
+      </section>
 
       <ConnectTerms
         label={L("What this link allows", "Τι επιτρέπει η σύνδεση")}

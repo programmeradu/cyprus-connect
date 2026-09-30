@@ -56,9 +56,9 @@ export const ERP_SYSTEMS: ErpSystem[] = [
     id: "xero",
     name: "Xero",
     fit: { en: "Accounting for small businesses", el: "Λογιστική για μικρές επιχειρήσεις" },
-    light: "/integrations/xero-official-light.svg",
-    dark: "/integrations/xero-official-dark.svg",
-    markHeight: 30,
+    light: "/integrations/erp/xero-brand.svg",
+    dark: "/integrations/erp/xero-brand.svg",
+    markHeight: 32,
   },
   {
     id: "zoho-books",

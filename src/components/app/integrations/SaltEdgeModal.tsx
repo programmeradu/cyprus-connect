@@ -13,7 +13,7 @@ interface SaltEdgeModalProps {
   locale: "en" | "el";
   /** Salt Edge keys are present on the server. */
   configured: boolean;
-  environment: "sandbox" | "live" | null;
+  environment: "sandbox" | "production" | null;
 }
 
 export function SaltEdgeModal({ open, onOpenChange, locale, configured, environment }: SaltEdgeModalProps) {
