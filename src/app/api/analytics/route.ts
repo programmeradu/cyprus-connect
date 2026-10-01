@@ -86,25 +86,36 @@ export async function GET(request: NextRequest) {
     // category and the calculated total in tonnes. Convert each category to
     // tonnes with the published reference factors before showing shares, so a
     // kWh figure is never presented as tonnes.
+    // The saved total is the calculator's figure (live factors when enabled,
+    // published reference factors otherwise) and is what every other page
+    // shows. The row keeps raw activity per category, so split that total by
+    // each category's reference-factor share; the parts then add up exactly.
     const tonnesOf = (row: typeof currentEmissions | null) => {
       if (!row) return null;
       const t = (key: keyof typeof REFERENCE_FACTORS, v: number) => ((Number(v) || 0) * REFERENCE_FACTORS[key].kgCo2ePerUnit) / 1000;
-      return {
+      const raw = {
         electricity: t("electricity", row.electricity),
         gas: t("gas", row.gas),
         transport: t("transport", row.transport),
         water: t("water", row.water),
         waste: t("waste", row.waste),
       };
+      const sum = raw.electricity + raw.gas + raw.transport + raw.water + raw.waste;
+      const saved = Number(row.totalCo2e) || 0;
+      const k = sum > 0 && saved > 0 ? saved / sum : 1;
+      return {
+        electricity: raw.electricity * k,
+        gas: raw.gas * k,
+        transport: raw.transport * k,
+        water: raw.water * k,
+        waste: raw.waste * k,
+      };
     };
     const cur = tonnesOf(currentEmissions);
     const prevT = tonnesOf(previousYearEmissions);
     const catSum = cur ? cur.electricity + cur.gas + cur.transport + cur.water + cur.waste : 0;
-    // One set of factors for every figure on the page, so the parts always add
-    // up to the total. The stored total is used only when no activity is split.
-    const totalEmissions = catSum > 0 ? catSum : (currentEmissions?.totalCo2e ?? 0);
-    const prevSum = prevT ? prevT.electricity + prevT.gas + prevT.transport + prevT.water + prevT.waste : 0;
-    const prevTotal = previousYearEmissions ? (prevSum > 0 ? prevSum : previousYearEmissions.totalCo2e) : null;
+    const totalEmissions = currentEmissions?.totalCo2e || catSum;
+    const prevTotal = previousYearEmissions ? (previousYearEmissions.totalCo2e || null) : null;
     const share = (v: number) => (catSum > 0 ? (v / catSum) * 100 : 0);
     const emissionsBreakdown = cur && catSum > 0 ? {
       electricity: { value: cur.electricity, percentage: share(cur.electricity) },
