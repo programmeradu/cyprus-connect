@@ -8,7 +8,10 @@
  * that tools can read exactly. Nothing here changes what is printed.
  */
 
-import { PDFDocument, PDFName, PDFString } from "pdf-lib";
+import { PDFDocument, PDFName, PDFString, type PDFDict } from "pdf-lib";
+
+// pdf-lib marks getInfoDict private, but it is the only way to add custom Info entries.
+const infoOf = (pdf: PDFDocument) => (pdf as unknown as { getInfoDict(): PDFDict }).getInfoDict();
 
 export type PdfKind = "board-summary" | "report" | "cbam";
 
@@ -43,7 +46,7 @@ export async function stampPdfDetails(bytes: Uint8Array, d: PdfDetails): Promise
   pdf.setModificationDate(d.issuedAt);
   pdf.setLanguage("en");
 
-  const info = pdf.getInfoDict();
+  const info = infoOf(pdf);
   const put = (k: string, v: string) => info.set(PDFName.of(k), PDFString.of(v));
   put("VuneliDocumentId", d.docId);
   put("VuneliDocumentType", d.kind);
@@ -57,7 +60,7 @@ export async function stampPdfDetails(bytes: Uint8Array, d: PdfDetails): Promise
 /** Reads the Vuneli fields back (used by tests and support tooling). */
 export async function readPdfDetails(bytes: Uint8Array) {
   const pdf = await PDFDocument.load(bytes, { updateMetadata: false });
-  const info = pdf.getInfoDict();
+  const info = infoOf(pdf);
   const get = (k: string) => {
     const v = info.lookup(PDFName.of(k));
     return v instanceof PDFString ? v.decodeText() : (v as { decodeText?: () => string } | undefined)?.decodeText?.() ?? null;
