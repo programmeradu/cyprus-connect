@@ -132,14 +132,21 @@ export async function POST(req: Request) {
         })
         .returning();
 
-      const report = await draftVsmeReport({
-        workspace,
-        periodLabel,
-        agentKey: resolvedAgent,
-        taskId: task?.id ?? null,
-        proposalId: proposal.id,
-        createdBy: actor,
-      });
+      let report: Awaited<ReturnType<typeof draftVsmeReport>>;
+      try {
+        report = await draftVsmeReport({
+          workspace,
+          periodLabel,
+          agentKey: resolvedAgent,
+          taskId: task?.id ?? null,
+          proposalId: proposal.id,
+          createdBy: actor,
+        });
+      } catch (error) {
+        // No draft means no review task: never leave an empty to-do behind.
+        if (task) await db.delete(agentTasks).where(eq(agentTasks.id, task.id));
+        throw error;
+      }
 
       deliverableHref = `/app/reports/${report.id}`;
       deliverableTitle = report.title;
