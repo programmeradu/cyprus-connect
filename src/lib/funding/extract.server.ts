@@ -209,4 +209,4 @@ export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractS
   return { read, failed, stoppedBy: null };
 }
 
-export { sanitize as sanitizeRules };
+export { sanitize as sanitizeRules, SYSTEM as RULES_SYSTEM, SCHEMA as RULES_SCHEMA, buildCallText, euTopic };
