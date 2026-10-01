@@ -241,7 +241,7 @@ export default function OnboardingPage() {
                 <img src={step1Welcome.src} alt="" width={1024} height={1024} />
               </div>
               <div className="vco-verde-copy">
-                <p className="vco-verde-kicker"><VuneliAiIcon className="h-4 w-4" aria-hidden /> {t("verde.kicker")}</p>
+                <p className="vco-verde-kicker"><VuneliAiIcon size={16} /> {t("verde.kicker")}</p>
                 <h2 className="vco-title">{t("verde.title")}</h2>
                 <p className="vco-sub">{t("verde.body")}</p>
                 <label className="block mt-3">

@@ -1491,43 +1491,12 @@
   "onboarding": {
     "loading": "Loading your profile...",
     "toasts": {
-      "completeProfile": "Please complete your profile first",
-      "qbRedirect": "Redirecting to QuickBooks... 📊",
-      "qbFail": "Failed to connect to QuickBooks",
       "noSession": "Session not found. Please log in again.",
       "updateFail": "Failed to update profile",
-      "createFail": "Failed to create account",
       "welcome": "Welcome to Vuneli! 🌿",
-      "genericError": "Something went wrong. Please try again.",
-      "extracted": "{type} bill data extracted successfully!"
-    },
-    "step1": {
-      "title": "Welcome to Your Sustainability Journey",
-      "step": "STEP 1/4",
-      "heading": "Unlock Instant Impact & Smarter Growth",
-      "features": [
-        "Effortless Data Integration",
-        "Real-time Carbon Footprint Tracking",
-        "AI-Driven Reduction Recommendations",
-        "Compliance & Reporting Simplified",
-        "Cost Savings Through Efficiency"
-      ],
-      "description": "Our AI-Powered Dashboard transforms complex data into actionable insights, helping your business thrive while protecting our planet.",
-      "getStarted": "Get Started",
-      "learnMore": "Learn More",
-      "imageAlt": "Sustainable city with green buildings and nature"
+      "genericError": "Something went wrong. Please try again."
     },
     "step2": {
-      "title": "Connect your data sources",
-      "subtitle": "Tell us about your company, then add a first data source. You can skip the sources for now.",
-      "companyHeader": "First, tell us about your company",
-      "yourName": "Your Name *",
-      "yourNamePlaceholder": "John Doe",
-      "email": "Email *",
-      "emailPlaceholder": "john@company.com",
-      "companyName": "Company Name *",
-      "companyNamePlaceholder": "Acme Corp",
-      "industry": "Industry *",
       "selectIndustry": "Select industry",
       "industries": {
         "technology": "Technology",
@@ -1537,7 +1506,6 @@
         "healthcare": "Healthcare",
         "finance": "Finance"
       },
-      "teamSize": "Team Size *",
       "selectTeamSize": "Select team size",
       "teamSizes": {
         "1-10": "1-10 employees",
@@ -1546,79 +1514,36 @@
         "201-500": "201-500 employees",
         "500+": "500+ employees"
       },
-      "utility": {
-        "title": "Utility Bills",
-        "desc": "Upload utility bills (PDF/Image) for automatic data extraction",
-        "cta": "Upload Utility Bill"
-      },
-      "accounting": {
-        "title": "Expense & Accounting Software",
-        "desc": "Connect Sage, SAP, NetSuite, Dynamics 365, QuickBooks, Xero, Zoho Books or FreshBooks to import supplier bills",
-        "cta": "Connect Accounting",
-        "connecting": "Connecting..."
-      },
-      "manual": {
-        "title": "Manual Upload",
-        "desc": "Upload any documents for OCR processing",
-        "cta": "Upload Files"
-      },
-      "security": "Your data is encrypted in transit and at rest. We process it under the GDPR.",
-      "back": "Back",
-      "next": "Next Step"
-    },
-    "step3": {
-      "title": "Green credits and the leaderboard",
-      "heading": "Earn credits for every reduction",
-      "description": "Each verified action earns green credits: lower energy use, less waste, cleaner suppliers. Compare your progress with other Cyprus businesses on the leaderboard.",
-      "greenCredits": "Green Credits",
-      "creditsEarned": "Earned from verified actions",
-      "leaderboard": "Leaderboard",
-      "yourRank": "Your position among Cyprus SMEs",
-      "explore": "Explore Initial Recommendations",
-      "back": "Back",
-      "skip": "Skip for now"
-    },
-    "step4": {
-      "title": "Your console is ready",
-      "subtitle": "You're all set! Here's a quick overview of what you'll find on your dashboard",
-      "features": [
-        {
-          "title": "Carbon Footprint Tracking",
-          "desc": "View your real-time emissions data with detailed breakdowns by category"
-        },
-        {
-          "title": "AI Recommendations",
-          "desc": "Get personalized suggestions to reduce your environmental impact"
-        },
-        {
-          "title": "Leaderboard & Credits",
-          "desc": "Track your progress and compete with other businesses in your area"
-        },
-        {
-          "title": "Detailed Reports",
-          "desc": "Generate compliance reports and export data for stakeholders"
-        }
-      ],
-      "cta": "Go to Dashboard",
-      "settingUp": "Setting up...",
-      "back": "Back"
-    },
-    "upload": {
-      "utilityTitle": "Upload Utility Bill",
-      "documentTitle": "Upload Document",
-      "descUtility": "Upload your utility bill and we'll automatically extract the data using OCR technology.",
-      "descDocument": "Upload your document and we'll automatically extract the data using OCR technology."
+      "security": "Your data is encrypted in transit and at rest. We process it under the GDPR."
     },
     "frame": {
       "title": "Set up your workspace",
-      "purpose": "Four short steps. You can change every answer later in Settings.",
-      "rail": [
-        "Welcome",
-        "Your company",
-        "Your data",
-        "The console"
-      ],
-      "stepOf": "Step {n} of 4"
+      "purpose": "One short step. You can change every answer later in Settings."
+    },
+    "form": {
+      "title": "Tell us about your company",
+      "yourName": "Your name",
+      "companyName": "Company name",
+      "companyNamePlaceholder": "Acme Ltd",
+      "website": "Company website (optional)",
+      "websiteHelp": "We use it to show your company's logo. Leave empty to use a generated picture.",
+      "websiteInvalid": "Use a website address such as acme.com.cy.",
+      "industry": "Industry",
+      "teamSize": "Team size",
+      "country": "Country",
+      "submit": "Open my workspace",
+      "saving": "Saving…"
+    },
+    "verde": {
+      "kicker": "Or let Verde do it",
+      "title": "Describe your business in a sentence",
+      "body": "Verde reads it and fills in your company details for you. Nothing is saved until you approve it.",
+      "label": "Your business in one sentence",
+      "placeholder": "For example: we are a 12-person bakery in Limassol with two shops, website bakery.com.cy.",
+      "cta": "Let Verde fill it in",
+      "needName": "Add your name first.",
+      "approval": "Verde shows you exactly what it will save, on your Home page.",
+      "prompt": "Please set up my company details from this description: {text}"
     }
   },
   "shared": {
