@@ -74,7 +74,9 @@ export interface ConsoleRun {
 export interface ConsoleTask {
   id: number;
   agentKey: string;
-  kind: "approval" | "evidence" | "exception";
+  kind: "approval" | "evidence" | "exception" | "question";
+  /** For questions: "answer_fact:<fact>". */
+  pendingTool?: string | null;
   title: string;
   detail: string | null;
   severity: "high" | "normal" | "low";

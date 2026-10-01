@@ -5,7 +5,7 @@
  */
 
 import { z } from "zod";
-import { and, eq } from "drizzle-orm";
+import { and, eq, gte } from "drizzle-orm";
 import { db } from "@/db";
 import { agentTasks } from "@/db/schema";
 import { refreshFundingMatches, shownCalls, factQuestion } from "@/lib/funding/funding.server";
@@ -64,6 +64,13 @@ export const askCompanyFact = tool({
       .from(agentTasks)
       .where(and(eq(agentTasks.workspaceId, ctx.workspaceId), eq(agentTasks.status, "open"), eq(agentTasks.pendingTool, `answer_fact:${input.fact}`)))
       .limit(1);
+    // Respect a dismissal for 30 days.
+    const [dismissed] = await db
+      .select({ id: agentTasks.id })
+      .from(agentTasks)
+      .where(and(eq(agentTasks.workspaceId, ctx.workspaceId), eq(agentTasks.status, "rejected"), eq(agentTasks.pendingTool, `answer_fact:${input.fact}`), gte(agentTasks.createdAt, new Date(Date.now() - 30 * 86_400_000))))
+      .limit(1);
+    if (!open && dismissed) return { taskId: dismissed.id, created: false };
     const q = factQuestion(input.fact as FactKey, input.opportunityIds.length);
     const detail = `Calls: ${input.titles.slice(0, 5).join(" · ")}${input.titles.length > 5 ? ` and ${input.titles.length - 5} more` : ""}.`;
     const payload = JSON.stringify({ fact: input.fact, opportunityIds: input.opportunityIds });
