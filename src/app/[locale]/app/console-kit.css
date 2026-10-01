@@ -1481,6 +1481,7 @@
 .vc .vck-cbam-contact:last-child { border-bottom: 0; padding-bottom: 0; }
 .vc .vck-cbam-contact-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .vc .vck-cbam-contact-head strong { color: var(--vc-ink); font-size: 15px; overflow-wrap: anywhere; }
+.vc .vck-cbam-contact-head > :last-child { max-width: 100%; white-space: normal; min-width: 0; }
 .vc .vck-cbam-fields { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; }
 .vc .vck-cbam-fields-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 14px; }
 .vc .vck-cbam-fields label { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
