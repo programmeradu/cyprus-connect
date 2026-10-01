@@ -214,7 +214,7 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
           : <State tone="idle">{t("stTracked")}</State>;
 
   return (
-    <li className="vck-cbam-contact">
+    <li className="vck-cbam-contact vck-sup-anchor" id={`sup-${encodeURIComponent(s.name)}`}>
       <div className="vck-cbam-contact-head">
         <strong>{s.name}</strong>
         {status}
@@ -353,9 +353,7 @@ export default function SuppliersPage() {
           ) : (
             <ul className="vck-cbam-contacts">
               {list.map((s) => (
-                <div key={`${s.name}|${s.email ?? ""}|${s.notes ?? ""}`} id={`sup-${encodeURIComponent(s.name)}`} className="vck-sup-anchor">
-                  <SupplierRow s={s} onMsg={say} />
-                </div>
+                <SupplierRow key={`${s.name}|${s.email ?? ""}|${s.notes ?? ""}`} s={s} onMsg={say} />
               ))}
             </ul>
           )}
