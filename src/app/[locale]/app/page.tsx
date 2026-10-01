@@ -11,11 +11,13 @@
  * Every figure is read from /api/console/overview; nothing is written by hand.
  */
 
-import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
+import { CompanyLogo } from "@/components/app/console/CompanyLogo";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
+import type { CompanyRecord } from "@/app/api/console/company/route";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import { fmtNumber, fmtSigned, toneFor } from "@/components/app/console/types";
 import { greetingFor, titleCase } from "@/components/app/dashboard/overview/shared";
@@ -29,6 +31,7 @@ export default function ConsolePage() {
   const t = useTranslations("home");
   const { data, error, refresh } = useConsole();
   const [pdfBusy, setPdfBusy] = useState(false);
+  const company = useWorkspaceResource<CompanyRecord>("/api/console/company");
 
   /* Home shows one series: the total footprint. Other metrics live on Measure. */
   const focus = useMemo(() => {
@@ -106,7 +109,7 @@ export default function ConsolePage() {
             <aside className="vc-team-card vch-team-card">
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">
-                  <ConsoleAvatar seed={workspace.name ?? "Vuneli"} size={30} styleKey="shapes" alt="" />
+                  <CompanyLogo name={workspace.name ?? "Vuneli"} domain={company.data?.logoDomain} size={30} />
                 </span>
                 <span>
                   <small>

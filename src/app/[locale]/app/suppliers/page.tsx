@@ -13,6 +13,9 @@ import { Link } from "@/i18n/navigation";
 import { Btn, ConsolePage, Empty, Plate, State } from "@/components/app/console/kit";
 import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 
+import { CompanyLogo } from "@/components/app/console/CompanyLogo";
+import { logoDomain } from "@/lib/company-logo";
+
 const PATH = "/api/console/suppliers";
 
 interface Supplier {
@@ -216,7 +219,10 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
   return (
     <li className="vck-cbam-contact vck-sup-anchor" id={`sup-${encodeURIComponent(s.name)}`}>
       <div className="vck-cbam-contact-head">
-        <strong>{s.name}</strong>
+        <span className="flex min-w-0 items-center gap-2.5">
+          <CompanyLogo name={s.name} domain={logoDomain(null, s.email)} size={28} />
+          <strong className="min-w-0 break-words">{s.name}</strong>
+        </span>
         {status}
       </div>
       <dl className="vck-sup-facts">

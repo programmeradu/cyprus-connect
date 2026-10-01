@@ -8,11 +8,16 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { activityEvents, user, workspaces } from "@/db/schema";
+import { logoDomain, normalizeDomain } from "@/lib/company-logo";
 
 export interface CompanyRecord {
   companyName: string | null;
   industry: string | null;
   teamSize: string | null;
+  /** Bare domain, for example "acme.com.cy". */
+  website: string | null;
+  /** Domain to look the logo up by: the website, else a work-email domain. */
+  logoDomain: string | null;
   country: string;
   sites: number;
   revenueEur: number | null;
@@ -40,6 +45,22 @@ export const CompanyPatch = z
     companyName: text(200),
     industry: text(100),
     teamSize: z.enum(TEAM_SIZES).nullable().optional(),
+    website: z
+      .string()
+      .trim()
+      .max(255)
+      .nullable()
+      .optional()
+      .transform((v, ctx) => {
+        if (v === undefined) return undefined;
+        if (v === null || v === "") return null;
+        const d = normalizeDomain(v);
+        if (!d) {
+          ctx.addIssue({ code: "custom", message: "Use a website address such as acme.com.cy." });
+          return z.NEVER;
+        }
+        return d;
+      }),
     country: z.string().trim().toUpperCase().regex(/^[A-Z]{2}$/, "Use a two-letter country code.").optional(),
     sites: z.number().int().min(1, "A company has at least one site.").max(10_000).optional(),
     revenueEur: z.number().finite().min(0, "Revenue cannot be negative.").max(1e13).nullable().optional(),
@@ -52,6 +73,7 @@ export const COMPANY_LABELS: Record<string, string> = {
   companyName: "company name",
   industry: "industry",
   teamSize: "team size",
+  website: "website",
   country: "country",
   sites: "number of sites",
   revenueEur: "yearly revenue",
@@ -60,7 +82,7 @@ export const COMPANY_LABELS: Record<string, string> = {
 export async function readCompany(accountId: string, workspaceId: string): Promise<CompanyRecord> {
   const [[p], [w]] = await Promise.all([
     db
-      .select({ companyName: user.companyName, industry: user.companyIndustry, teamSize: user.teamSize, country: user.countryCode })
+      .select({ companyName: user.companyName, industry: user.companyIndustry, teamSize: user.teamSize, country: user.countryCode, website: user.companyWebsite, email: user.email })
       .from(user)
       .where(eq(user.id, accountId))
       .limit(1),
@@ -77,6 +99,8 @@ export async function readCompany(accountId: string, workspaceId: string): Promi
     companyName: p?.companyName ?? null,
     industry: p?.industry ?? null,
     teamSize: p?.teamSize ?? null,
+    website: p?.website ?? null,
+    logoDomain: logoDomain(p?.website, p?.email),
     country: (p?.country || w?.country || "CY").toUpperCase(),
     sites: w?.sites ?? 1,
     revenueEur: w?.revenueEur ?? null,
@@ -120,6 +144,7 @@ export async function applyCompanyPatch(input: {
     if (body.companyName !== undefined) profile.companyName = body.companyName;
     if (body.industry !== undefined) profile.companyIndustry = body.industry;
     if (body.teamSize !== undefined) profile.teamSize = body.teamSize;
+    if (body.website !== undefined) profile.companyWebsite = body.website;
     if (body.country !== undefined) profile.countryCode = body.country;
     if (Object.keys(profile).length) {
       await tx.update(user).set({ ...profile, updatedAt: new Date() }).where(eq(user.id, accountId));

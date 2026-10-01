@@ -56,6 +56,7 @@ export const user = pgTable("user", {
   // Custom business fields from old "users" table
   companyName: text('company_name'),
   companyIndustry: text('company_industry'),
+  companyWebsite: text('company_website'),
   teamSize: text('team_size'),
   sustainabilityGoals: text('sustainability_goals'),
   totalCredits: integer('total_credits').notNull().default(0),

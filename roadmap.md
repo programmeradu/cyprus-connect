@@ -123,3 +123,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 
 - [x] Home redesign: today view, guided first visit, self-ticking setup checklist, Verde fills company details (approval-gated), board summary PDF, shared approval queue on Agents.
 - [ ] Home tour completion is remembered per browser only; move to account profile if needed.
+
+## Onboarding + logos (2026-10-01)
+- [x] Set-up cut to one screen (name, company, website, industry, size, country) or "Let Verde fill it in" (sent to Verde on Home, approval before saving)
+- [x] Real company logos (website or work-email domain) on Leaderboard, Suppliers, Home and Settings; generated avatar only when none found
+- [ ] Live database: apply scripts/sql/0029_company_website.sql (founder)
