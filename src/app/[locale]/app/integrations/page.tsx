@@ -426,7 +426,7 @@ function IntegrationsContent() {
                 <span className="vci-bank-line-why">
                   {WATER_BOARD_LABEL[b.board]?.[locale] ?? WATER_BOARD_LABEL.other[locale]}
                   {" · "}
-                  {num1.format(b.m3)} m³{b.amountEur !== null ? ` · ${eur.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}{(() => { const n = billPayNote(c.id === "water" ? d.waterPayments : d.eacPayments, b.id, L, date); return n ? ` · ${n}` : ""; })()}
+                  {num1.format(b.m3)} m³{b.amountEur !== null ? ` · ${eur2.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}{(() => { const n = billPayNote(c.id === "water" ? d.waterPayments : d.eacPayments, b.id, L, date); return n ? ` · ${n}` : ""; })()}
                   {" · "}
                   <button type="button" className="vci-link-btn" onClick={() => removeWater(b.id)} disabled={waterAction.busy}>
                     {L("Remove", "Αφαίρεση")}
@@ -472,7 +472,7 @@ function IntegrationsContent() {
                   {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
                 </span>
                 <span className="vci-bank-line-why">
-                  {num.format(b.kwh)} kWh{b.amountEur !== null ? ` · ${eur.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}{(() => { const n = billPayNote(c.id === "water" ? d.waterPayments : d.eacPayments, b.id, L, date); return n ? ` · ${n}` : ""; })()}
+                  {num.format(b.kwh)} kWh{b.amountEur !== null ? ` · ${eur2.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}{(() => { const n = billPayNote(c.id === "water" ? d.waterPayments : d.eacPayments, b.id, L, date); return n ? ` · ${n}` : ""; })()}
                   {" · "}
                   <button type="button" className="vci-link-btn" onClick={() => removeEac(b.id)} disabled={eacAction.busy}>
                     {L("Remove", "Αφαίρεση")}
