@@ -81,9 +81,7 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(emissions.periodYear), desc(emissions.periodMonth))
       .limit(12);
 
-    // Calculate total emissions and breakdown
-    const totalEmissions = currentEmissions ? currentEmissions.totalCo2e : 0;
-    
+
     // The emissions row stores activity amounts (kWh, m3, litres, kg, km) per
     // category and the calculated total in tonnes. Convert each category to
     // tonnes with the published reference factors before showing shares, so a
@@ -102,6 +100,11 @@ export async function GET(request: NextRequest) {
     const cur = tonnesOf(currentEmissions);
     const prevT = tonnesOf(previousYearEmissions);
     const catSum = cur ? cur.electricity + cur.gas + cur.transport + cur.water + cur.waste : 0;
+    // One set of factors for every figure on the page, so the parts always add
+    // up to the total. The stored total is used only when no activity is split.
+    const totalEmissions = catSum > 0 ? catSum : (currentEmissions?.totalCo2e ?? 0);
+    const prevSum = prevT ? prevT.electricity + prevT.gas + prevT.transport + prevT.water + prevT.waste : 0;
+    const prevTotal = previousYearEmissions ? (prevSum > 0 ? prevSum : previousYearEmissions.totalCo2e) : null;
     const share = (v: number) => (catSum > 0 ? (v / catSum) * 100 : 0);
     const emissionsBreakdown = cur && catSum > 0 ? {
       electricity: { value: cur.electricity, percentage: share(cur.electricity) },
@@ -111,29 +114,28 @@ export async function GET(request: NextRequest) {
     } : null;
 
     // Calculate YoY changes
-    const calculateYoYChange = (current: number, previous: number | null) => {
-      if (!previous || previous === 0) return 0;
+    // null = nothing to compare against (shown as no change line, not 0%).
+    const calculateYoYChange = (current: number, previous: number | null): number | null => {
+      if (!previous || previous === 0) return null;
       return ((current - previous) / previous) * 100;
     };
 
     const metricsData = {
       totalEmissions: {
         value: totalEmissions,
-        change: previousYearEmissions 
-          ? calculateYoYChange(totalEmissions, previousYearEmissions.totalCo2e)
-          : 0
+        change: calculateYoYChange(totalEmissions, prevTotal)
       },
       energy: {
         value: cur ? cur.electricity + cur.gas : 0,
-        change: cur && prevT ? calculateYoYChange(cur.electricity + cur.gas, prevT.electricity + prevT.gas) : 0
+        change: cur && prevT ? calculateYoYChange(cur.electricity + cur.gas, prevT.electricity + prevT.gas) : null
       },
       water: {
         value: cur ? cur.water : 0,
-        change: cur && prevT ? calculateYoYChange(cur.water, prevT.water) : 0
+        change: cur && prevT ? calculateYoYChange(cur.water, prevT.water) : null
       },
       waste: {
         value: cur ? cur.waste : 0,
-        change: cur && prevT ? calculateYoYChange(cur.waste, prevT.waste) : 0
+        change: cur && prevT ? calculateYoYChange(cur.waste, prevT.waste) : null
       }
     };
 
@@ -141,7 +143,7 @@ export async function GET(request: NextRequest) {
     const monthlyTrend = historicalData.reverse().map(record => ({
       month: new Date(record.year, record.month - 1).toLocaleString('en-GB', { month: 'long' }),
       value: record.totalCo2e,
-      change: 0 // Will be calculated based on previous month
+      change: null as number | null
     }));
 
     // Calculate month-over-month changes
@@ -162,10 +164,10 @@ export async function GET(request: NextRequest) {
 
     // Calculate user's performance vs industry average
     const industryComparison = benchmarkData ? {
-      yourPerformance: totalEmissions / 12, // Monthly average
+      yourPerformance: totalEmissions, // latest month
       industryAverage: benchmarkData.averageValue,
       betterBy: benchmarkData.averageValue > 0 
-        ? ((benchmarkData.averageValue - (totalEmissions / 12)) / benchmarkData.averageValue) * 100
+        ? ((benchmarkData.averageValue - totalEmissions) / benchmarkData.averageValue) * 100
         : 0
     } : null;
 
