@@ -1,4 +1,5 @@
 import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
   id: serial('id').primaryKey(),
