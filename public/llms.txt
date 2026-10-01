@@ -1,8 +1,11 @@
 # Vuneli
 
-> AI-powered sustainability platform for SMEs in Cyprus and across the EU. Track carbon footprint, generate CSRD/VSME-ready reports, benchmark against industry peers, and stay compliant — in EUR, with GDPR-compliant data handling and full English + Greek (el-CY) support.
+> Sustainability consultant for small and medium businesses in Cyprus, working in English and Greek (el-CY). Vuneli reads utility bills, bank payments and supplier records, tracks the EU and Cyprus rules that apply to each business (VSME, CBAM, EUDR, CSRD), and prepares reports, answers and funding matches. A person approves every action.
 
-Vuneli helps small and medium enterprises measure Scope 1/2/3 emissions, model Cyprus-specific energy costs, run compliance checks against EU CSRD/ESRS/VSME frameworks, and produce audit-ready sustainability reports powered by AI. Pricing is transparent in EUR and includes Cyprus VAT (19%).
+What works today: Verde, an AI consultant that cites its sources and drafts documents for approval; EAC electricity and Nicosia water bill reading by upload or email; bills matched to bank payments; deadlines matched to each business from a fixed rulebook, with EU law amendments flagged for human review; CBAM calculations with official EU default values; supplier screening against the EU consolidated sanctions list; funding calls shown only when the business is likely eligible; print-grade PDFs whose fingerprint anyone can check at /verify. Bank and accounting connections are being tested. Pricing is in EUR.
+
+- [Vision and roadmap (English)](/en/vision): What is live, what is being tested and what comes next.
+- [Όραμα και πλάνο (Ελληνικά)](/el/vision): Τι λειτουργεί, τι δοκιμάζεται και τι ακολουθεί.
 
 ## Pages
 
