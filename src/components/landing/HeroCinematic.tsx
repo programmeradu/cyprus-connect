@@ -4,7 +4,7 @@ import Image, { type StaticImageData } from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "@/i18n/navigation";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import hero01 from "@/assets/hero-01-turbines-dusk.jpg";
 import hero02 from "@/assets/hero-02-troodos-dawn.jpg";
 import hero03 from "@/assets/hero-03-limassol-blue.jpg";
@@ -157,8 +157,28 @@ export function HeroCinematic() {
             safely clear of the bottom scrim */}
         <div className="pointer-events-none absolute bottom-8 right-6 hidden md:block lg:bottom-12 lg:right-10">
           <div
-            className="pointer-events-auto inline-flex items-center gap-4 rounded-full border border-white/30 bg-white/15 py-2 pl-2 pr-6 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06]"
+            tabIndex={0}
+            aria-describedby="advisor-soon-tip"
+            className="group/advisor pointer-events-auto relative inline-flex cursor-default items-center gap-4 rounded-full border border-white/30 bg-white/15 py-2 pl-2 pr-6 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.35)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10 dark:bg-white/[0.06]"
           >
+            <div
+              id="advisor-soon-tip"
+              role="tooltip"
+              className="pointer-events-none absolute bottom-[calc(100%+12px)] right-0 w-[280px] translate-y-1 rounded-2xl border border-white/30 bg-background/90 p-4 text-left opacity-0 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition duration-200 group-hover/advisor:translate-y-0 group-hover/advisor:opacity-100 group-focus-visible/advisor:translate-y-0 group-focus-visible/advisor:opacity-100 dark:border-white/10"
+            >
+              <span className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-lime,#d9f99d)]/60 px-2 py-0.5 text-[11px] font-semibold text-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-foreground/70" aria-hidden="true" />
+                {el ? "Σύντομα" : "Coming soon"}
+              </span>
+              <p className="text-[13.5px] font-semibold leading-snug text-foreground">
+                {el ? "Αληθινοί άνθρωποι, πολύ σύντομα." : "Real humans, warming up their coffee."}
+              </p>
+              <p className="mt-1 text-[12.5px] leading-snug text-foreground/70" style={{ fontFamily: "var(--editorial-sans)" }}>
+                {el
+                  ? "Οι σύμβουλοί μας στην Κύπρο έρχονται σύντομα. Μέχρι τότε, η Verde είναι εδώ όλο το 24ωρο."
+                  : "Our Cyprus advisors join very soon. Until then, Verde is on shift around the clock."}
+              </p>
+            </div>
             <div className="flex -space-x-3">
               <Image
                 src={avatar1}
@@ -177,13 +197,13 @@ export function HeroCinematic() {
             </div>
             <div className="flex flex-col">
               <span className="text-[14px] font-semibold leading-tight text-foreground">
-                Talk to a Cyprus advisor
+                {el ? "Μιλήστε με σύμβουλο στην Κύπρο" : "Talk to a Cyprus advisor"}
               </span>
               <span
                 className="text-[12.5px] leading-tight text-foreground/65"
                 style={{ fontFamily: "var(--editorial-sans)" }}
               >
-                Free 20-minute consultation
+                {el ? "Δωρεάν συνάντηση 20 λεπτών" : "Free 20-minute consultation"}
               </span>
             </div>
           </div>
