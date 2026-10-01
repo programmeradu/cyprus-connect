@@ -161,7 +161,7 @@ export function existingSupplierFor(
 ): string | null {
   const label = norm(payee.label);
   for (const s of suppliers) {
-    if (payeeMatches(payee.key, s)) return s.supplierName;
+    if (payeeMatches(payee.key, s) || payeeMatches(payee.key, { supplierName: s.supplierName, bankPayee: null })) return s.supplierName;
     if (label.length >= 3 && norm(s.supplierName) === label) return s.supplierName;
   }
   return null;

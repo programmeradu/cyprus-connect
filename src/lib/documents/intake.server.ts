@@ -15,6 +15,7 @@ import { readWaterBill, waterBills, type WaterBill } from "@/lib/integrations/wa
 import type { UploadKind } from "@/lib/validate";
 import type { FootprintKey } from "@/lib/emissions/footprint";
 import { categorise } from "@/lib/bank/categorize";
+import type { StatementDebit } from "@/lib/suppliers";
 import {
   parseCsv,
   periodOk,
@@ -115,6 +116,7 @@ async function bankFromText(text: string): Promise<IntakeResult> {
   const rows = Array.isArray(parsed?.transactions) ? parsed!.transactions : [];
   const haystack = normaliseForMatch(text);
   const lines: BankLine[] = [];
+  const debits: StatementDebit[] = [];
   let count = 0;
   let first: string | null = null;
   let last: string | null = null;
@@ -126,13 +128,14 @@ async function bankFromText(text: string): Promise<IntakeResult> {
     if (!date || description.length < 3 || !Number.isFinite(amount) || amount <= 0 || amount > 10_000_000) continue;
     if (!haystack.includes(normaliseForMatch(description))) continue;
     count++;
+    debits.push({ date, description, amount: Math.round(amount * 100) / 100 });
     if (first === null || date < (first as string)) first = date;
     if (last === null || date > (last as string)) last = date;
     const c = categorise(description, "debit");
     if (c.category !== "other" && c.rule) lines.push({ date, description, amount: Math.round(amount * 100) / 100, category: c.category, rule: c.rule });
   }
   if (count === 0) return { ok: false, code: "unreadable" };
-  return { ok: true, proposal: finish("bank_statement", "code", [], { bank: summariseBank(lines, count, first, last), warnings: ["spend_not_usage"] }) };
+  return { ok: true, proposal: finish("bank_statement", "code", [], { bank: summariseBank(lines, count, first, last, debits), warnings: ["spend_not_usage"] }) };
 }
 
 // ── Anything else: the general reader ──────────────────────────────────
