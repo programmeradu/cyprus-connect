@@ -270,7 +270,7 @@ export async function POST(req: Request) {
         stopWhen: isStepCount(50),
         ...(provider === "groq" ? { providerOptions: { groq: { reasoningEffort: "low" } } } : {}),
       });
-      writer.merge(toUIMessageStream({ stream: result.stream, tools, sendStart: false, sendFinish: false }));
+      writer.merge(toUIMessageStream({ stream: result.stream, tools, sendStart: false, sendFinish: false, sendReasoning: false }));
 
       // Every figure in the answer must appear in the records or a tool result.
       const [text, steps] = await Promise.all([result.text, result.steps]);
@@ -278,7 +278,8 @@ export async function POST(req: Request) {
         .flatMap((step) => step.toolResults ?? [])
         .map((r) => JSON.stringify((r as { output?: unknown }).output ?? ""))
         .join("\n");
-      const grounding = checkGrounding(text, `${briefing}\n${outputs}`);
+      // Models often write dates with non-breaking hyphens; normalise before checking.
+      const grounding = checkGrounding(text.replace(/[\u2010-\u2013]/g, "-"), `${briefing}\n${outputs}`);
       if (!grounding.ok) {
         writer.write({ type: "data-grounding", data: { unsupported: grounding.unsupported, unsourced: grounding.unsourced } });
       }
