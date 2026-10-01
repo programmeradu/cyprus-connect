@@ -21,10 +21,10 @@ import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface AnalyticsData {
   metrics: {
-    totalEmissions: { value: number; change: number };
-    energy: { value: number; change: number };
-    water: { value: number; change: number };
-    waste: { value: number; change: number };
+    totalEmissions: { value: number; change: number | null };
+    energy: { value: number; change: number | null };
+    water: { value: number; change: number | null };
+    waste: { value: number; change: number | null };
   };
   emissionsBreakdown: {
     electricity: { value: number; percentage: number };
@@ -32,7 +32,7 @@ interface AnalyticsData {
     transportation: { value: number; percentage: number };
     other: { value: number; percentage: number };
   } | null;
-  monthlyTrend: Array<{ month: string; value: number; change: number }>;
+  monthlyTrend: Array<{ month: string; value: number; change: number | null }>;
   industryComparison: {
     yourPerformance: number;
     industryAverage: number;
@@ -57,6 +57,14 @@ export default function AnalyticsPage() {
     userId ? `/api/analytics?userId=${encodeURIComponent(userId)}` : null,
   );
   const analyticsData = analytics.data?.data ?? null;
+  // No line at all when there is no same month last year (never a fake 0%).
+  const yoyDelta = (change: number | null) =>
+    change === null
+      ? {}
+      : {
+          delta: t("yoy", { value: `${change > 0 ? "+" : ""}${change.toFixed(1)}` }),
+          deltaTone: (change < 0 ? "positive" : change > 0 ? "negative" : "neutral") as "positive" | "negative" | "neutral",
+        };
 
   useEffect(() => {
     if (!isPending && !session?.user && !isQaClient()) {
@@ -105,35 +113,31 @@ export default function AnalyticsPage() {
     >
       {analyticsData && (
         <>
-          <Section title={t("title")}>
+          <Section title={t("latestMonth")}>
             <MetricRow>
               <Metric
                 label={t("totalEmissions")}
                 value={analyticsData.metrics.totalEmissions.value.toFixed(1)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.totalEmissions.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.totalEmissions.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.totalEmissions.change)}
               />
               <Metric
                 label={t("energy")}
                 value={analyticsData.metrics.energy.value.toFixed(1)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.energy.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.energy.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.energy.change)}
               />
               <Metric
                 label={t("water")}
                 value={analyticsData.metrics.water.value.toFixed(1)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.water.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.water.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.water.change)}
               />
               <Metric
                 label={t("waste")}
                 value={analyticsData.metrics.waste.value.toFixed(1)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.waste.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.waste.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.waste.change)}
               />
             </MetricRow>
           </Section>

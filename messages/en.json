@@ -211,7 +211,8 @@
         "generatingBody": "Vuneli is analysing your latest figures for observations and recommendations.",
         "noInsights": "No insights yet",
         "noInsightsBody": "Insights are written automatically once analytics data is available."
-      }
+      },
+      "latestMonth": "Latest month"
     },
     "marketplace": {
       "titleA": "Carbon Offset",
@@ -1545,7 +1546,8 @@
       "loading": "Generating...",
       "success": "Report exported successfully! 📄",
       "noUser": "User not found. Please log in.",
-      "failed": "Failed to export report"
+      "failed": "Failed to export report",
+      "noData": "Add figures first — there is nothing recorded to export yet."
     },
     "fileUpload": {
       "dropOrBrowse": "Drop files here or",
