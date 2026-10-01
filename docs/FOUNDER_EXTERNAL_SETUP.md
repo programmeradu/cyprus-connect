@@ -260,4 +260,5 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Funding matching (Grant scout)
 - Run `scripts/sql/0036_funding_matching.sql` on the live database (after 0035).
+- Then run `scripts/sql/0037_funding_pdf_reread.sql` once: Grant scout re-reads every open call together with its official PDFs (40 calls per daily run, so it finishes within a few days).
 - Live Cloudflare needs `LOVABLE_API_KEY` set so the daily funding scan can read call rules (max 40 calls/day).

@@ -41,8 +41,8 @@ export interface CallRules {
   sectors: string[] | null;
   consortiumRequired: boolean | null;
   requiredDocuments: string[];
-  /** Short quote from the call text per rule key. */
-  evidence: { rule: string; quote: string }[];
+  /** Short quote from the call text per rule key; source = page or PDF it was found in. */
+  evidence: { rule: string; quote: string; source?: string }[];
 }
 
 export type FactKey = "country" | "employees" | "revenue" | "company_age" | "sector";

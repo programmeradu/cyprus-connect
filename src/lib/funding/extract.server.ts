@@ -10,6 +10,7 @@ import { grantOpportunities } from "@/db/schema";
 import { aiResponsesJson, AiGatewayError, hasLovableAi } from "@/lib/lovable-ai";
 import { sha256Hex, stableStringify } from "@/lib/agents/hash";
 import { logger } from "@/lib/log";
+import { pdfLinksIn, pdfLinksOnPage, readCallDocuments, type CallDocument } from "./call-documents.server";
 import { APPLICANT_TYPES, SECTORS, type CallRules } from "./rules";
 
 const log = logger("funding.extract");
@@ -50,6 +51,8 @@ const SCHEMA = {
 
 const SYSTEM = `You read the eligibility rules of one public funding call. Use only the call text given.
 Rules:
+- The text may include excerpts of official call documents (PDFs). A work programme can cover many topics: use only the parts about this call's title or identifier.
+- Quotes must be copied exactly from the text, including from the documents.
 - If the text does not clearly state a rule, return null for it. Never guess or use general knowledge about the programme.
 - countries: ISO-2 codes; "EU" when all EU member states are eligible; "ANY" when worldwide.
 - applicantTypes from: ${APPLICANT_TYPES.join(", ")}. "company" covers SMEs and enterprises. "consortium" only when applicants must be a group.
@@ -103,7 +106,7 @@ export async function contentHashOf(c: { title: string; summary: string; program
  * topic (the public SEDIA search API). Null when unavailable; the call is then
  * read from its stored summary only, which usually leaves it hidden.
  */
-async function euTopicText(url: string): Promise<string | null> {
+async function euTopic(url: string): Promise<{ id: string; text: string | null; pdfs: string[] } | null> {
   const id = url.match(/topic-details\/([A-Za-z0-9._-]+)/)?.[1];
   if (!id) return null;
   try {
@@ -115,16 +118,36 @@ async function euTopicText(url: string): Promise<string | null> {
       body: form,
       signal: AbortSignal.timeout(20_000),
     });
-    if (!res.ok) return null;
+    if (!res.ok) return { id, text: null, pdfs: [] };
     const json = (await res.json()) as { results?: { metadata?: Record<string, string[] | undefined> }[] };
     const m = json.results?.find((r) => r.metadata?.topicConditions?.[0] || r.metadata?.descriptionByte?.[0])?.metadata;
-    if (!m) return null;
+    if (!m) return { id, text: null, pdfs: [] };
     const clean = (h?: string) => (h ?? "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
     const text = [`Conditions: ${clean(m.topicConditions?.[0])}`, `Description: ${clean(m.descriptionByte?.[0])}`].join("\n\n");
-    return text.slice(0, 9000);
+    return { id, text: text.slice(0, 9000), pdfs: pdfLinksIn(JSON.stringify(m), url) };
   } catch {
-    return null;
+    return { id, text: null, pdfs: [] };
   }
+}
+
+/** Call page text plus excerpts of its official PDFs, each labelled with its source. */
+function buildCallText(
+  r: { title: string; program: string | null; deadline: string | null; summary: string | null },
+  official: string | null,
+  docs: CallDocument[],
+): string {
+  const head = `Title: ${r.title}\nProgramme: ${r.program ?? "not stated"}\nDeadline: ${r.deadline ?? "not stated"}\n\nCall text:\n${official ?? r.summary ?? "(no text)"}`;
+  return [head, ...docs.map((d, i) => `\n\n=== Official call document ${i + 1} (${d.url}) ===\n${d.text}`)].join("");
+}
+
+/** Tags each verified quote with the document it came from, so people can check it. */
+function withSources(rules: CallRules | null, pageUrl: string, docs: CallDocument[]): CallRules | null {
+  if (!rules) return null;
+  const squashed = docs.map((d) => ({ url: d.url, t: squash(d.text) }));
+  return {
+    ...rules,
+    evidence: rules.evidence.map((e) => ({ ...e, source: squashed.find((d) => d.t.includes(squash(e.quote)))?.url ?? pageUrl })),
+  };
 }
 
 export interface ExtractSummary { read: number; failed: number; stoppedBy: string | null }
@@ -148,8 +171,11 @@ export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractS
   for (const r of rows) {
     if (read >= limit) break;
     try {
-      const official = r.source === "eu-funding-tenders" ? await euTopicText(r.url) : null;
-      const callText = `Title: ${r.title}\nProgramme: ${r.program ?? "not stated"}\nDeadline: ${r.deadline ?? "not stated"}\n\nCall text:\n${official ?? r.summary ?? "(no text)"}`;
+      const topic = r.source === "eu-funding-tenders" ? await euTopic(r.url) : null;
+      const official = topic?.text ?? null;
+      const pdfUrls = topic ? topic.pdfs : await pdfLinksOnPage(r.url);
+      const docs = await readCallDocuments(pdfUrls, topic?.id ?? r.externalId);
+      const callText = buildCallText(r, official, docs);
       const hash = await sha256Hex(callText);
       if (r.rulesExtractedAt && r.rulesHash === hash) {
         await db.update(grantOpportunities).set({ contentHash: hash }).where(eq(grantOpportunities.id, r.id));
@@ -161,7 +187,7 @@ export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractS
         schemaName: "call_rules",
         schema: SCHEMA,
       });
-      const rules = sanitize(raw, callText);
+      const rules = withSources(sanitize(raw, callText), r.url, docs);
       await db
         .update(grantOpportunities)
         .set({ rules, rulesHash: hash, contentHash: hash, rulesExtractedAt: new Date() })
@@ -183,4 +209,4 @@ export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractS
   return { read, failed, stoppedBy: null };
 }
 
-export { sanitize as sanitizeRules };
+export { sanitize as sanitizeRules, SYSTEM as RULES_SYSTEM, SCHEMA as RULES_SCHEMA, buildCallText, euTopic };
