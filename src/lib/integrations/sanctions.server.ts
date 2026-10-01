@@ -46,7 +46,7 @@ export type SanctionsResult =
 const STOP = new Set([
   "ltd", "limited", "llc", "llp", "lp", "plc", "inc", "incorporated", "corp", "corporation", "co", "company", "the", "and", "of",
   "gmbh", "ag", "kg", "sa", "sas", "sarl", "srl", "spa", "bv", "nv", "oy", "ab", "as", "aps", "sro", "kft", "doo", "ad", "ood", "eood",
-  "ooo", "oao", "zao", "pao", "ao", "jsc", "ojsc", "cjsc", "pjsc", "fze", "fzco", "dmcc", "ltda", "cv", "de", "llc.", "ε", "επε", "αε", "ike", "οε", "εε", "ооо", "оао", "зао", "пао", "ао", "тоо", "ип",
+  "public", "joint", "stock", "open", "closed", "joint-stock", "society", "ooo", "oao", "zao", "pao", "ao", "jsc", "ojsc", "cjsc", "pjsc", "fze", "fzco", "dmcc", "ltda", "cv", "de", "llc.", "ε", "επε", "αε", "ike", "οε", "εε", "ооо", "оао", "зао", "пао", "ао", "тоо", "ип",
 ]);
 
 /** Pure: lowercase, strip accents and punctuation, drop legal forms. */
@@ -65,7 +65,11 @@ export function nameScore(a: string[], b: string[]): number {
   if (!a.length || !b.length) return 0;
   const sb = new Set(b);
   const common = a.filter((t) => sb.has(t)).length;
-  return Math.round((common / Math.max(a.length, b.length)) * 100) / 100;
+  const overlap = common / Math.max(a.length, b.length);
+  // One name fully inside the other ("Rosneft Aero" in "JSC Rosneft Aero Fuel") is worth a review
+  // when the shorter name has at least two distinctive words.
+  const contained = common === Math.min(a.length, b.length) && common >= 2;
+  return Math.round(Math.max(overlap, contained ? 0.85 : 0) * 100) / 100;
 }
 
 export type ListRow = { entityId: string; name: string; tokens: string[]; subjectType: string; programme: string | null; country: string | null; designated: string | null; url: string | null };

@@ -14,6 +14,8 @@ describe("EU sanctions list", () => {
     expect(nameScore(["acme", "trading"], ["acme", "trading"])).toBe(1);
     expect(nameScore(["acme", "bakery"], ["acme", "trading"])).toBe(0.5);
     expect(nameScore([], ["x"])).toBe(0);
+    expect(nameScore(["rosneft", "aero"], ["rosneft", "aero", "fuel"])).toBe(0.85);
+    expect(nameScore(["sberbank"], ["sberbank", "europe"])).toBe(0.5);
   });
   it("parses the official CSV: one row per entity name, keeps country, link and list date", () => {
     const { generated, rows } = parseEuCsv(csv([
