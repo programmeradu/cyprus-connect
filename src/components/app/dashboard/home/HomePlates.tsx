@@ -6,7 +6,7 @@
  * records and links to it, so nothing here is a dead end.
  */
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { ConsoleOverviewData } from "@/components/app/console/types";
 import { daysUntil, relativeTime } from "@/components/app/console/types";
@@ -94,6 +94,7 @@ export function WhatChangedPlate({ data }: { data: ConsoleOverviewData }) {
 
 export function AgentsDidPlate({ data }: { data: ConsoleOverviewData }) {
   const t = useTranslations("home.agents");
+  const locale = useLocale();
   const events = data.events.slice(0, 5);
   return (
     <section className="vc-plate" aria-labelledby="vch-agents-title">
@@ -111,7 +112,7 @@ export function AgentsDidPlate({ data }: { data: ConsoleOverviewData }) {
                 <strong>{e.actorName}</strong> {e.verb} {e.object}
               </p>
               {e.detail && <small>{e.detail}</small>}
-              <time dateTime={e.createdAt}>{relativeTime(e.createdAt)}</time>
+              <time dateTime={e.createdAt}>{relativeTime(e.createdAt, locale)}</time>
             </li>
           ))}
         </ul>

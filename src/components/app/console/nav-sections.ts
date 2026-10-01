@@ -56,3 +56,23 @@ export function sectionFor(path: string): Section | null {
 export function bare(pathname: string): string {
   return pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
 }
+
+/** Greek labels for the workspace navigation; English is the source text. */
+const NAV_EL: Record<string, string> = {
+  Home: "Αρχική",
+  Measure: "Μέτρηση",
+  Act: "Δράση",
+  Report: "Αναφορές",
+  Agents: "Πράκτορες",
+  Connect: "Σύνδεση",
+  More: "Περισσότερα",
+  Deliverables: "Παραδοτέα",
+  Benchmarks: "Συγκρίσεις",
+  "Every document an agent drafted": "Κάθε έγγραφο που συνέταξε ένας πράκτορας",
+  "Compare with similar companies": "Σύγκριση με παρόμοιες εταιρείες",
+  "Data sources and tariffs": "Πηγές δεδομένων και τιμολόγια",
+  "All of the workspace": "Όλος ο χώρος εργασίας",
+};
+
+export const navText = (text: string, locale: string) =>
+  locale === "el" ? NAV_EL[text] ?? text : text;

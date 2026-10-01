@@ -23,7 +23,8 @@ import {
   IcoVuneliAi,
 } from "./icons";
 import { ConsoleAvatar } from "./ConsoleAvatar";
-import { onPage, sectionFor } from "./nav-sections";
+import { navText, onPage, sectionFor } from "./nav-sections";
+import { useLocale } from "next-intl";
 import { useConsole } from "./ConsoleData";
 import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
@@ -65,6 +66,7 @@ interface Entry {
  * renders: navigation must never disappear between pages.
  */
 export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
+  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const path = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
@@ -223,7 +225,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
               aria-current={active ? "page" : undefined}
             >
               <Icon size={13} />
-              <span>{item.label}</span>
+              <span>{navText(item.label, locale)}</span>
             </Link>
           );
         })}
@@ -240,7 +242,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
               setAccount(false);
             }}
           >
-            <span>More</span>
+            <span>{navText("More", locale)}</span>
             <i aria-hidden="true">▾</i>
           </button>
 
@@ -254,8 +256,8 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                   data-active={onPage(path, item.href)}
                   onClick={() => setMore(false)}
                 >
-                  <strong>{item.label}</strong>
-                  <span>{item.detail}</span>
+                  <strong>{navText(item.label, locale)}</strong>
+                  <span>{navText(item.detail, locale)}</span>
                 </Link>
               ))}
             </div>
@@ -326,7 +328,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                         <strong>{task.title}</strong>
                         <span>{task.detail}</span>
                         <em>
-                          {task.kind} · raised {relativeTime(task.createdAt)}
+                          {task.kind} · raised {relativeTime(task.createdAt, locale)}
                         </em>
                         <div className="vc-pop-actions">
                           <button

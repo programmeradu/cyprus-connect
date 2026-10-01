@@ -13,7 +13,7 @@
 
 import { CompanyLogo } from "@/components/app/console/CompanyLogo";
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { useWorkspaceResource } from "@/components/app/console/workspace-store";
@@ -29,6 +29,7 @@ import { AgentsDidPlate, MoneyPlate, NextDeadlinePlate, WhatChangedPlate } from 
 
 export default function ConsolePage() {
   const t = useTranslations("home");
+  const locale = useLocale();
   const { data, error, refresh } = useConsole();
   const [pdfBusy, setPdfBusy] = useState(false);
   const company = useWorkspaceResource<CompanyRecord>("/api/console/company");
@@ -154,7 +155,7 @@ export default function ConsolePage() {
               <div className="vc-greeting">
                 <div>
                   <h1>
-                    {greetingFor(hour)}, {workspace.ownerName ?? t("there")}
+                    {greetingFor(hour, locale)}, {workspace.ownerName ?? t("there")}
                   </h1>
                   <p>{tasks.length === 0 ? t("nothingWaiting") : t("itemsWaiting", { count: tasks.length })}</p>
                 </div>
