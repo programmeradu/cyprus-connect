@@ -173,7 +173,7 @@ export function WhyChooseGrid() {
               className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.03]"
               placeholder="blur"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/10 md:bg-gradient-to-r md:from-black/70 md:via-black/30 md:to-transparent" />
             <div className="relative flex h-full min-h-[260px] flex-col justify-center p-8 lg:p-10">
               <h3
                 className="mb-2 max-w-md text-2xl leading-tight text-white md:text-3xl"
@@ -197,11 +197,11 @@ export function WhyChooseGrid() {
                 className="mb-3 text-2xl leading-tight text-card-foreground"
                 style={{ fontFamily: display }}
               >
-                Built for the Mediterranean.
+                {t("whyLocalTitle")}
               </h3>
             </div>
             <p className="mt-2 text-base leading-relaxed text-card-foreground/85">
-              Tuned to Cyprus grid data, EU CSRD wave 3, and local utility feeds. No US-first defaults, no bolt-on translations.
+              {t("whyLocalDesc")}
             </p>
           </article>
         </div>

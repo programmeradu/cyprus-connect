@@ -95,7 +95,7 @@ export function HeroCinematic() {
 
       {/* Content: flex column that fills the viewport height */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-5 pb-16 pt-24 sm:justify-end sm:px-8 sm:pb-14 sm:pt-32 md:pb-20 md:pt-36">
-        <div className="mx-auto max-w-[56rem] text-center sm:mx-0 sm:text-left [--hero-ink:theme(colors.white)]">
+        <div className="mx-auto max-w-[64rem] text-center sm:mx-0 sm:text-left [--hero-ink:theme(colors.white)]">
           <h1
             style={{
               fontFamily: "var(--editorial-sans)",
@@ -114,12 +114,10 @@ export function HeroCinematic() {
             <em
               className="not-italic"
               style={{
-                fontFamily: "var(--editorial-display)",
+                fontFamily: "var(--editorial-serif)",
                 fontStyle: "italic",
-                fontWeight: 300,
-                fontOpticalSizing: "auto",
-                fontVariationSettings: "'opsz' 144",
-                letterSpacing: "-0.02em",
+                fontWeight: 400,
+                letterSpacing: "-0.015em",
                 color: "color-mix(in oklab, var(--hero-ink) 82%, var(--accent-lime) 18%)",
               }}
             >

@@ -63,7 +63,7 @@ export function PowerChapters() {
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       {/* Section head - kept short so the chapters carry the weight */}
       <div className="max-w-3xl">
-        <h2 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
+        <h2 className="font-[family-name:var(--editorial-display)] font-semibold text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
           {t("powerTitleA")}{" "}
           <span className="italic text-muted-foreground">{t("powerTitleMid")}</span>{" "}
           <span className="italic text-muted-foreground">{t("powerTitleB")}</span>

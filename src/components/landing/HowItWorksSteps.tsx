@@ -23,7 +23,7 @@ export function HowItWorksSteps() {
   return (
     <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="max-w-2xl">
-        <h2 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
+        <h2 className="font-[family-name:var(--editorial-display)] font-semibold text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
           {t("howTitleA")}{" "}
           <span className="italic text-muted-foreground">{t("howTitleB")}</span>
         </h2>
