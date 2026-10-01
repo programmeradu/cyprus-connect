@@ -3,12 +3,18 @@
 /**
  * Home's short way into "Add data": drop a file here or pick one, and the
  * page that reads and checks it opens with the file already on its way.
+ *
+ * The scene is decorative only: papers drop into the reader on the left,
+ * read figures travel along the rule into the vault on the right.
  */
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ACCEPT, stashFiles } from "@/components/app/intake/pending-files";
+import readerImage from "@/assets/intake-reader.png";
+import vaultImage from "@/assets/intake-vault.png";
 
 export function AddDataCard() {
   const t = useTranslations("dashboard.intake");
@@ -38,10 +44,29 @@ export function AddDataCard() {
         send(Array.from(e.dataTransfer.files));
       }}
     >
+      <div className="vch-adddata-stage" aria-hidden="true">
+        <span className="vch-sheet" data-kind="bill">
+          <i /><i /><i /><b />
+        </span>
+        <span className="vch-sheet" data-kind="statement">
+          <i /><i /><i /><i />
+        </span>
+        <span className="vch-sheet" data-kind="sheet" />
+        <Image src={readerImage} alt="" width={200} height={223} className="vch-adddata-reader" />
+      </div>
+
       <div className="vch-adddata-copy">
         <h2 id="vch-adddata-title">{t("home.title")}</h2>
         <p>{t("home.body")}</p>
       </div>
+
+      <div className="vch-adddata-flow" aria-hidden="true">
+        <span className="vch-tag">kWh</span>
+        <span className="vch-tag">m³</span>
+        <span className="vch-tag">km</span>
+        <Image src={vaultImage} alt="" width={200} height={202} className="vch-adddata-vault" />
+      </div>
+
       <button type="button" className="vch-btn" data-kind="primary" onClick={() => input.current?.click()}>
         {t("home.cta")}
       </button>
