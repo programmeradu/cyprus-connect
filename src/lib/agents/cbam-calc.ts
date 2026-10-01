@@ -144,8 +144,8 @@ export function computeLine(line: CbamLineInput): CbamLineResult {
   }
 
   // Default split: Annex I gives direct/indirect for information; the total is what counts.
-  const dvDirect = dv ? (dv.direct !== null && (dv.indirect ?? 0) + dv.direct <= dv.total + 1e-9 ? dv.total - (indirectInScope ? dv.indirect ?? 0 : 0) : dv.total) : 0;
-  const dvIndirect = dv && indirectInScope ? dv.total - dvDirect : 0;
+  const dvIndirect = dv && indirectInScope ? dv.indirect ?? 0 : 0;
+  const dvDirect = dv ? dv.total - dvIndirect : 0;
   const direct = line.directSee ?? dvDirect;
   const indirect = indirectInScope ? (line.indirectSee ?? dvIndirect) : 0;
   const directActual = line.directSee !== null;
@@ -190,7 +190,23 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
     issues.push({
       kind: "unknown_cn",
       lineIds: unknown.map((l) => l.id),
-      message: `${unknown.length} line(s) have a CN code that is not a CBAM good in our table. Check the code or remove the line.`,
+      message: `${unknown.length} line(s) have a CN code that is not a CBAM good. Check the code or remove the line.`,
+    });
+  }
+  const noDefault = lines.filter((l) => l.basis === "no_default");
+  if (noDefault.length) {
+    issues.push({
+      kind: "no_default",
+      lineIds: noDefault.map((l) => l.id),
+      message: `${noDefault.length} line(s) have no EU default value we can use (for electricity, the official factors are licensed separately). Enter the supplier's actual value.`,
+    });
+  }
+  const short = lines.filter((l) => l.basis !== "unknown_cn" && l.basis !== "no_default" && !lookupCn(l.cnCode)?.exact);
+  if (short.length) {
+    issues.push({
+      kind: "short_cn",
+      lineIds: short.map((l) => l.id),
+      message: `${short.length} line(s) have a short CN code that covers several goods. We used the highest default value and the lowest benchmark, so the cost is on the high side. Add the full 8-digit code.`,
     });
   }
   const wrongYear = input.filter((l) => !l.importDate.startsWith(String(year)));
@@ -217,7 +233,7 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
         kind: "default_values",
         lineIds: s.defaultLines,
         supplierName,
-        message: `${supplierName}: ${s.defaultLines.length} line(s) use indicative default values. Ask the supplier for actual embedded emissions per installation.`,
+        message: `${supplierName}: ${s.defaultLines.length} line(s) use EU default values (with a mark-up when buying certificates). Ask the supplier for actual embedded emissions per installation.`,
       });
     }
     if (s.noInst.length) {
@@ -250,7 +266,9 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
   // Only electricity/hydrogen importers are not covered by the mass threshold.
   const hasUncountedGoods = lines.some((l) => l.sector === "electricity" || l.sector === "hydrogen");
   const belowThreshold = massTonnesCounted < DE_MINIMIS_TONNES && !hasUncountedGoods;
-  const blocking = issues.some((i) => i.kind === "unknown_cn" || i.kind === "wrong_year");
+  const blocking = issues.some((i) => i.kind === "unknown_cn" || i.kind === "wrong_year" || i.kind === "no_default");
+  const priced = lines.filter((l) => l.costEur !== null);
+  const scoped = lines.filter((l) => l.basis !== "unknown_cn");
 
   return {
     version: DRAFT_VERSION,
@@ -265,6 +283,11 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
       indirectT,
       embeddedT,
       defaultShare: embeddedT > 0 ? round(defaultT / embeddedT, 4) : 0,
+      certificates: round(priced.reduce((a, l) => a + (l.certificates ?? 0), 0), 3),
+      costEur: Math.round(priced.reduce((a, l) => a + (l.costEur ?? 0), 0) * 100) / 100,
+      costMissingLines: scoped.length - priced.length,
+      costProvisional: priced.some((l) => l.priceProvisional),
+      costExact: priced.length > 0 && priced.every((l) => l.costExact),
     },
     bySector: [...sectorMap.entries()]
       .map(([sector, v]) => ({ sector, massTonnes: round(v.massTonnes, 3), embeddedT: round(v.embeddedT, 3) }))
