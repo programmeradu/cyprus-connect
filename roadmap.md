@@ -117,5 +117,6 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Merge Report group: Deadlines home links each row to CBAM or the drafting flow; phone + desktop checked
 - [x] More holds only Deliverables and Benchmarks; Settings and Plan and usage live in the account menu; Learn off the menu
 - [ ] Home/dashboard redesign: on hold, founder to discuss
-- [ ] Suppliers page under Act (one list from bank, accounting, CBAM; approval-gated requests) — next
+- [x] Suppliers page under Act: one list (saved, CBAM, bank payees), 12-month spend, register + WikiRate checks, next steps; CBAM emails stay approval-gated
+- [ ] Suppliers: read payees from accounting systems once Nango live keys are in (blocked: live keys)
 - [x] Report: Obligations home is now one Deadlines list (soonest first, status, drafts, Draft/Open CBAM/See drafts per row)
