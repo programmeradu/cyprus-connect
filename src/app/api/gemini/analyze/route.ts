@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
-import { aiChat, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChat, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
 
 export async function POST(req: Request) {
   try {
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: creditGate.error }, { status: creditGate.status });
     }
 
-    if (!hasLovableAi()) {
+    if (!hasTextAi()) {
       return NextResponse.json(
         { error: "AI is not configured on this deployment." },
         { status: 503 }

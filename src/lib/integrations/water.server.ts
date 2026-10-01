@@ -14,7 +14,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { documents } from "@/db/schema";
-import { aiChatRaw, hasLovableAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChatRaw, hasDocumentAi, parseJsonAnswer } from "@/lib/lovable-ai";
 import { REFERENCE_FACTORS } from "@/lib/emissions/reference-factors";
 
 export const WATER_SOURCE = "water_bill";
@@ -168,7 +168,7 @@ export async function waterSummary(userId: string): Promise<WaterSummary> {
   const w = REFERENCE_FACTORS.water;
   const bills = await waterBills(userId);
   return {
-    readerReady: hasLovableAi(),
+    readerReady: hasDocumentAi(),
     factor: { kgPerM3: Math.round(kgPerM3() * 1000) / 1000, source: w.source, vintage: w.vintage },
     bills: bills.slice(0, 6),
     totalM3: bills.reduce((s, b) => s + b.m3, 0),

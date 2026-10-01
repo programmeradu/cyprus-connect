@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { aiChatStream, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChatStream, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
 import { checkRateLimit, createRateLimitHeaders, getRequestIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
 
 // Public (marketing assistant), so input is bounded and callers are rate-limited.
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     }
     const { prompt, context } = parsed.data;
 
-    if (!hasLovableAi()) {
+    if (!hasTextAi()) {
       return NextResponse.json(
         { error: "AI is not configured on this deployment." },
         { status: 503 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import { aiChatRaw, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChatRaw, hasDocumentAi } from "@/lib/lovable-ai";
 import { readUpload } from "@/lib/validate";
 import { logger } from "@/lib/log";
 
@@ -221,7 +221,7 @@ async function processExcel(file: File): Promise<ExtractedData> {
 }
 
 export async function POST(request: NextRequest) {
-  if (!hasLovableAi()) {
+  if (!hasDocumentAi()) {
     return NextResponse.json(
       { error: "AI is not configured on this deployment." },
       { status: 503 }

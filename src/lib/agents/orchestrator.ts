@@ -30,7 +30,7 @@ import { runGrantScout } from "./grant-scout";
 import { runDeadlineKeeper } from "./deadline-keeper";
 import { runCbamAgent } from "./cbam-agent";
 import { runPlanner } from "./planner";
-import { hasLovableAi } from "@/lib/lovable-ai";
+import { hasTextAi } from "@/lib/lovable-ai";
 
 const LEASE_MS = 5 * 60_000;
 
@@ -119,7 +119,7 @@ export async function scheduleDue(now = new Date()): Promise<number> {
   const day = now.toISOString().slice(0, 10);
   const week = isoWeek(now);
   const all = await db.select({ id: workspaces.id, owner: workspaces.ownerUserId, isDemo: workspaces.isDemo }).from(workspaces);
-  const ai = hasLovableAi();
+  const ai = hasTextAi();
   let created = 0;
   for (const ws of all) {
     for (const [agentKey, spec] of Object.entries(RUNNABLE_AGENTS)) {

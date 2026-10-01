@@ -370,11 +370,15 @@ export async function aiImage(
   }));
   parts.push({ type: "text", text: prompt });
 
-  const res = await post({
-    model,
-    modalities: ["image", "text"],
-    messages: [{ role: "user", content: parts }],
-  });
+  const res = await post(
+    {
+      model,
+      modalities: ["image", "text"],
+      messages: [{ role: "user", content: parts }],
+    },
+    undefined,
+    "lovable",
+  );
 
   const data = (await res.json()) as {
     choices?: Array<{
@@ -475,6 +479,30 @@ export async function aiResponsesJson<T>(options: {
   schema: Record<string, unknown>;
   signal?: AbortSignal;
 }): Promise<T | null> {
+  if (textProvider() === "groq") {
+    const res = await post(
+      {
+        model: GROQ_TEXT_MODEL,
+        reasoning_effort: "low",
+        messages: [
+          { role: "system", content: options.system },
+          { role: "user", content: options.user },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: { name: options.schemaName, schema: options.schema, strict: true },
+        },
+      },
+      options.signal,
+      "groq",
+    );
+    const data = (await res.json()) as {
+      choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }>;
+    };
+    const message = data.choices?.[0]?.message;
+    if (!message?.content || message.refusal) return null;
+    return parseJsonAnswer<T>(message.content);
+  }
   const res = await fetch(`${GATEWAY}/responses`, {
     method: "POST",
     headers: headers(requireKey()),

@@ -21,7 +21,7 @@ import {
 } from "@/db/schema";
 import { and, asc, eq } from "drizzle-orm";
 import { VSME_BASIC } from "@/data/tools/vsme-basic-module";
-import { aiChat, hasLovableAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChat, hasTextAi, parseJsonAnswer } from "@/lib/lovable-ai";
 
 export interface ReportFigure {
   label: string;
@@ -190,7 +190,7 @@ export async function draftVsmeReport(input: {
   let summary = `Draft VSME Basic Module report for ${workspace.name}, reporting period ${periodLabel}. Written from the workspace records held in the console. Every disclosure with no record is marked as a data gap for a person to complete.`;
   let ok = false;
 
-  if (hasLovableAi()) {
+  if (hasTextAi()) {
     const prompt = `You draft a VSME Basic Module report for a Cyprus SME.
 
 RULES

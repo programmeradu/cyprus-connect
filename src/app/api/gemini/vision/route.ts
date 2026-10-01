@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { aiErrorMessage, aiImage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiErrorMessage, aiImage, hasImageAi } from "@/lib/lovable-ai";
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!hasLovableAi()) {
+    if (!hasImageAi()) {
       return NextResponse.json(
         { error: "AI is not configured on this deployment." },
         { status: 503 }
