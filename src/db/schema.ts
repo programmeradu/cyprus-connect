@@ -1030,6 +1030,8 @@ export const euFeedItems = pgTable('eu_feed_items', {
   source: text('source').notNull(),
   title: text('title').notNull(),
   titleLang: text('title_lang').notNull().default('en'),
+  /** Official Greek title (EUR-Lex). scripts/sql/0036. */
+  titleEl: text('title_el'),
   url: text('url').notNull(),
   publishedAt: date('published_at').notNull(),
   deadline: date('deadline'),
@@ -1056,3 +1058,44 @@ export const euSanctionsNames = pgTable('eu_sanctions_names', {
   listDate: text('list_date'),
   fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** Public funding calls found by the grant scan; rules read once by AI. supabase 20260813 + scripts/sql/0036. */
+export const grantOpportunities = pgTable('grant_opportunities', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  source: text('source').notNull(),
+  externalId: text('external_id').notNull(),
+  title: text('title').notNull(),
+  summary: text('summary').notNull().default(''),
+  url: text('url').notNull(),
+  program: text('program'),
+  deadline: text('deadline'),
+  publishedAt: text('published_at'),
+  score: real('score').notNull().default(0),
+  reasons: text('reasons').notNull().default(''),
+  firstSeenAt: timestamp('first_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  notifiedAt: timestamp('notified_at', { withTimezone: true }),
+  rules: jsonb('rules').$type<import('@/lib/funding/rules').CallRules>(),
+  rulesHash: text('rules_hash'),
+  contentHash: text('content_hash'),
+  rulesExtractedAt: timestamp('rules_extracted_at', { withTimezone: true }),
+});
+
+/** Grant scout verdict per workspace and call. scripts/sql/0036. */
+export const fundingMatches = pgTable('funding_matches', {
+  workspaceId: text('workspace_id').notNull(),
+  opportunityId: integer('opportunity_id').notNull(),
+  verdict: text('verdict').notNull(),
+  met: jsonb('met').$type<import('@/lib/funding/rules').RuleCheck[]>().notNull().default([]),
+  missing: jsonb('missing').$type<import('@/lib/funding/rules').RuleCheck[]>().notNull().default([]),
+  failed: jsonb('failed').$type<import('@/lib/funding/rules').RuleCheck[]>().notNull().default([]),
+  rulesHash: text('rules_hash'),
+  checkedAt: timestamp('checked_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [primaryKey({ columns: [t.workspaceId, t.opportunityId] })]);
+
+/** Cached machine translations, keyed by source-text hash. scripts/sql/0036. */
+export const textTranslations = pgTable('text_translations', {
+  sourceHash: text('source_hash').notNull(),
+  locale: text('locale').notNull(),
+  text: text('text').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [primaryKey({ columns: [t.sourceHash, t.locale] })]);

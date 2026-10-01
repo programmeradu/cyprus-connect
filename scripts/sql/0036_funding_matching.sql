@@ -10,7 +10,7 @@ ALTER TABLE grant_opportunities ADD COLUMN IF NOT EXISTS rules_extracted_at time
 -- One verdict per workspace and call, worked out by fixed code.
 CREATE TABLE IF NOT EXISTS funding_matches (
   workspace_id text NOT NULL,
-  opportunity_id integer NOT NULL REFERENCES grant_opportunities(id) ON DELETE CASCADE,
+  opportunity_id bigint NOT NULL REFERENCES grant_opportunities(id) ON DELETE CASCADE,
   verdict text NOT NULL,              -- strong | needs_info | hidden
   met jsonb NOT NULL DEFAULT '[]',
   missing jsonb NOT NULL DEFAULT '[]',
