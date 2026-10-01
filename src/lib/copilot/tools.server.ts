@@ -7,7 +7,7 @@
 
 import { tool } from "ai";
 import { z } from "zod";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { activityEvents, cbamSuppliers, copilotProposals, metricDefinitions, metricReadings } from "@/db/schema";
 import { listObligations } from "@/lib/obligations/obligations.server";
@@ -250,4 +250,3 @@ export function toolOutputsText(parts: unknown[]): string {
     .join("\n");
 }
 
-export { and };
