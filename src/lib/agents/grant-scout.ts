@@ -27,7 +27,7 @@ export async function runGrantScout(rt: AgentRuntime) {
   const open = await db
     .select({ id: agentTasks.id, pendingTool: agentTasks.pendingTool })
     .from(agentTasks)
-    .where(and(eq(agentTasks.workspaceId, rt.workspaceId), eq(agentTasks.status, "open"), like(agentTasks.pendingTool, "answer_fact:%")));
+    .where(and(eq(agentTasks.workspaceId, rt.ctx.workspaceId), eq(agentTasks.status, "open"), like(agentTasks.pendingTool, "answer_fact:%")));
   for (const t of open) {
     if (!stillMissing.has(t.pendingTool ?? "")) {
       await db.update(agentTasks).set({ status: "resolved", result: "No longer needed" }).where(eq(agentTasks.id, t.id));
