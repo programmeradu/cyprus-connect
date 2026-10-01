@@ -443,13 +443,11 @@
   white-space: nowrap;
 }
 
-.vc-add-agent-dot {
-  width: 7px;
-  height: 7px;
+.vc-add-agent-icon {
+  width: 16px;
+  height: 16px;
   flex: none;
-  border-radius: 50%;
-  background: var(--vc-lime);
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--vc-lime) 22%, transparent);
+  color: var(--vc-ink);
 }
 
 .vc-add-agent-arrow {
