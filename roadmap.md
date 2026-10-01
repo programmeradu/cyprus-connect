@@ -178,3 +178,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 
 - [x] Funding matching: show only strong fits (or "one answer away"); hide non-fits entirely; dedicated Grant scout agent evaluates every call and asks for missing facts
 - [x] Greek: official EUR-Lex Greek titles; cached translations for funding/tender titles and agent notes
+- [x] Verde rebuilt as a working consultant: AI SDK streaming, answer cards (footprint, deadlines, suppliers, funding, bills, activity), inline fact forms, in-chat approvals, Board Summary download, page-aware starters, EN/EL, side panel
+- [ ] Verde: deliverable layouts via json-render catalogue (deferred: fixed cards cover current documents)
+- [ ] Verde: update fixed answer tests (scripts/verde-eval.ts) to the tool-based prompt
+- [ ] Live: run migration 0040_copilot_parts.sql
