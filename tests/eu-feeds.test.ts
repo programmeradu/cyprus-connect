@@ -23,7 +23,7 @@ describe("EUR-Lex parser", () => {
   it("tags topics, act type and corrigenda; drops duplicates", () => {
     const row = (celex: string, title: string) => ({ celex: { value: celex }, date: { value: "2026-09-14" }, title: { value: title } });
     const items = parseEurLex({ results: { bindings: [
-      row("32026R2049", "Implementing Regulation on primary batteries"),
+      row("32026R2049", "Implementing Regulation on the harmonised standard for primary batteries"),
       row("32026R2049", "dup"),
       row("32023R2674R(01)", "Corrigendum to Regulation (EU) 2023/956 carbon border adjustment"),
     ] } });
@@ -37,5 +37,9 @@ describe("EUR-Lex parser", () => {
     expect(topicsFor("fisheries quota")).toEqual([]);
     expect(isGreenCpv(["90700000"])).toBe(true);
     expect(isGreenCpv(["33100000"])).toBe(false);
+    expect(isGreenCpv(["90911200"])).toBe(false); // cleaning
+    expect(isGreenCpv(["34144000"])).toBe(false); // ordinary vehicles
+    expect(topicsFor("Decision on the Specialised Committee on Fisheries ... European Atomic Energy Community")).toEqual([]);
+    expect(topicsFor("Regulation making imports of primary batteries subject to registration (anti-dumping)")).toEqual([]);
   });
 });

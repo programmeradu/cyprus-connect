@@ -58,17 +58,24 @@ export const LAW_TOPICS: [string, RegExp][] = [
   ["Climate", /climate/i],
 ];
 
+/** Trade-defence and fisheries acts mention energy or batteries but set no rule a company must meet. */
+const NOT_A_RULE = /anti-dumping|countervailing|surveillance of imports|subject to registration|fisheries|fishing/i;
+
 export function topicsFor(title: string): string[] {
-  return LAW_TOPICS.filter(([, re]) => re.test(title)).map(([t]) => t);
+  if (NOT_A_RULE.test(title)) return [];
+  // "European Atomic Energy Community" is an institution name, not an energy rule.
+  const t = title.replace(/European Atomic Energy Community/gi, "");
+  return LAW_TOPICS.filter(([, re]) => re.test(t)).map(([name]) => name);
 }
 
 /**
  * CPV divisions/groups that are sustainability work: energy and fuels (09),
  * electricity and meters (3155, 3855), solar and insulation works (45261215,
- * 4532), environmental and energy consultancy (71313, 71314), and sewage,
- * waste and environmental services (90). Documented so the flag is auditable.
+ * 4532), environmental and energy consultancy (71313, 71314), sewage, waste
+ * and environmental services (904, 905, 907 — not 909 cleaning) and electric
+ * vehicles (34144900). Documented so the flag is auditable.
  */
-const GREEN_CPV = ["09", "3155", "3855", "45261215", "4532", "71313", "71314", "90", "3414"];
+const GREEN_CPV = ["09", "3155", "3855", "45261215", "4532", "71313", "71314", "904", "905", "907", "34144900"];
 export const isGreenCpv = (cpv: string[]) => cpv.some((c) => GREEN_CPV.some((p) => c.startsWith(p)));
 
 /* ----------------------------------------------------------------- parsers */
