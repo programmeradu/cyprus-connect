@@ -52,6 +52,7 @@ interface Data {
     pauseReason: string | null;
     agentPaused: Record<string, { paused: boolean; reason: string | null; by: string | null; at: string }>;
     runnable: string[];
+    planners?: string[];
     maxStepsPerRun: number;
   };
 }
@@ -75,6 +76,7 @@ export default function AgentsPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [note, setNote] = useState<{ tone: "good" | "warn"; text: string } | null>(null);
   const [open, setOpen] = useState<number | null>(null);
+  const [goals, setGoals] = useState<Record<string, string>>({});
   const [steps, setSteps] = useState<Record<number, Step[] | "loading" | "error">>({});
   const history = useWorkspaceResource<Data>(`${HISTORY}${filter ? `?agent=${encodeURIComponent(filter)}` : ""}`);
   const data = history.data ?? null;
@@ -96,11 +98,15 @@ export default function AgentsPage() {
     if (!Array.isArray(steps[runId])) void loadSteps(runId);
   }, [open, steps, loadSteps]);
 
-  const runAgent = useCallback(async (agentKey: string) => {
-    setBusy(`run:${agentKey}`);
+  const runAgent = useCallback(async (agentKey: string, goal?: string) => {
+    setBusy(goal ? `goal:${agentKey}` : `run:${agentKey}`);
     setNote(null);
     try {
-      const b = await workspaceRequest<{ status?: string; summary?: string; runId?: number }>("/api/console/agents/run", { method: "POST", body: { agentKey } });
+      const b = await workspaceRequest<{ status?: string; summary?: string; runId?: number }>("/api/console/agents/run", {
+        method: "POST",
+        body: goal ? { agentKey, goal } : { agentKey },
+      });
+      if (goal) setGoals((g) => ({ ...g, [agentKey]: "" }));
       setNote({ tone: b.status !== "skipped" ? "good" : "warn", text: b.summary ?? tr("runFinished") });
       invalidateWorkspace(AGENT_DATA);
       if (b.runId) {
@@ -132,6 +138,7 @@ export default function AgentsPage() {
 
   const c = data?.controls;
   const runnable = new Set(c?.runnable ?? []);
+  const planners = new Set(c?.planners ?? []);
   const nameOf = (key: string) => data?.roster.find((a) => a.key === key)?.name ?? key;
   const realRuns = (data?.runs ?? []).filter((r) => !r.sample);
   const shownRuns = (data?.runs ?? []).filter((r) => showSample || !r.sample);
@@ -168,13 +175,16 @@ export default function AgentsPage() {
           const last = realRuns.find((r) => r.agentKey === a.key);
           const tone = c?.paused || paused ? "warn" : last?.status === "failed" ? "bad" : "good";
           const stateText = c?.paused ? tr("state.pausedAll") : paused ? tr("state.paused") : tr("state.active");
+          const planner = planners.has(a.key);
+          const goal = goals[a.key] ?? "";
+          const goalOk = goal.trim().length >= 8;
           return (
             <Plate key={a.key} label={roleOf(a)} action={<State tone={tone}>{stateText}</State>}>
               <div className="vck-agent-card">
-                <h3>{a.name}</h3>
+                <h3>{a.name}{planner && <span className="vck-agent-badge">{tr("plannerBadge")}</span>}</h3>
                 <p className="vck-quiet">{missionOf(a)}</p>
                 <dl>
-                  <div><dt>{tr("schedule")}</dt><dd>{tr("scheduleValue")}</dd></div>
+                  <div><dt>{tr("schedule")}</dt><dd>{planner ? tr("scheduleWeekly") : tr("scheduleValue")}</dd></div>
                   <div>
                     <dt>{tr("lastRun")}</dt>
                     <dd>{last ? `${when(last.startedAt)} · ${runStatusLabel(last.status, lang).label}` : tr("notRunYet")}</dd>
@@ -191,6 +201,29 @@ export default function AgentsPage() {
                     {busy === `pause:${a.key}` ? tr("saving") : paused ? tr("resume") : tr("pause")}
                   </Btn>
                 </div>
+                {planner && (
+                  <form
+                    className="vck-agent-goal"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (goalOk && busy === null) void runAgent(a.key, goal.trim());
+                    }}
+                  >
+                    <label htmlFor={`goal-${a.key}`}>{tr("goalLabel", { name: a.name })}</label>
+                    <textarea
+                      id={`goal-${a.key}`}
+                      rows={3}
+                      maxLength={1000}
+                      value={goal}
+                      placeholder={tr("goalPlaceholder")}
+                      onChange={(e) => setGoals((g) => ({ ...g, [a.key]: e.target.value }))}
+                    />
+                    <p className="vck-quiet">{tr("goalHint")}</p>
+                    <Btn type="submit" disabled={!goalOk || busy !== null || paused || c?.paused}>
+                      {busy === `goal:${a.key}` ? tr("running") : tr("goalRun")}
+                    </Btn>
+                  </form>
+                )}
               </div>
             </Plate>
           );

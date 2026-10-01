@@ -367,6 +367,7 @@ export async function getControls(workspaceId: string) {
     maxStepsPerRun: c.maxStepsPerRun,
     agentPaused,
     runnable: Object.keys(RUNNABLE_AGENTS),
+    planners: Object.keys(RUNNABLE_AGENTS).filter(isPlanner),
     recentJobs: recent,
   };
 }
