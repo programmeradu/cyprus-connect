@@ -12,7 +12,7 @@ import { useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
-import { DocumentUploader } from "@/components/DocumentUploader";
+import { DocumentIntake } from "@/components/app/intake/DocumentIntake";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { PageShell, PageHeader, Section, DataTable, Metric, MetricRow, Empty } from "@/components/app/console/kit";
 import { FOOTPRINT_KEYS, isFutureMonth, previousMonth, type FootprintKey, type FootprintLine } from "@/lib/emissions/footprint";
@@ -59,6 +59,7 @@ function toNumber(v: string): number {
 
 export default function CalculatorPage() {
   const t = useTranslations("dashboard.calculator");
+  const ti = useTranslations("dashboard.intake");
   const locale = useLocale();
   const history = useWorkspaceResource<{ months: RecordedMonth[]; country: string }>(PATH);
   const save = useWorkspaceAction();
@@ -66,7 +67,6 @@ export default function CalculatorPage() {
   const [period, setPeriod] = useState(defaultPeriod);
   const [amounts, setAmounts] = useState<Amounts>(EMPTY);
   const [result, setResult] = useState<SavedFootprint | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const monthName = useMemo(() => {
     const fmt = new Intl.DateTimeFormat(locale === "el" ? "el-CY" : "en-GB", { month: "long", timeZone: "UTC" });
@@ -116,6 +116,10 @@ export default function CalculatorPage() {
 
   return (
     <PageShell header={<PageHeader title={t("title")} purpose={t("subtitle")} />}>
+      <Section title={ti("drop.title")}>
+        <DocumentIntake />
+      </Section>
+
       {result && (
         <Section
           title={t("result.title", { period: periodLabel(result.year, result.month) })}
@@ -173,7 +177,7 @@ export default function CalculatorPage() {
 
       {!result && (
         <Section
-          title={t("form.title")}
+          title={ti("manualTitle")}
           description={t("form.description")}
           action={<span className="vck-tag">{t("form.region", { country })}</span>}
         >
@@ -250,11 +254,8 @@ export default function CalculatorPage() {
               <button type="submit" className="vck-btn vck-btn-primary justify-center sm:flex-1" disabled={!hasValue || save.busy}>
                 {save.busy ? t("form.saving") : t("form.save")}
               </button>
-              <button type="button" className="vck-btn justify-center" onClick={() => setUploading(true)} disabled={save.busy}>
-                {t("form.upload")}
-              </button>
             </div>
-            <p className="vck-meta mt-3 break-words">{hasValue ? t("form.uploadHint") : t("form.needValue")}</p>
+            {!hasValue && <p className="vck-meta mt-3 break-words">{t("form.needValue")}</p>}
           </form>
         </Section>
       )}
@@ -293,16 +294,6 @@ export default function CalculatorPage() {
         )}
       </Section>
 
-      {uploading && (
-        <DocumentUploader
-          onDataExtracted={(data) => {
-            setAmounts(Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, data[k] && data[k]! > 0 ? String(data[k]) : ""])) as Amounts);
-            setUploading(false);
-            toast.success(t("toasts.extracted"));
-          }}
-          onClose={() => setUploading(false)}
-        />
-      )}
     </PageShell>
   );
 }
