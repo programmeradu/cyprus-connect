@@ -264,3 +264,11 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Live Cloudflare needs `LOVABLE_API_KEY` set so the daily funding scan can read call rules (max 40 calls/day).
 
 - Run `scripts/sql/0038_default_obligations.sql` on the live database. It now only removes four made-up deadlines (CBAM Q3 2026, VSME 2026, CSRD Wave 3, energy audit) that an earlier version added; untouched rows only.
+
+## Deadlines that know the business (1 Oct 2026)
+- Run `scripts/sql/0039_obligation_rules.sql` on the live database (after 0038). It adds the deadline facts, the law watch and the Deadline keeper agent.
+- The daily EU feed cron now also checks EUR-Lex for changes to the laws behind each deadline. It needs the same `CRON_SECRET`.
+- Open review: EUR-Lex lists Regulation (EU) 2026/2102 (13 Jul 2026) amending the deforestation rules. It appears to change the product list (Annex I), not the dates, but confirm with a lawyer, then mark it reviewed:
+  `UPDATE law_watch SET reviewed_at = now(), reviewed_note = '...' WHERE amending_celex = '32026R2102';`
+- Before relying on deadlines with customers, have a lawyer check the rulebook against `docs/research/DEADLINES_2026-10-01.md`.
+
