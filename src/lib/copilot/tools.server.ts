@@ -142,7 +142,7 @@ export function verdeTools(ctx: ToolContext) {
             program: c.program,
             deadline: c.deadline,
             verdict: c.verdict,
-            missing: c.missing.map((m) => m.label ?? String(m)).slice(0, 3),
+            missing: c.missing.map((m) => m.text).slice(0, 3),
           })),
         };
       },
@@ -161,7 +161,7 @@ export function verdeTools(ctx: ToolContext) {
             totalKgCo2e: Math.round(eac.totalKgCo2e),
             factor: eac.factor,
           },
-          water: { bills: (water as { bills?: unknown[] }).bills?.length ?? 0 },
+          water: { bills: water.bills.length, totalM3: Math.round(water.totalM3), totalKgCo2e: Math.round(water.totalKgCo2e), factor: water.factor },
         };
       },
     }),
