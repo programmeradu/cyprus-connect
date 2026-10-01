@@ -676,7 +676,7 @@
       "subtitle": "Automated compliance monitoring, reporting, and deadline management",
       "healthLabel": "Compliance Health",
       "tabs": {
-        "overview": "Overview",
+        "overview": "Deadlines",
         "regulations": "Regulations",
         "documents": "Documents",
         "audit": "Audit Trail",

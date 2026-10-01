@@ -34,7 +34,7 @@ export const SECTIONS: Section[] = [
   {
     key: "report",
     pages: [
-      { href: "/app/compliance", label: { en: "Obligations", el: "Υποχρεώσεις" } },
+      { href: "/app/compliance", label: { en: "Deadlines", el: "Προθεσμίες" } },
       { href: "/app/cbam", label: { en: "CBAM", el: "CBAM" } },
       { href: "/app/studio", label: { en: "Drafting studio", el: "Στούντιο συντάκτη" } },
     ],

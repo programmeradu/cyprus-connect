@@ -137,7 +137,13 @@ export default function CompliancePage() {
       }
     >
       {activeTab === "overview" && (
-        <OverviewTab regulations={regulations} documents={documents} />
+        <OverviewTab
+          regulations={regulations}
+          documents={documents}
+          onGenerate={handleGenerateReport}
+          generating={generating}
+          onOpenDocuments={() => setActiveTab("documents")}
+        />
       )}
       {activeTab === "regulations" && <RegulationsTab regulations={regulations} />}
       {activeTab === "documents" && (
