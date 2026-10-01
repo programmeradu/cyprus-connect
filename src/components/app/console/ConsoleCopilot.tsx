@@ -65,6 +65,14 @@ function authHeaders(): Record<string, string> {
 export const VERDE_ASK_EVENT = "vuneli:ask-verde";
 
 /** Opens Verde with a request ready to send. */
+/** Set-up hands a description to Verde across a page change; Verde sends it once on arrival. */
+export const VERDE_HANDOFF_KEY = "vuneli.verde.handoff";
+
+export function handOffToVerde(prompt: string) {
+  if (typeof window === "undefined") return;
+  window.sessionStorage.setItem(VERDE_HANDOFF_KEY, prompt);
+}
+
 export function askVerde(prompt?: string) {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent(VERDE_ASK_EVENT, { detail: { prompt } }));
@@ -232,6 +240,19 @@ export function ConsoleCopilot() {
     },
     [draft, streaming],
   );
+
+  /* A set-up handoff opens the panel, waits for the saved conversation to
+     load (so it is not overwritten), then sends the description once. */
+  useEffect(() => {
+    if (window.sessionStorage.getItem(VERDE_HANDOFF_KEY)) setOpen(true);
+  }, []);
+  useEffect(() => {
+    if (!loaded || streaming) return;
+    const handoff = window.sessionStorage.getItem(VERDE_HANDOFF_KEY);
+    if (!handoff) return;
+    window.sessionStorage.removeItem(VERDE_HANDOFF_KEY);
+    void send(handoff);
+  }, [loaded, streaming, send]);
 
   const decide = useCallback(
     async (id: number, decision: "approve" | "reject") => {
