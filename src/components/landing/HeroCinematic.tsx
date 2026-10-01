@@ -29,6 +29,7 @@ const HERO_SET: { src: StaticImageData; alt: string; focus: string }[] = [
 
 export function HeroCinematic() {
   const t = useTranslations("hero");
+  const el = useLocale() === "el";
 
   // Rotate on every mount/reload. Start with index 0 on the server so
   // hydration matches, then swap to a random shot on the client so each
