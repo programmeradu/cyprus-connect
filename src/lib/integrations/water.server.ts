@@ -95,7 +95,7 @@ export function checkWaterAnswer(raw: unknown): { ok: true; bill: WaterBill } | 
   };
 }
 
-const PROMPT = `You read water bills from Cyprus water suppliers: Water Board of Nicosia (Συμβούλιο Υδατοπρομήθειας Λευκωσίας), Water Board of Limassol / Lemesos (Λεμεσού), Water Board of Larnaca (Λάρνακας), Paphos Municipality water supply (Δήμος Πάφου Υδατοπρομήθεια), or a municipal / community water supplier. The bill may be in Greek or English.
+const PROMPT = `You read water bills from Cyprus water suppliers: Water Board of Nicosia (Συμβούλιο Υδατοπρομήθειας Λευκωσίας), Water Board of Limassol / Lemesos (Λεμεσού), Water Board of Larnaca (Λάρνακας), Paphos Municipality water supply (Δήμος Πάφου Υδατοπρομήθεια), or any other municipal or community water supplier (e.g. Paralimni, Ayia Napa, village water committees: use "other"). The bill may be in Greek or English.
 Return ONLY a JSON object:
 {"is_water_bill": true|false, "board": "nicosia"|"limassol"|"larnaca"|"paphos"|"other", "account_number": string|null, "period_start": "YYYY-MM-DD", "period_end": "YYYY-MM-DD", "m3": number|null, "amount_eur": number|null}
 - m3: total water consumed in the billing period, in cubic metres (κυβικά μέτρα, κμ, m³, Κατανάλωση). This is NOT a meter reading (Ένδειξη Μετρητή) and NOT a price per m³.

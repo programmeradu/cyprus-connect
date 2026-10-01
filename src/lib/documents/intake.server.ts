@@ -23,6 +23,7 @@ import {
   readBankRows,
   readConsumptionRows,
   recogniseText,
+  refuseText,
   sharesFor,
   summariseBank,
   toFootprintUnit,
@@ -146,6 +147,7 @@ Rules:
 - Only quantities actually used (kWh, m³, litres, kg, km). Never money amounts, never meter readings.
 - quote must be copied character for character from the document.
 - transport is distance driven in km. A fuel receipt shows litres: put them in fuel_litres and leave value 0.
+- A sewerage bill (Συμβούλιο Αποχετεύσεων), a municipal tax or licence bill, or a telephone / internet / TV bill (Cablenet, Cyta, Epic, Primetel) is "other" with no figures, even if it is a utility bill.
 - If the document is not about energy, water, waste, fuel or travel (an ID card, a contract, a menu, a CV), use "other" and no figures.
 - If a date is not printed, leave the figure out. Never estimate.`;
 
@@ -237,6 +239,8 @@ export async function readDocument(userId: string, bytes: Uint8Array, kind: Uplo
     if (seen === "eac_bill") return eac(userId, bytes, mime, "code");
     if (seen === "water_bill") return water(userId, bytes, mime, "code");
     if (seen === "bank_statement") return bankFromText(text);
+    const refused = refuseText(text);
+    if (refused) return { ok: false, code: "not_relevant", detail: refused };
     return general(userId, bytes, mime, text);
   }
 
