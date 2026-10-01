@@ -9,7 +9,7 @@ const STATE_WORD: Record<Connector["state"], { en: string; el: string }> = {
   live: { en: "Live", el: "Ενεργό" },
   oauth: { en: "Ready to link", el: "Έτοιμο για σύνδεση" },
   upload: { en: "Upload a bill", el: "Ανέβασμα λογαριασμού" },
-  scheduled: { en: "Scheduled", el: "Προγραμματισμένο" },
+  scheduled: { en: "Coming soon", el: "Έρχεται σύντομα" },
 };
 
 const STATE_TONE: Record<Connector["state"], string> = {
