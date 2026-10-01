@@ -68,6 +68,8 @@ export const user = pgTable("user", {
   timezone: text('timezone'),
   energyZone: text('energy_zone'),
   aiCreditsBalance: integer('ai_credits_balance').notNull().default(50),
+  // Home guided tour finished or skipped (migration 0033); null = show it.
+  homeTourDoneAt: timestamp('home_tour_done_at'),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),
