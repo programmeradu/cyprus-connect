@@ -25,13 +25,6 @@ const CYPRUS_MARKS: Mark[] = [
   },
   {
     kind: "image",
-    name: "JCC Payment Systems",
-    lightSrc: "/integrations/jcc-light.png",
-    darkSrc: "/integrations/jcc-dark.png",
-    className: "h-[2.6rem] sm:h-[3rem]",
-  },
-  {
-    kind: "image",
     name: "Republic of Cyprus government services",
     lightSrc: "/integrations/govcy-light.png",
     darkSrc: "/integrations/govcy-dark.png",

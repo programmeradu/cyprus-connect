@@ -212,5 +212,5 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Government & payments access (researched 2026-10-01)
 - **CY Login (gov.cy sign-in):** email the Digital Services Factory (dsf.dmrid.gov.cy) asking to join as a private-sector relying party for "Sign in with CY Login". Expect 2–6 months for approval.
 - **Companies Registrar:** nothing to apply for. The company register is published free on data.gov.cy. Optional: a paid live-lookup service (~$5 per 1,000 lookups) if we want real-time checks.
-- **JCC:** ask JCC for a JCCgateway merchant account (SaaS subscriptions, recurring card payments) and a fee quote. Sandbox is available as soon as the account exists.
+- **Payments:** Stripe is the chosen billing provider (JCC dropped). Stripe billing is not built yet; when it is, you will need a Stripe account and its keys added to Cloudflare.
 - **WikiRate:** add WIKIRATE_API_KEY to Cloudflare secrets.
