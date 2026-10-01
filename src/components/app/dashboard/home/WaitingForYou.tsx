@@ -5,7 +5,7 @@
  * Shared by Home and the Agents page so both always show the same queue.
  */
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
@@ -14,6 +14,7 @@ import { useConsole } from "@/components/app/console/ConsoleData";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { relativeTime, type ConsoleTask } from "@/components/app/console/types";
 import { IcoAlert, IcoCheck } from "@/components/app/console/icons";
+import { ACCEPT, stashFiles } from "@/components/app/intake/pending-files";
 
 const SHOWN = 5;
 
@@ -26,6 +27,15 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   const [failed, setFailed] = useState<{ id: number; message: string } | null>(null);
   const [showAll, setShowAll] = useState(false);
   const router = useRouter();
+  const picker = useRef<HTMLInputElement>(null);
+  const [uploadFor, setUploadFor] = useState<number | null>(null);
+
+  // "Upload" opens the file picker here; the chosen files are read on Add data,
+  // and the task closes once the document is kept.
+  const pickFor = (taskId: number) => {
+    setUploadFor(taskId);
+    picker.current?.click();
+  };
 
   const tasks = data?.tasks ?? [];
   const agentName = (key: string) => data?.agents.find((a) => a.key === key)?.name ?? key;
@@ -85,7 +95,7 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
                   {fact ? (
                     <FactAnswer fact={fact} disabled={busy !== null} onError={(m) => setFailed({ id: task.id, message: m })} />
                   ) : isEvidence ? (
-                    <Link href="/app/integrations" className="vch-btn" data-kind="primary">{t("upload")}</Link>
+                    <button type="button" className="vch-btn" data-kind="primary" disabled={busy !== null} onClick={() => pickFor(task.id)}>{t("upload")}</button>
                   ) : isException ? (
                     <Link href="/app/agents" className="vch-btn" data-kind="primary">{t("open")}</Link>
                   ) : (
@@ -102,6 +112,23 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
           })}
         </ul>
       )}
+
+      <input
+        ref={picker}
+        type="file"
+        multiple
+        accept={ACCEPT}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(e) => {
+          const files = Array.from(e.target.files ?? []);
+          e.target.value = "";
+          if (files.length === 0) return;
+          stashFiles(files.map((file) => ({ file, taskId: uploadFor ?? undefined })));
+          router.push("/app/calculator");
+        }}
+      />
 
       {tasks.length > SHOWN && (
         <button type="button" className="vch-link" onClick={() => setShowAll((v) => !v)}>
