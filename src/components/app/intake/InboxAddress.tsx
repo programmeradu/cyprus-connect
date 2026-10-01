@@ -43,6 +43,7 @@ export function InboxAddress() {
             </button>
           </div>
           <p className="vck-meta">{t("body")}</p>
+          <LastEmail inbox={inbox} />
         </>
       ) : (
         <>
