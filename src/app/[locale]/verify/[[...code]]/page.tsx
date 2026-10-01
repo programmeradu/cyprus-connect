@@ -135,7 +135,7 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
               <div className="mt-2.5 flex flex-col gap-3 sm:flex-row">
                 <input
                   id="code" name="code" defaultValue={raw} placeholder={t.placeholder} autoComplete="off" spellCheck={false} maxLength={200} inputMode="text"
-                  className="h-12 min-w-0 flex-1 rounded-full border border-white/25 bg-white/10 px-5 text-[15.5px] tabular-nums tracking-[0.02em] text-white placeholder:text-white/50 outline-none backdrop-blur-md focus:border-white/60 focus:bg-white/15"
+                  className="h-12 w-full min-w-0 rounded-full sm:flex-1 border border-white/25 bg-white/10 px-5 text-[15.5px] tabular-nums tracking-[0.02em] text-white placeholder:text-white/50 outline-none backdrop-blur-md focus:border-white/60 focus:bg-white/15"
                 />
                 <button type="submit" className={LIME_BUTTON}>{t.check}</button>
               </div>
@@ -167,7 +167,7 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
                   <p className="mt-3 text-[15.5px] leading-[1.65] text-muted-foreground">{doc ? t.foundBody : t.notFoundBody}</p>
                 </div>
                 {doc && (
-                  <div aria-hidden className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-primary">
+                  <div aria-hidden className="hidden h-16 w-16 shrink-0 lg:flex items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-primary">
                     <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
                   </div>
                 )}
