@@ -176,13 +176,95 @@
 
 /* Add data: drop a bill or statement from Home */
 .vch-adddata {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;
-  padding: clamp(16px, 1.6vw, 20px) clamp(18px, 1.8vw, 24px);
+  position: relative; overflow: hidden;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;
+  padding: clamp(12px, 1.2vw, 16px) clamp(18px, 1.8vw, 26px) clamp(12px, 1.2vw, 16px) clamp(14px, 1.4vw, 20px);
   border-radius: 22px; border: 1.5px dashed var(--vc-rule);
-  transition: border-color 150ms ease-out, background 150ms ease-out;
+  background:
+    radial-gradient(60% 140% at 0% 50%, color-mix(in oklab, var(--vc-lime) 16%, transparent), transparent 70%),
+    radial-gradient(40% 140% at 100% 50%, color-mix(in oklab, var(--vc-lime) 10%, transparent), transparent 70%);
+  transition: border-color 150ms ease-out, background-color 150ms ease-out;
 }
-.vch-adddata[data-dragging] { border-color: var(--vc-lime); background: var(--vc-well); }
-.vch-adddata-copy { flex: 1 1 280px; min-width: 0; }
-.vch-adddata h2 { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--vc-ink); }
-.vch-adddata p { margin: 3px 0 0; color: var(--vc-ink-2); font-size: 0.88rem; line-height: 1.45; }
-@media (max-width: 520px) { .vch-adddata .vch-btn { flex: 1 1 100%; } }
+.vch-adddata[data-dragging] { border-color: var(--vc-lime); background-color: var(--vc-well); }
+.vch-adddata-copy { flex: 1 1 260px; min-width: 0; }
+.vch-adddata h2 { margin: 0; font-size: 1.08rem; font-weight: 700; color: var(--vc-ink); }
+.vch-adddata p { margin: 4px 0 0; color: var(--vc-ink-2); font-size: 0.9rem; line-height: 1.5; max-width: 58ch; }
+
+/* Left: papers drop into the reader's slot, one after another. */
+.vch-adddata-stage { position: relative; flex: 0 0 auto; width: 112px; height: 116px; }
+.vch-adddata-reader, .vch-adddata-vault {
+  position: absolute; bottom: 0; height: auto; z-index: 2;
+  filter: drop-shadow(0 10px 14px color-mix(in oklab, var(--vc-ink) 22%, transparent));
+}
+.vch-adddata-reader { left: 0; width: 104px; }
+.vch-sheet {
+  position: absolute; z-index: 1; left: 30px; top: 0; width: 44px; height: 54px;
+  border-radius: 3px; background-color: #f4f1e8; /* paper stays paper in both themes */
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.18);
+  padding: 7px 6px; display: flex; flex-direction: column; gap: 4px;
+  opacity: 0; animation: vch-drop 7.5s cubic-bezier(.45,.05,.4,1) infinite;
+}
+.vch-sheet i { display: block; height: 3px; border-radius: 2px; background: #c9c3b3; }
+.vch-sheet i:nth-child(2) { width: 70%; }
+.vch-sheet i:nth-child(3) { width: 85%; }
+.vch-sheet[data-kind="bill"] b { margin-top: auto; align-self: flex-end; width: 14px; height: 6px; border-radius: 1px; background: var(--vc-lime); }
+.vch-sheet[data-kind="statement"] { animation-delay: 2.5s; }
+.vch-sheet[data-kind="statement"] i { height: 2px; background: #b9c4bd; }
+.vch-sheet[data-kind="sheet"] {
+  animation-delay: 5s;
+  background-image:
+    repeating-linear-gradient(0deg, #cfd8cf 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(90deg, #cfd8cf 0 1px, transparent 1px 11px);
+}
+@keyframes vch-drop {
+  0%   { opacity: 0; transform: translate(-26px, -14px) rotate(-14deg); }
+  6%   { opacity: 1; }
+  22%  { transform: translate(0, 4px) rotate(0deg); }
+  33%  { opacity: 1; transform: translate(0, 40px) rotate(0deg); }
+  36%, 100% { opacity: 0; transform: translate(0, 46px); }
+}
+
+/* Right: what was read travels along the rule and is filed in the vault. */
+.vch-adddata-flow {
+  position: relative; flex: 0 1 260px; min-width: 200px; height: 104px;
+}
+.vch-adddata-flow::before {
+  content: ""; position: absolute; left: 0; right: 70px; top: 58%;
+  border-top: 1.5px dashed color-mix(in oklab, var(--vc-ink) 28%, transparent);
+}
+.vch-adddata-vault { right: 0; width: 96px; }
+.vch-tag {
+  position: absolute; left: 0; top: calc(58% - 13px); z-index: 1;
+  padding: 3px 8px; border-radius: 4px;
+  background: #f4f1e8; color: #1d2320; border-left: 3px solid var(--vc-lime);
+  font-family: var(--font-mono, "IBM Plex Mono", monospace); font-size: 0.74rem; font-weight: 600;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.14);
+  opacity: 0; animation: vch-file 7.5s ease-in-out infinite;
+}
+.vch-tag:nth-child(1) { animation-delay: 1.4s; }
+.vch-tag:nth-child(2) { animation-delay: 3.9s; }
+.vch-tag:nth-child(3) { animation-delay: 6.4s; }
+@keyframes vch-file {
+  0%   { opacity: 0; transform: translateX(0); }
+  5%   { opacity: 1; }
+  30%  { opacity: 1; transform: translateX(150px); }
+  36%, 100% { opacity: 0; transform: translateX(176px) scale(.7); }
+}
+
+.vch-adddata[data-dragging] .vch-sheet { animation-duration: 2.4s; }
+.vch-adddata[data-dragging] .vch-sheet[data-kind="statement"] { animation-delay: .8s; }
+.vch-adddata[data-dragging] .vch-sheet[data-kind="sheet"] { animation-delay: 1.6s; }
+.vch-adddata .vch-btn { flex: 0 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vch-sheet, .vch-tag { animation: none; opacity: 0; }
+  .vch-sheet[data-kind="bill"] { opacity: 1; transform: translateY(14px); }
+  .vch-tag:nth-child(1) { opacity: 1; transform: translateX(60px); }
+}
+@media (max-width: 900px) { .vch-adddata-flow { display: none; } }
+@media (max-width: 520px) {
+  .vch-adddata-stage { width: 84px; height: 88px; }
+  .vch-adddata-reader { width: 80px; }
+  .vch-sheet { left: 22px; width: 36px; height: 44px; }
+  .vch-adddata .vch-btn { flex: 1 1 100%; }
+}
