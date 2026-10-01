@@ -141,3 +141,11 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] axe-core accessibility checks + MSW mocks for outside services in tests
 - [ ] Promptfoo test set for Verde and agents
 - [ ] Docling trial on sample bills vs current reader (needs a separate service; Python)
+
+## Premium PDFs + public check + EU feeds (plan: .lovable/plan/premium-pdfs-public-fingerprint-check-eu-tenders-feed-and-re-2026-10-01.md)
+- [x] Engine bake-off: Typst sample Board Summary (Source Serif 4 + IBM Plex, running header/footer, ruled tables, contour motif, QR) in src/lib/pdf/typst/
+- [ ] Founder sign-off on the sample design (waiting)
+- [ ] Convert Board Summary, report and CBAM to Typst (browser WebAssembly), Greek check
+- [ ] Public /verify page + document_fingerprints table
+- [ ] TED tenders + EUR-Lex watch feeds
+- [ ] OpenSanctions (needs API key), pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
