@@ -96,7 +96,8 @@ export function relevantExcerpt(text: string, callId: string | undefined, budget
 async function fetchPdfText(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(30_000) });
-    if (!res.ok || !isOfficialPdfUrl(res.url || url) && !OFFICIAL_HOSTS.some((h) => h.test(new URL(res.url || url).hostname))) return null;
+    // Redirects must stay on an official host.
+    if (!res.ok || !OFFICIAL_HOSTS.some((h) => h.test(new URL(res.url || url).hostname))) return null;
     const len = Number(res.headers.get("content-length") ?? 0);
     if (len > MAX_BYTES) return null;
     const buf = new Uint8Array(await res.arrayBuffer());
