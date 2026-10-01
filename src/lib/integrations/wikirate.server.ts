@@ -219,10 +219,27 @@ export function median(values: number[]): number | null {
   return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
 }
 
+/** Tonnes CO2e multiplier for a reported unit, or null when the unit is not a mass of CO2e we can trust. */
+export function tonnesFactor(unit: string | null): number | null {
+  const u = (unit ?? "").toLowerCase();
+  if (!u) return 1; // GRI metrics are defined in tonnes CO2e
+  if (/\b(kt|kilo ?tonnes?|thousand tonnes)\b/.test(u)) return 1000;
+  if (/\b(mt|million tonnes|megatonnes?)\b/.test(u)) return 1_000_000;
+  if (/\b(kg|kilograms?)\b/.test(u)) return 0.001;
+  if (/(tonne|ton|\bt\b|tco2)/.test(u)) return 1;
+  return null;
+}
+
 export function peerFromFigures(company: string, f: Partial<Record<FigureKey, Figure>>): PeerRow {
-  const s1 = typeof f.scope1?.value === "number" ? f.scope1 : null;
-  const s2 = typeof f.scope2?.value === "number" ? f.scope2 : null;
-  const emp = typeof f.employees?.value === "number" ? f.employees : null;
+  const raw1 = typeof f.scope1?.value === "number" ? f.scope1 : null;
+  const raw2 = typeof f.scope2?.value === "number" ? f.scope2 : null;
+  const k1 = raw1 ? tonnesFactor(raw1.unit) : null;
+  const k2 = raw2 ? tonnesFactor(raw2.unit) : null;
+  const s1 = raw1 && k1 !== null ? { ...raw1, value: (raw1.value as number) * k1 } : null;
+  const s2 = raw2 && k2 !== null ? { ...raw2, value: (raw2.value as number) * k2 } : null;
+  const empRaw = typeof f.employees?.value === "number" ? f.employees : null;
+  // Head count must be within a year of the emissions figure, or the ratio means nothing.
+  const emp = empRaw && s1 && Math.abs(empRaw.year - s1.year) <= 1 ? empRaw : null;
   if (!s1 || !emp) {
     return { company, status: "no_figures", scope12Tonnes: null, employees: null, year: null, tonnesPerEmployee: null, sources: [] };
   }
@@ -244,6 +261,8 @@ export async function comparePeers(input: {
   peers: string[];
   ownScope12Tonnes: number | null;
   ownEmployees: number | null;
+  /** Months of own readings behind ownScope12Tonnes. Peers report full years, so fewer than 12 is not compared. */
+  ownMonths: number;
 }): Promise<
   | {
       ok: true;
@@ -269,7 +288,7 @@ export async function comparePeers(input: {
   const compared = peers.filter((p) => p.tonnesPerEmployee !== null).map((p) => p.tonnesPerEmployee as number);
   const peerMedian = median(compared);
   const own =
-    input.ownScope12Tonnes !== null && input.ownEmployees && input.ownEmployees > 0
+    input.ownScope12Tonnes !== null && input.ownMonths >= 12 && input.ownEmployees && input.ownEmployees > 0
       ? input.ownScope12Tonnes / input.ownEmployees
       : null;
   return {
@@ -279,6 +298,6 @@ export async function comparePeers(input: {
     own,
     ownVsMedianPct: own !== null && peerMedian ? ((own - peerMedian) / peerMedian) * 100 : null,
     caveat:
-      "Peers are companies that publish reports, usually far larger than an SME. Use the comparison as direction, not as a target, and say so wherever it is shown.",
+      (input.ownScope12Tonnes !== null && input.ownMonths < 12 ? "Your own figure covers fewer than 12 months, so it is not compared with peers' full-year totals. " : "") + "Peers are companies that publish reports, usually far larger than an SME. Use the comparison as direction, not as a target, and say so wherever it is shown.",
   };
 }

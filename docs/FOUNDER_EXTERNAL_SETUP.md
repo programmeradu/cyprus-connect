@@ -214,3 +214,8 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - **Companies Registrar:** nothing to apply for. The company register is published free on data.gov.cy. Optional: a paid live-lookup service (~$5 per 1,000 lookups) if we want real-time checks.
 - **Payments:** Stripe is the chosen billing provider (JCC dropped). Stripe billing is not built yet; when it is, you will need a Stripe account and its keys added to Cloudflare.
 - **WikiRate:** add WIKIRATE_API_KEY to Cloudflare secrets.
+
+## Company register link and WikiRate checks (added 2026-10-01)
+- Apply `scripts/sql/0027_registry_and_goals.sql` on the live database (already applied on preview).
+- Add `WIKIRATE_API_KEY` to Cloudflare secrets so supplier checks and peer comparison work live.
+- No key needed for the Registrar of Companies: it reads the official open register on data.gov.cy (updated monthly, CC BY 4.0).

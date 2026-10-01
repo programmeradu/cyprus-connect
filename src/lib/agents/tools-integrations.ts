@@ -137,7 +137,7 @@ export const compareWithPeers = tool({
   input: z.object({ peers: z.array(z.string().min(2).max(160)).min(1).max(8) }),
   run: async (ctx, input) => {
     const [c, own] = await Promise.all([company(ctx.workspaceId), ownScope12(ctx.workspaceId)]);
-    const r = await comparePeers({ peers: input.peers, ownScope12Tonnes: own.tonnes, ownEmployees: c.employees || null });
+    const r = await comparePeers({ peers: input.peers, ownScope12Tonnes: own.tonnes, ownEmployees: c.employees || null, ownMonths: own.months });
     if (!r.ok) return r;
     return {
       ...r,
