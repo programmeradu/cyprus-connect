@@ -22,8 +22,9 @@ export function plainText(text: string | null | undefined): string {
     .replace(SECTION, "")
     .replace(/\b[a-z]+(?:_[a-z0-9]+)+\b/g, (m) => m.replace(/_/g, " "))
     .replace(/\s*(Everything read and recorded|Partial work) is in the step ledger\.?/gi, "")
-    .replace(/\bI (also )?recorded (this|that|a|the) (fact|finding)( for other agents)?\.?/gi, "")
+    .replace(/\bI (also )?recorded (this|that|a|the) (fact|finding)( for other agents)?\s*\.?/gi, "")
     .replace(/\s+([.,;:])/g, "$1")
+    .replace(/\.{2,}/g, ".")
     .replace(/\s+/g, " ")
     .trim();
 }
