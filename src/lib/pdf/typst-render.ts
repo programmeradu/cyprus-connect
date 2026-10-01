@@ -28,14 +28,16 @@ type Compiler = Awaited<ReturnType<typeof makeCompiler>>;
 let compilerPromise: Promise<Compiler> | null = null;
 
 async function makeCompiler(base: string, wasm?: Uint8Array | ArrayBuffer) {
-  const { createTypstCompiler, preloadRemoteFonts, initOptions } = await import("@myriaddreamin/typst.ts");
+  // Sub-path imports: the package root also pulls in the renderer, which we do not use.
+  const { createTypstCompiler } = await import("@myriaddreamin/typst.ts/compiler");
+  const { preloadRemoteFonts, disableDefaultFontAssets } = await import("@myriaddreamin/typst.ts/dist/esm/options.init.mjs");
   const compiler = createTypstCompiler();
   const fonts = await Promise.all(
     FONT_FILES.map(async (f) => new Uint8Array(await (await fetchOk(`${base}/fonts/pdf/typst/${f}.ttf`)).arrayBuffer())),
   );
   await compiler.init({
     getModule: () => wasm ?? WASM_URL,
-    beforeBuild: [initOptions.disableDefaultFontAssets(), preloadRemoteFonts(fonts)],
+    beforeBuild: [disableDefaultFontAssets(), preloadRemoteFonts(fonts)],
   });
   const enc = new TextEncoder();
   const assets = new Map<string, Uint8Array>();
