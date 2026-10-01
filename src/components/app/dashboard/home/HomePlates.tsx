@@ -123,17 +123,14 @@ export function AgentsDidPlate({ data }: { data: ConsoleOverviewData }) {
 }
 
 interface FundingFeed {
-  matches?: { id: number; title: string; url: string; program: string | null; source: string; deadline: string | null }[];
+  calls?: { id: number; title: string; titleTranslated: string | null; url: string; program: string | null; source: string; deadline: string | null; verdict: "strong" | "needs_info" }[];
 }
 
 export function MoneyPlate() {
   const t = useTranslations("home.money");
-  const feed = useWorkspaceResource<FundingFeed>("/api/grant-alerts/subscribe");
-  const today = new Date().toISOString().slice(0, 10);
-  const open = (feed.data?.matches ?? [])
-    .filter((m) => !m.deadline || m.deadline >= today)
-    .sort((a, b) => (a.deadline ?? "9999").localeCompare(b.deadline ?? "9999"))
-    .slice(0, 3);
+  const el = useLocale() === "el";
+  const feed = useWorkspaceResource<FundingFeed>("/api/console/funding");
+  const open = (feed.data?.calls ?? []).slice(0, 3);
 
   return (
     <section className="vc-plate" aria-labelledby="vch-money-title">
@@ -150,9 +147,9 @@ export function MoneyPlate() {
           {open.map((m) => (
             <li key={m.id}>
               <p>
-                <a href={m.url} target="_blank" rel="noreferrer" className="vch-ext">{m.title}</a>
+                <a href={m.url} target="_blank" rel="noreferrer" className="vch-ext">{el && m.titleTranslated ? m.titleTranslated : m.title}</a>
               </p>
-              <small>{[m.program, m.source].filter(Boolean).join(" · ")}</small>
+              <small>{[m.verdict === "needs_info" ? t("oneAway") : null, m.program, m.source].filter(Boolean).join(" · ")}</small>
               <time>{m.deadline ? daysUntil(m.deadline) <= 0 ? t("closesToday") : t("closes", { days: daysUntil(m.deadline) }) : t("rolling")}</time>
             </li>
           ))}
