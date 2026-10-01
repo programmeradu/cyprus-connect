@@ -1500,7 +1500,15 @@
       "emptyTitle": "No suppliers yet",
       "emptyBody": "Add a supplier by hand, import CBAM lines, or connect your bank so the businesses you pay show up here.",
       "emptyBodyBank": "Add the businesses you pay from the list below, or add a supplier by hand.",
-      "connectBank": "Connect your bank"
+      "connectBank": "Connect your bank",
+      "sanctions": "Sanctions lists",
+      "sanClear": "No match on EU, UN, UK or US sanctions lists (OpenSanctions, checked {date})",
+      "sanReview": "{count, plural, one {# possible match} other {# possible matches}} to review (checked {date}). A name match is not proof; open each record and compare details.",
+      "sanScore": "{pct}% name match",
+      "checkSanctions": "Check sanctions lists",
+      "sanAgain": "Check sanctions again",
+      "sanClearMsg": "{name}: no match on sanctions lists.",
+      "sanMatchMsg": "{name}: possible sanctions match. Review the records before you pay or sign."
     }
   },
   "onboarding": {
