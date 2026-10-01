@@ -106,9 +106,10 @@ export function ConsoleCopilot() {
   const t = verdeText(lang);
   const pathname = usePathname();
   const page = pageOf(pathname);
-  const pageRef = useRef(page);
-  pageRef.current = page;
 
+
+  const pageRef = useRef({ page, lang });
+  pageRef.current = { page, lang };
   const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [proposals, setProposals] = useState<ProposalState[]>([]);
@@ -126,7 +127,7 @@ export function ConsoleCopilot() {
         credentials: "include",
         headers: () => authHeaders(),
         prepareSendMessagesRequest: ({ messages }) => ({
-          body: { message: messages[messages.length - 1], page: pageRef.current },
+          body: { message: messages[messages.length - 1], page: pageRef.current.page, lang: pageRef.current.lang },
         }),
       }),
     [],

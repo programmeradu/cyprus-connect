@@ -218,8 +218,10 @@ export async function POST(req: Request) {
 
   let prompt = "";
   let page: string | null = null;
+  let lang: "en" | "el" = "en";
   try {
-    const body = (await req.json()) as { message?: unknown; prompt?: unknown; page?: unknown };
+    const body = (await req.json()) as { message?: unknown; prompt?: unknown; page?: unknown; lang?: unknown };
+    lang = body.lang === "el" ? "el" : "en";
     prompt = typeof body.prompt === "string" ? body.prompt.trim() : textOf(body.message);
     page = typeof body.page === "string" && PAGES.has(body.page) ? body.page : null;
   } catch {
@@ -246,7 +248,7 @@ export async function POST(req: Request) {
   history.reverse();
 
   const briefing = await buildBriefing(workspace.id, account.id);
-  const system = toolSystemPrompt(workspace.name, workspace.sector, workspace.framework, briefing, page);
+  const system = toolSystemPrompt(workspace.name, workspace.sector, workspace.framework, briefing, page, lang);
 
   const [userRow] = await db
     .insert(copilotMessages)

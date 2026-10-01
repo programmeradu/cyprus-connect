@@ -48,8 +48,8 @@ const T = {
     download: "Download PDF",
     preparing: "Preparing",
     open: "Open",
-    ran: "Read",
-    checking: "Reading",
+    ran: "Checked",
+    checking: "Checking",
     failed: "Could not read",
   },
   el: {
@@ -87,8 +87,8 @@ const T = {
     download: "Λήψη PDF",
     preparing: "Προετοιμασία",
     open: "Άνοιγμα",
-    ran: "Διάβασε",
-    checking: "Διαβάζει",
+    ran: "Έλεγξε",
+    checking: "Ελέγχει",
     failed: "Δεν διαβάστηκε",
   },
 } as const;
@@ -104,7 +104,7 @@ export const TOOL_LABEL: Record<string, { en: string; el: string }> = {
   read_funding: { en: "Grant scout matches", el: "αντιστοιχίσεις Grant scout" },
   read_bills: { en: "utility bills", el: "λογαριασμούς" },
   read_activity: { en: "recent activity", el: "πρόσφατη δραστηριότητα" },
-  ask_for_facts: { en: "missing facts", el: "στοιχεία που λείπουν" },
+  ask_for_facts: { en: "what is missing", el: "τι λείπει" },
   propose_change: { en: "a proposed change", el: "προτεινόμενη αλλαγή" },
   prepare_document: { en: "a document", el: "ένα έγγραφο" },
 };
