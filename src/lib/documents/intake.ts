@@ -344,8 +344,8 @@ export function readBankRows(rows: string[][]): BankSummary | null {
     }
     if (credit >= 0 && out === null) continue;
     if (!out) continue;
-    first = !first || d < first ? d : first;
-    last = !last || d > last ? d : last;
+    if (first === null || d < (first as string)) first = d;
+    if (last === null || d > (last as string)) last = d;
     debitCount++;
     const description = (r[desc] ?? "").slice(0, 200);
     const c = categorise(description, "debit");

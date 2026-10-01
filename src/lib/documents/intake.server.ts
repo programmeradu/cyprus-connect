@@ -126,8 +126,8 @@ async function bankFromText(text: string): Promise<IntakeResult> {
     if (!date || description.length < 3 || !Number.isFinite(amount) || amount <= 0 || amount > 10_000_000) continue;
     if (!haystack.includes(normaliseForMatch(description))) continue;
     count++;
-    first = !first || date < first ? date : first;
-    last = !last || date > last ? date : last;
+    if (first === null || date < (first as string)) first = date;
+    if (last === null || date > (last as string)) last = date;
     const c = categorise(description, "debit");
     if (c.category !== "other" && c.rule) lines.push({ date, description, amount: Math.round(amount * 100) / 100, category: c.category, rule: c.rule });
   }
