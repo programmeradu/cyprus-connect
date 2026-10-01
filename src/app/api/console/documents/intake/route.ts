@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 const log = logger("api.console.documents.intake");
 
-export const PENDING_SOURCE = "intake_pending";
+const PENDING_SOURCE = "intake_pending";
 const KINDS: readonly UploadKind[] = ["pdf", "png", "jpeg", "webp", "csv", "xlsx"];
 
 export async function POST(request: NextRequest) {
