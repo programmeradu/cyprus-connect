@@ -389,7 +389,7 @@ function IntegrationsContent() {
       );
     }
     if (c.id === "energy-charts" && d?.grid) {
-      return <Link href="/app/insights" className="vck-btn vck-btn-quiet">{L("Open today's grid", "Το σημερινό δίκτυο")}</Link>;
+      return <Link href="/app/analytics" className="vck-btn vck-btn-quiet">{L("Open today's grid", "Το σημερινό δίκτυο")}</Link>;
     }
     return null;
   };
