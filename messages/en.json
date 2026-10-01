@@ -1283,7 +1283,9 @@
         "other": "Other countries table",
         "unknown_origin": "Origin unknown (highest value)"
       },
-      "officialNote": "Default values: EU Implementing Regulation 2025/2621 as corrected by 2026/1740. Benchmarks: 2025/2620. Price: official 2026 quarterly prices. Cost does not deduct a carbon price paid in the country of origin."
+      "officialNote": "Default values: EU Implementing Regulation 2025/2621 as corrected by 2026/1740. Benchmarks: 2025/2620. Price: official 2026 quarterly prices. Cost does not deduct a carbon price paid in the country of origin.",
+      "pdf": "Download PDF",
+      "pdfBusy": "Preparing PDF…"
     },
     "reports": {
       "title": "Deliverables",

@@ -194,6 +194,29 @@ export default function CbamPage() {
     { key: "x", header: "", render: (l) => <Btn variant="text" disabled={busy !== null} onClick={() => removeLine(l.id)} aria-label={t("removeLine", { id: l.id })}>{busy === l.id ? t("removing") : t("remove")}</Btn> },
   ];
 
+  const downloadPdf = async () => {
+    if (!decl || !data) return;
+    setBusy("pdf");
+    try {
+      const { downloadCbamPdf } = await import("@/lib/pdf/cbam");
+      await downloadCbamPdf(
+        {
+          year: data.year,
+          company: data.declarant.legalName ?? "Workspace",
+          declarant: data.declarant,
+          status: decl.status,
+          draftHash: decl.draftHash,
+          signedBy: decl.signedBy,
+          signedAt: decl.signedAt,
+          draft: decl.draft as unknown as import("@/lib/agents/cbam-calc").CbamDraft,
+        },
+        `cbam-declaration-${data.year}.pdf`,
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const signatureText = !decl
     ? null
     : decl.status === "signed"
@@ -224,6 +247,9 @@ export default function CbamPage() {
             {busy === "upload" ? t("uploading") : t("upload")}
             <input ref={fileRef} type="file" accept=".csv,text/csv" disabled={busy !== null} onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
           </label>
+          {decl && data && (
+            <Btn variant="quiet" disabled={busy !== null} onClick={downloadPdf}>{busy === "pdf" ? t("pdfBusy") : t("pdf")}</Btn>
+          )}
           <Btn variant="primary" onClick={runAgent} disabled={busy !== null}>{busy === "run" ? t("running") : t("run")}</Btn>
         </div>
       }
