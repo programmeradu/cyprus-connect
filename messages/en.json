@@ -1074,7 +1074,7 @@
         },
         "reduce": {
           "role": "Reduction planning",
-          "mission": "Finds the cheapest next tonne and models the payback for each measure."
+          "mission": "Reads your bills, bank spend and metrics, compares you with published peers in your sector, and proposes the three most useful reduction steps."
         },
         "assure": {
           "role": "Assurance and audit",
@@ -1086,9 +1086,15 @@
         },
         "supply": {
           "role": "Supplier engagement",
-          "mission": "Collects supplier data for Scope 3 and chases the missing responses."
+          "mission": "Checks your suppliers against published emissions on WikiRate and the Cyprus company register, records what it finds, and drafts requests where data is missing."
         }
-      }
+      },
+      "scheduleWeekly": "Every week, and whenever you give it a goal",
+      "goalLabel": "Give {name} a goal",
+      "goalPlaceholder": "e.g. Check whether our cement and steel suppliers publish their emissions",
+      "goalHint": "It decides which sources to combine. Anything that leaves the company waits for your approval.",
+      "goalRun": "Start with this goal",
+      "plannerBadge": "Plans its own steps"
     },
     "cbam": {
       "title": "CBAM declaration",
