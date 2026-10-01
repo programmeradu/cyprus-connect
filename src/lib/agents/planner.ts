@@ -67,7 +67,7 @@ function systemPrompt(agentName: string, today: string): string {
     "- When a person must act or decide, use create_task with a short title and a detail that cites the figures. Do not create a task that only says what you read.",
     "- An email to a supplier (send_supplier_request) only goes out after a person approves the exact text; write it plainly and politely.",
     "- Peer figures from WikiRate are from large companies; say that whenever you compare.",
-    "- Stop when the job is done. Finish with two or three plain sentences: what you found, what you recorded, and what is waiting for a person.",
+    "- Stop when the job is done. Finish with two or three plain sentences a business owner understands: what you found and what is waiting for them. No markdown, bullet points, headings, tool names or fact keys.",
   ].join("\n");
 }
 
@@ -133,18 +133,25 @@ export async function runPlanner(
     }
   } catch (error) {
     if (error instanceof StepLimitError) {
-      summary = summary || `${error.message} Partial work is in the step ledger.`;
+      summary = summary || roundUp(executed, waiting, true);
     } else {
       throw new Error(aiErrorMessage(error));
     }
   }
 
-  if (!summary) summary = `Stopped after ${MAX_TURNS} rounds. Everything read and recorded is in the step ledger.`;
+  if (!summary) summary = roundUp(executed, waiting, false);
   return {
     summary: dropRepeatedParagraphs(summary).slice(0, 1200),
     itemsProcessed: executed,
     confidence: waiting > 0 ? 0.6 : executed > 0 ? 0.8 : 0.3,
   };
+}
+
+/** A plain closing line when the model did not write one. */
+function roundUp(executed: number, waiting: number, hitLimit: boolean): string {
+  const did = executed > 0 ? `Checked ${executed} ${executed === 1 ? "source" : "sources"}` : "Looked through the workspace";
+  const next = waiting > 0 ? ` ${waiting} ${waiting === 1 ? "item is" : "items are"} waiting for your approval.` : " Nothing needs you right now.";
+  return `${did}${hitLimit ? " before reaching its limit for one run" : ""}.${next}`;
 }
 
 /** Models sometimes restate a short opener in a longer closing paragraph; keep only the fuller one. */

@@ -96,7 +96,7 @@ export function WhatChangedPlate({ data }: { data: ConsoleOverviewData }) {
 export function AgentsDidPlate({ data }: { data: ConsoleOverviewData }) {
   const t = useTranslations("home.agents");
   const locale = useLocale();
-  const events = data.events.slice(0, 5);
+  const events = data.events.slice(0, 8);
   return (
     <section className="vc-plate" aria-labelledby="vch-agents-title">
       <header>
@@ -106,11 +106,11 @@ export function AgentsDidPlate({ data }: { data: ConsoleOverviewData }) {
       {events.length === 0 ? (
         <p className="vch-empty">{t("empty")}</p>
       ) : (
-        <ul className="vch-feed">
+        <ul className="vch-feed" tabIndex={0} aria-label={t("title")}>
           {events.map((e) => (
             <li key={e.id} data-actor={e.actorType}>
               <p>
-                <strong>{e.actorName}</strong> {e.verb} {e.object}
+                <strong>{e.actorName}</strong> {e.verb}{e.object ? ` ${e.object}` : ""}
               </p>
               {e.detail && <small>{e.detail}</small>}
               <time dateTime={e.createdAt}>{relativeTime(e.createdAt, locale)}</time>
