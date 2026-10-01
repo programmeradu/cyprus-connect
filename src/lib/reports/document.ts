@@ -105,7 +105,7 @@ async function gatherRecords(workspace: typeof workspaces.$inferSelect, accountI
     "",
     "SUPPLIERS (suppliers)",
     ...((suppliers ?? []).length
-      ? (suppliers ?? []).map((s) => `- ${s.supplierName}${s.country ? `, ${s.country}` : ""}, sanctions check ${s.sanctionsStatus ?? "not run"}`)
+      ? (suppliers ?? []).map((s) => `- ${s.supplierName}, sanctions check ${s.sanctionsStatus ?? "not run"}`)
       : ["- none recorded"]),
     "",
     "FUNDING FITS (grant_scout)",
