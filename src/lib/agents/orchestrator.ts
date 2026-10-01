@@ -26,6 +26,7 @@ import {
 import { isPolicyMode, retryDelayMs, type PolicyMode, type RiskLevel } from "./policy";
 import { AgentRuntime } from "./runtime";
 import { runEvidenceSweep } from "./evidence-sweep";
+import { runGrantScout } from "./grant-scout";
 import { runCbamAgent } from "./cbam-agent";
 import { runPlanner } from "./planner";
 import { hasLovableAi } from "@/lib/lovable-ai";
@@ -51,6 +52,7 @@ export const PLANNER_MISSIONS: Record<string, string> = {
 export const RUNNABLE_AGENTS: Record<string, { handler: AgentHandler; cadence: "daily" | "weekly"; planner?: true }> = {
   ingest: { handler: (rt) => runEvidenceSweep(rt), cadence: "daily" },
   cbam: { handler: (rt) => runCbamAgent(rt), cadence: "daily" },
+  grants: { handler: (rt) => runGrantScout(rt), cadence: "daily" },
   supply: {
     handler: (rt, job) => runPlanner(rt, { agentName: job.agentName, mission: PLANNER_MISSIONS.supply, goal: job.goal }),
     cadence: "weekly",
