@@ -56,7 +56,7 @@ export function MarketingHeader() {
         <div className="pointer-events-auto absolute right-4 top-1/2 hidden -translate-y-1/2 md:block sm:right-8">
           {session?.user ? (
             <div className="flex items-center gap-2">
-              <SubscriptionBadge />
+              <SubscriptionBadge overHero={!scrolled} />
               <Link
                 href="/app"
                 className="inline-flex h-9 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-4 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"

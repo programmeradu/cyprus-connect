@@ -6,7 +6,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-export const SubscriptionBadge = () => {
+/** `overHero`: the header sits on the always-dark hero photo, so use light glass. */
+export const SubscriptionBadge = ({ overHero = false }: { overHero?: boolean }) => {
   const tPlans = useTranslations("billing.planNames");
   const { data: session, isPending: isSessionPending } = useSession();
   const { plan, isLoading } = useSubscription();
@@ -17,17 +18,16 @@ export const SubscriptionBadge = () => {
   const planId = plan?.id || "free";
   const planName = planId === "free" ? tPlans("free") : plan?.name;
 
-  const badgeColor =
-    planId === "pro" || planId === "enterprise"
-      ? "border-primary/40 text-foreground"
-      : "border-foreground/15 text-foreground";
+  const badgeColor = overHero
+    ? "border-white/25 bg-white/12 text-white hover:bg-white/20 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.6)]"
+    : "border-foreground/15 bg-background/85 text-foreground hover:bg-background shadow-[0_10px_30px_-14px_rgba(0,0,0,0.35)]";
   // Plan-tier emoji is an approved exception (see mem://design/logos-and-assets).
   const badgeIcon = planId === "enterprise" ? "👑" : planId === "pro" ? "⭐" : "🌱";
 
   return (
     <Link href="/pricing">
       <motion.div
-        className={`inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 bg-background/85 backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.45)] ${badgeColor} text-[13px] font-semibold cursor-pointer transition-colors hover:bg-background`}
+        className={`inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 backdrop-blur-xl backdrop-saturate-150 ${badgeColor} text-[13px] font-semibold cursor-pointer transition-colors duration-300`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
