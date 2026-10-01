@@ -50,7 +50,7 @@ raw = open(SRC, encoding="utf-8").read()
 soup = BeautifulSoup(raw, "lxml")
 cells = lambda tr: [re.sub(r"\s+", " ", td.get_text(" ")).strip() for td in tr.find_all(["td", "th"], recursive=False)]
 
-countries, other, annex_iv = {}, None, None
+countries, other, annex_iv, goods = {}, None, None, {}
 for t in soup.find_all("table"):
     rows = t.find_all("tr")
     if len(rows) < 4:
@@ -75,6 +75,7 @@ for t in soup.find_all("table"):
             if total is None:
                 continue
             data[code] = [None, None, total, c[-1].strip("() ") or None]
+            goods[code] = c[1]
         else:
             d, i, tot = num(c[2]), num(c[3]), num(c[4])
             if tot is None:
@@ -107,6 +108,7 @@ out = {
                "J": "High alloy steel (EAF)", "K": "Primary aluminium", "L": "Secondary aluminium"},
     "other": other,
     "annexIV": annex_iv or {},
+    "goods": goods,
     "countries": dict(sorted(countries.items())),
 }
 json.dump(out, open(OUT, "w"), separators=(",", ":"))
