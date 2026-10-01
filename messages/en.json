@@ -2485,7 +2485,10 @@
         "finance": "Finance"
       },
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "openDraft": "Open draft",
+      "readyToast": "Saved to Deliverables: {title}",
+      "openShort": "Open"
     },
     "deadline": {
       "title": "Next deadline",

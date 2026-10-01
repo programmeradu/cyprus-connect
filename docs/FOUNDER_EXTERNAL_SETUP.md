@@ -288,3 +288,5 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Content (2026-10-01)
 - Review the rewritten CBAM Cyprus guide and new EUDR and EU greenwashing guides on /en/learn before publishing; confirm the Department of Environment CBAM contact on gov.cy.
 - Batch 2 (CSRD rewrites, green loans guide): have your accountant sanity-check the CSRD thresholds wording once the final Omnibus text is published in the Official Journal.
+- CBAM Registry file: the UI manual and the CarbonOps sample are not enough. Still needed: the official definitive-period CBAM declaration XSD + code lists (ask the CBAM helpdesk or Department of Environment).
+- Live errors seen on vuneli.com (Oct 1): Verde returns 500 and Home summary 503 — run pending live SQL migrations (incl. 0040_copilot_parts.sql) and redeploy; the compliance "Generate report" button no longer needs a Gemini key.

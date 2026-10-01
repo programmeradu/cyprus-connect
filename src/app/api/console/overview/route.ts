@@ -12,8 +12,9 @@ import {
   obligations,
   activityEvents,
   user as userTable,
+  reports,
 } from "@/db/schema";
-import { and, asc, desc, eq, ne } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { logger } from "@/lib/log";
 import { liveConnections } from "@/lib/console/connections.server";
@@ -251,7 +252,21 @@ export async function GET(req: Request) {
       locale,
     ).catch(() => new Map<string, string>());
     const tx = (v: string | null) => (v ? tr.get(v) ?? v : v);
-    const tasksOut = locale === "el" ? tasks.map((x) => ({ ...x, title: tx(x.title) ?? x.title, detail: tx(x.detail) })) : tasks;
+    // A review task that came with a drafted document links straight to it.
+    const taskIds = tasks.map((x) => x.id);
+    const drafts = taskIds.length
+      ? await db
+          .select({ id: reports.id, title: reports.title, taskId: reports.taskId })
+          .from(reports)
+          .where(and(eq(reports.workspaceId, workspaceId), inArray(reports.taskId, taskIds)))
+          .catch(() => [])
+      : [];
+    const draftFor = new Map(drafts.map((d) => [d.taskId, d]));
+    const withDrafts = tasks.map((x) => {
+      const d = draftFor.get(x.id);
+      return { ...x, deliverableHref: d ? `/app/reports/${d.id}` : null, deliverableTitle: d?.title ?? null };
+    });
+    const tasksOut = locale === "el" ? withDrafts.map((x) => ({ ...x, title: tx(x.title) ?? x.title, detail: tx(x.detail) })) : withDrafts;
     const runsOut = locale === "el" ? runs.map((x) => ({ ...x, summary: tx(x.summary) ?? x.summary })) : runs;
     const eventsOut = locale === "el" ? events.map((x) => ({ ...x, object: tx(x.object) ?? x.object, detail: tx(x.detail) })) : events;
 

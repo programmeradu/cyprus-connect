@@ -7,6 +7,8 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
@@ -23,6 +25,7 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   const [busy, setBusy] = useState<number | null>(null);
   const [failed, setFailed] = useState<{ id: number; message: string } | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const router = useRouter();
 
   const tasks = data?.tasks ?? [];
   const agentName = (key: string) => data?.agents.find((a) => a.key === key)?.name ?? key;
@@ -31,8 +34,18 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   const decide = async (task: ConsoleTask, decision: "approve" | "reject") => {
     setBusy(task.id);
     setFailed(null);
-    const ok = await run(`/api/console/tasks/${task.id}`, { body: { decision }, invalidates: ["/api/console/agents"] });
+    const ok = await run<{ deliverable?: { href: string; title: string } | null }>(`/api/console/tasks/${task.id}`, {
+      body: { decision },
+      invalidates: ["/api/console/agents", "/api/console/overview", "/api/console/reports"],
+    });
     if (!ok) setFailed({ id: task.id, message: t("failed") });
+    else if (ok.deliverable && decision === "approve") {
+      const { href, title } = ok.deliverable;
+      toast.success(t("readyToast", { title }), {
+        duration: 12000,
+        action: { label: t("openShort"), onClick: () => router.push(href) },
+      });
+    }
     setBusy(null);
   };
 
@@ -62,6 +75,9 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
                     {" · "}
                     {relativeTime(task.createdAt, locale)}
                   </small>
+                  {task.deliverableHref && (
+                    <Link href={task.deliverableHref} className="vch-link">{t("openDraft")}{task.deliverableTitle ? ` · ${task.deliverableTitle}` : ""}</Link>
+                  )}
                   {failed?.id === task.id && <p className="vch-error" role="alert">{failed.message}</p>}
                 </div>
                 <div className="vch-task-actions">
