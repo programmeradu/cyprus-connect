@@ -10,6 +10,7 @@ import {
 } from '@/db/schema';
 import { eq, desc, and, gte, lte } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { REFERENCE_FACTORS } from "@/lib/emissions/reference-factors";
 
 export async function GET(request: NextRequest) {
   try {
@@ -83,24 +84,30 @@ export async function GET(request: NextRequest) {
     // Calculate total emissions and breakdown
     const totalEmissions = currentEmissions ? currentEmissions.totalCo2e : 0;
     
-    // Calculate category breakdown percentages
-    const emissionsBreakdown = currentEmissions ? {
-      electricity: {
-        value: currentEmissions.electricity,
-        percentage: (currentEmissions.electricity / totalEmissions) * 100
-      },
-      gas: {
-        value: currentEmissions.gas,
-        percentage: (currentEmissions.gas / totalEmissions) * 100
-      },
-      transportation: {
-        value: currentEmissions.transport,
-        percentage: (currentEmissions.transport / totalEmissions) * 100
-      },
-      other: {
-        value: currentEmissions.water + currentEmissions.waste,
-        percentage: ((currentEmissions.water + currentEmissions.waste) / totalEmissions) * 100
-      }
+    // The emissions row stores activity amounts (kWh, m3, litres, kg, km) per
+    // category and the calculated total in tonnes. Convert each category to
+    // tonnes with the published reference factors before showing shares, so a
+    // kWh figure is never presented as tonnes.
+    const tonnesOf = (row: typeof currentEmissions | null) => {
+      if (!row) return null;
+      const t = (key: keyof typeof REFERENCE_FACTORS, v: number) => ((Number(v) || 0) * REFERENCE_FACTORS[key].kgCo2ePerUnit) / 1000;
+      return {
+        electricity: t("electricity", row.electricity),
+        gas: t("gas", row.gas),
+        transport: t("transport", row.transport),
+        water: t("water", row.water),
+        waste: t("waste", row.waste),
+      };
+    };
+    const cur = tonnesOf(currentEmissions);
+    const prevT = tonnesOf(previousYearEmissions);
+    const catSum = cur ? cur.electricity + cur.gas + cur.transport + cur.water + cur.waste : 0;
+    const share = (v: number) => (catSum > 0 ? (v / catSum) * 100 : 0);
+    const emissionsBreakdown = cur && catSum > 0 ? {
+      electricity: { value: cur.electricity, percentage: share(cur.electricity) },
+      gas: { value: cur.gas, percentage: share(cur.gas) },
+      transportation: { value: cur.transport, percentage: share(cur.transport) },
+      other: { value: cur.water + cur.waste, percentage: share(cur.water + cur.waste) },
     } : null;
 
     // Calculate YoY changes
@@ -117,25 +124,16 @@ export async function GET(request: NextRequest) {
           : 0
       },
       energy: {
-        value: currentEmissions ? currentEmissions.electricity + currentEmissions.gas : 0,
-        change: previousYearEmissions 
-          ? calculateYoYChange(
-              currentEmissions.electricity + currentEmissions.gas,
-              previousYearEmissions.electricity + previousYearEmissions.gas
-            )
-          : 0
+        value: cur ? cur.electricity + cur.gas : 0,
+        change: cur && prevT ? calculateYoYChange(cur.electricity + cur.gas, prevT.electricity + prevT.gas) : 0
       },
       water: {
-        value: currentEmissions ? currentEmissions.water : 0,
-        change: previousYearEmissions 
-          ? calculateYoYChange(currentEmissions.water, previousYearEmissions.water)
-          : 0
+        value: cur ? cur.water : 0,
+        change: cur && prevT ? calculateYoYChange(cur.water, prevT.water) : 0
       },
       waste: {
-        value: currentEmissions ? currentEmissions.waste : 0,
-        change: previousYearEmissions 
-          ? calculateYoYChange(currentEmissions.waste, previousYearEmissions.waste)
-          : 0
+        value: cur ? cur.waste : 0,
+        change: cur && prevT ? calculateYoYChange(cur.waste, prevT.waste) : 0
       }
     };
 

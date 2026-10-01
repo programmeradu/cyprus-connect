@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { QA_ACCOUNT, isQaClient } from "@/lib/qa-bypass";
 import { LiveInsights } from "@/components/app/console/LiveInsights";
 import { useTranslations } from "next-intl";
 import { ExportReportButton } from "@/components/app/ExportReportButton";
@@ -45,7 +46,11 @@ export default function AnalyticsPage() {
   const tc = useTranslations("common");
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const userId = session?.user?.id ?? null;
+  // Preview QA mode: the server already accepts the test identity.
+  const [qa, setQa] = useState(false);
+  useEffect(() => setQa(isQaClient()), []);
+  const userId = session?.user?.id ?? (qa ? QA_ACCOUNT.id : null);
+  const signedIn = Boolean(session?.user) || qa;
 
   // Shared records: the same copies the dashboard and settings read.
   const analytics = useWorkspaceResource<{ data: AnalyticsData }>(
@@ -54,7 +59,7 @@ export default function AnalyticsPage() {
   const analyticsData = analytics.data?.data ?? null;
 
   useEffect(() => {
-    if (!isPending && !session?.user) {
+    if (!isPending && !session?.user && !isQaClient()) {
       if (!APP_OPEN_ACCESS) router.push("/auth?redirect=" + encodeURIComponent(window.location.pathname));
     }
   }, [session, isPending, router]);
@@ -75,9 +80,9 @@ export default function AnalyticsPage() {
 
   return (
     <PageShell
-      signedOut={!isPending && !session?.user}
-      loading={isPending || analytics.loading}
-      error={isPending ? null : analytics.error}
+      signedOut={!qa && !isPending && !signedIn}
+      loading={(!qa && isPending) || analytics.loading}
+      error={!qa && isPending ? null : analytics.error}
       onRetry={handleRefresh}
       header={
         <PageHeader
@@ -89,7 +94,7 @@ export default function AnalyticsPage() {
                 {refreshing ? tc("refreshing") : tc("refresh")}
               </button>
               <ExportReportButton
-                userId={session?.user?.id}
+                userId={userId ?? undefined}
                 analyticsData={analyticsData}
                 companyName={session?.user?.name || "Pilot Enterprise"}
               />

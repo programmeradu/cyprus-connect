@@ -167,8 +167,8 @@
       }
     },
     "analytics": {
-      "title": "Analytics",
-      "subtitle": "Detailed insights into your sustainability metrics",
+      "title": "Footprint",
+      "subtitle": "Your emissions from recorded figures, today's Cyprus grid, deadlines and sourced advice in one place",
       "loading": "Loading analytics…",
       "unableTitle": "Unable to Load Analytics",
       "unableFallback": "No analytics data available",
@@ -178,7 +178,7 @@
       "water": "Water",
       "waste": "Waste",
       "yoy": "{value}% YoY",
-      "tonsPerYear": "tons CO2e/year",
+      "tonsPerYear": "t CO₂e, latest month",
       "tonsPerMonth": "tons CO2e/month",
       "tons": "{value} tons",
       "byCategory": "Emissions by Category",
