@@ -42,7 +42,7 @@ const T = {
     imgAlt: "The footer of a printed report showing a fingerprint and a QR code",
     heroAlt: "A reviewer scanning the QR code on a printed sustainability report in a Nicosia boardroom",
     questions: "Questions about a document?",
-    questionsBody: "Write to verify@vuneli.com with the document ID. We answer lenders, auditors and public bodies within two working days.",
+    questionsBody: "Write to hello@vuneli.com with the document ID. Lenders, auditors and public bodies are welcome to contact us directly.",
   },
   el: {
     title: "Έλεγχος εγγράφου Vuneli",
@@ -71,7 +71,7 @@ const T = {
     imgAlt: "Το υποσέλιδο τυπωμένης έκθεσης με αποτύπωμα και κωδικό QR",
     heroAlt: "Ελεγκτής σαρώνει τον κωδικό QR τυπωμένης έκθεσης βιωσιμότητας σε αίθουσα συσκέψεων στη Λευκωσία",
     questions: "Ερωτήσεις για ένα έγγραφο;",
-    questionsBody: "Γράψτε στο verify@vuneli.com με τον κωδικό του εγγράφου. Απαντούμε σε τράπεζες, ελεγκτές και δημόσιους φορείς εντός δύο εργάσιμων ημερών.",
+    questionsBody: "Γράψτε στο hello@vuneli.com με τον κωδικό του εγγράφου. Τράπεζες, ελεγκτές και δημόσιοι φορείς μπορούν να επικοινωνήσουν απευθείας μαζί μας.",
   },
 } as const;
 
