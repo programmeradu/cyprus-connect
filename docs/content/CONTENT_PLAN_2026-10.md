@@ -8,9 +8,9 @@ Voice: Vuneli team. Every guide ships EN + EL, its own hero image, sourced facts
 
 - Batch 3: CBAM default values explained (new), CBAM authorised declarant portal guide (new, from DG TAXUD UMN v6.00)
 - Batch 4: Cyprus electricity emission factor (new), SME document checklist + Verde product update (new)
+- Batch 5: VSME guide (full rewrite: Recommendation 2025/1710, B1-B11/C1-C9, Omnibus value-chain cap; removed unsourced cost figures)
 
 ## Next
-- VSME guide refresh (link to value-chain cap, bank use)
 - ESRS explained refresh (simplified ESRS)
 - Double materiality refresh (lighter post-Omnibus scope)
 - EU Taxonomy refresh (2025 simplification, materiality threshold)
