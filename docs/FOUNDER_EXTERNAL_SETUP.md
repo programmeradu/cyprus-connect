@@ -262,3 +262,5 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Run `scripts/sql/0036_funding_matching.sql` on the live database (after 0035).
 - Then run `scripts/sql/0037_funding_pdf_reread.sql` once: Grant scout re-reads every open call together with its official PDFs (40 calls per daily run, so it finishes within a few days).
 - Live Cloudflare needs `LOVABLE_API_KEY` set so the daily funding scan can read call rules (max 40 calls/day).
+
+- Run `scripts/sql/0038_default_obligations.sql` on the live database. It now only removes four made-up deadlines (CBAM Q3 2026, VSME 2026, CSRD Wave 3, energy audit) that an earlier version added; untouched rows only.
