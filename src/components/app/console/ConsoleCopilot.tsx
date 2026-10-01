@@ -340,7 +340,12 @@ export function ConsoleCopilot() {
       );
     }
     const out = part.output;
-    const step = <p className="vv-step" data-state="done">{t.ran} {label}</p>;
+    const prepared = name === "propose_change" || name === "prepare_document";
+    const step = (
+      <p className="vv-step" data-state="done">
+        {prepared ? (lang === "el" ? "Ετοίμασε" : "Prepared") : t.ran} {label}
+      </p>
+    );
     let card: React.ReactNode = null;
     switch (name) {
       case "read_footprint": card = <FootprintCard out={out} lang={lang} />; break;

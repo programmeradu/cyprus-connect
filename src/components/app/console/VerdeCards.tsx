@@ -105,7 +105,7 @@ export const TOOL_LABEL: Record<string, { en: string; el: string }> = {
   read_bills: { en: "utility bills", el: "λογαριασμούς" },
   read_activity: { en: "recent activity", el: "πρόσφατη δραστηριότητα" },
   ask_for_facts: { en: "what is missing", el: "τι λείπει" },
-  propose_change: { en: "a proposed change", el: "προτεινόμενη αλλαγή" },
+  propose_change: { en: "a change for your approval", el: "μια αλλαγή για έγκριση" },
   prepare_document: { en: "a document", el: "ένα έγγραφο" },
 };
 
