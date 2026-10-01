@@ -57,7 +57,7 @@
 		{
 			"binding": "HYPERDRIVE",
 			"id": "f13143783bcc4d0fb0ef19b3140a462a",
-			"localConnectionString": "postgresql://postgres.mvjasyxjkqnjhvhwkgjo:Sammyone%4012345sam@aws-0-eu-west-1.pooler.supabase.com:5432/postgres"
+			"localConnectionString": "postgresql://postgres.mvjasyxjkqnjhvhwkgjo:Sammyone%4012345sam@aws-0-eu-west-1.pooler.supabase.com:6543/postgres"
 		}
 	]
 }

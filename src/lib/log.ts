@@ -33,6 +33,8 @@ export function errorFields(error: unknown): Fields {
       errorName: error.name,
       errorMessage: redact(error.message),
       stack: error.stack?.split("\n").slice(0, 6).join("\n"),
+      // Database wrappers hide the real reason (timeout, missing column) here.
+      ...(error.cause instanceof Error ? { cause: redact(error.cause.message) } : {}),
     };
   }
   return { errorMessage: redact(String(error)) };

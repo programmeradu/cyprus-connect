@@ -10,6 +10,7 @@ import {
 } from '@/db/schema';
 import { eq, desc, and, gte, lte } from 'drizzle-orm';
 import { bindSessionUser } from "@/lib/api-auth";
+import { REFERENCE_FACTORS } from "@/lib/emissions/reference-factors";
 
 export async function GET(request: NextRequest) {
   try {
@@ -80,62 +81,72 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(emissions.periodYear), desc(emissions.periodMonth))
       .limit(12);
 
-    // Calculate total emissions and breakdown
-    const totalEmissions = currentEmissions ? currentEmissions.totalCo2e : 0;
-    
-    // Calculate category breakdown percentages
-    const emissionsBreakdown = currentEmissions ? {
-      electricity: {
-        value: currentEmissions.electricity,
-        percentage: (currentEmissions.electricity / totalEmissions) * 100
-      },
-      gas: {
-        value: currentEmissions.gas,
-        percentage: (currentEmissions.gas / totalEmissions) * 100
-      },
-      transportation: {
-        value: currentEmissions.transport,
-        percentage: (currentEmissions.transport / totalEmissions) * 100
-      },
-      other: {
-        value: currentEmissions.water + currentEmissions.waste,
-        percentage: ((currentEmissions.water + currentEmissions.waste) / totalEmissions) * 100
-      }
+
+    // The emissions row stores activity amounts (kWh, m3, litres, kg, km) per
+    // category and the calculated total in tonnes. Convert each category to
+    // tonnes with the published reference factors before showing shares, so a
+    // kWh figure is never presented as tonnes.
+    // The saved total is the calculator's figure (live factors when enabled,
+    // published reference factors otherwise) and is what every other page
+    // shows. The row keeps raw activity per category, so split that total by
+    // each category's reference-factor share; the parts then add up exactly.
+    const tonnesOf = (row: typeof currentEmissions | null) => {
+      if (!row) return null;
+      const t = (key: keyof typeof REFERENCE_FACTORS, v: number) => ((Number(v) || 0) * REFERENCE_FACTORS[key].kgCo2ePerUnit) / 1000;
+      const raw = {
+        electricity: t("electricity", row.electricity),
+        gas: t("gas", row.gas),
+        transport: t("transport", row.transport),
+        water: t("water", row.water),
+        waste: t("waste", row.waste),
+      };
+      const sum = raw.electricity + raw.gas + raw.transport + raw.water + raw.waste;
+      const saved = Number(row.totalCo2e) || 0;
+      const k = sum > 0 && saved > 0 ? saved / sum : 1;
+      return {
+        electricity: raw.electricity * k,
+        gas: raw.gas * k,
+        transport: raw.transport * k,
+        water: raw.water * k,
+        waste: raw.waste * k,
+      };
+    };
+    const cur = tonnesOf(currentEmissions);
+    const prevT = tonnesOf(previousYearEmissions);
+    const catSum = cur ? cur.electricity + cur.gas + cur.transport + cur.water + cur.waste : 0;
+    const totalEmissions = currentEmissions?.totalCo2e || catSum;
+    const prevTotal = previousYearEmissions ? (previousYearEmissions.totalCo2e || null) : null;
+    const share = (v: number) => (catSum > 0 ? (v / catSum) * 100 : 0);
+    const emissionsBreakdown = cur && catSum > 0 ? {
+      electricity: { value: cur.electricity, percentage: share(cur.electricity) },
+      gas: { value: cur.gas, percentage: share(cur.gas) },
+      transportation: { value: cur.transport, percentage: share(cur.transport) },
+      other: { value: cur.water + cur.waste, percentage: share(cur.water + cur.waste) },
     } : null;
 
     // Calculate YoY changes
-    const calculateYoYChange = (current: number, previous: number | null) => {
-      if (!previous || previous === 0) return 0;
+    // null = nothing to compare against (shown as no change line, not 0%).
+    const calculateYoYChange = (current: number, previous: number | null): number | null => {
+      if (!previous || previous === 0) return null;
       return ((current - previous) / previous) * 100;
     };
 
     const metricsData = {
       totalEmissions: {
         value: totalEmissions,
-        change: previousYearEmissions 
-          ? calculateYoYChange(totalEmissions, previousYearEmissions.totalCo2e)
-          : 0
+        change: calculateYoYChange(totalEmissions, prevTotal)
       },
       energy: {
-        value: currentEmissions ? currentEmissions.electricity + currentEmissions.gas : 0,
-        change: previousYearEmissions 
-          ? calculateYoYChange(
-              currentEmissions.electricity + currentEmissions.gas,
-              previousYearEmissions.electricity + previousYearEmissions.gas
-            )
-          : 0
+        value: cur ? cur.electricity + cur.gas : 0,
+        change: cur && prevT ? calculateYoYChange(cur.electricity + cur.gas, prevT.electricity + prevT.gas) : null
       },
       water: {
-        value: currentEmissions ? currentEmissions.water : 0,
-        change: previousYearEmissions 
-          ? calculateYoYChange(currentEmissions.water, previousYearEmissions.water)
-          : 0
+        value: cur ? cur.water : 0,
+        change: cur && prevT ? calculateYoYChange(cur.water, prevT.water) : null
       },
       waste: {
-        value: currentEmissions ? currentEmissions.waste : 0,
-        change: previousYearEmissions 
-          ? calculateYoYChange(currentEmissions.waste, previousYearEmissions.waste)
-          : 0
+        value: cur ? cur.waste : 0,
+        change: cur && prevT ? calculateYoYChange(cur.waste, prevT.waste) : null
       }
     };
 
@@ -143,7 +154,7 @@ export async function GET(request: NextRequest) {
     const monthlyTrend = historicalData.reverse().map(record => ({
       month: new Date(record.year, record.month - 1).toLocaleString('en-GB', { month: 'long' }),
       value: record.totalCo2e,
-      change: 0 // Will be calculated based on previous month
+      change: null as number | null
     }));
 
     // Calculate month-over-month changes
@@ -164,10 +175,10 @@ export async function GET(request: NextRequest) {
 
     // Calculate user's performance vs industry average
     const industryComparison = benchmarkData ? {
-      yourPerformance: totalEmissions / 12, // Monthly average
+      yourPerformance: totalEmissions, // latest month
       industryAverage: benchmarkData.averageValue,
       betterBy: benchmarkData.averageValue > 0 
-        ? ((benchmarkData.averageValue - (totalEmissions / 12)) / benchmarkData.averageValue) * 100
+        ? ((benchmarkData.averageValue - totalEmissions) / benchmarkData.averageValue) * 100
         : 0
     } : null;
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { QA_ACCOUNT, isQaClient } from "@/lib/qa-bypass";
 import { LiveInsights } from "@/components/app/console/LiveInsights";
 import { useTranslations } from "next-intl";
 import { ExportReportButton } from "@/components/app/ExportReportButton";
@@ -20,10 +21,10 @@ import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
 interface AnalyticsData {
   metrics: {
-    totalEmissions: { value: number; change: number };
-    energy: { value: number; change: number };
-    water: { value: number; change: number };
-    waste: { value: number; change: number };
+    totalEmissions: { value: number; change: number | null };
+    energy: { value: number; change: number | null };
+    water: { value: number; change: number | null };
+    waste: { value: number; change: number | null };
   };
   emissionsBreakdown: {
     electricity: { value: number; percentage: number };
@@ -31,7 +32,7 @@ interface AnalyticsData {
     transportation: { value: number; percentage: number };
     other: { value: number; percentage: number };
   } | null;
-  monthlyTrend: Array<{ month: string; value: number; change: number }>;
+  monthlyTrend: Array<{ month: string; value: number; change: number | null }>;
   industryComparison: {
     yourPerformance: number;
     industryAverage: number;
@@ -45,16 +46,28 @@ export default function AnalyticsPage() {
   const tc = useTranslations("common");
   const { data: session, isPending } = useSession();
   const router = useRouter();
-  const userId = session?.user?.id ?? null;
+  // Preview QA mode: the server already accepts the test identity.
+  const [qa, setQa] = useState(false);
+  useEffect(() => setQa(isQaClient()), []);
+  const userId = session?.user?.id ?? (qa ? QA_ACCOUNT.id : null);
+  const signedIn = Boolean(session?.user) || qa;
 
   // Shared records: the same copies the dashboard and settings read.
   const analytics = useWorkspaceResource<{ data: AnalyticsData }>(
     userId ? `/api/analytics?userId=${encodeURIComponent(userId)}` : null,
   );
   const analyticsData = analytics.data?.data ?? null;
+  // No line at all when there is no same month last year (never a fake 0%).
+  const yoyDelta = (change: number | null) =>
+    change === null
+      ? {}
+      : {
+          delta: t("yoy", { value: `${change > 0 ? "+" : ""}${change.toFixed(1)}` }),
+          deltaTone: (change < 0 ? "positive" : change > 0 ? "negative" : "neutral") as "positive" | "negative" | "neutral",
+        };
 
   useEffect(() => {
-    if (!isPending && !session?.user) {
+    if (!isPending && !session?.user && !isQaClient()) {
       if (!APP_OPEN_ACCESS) router.push("/auth?redirect=" + encodeURIComponent(window.location.pathname));
     }
   }, [session, isPending, router]);
@@ -75,9 +88,9 @@ export default function AnalyticsPage() {
 
   return (
     <PageShell
-      signedOut={!isPending && !session?.user}
-      loading={isPending || analytics.loading}
-      error={isPending ? null : analytics.error}
+      signedOut={!qa && !isPending && !signedIn}
+      loading={(!qa && isPending) || analytics.loading}
+      error={!qa && isPending ? null : analytics.error}
       onRetry={handleRefresh}
       header={
         <PageHeader
@@ -89,7 +102,7 @@ export default function AnalyticsPage() {
                 {refreshing ? tc("refreshing") : tc("refresh")}
               </button>
               <ExportReportButton
-                userId={session?.user?.id}
+                userId={userId ?? undefined}
                 analyticsData={analyticsData}
                 companyName={session?.user?.name || "Pilot Enterprise"}
               />
@@ -100,35 +113,31 @@ export default function AnalyticsPage() {
     >
       {analyticsData && (
         <>
-          <Section title={t("title")}>
+          <Section title={t("latestMonth")}>
             <MetricRow>
               <Metric
                 label={t("totalEmissions")}
-                value={analyticsData.metrics.totalEmissions.value.toFixed(1)}
+                value={analyticsData.metrics.totalEmissions.value.toFixed(2)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.totalEmissions.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.totalEmissions.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.totalEmissions.change)}
               />
               <Metric
                 label={t("energy")}
-                value={analyticsData.metrics.energy.value.toFixed(1)}
+                value={analyticsData.metrics.energy.value.toFixed(2)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.energy.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.energy.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.energy.change)}
               />
               <Metric
                 label={t("water")}
-                value={analyticsData.metrics.water.value.toFixed(1)}
+                value={analyticsData.metrics.water.value.toFixed(2)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.water.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.water.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.water.change)}
               />
               <Metric
                 label={t("waste")}
-                value={analyticsData.metrics.waste.value.toFixed(1)}
+                value={analyticsData.metrics.waste.value.toFixed(2)}
                 unit={t("tonsPerYear")}
-                delta={t("yoy", { value: analyticsData.metrics.waste.change.toFixed(1) })}
-                deltaTone={analyticsData.metrics.waste.change < 0 ? "positive" : "negative"}
+                {...yoyDelta(analyticsData.metrics.waste.change)}
               />
             </MetricRow>
           </Section>

@@ -3,18 +3,53 @@ import postgres from 'postgres';
 import * as schema from '@/db/schema';
 import { cache } from 'react';
 
+/**
+ * `next dev` exposes a local Hyperdrive stand-in that forwards to wrangler's
+ * localConnectionString (the capped session pooler). Skip it in development
+ * and talk to DATABASE_URL directly through one shared pool.
+ */
+const IS_DEV = process.env.NODE_ENV === 'development';
+
+function usesHyperdrive(): boolean {
+  if (IS_DEV) return false;
+  if (typeof process !== 'undefined' && process.env?.HYPERDRIVE_URL) return true;
+  try {
+    const ctx = (globalThis as unknown as Record<symbol, { env?: { HYPERDRIVE?: { connectionString?: string } } }>)[
+      Symbol.for('__cloudflare-context__')
+    ];
+    const conn = ctx?.env?.HYPERDRIVE?.connectionString;
+    // In local dev the binding just echoes wrangler's localConnectionString
+    // (the raw pooler), so it is not a real Hyperdrive pool.
+    return Boolean(conn) && !conn!.includes('pooler.supabase.com');
+  } catch {
+    return false;
+  }
+}
+
 function getConnectionString(): string {
+  if (IS_DEV) return toTransactionPool((process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!);
   if (typeof process !== 'undefined' && process.env?.HYPERDRIVE_URL) {
-    return process.env.HYPERDRIVE_URL;
+    return toTransactionPool(process.env.HYPERDRIVE_URL);
   }
   try {
     const symbol = Symbol.for('__cloudflare-context__');
     const ctx = (globalThis as unknown as Record<symbol, { env?: { HYPERDRIVE?: { connectionString?: string } } }>)[symbol];
     if (ctx?.env?.HYPERDRIVE?.connectionString) {
-      return ctx.env.HYPERDRIVE.connectionString;
+      return toTransactionPool(ctx.env.HYPERDRIVE.connectionString);
     }
   } catch {}
-  return (process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!;
+  return toTransactionPool((process.env.DATABASE_URL ?? process.env.SUPABASE_DATABASE_URL)!);
+}
+
+/**
+ * The hosted pooler's session mode (port 5432) allows only 15 clients in
+ * total, shared by every environment using the database; once the preview,
+ * the live site and local tools are all connected, requests fail with
+ * EMAXCONNSESSION. Transaction mode (6543) multiplexes clients and works with
+ * our settings (prepare: false), so use it whenever a session-mode URL is set.
+ */
+export function toTransactionPool(url: string): string {
+  return url.replace(/(\.pooler\.supabase\.com):5432(?=\/|$|\?)/, "$1:6543");
 }
 
 // React.cache scopes the database client per incoming Next.js request.
@@ -31,24 +66,54 @@ const getRequestDb = cache(() => {
   return drizzle(client, { schema });
 });
 
-let fallbackDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
+// Kept on globalThis: the dev server loads this module once per route bundle,
+// and a module-level pool per bundle still exhausts the connection limit.
+const POOL_KEY = Symbol.for('vuneli.db.pool.v2');
+type Db = ReturnType<typeof drizzle<typeof schema>>;
+const store = globalThis as unknown as Record<symbol, Db | undefined>;
 
 function getFallbackDb(): ReturnType<typeof drizzle<typeof schema>> {
+  let fallbackDb = store[POOL_KEY];
   if (!fallbackDb) {
     const connStr = getConnectionString();
     const client = postgres(connStr, {
-      max: 3,
+      max: 5,
       prepare: false,
-      idle_timeout: 20,
+      // The hosted pooler silently drops idle sockets; a query sent on a
+      // dropped socket hangs forever. Retire sockets quickly so none go stale.
+      idle_timeout: 5,
+      max_lifetime: 120,
+      keep_alive: 10,
       connect_timeout: 10,
     });
     fallbackDb = drizzle(client, { schema });
+    store[POOL_KEY] = fallbackDb;
   }
   return fallbackDb;
 }
 
+/**
+ * Development only: a long-lived pool inside `next dev` stops answering after
+ * a while (queries queue forever while the database itself is idle). A short
+ * lived client per use avoids that; the transaction pooler has room for it.
+ */
+function getDevDb(): Db {
+  const client = postgres(getConnectionString(), {
+    max: 1,
+    prepare: false,
+    idle_timeout: 1,
+    connect_timeout: 10,
+  });
+  return drizzle(client, { schema });
+}
+
 function getDbInstance(): ReturnType<typeof drizzle<typeof schema>> {
-  if (process.env.NODE_ENV === 'test') {
+  if (IS_DEV) return getDevDb();
+  // Without Hyperdrive (tests, local dev, the preview) there is no pooler in
+  // front of Postgres. React.cache only scopes inside a React render, so in
+  // API routes it would open a fresh client on every access and exhaust the
+  // database's connection limit. Share one small pool instead.
+  if (process.env.NODE_ENV === 'test' || !usesHyperdrive()) {
     return getFallbackDb();
   }
   try {

@@ -228,7 +228,8 @@
 
 /* hairline separators, no filled block */
 .vc .vck-reading + .vck-reading { border-top: 1px solid var(--vc-rule-soft); }
-.vc .vck-reading:first-child { padding-left: 0; }
+/* single column (phones): every reading sits flush left, none indented */
+.vc .vck-reading { padding-left: 0; }
 
 @media (min-width: 620px) {
   .vc .vck-reading { padding-left: 22px; border-top: 1px solid var(--vc-rule-soft); }
