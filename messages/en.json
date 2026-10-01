@@ -2457,7 +2457,9 @@
         "hospitality": "Hospitality",
         "healthcare": "Healthcare",
         "finance": "Finance"
-      }
+      },
+      "yes": "Yes",
+      "no": "No"
     },
     "deadline": {
       "title": "Next deadline",
