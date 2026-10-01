@@ -8,6 +8,7 @@
 
 import { Fragment, useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { WaitingForYou } from "@/components/app/dashboard/home/WaitingForYou";
 import { Btn, ConsolePage, Empty, Plate, State } from "@/components/app/console/kit";
 import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import {
@@ -167,6 +168,11 @@ export default function AgentsPage() {
           {c.pauseReason ? tr("allPausedReason", { reason: c.pauseReason }) : tr("allPaused")}
         </p>
       )}
+
+      {/* The same queue as Home, so a decision made in either place shows in both. */}
+      <div className="vch-home vch-agents-queue">
+        <WaitingForYou />
+      </div>
 
       <div className="vck-agents-grid">
         {liveAgents.map((a) => {

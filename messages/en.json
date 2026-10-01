@@ -2435,5 +2435,149 @@
     "segOther": "Other SME",
     "waitlistSubmit": "Request early access",
     "waitlistSuccess": "Thank you. We have your request and will write to you from a Vuneli address."
+  },
+  "home": {
+    "aria": "Vuneli home",
+    "errorTitle": "The console cannot reach your data",
+    "retry": "Try again",
+    "loading": "Loading your home page",
+    "sites": "{count, plural, one {# site} other {# sites}}",
+    "agentsActive": "of {total} agents active",
+    "decisions": "Waiting for you",
+    "runsToday": "Agent runs today",
+    "health": {
+      "title": "Data health",
+      "value": "{pct}% of your figures are backed by bills, bank records or accounts",
+      "none": "No figures backed by records yet",
+      "fix": "Improve it",
+      "manage": "Manage sources"
+    },
+    "workforce": "Agent workforce",
+    "workforceAria": "Open the agent workforce",
+    "there": "there",
+    "nothingWaiting": "Nothing needs your decision right now.",
+    "itemsWaiting": "{count, plural, one {# item needs} other {# items need}} your decision.",
+    "boardSummary": "Board summary (PDF)",
+    "preparing": "Preparing…",
+    "footprint": "Your footprint",
+    "vsLast": "{delta} vs last month",
+    "noComparison": "No earlier month to compare yet",
+    "openMeasure": "See the full breakdown",
+    "emptyTitle": "Your footprint will appear here",
+    "emptyBody": "Connect a bank, forward a bill or add your first month of figures. The chart fills in from real records only.",
+    "waiting": {
+      "title": "Waiting for you",
+      "clear": "All clear",
+      "count": "{count} waiting",
+      "empty": "Nothing needs your decision. Agents will ask here when they need approval or a document.",
+      "failed": "Your decision was not saved. Please try again.",
+      "kindApproval": "{agent} asks for approval",
+      "kindEvidence": "{agent} needs a document",
+      "kindException": "{agent} hit a problem",
+      "upload": "Upload",
+      "open": "Open",
+      "approve": "Approve",
+      "decline": "Decline",
+      "dismiss": "Dismiss",
+      "saving": "Saving…",
+      "showAll": "Show all {count}",
+      "showLess": "Show fewer"
+    },
+    "deadline": {
+      "title": "Next deadline",
+      "clear": "None open",
+      "overdue": "Overdue",
+      "days": "{count, plural, one {# day left} other {# days left}}",
+      "prepared": "{pct}% prepared",
+      "due": "due {date}",
+      "continue": "Continue",
+      "more": "{count, plural, one {# more deadline} other {# more deadlines}}",
+      "empty": "No reporting deadline is open for your company.",
+      "grid": "Cyprus grid today: {value} gCO₂ per kWh"
+    },
+    "changed": {
+      "title": "What changed",
+      "open": "Open Measure",
+      "view": "View",
+      "empty": "Changes appear once you have two months of figures."
+    },
+    "agents": {
+      "title": "What your agents did",
+      "history": "Full history",
+      "empty": "No activity yet. Run your first agent from the Agents page."
+    },
+    "money": {
+      "title": "Money on the table",
+      "all": "All funding",
+      "loading": "Reading open funding calls…",
+      "empty": "No open funding call right now. We check every hour.",
+      "closes": "{days, plural, one {closes in # day} other {closes in # days}}",
+      "rolling": "open call",
+      "note": "Open EU and Cyprus calls. Check each call's rules to see if your company qualifies."
+    },
+    "setup": {
+      "title": "Finish setting up",
+      "lead": "{done} of {total} done. Each step ticks itself once the data is saved.",
+      "progress": "Setup progress",
+      "askVerde": "Ask Verde to do it",
+      "doneNote": "Done",
+      "company": {
+        "title": "Add your company details",
+        "why": "Name, sector, team size and sites. Every report and agent uses them.",
+        "cta": "Add details",
+        "verde": "Please fill in my company details. We are "
+      },
+      "source": {
+        "title": "Connect a bank or forward a bill",
+        "why": "Real records make your figures defensible to banks and auditors.",
+        "cta": "Connect",
+        "verde": "Which data source should I connect first for my company, and how?"
+      },
+      "figures": {
+        "title": "Add your first month of figures",
+        "why": "Electricity, fuel or spend for one month is enough to start.",
+        "cta": "Add figures",
+        "verde": "Help me log my first month of figures. Last month we used "
+      },
+      "suppliers": {
+        "title": "Add your suppliers",
+        "why": "Agents ask suppliers for data and check them in public records.",
+        "cta": "Add suppliers",
+        "verde": "Which of my suppliers should I add first, and why?"
+      },
+      "agent": {
+        "title": "Run your first agent",
+        "why": "See an agent check your records and report back here.",
+        "cta": "Open agents",
+        "verde": "Which agent should I run first for my company?"
+      }
+    },
+    "tour": {
+      "step": "Step {n} of {total}",
+      "skip": "Skip tour",
+      "back": "Back",
+      "next": "Next",
+      "done": "Start using Vuneli",
+      "footprint": {
+        "title": "Your footprint, at a glance",
+        "body": "One figure and one chart, built only from your real records. The full breakdown is one click away in Measure."
+      },
+      "waiting": {
+        "title": "Waiting for you",
+        "body": "Agents never send or file anything alone. Approvals and document requests land here, and you decide on the spot."
+      },
+      "deadline": {
+        "title": "Your next deadline",
+        "body": "The soonest report you owe, how ready it is, and a button to continue it."
+      },
+      "verde": {
+        "title": "Meet Verde",
+        "body": "Tell Verde about your business in plain words and it fills in the app for you. You approve every change first."
+      },
+      "nav": {
+        "title": "Everything else",
+        "body": "Measure, Act, Report, Agents and Connect hold the detail. Home stays short on purpose."
+      }
+    }
   }
 }

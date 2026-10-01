@@ -1,93 +1,49 @@
 "use client";
 
 /**
- * Vuneli console overview.
+ * Vuneli Home: "what needs me today".
  *
- * The Rinesk study is the whole application surface, not a framed window.
- * Every figure, label, count and section below is read from
- * /api/console/overview. Nothing on this page is written by hand.
+ * One calm screen. The hero keeps the console look (company card, greeting,
+ * one footprint chart). Below it: the setup checklist until setup is done,
+ * the approval queue, the next deadline, then three short summaries that each
+ * open the page owning those records. Metric switching, filters and the
+ * evidence/connection/audit tables live on Measure, Connect and Agents.
+ * Every figure is read from /api/console/overview; nothing is written by hand.
  */
 
 import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
-import { downloadSectionCsv, exportFileName, sectionTable } from "@/components/app/console/export-csv";
-import { ConsoleFilterBar } from "@/components/app/console/ConsoleFilterBar";
-import {
-  DEFAULT_FILTER,
-  applyFilter,
-  describeFilter,
-  filterSlug,
-  isDefaultFilter,
-  yearsInData,
-  type ConsoleFilter,
-} from "@/components/app/console/filters";
 import { SignalChart } from "@/components/app/console/SignalChart";
-import { IcoClock, IcoPulse } from "@/components/app/console/icons";
-import { Spark } from "@/components/app/console/charts";
-import { fmtNumber, fmtSigned, relativeTime, toneFor } from "@/components/app/console/types";
-import {
-  CATEGORY_ICON,
-  CATEGORY_LABEL,
-  greetingFor,
-  PlateOpen,
-  titleCase,
-  type SectionKey,
-} from "@/components/app/dashboard/overview/shared";
-import { OverviewSection } from "@/components/app/dashboard/overview/OverviewSection";
-import {
-  AuditSection,
-  ConnectionsSection,
-  EvidenceSection,
-  ObligationsSection,
-} from "@/components/app/dashboard/overview/RecordSections";
-
-
+import { fmtNumber, fmtSigned, toneFor } from "@/components/app/console/types";
+import { greetingFor, titleCase } from "@/components/app/dashboard/overview/shared";
+import { boardSummaryTable, exportFileName } from "@/components/app/console/export-csv";
+import { WaitingForYou } from "@/components/app/dashboard/home/WaitingForYou";
+import { SetupChecklist } from "@/components/app/dashboard/home/SetupChecklist";
+import { FirstVisitTour } from "@/components/app/dashboard/home/FirstVisitTour";
+import { AgentsDidPlate, MoneyPlate, NextDeadlinePlate, WhatChangedPlate } from "@/components/app/dashboard/home/HomePlates";
 
 export default function ConsolePage() {
-  /* The workspace read lives in the layout, so the top bar, the palette
-     and every page share one set of records. */
-  const { data: raw, error, refresh } = useConsole();
-  const [filter, setFilter] = useState<ConsoleFilter>(DEFAULT_FILTER);
+  const t = useTranslations("home");
+  const { data, error, refresh } = useConsole();
   const [pdfBusy, setPdfBusy] = useState(false);
-  /* Every figure below reads the filtered copy, so the screen, the CSV and
-     the PDF always agree. */
-  const data = useMemo(() => (raw ? applyFilter(raw, filter) : null), [raw, filter]);
-  const years = useMemo(() => (raw ? yearsInData(raw) : []), [raw]);
-  const [category, setCategory] = useState<string | null>(null);
-  const [focusKey, setFocusKey] = useState<string | null>(null);
-  const [section, setSection] = useState<SectionKey>("overview");
 
-  /** Categories are whatever the metric table actually holds. */
-  const categories = useMemo(() => {
-    const seen: string[] = [];
-    for (const metric of data?.metrics ?? []) {
-      if (!seen.includes(metric.category)) seen.push(metric.category);
-    }
-    return seen;
+  /* Home shows one series: the total footprint. Other metrics live on Measure. */
+  const focus = useMemo(() => {
+    const metrics = data?.metrics ?? [];
+    return metrics.find((m) => m.key === "co2e_total" && m.points.length > 0) ?? metrics.find((m) => m.points.length > 0) ?? null;
   }, [data]);
-
-  const activeCategory = category ?? categories[0] ?? null;
-
-  const inCategory = useMemo(
-    () => (data?.metrics ?? []).filter((m) => m.category === activeCategory),
-    [data, activeCategory],
-  );
-
-  const focus = useMemo(
-    () => inCategory.find((m) => m.key === focusKey) ?? inCategory[0],
-    [inCategory, focusKey],
-  );
 
   if (error) {
     return (
       <div className="vc vc-fit">
         <div className="vc-window vc-state">
-          <p>The console cannot reach your data</p>
+          <p>{t("errorTitle")}</p>
           <span>{error}</span>
           <button type="button" className="vc-add-agent" onClick={refresh}>
-            Try again
+            {t("retry")}
           </button>
         </div>
       </div>
@@ -97,13 +53,7 @@ export default function ConsolePage() {
   if (!data) {
     return (
       <div className="vc vc-fit">
-        <div className="vc-window vc-loading" aria-label="Loading the Vuneli console">
-          <div className="vc-loading-top">
-            <span />
-            <i />
-            <i />
-            <i />
-          </div>
+        <div className="vc-window vc-loading" aria-label={t("loading")}>
           <div className="vc-loading-hero">
             <aside />
             <main>
@@ -112,9 +62,7 @@ export default function ConsolePage() {
               <em />
             </main>
           </div>
-          <div className="vc-loading-tabs" />
           <div className="vc-loading-deck">
-            <span />
             <span />
             <span />
             <span />
@@ -124,59 +72,26 @@ export default function ConsolePage() {
     );
   }
 
-  /* A new account owns a workspace with no readings yet. Show the first step
-     instead of an endless skeleton. */
-  if (!focus) {
-    return (
-      <div className="vc vc-fit">
-        <div className="vc-window vc-state">
-          <p>Welcome, {data.workspace.ownerName ?? "there"}</p>
-          <span>
-            {data.workspace.name} has no readings yet. Connect a data source, or enter your
-            first figures, and the console fills in.
-          </span>
-          <Link className="vc-add-agent" href="/app/integrations">
-            Connect a data source
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-
-  const { workspace, agents, runs, tasks, connections, obligations, events, metrics } = data;
+  const { workspace, agents, runs, tasks, metrics } = data;
   const hour = new Date().getHours();
-  const activeAgents = agents.filter((agent) => agent.status === "active");
-  const runsToday = runs.filter((run) => Date.now() - new Date(run.startedAt).getTime() < 86_400_000);
-  const byKey = (key: string) => metrics.find((metric) => metric.key === key);
-  const coverage = byKey("data_coverage");
-  const automation = byKey("automation_rate");
-  const focusTone = toneFor(focus.delta, focus.goodDirection);
+  const activeAgents = agents.filter((a) => a.status === "active");
+  const runsToday = runs.filter((r) => Date.now() - new Date(r.startedAt).getTime() < 86_400_000);
+  const coverage = metrics.find((m) => m.key === "data_coverage" && m.points.length > 0);
+  const hasComparison = focus ? focus.points.length >= 2 && focus.previous !== 0 : false;
+  const focusTone = focus ? toneFor(focus.delta, focus.goodDirection) : "flat";
+  const lastPoint = focus?.points[focus.points.length - 1];
 
-  const SECTIONS: { key: SectionKey; label: string; count: number }[] = [
-    { key: "overview", label: "Overview", count: metrics.length },
-    { key: "evidence", label: "Evidence", count: connections.length },
-    { key: "obligations", label: "Obligations", count: obligations.length },
-    { key: "connections", label: "Connections", count: connections.length },
-    { key: "audit", label: "Audit trail", count: events.length },
-  ];
-
-  const sectionLabel = SECTIONS.find((s) => s.key === section)?.label ?? section;
-  const readingsInView = metrics.reduce((n, m) => n + m.points.length, 0);
-
-  /* The PDF library is large; it loads only when someone asks for a file. */
-  const exportPdf = async () => {
-    if (!data) return;
+  const exportSummary = async () => {
     setPdfBusy(true);
     try {
       const { buildSectionPdf } = await import("@/lib/pdf/console-section-pdf");
       const doc = buildSectionPdf({
-        workspaceName: data.workspace.name || "Workspace",
-        sectionLabel,
-        filterLabel: describeFilter(filter),
-        table: sectionTable(data, section),
+        workspaceName: workspace.name || "Workspace",
+        sectionLabel: "Board summary",
+        filterLabel: "All periods and sites",
+        table: boardSummaryTable(data),
       });
-      doc.save(exportFileName(data, section, "pdf", filterSlug(filter)));
+      doc.save(exportFileName(data, "overview", "pdf", "-board-summary"));
     } finally {
       setPdfBusy(false);
     }
@@ -184,23 +99,18 @@ export default function ConsolePage() {
 
   return (
     <div className="vc vc-fit">
-      <section className="vc-window" aria-label="Vuneli autonomous ESG console">
+      <FirstVisitTour workspaceId={workspace.id} />
+      <section className="vc-window vch-home" aria-label={t("aria")}>
         <div className="vc-top-panel">
-          <div className="vc-hero-grid">
-            <aside className="vc-team-card">
-              {/* The card names the entity under measurement, not the person.
-                  The greeting and the account menu already carry the person. */}
+          <div className="vc-hero-grid vch-hero-grid">
+            <aside className="vc-team-card vch-team-card">
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">
                   <ConsoleAvatar seed={workspace.name ?? "Vuneli"} size={30} styleKey="shapes" alt="" />
                 </span>
                 <span>
                   <small>
-                    {[
-                      titleCase(workspace.sector),
-                      workspace.country,
-                      `${workspace.sites} site${workspace.sites === 1 ? "" : "s"}`,
-                    ]
+                    {[titleCase(workspace.sector), workspace.country, t("sites", { count: workspace.sites })]
                       .filter(Boolean)
                       .join(" · ")}
                   </small>
@@ -208,222 +118,101 @@ export default function ConsolePage() {
                 </span>
               </div>
 
-
-              <Link
-                href={"/app/agents" as never}
-                className="vc-add-agent"
-                aria-label="Open the agent workforce"
-              >
-                <span className="vc-add-agent-dot" aria-hidden="true" />
-                <span className="vc-add-agent-label">Agent workforce</span>
-                <svg className="vc-add-agent-arrow" viewBox="0 0 16 16" aria-hidden="true">
-                  <path
-                    d="M3.5 8h8M8 4.5 11.5 8 8 11.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
-
-
-
-              {/* The rail switches the hero series. It is not decoration. */}
-              <div className="vc-side-icons" role="tablist" aria-label="Metric category">
-                {categories.map((key) => {
-                  const Icon = CATEGORY_ICON[key] ?? IcoPulse;
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      role="tab"
-                      aria-selected={key === activeCategory}
-                      aria-label={CATEGORY_LABEL[key] ?? titleCase(key)}
-                      title={CATEGORY_LABEL[key] ?? titleCase(key)}
-                      data-active={key === activeCategory}
-                      onClick={() => {
-                        setCategory(key);
-                        setFocusKey(null);
-                      }}
-                    >
-                      <Icon size={14} />
-                    </button>
-                  );
-                })}
-              </div>
-
               <div className="vc-big-number">
                 <span>{activeAgents.length}</span>
-                <small>of {agents.length} agents active</small>
+                <small>{t("agentsActive", { total: agents.length })}</small>
               </div>
 
               <div className="vc-legend">
                 <p>
-                  <i data-tone="lime" /> <span>Automated</span> <strong>{Math.round(automation?.current ?? 0)}%</strong>
+                  <i data-tone="lime" /> <span>{t("decisions")}</span> <strong>{tasks.length}</strong>
                 </p>
                 <p>
-                  <i /> <span>Evidence</span>
-                  <PlateOpen href="/app/analytics" label="Open evidence coverage" />
-                  <strong>{Math.round(coverage?.current ?? 0)}%</strong>
-                </p>
-                <p>
-                  <i data-tone="soft" /> <span>Human tasks</span> <strong>{tasks.length}</strong>
+                  <i /> <span>{t("runsToday")}</span> <strong>{runsToday.length}</strong>
                 </p>
               </div>
 
-              {/* The rest of the category, so the column carries real weight. */}
-              <div className="vc-side-series" aria-label={`Other ${CATEGORY_LABEL[activeCategory ?? ""] ?? ""} readings`}>
-                {inCategory
-                  .filter((metric) => metric.key !== focus.key)
-                  .slice(0, 3)
-                  .map((metric) => {
-                    const tone = toneFor(metric.delta, metric.goodDirection);
-                    return (
-                      <button
-                        key={metric.key}
-                        type="button"
-                        onClick={() => setFocusKey(metric.key)}
-                        aria-label={`Show ${metric.label}`}
-                      >
-                        <span className="vc-side-series-copy">
-                          <small>{metric.shortLabel ?? metric.label}</small>
-                          <strong>
-                            {fmtNumber(metric.current, metric.precision)} <em>{metric.unit}</em>
-                          </strong>
-                        </span>
-                        <span className="vc-side-series-spark">
-                          <Spark points={metric.points.map((p) => ({ label: p.label, value: p.value }))} />
-                        </span>
-                        <em data-tone={tone}>{fmtSigned(metric.delta)}</em>
-                      </button>
-                    );
-                  })}
+              <div className="vch-health">
+                <span>{t("health.title")}</span>
+                <p>
+                  {coverage
+                    ? t("health.value", { pct: Math.round(coverage.current) })
+                    : t("health.none")}
+                </p>
+                <Link href="/app/integrations" className="vch-link">
+                  {coverage && coverage.current >= 90 ? t("health.manage") : t("health.fix")}
+                </Link>
               </div>
+
+              <Link href={"/app/agents" as never} className="vc-add-agent" aria-label={t("workforceAria")}>
+                <span className="vc-add-agent-dot" aria-hidden="true" />
+                <span className="vc-add-agent-label">{t("workforce")}</span>
+                <svg className="vc-add-agent-arrow" viewBox="0 0 16 16" aria-hidden="true">
+                  <path d="M3.5 8h8M8 4.5 11.5 8 8 11.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
             </aside>
 
-            <main className="vc-chart-zone">
+            <main className="vc-chart-zone" data-tour="footprint">
               <div className="vc-greeting">
                 <div>
                   <h1>
-                    {greetingFor(hour)}, {workspace.ownerName ?? "there"}
+                    {greetingFor(hour)}, {workspace.ownerName ?? t("there")}
                   </h1>
-                  <p>
-                    {runsToday.length} agent {runsToday.length === 1 ? "run" : "runs"} closed today.{" "}
-                    {tasks.length === 0
-                      ? "Nothing needs a human decision."
-                      : `${tasks.length} ${tasks.length === 1 ? "item needs" : "items need"} a human decision.`}
-                  </p>
+                  <p>{tasks.length === 0 ? t("nothingWaiting") : t("itemsWaiting", { count: tasks.length })}</p>
                 </div>
-                <span className="vc-history" title={`Console data read at ${new Date(data.generatedAt).toLocaleTimeString("en-GB")}`}>
-                  <IcoClock size={14} />
-                  <em>
-                    Read{" "}
-                    {new Date(data.generatedAt).toLocaleTimeString("en-GB", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </em>
-                </span>
+                <button type="button" className="vch-btn vch-summary-btn" onClick={() => void exportSummary()} disabled={pdfBusy}>
+                  {pdfBusy ? t("preparing") : t("boardSummary")}
+                </button>
               </div>
 
-              <div className="vc-top-tabs" role="tablist" aria-label="Metric in view">
-                {inCategory.map((metric) => (
-                  <button
-                    key={metric.key}
-                    type="button"
-                    role="tab"
-                    aria-selected={metric.key === focus.key}
-                    data-active={metric.key === focus.key}
-                    onClick={() => setFocusKey(metric.key)}
-                  >
-                    {metric.shortLabel ?? metric.label}
-                  </button>
-                ))}
-              </div>
-
-              <div className="vc-focus-row">
-                <div>
-                  <small>{focus.label}</small>
-                  <strong>
-                    {fmtNumber(focus.current, focus.precision)} <em>{focus.unit}</em>
-                  </strong>
+              {focus ? (
+                <>
+                  <div className="vc-focus-row">
+                    <div>
+                      <small>
+                        {focus.key === "co2e_total" ? t("footprint") : focus.label}
+                        {lastPoint ? ` · ${lastPoint.label}` : ""}
+                      </small>
+                      <strong>
+                        {fmtNumber(focus.current, focus.precision)} <em>{focus.unit}</em>
+                      </strong>
+                    </div>
+                    {hasComparison ? (
+                      <span data-tone={focusTone}>{t("vsLast", { delta: fmtSigned(focus.delta) })}</span>
+                    ) : (
+                      <span data-tone="flat">{t("noComparison")}</span>
+                    )}
+                  </div>
+                  <SignalChart metric={focus} />
+                  <Link href="/app/analytics" className="vch-link vch-measure-link">
+                    {t("openMeasure")}
+                  </Link>
+                </>
+              ) : (
+                <div className="vch-hero-empty">
+                  <strong>{t("emptyTitle")}</strong>
+                  <p>{t("emptyBody")}</p>
                 </div>
-                <span data-tone={focusTone}>{fmtSigned(focus.delta)} on last period</span>
-              </div>
-
-              <SignalChart
-                metric={focus}
-                emptyNote={
-                  isDefaultFilter(filter)
-                    ? undefined
-                    : `Fewer than two readings of this metric fall in ${describeFilter(filter)}. Widen the period or pick another site.`
-                }
-              />
+              )}
             </main>
           </div>
         </div>
 
-        <ConsoleFilterBar
-          filter={filter}
-          onChange={setFilter}
-          years={years}
-          sites={raw?.sites ?? []}
-          readingsInView={readingsInView}
-        />
+        <div className="vc-deck vch-deck">
+          <SetupChecklist data={data} />
 
-        <div className="vc-tab-strip" role="tablist" aria-label="Workspace sections">
-          {SECTIONS.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              role="tab"
-              aria-selected={item.key === section}
-              data-active={item.key === section}
-              onClick={() => setSection(item.key)}
-            >
-              {item.label}
-              <i>{item.count}</i>
-            </button>
-          ))}
-          <span className="vc-tab-exports">
-            <button
-              type="button"
-              className="vc-tab-export"
-              onClick={() => data && downloadSectionCsv(data, section, filterSlug(filter))}
-              disabled={!data}
-              aria-label={`Download ${sectionLabel} as CSV`}
-            >
-              Export CSV
-            </button>
-            <button
-              type="button"
-              className="vc-tab-export"
-              onClick={() => void exportPdf()}
-              disabled={!data || pdfBusy}
-              aria-label={`Download ${sectionLabel} as PDF`}
-            >
-              {pdfBusy ? "Preparing…" : "Export PDF"}
-            </button>
-          </span>
-        </div>
+          <div className="vch-grid-primary">
+            <WaitingForYou />
+            <NextDeadlinePlate data={data} />
+          </div>
 
-        <div className="vc-deck" role="tabpanel" aria-label={`${section} records`}>
-          <div className="vc-slab">
-            {section === "overview" && <OverviewSection data={data} />}
-            {section === "evidence" && <EvidenceSection data={data} />}
-            {section === "obligations" && <ObligationsSection data={data} />}
-            {section === "connections" && <ConnectionsSection data={data} />}
-            {section === "audit" && <AuditSection data={data} />}
+          <div className="vch-grid-secondary">
+            <WhatChangedPlate data={data} />
+            <AgentsDidPlate data={data} />
+            <MoneyPlate />
           </div>
         </div>
-
-
-        <p className="vc-foot-note">
-          {workspace.name} · {workspace.framework} · baseline {workspace.baselineYear} · read{" "}
-          {relativeTime(data.generatedAt)}
-        </p>
       </section>
     </div>
   );

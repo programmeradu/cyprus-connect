@@ -24,6 +24,7 @@ import {
 } from "@/db/schema";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { readCompany } from "@/lib/company-update.server";
 
 export const dynamic = "force-dynamic";
 
@@ -97,7 +98,8 @@ function round(value: number, precision: number): string {
  * Turns the workspace records into a compact briefing. The model may quote
  * only what appears here, which is what keeps the answers auditable.
  */
-async function buildBriefing(workspaceId: string) {
+async function buildBriefing(workspaceId: string, accountId: string) {
+  const company = await readCompany(accountId, workspaceId).catch(() => null);
   const [defs, readings, roster, tasks, obs, events] = await Promise.all([
     db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder)),
     db
@@ -147,7 +149,14 @@ async function buildBriefing(workspaceId: string) {
     return `- ${d.key} "${d.label}": ${current ? round(current.value, d.precision) : "no reading"} ${d.unit} (${trend}). Better when ${d.goodDirection}. Recent: ${recent || "none"}`;
   });
 
+  const companyLine = company
+    ? `- name ${company.companyName ?? "not set"}; industry ${company.industry ?? "not set"}; team size ${company.teamSize ?? "not set"}; country ${company.country}; sites ${company.sites}; yearly revenue ${company.revenueEur ?? "not set"} EUR`
+    : "- could not be read";
+
   return [
+    "COMPANY DETAILS (profile + workspace)",
+    companyLine,
+    "",
     "METRICS (metric_definitions + metric_readings)",
     metricLines.join("\n") || "- none recorded",
     "",
@@ -195,7 +204,9 @@ Allowed kinds and payloads:
 - update_obligation: {"obligationId":"<id from the list>","status":"on_track|at_risk|late|complete","progressPct":0-100}
 - log_reading: {"metricKey":"<key from the list>","periodLabel":"...","periodStart":"YYYY-MM-DD","value":<number>}
 - draft_report: {"agentKey":"<agent key or null>","periodLabel":"the reporting period, for example 2026","detail":"what the draft must cover"}
+- update_company: any of {"companyName":"...","industry":"...","teamSize":"1-10|11-50|51-200|201-500|500+","country":"two-letter code, for example CY","sites":<whole number of sites or shops>,"revenueEur":<yearly revenue in euro or null>}
 Use draft_report when the person asks for a report, a VSME report or a report draft. On approval the agent writes the full draft and the person receives the document, so your summary must say that a draft will be written for review. Do not use create_task for a report request.
+Use update_company when the person describes their business ("we are a 12-person bakery in Limassol with two shops") or asks you to fill in or set up their company details. Include only fields the person actually stated or that follow directly from what they said (12 people means teamSize "11-50"; Limassol means country "CY"). Never guess revenue. In the summary, list every field and its new value, for example "Sets industry to Bakery, team size to 11-50, sites to 2." If something important is missing, still propose what you know and ask for the rest in your prose.
 Use ids and keys exactly as they appear in the records. Write the "summary" as one sentence that tells the approver what will change. Do not mention the block itself in your prose; say what you propose in normal words.
 
 WORKSPACE RECORDS
@@ -275,7 +286,7 @@ export async function POST(req: Request) {
     .limit(HISTORY_LIMIT);
   history.reverse();
 
-  const briefing = await buildBriefing(workspace.id);
+  const briefing = await buildBriefing(workspace.id, resolved.session.account.id);
   const instructions = systemPrompt(
     workspace.name,
     workspace.sector,

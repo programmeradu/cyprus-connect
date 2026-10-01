@@ -77,3 +77,28 @@ export function downloadSectionCsv(data: ConsoleOverviewData, section: ExportSec
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+
+/**
+ * The one-page board summary: the headline facts from Home, each traced to
+ * the record it comes from. Nothing here is computed that the screen does not show.
+ */
+export function boardSummaryTable(data: ConsoleOverviewData): SectionTable {
+  const rows: Cell[][] = [];
+  const footprint = data.metrics.find((m) => m.key === "co2e_total");
+  if (footprint && footprint.points.length) {
+    const last = footprint.points[footprint.points.length - 1];
+    rows.push(["Footprint", `Latest month (${last.label})`, last.value, footprint.unit, last.source]);
+    const year = footprint.points.slice(-12).reduce((s, p) => s + p.value, 0);
+    rows.push(["Footprint", `Last ${Math.min(12, footprint.points.length)} months`, Math.round(year * 100) / 100, footprint.unit, "Sum of monthly readings"]);
+  }
+  const coverage = data.metrics.find((m) => m.key === "data_coverage");
+  if (coverage && coverage.points.length) rows.push(["Data health", "Figures backed by primary records", Math.round(coverage.current), "%", "data_coverage"]);
+  for (const o of data.obligations.filter((x) => x.status !== "done").slice(0, 5)) {
+    rows.push(["Deadline", `${o.framework}: ${o.title}`, o.dueDate, `${Math.round(o.progressPct)}% prepared`, o.status.replace(/_/g, " ")]);
+  }
+  rows.push(["Decisions", "Waiting for a person", data.tasks.length, "items", "Approval queue"]);
+  for (const e of data.events.slice(0, 8)) {
+    rows.push(["Activity", `${e.actorName} ${e.verb} ${e.object}`, e.createdAt.slice(0, 10), e.actorType, e.detail]);
+  }
+  return table(["section", "item", "value", "unit_or_status", "source"], rows);
+}
