@@ -240,7 +240,7 @@ async function seed() {
     ["ingest", "succeeded", "Read 14 EAC invoices and 212 bank lines. No exceptions.", 226, 0.99, 8, 4200],
     ["assure", "needs_review", "3 figures lack primary evidence for June.", 3, 0.74, 41, 6100],
     ["factors", "succeeded", "Applied the July 2026 Cyprus grid factor. 12 periods re-stated.", 12, 1, 96, 3300],
-    ["cbam", "succeeded", "Drafted the Q2 2026 declaration. Awaiting your signature.", 9, 0.93, 180, 12400],
+    ["cbam", "succeeded", "Drafted the 2026 annual CBAM declaration. Awaiting your signature.", 9, 0.93, 180, 12400],
     ["reduce", "succeeded", "Ranked 6 measures. Best payback: 2.4 years on rooftop solar phase 2.", 6, 0.87, 320, 9800],
     ["grants", "succeeded", "2 open calls match your plan. Deadline in 46 days.", 2, 0.91, 640, 5200],
     ["vsme", "running", "Drafting section B3, energy and emissions.", 0, 0.9, 2, 0],
@@ -258,7 +258,7 @@ async function seed() {
   }
 
   const tasks = [
-    ["cbam", "approval", "Sign the Q2 2026 CBAM declaration", "Border prepared 9 import lines from 3 suppliers. Two supplier emission values use default factors.", "high", "2026-08-14"],
+    ["cbam", "approval", "Sign the 2026 annual CBAM declaration", "Border prepared 9 import lines from 3 suppliers. Two supplier emission values use default factors.", "high", "2026-08-14"],
     ["assure", "evidence", "Upload the June invoice for the Limassol site", "Warden cannot close June Scope 2 without the missing bill.", "high", "2026-08-05"],
     ["vsme", "approval", "Approve the VSME B3 narrative", "Scribe drafted 340 words with 11 citations to source documents.", "normal", "2026-08-20"],
     ["supply", "exception", "Reconnect the supplier portal", "Weaver lost access after the credential rotation on 26 July.", "high", null],
@@ -292,7 +292,7 @@ async function seed() {
   }
 
   const obs = [
-    ["cbam_q2", "CBAM", "Q2 2026 declaration", "Definitive regime. Nine import lines from three suppliers.", "2026-08-31", "at_risk", 76, "Border", "cbam"],
+    ["cbam_annual_2026", "CBAM", "Annual CBAM declaration for 2026 imports", "Definitive regime. Nine import lines from three suppliers.", "2027-09-30", "at_risk", 76, "Border", "cbam"],
     ["vsme_2026", "VSME", "Voluntary disclosure 2026", "Requested by Bank of Cyprus for the credit review.", "2026-12-31", "on_track", 58, "Scribe", "vsme"],
     ["csrd_w3", "CSRD", "Wave 3 first report", "Listed SMEs report on financial year 2026.", "2027-01-01", "on_track", 24, "Scribe", "vsme"],
     ["cbam_q3", "CBAM", "Q3 2026 declaration", "Opens 1 October 2026.", "2026-11-30", "planned", 0, "Border", "cbam"],
@@ -311,7 +311,7 @@ async function seed() {
     ["agent", "Warden", "flagged", "3 unevidenced figures", "June Scope 2, Limassol site.", 41],
     ["human", "Emmanuel", "approved", "May VSME narrative", "Signed off with 2 edits.", 96],
     ["agent", "Factor", "restated", "12 monthly periods", "New Cyprus grid factor, 610 gCO₂/kWh.", 96],
-    ["agent", "Border", "drafted", "Q2 2026 CBAM declaration", "Awaiting signature.", 180],
+    ["agent", "Border", "drafted", "2026 annual CBAM declaration", "Awaiting signature.", 180],
     ["agent", "Compass", "ranked", "6 reduction measures", "Rooftop solar phase 2 leads on payback.", 320],
     ["system", "Vuneli", "rotated", "supplier portal credential", "Weaver lost access as a result.", 1500],
     ["agent", "Forager", "matched", "2 funding calls", "RIF and Horizon Europe cascade.", 640],
