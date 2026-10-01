@@ -232,6 +232,7 @@ function IntegrationsContent() {
     "climate-trace": Boolean(d?.climateTrace),
     cystat: Boolean(d?.cystat),
     wikirate: d?.wikirate?.cyprusCompanies != null,
+    registrar: Boolean(d?.registry),
   };
   const liveCount = CONNECTORS.filter((c) => c.state === "live" && answered[c.id]).length;
   const linkableCount = CONNECTORS.filter((c) => c.state === "oauth" || c.state === "upload").length;
@@ -265,6 +266,7 @@ function IntegrationsContent() {
       if (!d.eac.readerReady) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
     }
     if (c.state === "live" && d && c.id in answered && !answered[c.id]) {
+      if (c.id === "registrar") return { word: L("Not linked yet", "Δεν έχει συνδεθεί"), tone: "idle" as const };
       if (c.id === "wikirate" && !d.wikirate.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
       return { word: L("No answer now", "Χωρίς απάντηση"), tone: "warn" as const };
     }
@@ -716,6 +718,28 @@ function IntegrationsContent() {
             </p>
           )}
         </>
+      );
+    }
+    if (c.id === "registrar" && d) {
+      if (!d.registry) {
+        return (
+          <p className="vci-tile-note">
+            {L("Find your company in Settings to link its register entry.", "Βρείτε την εταιρεία σας στις Ρυθμίσεις για να συνδέσετε την εγγραφή της.")}{" "}
+            <a href={`/${lang === "el" ? "el" : "en"}/app/settings`}>{L("Open Settings", "Άνοιγμα Ρυθμίσεων")}</a>
+          </p>
+        );
+      }
+      return (
+        <div className="vci-tile-detail">
+          <div>
+            <span>{d.registry.registrationNo}</span>
+            <strong style={{ overflowWrap: "anywhere" }}>{d.registry.legalName}</strong>
+          </div>
+          <div>
+            <span>{L("Status", "Κατάσταση")}</span>
+            <strong>{d.registry.status === "Registered" ? L("Registered", "Εγγεγραμμένη") : d.registry.status}</strong>
+          </div>
+        </div>
       );
     }
     if (c.id === "wikirate" && d) {
