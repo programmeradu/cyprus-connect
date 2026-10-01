@@ -294,3 +294,6 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Approval and Deliverables fix (1 Oct 2026)
 - Redeploy to pick up the fix. Approving an old "VSME draft" task now writes the draft and links it from Deliverables. Clicking a task that was already decided no longer shows an error.
 - If Deliverables stays empty after approving a VSME draft, check that the live database has the `reports` table (migration list in this file) and send the error reference shown in the app.
+
+## Verde document drafter (2026-10-01)
+- Nothing to set up. Redeploy, then ask Verde e.g. "write our supplier code of conduct", approve, and check it opens in Deliverables.
