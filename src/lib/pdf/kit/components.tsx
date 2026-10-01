@@ -13,7 +13,7 @@ export const MARGIN = 54;
 export const CONTENT_W = PAGE_W - MARGIN * 2;
 
 const s = StyleSheet.create({
-  page: { fontFamily: SANS as unknown as string, fontSize: 9.5, color: C.body, paddingTop: 76, paddingBottom: 70, paddingHorizontal: MARGIN, lineHeight: 1.45 },
+  page: { fontFamily: SANS as unknown as string, fontSize: 9.5, color: C.body, paddingTop: 76, paddingBottom: 70, paddingHorizontal: MARGIN },
   header: { position: "absolute", top: 30, left: MARGIN, right: MARGIN, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomWidth: 0.5, borderBottomColor: C.rule, paddingBottom: 9 },
   headerText: { fontSize: 7.5, color: C.quiet, letterSpacing: 0.6, textTransform: "uppercase", fontWeight: 500 },
   footer: { position: "absolute", bottom: 30, left: MARGIN, right: MARGIN, flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", borderTopWidth: 0.5, borderTopColor: C.rule, paddingTop: 8 },
