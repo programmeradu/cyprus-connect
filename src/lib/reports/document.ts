@@ -45,6 +45,28 @@ function figures(v: unknown): ReportFigure[] {
     .filter((f) => f.label && f.value && f.source);
 }
 
+/** Readers never see internal codes: "scope2_intensity" -> "scope2 intensity". */
+function plain(v: string): string {
+  return v.replace(/\b([A-Za-z0-9]+(?:_[A-Za-z0-9]+)+)\b/g, (m) => m.replace(/_/g, " "));
+}
+
+const SOURCE_NAMES: Record<string, string> = {
+  metric_readings: "Carbon footprint records",
+  utility_bills: "Uploaded utility bills",
+  obligations: "Deadline records",
+  suppliers: "Supplier list",
+  cbam_suppliers: "Supplier list",
+  grant_scout: "Funding matches",
+  company: "Company record",
+};
+
+function plainSource(v: string | undefined | null): string {
+  if (!v) return "";
+  let out = String(v);
+  for (const [k, n] of Object.entries(SOURCE_NAMES)) out = out.replace(new RegExp(`\\b${k}\\b`, "g"), n);
+  return plain(out).replace(/\bco2e total\b/gi, "total emissions").replace(/\bscope([123])\b/gi, "Scope $1");
+}
+
 function gaps(v: unknown): string[] {
   return Array.isArray(v) ? v.slice(0, 5).map((e) => text(e, 160)).filter(Boolean) : [];
 }
@@ -84,7 +106,7 @@ async function gatherRecords(workspace: typeof workspaces.$inferSelect, accountI
     .map((d) => {
       const pts = (readings ?? []).filter((r) => r.metricKey === d.key && r.site === null);
       const cur = pts.at(-1);
-      return cur ? `${d.key} "${d.label}": ${cur.value.toFixed(d.precision)} ${d.unit} (${cur.periodLabel}, source ${cur.source})` : null;
+      return cur ? `${d.label}: ${cur.value.toFixed(d.precision)} ${d.unit} (${cur.periodLabel}, source ${plainSource(cur.source)})` : null;
     })
     .filter(Boolean);
 
@@ -93,23 +115,23 @@ async function gatherRecords(workspace: typeof workspaces.$inferSelect, accountI
     "COMPANY (company record)",
     ...companyLines.map((l) => `- ${l}`),
     "",
-    "FOOTPRINT (metric_readings)",
+    "FOOTPRINT (carbon footprint records)",
     ...(metricLines.length ? metricLines.map((l) => `- ${l}`) : ["- none recorded"]),
     "",
-    "UTILITY BILLS (utility_bills)",
+    "UTILITY BILLS (uploaded utility bills)",
     eac ? `- electricity: ${eac.bills.length} bills, ${Math.round(eac.totalKwh)} kWh, ${Math.round(eac.totalKgCo2e)} kg CO2e, factor ${eac.factor}` : "- electricity: not available",
     water ? `- water: ${water.bills.length} bills, ${Math.round(water.totalM3)} m3` : "- water: not available",
     "",
-    "LEGAL DEADLINES (obligations)",
-    ...(ob.length ? ob.map((o) => `- ${o.framework}: ${o.title}, due ${o.dueDate}, ${o.match}, status ${o.status}`) : ["- none matched"]),
+    "LEGAL DEADLINES (deadline records)",
+    ...(ob.length ? ob.map((o) => `- ${o.framework}: ${o.title}, due ${o.dueDate}, ${plain(o.match)}, status ${plain(o.status)}`) : ["- none matched"]),
     "",
-    "SUPPLIERS (suppliers)",
+    "SUPPLIERS (supplier list)",
     ...((suppliers ?? []).length
-      ? (suppliers ?? []).map((s) => `- ${s.supplierName}, sanctions check ${s.sanctionsStatus ?? "not run"}`)
+      ? (suppliers ?? []).map((s) => `- ${s.supplierName}, sanctions check ${plain(s.sanctionsStatus ?? "not run")}`)
       : ["- none recorded"]),
     "",
-    "FUNDING FITS (grant_scout)",
-    ...((funding?.calls ?? []).length ? funding!.calls.slice(0, 5).map((f) => `- ${f.title}, ${f.verdict}, deadline ${f.deadline ?? "open"}`) : ["- none"]),
+    "FUNDING FITS (funding matches)",
+    ...((funding?.calls ?? []).length ? funding!.calls.slice(0, 5).map((f) => `- ${f.title}, ${plain(f.verdict)}, deadline ${f.deadline ?? "open"}`) : ["- none"]),
   ].join("\n");
 
   return {
@@ -178,7 +200,7 @@ RULES
 5. Never commit the company to a process, schedule, audit, certification, project, supplier step or deadline that the records do not show. Where a section needs a decision, describe briefly what the LIBRARY requires and add "Decide: ..." to "gaps".
 6. Cite a source only for what its LIBRARY line says it covers. Use only figures that matter for this document; do not pad with unrelated figures (a carbon footprint does not belong in a deforestation statement).
 7. Dates and deadlines come only from LIBRARY or RECORDS. If unsure of a current date, say "check the current date at [Sn]".
-${applicability ? `8. APPLICABILITY: ${applicability}\n` : ""}9. Each "body" is 60 to 180 words. "figures" quote only record values; "source" names the record, for example "metric_readings: scope2_intensity, 2026".
+${applicability ? `8. APPLICABILITY: ${applicability}\n` : ""}9. Each "body" is 60 to 180 words. "figures" quote only record values; "source" names the record in plain words, for example "Carbon footprint records, Scope 2, Sep 2026". Never write internal codes, field names or words joined with underscores anywhere.
 
 OUTLINE
 ${outline}
@@ -203,12 +225,12 @@ One entry per outline heading, in order.`;
       sections.forEach((s, i) => {
         const m = model[i];
         if (!m) return;
-        s.body = text(m.body, 2600);
-        s.figures = figures(m.figures);
-        s.gaps = gaps(m.gaps);
+        s.body = plain(text(m.body, 2600));
+        s.figures = figures(m.figures).map((f) => ({ ...f, label: plain(f.label), value: plain(f.value), source: plainSource(f.source) }));
+        s.gaps = gaps(m.gaps).map(plain);
       });
       const drafted = text(parsed?.summary, 900);
-      if (drafted) summary = drafted;
+      if (drafted) summary = plain(drafted);
       ok = sections.some((s) => s.body);
     } catch (error) {
       log.error("model draft failed", { error });
