@@ -820,7 +820,7 @@ export const supplierPayeeSkips = pgTable('supplier_payee_skips', {
   label: text('label').notNull(),
   skippedBy: text('skipped_by'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-}, (t) => [primaryKey({ columns: [t.workspaceId, t.payeeKey] })]);
+}, (t) => ({ pk: primaryKey({ columns: [t.workspaceId, t.payeeKey] }) }));
 
 /** Every supplier data request that was approved and actually sent. */
 export const cbamSupplierRequests = pgTable('cbam_supplier_requests', {
