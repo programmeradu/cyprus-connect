@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 function authorized(req: NextRequest): boolean {
-  const expected = process.env.CRON_SECRET;
+  const expected = process.env.CRON_SECRET?.trim();
   if (!expected) return false;
-  const provided = req.nextUrl.searchParams.get("secret") || req.headers.get("x-cron-secret") || "";
+  const provided = (req.nextUrl.searchParams.get("secret") || req.headers.get("x-cron-secret") || "").trim();
   return provided === expected;
 }
 

@@ -9,9 +9,10 @@ export const maxDuration = 60;
 // Called by the Cloudflare cron with the x-cron-secret header. With no
 // CRON_SECRET configured the route refuses every caller.
 function authorized(req: NextRequest): boolean {
-  const expected = process.env.CRON_SECRET;
+  const expected = process.env.CRON_SECRET?.trim();
   if (!expected) return false;
-  return (req.headers.get("x-cron-secret") || "") === expected;
+  const provided = (req.nextUrl.searchParams.get("secret") || req.headers.get("x-cron-secret") || "").trim();
+  return provided === expected;
 }
 
 export async function GET(req: NextRequest) {

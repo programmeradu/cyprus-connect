@@ -8,8 +8,9 @@ export const maxDuration = 60;
 
 // Called on the hourly Cloudflare tick with x-cron-secret; downloads at most once every 20 hours.
 function authorized(req: NextRequest): boolean {
-  const expected = process.env.CRON_SECRET;
-  return !!expected && (req.headers.get("x-cron-secret") || "") === expected;
+  const expected = process.env.CRON_SECRET?.trim();
+  const provided = (req.nextUrl.searchParams.get("secret") || req.headers.get("x-cron-secret") || "").trim();
+  return !!expected && provided === expected;
 }
 
 export async function GET(req: NextRequest) {

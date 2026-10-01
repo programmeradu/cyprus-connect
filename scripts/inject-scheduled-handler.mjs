@@ -9,25 +9,40 @@
  * Run automatically as part of `npm run deploy` via the `build:cf` hook.
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const workerPath = join(__dirname, "../.open-next/worker.js");
 
+if (!existsSync(workerPath)) {
+  console.log("ℹ️ .open-next/worker.js not found yet, skipping handler injection");
+  process.exit(0);
+}
+
 let source = readFileSync(workerPath, "utf8");
 
-// 1. Ensure HYPERDRIVE_URL is initialized on fetch
-if (!source.includes("process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;")) {
-  source = source.replace(
-    "async fetch(request, env, ctx) {",
-    `async fetch(request, env, ctx) {
+// 1. Ensure env secrets and HYPERDRIVE_URL are initialized on fetch
+if (!source.includes("process.env[k] = v.trim();")) {
+  // If previously injected with untrimmed version, replace it; else replace fetch header
+  if (source.includes("process.env[k] = v;")) {
+    source = source.replaceAll("process.env[k] = v;", "process.env[k] = v.trim();");
+  } else {
+    source = source.replace(
+      "async fetch(request, env, ctx) {",
+      `async fetch(request, env, ctx) {
+        if (env) {
+            for (const [k, v] of Object.entries(env)) {
+                if (typeof v === "string") process.env[k] = v.trim();
+            }
+        }
         if (env.HYPERDRIVE?.connectionString) {
             process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;
         }`
-  );
-  console.log("✅ Injected HYPERDRIVE_URL initialization");
+    );
+  }
+  console.log("✅ Injected env secrets and HYPERDRIVE_URL initialization");
 }
 
 // 2. Inject scheduled cron handler
@@ -40,6 +55,11 @@ const injection = `
 //   "*/15 * * * *" → agent heartbeat (enqueue + run a bounded batch)
 // Each job self-fetches its API route via the WORKER_SELF_REFERENCE binding.
 async function __vuneliScheduled(event, env, _ctx) {
+  if (env) {
+    for (const [k, v] of Object.entries(env)) {
+      if (typeof v === "string") process.env[k] = v.trim();
+    }
+  }
   if (env.HYPERDRIVE?.connectionString) {
     process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;
   }
@@ -91,6 +111,11 @@ async function __vuneliScheduled(event, env, _ctx) {
 // refused so the sender gets a bounce instead of silence.
 const __VUNELI_MAX_EMAIL = 15 * 1024 * 1024;
 async function __vuneliEmail(message, env, _ctx) {
+  if (env) {
+    for (const [k, v] of Object.entries(env)) {
+      if (typeof v === "string") process.env[k] = v.trim();
+    }
+  }
   if (env.HYPERDRIVE?.connectionString) {
     process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;
   }

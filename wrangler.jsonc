@@ -2,6 +2,9 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"main": ".open-next/worker.js",
 	"name": "cyprus-connect",
+	"build": {
+		"command": "node scripts/inject-scheduled-handler.mjs"
+	},
 	"compatibility_date": "2026-08-01",
 	"keep_vars": true,
 	"placement": {
