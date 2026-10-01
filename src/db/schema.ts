@@ -1,4 +1,4 @@
-import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date, numeric } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
@@ -1016,4 +1016,22 @@ export const documentFingerprints = pgTable('document_fingerprints', {
   issuedBy: text('issued_by').notNull(),
   issuedAt: timestamp('issued_at', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Shared official EU feeds: Cyprus tenders (TED) and EU legal acts (EUR-Lex). scripts/sql/0032. */
+export const euFeedItems = pgTable('eu_feed_items', {
+  id: text('id').primaryKey(),
+  source: text('source').notNull(),
+  title: text('title').notNull(),
+  titleLang: text('title_lang').notNull().default('en'),
+  url: text('url').notNull(),
+  publishedAt: date('published_at').notNull(),
+  deadline: date('deadline'),
+  buyer: text('buyer'),
+  valueEur: numeric('value_eur'),
+  actType: text('act_type'),
+  topics: text('topics').array().notNull().default(sql`'{}'::text[]`),
+  cpv: text('cpv').array().notNull().default(sql`'{}'::text[]`),
+  green: boolean('green').notNull().default(false),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
 });
