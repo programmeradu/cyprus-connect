@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
 import { useWorkspaceAction } from "@/components/app/console/workspace-store";
@@ -17,6 +17,7 @@ const SHOWN = 5;
 
 export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("home.waiting");
+  const locale = useLocale();
   const { data } = useConsole();
   const { run } = useWorkspaceAction();
   const [busy, setBusy] = useState<number | null>(null);
@@ -58,7 +59,7 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
                   <small>
                     {t(isEvidence ? "kindEvidence" : isException ? "kindException" : "kindApproval", { agent: agentName(task.agentKey) })}
                     {" · "}
-                    {relativeTime(task.createdAt)}
+                    {relativeTime(task.createdAt, locale)}
                   </small>
                   {failed?.id === task.id && <p className="vch-error" role="alert">{failed.message}</p>}
                 </div>

@@ -186,7 +186,7 @@ export function PendingEmailsPlate({ emails, onDecided }: { emails: PendingEmail
           <li key={e.taskId} className="vck-cbam-contact">
             <div className="vck-cbam-contact-head"><strong>{e.subject}</strong></div>
             <p className="vck-cbam-note">{t("to", { to: e.to })} · {e.replyTo ? t("repliesTo", { email: e.replyTo }) : t("noReplyTo")}</p>
-            <pre className="vck-cbam-mail">{e.body}</pre>
+            <pre className="vck-cbam-mail" tabIndex={0} aria-label={e.subject}>{e.body}</pre>
             {e.lastError && <p className="vck-cbam-note" data-tone="warn">{e.lastError}</p>}
             <div className="vck-cbam-actions">
               <Btn variant="primary" disabled={busy !== null} onClick={() => decide(e, "approve")}>{busy === e.taskId ? t("working") : t("approve")}</Btn>

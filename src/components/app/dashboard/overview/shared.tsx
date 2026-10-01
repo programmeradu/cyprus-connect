@@ -40,8 +40,10 @@ export const STATUS_TONE: Record<string, string> = {
 
 export { titleCase } from "./text";
 
-export const greetingFor = (hour: number) =>
-  hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+export const greetingFor = (hour: number, locale: string = "en") =>
+  locale === "el"
+    ? hour < 12 ? "Καλημέρα" : hour < 18 ? "Καλό απόγευμα" : "Καλησπέρα"
+    : hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
 export type SectionKey = "overview" | "evidence" | "obligations" | "connections" | "audit";
 

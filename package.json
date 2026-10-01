@@ -26,7 +26,8 @@
     "test:auth-migration": "node --test tests/supabase-auth-contract.test.mjs",
     "test": "vitest run --config vitest.config.ts",
     "test:coverage": "vitest run --config vitest.config.ts --coverage",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@babel/parser": "^7.28.5",
@@ -155,8 +156,10 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/eslintrc": "^3.3.1",
     "@opennextjs/cloudflare": "^1.20.2",
+    "@playwright/test": "1.56.0",
     "@types/qrcode": "^1.5.6",
     "@types/sanitize-html": "^2.16.1",
     "@vitest/coverage-v8": "^3",

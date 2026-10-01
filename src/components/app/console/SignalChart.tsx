@@ -9,6 +9,7 @@
  * series that is passed in. Nothing here is written by hand.
  */
 
+import { useLocale } from "next-intl";
 import { useMemo, useRef, useState } from "react";
 import { fmtNumber, fmtSigned, type ConsoleMetric } from "./types";
 
@@ -47,6 +48,7 @@ function scaleTicks(min: number, max: number, precision: number) {
 }
 
 export function SignalChart({ metric, emptyNote }: { metric: ConsoleMetric; emptyNote?: string }) {
+  const locale = useLocale();
   const host = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<number | null>(null);
 
@@ -84,7 +86,7 @@ export function SignalChart({ metric, emptyNote }: { metric: ConsoleMetric; empt
   if (points.length < 2) {
     return (
       <div className="vc-signal vc-signal-empty">
-        <p>{emptyNote ?? "This metric has no series yet. It appears when the first period closes."}</p>
+        <p>{emptyNote ?? (locale === "el" ? "Δεν υπάρχουν ακόμη τιμές. Εμφανίζονται όταν κλείσει η πρώτη περίοδος." : "This metric has no series yet. It appears when the first period closes.")}</p>
       </div>
     );
   }

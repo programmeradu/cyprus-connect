@@ -15,12 +15,12 @@
 
 .vch-home .vc-plate > header > span { font-weight: 650; color: var(--vc-ink); font-size: 0.95rem; }
 .vch-home .vc-plate > header > strong { font-variant-numeric: tabular-nums; color: var(--vc-ink-2); font-weight: 650; }
-.vch-home .vc-plate > header > strong[data-tone="warn"] { color: var(--vc-warn); }
-.vch-home .vc-plate > header > strong[data-tone="bad"] { color: var(--vc-bad); }
+.vch-home .vc-plate > header > strong[data-tone="warn"] { color: var(--vc-warn-text); }
+.vch-home .vc-plate > header > strong[data-tone="bad"] { color: var(--vc-bad-text); }
 
 .vch-empty { margin: 0; color: var(--vc-ink-2); font-size: 0.9rem; line-height: 1.5; }
 .vch-meta { margin: 0; color: var(--vc-ink-3); font-size: 0.82rem; font-weight: 550; line-height: 1.45; }
-.vch-error { margin: 4px 0 0; color: var(--vc-bad); font-size: 0.82rem; font-weight: 600; }
+.vch-error { margin: 4px 0 0; color: var(--vc-bad-text); font-size: 0.82rem; font-weight: 600; }
 
 /* Buttons: one shape, three weights. */
 .vch-btn {

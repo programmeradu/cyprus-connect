@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
 import { db } from "@/db";
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
         issuedAt: new Date(b.issuedAt),
       })
       .onConflictDoNothing();
+    await recordActivity(s.session, "downloaded document", b.title, `${b.docId} · fingerprint ${b.hash.slice(0, 12)}…`);
     return NextResponse.json({ ok: true });
   } catch (error) {
     const ref = log.error("register failed", error);

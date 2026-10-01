@@ -434,7 +434,9 @@
       "expertsEmpty": "We only list projects and experts we have checked. None are listed yet.",
       "expertsOpen": "Open experts and offsets",
       "progress": "Progress",
-      "steps": "Steps"
+      "steps": "Steps",
+      "noneTitle": "No actions available yet",
+      "noneBody": "Finish setting up your company and connect your emissions data so Vuneli can suggest actions for your business."
     },
     "settings": {
       "title": "Settings",

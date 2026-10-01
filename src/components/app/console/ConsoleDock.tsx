@@ -13,7 +13,8 @@ import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoVuneliAi, IcoMenu } from "./icons";
 import { MORE_ITEMS, navActive } from "./ConsoleTopbar";
-import { onPage } from "./nav-sections";
+import { navText, onPage } from "./nav-sections";
+import { useLocale } from "next-intl";
 
 const DOCK_ITEMS = [
   { href: "/app", label: "Home", icon: IcoGrid },
@@ -29,6 +30,7 @@ const SHEET_ITEMS = [
 ];
 
 export function ConsoleDock() {
+  const locale = useLocale();
   const pathname = usePathname();
   const path = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
   const [sheet, setSheet] = useState(false);
@@ -61,7 +63,7 @@ export function ConsoleDock() {
             onClick={(event) => event.stopPropagation()}
           >
             <header>
-              <span>All of the workspace</span>
+              <span>{navText("All of the workspace", locale)}</span>
               <button type="button" onClick={() => setSheet(false)} aria-label="Close the menu">
                 <IcoClose size={14} />
               </button>
@@ -74,8 +76,8 @@ export function ConsoleDock() {
                     data-active={onPage(path, item.href)}
                     onClick={() => setSheet(false)}
                   >
-                    <strong>{item.label}</strong>
-                    <span>{item.detail}</span>
+                    <strong>{navText(item.label, locale)}</strong>
+                    <span>{navText(item.detail, locale)}</span>
                   </Link>
                 </li>
               ))}
@@ -94,10 +96,10 @@ export function ConsoleDock() {
               href={item.href as never}
               data-active={active}
               aria-current={active ? "page" : undefined}
-              aria-label={item.label}
+              aria-label={navText(item.label, locale)}
             >
               <Icon size={16} />
-              <em>{item.label}</em>
+              <em>{navText(item.label, locale)}</em>
             </Link>
           );
         })}

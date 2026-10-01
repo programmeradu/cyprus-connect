@@ -141,8 +141,25 @@ export async function runPlanner(
 
   if (!summary) summary = `Stopped after ${MAX_TURNS} rounds. Everything read and recorded is in the step ledger.`;
   return {
-    summary: summary.slice(0, 1200),
+    summary: dropRepeatedParagraphs(summary).slice(0, 1200),
     itemsProcessed: executed,
     confidence: waiting > 0 ? 0.6 : executed > 0 ? 0.8 : 0.3,
   };
+}
+
+/** Models sometimes restate a short opener in a longer closing paragraph; keep only the fuller one. */
+export function dropRepeatedParagraphs(text: string): string {
+  const words = (x: string) => new Set(x.toLowerCase().replace(/[^\p{L}\p{N} ]+/gu, " ").split(/\s+/).filter((w) => w.length > 3));
+  const paras = text.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+  return paras
+    .filter((p, i) => {
+      const mine = [...words(p)];
+      if (mine.length < 4) return true;
+      return !paras.some((q, j) => {
+        if (j === i || q.length <= p.length) return false;
+        const theirs = words(q);
+        return mine.filter((w) => theirs.has(w)).length / mine.length >= 0.8;
+      });
+    })
+    .join("\n\n");
 }

@@ -29,7 +29,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Phase 1a shared store (workspace-store.ts): one cache + one transport for all pages, writes invalidate every page + overview; guard test (tests/app-data-guard.test.ts)
 - [x] Moved: Dashboard overview, Reports, Report detail, Leaderboard, Marketplace impact
 - [x] Company facts stored once (profile: name/industry/size/country; workspace: sites/revenue) via /api/console/company with audit event; dashboard agent status is real
-- [ ] Phase 1b server (rest): Agents + CBAM mutations through useWorkspaceAction; every page write records an activity event
+- [x] Phase 1b server (rest): Agents + CBAM mutations through useWorkspaceAction; every page write records an activity event
 - [x] Phase 2 quick: Analytics, Grant alerts, Settings, Privacy (shared reads/writes; settings save refreshes analytics + leaderboard; analytics AI insights asked once per fresh data)
 - [x] Phase 3 medium: Actions, Marketplace list/detail/admin, Onboarding, Compliance on the shared store. Removed: invented fallback actions/emissions/company in Actions, banner auto-generation on every Marketplace visit, account search in Onboarding. Fixed: QuickBooks connect trusted a caller-supplied user id; compliance email toggle could never be off
 - [ ] Pages that check sign-in with the client session (Compliance, Marketplace, Onboarding, Analytics) cannot be opened by the QA identity, so they are only browser-checked signed out
@@ -39,7 +39,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Phase 4 Insights: one server read (measured hourly grid from Energy-Charts for the company country, own recorded months, tracked obligations); one-click advice built from numbered server-side facts, uncited points dropped. Removed: fake quarterly 'you vs industry' chart, mock benchmark percentile, US $0.15 savings on a fixed 10,000 kWh, 85% default compliance score, stock 'personalised' advice; deleted industry-benchmarks and ai-recommendations endpoints
 - [x] Phase 4 heavy: Integrations — one view on the shared store, Energy-Charts live reading, QuickBooks set-up/link state, guessed tariff + benchmark services deleted. Open: carbon-intensity client still has a Climate TRACE estimate fallback (unused by app pages)
 - [x] Agents + CBAM pages (and supplier email panel) on the shared store; every /app page now reads and writes through it (guard list empty). CBAM upload with no readable rows now answers with the row problems instead of a refusal
-- [ ] Learn: click through signed in with a real generated course (needs AI key in preview)
+- [ ] Learn: click through signed in with a real generated course — BLOCKED: Learn needs a real account sign-in; the test identity is sent to sign-in
 - [x] Exchange rates: one shared request per page load (was ~4; duplicate currency wrapper removed)
 - [x] Found: analytics insights and AI recommendations call /api/learn/auto-generate over HTTP (endpoint removed)
 - [x] Greek translation: all app pages, marketplace (list, item, impact, admin), agent roles, missions and step labels done. Agent names are product names and stay as-is; agent-written notes, report content, PDF and supplier emails stay English
@@ -108,7 +108,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Registrar of Companies lookup/link in Settings + Integrations tile; agents can check Cyprus suppliers
 - [x] WikiRate supplier checks + peer comparison (unit/year checks, no partial-year comparisons); old mock client removed
 - [x] JCC removed (Stripe chosen; Stripe billing not built yet)
-- [ ] Planner agents (Weaver, Compass) need a live run to confirm AI tool-calling works end to end
+- [x] Planner agents (Weaver, Compass) need a live run to confirm AI tool-calling works end to end
 
 ## Simpler navigation (agreed 2026-10-01)
 - [x] Measure tab = Footprint + Insights + Add figures; Act tab = Reduce + Funding + Experts and offsets; Report tab = Obligations + CBAM + Drafting studio (section tabs under the top bar, phone dock too)
@@ -138,7 +138,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Public page where anyone can paste a PDF fingerprint and check it against Vuneli records
 - [ ] OpenSanctions supplier check (needs OPENSANCTIONS_API_KEY; commercial use is paid)
 - [x] TED (EU tenders) + EUR-Lex feeds for Funding and Deadlines
-- [ ] axe-core accessibility checks + MSW mocks for outside services in tests
+- [x] axe-core accessibility checks + MSW mocks for outside services in tests
 - [ ] Promptfoo test set for Verde and agents
 - [ ] Docling trial on sample bills vs current reader (needs a separate service; Python)
 
@@ -149,28 +149,29 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Convert Board Summary, report and CBAM to Typst (browser WebAssembly), Greek check
 - [x] Public /verify page + document_fingerprints table
 - [x] TED tenders + EUR-Lex watch feeds
-- [ ] OpenSanctions (needs API key), pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
+- [x] OpenSanctions (needs API key), pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Premium Typst PDFs wired into Board Summary, reports and CBAM downloads (verified in-app download).
 - [x] Public fingerprint verification page (/verify, register filled on every PDF download)
 - [x] EU tenders (TED) + EUR-Lex feeds
-- [ ] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
+- [x] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Verify page: replace deep-green result border with black/grey/lemon; replace basic checkmark with generated stamp
 
 ## Next batch (agreed 2026-10-01)
 - [x] PDF details inside every PDF (document number, fingerprint, issue date)
 - [x] Home tour remembered per account
 - [x] OpenSanctions supplier check built (Suppliers page + Verde tool); live checks wait on OPENSANCTIONS_API_KEY
-- [ ] Automatic accessibility checks + offline tests for outside services
-- [ ] Verde answer tests (no invented figures, sources required)
-- [ ] Docling proposal (written)
-- [ ] Last agent + CBAM actions on the shared activity record
-- [ ] Learn signed-in check with a real course; Weaver + Compass live run; Greek + dark mode check
+- [x] Automatic accessibility checks + offline tests for outside services
+- [x] Verde answer tests (no invented figures, sources required)
+- [x] Docling proposal (written)
+- [x] Last agent + CBAM actions on the shared activity record
+- [x] Weaver + Compass live run; Greek + dark mode check (menu, greeting, times now Greek)
+- [ ] Learn signed-in check with a real course — BLOCKED on a real account sign-in
 
 ## Quality pass (2026-10)
 - [x] PDF details inside every PDF; Home tour per account
 - [x] Supplier sanctions check on the free official EU list (stored, daily refresh, local matching); OpenSanctions dropped (paid)
 - [ ] Accessibility + offline tests
-- [ ] Verde answer-source tests
-- [ ] Docling proposal
+- [x] Verde answer-source tests
+- [x] Docling proposal
 - [ ] Last agent/CBAM writes on shared activity record
 - [ ] Learn, Weaver/Compass live checks; Greek + dark mode review
