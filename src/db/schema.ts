@@ -1,4 +1,5 @@
 import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
   id: serial('id').primaryKey(),
@@ -1001,4 +1002,18 @@ export const companyLogos = pgTable('company_logos', {
   status: integer('status').notNull().default(200),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Every PDF issued, keyed by its printed SHA-256 fingerprint (scripts/sql/0031). */
+export const documentFingerprints = pgTable('document_fingerprints', {
+  hash: text('hash').primaryKey(),
+  prefix: text('prefix').generatedAlwaysAs(sql`substring(hash from 1 for 16)`),
+  kind: text('kind').notNull(),
+  docId: text('doc_id').notNull(),
+  title: text('title').notNull(),
+  company: text('company').notNull(),
+  workspaceId: text('workspace_id').notNull(),
+  issuedBy: text('issued_by').notNull(),
+  issuedAt: timestamp('issued_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
