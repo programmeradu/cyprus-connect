@@ -7,7 +7,6 @@
 import { and, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { fundingMatches, grantOpportunities, user, workspaces } from "@/db/schema";
-import { employeesFromTeamSize } from "@/lib/company.server";
 import { checkFit, yearsSince } from "./match";
 import { FACT_LABEL, sectorOf, type BusinessPicture, type FactKey, type RuleCheck, type Verdict } from "./rules";
 
@@ -21,14 +20,28 @@ export async function businessPicture(workspaceId: string): Promise<BusinessPict
         .where(eq(user.id, ws.ownerUserId))
         .limit(1)
     : [];
-  const employees = employeesFromTeamSize(p?.teamSize) ?? (ws.employees > 0 ? ws.employees : null);
+  const band = staffBand(p?.teamSize);
+  const fallback = ws.employees > 0 ? ws.employees : null;
   return {
     country: (p?.country || ws.country || "").toUpperCase() || null,
-    employees,
+    employees: band ? band.lo : fallback,
+    employeesMax: band ? band.hi : fallback,
     revenueEur: ws.revenueEur ?? null,
     companyAgeYears: yearsSince(ws.registryRegisteredOn),
     sector: sectorOf(p?.industry || ws.sector),
   };
+}
+
+/** "11-50" -> 11..50, "250+" -> 250..open, "37" -> exact. */
+export function staffBand(teamSize: string | null | undefined): { lo: number; hi: number | null } | null {
+  const t = (teamSize ?? "").replace(/\s/g, "");
+  let m = t.match(/^(\d+)-(\d+)$/);
+  if (m) return { lo: Number(m[1]), hi: Number(m[2]) };
+  m = t.match(/^(\d+)\+$/);
+  if (m) return { lo: Number(m[1]), hi: null };
+  m = t.match(/^(\d+)$/);
+  if (m) return { lo: Number(m[1]), hi: Number(m[1]) };
+  return null;
 }
 
 function openCallsFilter() {

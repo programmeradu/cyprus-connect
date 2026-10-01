@@ -62,7 +62,10 @@ export type Verdict = "strong" | "needs_info" | "hidden";
 
 export interface BusinessPicture {
   country: string | null;
+  /** Lowest possible staff count (exact when employeesMax equals it). */
   employees: number | null;
+  /** Highest possible staff count from a size band; null when the band is open-ended. */
+  employeesMax: number | null;
   revenueEur: number | null;
   companyAgeYears: number | null;
   sector: Sector | null;

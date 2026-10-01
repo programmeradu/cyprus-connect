@@ -73,10 +73,15 @@ export function checkFit(rules: CallRules, biz: BusinessPicture): FitResult {
     if (biz.employees === null) {
       add(missing, "employees", "Staff numbers must be checked.", "Πρέπει να ελεγχθεί ο αριθμός εργαζομένων.", "employees");
     } else {
-      const n = biz.employees;
+      // A size band (e.g. 11-50) only settles a limit when the whole band is on one side of it.
+      const lo = biz.employees;
+      const hi = biz.employeesMax;
       const maxE = rules.smeOnly ? Math.min(rules.maxEmployees ?? 249, 249) : rules.maxEmployees;
-      if (maxE !== null && n > maxE) add(failed, "employees", `For up to ${maxE} staff.`, `Για έως ${maxE} εργαζόμενους.`);
-      else if (rules.minEmployees !== null && n < rules.minEmployees) add(failed, "employees", `Needs at least ${rules.minEmployees} staff.`, `Απαιτεί τουλάχιστον ${rules.minEmployees} εργαζόμενους.`);
+      const minE = rules.minEmployees;
+      const ask = () => add(missing, "employees", "Exact staff number needed: your size band spans the limit.", "Χρειάζεται ο ακριβής αριθμός εργαζομένων: το εύρος σας περιλαμβάνει το όριο.", "employees");
+      if (maxE !== null && lo > maxE) add(failed, "employees", `For up to ${maxE} staff.`, `Για έως ${maxE} εργαζόμενους.`);
+      else if (minE !== null && hi !== null && hi < minE) add(failed, "employees", `Needs at least ${minE} staff.`, `Απαιτεί τουλάχιστον ${minE} εργαζόμενους.`);
+      else if ((maxE !== null && (hi === null || hi > maxE)) || (minE !== null && lo < minE)) ask();
       else add(met, "employees", rules.smeOnly ? "Staff numbers fit an SME." : "Staff numbers fit.", rules.smeOnly ? "Ο αριθμός εργαζομένων ταιριάζει σε ΜμΕ." : "Ο αριθμός εργαζομένων ταιριάζει.");
     }
   }
