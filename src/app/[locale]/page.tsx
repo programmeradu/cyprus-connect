@@ -65,8 +65,8 @@ export default function Home() {
       {/* News ticker - the hero photo dissolves through the space above it, so
           the image oozes into this section. The headlines themselves sit just
           past the tail of the dissolve to stay legible over any hero shot. */}
-      <section className="pointer-events-none relative z-10 -mt-28 bg-transparent">
-        <div className="mx-auto max-w-6xl px-4 pb-8 pt-44 sm:px-6 sm:pb-12 sm:pt-48 [&>*]:pointer-events-auto">
+      <section className="relative z-10 -mt-28 bg-transparent">
+        <div className="mx-auto max-w-6xl px-4 pb-8 pt-44 sm:px-6 sm:pb-12 sm:pt-48">
           <NewsTicker />
         </div>
       </section>
