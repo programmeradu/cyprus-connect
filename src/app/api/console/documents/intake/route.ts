@@ -51,7 +51,9 @@ export async function POST(request: NextRequest) {
         updatedAt: now,
       })
       .returning({ id: documents.id });
-    return NextResponse.json({ id: row.id, fileName, proposal: result.proposal });
+    // The raw statement lines stay on the server; the page only needs the payees.
+    const proposal = result.proposal.bank ? { ...result.proposal, bank: { ...result.proposal.bank, debits: undefined } } : result.proposal;
+    return NextResponse.json({ id: row.id, fileName, proposal });
   } catch (error) {
     const ref = log.error("intake read failed", error);
     return NextResponse.json({ message: "The document could not be read just now. Try again.", ref }, { status: 502 });
