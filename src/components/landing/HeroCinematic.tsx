@@ -156,7 +156,7 @@ export function HeroCinematic() {
 
         {/* Advisor chip - absolute positioned so it never affects hero height,
             safely clear of the bottom scrim */}
-        <div className="pointer-events-none absolute bottom-8 right-6 hidden md:block lg:bottom-12 lg:right-10">
+        <div className="pointer-events-none absolute bottom-8 right-6 z-30 hidden md:block lg:bottom-12 lg:right-10">
           <div
             tabIndex={0}
             aria-describedby="advisor-soon-tip"
