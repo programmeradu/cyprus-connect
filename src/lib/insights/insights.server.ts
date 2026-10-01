@@ -75,19 +75,23 @@ export interface ComplianceSummary {
 }
 
 export async function complianceSummary(userId: string, now = new Date()): Promise<ComplianceSummary> {
-  const regs = await db
-    .select({ name: complianceRegulations.name, status: complianceRegulations.status, nextDeadline: complianceRegulations.nextDeadline })
-    .from(complianceRegulations)
-    .where(and(eq(complianceRegulations.userId, userId)));
+  // Deadlines come from the shared rulebook rows on the account's workspace.
+  const [ws] = await db.select({ id: workspaces.id }).from(workspaces).where(eq(workspaces.ownerUserId, userId)).limit(1);
+  const regs = ws
+    ? (await db
+        .select({ name: obligations.title, match: obligations.match, dueDate: obligations.dueDate })
+        .from(obligations)
+        .where(eq(obligations.workspaceId, ws.id))).filter((r) => r.match === null || r.match === "applies")
+    : [];
   const day = 86_400_000;
   const upcoming = regs
-    .map((r) => ({ name: r.name, deadline: r.nextDeadline, t: Date.parse(r.nextDeadline) }))
+    .map((r) => ({ name: r.name, deadline: r.dueDate, t: Date.parse(r.dueDate) }))
     .filter((r) => Number.isFinite(r.t) && r.t >= now.getTime())
     .sort((a, b) => a.t - b.t);
   return {
     tracked: regs.length,
-    compliant: regs.filter((r) => r.status === "compliant").length,
-    actionRequired: regs.filter((r) => r.status === "action_required").length,
+    compliant: 0,
+    actionRequired: regs.filter((r) => { const t = Date.parse(r.dueDate); return Number.isFinite(t) && t < now.getTime(); }).length,
     dueWithin30Days: upcoming.filter((r) => r.t - now.getTime() <= 30 * day).length,
     next: upcoming[0] ? { name: upcoming[0].name, deadline: upcoming[0].deadline, daysLeft: Math.ceil((upcoming[0].t - now.getTime()) / day) } : null,
   };
