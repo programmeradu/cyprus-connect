@@ -550,6 +550,10 @@ export const workspaces = pgTable('workspaces', {
   revenueEur: real('revenue_eur'),
   /** Exact staff number given by the company; overrides the profile size band. */
   employeesExact: integer('employees_exact'),
+  /** Deadline facts (scripts/sql/0039). Null = not answered. */
+  importsCbamGoods: boolean('imports_cbam_goods'),
+  eudrCommodities: boolean('eudr_commodities'),
+  consumerClaims: boolean('consumer_claims'),
   country: text('country').notNull().default('CY'),
   baselineYear: integer('baseline_year').notNull().default(2025),
   framework: text('framework').notNull().default('VSME'),
@@ -894,7 +898,27 @@ export const obligations = pgTable('obligations', {
   progressPct: real('progress_pct').notNull().default(0),
   ownerName: text('owner_name'),
   agentKey: text('agent_key'),
+  /** Rulebook rule that produced this row (scripts/sql/0039). Null = added by a person. */
+  ruleId: text('rule_id'),
+  /** applies | might | not. */
+  match: text('match'),
+  reason: text('reason'),
+  reasonEl: text('reason_el'),
+  titleEl: text('title_el'),
+  sourceUrl: text('source_url'),
+  userEdited: boolean('user_edited').notNull().default(false),
+  checkedAt: timestamp('checked_at', { withTimezone: true }),
 });
+
+/** Amending acts seen per tracked base law (scripts/sql/0039). */
+export const lawWatch = pgTable('law_watch', {
+  baseCelex: text('base_celex').notNull(),
+  amendingCelex: text('amending_celex').notNull(),
+  actDate: text('act_date').notNull(),
+  firstSeenAt: timestamp('first_seen_at', { withTimezone: true }).notNull().defaultNow(),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+  reviewedNote: text('reviewed_note'),
+}, (t) => ({ pk: primaryKey({ columns: [t.baseCelex, t.amendingCelex] }) }));
 
 /** The audit ledger. Every agent and human act is written here. */
 export const activityEvents = pgTable('activity_events', {
