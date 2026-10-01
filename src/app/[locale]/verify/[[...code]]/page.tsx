@@ -83,12 +83,16 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
   return (
     <div className="min-h-screen bg-background text-foreground antialiased" style={{ fontFamily: "var(--editorial-sans)" }}>
       <MarketingHeader />
-      <main className="mx-auto max-w-3xl px-5 pb-24 pt-28 sm:px-8 sm:pt-36">
-        <h1 className="text-[2.1rem] font-semibold leading-[1.08] tracking-[-0.02em] sm:text-[2.8rem]" style={{ fontFamily: "var(--editorial-display)", textWrap: "balance" }}>
-          {t.title}
-        </h1>
-        <p className="mt-5 max-w-2xl text-[16.5px] leading-[1.62] text-muted-foreground">{t.intro}</p>
-
+      {/* Dark masthead, as on the trust pages, so the floating header stays legible. */}
+      <section className="bg-[oklch(0.19_0.02_150)] text-white">
+        <div className="mx-auto max-w-3xl px-5 pb-12 pt-28 sm:px-8 sm:pb-14 sm:pt-36">
+          <h1 className="text-[2.1rem] font-semibold leading-[1.08] tracking-[-0.02em] sm:text-[2.8rem]" style={{ fontFamily: "var(--editorial-display)", textWrap: "balance" }}>
+            {t.title}
+          </h1>
+          <p className="mt-5 max-w-2xl text-[16.5px] leading-[1.62] text-white/80">{t.intro}</p>
+        </div>
+      </section>
+      <main className="mx-auto max-w-3xl px-5 pb-24 pt-2 sm:px-8">
         <form action={`/${l}/verify`} method="get" className="mt-10">
           <label htmlFor="code" className="text-[14px] font-semibold">{t.label}</label>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row">
