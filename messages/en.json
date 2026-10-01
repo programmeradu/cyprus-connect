@@ -534,7 +534,9 @@
           "botttsNeutral": "Robots",
           "shapes": "Shapes",
           "initials": "Initials"
-        }
+        },
+        "website": "Company website",
+        "websiteHelp": "We use it to show your company's logo across the app. Leave empty to keep the generated picture."
       },
       "registry": {
         "title": "Find your company in the Cyprus Registrar of Companies",

@@ -27,6 +27,8 @@ import {
   useAvatarStyle,
   type AvatarStyleKey,
 } from "@/components/app/console/ConsoleAvatar";
+import { CompanyLogo } from "@/components/app/console/CompanyLogo";
+import { normalizeDomain } from "@/lib/company-logo";
 
 const inputClass =
   "w-full h-11 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-sm focus:outline-none focus:ring-2 focus:ring-primary/30";
@@ -43,6 +45,7 @@ function SettingsContent() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [website, setWebsite] = useState("");
   const [industry, setIndustry] = useState("");
   const [teamSize, setTeamSize] = useState("");
   const [countryCode, setCountryCode] = useState("");
@@ -74,6 +77,7 @@ function SettingsContent() {
     const c = company.data;
     if (!c) return;
     setCompanyName(c.companyName || "");
+    setWebsite(c.website || "");
     setIndustry(c.industry || "");
     setTeamSize(c.teamSize || "");
     setCountryCode(c.country || "");
@@ -152,6 +156,7 @@ function SettingsContent() {
         method: "PATCH",
         body: {
           companyName,
+          website: website.trim() || null,
           industry: industry || null,
           teamSize: teamSize || null,
           ...(countryCode ? { country: countryCode } : {}),
@@ -258,6 +263,23 @@ function SettingsContent() {
                   placeholder={t("companyNamePh")}
                   className={inputClass}
                 />
+              </div>
+              <div>
+                <label className="vck-label block mb-1.5" htmlFor="company-website">{t("x.website")}</label>
+                <div className="flex items-center gap-3">
+                  <CompanyLogo name={companyName || "vuneli"} domain={normalizeDomain(website) ?? company.data?.logoDomain} size={36} />
+                  <input
+                    id="company-website"
+                    type="text"
+                    inputMode="url"
+                    autoComplete="url"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    placeholder="acme.com.cy"
+                    className={`${inputClass} min-w-0 flex-1`}
+                  />
+                </div>
+                <p className="vck-meta mt-1.5">{t("x.websiteHelp")}</p>
               </div>
               {company.data && (company.data.country || "CY") === "CY" && (
                 <RegistryLink registry={company.data.registry ?? null} companyName={company.data.companyName || ""} />
