@@ -16,13 +16,13 @@ SRC = sys.argv[1]
 OUT = "src/data/cbam/benchmarks-2026.json"
 raw = open(SRC, encoding="utf-8").read()
 soup = BeautifulSoup(raw, "lxml")
-cells = lambda tr: [re.sub(r"\\s+", " ", td.get_text(" ")).strip() for td in tr.find_all(["td", "th"], recursive=False)]
-TOKEN = re.compile(r"(\\d+,\\d+)\\s*((?:\\([A-L12]\\))*)")
+cells = lambda tr: [re.sub(r"\s+", " ", td.get_text(" ")).strip() for td in tr.find_all(["td", "th"], recursive=False)]
+TOKEN = re.compile(r"(\d+,\d+)\s*((?:\([A-L12]\))*)")
 
 def parse(cell: str):
     out = []
     for m in TOKEN.finditer(cell):
-        tags = re.findall(r"\\(([A-L12])\\)", m.group(2))
+        tags = re.findall(r"\(([A-L12])\)", m.group(2))
         route = next((t for t in tags if t.isalpha()), None)
         period = next((int(t) for t in tags if t.isdigit()), None)
         out.append([float(m.group(1).replace(",", ".")), route, period])
@@ -37,9 +37,9 @@ assert table is not None, "benchmark table not found"
 bm = {}
 for r in table.find_all("tr"):
     c = cells(r)
-    if len(c) < 4 or not re.match(r"\\d", c[0]):
+    if len(c) < 4 or not re.match(r"\d", c[0]):
         continue
-    code = re.sub(r"\\D", "", c[0])
+    code = re.sub(r"\D", "", c[0])
     a, b = parse(c[2]), parse(c[3])
     if not b:
         continue
