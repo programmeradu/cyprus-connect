@@ -135,9 +135,9 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] CBAM official export format (XSD): founder to download from the CBAM Registry (EU Login)
 - [ ] CBAM: add Q3/Q4 2026 certificate prices when published (5 Oct 2026, 4 Jan 2027) in src/lib/cbam/official.ts
 - [x] Premium PDFs: Board Summary, drafted reports and a new CBAM declaration PDF on one design system (brand fonts, Greek support, generated Cyprus cover photographs, charts, SHA-256 fingerprint on every page)
-- [ ] Public page where anyone can paste a PDF fingerprint and check it against Vuneli records
+- [x] Public page where anyone can paste a PDF fingerprint and check it against Vuneli records
 - [ ] OpenSanctions supplier check (needs OPENSANCTIONS_API_KEY; commercial use is paid)
-- [ ] TED (EU tenders) + EUR-Lex feeds for Funding and Deadlines
+- [x] TED (EU tenders) + EUR-Lex feeds for Funding and Deadlines
 - [ ] axe-core accessibility checks + MSW mocks for outside services in tests
 - [ ] Promptfoo test set for Verde and agents
 - [ ] Docling trial on sample bills vs current reader (needs a separate service; Python)
@@ -145,13 +145,13 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 ## Premium PDFs + public check + EU feeds (plan: .lovable/plan/premium-pdfs-public-fingerprint-check-eu-tenders-feed-and-re-2026-10-01.md)
 - [x] Engine bake-off: Typst sample Board Summary (Source Serif 4 + IBM Plex, running header/footer, ruled tables, contour motif, QR) in src/lib/pdf/typst/
 - [x] Founder approved direction; logo in header; per-document styles (Board Summary light, report bold forest cover)
-- [ ] CBAM style (official form look)
-- [ ] Convert Board Summary, report and CBAM to Typst (browser WebAssembly), Greek check
-- [ ] Public /verify page + document_fingerprints table
-- [ ] TED tenders + EUR-Lex watch feeds
+- [x] CBAM style (official form look)
+- [x] Convert Board Summary, report and CBAM to Typst (browser WebAssembly), Greek check
+- [x] Public /verify page + document_fingerprints table
+- [x] TED tenders + EUR-Lex watch feeds
 - [ ] OpenSanctions (needs API key), pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Premium Typst PDFs wired into Board Summary, reports and CBAM downloads (verified in-app download).
 - [x] Public fingerprint verification page (/verify, register filled on every PDF download)
-- [ ] EU tenders (TED) + EUR-Lex feeds
+- [x] EU tenders (TED) + EUR-Lex feeds
 - [ ] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Verify page: replace deep-green result border with black/grey/lemon; replace basic checkmark with generated stamp
