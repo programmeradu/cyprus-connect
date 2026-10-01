@@ -1673,3 +1673,13 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
   .vcm-option, .vcm-radio, .vcm-close { transition: none; }
 }
 .vcm-search input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+
+/* Utility bills: bank check and forwarding address. Long addresses and descriptions wrap, never clip. */
+.vci-billcheck { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--vc-rule); min-width: 0; }
+.vci-billcheck-head { margin: 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--vc-ink-3); }
+.vci-billcheck-head .vck-num { text-transform: none; letter-spacing: 0; color: var(--vc-ink-2); }
+.vci-billcheck-ask { margin: 0; font-size: 13px; line-height: 1.5; color: var(--vc-ink); overflow-wrap: anywhere; }
+.vci-billcheck-more { margin: 0; font-size: 12px; line-height: 1.5; color: var(--vc-ink-3); overflow-wrap: anywhere; }
+.vci-billcheck-last { display: grid; gap: 2px; }
+.vci-inbox-addr { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 12px; border-radius: 10px; background: var(--vc-well); border: 1px solid var(--vc-rule); font-size: 13px; }
+.vci-inbox-addr code { font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--vc-ink); word-break: break-all; min-width: 0; flex: 1 1 220px; }
