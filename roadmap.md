@@ -109,3 +109,9 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] WikiRate supplier checks + peer comparison (unit/year checks, no partial-year comparisons); old mock client removed
 - [x] JCC removed (Stripe chosen; Stripe billing not built yet)
 - [ ] Planner agents (Weaver, Compass) need a live run to confirm AI tool-calling works end to end
+
+## Simpler navigation (agreed 2026-10-01)
+- [x] Measure tab = Footprint + Insights + Add figures; Act tab = Reduce + Funding + Experts and offsets; Report tab = Obligations + CBAM + Drafting studio (section tabs under the top bar, phone dock too)
+- [x] More holds only Deliverables and Benchmarks; Settings and Plan and usage live in the account menu; Learn off the menu
+- [ ] Home/dashboard redesign: on hold, founder to discuss
+- [ ] Suppliers list inside Act: to discuss
