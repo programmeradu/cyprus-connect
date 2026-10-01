@@ -158,7 +158,6 @@ export function BoardSummaryDocument({ c, hash, base, generatedAt }: { c: Conten
         <View>
           <FingerprintBlock hash={hash} generatedAt={generatedAt} sources={["Readings and documents stored in the Vuneli workspace", "Deadlines from the workspace obligation list", "Approval queue and activity log"]} />
         </View>
-        <Text style={{ fontSize: 1 }}> </Text>
       </InnerPage>
     </PdfDocument>
   );
