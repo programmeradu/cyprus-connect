@@ -143,7 +143,7 @@ export async function saveWaterBill(userId: string, fileName: string, mime: stri
   return { duplicate: false as const, id: row.id };
 }
 
-async function waterBills(userId: string): Promise<WaterBillRow[]> {
+export async function waterBills(userId: string): Promise<WaterBillRow[]> {
   const f = kgPerM3();
   const rows = await db
     .select({ id: documents.id, fileName: documents.fileName, parsedData: documents.parsedData, createdAt: documents.createdAt })

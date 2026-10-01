@@ -952,3 +952,16 @@ export const userRoles = pgTable('user_roles', {
   grantedBy: text('granted_by'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+/** One private forwarding address per account for utility e-bills (scripts/sql/0026_bill_inbox.sql). */
+export const billInboxes = pgTable('bill_inboxes', {
+  userId: text('user_id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  token: text('token').notNull().unique(),
+  lastMessageAt: timestamp('last_message_at'),
+  lastMessageFrom: text('last_message_from'),
+  lastMessageSubject: text('last_message_subject'),
+  lastResult: jsonb('last_result').$type<{ file: string; kind: 'water' | 'electricity' | null; ok: boolean; duplicate: boolean; reason: string | null }[]>().notNull().default([]),
+  confirmation: jsonb('confirmation').$type<{ provider: 'gmail'; code: string | null; link: string | null; at: string } | null>(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});

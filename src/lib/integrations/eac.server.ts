@@ -114,7 +114,7 @@ export async function saveEacBill(userId: string, fileName: string, mime: string
   return { duplicate: false as const, id: row.id };
 }
 
-async function eacBills(userId: string): Promise<EacBillRow[]> {
+export async function eacBills(userId: string): Promise<EacBillRow[]> {
   const f = REFERENCE_FACTORS.electricity;
   const rows = await db
     .select({ id: documents.id, fileName: documents.fileName, parsedData: documents.parsedData, createdAt: documents.createdAt })

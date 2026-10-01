@@ -14,7 +14,11 @@ import { bankSummary, type BankSummary } from "@/lib/bank/bank.server";
 import { saltEdgeSummary, type SaltEdgeSummary } from "@/lib/bank/saltedge.server";
 import { nangoSummary, type NangoSummary } from "@/lib/integrations/nango.server";
 import { eacSummary, type EacSummary } from "@/lib/integrations/eac.server";
-import { waterSummary, type WaterSummary } from "@/lib/integrations/water.server";
+import { waterSummary, waterBills, type WaterSummary } from "@/lib/integrations/water.server";
+import { eacBills } from "@/lib/integrations/eac.server";
+import { billInboxSummary, type BillInboxSummary } from "@/lib/integrations/bill-inbox.server";
+import { billPaymentCheck } from "@/lib/integrations/bill-payments.server";
+import type { BillPaymentCheck } from "@/lib/integrations/bill-match";
 import {
   climateTraceSummary,
   cyStatSummary,
@@ -43,6 +47,10 @@ export interface IntegrationsData {
   bank: BankSummary;
   eac: EacSummary;
   water: WaterSummary;
+  /** Bank payments to the water board / EAC matched against the bills. */
+  waterPayments: BillPaymentCheck;
+  eacPayments: BillPaymentCheck;
+  billInbox: BillInboxSummary;
   climateTrace: ClimateTraceSummary | null;
   climateTraceReason: "unsupported" | "unavailable" | null;
   cystat: CyStatSummary | null;
@@ -62,7 +70,8 @@ export async function GET() {
   try {
     const profile = await readCompanyProfile(account.id);
     const industry = profile?.companyIndustry?.trim() || null;
-    const [grid, bank, saltedge, nango, eac, water, ct, cystat, wikirate] = await Promise.all([
+    const [allWater, allEac] = await Promise.all([waterBills(account.id), eacBills(account.id)]);
+    const [grid, bank, saltedge, nango, eac, water, ct, cystat, wikirate, waterPayments, eacPayments, billInbox] = await Promise.all([
       gridToday(country),
       bankSummary(workspace.id),
       saltEdgeSummary(workspace.id),
@@ -72,6 +81,9 @@ export async function GET() {
       climateTraceSummary(country),
       cyStatSummary(industry),
       wikiRateSummary(),
+      billPaymentCheck(workspace.id, "water", allWater),
+      billPaymentCheck(workspace.id, "electricity", allEac),
+      billInboxSummary(account.id),
     ]);
     const body: IntegrationsData = {
       country,
@@ -90,6 +102,9 @@ export async function GET() {
       bank,
       eac,
       water,
+      waterPayments,
+      eacPayments,
+      billInbox,
       climateTrace: ct.data,
       climateTraceReason: ct.reason,
       cystat: cystat.data,

@@ -16,6 +16,7 @@ import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/conso
 import { ConnectorTile } from "@/components/app/integrations/ConnectorTile";
 import { SaltEdgeModal } from "@/components/app/integrations/SaltEdgeModal";
 import { NangoModal } from "@/components/app/integrations/NangoModal";
+import { BillInboxBlock, BillPaymentsBlock, billPayNote } from "@/components/app/integrations/BillChecks";
 import { ERP_SYSTEMS } from "@/lib/integrations/erp-catalog";
 import {
   CONNECTORS,
@@ -52,6 +53,7 @@ function IntegrationsContent() {
   const eacInput = useRef<HTMLInputElement>(null);
   const waterAction = useWorkspaceAction();
   const waterInput = useRef<HTMLInputElement>(null);
+  const inboxAction = useWorkspaceAction();
   const [saltEdgeModalOpen, setSaltEdgeModalOpen] = useState(false);
   const [nangoModalOpen, setNangoModalOpen] = useState(false);
   const d = res.data;
@@ -110,6 +112,20 @@ function IntegrationsContent() {
   useEffect(() => {
     if (waterAction.error) toast.error(waterAction.error);
   }, [waterAction.error]);
+  useEffect(() => {
+    if (inboxAction.error) toast.error(inboxAction.error);
+  }, [inboxAction.error]);
+
+  const openInbox = async (rotate: boolean) => {
+    if (rotate && !window.confirm(L("Get a new address? The old one stops receiving bills, so update your forwarding rule.", "Νέα διεύθυνση; Η παλιά σταματά να δέχεται λογαριασμούς, οπότε ενημερώστε τον κανόνα προώθησης."))) return;
+    const r = await inboxAction.run<{ address: string }>("/api/console/integrations/bill-inbox", { body: { rotate }, invalidates: [PATH] });
+    if (r) toast.success(L("Forwarding address ready.", "Η διεύθυνση προώθησης είναι έτοιμη."));
+  };
+  const closeInbox = async () => {
+    if (!window.confirm(L("Stop forwarding? Bills sent to this address will bounce.", "Διακοπή προώθησης; Οι λογαριασμοί σε αυτή τη διεύθυνση θα επιστρέφονται."))) return;
+    const r = await inboxAction.run("/api/console/integrations/bill-inbox", { method: "DELETE", invalidates: [PATH] });
+    if (r) toast.success(L("Forwarding stopped.", "Η προώθηση σταμάτησε."));
+  };
 
   const uploadEac = async (file: File | undefined) => {
     if (!file) return;
@@ -201,6 +217,7 @@ function IntegrationsContent() {
   const bank = d?.bank;
   const saltedge = d?.saltedge;
   const nango = d?.nango;
+  const eur2 = useMemo(() => new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }), [loc]);
   const eur = useMemo(() => new Intl.NumberFormat(loc, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }), [loc]);
   const CAT: Record<string, [string, string]> = {
     electricity: ["Electricity", "Ρεύμα"],
@@ -375,6 +392,105 @@ function IntegrationsContent() {
     return null;
   };
 
+  const billCore = (c: Connector) => {
+    if (!d) return null;
+    if (c.id === "water" && d?.water) {
+      const w = d.water;
+      if (w.bills.length === 0) {
+        return (
+          <p className="vci-tile-note">
+            {w.readerReady
+              ? L("PDF or photo, up to 10 MB. A bill whose m³ or period cannot be read is refused, never guessed. Sewerage bills are not water bills.", "PDF ή φωτογραφία, έως 10 MB. Λογαριασμός χωρίς αναγνώσιμα m³ ή περίοδο απορρίπτεται, χωρίς εικασίες. Οι λογαριασμοί αποχέτευσης δεν είναι λογαριασμοί νερού.")
+              : L("Bill reading opens once the workspace owner adds the AI reader key.", "Η ανάγνωση λογαριασμών ανοίγει όταν ο ιδιοκτήτης προσθέσει το κλειδί ανάγνωσης.")}
+          </p>
+        );
+      }
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Water on your bills", "Νερό στους λογαριασμούς")}</span>
+              <strong className="vck-num">{num1.format(w.totalM3)} m³</strong>
+            </div>
+            <div>
+              <span>{L("Scope 3", "Scope 3")}</span>
+              <strong className="vck-num">{num1.format(w.totalKgCo2e)} kg CO₂e</strong>
+            </div>
+          </div>
+          <ul className="vci-bank-lines" aria-label={L("Latest bills", "Τελευταίοι λογαριασμοί")}>
+            {w.bills.map((b) => (
+              <li key={b.id}>
+                <span className="vci-bank-line-what">
+                  {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
+                </span>
+                <span className="vci-bank-line-why">
+                  {WATER_BOARD_LABEL[b.board]?.[locale] ?? WATER_BOARD_LABEL.other[locale]}
+                  {" · "}
+                  {num1.format(b.m3)} m³{b.amountEur !== null ? ` · ${eur2.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}{(() => { const n = billPayNote(c.id === "water" ? d.waterPayments : d.eacPayments, b.id, L, date); return n ? ` · ${n}` : ""; })()}
+                  {" · "}
+                  <button type="button" className="vci-link-btn" onClick={() => removeWater(b.id)} disabled={waterAction.busy}>
+                    {L("Remove", "Αφαίρεση")}
+                  </button>
+                </span>
+                <strong className="vck-num">{num1.format(b.kgCo2e)} kg</strong>
+              </li>
+            ))}
+          </ul>
+          <p className="vci-tile-note">
+            {L(`Factor: ${w.factor.kgPerM3} kg CO₂e per m³, ${w.factor.source}, ${w.factor.vintage}.`, `Συντελεστής: ${w.factor.kgPerM3} kg CO₂e ανά m³, ${w.factor.source}, ${w.factor.vintage}.`)}
+          </p>
+        </>
+      );
+    }
+    if (c.id === "eac" && d?.eac) {
+      const e = d.eac;
+      if (e.bills.length === 0) {
+        return (
+          <p className="vci-tile-note">
+            {e.readerReady
+              ? L("PDF or photo, up to 10 MB. A bill whose kWh or period cannot be read is refused, never guessed.", "PDF ή φωτογραφία, έως 10 MB. Λογαριασμός χωρίς αναγνώσιμα kWh ή περίοδο απορρίπτεται, χωρίς εικασίες.")
+              : L("Bill reading opens once the workspace owner adds the AI reader key.", "Η ανάγνωση λογαριασμών ανοίγει όταν ο ιδιοκτήτης προσθέσει το κλειδί ανάγνωσης.")}
+          </p>
+        );
+      }
+      return (
+        <>
+          <div className="vci-tile-detail">
+            <div>
+              <span>{L("Electricity on your bills", "Ηλεκτρισμός στους λογαριασμούς")}</span>
+              <strong className="vck-num">{num.format(e.totalKwh)} kWh</strong>
+            </div>
+            <div>
+              <span>{L("Scope 2", "Scope 2")}</span>
+              <strong className="vck-num">{num1.format(e.totalKgCo2e / 1000)} t CO₂e</strong>
+            </div>
+          </div>
+          <ul className="vci-bank-lines" aria-label={L("Latest bills", "Τελευταίοι λογαριασμοί")}>
+            {e.bills.map((b) => (
+              <li key={b.id}>
+                <span className="vci-bank-line-what">
+                  {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
+                </span>
+                <span className="vci-bank-line-why">
+                  {num.format(b.kwh)} kWh{b.amountEur !== null ? ` · ${eur2.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}{(() => { const n = billPayNote(c.id === "water" ? d.waterPayments : d.eacPayments, b.id, L, date); return n ? ` · ${n}` : ""; })()}
+                  {" · "}
+                  <button type="button" className="vci-link-btn" onClick={() => removeEac(b.id)} disabled={eacAction.busy}>
+                    {L("Remove", "Αφαίρεση")}
+                  </button>
+                </span>
+                <strong className="vck-num">{num1.format(b.kgCo2e)} kg</strong>
+              </li>
+            ))}
+          </ul>
+          <p className="vci-tile-note">
+            {L(`Factor: ${e.factor.kgPerKwh} kg CO₂e per kWh, ${e.factor.source}, ${e.factor.vintage}.`, `Συντελεστής: ${e.factor.kgPerKwh} kg CO₂e ανά kWh, ${e.factor.source}, ${e.factor.vintage}.`)}
+          </p>
+        </>
+      );
+    }
+    return null;
+  };
+
   const detailFor = (c: Connector) => {
     if (c.id === "bankofcyprus" && bank) {
       if (!bank.configured) {
@@ -520,97 +636,12 @@ function IntegrationsContent() {
         </p>
       );
     }
-    if (c.id === "water" && d?.water) {
-      const w = d.water;
-      if (w.bills.length === 0) {
-        return (
-          <p className="vci-tile-note">
-            {w.readerReady
-              ? L("PDF or photo, up to 10 MB. A bill whose m³ or period cannot be read is refused, never guessed. Sewerage bills are not water bills.", "PDF ή φωτογραφία, έως 10 MB. Λογαριασμός χωρίς αναγνώσιμα m³ ή περίοδο απορρίπτεται, χωρίς εικασίες. Οι λογαριασμοί αποχέτευσης δεν είναι λογαριασμοί νερού.")
-              : L("Bill reading opens once the workspace owner adds the AI reader key.", "Η ανάγνωση λογαριασμών ανοίγει όταν ο ιδιοκτήτης προσθέσει το κλειδί ανάγνωσης.")}
-          </p>
-        );
-      }
+    if ((c.id === "water" || c.id === "eac") && d?.water && d?.eac) {
       return (
         <>
-          <div className="vci-tile-detail">
-            <div>
-              <span>{L("Water on your bills", "Νερό στους λογαριασμούς")}</span>
-              <strong className="vck-num">{num1.format(w.totalM3)} m³</strong>
-            </div>
-            <div>
-              <span>{L("Scope 3", "Scope 3")}</span>
-              <strong className="vck-num">{num1.format(w.totalKgCo2e)} kg CO₂e</strong>
-            </div>
-          </div>
-          <ul className="vci-bank-lines" aria-label={L("Latest bills", "Τελευταίοι λογαριασμοί")}>
-            {w.bills.map((b) => (
-              <li key={b.id}>
-                <span className="vci-bank-line-what">
-                  {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
-                </span>
-                <span className="vci-bank-line-why">
-                  {WATER_BOARD_LABEL[b.board]?.[locale] ?? WATER_BOARD_LABEL.other[locale]}
-                  {" · "}
-                  {num1.format(b.m3)} m³{b.amountEur !== null ? ` · ${eur.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}
-                  {" · "}
-                  <button type="button" className="vci-link-btn" onClick={() => removeWater(b.id)} disabled={waterAction.busy}>
-                    {L("Remove", "Αφαίρεση")}
-                  </button>
-                </span>
-                <strong className="vck-num">{num1.format(b.kgCo2e)} kg</strong>
-              </li>
-            ))}
-          </ul>
-          <p className="vci-tile-note">
-            {L(`Factor: ${w.factor.kgPerM3} kg CO₂e per m³, ${w.factor.source}, ${w.factor.vintage}.`, `Συντελεστής: ${w.factor.kgPerM3} kg CO₂e ανά m³, ${w.factor.source}, ${w.factor.vintage}.`)}
-          </p>
-        </>
-      );
-    }
-    if (c.id === "eac" && d?.eac) {
-      const e = d.eac;
-      if (e.bills.length === 0) {
-        return (
-          <p className="vci-tile-note">
-            {e.readerReady
-              ? L("PDF or photo, up to 10 MB. A bill whose kWh or period cannot be read is refused, never guessed.", "PDF ή φωτογραφία, έως 10 MB. Λογαριασμός χωρίς αναγνώσιμα kWh ή περίοδο απορρίπτεται, χωρίς εικασίες.")
-              : L("Bill reading opens once the workspace owner adds the AI reader key.", "Η ανάγνωση λογαριασμών ανοίγει όταν ο ιδιοκτήτης προσθέσει το κλειδί ανάγνωσης.")}
-          </p>
-        );
-      }
-      return (
-        <>
-          <div className="vci-tile-detail">
-            <div>
-              <span>{L("Electricity on your bills", "Ηλεκτρισμός στους λογαριασμούς")}</span>
-              <strong className="vck-num">{num.format(e.totalKwh)} kWh</strong>
-            </div>
-            <div>
-              <span>{L("Scope 2", "Scope 2")}</span>
-              <strong className="vck-num">{num1.format(e.totalKgCo2e / 1000)} t CO₂e</strong>
-            </div>
-          </div>
-          <ul className="vci-bank-lines" aria-label={L("Latest bills", "Τελευταίοι λογαριασμοί")}>
-            {e.bills.map((b) => (
-              <li key={b.id}>
-                <span className="vci-bank-line-what">
-                  {date.format(new Date(b.periodStart))} – {date.format(new Date(b.periodEnd))}
-                </span>
-                <span className="vci-bank-line-why">
-                  {num.format(b.kwh)} kWh{b.amountEur !== null ? ` · ${eur.format(b.amountEur)}` : ""}{b.accountNumber ? ` · ${L("account", "λογ.")} ${b.accountNumber}` : ""}
-                  {" · "}
-                  <button type="button" className="vci-link-btn" onClick={() => removeEac(b.id)} disabled={eacAction.busy}>
-                    {L("Remove", "Αφαίρεση")}
-                  </button>
-                </span>
-                <strong className="vck-num">{num1.format(b.kgCo2e)} kg</strong>
-              </li>
-            ))}
-          </ul>
-          <p className="vci-tile-note">
-            {L(`Factor: ${e.factor.kgPerKwh} kg CO₂e per kWh, ${e.factor.source}, ${e.factor.vintage}.`, `Συντελεστής: ${e.factor.kgPerKwh} kg CO₂e ανά kWh, ${e.factor.source}, ${e.factor.vintage}.`)}
-          </p>
+          {billCore(c)}
+          <BillPaymentsBlock kind={c.id === "water" ? "water" : "electricity"} check={c.id === "water" ? d.waterPayments : d.eacPayments} L={L} date={date} eur2={eur2} />
+          <BillInboxBlock inbox={d.billInbox} L={L} time={time} busy={inboxAction.busy} onOpen={() => openInbox(false)} onRotate={() => openInbox(true)} onClose={closeInbox} />
         </>
       );
     }
