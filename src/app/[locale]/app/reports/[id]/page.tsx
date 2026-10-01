@@ -73,8 +73,8 @@ export default function ReportPage() {
     if (!report) return;
     setExporting(true);
     try {
-      const { buildReportPdf } = await import("@/lib/pdf/report-document");
-      const doc = buildReportPdf({
+      const { downloadReport } = await import("@/lib/pdf/report");
+      await downloadReport({
         title: report.title,
         framework: report.framework,
         periodLabel: report.periodLabel,
@@ -83,8 +83,7 @@ export default function ReportPage() {
         agentName: report.agentName,
         summary: report.summary,
         sections: report.sections,
-      });
-      doc.save(`${report.framework}-report-${report.periodLabel}.pdf`.replace(/\s+/g, "-"));
+      }, `${report.framework}-report-${report.periodLabel}.pdf`);
     } finally {
       setExporting(false);
     }

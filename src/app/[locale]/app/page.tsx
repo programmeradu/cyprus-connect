@@ -87,14 +87,8 @@ export default function ConsolePage() {
   const exportSummary = async () => {
     setPdfBusy(true);
     try {
-      const { buildSectionPdf } = await import("@/lib/pdf/console-section-pdf");
-      const doc = buildSectionPdf({
-        workspaceName: workspace.name || "Workspace",
-        sectionLabel: "Board summary",
-        filterLabel: "All periods and sites",
-        table: boardSummaryTable(data),
-      });
-      doc.save(exportFileName(data, "overview", "pdf", "-board-summary"));
+      const { downloadBoardSummary } = await import("@/lib/pdf/board-summary");
+      await downloadBoardSummary(data, exportFileName(data, "overview", "pdf", "-board-summary"));
     } finally {
       setPdfBusy(false);
     }
