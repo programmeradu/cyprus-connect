@@ -150,7 +150,7 @@ export default function Home() {
                 {
                   year: "2026",
                   title: "Cyprus data spine",
-                  body: "EAC bill ingestion, JCC and accounting connectors, and a verified Cyprus emission factor set behind every number.",
+                  body: "EAC bill ingestion, bank and accounting connectors, and a verified Cyprus emission factor set behind every number.",
                   Glyph: GlyphDataSpine,
                 },
                 {

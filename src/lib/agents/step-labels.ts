@@ -17,6 +17,16 @@ const TOOL_LABELS: Record<string, { verb: string; kind: "read" | "write" | "outw
   read_cbam_suppliers: { verb: "Read supplier contacts and past requests", kind: "read" },
   withdraw_approval_request: { verb: "Withdrew an out-of-date request", kind: "write" },
   send_supplier_request: { verb: "Email to a supplier asking for CBAM data", kind: "outward" },
+  read_company_profile: { verb: "Read the company record", kind: "read" },
+  search_company_registry: { verb: "Searched the Cyprus Registrar of Companies", kind: "read" },
+  lookup_company_registry: { verb: "Read a Registrar of Companies entry", kind: "read" },
+  find_wikirate_company: { verb: "Looked up a company on WikiRate", kind: "read" },
+  read_wikirate_figures: { verb: "Read a company's published figures on WikiRate", kind: "read" },
+  compare_with_peers: { verb: "Compared emissions per employee with published peers", kind: "read" },
+  read_cyprus_context: { verb: "Read national context (Climate TRACE, CyStat)", kind: "read" },
+  read_utility_bills: { verb: "Read electricity and water bills", kind: "read" },
+  read_bank_spend: { verb: "Read bank spend by category", kind: "read" },
+  read_workspace_facts: { verb: "Read facts other agents recorded", kind: "read" },
 };
 
 export const RISK_LABELS = ["Read only", "Internal write", "Outward action", "Legal or financial"] as const;
@@ -34,6 +44,16 @@ const EL_VERBS: Record<string, string> = {
   read_cbam_suppliers: "Διάβασε επαφές προμηθευτών και προηγούμενα αιτήματα",
   withdraw_approval_request: "Απέσυρε ένα παρωχημένο αίτημα",
   send_supplier_request: "Email σε προμηθευτή για δεδομένα CBAM",
+  read_company_profile: "Διάβασε τα στοιχεία της εταιρείας",
+  search_company_registry: "Αναζήτησε στο Μητρώο Εταιρειών Κύπρου",
+  lookup_company_registry: "Διάβασε εγγραφή του Μητρώου Εταιρειών",
+  find_wikirate_company: "Αναζήτησε εταιρεία στο WikiRate",
+  read_wikirate_figures: "Διάβασε δημοσιευμένα στοιχεία εταιρείας στο WikiRate",
+  compare_with_peers: "Σύγκρινε εκπομπές ανά εργαζόμενο με δημοσιευμένες εταιρείες",
+  read_cyprus_context: "Διάβασε εθνικό πλαίσιο (Climate TRACE, CyStat)",
+  read_utility_bills: "Διάβασε λογαριασμούς ρεύματος και νερού",
+  read_bank_spend: "Διάβασε τραπεζικές δαπάνες ανά κατηγορία",
+  read_workspace_facts: "Διάβασε στοιχεία που κατέγραψαν άλλοι πράκτορες",
 };
 const EL_RISK = ["Μόνο ανάγνωση", "Εσωτερική εγγραφή", "Ενέργεια προς τα έξω", "Νομική ή οικονομική"] as const;
 const EL_DECISION: Record<string, string> = {

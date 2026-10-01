@@ -1428,6 +1428,12 @@
 .vc .vck-agent-card dt { color: var(--vc-ink-3); }
 .vc .vck-agent-card dd { margin: 0; color: var(--vc-ink); text-align: right; overflow-wrap: anywhere; }
 .vc .vck-agent-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.vc .vck-agent-card h3 .vck-agent-badge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--vc-rule); font-size: 11px; font-weight: 500; line-height: 1.6; color: var(--vc-ink-2); vertical-align: middle; white-space: nowrap; }
+.vc .vck-agent-goal { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--vc-rule); }
+.vc .vck-agent-goal label { font-size: 13px; font-weight: 600; color: var(--vc-ink); }
+.vc .vck-agent-goal textarea { width: 100%; min-width: 0; min-height: 76px; resize: vertical; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--vc-rule); background: var(--vc-well); color: var(--vc-ink); font: inherit; font-size: 14px; line-height: 1.5; }
+.vc .vck-agent-goal p { margin: 0; font-size: 12px; line-height: 1.5; }
+.vc .vck-agent-goal .vck-btn { justify-self: start; }
 .vc .vck-agent-planned-lead { margin: 0 0 10px; font-size: 13px; }
 .vc .vck-agent-planned { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 8px; }
 .vc .vck-agent-planned li { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border: 1px solid var(--vc-rule); border-radius: 10px; font-size: 13px; }

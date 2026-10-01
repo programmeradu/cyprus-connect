@@ -27,6 +27,16 @@ export interface CompanyRecord {
   revenueEur: number | null;
   baselineYear: number;
   framework: string;
+  /** Cyprus Registrar of Companies link, set only from the register. */
+  registry: {
+    registrationNo: string;
+    type: string | null;
+    legalName: string | null;
+    status: string | null;
+    registeredOn: string | null;
+    address: string | null;
+    checkedAt: string | null;
+  } | null;
 }
 
 const text = (max: number) =>
@@ -60,7 +70,10 @@ async function read(accountId: string, workspaceId: string): Promise<CompanyReco
       .where(eq(user.id, accountId))
       .limit(1),
     db
-      .select({ sites: workspaces.sites, revenueEur: workspaces.revenueEur, baselineYear: workspaces.baselineYear, framework: workspaces.framework, country: workspaces.country })
+      .select({ sites: workspaces.sites, revenueEur: workspaces.revenueEur, baselineYear: workspaces.baselineYear, framework: workspaces.framework, country: workspaces.country,
+        registrationNo: workspaces.registrationNo, registryType: workspaces.registryType, registryName: workspaces.registryName,
+        registryStatus: workspaces.registryStatus, registryRegisteredOn: workspaces.registryRegisteredOn,
+        registryAddress: workspaces.registryAddress, registryCheckedAt: workspaces.registryCheckedAt })
       .from(workspaces)
       .where(eq(workspaces.id, workspaceId))
       .limit(1),
@@ -74,6 +87,17 @@ async function read(accountId: string, workspaceId: string): Promise<CompanyReco
     revenueEur: w?.revenueEur ?? null,
     baselineYear: w?.baselineYear ?? new Date().getFullYear(),
     framework: w?.framework ?? "VSME",
+    registry: w?.registrationNo
+      ? {
+          registrationNo: w.registrationNo,
+          type: w.registryType,
+          legalName: w.registryName,
+          status: w.registryStatus,
+          registeredOn: w.registryRegisteredOn,
+          address: w.registryAddress,
+          checkedAt: w.registryCheckedAt ? w.registryCheckedAt.toISOString() : null,
+        }
+      : null,
   };
 }
 

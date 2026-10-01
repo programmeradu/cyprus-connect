@@ -57,6 +57,8 @@ export interface IntegrationsData {
   /** Onboarding sector, so the page can say when it has no NACE match. */
   industry: string | null;
   wikirate: WikiRateSummary;
+  /** Registrar of Companies link, read from the workspace (set in Settings). */
+  registry: { registrationNo: string; legalName: string | null; status: string | null; checkedAt: string | null } | null;
   fetchedAt: string;
 }
 
@@ -110,6 +112,14 @@ export async function GET() {
       cystat: cystat.data,
       industry,
       wikirate,
+      registry: workspace.registrationNo
+        ? {
+            registrationNo: workspace.registrationNo,
+            legalName: workspace.registryName ?? null,
+            status: workspace.registryStatus ?? null,
+            checkedAt: workspace.registryCheckedAt ? new Date(workspace.registryCheckedAt).toISOString() : null,
+          }
+        : null,
       fetchedAt: new Date().toISOString(),
     };
     return NextResponse.json(body);

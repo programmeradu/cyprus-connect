@@ -263,3 +263,53 @@ export async function aiEmbed(
   const data = (await res.json()) as { data?: Array<{ embedding: number[] }> };
   return (data.data ?? []).map((row) => row.embedding);
 }
+
+/* ------------------------------------------------------------- tool calling */
+
+export interface ToolSpec {
+  type: "function";
+  function: { name: string; description: string; parameters: Record<string, unknown> };
+}
+
+export interface ToolCall {
+  id: string;
+  type: "function";
+  function: { name: string; arguments: string };
+}
+
+export type ToolTurnMessage =
+  | { role: "system" | "user"; content: string }
+  | { role: "assistant"; content: string | null; tool_calls?: ToolCall[] }
+  | { role: "tool"; tool_call_id: string; content: string };
+
+/**
+ * One turn of a tool-using conversation: the model either answers in text or
+ * asks for tool calls. The caller runs the tools and sends the results back.
+ */
+export async function aiToolTurn(options: {
+  messages: ToolTurnMessage[];
+  tools: ToolSpec[];
+  model?: string;
+  temperature?: number;
+  signal?: AbortSignal;
+}): Promise<{ content: string | null; toolCalls: ToolCall[]; finishReason: string | null }> {
+  const res = await post(
+    {
+      model: options.model ?? CHAT_MODEL,
+      messages: options.messages,
+      tools: options.tools,
+      tool_choice: "auto",
+      ...(options.temperature !== undefined ? { temperature: options.temperature } : {}),
+    },
+    options.signal,
+  );
+  const data = (await res.json()) as {
+    choices?: Array<{ finish_reason?: string; message?: { content?: string | null; tool_calls?: ToolCall[] } }>;
+  };
+  const choice = data.choices?.[0];
+  return {
+    content: choice?.message?.content ?? null,
+    toolCalls: (choice?.message?.tool_calls ?? []).filter((c) => c?.function?.name),
+    finishReason: choice?.finish_reason ?? null,
+  };
+}

@@ -27,6 +27,8 @@ import { isPolicyMode, retryDelayMs, type PolicyMode, type RiskLevel } from "./p
 import { AgentRuntime } from "./runtime";
 import { runEvidenceSweep } from "./evidence-sweep";
 import { runCbamAgent } from "./cbam-agent";
+import { runPlanner } from "./planner";
+import { hasLovableAi } from "@/lib/lovable-ai";
 
 const LEASE_MS = 5 * 60_000;
 
@@ -35,13 +37,45 @@ export interface AgentOutcome {
   itemsProcessed: number;
   confidence: number;
 }
-type AgentHandler = (rt: AgentRuntime) => Promise<AgentOutcome>;
+type AgentHandler = (rt: AgentRuntime, job: { goal: string | null; agentName: string }) => Promise<AgentOutcome>;
+
+/** Standing jobs of the planning agents. They choose their own sources for it. */
+export const PLANNER_MISSIONS: Record<string, string> = {
+  supply:
+    "Check the suppliers this company works with: CBAM supplier contacts and the payees in its bank spend. Look each one up on WikiRate; where a supplier publishes emissions, record them with year and source. Where a CBAM supplier publishes nothing and has an email contact, draft a short request for its actual embedded emissions. Confirm Cyprus suppliers in the Registrar of Companies when a registration number or exact name is known.",
+  reduce:
+    "Find where this company's emissions come from and what to do first. Read its own metrics, electricity and water bills and bank spend; read the national context for its sector; pick two to five published companies in the same sector and compare emissions per employee. Put one review task with the three most useful reduction steps, each tied to a figure you read.",
+};
 
 /** Agents with real work behind them. Others in the registry are not runnable yet. */
-export const RUNNABLE_AGENTS: Record<string, { handler: AgentHandler; cadence: "daily" }> = {
+export const RUNNABLE_AGENTS: Record<string, { handler: AgentHandler; cadence: "daily" | "weekly"; planner?: true }> = {
   ingest: { handler: (rt) => runEvidenceSweep(rt), cadence: "daily" },
   cbam: { handler: (rt) => runCbamAgent(rt), cadence: "daily" },
+  supply: {
+    handler: (rt, job) => runPlanner(rt, { agentName: job.agentName, mission: PLANNER_MISSIONS.supply, goal: job.goal }),
+    cadence: "weekly",
+    planner: true,
+  },
+  reduce: {
+    handler: (rt, job) => runPlanner(rt, { agentName: job.agentName, mission: PLANNER_MISSIONS.reduce, goal: job.goal }),
+    cadence: "weekly",
+    planner: true,
+  },
 };
+
+export function isPlanner(agentKey: string): boolean {
+  return Boolean(RUNNABLE_AGENTS[agentKey]?.planner);
+}
+
+/** ISO week key, e.g. 2026-W40. */
+export function isoWeek(d: Date): string {
+  const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  const week = Math.ceil(((t.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  return `${t.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
+}
 
 export function isRunnable(agentKey: string): boolean {
   return agentKey in RUNNABLE_AGENTS;
@@ -53,6 +87,7 @@ export async function enqueue(input: {
   trigger: "cron" | "manual" | "event";
   idempotencyKey: string;
   requestedBy?: string | null;
+  goal?: string | null;
 }): Promise<{ jobId: number | null; created: boolean }> {
   const rows = await db
     .insert(agentJobs)
@@ -62,6 +97,7 @@ export async function enqueue(input: {
       trigger: input.trigger,
       idempotencyKey: input.idempotencyKey,
       requestedBy: input.requestedBy ?? null,
+      goal: input.goal ?? null,
     })
     .onConflictDoNothing({ target: agentJobs.idempotencyKey })
     .returning({ id: agentJobs.id });
@@ -77,15 +113,19 @@ export async function enqueue(input: {
 /** Enqueue today's scheduled work for every workspace. Safe to call many times a day. */
 export async function scheduleDue(now = new Date()): Promise<number> {
   const day = now.toISOString().slice(0, 10);
-  const all = await db.select({ id: workspaces.id }).from(workspaces);
+  const week = isoWeek(now);
+  const all = await db.select({ id: workspaces.id, owner: workspaces.ownerUserId, isDemo: workspaces.isDemo }).from(workspaces);
+  const ai = hasLovableAi();
   let created = 0;
   for (const ws of all) {
-    for (const agentKey of Object.keys(RUNNABLE_AGENTS)) {
+    for (const [agentKey, spec] of Object.entries(RUNNABLE_AGENTS)) {
+      // Planners spend AI credits: only real, owned workspaces, once a week.
+      if (spec.planner && (!ai || !ws.owner || ws.isDemo)) continue;
       const r = await enqueue({
         workspaceId: ws.id,
         agentKey,
         trigger: "cron",
-        idempotencyKey: `${agentKey}:${ws.id}:${day}`,
+        idempotencyKey: `${agentKey}:${ws.id}:${spec.cadence === "weekly" ? week : day}`,
       });
       if (r.created) created += 1;
     }
@@ -108,7 +148,7 @@ async function claim(limit: number, onlyJobId?: number) {
       limit ${limit}
       for update skip locked
     )
-    returning id, workspace_id, agent_key, trigger, attempts, max_attempts
+    returning id, workspace_id, agent_key, trigger, attempts, max_attempts, goal
   `);
   return (rows as unknown as Array<{
     id: number;
@@ -117,6 +157,7 @@ async function claim(limit: number, onlyJobId?: number) {
     trigger: string;
     attempts: number;
     max_attempts: number;
+    goal: string | null;
   }>);
 }
 
@@ -207,7 +248,7 @@ async function runJob(job: Awaited<ReturnType<typeof claim>>[number]): Promise<J
   const actorName = agentRow?.name ?? job.agent_key;
 
   try {
-    const outcome = await spec.handler(rt);
+    const outcome = await spec.handler(rt, { goal: job.goal, agentName: actorName });
     await db
       .update(agentRuns)
       .set({
@@ -326,6 +367,7 @@ export async function getControls(workspaceId: string) {
     maxStepsPerRun: c.maxStepsPerRun,
     agentPaused,
     runnable: Object.keys(RUNNABLE_AGENTS),
+    planners: Object.keys(RUNNABLE_AGENTS).filter(isPlanner),
     recentJobs: recent,
   };
 }
