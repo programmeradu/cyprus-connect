@@ -315,7 +315,7 @@ export default function CbamPage() {
             )}
 
             <Plate label={t("importLines", { year: data.year })} meta={String(data.lines.length)} action={<Btn variant="text" onClick={downloadTemplate}>{t("template")}</Btn>} flush
-              foot={t("linesFoot")}>
+              foot={<>{t("linesFoot")} {t("officialNote")}</>}>
               <div className="vck-cbam-table vck-cbam-table-wide">
                 <ConsoleTable rows={data.lines} rowKey={(l) => String(l.id)} columns={columns} empty={t("noLines")} />
               </div>
