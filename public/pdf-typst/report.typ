@@ -9,9 +9,10 @@
 #let accent = rgb("#3F5F33")
 #let pale = rgb("#A8C496")
 #let warn = rgb("#94531A")
-#let serif = ("Source Serif 4 24pt",)
-#let sans = ("IBM Plex Sans",)
-#let mono = ("IBM Plex Mono", "IBM Plex Sans")
+#let display = ("Commissioner",)
+#let accent = ("Source Serif 4 24pt",)
+#let sans = ("Commissioner",)
+#let mono = ("IBM Plex Mono", "Commissioner")
 #let short-fp = d.hash.slice(0, 16)
 
 #set document(title: d.company + " — " + d.title, author: "Vuneli")
@@ -38,9 +39,9 @@
 #let chapter(n, title, first) = {
   if not first { v(18pt) }
   block(below: 12pt, breakable: false)[
-    #text(font: serif, size: 40pt, weight: 400, fill: pale)[#n]
+    #text(font: accent, style: "italic", size: 40pt, weight: 400, fill: pale)[#n]
     #v(-30pt)
-    #text(font: serif, size: 20pt, weight: 600, fill: ink)[#title]
+    #text(font: display, size: 20pt, weight: 600, fill: ink)[#title]
     #v(-2pt)
     #line(length: 28mm, stroke: 2pt + accent)
   ]
@@ -78,7 +79,7 @@
     #v(46mm)
     #text(size: 11pt, weight: 500, fill: pale)[#d.framework #h(6pt) · #h(6pt) #d.period]
     #v(6pt)
-    #block(width: 94%)[#set par(leading: 0.24em); #text(font: serif, size: if d.title.len() > 48 { 32pt } else { 40pt }, weight: 600, fill: white, tracking: -0.4pt)[#d.title]]
+    #block(width: 94%)[#set par(leading: 0.24em); #text(font: display, size: if d.title.len() > 48 { 32pt } else { 40pt }, weight: 600, fill: white, tracking: -0.4pt)[#d.title]]
     #v(10pt)
     #text(size: 13pt, weight: 500, fill: rgb("#DCE6D3"))[#d.company]
     #if d.draft [
@@ -95,12 +96,12 @@
 ]
 
 // ---------- Contents + summary ----------
-#text(font: serif, size: 24pt, weight: 600, fill: ink)[Contents]
+#text(font: display, size: 24pt, weight: 600, fill: ink)[Contents]
 #v(8pt)
 #for c in d.chapters [
   #grid(columns: (16mm, 1fr, auto), align: (left + horizon, left + horizon, right + horizon),
-    text(font: serif, size: 15pt, fill: pale)[#c.n],
-    text(font: serif, size: 12pt, weight: 600, fill: ink)[#c.title],
+    text(font: accent, style: "italic", size: 15pt, fill: pale)[#c.n],
+    text(font: display, size: 12pt, weight: 600, fill: ink)[#c.title],
     text(size: 8pt, fill: quiet)[#if c.gaps.len() > 0 [#c.gaps.len() open gap#if c.gaps.len() > 1 [s]]])
   #v(-6pt)
   #line(length: 100%, stroke: 0.3pt + hair)
@@ -113,7 +114,7 @@
 
 #if d.summary.len() > 0 [
   #v(14pt)
-  #text(font: serif, size: 15pt, weight: 600, fill: ink)[Summary]
+  #text(font: display, size: 15pt, weight: 600, fill: ink)[Summary]
   #v(2pt)
   #set text(size: 10.5pt, fill: ink)
   #for p in d.summary [#p #parbreak()]
@@ -141,7 +142,7 @@
 // ---------- About ----------
 #v(20pt)
 #block(breakable: false)[
-#text(font: serif, size: 15pt, weight: 600, fill: ink)[About this document]
+#text(font: display, size: 15pt, weight: 600, fill: ink)[About this document]
 #v(-4pt)
 #line(length: 100%, stroke: 0.4pt + rule-c)
 #grid(columns: (1fr, 32mm), column-gutter: 14pt, [

@@ -7,9 +7,10 @@
 #let hair = rgb("#E3E7E0")
 #let accent = rgb("#3F5F33")
 #let warn = rgb("#94531A")
-#let serif = ("Source Serif 4 24pt",)
-#let sans = ("IBM Plex Sans",)
-#let mono = ("IBM Plex Mono", "IBM Plex Sans")
+#let display = ("Commissioner",)
+#let accent = ("Source Serif 4 24pt",)
+#let sans = ("Commissioner",)
+#let mono = ("IBM Plex Mono", "Commissioner")
 
 #set document(title: d.company + " — Board summary", author: "Vuneli")
 #set text(font: sans, size: 9.5pt, fill: body-c, lang: d.lang, number-type: "lining", hyphenate: false)
@@ -49,8 +50,8 @@
   v(14pt)
   block(breakable: false, below: 10pt)[
     #grid(columns: (22pt, 1fr), column-gutter: 6pt,
-      text(font: serif, size: 15pt, weight: 400, fill: accent)[#n],
-      text(font: serif, size: 15pt, weight: 600, fill: ink)[#title],
+      text(font: accent, style: "italic", size: 15pt, weight: 400, fill: accent)[#n],
+      text(font: display, size: 15pt, weight: 600, fill: ink)[#title],
     )
     #v(-2pt)
     #line(length: 100%, stroke: 0.4pt + rule-c)
@@ -90,7 +91,7 @@
   #v(48mm)
   #text(size: 10pt, weight: 500, fill: accent)[Board summary]
   #v(4pt)
-  #block(width: 88%)[#text(font: serif, size: 34pt, weight: 600, fill: ink, tracking: -0.3pt)[#par(leading: 0.28em)[#d.company]]]
+  #block(width: 88%)[#text(font: display, size: 34pt, weight: 600, fill: ink, tracking: -0.3pt)[#par(leading: 0.28em)[#d.company]]]
   #v(8pt)
   #block(width: 78%)[#text(size: 11pt, fill: body-c)[#par(leading: 0.6em)[Where the company stands on emissions, deadlines and the decisions waiting for the board.]]]
   #v(18mm)
@@ -112,7 +113,7 @@
   let kpi(label, value, unit, note, tone: ink) = block(width: 100%, inset: (top: 8pt, bottom: 2pt))[
     #text(size: 7.5pt, fill: quiet)[#label] \
     #v(2pt)
-    #text(font: serif, size: 22pt, weight: 600, fill: tone, number-width: "tabular")[#value]#if unit != "" [#h(3pt)#text(size: 8.5pt, fill: quiet)[#unit]] \
+    #text(font: display, size: 22pt, weight: 600, fill: tone, number-width: "tabular")[#value]#if unit != "" [#h(3pt)#text(size: 8.5pt, fill: quiet)[#unit]] \
     #v(1pt)
     #text(size: 7.5pt, fill: quiet)[#note]
   ]
