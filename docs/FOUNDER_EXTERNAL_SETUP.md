@@ -24,6 +24,18 @@ _Last updated: 30 September 2026 — saved Jotform link; BoC to be tested on vun
 - Create a Resend account, verify a sending domain, then set Cloudflare secrets `RESEND_API_KEY` and `EMAIL_FROM`.
 - Get the official CBAM Registry XML format (XSD) so the export can be validated.
 
+## Utility bill forwarding (added 2026-10-01)
+
+Customers can now auto-forward EAC and water e-bills to a private address. To switch it on:
+
+1. Cloudflare dashboard → vuneli.com → Email → Email Routing → enable it on the **subdomain** `bills.vuneli.com` (keeps your normal vuneli.com mailbox untouched). Accept the MX/TXT records it adds.
+2. Email Routing → Routing rules → Catch-all for `bills.vuneli.com` → Action "Send to a Worker" → `cyprus-connect`.
+3. Worker secrets: `INBOUND_EMAIL_SECRET` (any long random string) and variable `BILL_INBOX_DOMAIN=bills.vuneli.com`.
+4. Deploy (the deploy script now attaches the email handler).
+5. Test: in /app/integrations press "Get my forwarding address", forward one real EAC or water e-bill (PDF attached) and check it appears.
+
+Also fixed: the cron jobs (grant alerts, keep-alive, agents) were attached in a way Cloudflare never calls. After the next deploy check Workers → Logs for `[agents cron]` lines; it still needs `CRON_SECRET`.
+
 ## Needed now
 
 | # | What | Where | Why it matters | Blocks |
