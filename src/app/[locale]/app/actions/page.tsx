@@ -5,6 +5,7 @@ import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/co
 import { useTranslations } from "next-intl";
 import { ActionCard } from "@/components/app/ActionCard";
 import { FundingPanel } from "@/components/app/console/FundingPanel";
+import { EuFeedPanel } from "@/components/app/console/EuFeedPanel";
 import { ExpertsPanel } from "@/components/app/console/ExpertsPanel";
 import { BulbIcon, BoltIcon, FireIcon, WaterIcon, LeafIcon, RecycleIcon, TargetIcon } from "@/components/icons/CustomIcons";
 import { toast } from "sonner";
@@ -273,6 +274,7 @@ Return ONLY valid JSON:
       </Section>
 
       <FundingPanel />
+      <EuFeedPanel source="ted" />
       <ExpertsPanel />
     </PageShell>
   );
