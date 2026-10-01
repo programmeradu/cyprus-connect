@@ -17,6 +17,9 @@
 
 - [x] Bank of Cyprus read-only link (sandbox): link, first 90-day read, Read again, Unlink (deletes stored payments), fuel/electricity/water/freight sorting with matched rule; on Integrations
 - [x] Integrations tiles wired: Climate TRACE (Cyprus total, world share, top sectors), CyStat (establishments in your sector, all Cyprus), EAC (bill upload, read, Scope 2, remove), WikiRate (key-gated)
+- [x] Utility bills: tiles renamed (Electricity bills (EAC), Water bills); bank check matches board/EAC payments to bills and lists payments with no bill; forwarding address per account reads emailed e-bills (Gmail confirmation code shown in app)
+- [x] Fixed: cron handler was a named export Cloudflare never calls; now on the default export with the email handler
+- [ ] Bill forwarding live: founder to enable Cloudflare Email Routing on bills.vuneli.com + set BILL_INBOX_DOMAIN, INBOUND_EMAIL_SECRET; then send one real forwarded bill
 - [ ] EAC bill reading checked on real bills (founder to upload); WikiRate needs WIKIRATE_API_KEY
 - [ ] Bank link end-to-end with the bank's sign-in: blocked until the redirect URL is registered on the BoC app (founder)
 
