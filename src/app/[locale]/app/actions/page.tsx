@@ -252,8 +252,8 @@ Return ONLY valid JSON:
       <Section title={aiActions.length > 0 ? t("standardSection") : t("steps")}>
         {regularActions.length === 0 && aiActions.length === 0 ? (
           <Empty
-            title="No actions available yet"
-            body="Complete onboarding and connect your emissions data so Vuneli can suggest actions tailored to your company."
+            title={t("noneTitle")}
+            body={t("noneBody")}
           />
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
