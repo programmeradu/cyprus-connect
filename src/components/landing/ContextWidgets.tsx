@@ -14,6 +14,11 @@ type Carbon = {
 };
 type NewsItem = { title: string; link: string; pubDate: string };
 
+/**
+ * Fixed EU dates from Regulation (EU) 2025/2083 (CBAM simplification), which
+ * amends Regulation (EU) 2023/956. Only legal dates; voluntary standards (VSME)
+ * have none, and CSRD SME waves were postponed by Directive (EU) 2025/794.
+ */
 const REGULATORY_DEADLINES = [
   {
     date: "2026-01-01",
@@ -21,19 +26,14 @@ const REGULATORY_DEADLINES = [
     el: { title: "Έναρξη οριστικής περιόδου CBAM", short: "CBAM ζωντανά" },
   },
   {
-    date: "2026-01-01",
-    en: { title: "CSRD Wave 2 first reports", short: "CSRD Wave 2" },
-    el: { title: "Πρώτες αναφορές CSRD Κύμα 2", short: "CSRD Κύμα 2" },
+    date: "2027-02-01",
+    en: { title: "Sale of CBAM certificates begins", short: "CBAM certificates" },
+    el: { title: "Έναρξη πώλησης πιστοποιητικών CBAM", short: "Πιστοποιητικά CBAM" },
   },
   {
-    date: "2026-06-30",
-    en: { title: "VSME voluntary adoption window", short: "VSME window" },
-    el: { title: "Παράθυρο υιοθέτησης VSME", short: "VSME" },
-  },
-  {
-    date: "2027-01-01",
-    en: { title: "CSRD Wave 3 - listed SMEs", short: "CSRD Wave 3" },
-    el: { title: "CSRD Κύμα 3 - εισηγμένες ΜμΕ", short: "CSRD Κύμα 3" },
+    date: "2027-09-30",
+    en: { title: "First annual CBAM declaration (2026 imports)", short: "CBAM declaration" },
+    el: { title: "Πρώτη ετήσια δήλωση CBAM (εισαγωγές 2026)", short: "Δήλωση CBAM" },
   },
 ];
 
