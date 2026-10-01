@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import type { CompanyRecord } from "@/app/api/console/company/route";
+import { RegistryLink } from "@/components/app/settings/RegistryLink";
 
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import { PricingTable } from "@/components/billing/PricingTable";
@@ -258,6 +259,9 @@ function SettingsContent() {
                   className={inputClass}
                 />
               </div>
+              {company.data && (company.data.country || "CY") === "CY" && (
+                <RegistryLink registry={company.data.registry ?? null} companyName={company.data.companyName || ""} />
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="vck-label block mb-1.5">{t("industry")}</label>

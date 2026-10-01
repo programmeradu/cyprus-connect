@@ -527,6 +527,23 @@
           "shapes": "Shapes",
           "initials": "Initials"
         }
+      },
+      "registry": {
+        "title": "Find your company in the Cyprus Registrar of Companies",
+        "placeholder": "Company name or registration number, e.g. HE 123456",
+        "hint": "Linking fills the legal name, number, status and registered office from the official register, so reports and agents use the verified record.",
+        "searching": "Searching the register…",
+        "none": "No entry matches. Try the exact registered name or the HE number.",
+        "failed": "The register could not be searched.",
+        "useName": "Also use the registered name as the company name",
+        "results": "Register entries",
+        "linkedTitle": "Linked to the Registrar of Companies",
+        "registeredOn": "registered {date}",
+        "statusActive": "Registered",
+        "source": "Source: Registrar of Companies open data (data.gov.cy, CC BY 4.0)",
+        "checked": "read {date}",
+        "unlink": "Remove link",
+        "working": "Working…"
       }
     },
     "learn": {
