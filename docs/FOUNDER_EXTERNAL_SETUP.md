@@ -311,3 +311,7 @@ What to do:
 2. Re-run the crawl now; the JavaScript/CSS errors should clear.
 3. Optional, permanent fix (keeps older files available during deploys — "skew protection", experimental in OpenNext): create a Cloudflare API token with "Workers Scripts: Read", then tell Vuneli's builder so it can be switched on. Needs: CF_WORKERS_SCRIPTS_API_TOKEN, CF_ACCOUNT_ID, CF_WORKER_NAME, CF_PREVIEW_DOMAIN (your workers.dev subdomain) as build variables.
 4. The short glossary descriptions (English and Greek) are fixed in the code and checked: all 104 now fall between 110 and 158 characters. They go live with the next deploy.
+
+## Add data page (Oct 2026)
+- No new keys or migrations needed. After deploy, sign in and drop the EAC bill, the water bill and a bank CSV on **Add data** to check them.
+- Scanned (picture-only) PDFs are refused until the image-capable AI key (Gemini/Lovable gateway) is added; photos work with Groq.
