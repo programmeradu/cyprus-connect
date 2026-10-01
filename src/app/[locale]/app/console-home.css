@@ -186,3 +186,7 @@
 .vch-adddata h2 { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--vc-ink); }
 .vch-adddata p { margin: 3px 0 0; color: var(--vc-ink-2); font-size: 0.88rem; line-height: 1.45; }
 @media (max-width: 520px) { .vch-adddata .vch-btn { flex: 1 1 100%; } }
+
+/* Agent feed: fixed height, scrolls inside the card instead of stretching it. */
+.vch-feed { max-height: 320px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px; }
+.vch-feed:focus-visible { outline: 2px solid var(--vc-lime); outline-offset: 2px; }
