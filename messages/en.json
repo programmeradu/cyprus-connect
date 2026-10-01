@@ -2489,7 +2489,8 @@
       "openDraft": "Open draft",
       "readyToast": "Saved to Deliverables: {title}",
       "openShort": "Open",
-      "alreadyDecided": "This was already decided. The list is now up to date."
+      "alreadyDecided": "This was already decided. The list is now up to date.",
+      "markDone": "Mark done"
     },
     "deadline": {
       "title": "Next deadline",
