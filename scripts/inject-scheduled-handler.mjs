@@ -35,7 +35,7 @@ const injection = `
 // ── Cloudflare Cron: scheduled event handler ──────────────────────────────────
 // Injected by scripts/inject-scheduled-handler.mjs after opennextjs build.
 // Crons (see wrangler.jsonc → triggers.crons):
-//   "0 * * * *"  → grant-alerts scan (hourly)
+//   "0 * * * *"  → grant-alerts scan + EU feeds refresh (hourly)
 //   "15 6 * * *" → database keep-alive ping (daily)
 //   "*/15 * * * *" → agent heartbeat (enqueue + run a bounded batch)
 // Each job self-fetches its API route via the WORKER_SELF_REFERENCE binding.
@@ -69,6 +69,11 @@ async function __vuneliScheduled(event, env, _ctx) {
     return;
   }
   await run("grant-alerts", "https://vuneli.com/api/cron/grant-alerts", {
+    method: "POST",
+    headers: { "x-cron-secret": env.CRON_SECRET },
+  });
+  // Same hourly tick: refresh the shared TED tenders and EUR-Lex acts.
+  await run("eu-feeds", "https://vuneli.com/api/cron/eu-feeds", {
     method: "POST",
     headers: { "x-cron-secret": env.CRON_SECRET },
   });

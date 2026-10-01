@@ -18,6 +18,7 @@ import { climateTraceSummary, cyStatSummary } from "@/lib/integrations/reference
 import { eacSummary } from "@/lib/integrations/eac.server";
 import { waterSummary } from "@/lib/integrations/water.server";
 import { bankSummary } from "@/lib/bank/bank.server";
+import { readEuFeed } from "@/lib/integrations/eu-feeds.server";
 import type { ToolDef } from "./tools";
 
 function tool<I extends z.ZodType, O>(def: ToolDef<I, O>): ToolDef<I, O> {
@@ -207,6 +208,24 @@ export const readWorkspaceFacts = tool({
   },
 });
 
+export const readEuTenders = tool({
+  name: "read_eu_tenders",
+  risk: 0,
+  description:
+    "Open public tenders from Cyprus buyers on TED (the EU tenders journal): title, buyer, deadline, estimated value, CPV codes and a link. greenOnly keeps energy, environmental and efficiency work.",
+  input: z.object({ greenOnly: z.boolean().default(true), limit: z.number().int().min(1).max(50).default(20) }),
+  run: async (_ctx, input) => readEuFeed("ted", { greenOnly: input.greenOnly, limit: input.limit }),
+});
+
+export const readEuLaw = tool({
+  name: "read_eu_law_updates",
+  risk: 0,
+  description:
+    "EU regulations, directives and decisions from EUR-Lex in the last six months on climate, energy and reporting, tagged by topic (e.g. CBAM, Sustainability reporting, EU Taxonomy, Energy). Optional topic filter.",
+  input: z.object({ topic: z.string().max(60).optional(), limit: z.number().int().min(1).max(50).default(20) }),
+  run: async (_ctx, input) => readEuFeed("eurlex", { topic: input.topic, limit: input.limit }),
+});
+
 export const INTEGRATION_TOOLS = {
   read_company_profile: readCompanyProfile,
   search_company_registry: searchCompanyRegistry,
@@ -218,4 +237,6 @@ export const INTEGRATION_TOOLS = {
   read_utility_bills: readUtilityBills,
   read_bank_spend: readBankSpend,
   read_workspace_facts: readWorkspaceFacts,
+  read_eu_tenders: readEuTenders,
+  read_eu_law_updates: readEuLaw,
 } as const;

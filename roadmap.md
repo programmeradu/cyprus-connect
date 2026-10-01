@@ -154,3 +154,4 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Public fingerprint verification page (/verify, register filled on every PDF download)
 - [ ] EU tenders (TED) + EUR-Lex feeds
 - [ ] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
+- [x] Verify page: replace deep-green result border with black/grey/lemon; replace basic checkmark with generated stamp

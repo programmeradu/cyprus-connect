@@ -16,6 +16,7 @@ import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { isQaClient } from "@/lib/qa-bypass";
 import { DEFAULT_JURISDICTIONS, type AuditLog, type ComplianceDocument, type Regulation, type Settings } from "@/components/app/compliance/types";
 import { OverviewTab } from "@/components/app/compliance/OverviewTab";
+import { EuFeedPanel } from "@/components/app/console/EuFeedPanel";
 import { RegulationsTab } from "@/components/app/compliance/RegulationsTab";
 import { DocumentsTab } from "@/components/app/compliance/DocumentsTab";
 import { AuditTab } from "@/components/app/compliance/AuditTab";
@@ -148,6 +149,7 @@ export default function CompliancePage() {
           onOpenDocuments={() => setActiveTab("documents")}
         />
       )}
+      {(activeTab === "overview" || activeTab === "regulations") && <EuFeedPanel source="eurlex" />}
       {activeTab === "regulations" && <RegulationsTab regulations={regulations} />}
       {activeTab === "documents" && (
         <DocumentsTab documents={documents} onGenerate={handleGenerateReport} generating={generating} />

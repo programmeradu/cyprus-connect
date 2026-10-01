@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/i18n/routing";
+import Image from "next/image";
+import heroPhoto from "@/assets/verify-hero-boardroom.jpg";
+import footerPhoto from "@/assets/verify-document-footer.jpg";
+import sealImage from "@/assets/verify-seal.png";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { findIssuedDocument, normaliseCode } from "@/lib/document-verify.server";
 
@@ -28,6 +32,18 @@ const T = {
     what: "What this proves",
     whatBody: "The fingerprint is a SHA-256 digest of exactly the data printed in the document. Matching fingerprints show the figures are the ones Vuneli produced on the issue date. It is not a qualified electronic signature and does not mean the figures were audited.",
     privacy: "This page shows only details printed on the document itself.",
+    eyebrow: "Document register",
+    how: "How to check a document",
+    steps: [
+      ["Find the footer", "Every page of a Vuneli PDF ends with a short fingerprint. The last page carries the QR code and the full 64-character fingerprint."],
+      ["Scan or type", "Scan the QR code with any phone camera, or type the fingerprint here. Spaces and capital letters do not matter."],
+      ["Compare every character", "A match confirms the document is in our register. Compare the full fingerprint shown here with the one printed on the paper."],
+    ],
+    meta: [["Method", "SHA-256 of the printed data"], ["Register", "Every PDF issued from Vuneli"], ["Shown here", "Only what is on the paper"]],
+    imgAlt: "The footer of a printed report showing a fingerprint and a QR code",
+    heroAlt: "A reviewer scanning the QR code on a printed sustainability report in a Nicosia boardroom",
+    questions: "Questions about a document?",
+    questionsBody: "Write to hello@vuneli.com with the document ID. Lenders, auditors and public bodies are welcome to contact us directly.",
   },
   el: {
     title: "Έλεγχος εγγράφου Vuneli",
@@ -45,6 +61,18 @@ const T = {
     what: "Τι αποδεικνύει",
     whatBody: "Το αποτύπωμα είναι σύνοψη SHA-256 ακριβώς των στοιχείων που τυπώνονται στο έγγραφο. Αν ταιριάζει, τα στοιχεία είναι αυτά που παρήγαγε η Vuneli την ημερομηνία έκδοσης. Δεν είναι εγκεκριμένη ηλεκτρονική υπογραφή και δεν σημαίνει ότι τα στοιχεία ελέγχθηκαν από ελεγκτή.",
     privacy: "Η σελίδα δείχνει μόνο στοιχεία που είναι ήδη τυπωμένα στο έγγραφο.",
+    eyebrow: "Μητρώο εγγράφων",
+    how: "Πώς ελέγχετε ένα έγγραφο",
+    steps: [
+      ["Βρείτε το υποσέλιδο", "Κάθε σελίδα PDF της Vuneli κλείνει με σύντομο αποτύπωμα. Η τελευταία σελίδα φέρει τον κωδικό QR και το πλήρες αποτύπωμα 64 χαρακτήρων."],
+      ["Σαρώστε ή πληκτρολογήστε", "Σαρώστε τον κωδικό QR με την κάμερα του κινητού ή πληκτρολογήστε το αποτύπωμα εδώ. Κενά και κεφαλαία δεν έχουν σημασία."],
+      ["Συγκρίνετε κάθε χαρακτήρα", "Η αντιστοιχία επιβεβαιώνει ότι το έγγραφο υπάρχει στο μητρώο μας. Συγκρίνετε το πλήρες αποτύπωμα εδώ με αυτό στο χαρτί."],
+    ],
+    meta: [["Μέθοδος", "SHA-256 των τυπωμένων στοιχείων"], ["Μητρώο", "Κάθε PDF που εκδίδει η Vuneli"], ["Εμφανίζονται", "Μόνο όσα είναι στο χαρτί"]],
+    imgAlt: "Το υποσέλιδο τυπωμένης έκθεσης με αποτύπωμα και κωδικό QR",
+    heroAlt: "Ελεγκτής σαρώνει τον κωδικό QR τυπωμένης έκθεσης βιωσιμότητας σε αίθουσα συσκέψεων στη Λευκωσία",
+    questions: "Ερωτήσεις για ένα έγγραφο;",
+    questionsBody: "Γράψτε στο hello@vuneli.com με τον κωδικό του εγγράφου. Τράπεζες, ελεγκτές και δημόσιοι φορείς μπορούν να επικοινωνήσουν απευθείας μαζί μας.",
   },
 } as const;
 
@@ -69,6 +97,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 const group = (h: string) => h.match(/.{1,4}/g)!.join(" ");
 
+const LIME_BUTTON =
+  "inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-7 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+
 export default async function VerifyPage({ params, searchParams }: { params: Params; searchParams: Search }) {
   const { locale, code: seg } = await params;
   if (!routing.locales.includes(locale as Locale)) notFound();
@@ -81,55 +112,118 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
   const issued = doc ? new Intl.DateTimeFormat(l === "el" ? "el-CY" : "en-GB", { dateStyle: "long", timeZone: "Europe/Nicosia" }).format(doc.issuedAt) : "";
 
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased" style={{ fontFamily: "var(--editorial-sans)" }}>
+    <div className="relative min-h-screen bg-background text-foreground antialiased" style={{ fontFamily: "var(--editorial-sans)" }}>
       <MarketingHeader />
-      {/* Dark masthead, as on the trust pages, so the floating header stays legible. */}
-      <section className="bg-[oklch(0.19_0.02_150)] text-white">
-        <div className="mx-auto max-w-3xl px-5 pb-12 pt-28 sm:px-8 sm:pb-14 sm:pt-36">
-          <h1 className="text-[2.1rem] font-semibold leading-[1.08] tracking-[-0.02em] sm:text-[2.8rem]" style={{ fontFamily: "var(--editorial-display)", textWrap: "balance" }}>
-            {t.title}
-          </h1>
-          <p className="mt-5 max-w-2xl text-[16.5px] leading-[1.62] text-white/80">{t.intro}</p>
+
+      {/* Hero: context photograph, check form in the first view. */}
+      <section className="relative isolate overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <Image src={heroPhoto} alt={t.heroAlt} fill priority sizes="100vw" placeholder="blur" className="object-cover object-[70%_center]" />
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent" />
+        </div>
+        <div className="mx-auto max-w-6xl px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-40">
+          <div className="max-w-2xl">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-white/75">{t.eyebrow}</p>
+            <h1 className="mt-5 font-[family-name:var(--editorial-display)] text-[2.4rem] font-semibold leading-[1.03] tracking-[-0.025em] text-white sm:text-[3.6rem]" style={{ textWrap: "balance" }}>
+              {t.title}
+            </h1>
+            <p className="mt-6 text-[16.5px] font-medium leading-[1.62] text-white/85 sm:text-[18px]">{t.intro}</p>
+
+            <form action={`/${l}/verify`} method="get" className="mt-9">
+              <label htmlFor="code" className="text-[13.5px] font-semibold text-white/80">{t.label}</label>
+              <div className="mt-2.5 flex flex-col gap-3 sm:flex-row">
+                <input
+                  id="code" name="code" defaultValue={raw} placeholder={t.placeholder} autoComplete="off" spellCheck={false} maxLength={200} inputMode="text"
+                  className="h-12 w-full min-w-0 rounded-full sm:flex-1 border border-white/25 bg-white/10 px-5 text-[15.5px] tabular-nums tracking-[0.02em] text-white placeholder:text-white/50 outline-none backdrop-blur-md focus:border-white/60 focus:bg-white/15"
+                />
+                <button type="submit" className={LIME_BUTTON}>{t.check}</button>
+              </div>
+              {raw && !valid && <p role="alert" className="mt-3 text-[14px] font-medium text-[var(--accent-lime)]">{t.bad}</p>}
+            </form>
+          </div>
+
+          <dl className="mt-14 grid max-w-3xl grid-cols-1 gap-x-10 gap-y-5 border-t border-white/20 pt-6 sm:grid-cols-3">
+            {t.meta.map(([k, v]) => (
+              <div key={k}>
+                <dt className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-white/55">{k}</dt>
+                <dd className="mt-1.5 text-[15.5px] font-semibold text-white">{v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
-      <main className="mx-auto max-w-3xl px-5 pb-24 pt-2 sm:px-8">
-        <form action={`/${l}/verify`} method="get" className="mt-10">
-          <label htmlFor="code" className="text-[14px] font-semibold">{t.label}</label>
-          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-            <input
-              id="code" name="code" defaultValue={raw} placeholder={t.placeholder} autoComplete="off" spellCheck={false} maxLength={200}
-              className="min-w-0 flex-1 rounded-lg border border-border bg-card px-4 py-3 font-mono text-[15px] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
-            <button type="submit" className="rounded-lg bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground hover:opacity-90">{t.check}</button>
-          </div>
-          {raw && !valid && <p role="alert" className="mt-3 text-[14px] text-destructive">{t.bad}</p>}
-        </form>
 
+      <main className="mx-auto max-w-6xl px-5 sm:px-8">
         {valid && (
-          <section aria-live="polite" className={`mt-10 rounded-xl border p-6 sm:p-8 ${doc ? "border-primary/40 bg-primary/5" : "border-destructive/40 bg-destructive/5"}`}>
-            <h2 className={`text-[1.35rem] font-semibold ${doc ? "text-primary" : "text-destructive"}`}>{doc ? `✓ ${t.found}` : t.notFound}</h2>
-            <p className="mt-2 text-[15.5px] leading-[1.6] text-muted-foreground">{doc ? t.foundBody : t.notFoundBody}</p>
-            {doc && (
-              <dl className="mt-6 grid gap-x-8 gap-y-4 border-t border-border pt-6 sm:grid-cols-2">
-                {[[t.doc, `${doc.title}`], [t.type, t.kinds[doc.kind] ?? doc.kind], [t.company, doc.company], [t.issued, `${issued} · ${doc.docId}`]].map(([k, v]) => (
-                  <div key={k} className="min-w-0">
-                    <dt className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{k}</dt>
-                    <dd className="mt-1 break-words text-[15.5px] font-medium">{v}</dd>
-                  </div>
-                ))}
-                <div className="sm:col-span-2">
-                  <dt className="text-[12.5px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{t.full}</dt>
-                  <dd className="mt-1 break-all font-mono text-[14px] leading-[1.7]">{group(doc.hash)}</dd>
+          <section aria-live="polite" className="py-14 sm:py-16">
+            <div className={`rounded-2xl border bg-card p-6 shadow-[0_30px_60px_-40px_rgba(0,0,0,0.35)] sm:p-10 ${doc ? "border-[var(--accent-lime)] ring-1 ring-foreground/10" : "border-foreground/20"}`}>
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                <div className="max-w-xl">
+                  <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${doc ? "text-foreground/70" : "text-destructive"}`}>{doc ? doc.docId : code.slice(0, 16)}</p>
+                  <h2 className="mt-3 font-[family-name:var(--editorial-display)] text-[1.9rem] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[2.3rem]">
+                    {doc ? t.found : t.notFound}
+                  </h2>
+                  <p className="mt-3 text-[15.5px] leading-[1.65] text-muted-foreground">{doc ? t.foundBody : t.notFoundBody}</p>
                 </div>
-              </dl>
-            )}
+                {doc && (
+                  <Image src={sealImage} alt="" aria-hidden width={160} height={160} className="order-first h-28 w-28 shrink-0 -rotate-6 drop-shadow-[0_12px_18px_rgba(0,0,0,0.18)] sm:h-36 sm:w-36 lg:order-none lg:h-40 lg:w-40" />
+                )}
+              </div>
+              {doc && (
+                <dl className="mt-8 grid gap-x-10 gap-y-6 border-t border-border pt-8 sm:grid-cols-2 lg:grid-cols-4">
+                  {[[t.doc, doc.title], [t.type, t.kinds[doc.kind] ?? doc.kind], [t.company, doc.company], [t.issued, issued]].map(([k, v]) => (
+                    <div key={k} className="min-w-0">
+                      <dt className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{k}</dt>
+                      <dd className="mt-1.5 break-words text-[16px] font-semibold">{v}</dd>
+                    </div>
+                  ))}
+                  <div className="sm:col-span-2 lg:col-span-4">
+                    <dt className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">{t.full}</dt>
+                    <dd className="mt-2 grid grid-cols-4 gap-x-4 gap-y-1.5 text-[15px] font-medium tabular-nums tracking-[0.04em] sm:grid-cols-8">
+                      {group(doc.hash).split(" ").map((g, i) => <span key={i}>{g}</span>)}
+                    </dd>
+                  </div>
+                </dl>
+              )}
+            </div>
           </section>
         )}
 
-        <section className="mt-14 border-t border-border pt-8">
-          <h2 className="text-[1.1rem] font-semibold">{t.what}</h2>
-          <p className="mt-2 text-[15px] leading-[1.65] text-muted-foreground">{t.whatBody}</p>
-          <p className="mt-3 text-[13.5px] text-muted-foreground">{t.privacy}</p>
+        {/* How it works: numerals and hairlines, one context photograph. */}
+        <section className="grid gap-12 border-t border-border py-16 sm:py-20 lg:grid-cols-12 lg:gap-14">
+          <div className="lg:col-span-6">
+            <h2 className="font-[family-name:var(--editorial-display)] text-[2rem] font-semibold leading-[1.08] tracking-[-0.02em] sm:text-[2.6rem]" style={{ textWrap: "balance" }}>{t.how}</h2>
+            <ol className="mt-10">
+              {t.steps.map(([title, body], i) => (
+                <li key={title} className="grid grid-cols-[3rem_1fr] gap-4 border-t border-border py-6 last:border-b">
+                  <span className="font-[family-name:var(--editorial-display)] text-[1.5rem] font-semibold text-muted-foreground tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3 className="text-[17px] font-semibold">{title}</h3>
+                    <p className="mt-1.5 text-[15.5px] leading-[1.65] text-muted-foreground">{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <figure className="lg:col-span-6">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+              <Image src={footerPhoto} alt={t.imgAlt} fill sizes="(min-width: 1024px) 50vw, 100vw" placeholder="blur" className="object-cover" loading="lazy" />
+            </div>
+          </figure>
+        </section>
+
+        <section className="grid gap-10 border-t border-border py-16 sm:py-20 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <h2 className="font-[family-name:var(--editorial-display)] text-[1.7rem] font-semibold tracking-[-0.02em]">{t.what}</h2>
+            <p className="mt-4 text-[16px] leading-[1.7] text-muted-foreground">{t.whatBody}</p>
+            <p className="mt-4 text-[14px] font-medium text-muted-foreground">{t.privacy}</p>
+          </div>
+          <div className="lg:col-span-4 lg:col-start-9">
+            <h2 className="font-[family-name:var(--editorial-display)] text-[1.7rem] font-semibold tracking-[-0.02em]">{t.questions}</h2>
+            <p className="mt-4 text-[16px] leading-[1.7] text-muted-foreground">{t.questionsBody}</p>
+          </div>
         </section>
       </main>
     </div>
