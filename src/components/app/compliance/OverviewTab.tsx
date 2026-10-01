@@ -84,7 +84,7 @@ export function OverviewTab({
           {o.match === null && <span>{t("deadlines.addedByPerson")}</span>}
         </p>
       </div>
-      <div className="flex shrink-0 flex-wrap items-center gap-2">
+      <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
         {o.underReview.length > 0 && (
           <span className="vck-tag" data-tone="caution" title={o.underReview.join(", ")}>{t("deadlines.underReview")}</span>
         )}
