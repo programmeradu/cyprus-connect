@@ -1,3 +1,4 @@
+import { cachedTranslations, localeOf } from "@/lib/translate.server";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
@@ -255,16 +256,27 @@ export async function GET() {
     const agentsResult = await rosterFor(workspaceId, roster, Object.keys(RUNNABLE_AGENTS));
     console.log("[overview] Step 5: rosterFor done");
 
+    // Agent-written notes are English; Greek pages get cached translations.
+    const locale = localeOf(req.headers);
+    const tr = await cachedTranslations(
+      [...tasks.flatMap((x) => [x.title, x.detail]), ...runs.map((x) => x.summary), ...events.flatMap((x) => [x.object, x.detail])],
+      locale,
+    ).catch(() => new Map<string, string>());
+    const tx = (v: string | null) => (v ? tr.get(v) ?? v : v);
+    const tasksOut = locale === "el" ? tasks.map((x) => ({ ...x, title: tx(x.title) ?? x.title, detail: tx(x.detail) })) : tasks;
+    const runsOut = locale === "el" ? runs.map((x) => ({ ...x, summary: tx(x.summary) ?? x.summary })) : runs;
+    const eventsOut = locale === "el" ? events.map((x) => ({ ...x, object: tx(x.object) ?? x.object, detail: tx(x.detail) })) : events;
+
     return NextResponse.json({
       workspace,
       metrics,
       sites: [...siteNames].sort((a, b) => a.localeCompare(b)),
       agents: agentsResult,
-      runs,
-      tasks,
+      runs: runsOut,
+      tasks: tasksOut,
       connections,
       obligations: obs,
-      events,
+      events: eventsOut,
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
