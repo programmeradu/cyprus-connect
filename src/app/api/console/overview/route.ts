@@ -42,7 +42,7 @@ function employeesFrom(teamSize: string | null): number {
  * from here. The workspace is the one owned by the signed-in account: there
  * is no shared or demo fallback, so one account never sees another's data.
  */
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const requestHeaders = await headers();
     const cookieHeader = requestHeaders.get("cookie") || "";
