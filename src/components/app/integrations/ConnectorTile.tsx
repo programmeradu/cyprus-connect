@@ -1,9 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import type { Connector } from "./catalog";
 
 type Locale = "en" | "el";
+
+/** One headline fact shown on the closed card, so people know whether to open it. */
+export type TileFact = { label: string; value: ReactNode; tone?: "warn" };
 
 const STATE_WORD: Record<Connector["state"], { en: string; el: string }> = {
   live: { en: "Live", el: "Ενεργό" },
@@ -37,9 +40,9 @@ export function ConnectorMark({
 }
 
 /**
- * One service in the directory. The card states what the connection gives
- * the workspace and where the figures come from, so a connector is never a
- * logo with a button next to it.
+ * One service in the directory. Closed by default: name, one line on what it
+ * does, up to three headline facts and the actions. Everything else (what it
+ * gives, the source, bills, bank check, forwarding) opens under "Details".
  */
 export function ConnectorTile({
   connector,
@@ -47,20 +50,25 @@ export function ConnectorTile({
   status,
   action,
   detail,
+  facts,
 }: {
   connector: Connector;
   locale: Locale;
   /** Overrides the catalogue state word, for a link that is already made. */
   status?: { word: string; tone: "live" | "good" | "warn" | "bad" | "idle" };
   action?: ReactNode;
-  /** Extra rows shown under the copy, such as the last sync of a live link. */
+  /** Extra content shown inside Details, such as the last sync of a live link. */
   detail?: ReactNode;
+  facts?: TileFact[];
 }) {
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
   const word = status?.word ?? STATE_WORD[connector.state][locale];
   const tone = status?.tone ?? STATE_TONE[connector.state];
+  const el = locale === "el";
 
   return (
-    <article className="vci-tile">
+    <article className="vci-tile" data-open={open || undefined}>
       <header className="vci-tile-head">
         <ConnectorMark connector={connector} />
         <span className="vck-state" data-tone={tone}>
@@ -69,29 +77,56 @@ export function ConnectorTile({
         </span>
       </header>
 
-      <h3 className="vci-tile-name">{connector.name}</h3>
-      <p className="vci-tile-desc">{connector.desc[locale]}</p>
+      <div className="vci-tile-intro">
+        <h3 className="vci-tile-name">{connector.name}</h3>
+        <p className="vci-tile-desc">{connector.desc[locale]}</p>
+      </div>
 
-      <dl className="vci-tile-meta">
-        <div>
-          <dt>{locale === "el" ? "Δίνει" : "Gives you"}</dt>
-          <dd>{connector.gives[locale]}</dd>
-        </div>
-        <div>
-          <dt>{locale === "el" ? "Πηγή" : "Source"}</dt>
-          <dd>
-            {connector.href ? (
-              <a href={connector.href} target="_blank" rel="noreferrer noopener">
-                {connector.source}
-              </a>
-            ) : (
-              connector.source
-            )}
-          </dd>
-        </div>
-      </dl>
+      {facts && facts.length > 0 && (
+        <dl className="vci-tile-facts">
+          {facts.slice(0, 3).map((f) => (
+            <div key={f.label} data-tone={f.tone}>
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
 
-      {detail}
+      <button
+        type="button"
+        className="vci-tile-toggle"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span>{open ? (el ? "Λιγότερα" : "Hide details") : el ? "Λεπτομέρειες" : "Details"}</span>
+        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      <div id={panelId} className="vci-tile-panel" hidden={!open}>
+        <dl className="vci-tile-meta">
+          <div>
+            <dt>{el ? "Τι δίνει" : "What you get"}</dt>
+            <dd>{connector.gives[locale]}</dd>
+          </div>
+          <div>
+            <dt>{el ? "Πηγή" : "Source"}</dt>
+            <dd>
+              {connector.href ? (
+                <a href={connector.href} target="_blank" rel="noreferrer noopener">
+                  {connector.source}
+                </a>
+              ) : (
+                connector.source
+              )}
+            </dd>
+          </div>
+        </dl>
+        {detail}
+      </div>
 
       {action && <footer className="vci-tile-foot">{action}</footer>}
     </article>

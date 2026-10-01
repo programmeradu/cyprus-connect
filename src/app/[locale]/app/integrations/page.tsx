@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { ConsolePage, Plate, Reading, ReadingRail, Btn, Bar } from "@/components/app/console/kit";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
-import { ConnectorTile } from "@/components/app/integrations/ConnectorTile";
+import { ConnectorTile, type TileFact } from "@/components/app/integrations/ConnectorTile";
 import { SaltEdgeModal } from "@/components/app/integrations/SaltEdgeModal";
 import { NangoModal } from "@/components/app/integrations/NangoModal";
 import { BillInboxBlock, BillPaymentsBlock, billPayNote } from "@/components/app/integrations/BillChecks";
@@ -493,6 +493,66 @@ function IntegrationsContent() {
     return null;
   };
 
+  /** Up to three headline facts for the closed card. Only real readings, never placeholders. */
+  const factsFor = (c: Connector): TileFact[] => {
+    const f: TileFact[] = [];
+    if (c.id === "bankofcyprus" && bank?.status === "active") {
+      f.push({ label: L("Accounts read", "Λογαριασμοί"), value: <span className="vck-num">{bank.accounts}</span> });
+      f.push({ label: L(`Payments, last ${bank.windowDays} days`, `Πληρωμές, ${bank.windowDays} ημέρες`), value: <span className="vck-num">{bank.paymentsRead}</span> });
+      f.push({ label: L("Last read", "Τελευταία ανάγνωση"), value: bank.lastSyncAt ? time.format(new Date(bank.lastSyncAt)) : L("Not yet", "Όχι ακόμη") });
+    }
+    if (c.id === "saltedge" && d?.saltedge?.status === "active") {
+      const se = d.saltedge;
+      f.push({ label: L("Accounts read", "Λογαριασμοί"), value: <span className="vck-num">{se.accounts}</span> });
+      if (se.lastSyncAt) f.push({ label: L("Last sync", "Συγχρονισμός"), value: date.format(new Date(se.lastSyncAt)) });
+    }
+    if (c.id === "nango" && d?.nango?.connected) {
+      f.push({ label: L("Systems linked", "Συστήματα"), value: <span className="vck-num">{d.nango.connectionsCount}</span> });
+    }
+    if ((c.id === "eac" || c.id === "water") && d?.eac && d?.water) {
+      const isWater = c.id === "water";
+      const n = isWater ? d.water.bills.length : d.eac.bills.length;
+      f.push({
+        label: L("Bills on file", "Λογαριασμοί"),
+        value: n === 0 ? L("None yet", "Κανένας ακόμη") : isWater ? `${n} · ${num1.format(d.water.totalM3)} m³` : `${n} · ${num.format(d.eac.totalKwh)} kWh`,
+      });
+      const check = isWater ? d.waterPayments : d.eacPayments;
+      if (check.bankLinked) {
+        const miss = check.paymentsWithoutBill.length;
+        f.push({
+          label: L("Payments without a bill", "Πληρωμές χωρίς λογαριασμό"),
+          value: <span className="vck-num">{miss}</span>,
+          tone: miss > 0 ? "warn" : undefined,
+        });
+      }
+      if (d.billInbox.ready) {
+        f.push({
+          label: L("Email forwarding", "Προώθηση email"),
+          value: d.billInbox.address
+            ? d.billInbox.lastMessageAt
+              ? L(`On · last ${date.format(new Date(d.billInbox.lastMessageAt))}`, `Ενεργή · ${date.format(new Date(d.billInbox.lastMessageAt))}`)
+              : L("On · nothing received yet", "Ενεργή · τίποτα ακόμη")
+            : L("Off", "Ανενεργή"),
+        });
+      }
+    }
+    if (c.id === "climate-trace" && d?.climateTrace) {
+      const ct = d.climateTrace;
+      f.push({ label: L(`${ct.country} emissions, ${ct.year}`, `Εκπομπές ${ct.country}, ${ct.year}`), value: `${num1.format(ct.totalTonnes / 1e6)} Mt CO₂e` });
+    }
+    if (c.id === "cystat" && d?.cystat) {
+      f.push({ label: L(`Establishments, ${d.cystat.year}`, `Μονάδες, ${d.cystat.year}`), value: <span className="vck-num">{num.format(d.cystat.total)}</span> });
+      if (d.cystat.own) f.push({ label: L("Your sector's share", "Μερίδιο κλάδου"), value: `${num1.format(d.cystat.own.sharePct)}%` });
+    }
+    if (c.id === "wikirate" && d?.wikirate.configured && d.wikirate.cyprusCompanies !== null) {
+      f.push({ label: L("Cyprus companies listed", "Κυπριακές εταιρείες"), value: <span className="vck-num">{d.wikirate.cyprusCompanies}{d.wikirate.cyprusCompanies >= 100 ? "+" : ""}</span> });
+    }
+    if (c.id === "registrar" && d?.registry) {
+      f.push({ label: d.registry.registrationNo, value: d.registry.legalName });
+    }
+    return f;
+  };
+
   const detailFor = (c: Connector) => {
     if (c.id === "bankofcyprus" && bank) {
       if (!bank.configured) {
@@ -641,7 +701,10 @@ function IntegrationsContent() {
     if ((c.id === "water" || c.id === "eac") && d?.water && d?.eac) {
       return (
         <>
-          {billCore(c)}
+          <section className="vci-billcheck">
+            <p className="vci-billcheck-head"><span>{L("Your bills", "Οι λογαριασμοί σας")}</span></p>
+            {billCore(c)}
+          </section>
           <BillPaymentsBlock kind={c.id === "water" ? "water" : "electricity"} check={c.id === "water" ? d.waterPayments : d.eacPayments} L={L} date={date} eur2={eur2} />
           <BillInboxBlock inbox={d.billInbox} L={L} time={time} busy={inboxAction.busy} onOpen={() => openInbox(false)} onRotate={() => openInbox(true)} onClose={closeInbox} />
         </>
@@ -825,7 +888,7 @@ function IntegrationsContent() {
             <p className="vci-group-note">{CATEGORY_NOTE[cat][locale]}</p>
             <div className="vci-grid">
               {items.map((c) => (
-                <ConnectorTile key={c.id} connector={c} locale={locale} status={statusFor(c)} action={actionFor(c)} detail={detailFor(c)} />
+                <ConnectorTile key={c.id} connector={c} locale={locale} status={statusFor(c)} action={actionFor(c)} detail={detailFor(c)} facts={factsFor(c)} />
               ))}
             </div>
           </Plate>
