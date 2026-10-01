@@ -46,7 +46,7 @@ export type SanctionsResult =
 const STOP = new Set([
   "ltd", "limited", "llc", "llp", "lp", "plc", "inc", "incorporated", "corp", "corporation", "co", "company", "the", "and", "of",
   "gmbh", "ag", "kg", "sa", "sas", "sarl", "srl", "spa", "bv", "nv", "oy", "ab", "as", "aps", "sro", "kft", "doo", "ad", "ood", "eood",
-  "ooo", "oao", "zao", "pao", "ao", "jsc", "ojsc", "cjsc", "pjsc", "fze", "fzco", "dmcc", "ltda", "cv", "de", "llc.", "ε", "επε", "αε", "ike", "οε", "εε",
+  "ooo", "oao", "zao", "pao", "ao", "jsc", "ojsc", "cjsc", "pjsc", "fze", "fzco", "dmcc", "ltda", "cv", "de", "llc.", "ε", "επε", "αε", "ike", "οε", "εε", "ооо", "оао", "зао", "пао", "ао", "тоо", "ип",
 ]);
 
 /** Pure: lowercase, strip accents and punctuation, drop legal forms. */
@@ -78,7 +78,7 @@ function splitLine(line: string): string[] {
     const c = line[i];
     if (q) {
       if (c === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c;
-    } else if (c === '"') q = true;
+    } else if (c === '"' && cur === "") q = true;
     else if (c === ";") { out.push(cur); cur = ""; }
     else cur += c;
   }
