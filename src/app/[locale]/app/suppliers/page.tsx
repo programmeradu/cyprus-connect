@@ -196,7 +196,10 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
     });
   const screen = () =>
     run("sanctions", async () => {
-      const r = await workspaceRequest<{ status: "clear" | "possible_match" }>(PATH, { method: "POST", body: { action: "check_sanctions", name: s.name } });
+      const r = await workspaceRequest<{ status: "clear" | "possible_match" }>(PATH, { method: "POST", body: { action: "check_sanctions", name: s.name } }).catch((e: unknown) => {
+        // The server answers in English; show the not-connected case in the page language.
+        throw new Error(errText(e, "").includes("not connected") ? t("sanNotConnected") : errText(e, t("saveFailed")));
+      });
       invalidateWorkspace([PATH]);
       return r.status === "clear" ? t("sanClearMsg", { name: s.name }) : t("sanMatchMsg", { name: s.name });
     });

@@ -1508,7 +1508,8 @@
       "checkSanctions": "Check sanctions lists",
       "sanAgain": "Check sanctions again",
       "sanClearMsg": "{name}: no match on sanctions lists.",
-      "sanMatchMsg": "{name}: possible sanctions match. Review the records before you pay or sign."
+      "sanMatchMsg": "{name}: possible sanctions match. Review the records before you pay or sign.",
+      "sanNotConnected": "Sanctions checks are not connected yet. Add an OpenSanctions key to turn them on."
     }
   },
   "onboarding": {
