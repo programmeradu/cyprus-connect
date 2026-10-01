@@ -151,6 +151,6 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] TED tenders + EUR-Lex watch feeds
 - [ ] OpenSanctions (needs API key), pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Premium Typst PDFs wired into Board Summary, reports and CBAM downloads (verified in-app download).
-- [ ] Public fingerprint verification page
+- [x] Public fingerprint verification page (/verify, register filled on every PDF download)
 - [ ] EU tenders (TED) + EUR-Lex feeds
 - [ ] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal

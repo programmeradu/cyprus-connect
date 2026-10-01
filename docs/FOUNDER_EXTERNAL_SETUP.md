@@ -242,3 +242,8 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## PDFs (2026-10-01)
 - Nothing to set up. Cover photographs are AI-generated illustrations and say so in small print on the cover; swap in your own photography any time by replacing the files in public/pdf-art/.
+
+## Document check page (added 1 Oct 2026)
+- Run `scripts/sql/0031_document_fingerprints.sql` on the live database before deploying, or PDF QR codes will show "Not in our register".
+- PDFs load the typesetting engine from cdn.jsdelivr.net; if a Content-Security-Policy is added later, allow it in `connect-src`.
+- PDFs downloaded before this release are not in the register.
