@@ -1174,7 +1174,8 @@
         "actual": "Supplier actual",
         "mixed": "Part default",
         "default": "Default value",
-        "unknown_cn": "Not a CBAM code"
+        "unknown_cn": "Not a CBAM code",
+        "no_default": "Needs supplier value"
       },
       "col": {
         "date": "Date",
@@ -1184,7 +1185,9 @@
         "embedded": "Embedded tCO₂e",
         "basis": "Basis",
         "lines": "Lines",
-        "onDefaults": "On defaults"
+        "onDefaults": "On defaults",
+        "cost": "Certificates · €",
+        "source": "Default from"
       },
       "runAgentCell": "Run agent",
       "notDrafted": "Not drafted yet",
@@ -1210,7 +1213,11 @@
         "massNote": "threshold, excl. electricity & hydrogen",
         "defaults": "On default values",
         "defaultsNote": "of embedded emissions",
-        "due": "Declaration due"
+        "due": "Declaration due",
+        "cost": "Estimated certificate cost",
+        "costNote": "{certs} certificates · official EU price",
+        "costProvisional": "{certs} certificates · latest published price for quarters not yet priced",
+        "costMissing": "{count} line(s) not priced"
       },
       "noDraftTitle": "No draft yet",
       "noDraftBody": "Run the CBAM agent to build the declaration from these lines.",
@@ -1270,7 +1277,13 @@
         "working": "Working…",
         "approve": "Approve and send",
         "reject": "Reject"
-      }
+      },
+      "source": {
+        "country": "{name} table",
+        "other": "Other countries table",
+        "unknown_origin": "Origin unknown (highest value)"
+      },
+      "officialNote": "Default values: EU Implementing Regulation 2025/2621 as corrected by 2026/1740. Benchmarks: 2025/2620. Price: official 2026 quarterly prices. Cost does not deduct a carbon price paid in the country of origin."
     },
     "reports": {
       "title": "Deliverables",
