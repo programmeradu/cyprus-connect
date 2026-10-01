@@ -5,7 +5,7 @@ import { complianceDocuments, complianceAuditLogs, emissions, user } from '@/db/
 import { eq, desc } from 'drizzle-orm';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
-import { requireVuneliUserId } from '@/lib/auth';
+import { requireUserIdOrQa as requireVuneliUserId } from '@/lib/api-auth';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
