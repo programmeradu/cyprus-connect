@@ -2445,7 +2445,19 @@
       "dismiss": "Dismiss",
       "saving": "Saving…",
       "showAll": "Show all {count}",
-      "showLess": "Show fewer"
+      "showLess": "Show fewer",
+      "kindQuestion": "Question from {agent}",
+      "answer": "Save answer",
+      "answerInvalid": "Please enter a valid value.",
+      "lookUpRegistry": "Look up in Registrar",
+      "industry": {
+        "technology": "Technology",
+        "retail": "Retail",
+        "manufacturing": "Manufacturing",
+        "hospitality": "Hospitality",
+        "healthcare": "Healthcare",
+        "finance": "Finance"
+      }
     },
     "deadline": {
       "title": "Next deadline",

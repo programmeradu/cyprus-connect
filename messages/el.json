@@ -2445,7 +2445,19 @@
       "dismiss": "Παράβλεψη",
       "saving": "Αποθήκευση…",
       "showAll": "Όλα ({count})",
-      "showLess": "Λιγότερα"
+      "showLess": "Λιγότερα",
+      "kindQuestion": "Ερώτηση από {agent}",
+      "answer": "Αποθήκευση",
+      "answerInvalid": "Εισαγάγετε έγκυρη τιμή.",
+      "lookUpRegistry": "Αναζήτηση στο Μητρώο",
+      "industry": {
+        "technology": "Τεχνολογία",
+        "retail": "Λιανική",
+        "manufacturing": "Μεταποίηση",
+        "hospitality": "Φιλοξενία",
+        "healthcare": "Υγεία",
+        "finance": "Χρηματοοικονομικά"
+      }
     },
     "deadline": {
       "title": "Επόμενη προθεσμία",
