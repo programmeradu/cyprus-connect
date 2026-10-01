@@ -46,7 +46,8 @@ function figures(v: unknown): ReportFigure[] {
 }
 
 /** Readers never see internal codes: "scope2_intensity" -> "scope2 intensity". */
-function plain(v: string): string {
+function plain(v: string | null | undefined): string {
+  if (!v) return "";
   return v.replace(/\b([A-Za-z0-9]+(?:_[A-Za-z0-9]+)+)\b/g, (m) => m.replace(/_/g, " "));
 }
 
