@@ -301,3 +301,13 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Search visibility (2026-10-01)
 - After the next deploy, re-run the Ahrefs site audit. Don't run it while a deploy is still going: pages crawled mid-deploy can report "broken JavaScript" for files that are being replaced.
 - The deploy now pings IndexNow (Bing and others) on its own. Optional: add vuneli.com in Bing Webmaster Tools and import it from Google Search Console.
+
+## Site audit score drops after a deploy (Oct 2026)
+
+Ahrefs reports "broken JavaScript/CSS" on almost every page when it crawls while a new version is being deployed: pages fetched before the switch point to script/style files that the new version has replaced. The live site checked clean afterwards (no failed scripts, styles or fonts on 7 key pages).
+
+What to do:
+1. Deploy first, wait ~5 minutes, then start the Ahrefs crawl (or schedule the crawl at a time you don't deploy).
+2. Re-run the crawl now; the JavaScript/CSS errors should clear.
+3. Optional, permanent fix (keeps older files available during deploys — "skew protection", experimental in OpenNext): create a Cloudflare API token with "Workers Scripts: Read", then tell Vuneli's builder so it can be switched on. Needs: CF_WORKERS_SCRIPTS_API_TOKEN, CF_ACCOUNT_ID, CF_WORKER_NAME, CF_PREVIEW_DOMAIN (your workers.dev subdomain) as build variables.
+4. The 30 short glossary descriptions are already fixed in the code; they go live with the next deploy.
