@@ -26,6 +26,9 @@ const s = StyleSheet.create({
 
 const font = (f: string[]) => f as unknown as string;
 
+/** Upper-case text drops Greek tonos marks (and other accents), as typesetters do. */
+const caps = (t: string) => t.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").normalize("NFC");
+
 /* ---------------------------------------------------------------- document */
 
 export function PdfDocument({ title, subject, hash, children }: { title: string; subject: string; hash: string; children: React.ReactNode }) {
@@ -52,6 +55,7 @@ export function Cover({
   meta,
   hash,
   caption,
+  contents,
 }: {
   image: string;
   wordmark: string;
@@ -61,6 +65,7 @@ export function Cover({
   meta: CoverMeta[];
   hash: string;
   caption: string;
+  contents?: string[];
 }) {
   const imgH = 430;
   return (
@@ -95,6 +100,16 @@ export function Cover({
             </View>
           ))}
         </View>
+        {contents?.length ? (
+          <View style={{ marginTop: 22, flexDirection: "row", flexWrap: "wrap" }}>
+            {contents.map((c, i) => (
+              <View key={i} style={{ width: "33.33%", flexDirection: "row", paddingVertical: 3, paddingRight: 8 }}>
+                <Text style={{ fontFamily: font(DISPLAY), fontSize: 9, color: C.accent, width: 18 }}>{String(i + 1).padStart(2, "0")}</Text>
+                <Text style={{ fontSize: 8.5, color: C.body, flex: 1 }}>{c}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
       </View>
 
       <View style={{ paddingHorizontal: MARGIN, paddingBottom: 34, flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
@@ -114,7 +129,7 @@ export function InnerPage({ docTitle, company, hash, children, orientation = "po
   return (
     <Page size="A4" orientation={orientation} style={s.page} wrap>
       <View style={s.header} fixed>
-        <Text style={s.headerText}>{company}</Text>
+        <Text style={s.headerText}>{caps(company)}</Text>
         <Text style={s.headerText}>{docTitle}</Text>
       </View>
       {children}
@@ -123,8 +138,8 @@ export function InnerPage({ docTitle, company, hash, children, orientation = "po
           Prepared with Vuneli from the company's own records.{"\n"}
           <Text style={s.mono}>SHA-256 {shortPrint(hash)}</Text>
         </Text>
-        <Text style={[s.footerText, { color: C.quiet }]} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
       </View>
+      <Text fixed style={{ position: "absolute", bottom: 30, right: MARGIN, fontSize: 7.5, color: C.quiet }} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
     </Page>
   );
 }
@@ -160,10 +175,10 @@ export function KpiRow({ items }: { items: Kpi[] }) {
       {items.map((k, i) => (
         <View key={i} style={{ flex: 1, paddingTop: 11, paddingRight: 12, paddingLeft: i === 0 ? 0 : 12, borderLeftWidth: i === 0 ? 0 : 0.5, borderLeftColor: C.rule }}>
           <Text style={{ fontSize: 7, color: C.quiet, letterSpacing: 0.9, textTransform: "uppercase", fontWeight: 600 }}>{k.label}</Text>
-          <View style={{ flexDirection: "row", alignItems: "baseline", marginTop: 6, flexWrap: "wrap" }}>
-            <Text style={{ fontFamily: font(DISPLAY), fontWeight: 600, fontSize: 24, letterSpacing: -0.6, color: k.tone === "warn" ? C.warn : k.tone === "good" ? C.accent : C.ink }}>{k.value}</Text>
-            {k.unit ? <Text style={{ fontSize: 8.5, color: C.quiet, marginLeft: 4 }}>{k.unit}</Text> : null}
-          </View>
+          <Text style={{ fontFamily: font(DISPLAY), fontWeight: 600, fontSize: 24, lineHeight: 1.15, letterSpacing: -0.6, marginTop: 6, color: k.tone === "warn" ? C.warn : k.tone === "good" ? C.accent : C.ink }}>
+            {k.value}
+            {k.unit ? <Text style={{ fontFamily: font(SANS), fontWeight: 400, fontSize: 8.5, letterSpacing: 0, color: C.quiet }}>{"  "}{k.unit}</Text> : null}
+          </Text>
           {k.note ? <Text style={{ fontSize: 7.5, color: C.quiet, marginTop: 4, lineHeight: 1.4 }}>{k.note}</Text> : null}
         </View>
       ))}
@@ -276,7 +291,7 @@ export function BarChart({ points, unit, width = CONTENT_W, height = 150, highli
             <React.Fragment key={t}>
               <Line x1={padL} y1={y} x2={width} y2={y} stroke={t === 0 ? C.ink : C.hair} strokeWidth={t === 0 ? 0.75 : 0.5} />
               <SvgText x={padL - 6} y={y + 2.5} style={{ fontSize: 6.5, fontFamily: font(SANS) }} fill={C.quiet} textAnchor="end">
-                {fmtSmart(nice * t)}
+                {axisLabel(nice * t, nice)}
               </SvgText>
             </React.Fragment>
           );
@@ -302,6 +317,12 @@ export function BarChart({ points, unit, width = CONTENT_W, height = 150, highli
       </Svg>
     </View>
   );
+}
+
+function axisLabel(v: number, top: number) {
+  const step = top / 4;
+  const d = step >= 1 ? 0 : step >= 0.1 ? 1 : 2;
+  return v.toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d });
 }
 
 /** Horizontal share bars: label, bar, value. Used for sector and supplier splits. */

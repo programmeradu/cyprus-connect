@@ -78,6 +78,7 @@ export function BoardSummaryDocument({ c, hash, base, generatedAt }: { c: Conten
         ]}
         hash={hash}
         caption="Photograph: Nicosia rooftops. Generated illustration."
+        contents={["At a glance", "Footprint", "Deadlines", "Decisions waiting", "Recent activity", "About this document"]}
       />
 
       <InnerPage docTitle={title} company={c.company} hash={hash}>
