@@ -38,7 +38,10 @@ def num(v: str):
     v = v.strip().replace(" ", "")
     if v in ("", "-", "–", "—"):
         return None
-    return float(v.replace(",", "."))
+    try:
+        return float(v.replace(",", "."))
+    except ValueError:
+        return None  # "see below": the sub-rows carry the values
 
 raw = open(SRC, encoding="utf-8").read()
 soup = BeautifulSoup(raw, "lxml")
