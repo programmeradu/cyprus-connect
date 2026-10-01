@@ -144,3 +144,5 @@
 .vch-tour-actions > span { display: flex; gap: 8px; }
 @media (prefers-reduced-motion: reduce) { .vch-tour-ring, .vch-setup-meter > span { transition: none; } }
 .vch-agents-queue { margin-bottom: 18px; }
+.vch-focus-side { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+@media (max-width: 640px) { .vch-focus-side { align-items: flex-start; text-align: left; } }

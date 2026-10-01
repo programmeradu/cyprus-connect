@@ -151,7 +151,7 @@ export function MoneyPlate() {
                 <a href={m.url} target="_blank" rel="noreferrer" className="vch-ext">{m.title}</a>
               </p>
               <small>{[m.program, m.source].filter(Boolean).join(" · ")}</small>
-              <time>{m.deadline ? t("closes", { days: daysUntil(m.deadline) }) : t("rolling")}</time>
+              <time>{m.deadline ? daysUntil(m.deadline) <= 0 ? t("closesToday") : t("closes", { days: daysUntil(m.deadline) }) : t("rolling")}</time>
             </li>
           ))}
         </ul>

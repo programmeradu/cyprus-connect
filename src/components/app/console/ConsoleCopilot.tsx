@@ -293,7 +293,7 @@ export function ConsoleCopilot() {
           <span className="vc-copilot-fab-mark">
             <CopilotMark small />
           </span>
-          <span className="vc-copilot-fab-label">Ask Copilot</span>
+          <span className="vc-copilot-fab-label">Ask Verde</span>
           {pending.length > 0 && (
             <span className="vc-copilot-fab-count">
               {pending.length > 9 ? "9+" : pending.length}

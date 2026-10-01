@@ -2513,7 +2513,8 @@
       "empty": "No open funding call right now. We check every hour.",
       "closes": "{days, plural, one {closes in # day} other {closes in # days}}",
       "rolling": "open call",
-      "note": "Open EU and Cyprus calls. Check each call's rules to see if your company qualifies."
+      "note": "Open EU and Cyprus calls. Check each call's rules to see if your company qualifies.",
+      "closesToday": "closes today"
     },
     "setup": {
       "title": "Finish setting up",

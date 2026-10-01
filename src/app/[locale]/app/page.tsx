@@ -178,16 +178,18 @@ export default function ConsolePage() {
                         {fmtNumber(focus.current, focus.precision)} <em>{focus.unit}</em>
                       </strong>
                     </div>
-                    {hasComparison ? (
-                      <span data-tone={focusTone}>{t("vsLast", { delta: fmtSigned(focus.delta) })}</span>
-                    ) : (
-                      <span data-tone="flat">{t("noComparison")}</span>
-                    )}
+                    <span className="vch-focus-side">
+                      {hasComparison ? (
+                        <span data-tone={focusTone}>{t("vsLast", { delta: fmtSigned(focus.delta) })}</span>
+                      ) : (
+                        <span data-tone="flat">{t("noComparison")}</span>
+                      )}
+                      <Link href="/app/analytics" className="vch-link">
+                        {t("openMeasure")}
+                      </Link>
+                    </span>
                   </div>
                   <SignalChart metric={focus} />
-                  <Link href="/app/analytics" className="vch-link vch-measure-link">
-                    {t("openMeasure")}
-                  </Link>
                 </>
               ) : (
                 <div className="vch-hero-empty">
