@@ -23,14 +23,15 @@ import {
   IcoVuneliAi,
 } from "./icons";
 import { ConsoleAvatar } from "./ConsoleAvatar";
+import { onPage, sectionFor } from "./nav-sections";
 import { useConsole } from "./ConsoleData";
 import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
 export const NAV_ITEMS = [
   { href: "/app", label: "Home", icon: IcoGrid },
-  { href: "/app/analytics", label: "Measure", icon: IcoPulse },
-  { href: "/app/compliance", label: "Report", icon: IcoDoc },
-  { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
+  { href: "/app/analytics", label: "Measure", icon: IcoPulse, section: "measure" },
+  { href: "/app/actions", label: "Act", icon: IcoLeaf, section: "act" },
+  { href: "/app/compliance", label: "Report", icon: IcoDoc, section: "report" },
   { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
   { href: "/app/integrations", label: "Connect", icon: IcoPlug },
 ];
@@ -41,16 +42,15 @@ export const NAV_ITEMS = [
  * one menu instead of disappearing from the product.
  */
 export const MORE_ITEMS = [
-  { href: "/app/reports", label: "Deliverables", detail: "Drafted reports and exports" },
-  { href: "/app/studio", label: "Studio", detail: "Draft disclosures and briefs" },
-  { href: "/app/learn", label: "Learn", detail: "Courses and guidance" },
-  { href: "/app/marketplace", label: "Marketplace", detail: "Consultants, providers and offsets" },
-  { href: "/app/calculator", label: "Calculator", detail: "Manual emission entries" },
-  { href: "/app/grant-alerts", label: "Grant alerts", detail: "EU and Cyprus funding" },
-  { href: "/app/leaderboard", label: "Benchmarks", detail: "Sector comparison" },
-  { href: "/app/billing", label: "Plan and usage", detail: "Subscription and credits" },
-  { href: "/app/settings", label: "Settings", detail: "Workspace and profile" },
+  { href: "/app/reports", label: "Deliverables", detail: "Every document an agent drafted" },
+  { href: "/app/leaderboard", label: "Benchmarks", detail: "Compare with similar companies" },
 ];
+
+/** A top tab is open on its own page and on every page of its section. */
+export function navActive(item: { href: string; section?: string }, path: string): boolean {
+  if (item.section) return sectionFor(path)?.key === item.section;
+  return onPage(path, item.href);
+}
 
 
 interface Entry {
@@ -203,7 +203,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
     setPalette(false);
     router.push(href as never);
   };
-  const moreActive = MORE_ITEMS.some((item) => path.startsWith(item.href));
+  const moreActive = MORE_ITEMS.some((item) => onPage(path, item.href));
 
   return (
     <header className="vc-nav" ref={bar}>
@@ -214,7 +214,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
       <nav className="vc-mainnav" aria-label="Workspace navigation">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
-          const active = item.href === "/app" ? path === "/app" : path.startsWith(item.href);
+          const active = navActive(item, path);
           return (
             <Link
               key={item.href}
@@ -251,7 +251,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                   key={item.href}
                   href={item.href as never}
                   role="menuitem"
-                  data-active={path.startsWith(item.href)}
+                  data-active={onPage(path, item.href)}
                   onClick={() => setMore(false)}
                 >
                   <strong>{item.label}</strong>

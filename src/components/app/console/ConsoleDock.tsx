@@ -12,13 +12,14 @@
 import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoVuneliAi, IcoMenu } from "./icons";
-import { MORE_ITEMS } from "./ConsoleTopbar";
+import { MORE_ITEMS, navActive } from "./ConsoleTopbar";
+import { onPage } from "./nav-sections";
 
 const DOCK_ITEMS = [
   { href: "/app", label: "Home", icon: IcoGrid },
-  { href: "/app/analytics", label: "Measure", icon: IcoPulse },
-  { href: "/app/compliance", label: "Report", icon: IcoDoc },
-  { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
+  { href: "/app/analytics", label: "Measure", icon: IcoPulse, section: "measure" },
+  { href: "/app/actions", label: "Act", icon: IcoLeaf, section: "act" },
+  { href: "/app/compliance", label: "Report", icon: IcoDoc, section: "report" },
   { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
 ];
 
@@ -47,7 +48,7 @@ export function ConsoleDock() {
     };
   }, [sheet]);
 
-  const sheetActive = SHEET_ITEMS.some((item) => path.startsWith(item.href));
+  const sheetActive = SHEET_ITEMS.some((item) => onPage(path, item.href));
 
   return (
     <>
@@ -70,7 +71,7 @@ export function ConsoleDock() {
                 <li key={item.href}>
                   <Link
                     href={item.href as never}
-                    data-active={path.startsWith(item.href)}
+                    data-active={onPage(path, item.href)}
                     onClick={() => setSheet(false)}
                   >
                     <strong>{item.label}</strong>
@@ -86,7 +87,7 @@ export function ConsoleDock() {
       <nav className="vc-dock" aria-label="Workspace navigation">
         {DOCK_ITEMS.map((item) => {
           const Icon = item.icon;
-          const active = item.href === "/app" ? path === "/app" : path.startsWith(item.href);
+          const active = navActive(item, path);
           return (
             <Link
               key={item.href}

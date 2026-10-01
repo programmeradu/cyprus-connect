@@ -6,6 +6,7 @@ import "./console-kit.css";
 import "./console-copilot.css";
 
 import { ConsoleChrome } from "@/components/app/console/ConsoleChrome";
+import { SectionTabs } from "@/components/app/console/SectionTabs";
 import { ConsoleDataProvider } from "@/components/app/console/ConsoleData";
 import { UserProvider } from "@/lib/user-context";
 import { OnboardingCheck } from "@/components/app/OnboardingCheck";
@@ -24,6 +25,7 @@ export default function AppLayout({
           <div className="viq-app vc vc-shell relative min-h-screen">
             <OnboardingCheck />
             <ConsoleChrome />
+            <SectionTabs />
 
             <main>{children}</main>
 
