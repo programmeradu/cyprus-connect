@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import { getTool } from "@/data/tools";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { DashboardDemo } from "@/components/DashboardDemo";
+import { seoDescription } from "@/lib/seo-description";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 const SLUG = "report-visuals";
@@ -30,11 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: c.metaTitle,
-    description: c.metaDescription,
+    description: seoDescription(c.metaDescription, locale),
     alternates: { canonical: url, languages },
     openGraph: {
       title: c.metaTitle,
-      description: c.metaDescription,
+      description: seoDescription(c.metaDescription, locale),
       url,
       siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     twitter: {
       card: "summary_large_image",
       title: c.metaTitle,
-      description: c.metaDescription,
+      description: seoDescription(c.metaDescription, locale),
       images: [ogImage],
     },
   };

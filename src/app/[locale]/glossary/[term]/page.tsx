@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { GLOSSARY, GLOSSARY_SLUGS, getGlossaryEntry, type GlossaryEntry } from "@/data/learn/glossary";
 import { getPillar } from "@/data/learn/pillars";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { seoDescription } from "@/lib/seo-description";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
@@ -29,16 +30,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     ? `${entry.term} - Ορισμός | Vuneli Γλωσσάρι`
     : `${entry.term} - Definition & Meaning | Vuneli Glossary`;
 
-  let description = definition;
-  if (definition.length > 158) {
-    description = definition.slice(0, 155) + "...";
-  } else if (definition.length < 115) {
-    const suffix = isEl
-      ? " Μάθετε τι σημαίνει και πώς εφαρμόζεται στις επιχειρήσεις με το Vuneli."
-      : " Learn what this means and how it applies to ESG compliance at Vuneli.";
-    const combined = definition.endsWith(".") ? `${definition}${suffix}` : `${definition}.${suffix}`;
-    description = combined.length <= 158 ? combined : combined.slice(0, 155) + "...";
-  }
+  const description = seoDescription(
+    definition,
+    safeLocale,
+    isEl
+      ? "Τι σημαίνει και πώς εφαρμόζεται στις επιχειρήσεις, από το Vuneli."
+      : "What it means and how it applies to businesses, explained by Vuneli.",
+  );
 
   const url = `${SITE_URL}/${safeLocale}/glossary/${term}`;
   const languages: Record<string, string> = {};

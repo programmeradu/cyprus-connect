@@ -9,6 +9,7 @@ import CbamEstimator from "@/components/learn/widgets/CbamEstimator";
 import GlossaryText from "@/components/learn/GlossaryText";
 import RelatedSuggestions from "@/components/learn/RelatedSuggestions";
 import type { Metadata } from "next";
+import { seoDescription } from "@/lib/seo-description";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
@@ -64,11 +65,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   return {
     title: c.metaTitle,
-    description: c.metaDescription,
+    description: seoDescription(c.metaDescription, locale),
     alternates: { canonical: url, languages },
     openGraph: {
       title: c.metaTitle,
-      description: c.metaDescription,
+      description: seoDescription(c.metaDescription, locale),
       url,
       siteName: "Vuneli",
       locale: safeLocale === "el" ? "el_CY" : "en_US",
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     twitter: {
       card: "summary_large_image",
       title: c.metaTitle,
-      description: c.metaDescription,
+      description: seoDescription(c.metaDescription, locale),
       images: [ogImage],
     },
   };
@@ -105,7 +106,7 @@ export default async function PillarPage({ params }: { params: Params }) {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: c.title,
-    description: c.metaDescription,
+    description: seoDescription(c.metaDescription, locale),
     image: [heroUrl],
     datePublished: pillar.publishedAt,
     dateModified: pillar.updatedAt,
