@@ -1361,6 +1361,8 @@
         "gaps": "{count, plural, one {# data gap needs} other {# data gaps need}} a person to complete them before you file this report.",
         "noGaps": "No data gap was recorded in this draft. Review it before you file it.",
         "noSummary": "No summary was recorded for this draft.",
+        "docPurpose": "Drafted for {workspace} by {agent} from your company records and official sources. Review it, fill the gaps, then export.",
+        "sections": "Sections",
         "disclosures": "{framework} disclosures",
         "dataGaps": "Data gaps",
         "contentNote": "The agent writes report content in English."

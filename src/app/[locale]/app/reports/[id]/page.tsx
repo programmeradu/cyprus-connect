@@ -83,7 +83,9 @@ export default function ReportPage() {
         agentName: report.agentName,
         summary: report.summary,
         sections: report.sections,
-      }, `${report.framework}-report-${report.periodLabel}.pdf`);
+      }, report.framework === "DOC"
+        ? `${report.title.toLowerCase().replace(/[^a-z0-9\u0370-\u03ff]+/g, "-").replace(/^-|-$/g, "") || "document"}-${report.periodLabel}.pdf`
+        : `${report.framework}-report-${report.periodLabel}.pdf`);
     } finally {
       setExporting(false);
     }
@@ -99,7 +101,9 @@ export default function ReportPage() {
       title={report?.title ?? t("d.report")}
       purpose={
         report
-          ? t("d.purpose", { framework: report.framework, workspace: workspaceName, period: report.periodLabel, agent: report.agentName ?? t("d.theAgent") })
+          ? report.framework === "DOC"
+            ? t("d.docPurpose", { workspace: workspaceName, agent: report.agentName ?? t("d.theAgent") })
+            : t("d.purpose", { framework: report.framework, workspace: workspaceName, period: report.periodLabel, agent: report.agentName ?? t("d.theAgent") })
           : t("d.reading")
       }
       loading={!report && !error}
@@ -143,7 +147,7 @@ export default function ReportPage() {
             {!english && <p className="vck-quiet">{t("d.contentNote")}</p>}
           </Plate>
 
-          <Plate label={t("d.disclosures", { framework: report.framework })}>
+          <Plate label={report.framework === "DOC" ? t("d.sections") : t("d.disclosures", { framework: report.framework })}>
             <article className="vcr-doc">
               {report.sections.map((section) => (
                 <section key={section.code} className="vcr-sec">
