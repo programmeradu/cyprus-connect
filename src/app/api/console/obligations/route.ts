@@ -8,7 +8,8 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { logger } from "@/lib/log";
-import { listObligations, refreshObligations } from "@/lib/obligations/obligations.server";
+import { listObligations, obligationFacts, refreshObligations } from "@/lib/obligations/obligations.server";
+import { evaluateAll } from "@/lib/obligations/rulebook";
 
 export const dynamic = "force-dynamic";
 const log = logger("api.console.obligations");
@@ -24,10 +25,14 @@ export async function GET() {
       await refreshObligations(ws);
       rows = await listObligations(ws);
     }
+    // The fact that would settle each "might" rule, from the same facts the matcher used.
+    const facts = await obligationFacts(ws);
+    const factOf = new Map(facts ? evaluateAll(facts).map(({ rule, result }) => [rule.id, result.fact ?? null]) : []);
+    const out = rows.map((r) => ({ ...r, fact: r.ruleId ? factOf.get(r.ruleId) ?? null : null }));
     const order = (d: string) => (d ? d : "9999-12-31");
-    rows.sort((a, b) => order(a.dueDate).localeCompare(order(b.dueDate)));
-    const checkedAt = rows.reduce<string | null>((m, r) => (r.checkedAt && (!m || r.checkedAt > m) ? r.checkedAt : m), null);
-    return NextResponse.json({ obligations: rows, checkedAt });
+    out.sort((a, b) => order(a.dueDate).localeCompare(order(b.dueDate)));
+    const checkedAt = out.reduce<string | null>((m, r) => (r.checkedAt && (!m || r.checkedAt > m) ? r.checkedAt : m), null);
+    return NextResponse.json({ obligations: out, checkedAt });
   } catch (error) {
     const ref = log.error("GET failed", error);
     return NextResponse.json({ message: `Deadlines could not be read. Reference ${ref}.`, ref }, { status: 500 });
