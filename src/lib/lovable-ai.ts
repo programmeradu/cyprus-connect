@@ -313,3 +313,71 @@ export async function aiToolTurn(options: {
     finishReason: choice?.finish_reason ?? null,
   };
 }
+
+/** Default model for new text work on the Responses endpoint. */
+export const RESPONSES_MODEL = "openai/gpt-6-astra";
+
+/**
+ * Structured answer through /v1/responses, streamed so long reasoning never
+ * hits a buffered timeout. Returns the parsed object, or null when the text is
+ * not valid JSON. Gateway failures throw AiGatewayError with the status.
+ */
+export async function aiResponsesJson<T>(options: {
+  system: string;
+  user: string;
+  schemaName: string;
+  schema: Record<string, unknown>;
+  signal?: AbortSignal;
+}): Promise<T | null> {
+  const res = await fetch(`${GATEWAY}/responses`, {
+    method: "POST",
+    headers: headers(requireKey()),
+    signal: options.signal,
+    body: JSON.stringify({
+      model: RESPONSES_MODEL,
+      stream: true,
+      store: false,
+      reasoning: { effort: "low" },
+      input: [
+        { role: "system", content: options.system },
+        { role: "user", content: options.user },
+      ],
+      text: { format: { type: "json_schema", name: options.schemaName, schema: options.schema, strict: true } },
+    }),
+  });
+  if (!res.ok) {
+    const detail = (await res.text()).slice(0, 400);
+    throw new AiGatewayError(res.status, `AI gateway ${res.status}: ${detail}`);
+  }
+  if (!res.body) return null;
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let text = "";
+  let refused = false;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith("data:")) continue;
+      const payload = trimmed.slice(5).trim();
+      if (!payload || payload === "[DONE]") continue;
+      try {
+        const ev = JSON.parse(payload) as { type?: string; delta?: string; response?: { error?: { message?: string } } };
+        if (ev.type === "response.output_text.delta" && ev.delta) text += ev.delta;
+        else if (ev.type === "response.refusal.delta") refused = true;
+        else if (ev.type === "response.failed" || ev.type === "error") {
+          throw new AiGatewayError(502, ev.response?.error?.message ?? "The AI run failed.");
+        }
+      } catch (e) {
+        if (e instanceof AiGatewayError) throw e;
+      }
+    }
+  }
+  if (refused || !text) return null;
+  return parseJsonAnswer<T>(text);
+}

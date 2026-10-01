@@ -14,6 +14,8 @@ export interface CompanyRecord {
   companyName: string | null;
   industry: string | null;
   teamSize: string | null;
+  /** Exact staff number, when given. */
+  employees: number | null;
   /** Bare domain, for example "acme.com.cy". */
   website: string | null;
   /** Domain to look the logo up by: the website, else a work-email domain. */
@@ -64,8 +66,13 @@ export const CompanyPatch = z
     country: z.string().trim().toUpperCase().regex(/^[A-Z]{2}$/, "Use a two-letter country code.").optional(),
     sites: z.number().int().min(1, "A company has at least one site.").max(10_000).optional(),
     revenueEur: z.number().finite().min(0, "Revenue cannot be negative.").max(1e13).nullable().optional(),
+    employees: z.number().int().min(1, "A company has at least one person.").max(1_000_000).nullable().optional(),
   })
   .strict();
+
+export function bandFor(n: number): (typeof TEAM_SIZES)[number] {
+  return n <= 10 ? "1-10" : n <= 50 ? "11-50" : n <= 200 ? "51-200" : n <= 500 ? "201-500" : "500+";
+}
 
 export type CompanyPatchInput = z.infer<typeof CompanyPatch>;
 
@@ -77,6 +84,7 @@ export const COMPANY_LABELS: Record<string, string> = {
   country: "country",
   sites: "number of sites",
   revenueEur: "yearly revenue",
+  employees: "number of employees",
 };
 
 export async function readCompany(accountId: string, workspaceId: string): Promise<CompanyRecord> {
@@ -87,7 +95,7 @@ export async function readCompany(accountId: string, workspaceId: string): Promi
       .where(eq(user.id, accountId))
       .limit(1),
     db
-      .select({ sites: workspaces.sites, revenueEur: workspaces.revenueEur, baselineYear: workspaces.baselineYear, framework: workspaces.framework, country: workspaces.country,
+      .select({ sites: workspaces.sites, revenueEur: workspaces.revenueEur, employeesExact: workspaces.employeesExact, baselineYear: workspaces.baselineYear, framework: workspaces.framework, country: workspaces.country,
         registrationNo: workspaces.registrationNo, registryType: workspaces.registryType, registryName: workspaces.registryName,
         registryStatus: workspaces.registryStatus, registryRegisteredOn: workspaces.registryRegisteredOn,
         registryAddress: workspaces.registryAddress, registryCheckedAt: workspaces.registryCheckedAt })
@@ -99,6 +107,7 @@ export async function readCompany(accountId: string, workspaceId: string): Promi
     companyName: p?.companyName ?? null,
     industry: p?.industry ?? null,
     teamSize: p?.teamSize ?? null,
+    employees: w?.employeesExact ?? null,
     website: p?.website ?? null,
     logoDomain: logoDomain(p?.website, p?.email),
     country: (p?.country || w?.country || "CY").toUpperCase(),
@@ -144,6 +153,8 @@ export async function applyCompanyPatch(input: {
     if (body.companyName !== undefined) profile.companyName = body.companyName;
     if (body.industry !== undefined) profile.companyIndustry = body.industry;
     if (body.teamSize !== undefined) profile.teamSize = body.teamSize;
+    // An exact headcount also sets the matching size band, so every page agrees.
+    if (body.employees != null && body.teamSize === undefined) profile.teamSize = bandFor(body.employees);
     if (body.website !== undefined) profile.companyWebsite = body.website;
     if (body.country !== undefined) profile.countryCode = body.country;
     if (Object.keys(profile).length) {
@@ -152,6 +163,8 @@ export async function applyCompanyPatch(input: {
     const ws: Partial<typeof workspaces.$inferInsert> = {};
     if (body.sites !== undefined) ws.sites = body.sites;
     if (body.revenueEur !== undefined) ws.revenueEur = body.revenueEur;
+    if (body.employees !== undefined) ws.employeesExact = body.employees;
+    else if (body.teamSize !== undefined) ws.employeesExact = null;
     if (Object.keys(ws).length) await tx.update(workspaces).set(ws).where(eq(workspaces.id, workspaceId));
     await tx.insert(activityEvents).values({
       workspaceId,
@@ -162,6 +175,19 @@ export async function applyCompanyPatch(input: {
       detail: `Changed ${changed.map((k) => COMPANY_LABELS[k]).join(", ")}${via ? ` ${via}` : ""}.`,
     });
   });
+
+  // Facts that decide funding fit: re-check right away and let Grant scout
+  // close or raise questions. Never blocks the save.
+  if (changed.some((k) => ["industry", "teamSize", "country", "revenueEur", "employees"].includes(k))) {
+    try {
+      const { refreshFundingMatches } = await import("@/lib/funding/funding.server");
+      await refreshFundingMatches(workspaceId);
+      const { enqueue } = await import("@/lib/agents/orchestrator");
+      await enqueue({ workspaceId, agentKey: "grants", trigger: "event", idempotencyKey: `grants:${workspaceId}:company:${Date.now()}` });
+    } catch {
+      // The daily Grant scout run catches up.
+    }
+  }
 
   return { company: await readCompany(accountId, workspaceId), changed };
 }

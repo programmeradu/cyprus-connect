@@ -63,6 +63,8 @@ export async function workspaceRequest<T>(path: string, options: RequestOptions 
     credentials: "include",
     headers: {
       Accept: "application/json",
+      // Lets the server return cached Greek for agent notes and public titles.
+      ...(typeof document !== "undefined" && document.documentElement.lang ? { "X-Vuneli-Locale": document.documentElement.lang } : {}),
       ...(body !== undefined && !isForm ? { "Content-Type": "application/json" } : {}),
       ...bearer(),
     },

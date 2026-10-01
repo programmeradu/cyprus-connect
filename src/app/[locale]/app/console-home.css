@@ -146,3 +146,17 @@
 .vch-agents-queue { margin-bottom: 18px; }
 .vch-focus-side { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
 @media (max-width: 640px) { .vch-focus-side { align-items: flex-start; text-align: left; } }
+
+/* One-field answers in Waiting for you (Grant scout questions). */
+.vch-input {
+  min-height: 2rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--vc-rule);
+  border-radius: 0.5rem;
+  background: var(--vc-paper, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+  max-width: 100%;
+}
+.vch-input:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 1px; }

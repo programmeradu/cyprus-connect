@@ -23,6 +23,7 @@ import {
 import { sendEmail } from "@/lib/email/send";
 import type { RiskLevel } from "./policy";
 import { INTEGRATION_TOOLS } from "./tools-integrations";
+import { FUNDING_TOOLS } from "./tools-funding";
 
 export interface ToolContext {
   workspaceId: string;
@@ -397,6 +398,7 @@ export const TOOLS = {
   withdraw_approval_request: withdrawApprovalRequest,
   send_supplier_request: sendSupplierRequest,
   ...INTEGRATION_TOOLS,
+  ...FUNDING_TOOLS,
 } as const;
 
 export type ToolName = keyof typeof TOOLS;

@@ -9,6 +9,7 @@ type Item = {
   id: string;
   title: string;
   titleLang: string;
+  titleEl?: string | null;
   url: string;
   publishedAt: string;
   deadline: string | null;
@@ -136,8 +137,14 @@ export function EuFeedPanel({ source }: { source: "ted" | "eurlex" }) {
               return (
                 <li key={i.id} className="flex flex-col gap-1.5 p-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
                   <div className="min-w-0">
-                    <a href={i.url} target="_blank" rel="noreferrer" lang={i.titleLang} className="font-medium leading-snug break-words hover:underline">
-                      {i.title}
+                    <a
+                      href={lang === "el" && i.titleEl ? i.url.replace("/legal-content/EN/", "/legal-content/EL/") : i.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      lang={lang === "el" && i.titleEl ? "el" : i.titleLang}
+                      className="font-medium leading-snug break-words hover:underline"
+                    >
+                      {lang === "el" && i.titleEl ? i.titleEl : i.title}
                     </a>
                     <p className="vck-meta mt-1 break-words">
                       {source === "ted"
