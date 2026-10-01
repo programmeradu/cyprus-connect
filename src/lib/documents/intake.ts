@@ -220,7 +220,7 @@ const EAC_TEXT = /electricity authority of cyprus|αρχη ηλεκτρισμο�
 // One reader for every Cyprus water supplier: the boards of Nicosia, Limassol
 // and Larnaca, and municipal or community supplies (Paphos, Paralimni, ...).
 const WATER_TEXT = /water board|συμβουλιο υδατοπρομηθειας|υδατοπρομηθει|water supply|υδρευσ|τελη νερου|water charges/;
-const WATER_UNIT = /m3|m³|κυβικ|\bκμ\b|consumption/;
+const WATER_UNIT = /m3|m³|κυβικ|(^|[\s\d])κμ([\s.]|$)|consumption/;
 
 /** Bills that look like utilities but measure nothing the footprint uses. */
 const REFUSE_TEXT: [RegExp, string][] = [
