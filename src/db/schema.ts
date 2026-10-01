@@ -991,3 +991,14 @@ export const billInboxes = pgTable('bill_inboxes', {
   confirmation: jsonb('confirmation').$type<{ provider: 'gmail'; code: string | null; link: string | null; at: string } | null>(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+/** Persistent cache for company logos fetched from Logo.dev or favicons (scripts/sql/0030_company_logos.sql). */
+export const companyLogos = pgTable('company_logos', {
+  domain: text('domain').primaryKey(),
+  contentType: text('content_type').notNull(),
+  data: text('data').notNull().default(''),
+  source: text('source').notNull().default('logo_dev'),
+  status: integer('status').notNull().default(200),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
