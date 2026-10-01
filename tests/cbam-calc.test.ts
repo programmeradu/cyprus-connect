@@ -8,12 +8,12 @@ const line = (p: Partial<CbamLineInput>): CbamLineInput => ({
 });
 
 describe("CBAM maths", () => {
-  it("matches the longest CN prefix and rejects non-CBAM codes", () => {
+  it("matches the official goods list and rejects non-CBAM codes", () => {
     expect(lookupCn("7601 10 00")?.code).toBe("7601");
     expect(lookupCn("0901")).toBeNull();
     expect(lookupCn("76")).toBeNull();
-    expect(lookupCn("2523 29")?.code).toBe("2523 29 00");
-    expect(lookupCn("2523")).toBeNull(); // ambiguous: several cement codes
+    expect(lookupCn("2523 29")?.code).toBe("25232900");
+    expect(lookupCn("2523")?.exact).toBe(false); // several cement goods
   });
 
   it("uses supplier actual values and skips out-of-scope indirect", () => {
@@ -44,6 +44,50 @@ describe("CBAM maths", () => {
     expect(yearsInScope(new Date("2026-09-26T00:00:00Z"))).toEqual([2026]);
     expect(yearsInScope(new Date("2027-02-01T00:00:00Z"))).toEqual([2026, 2027]);
     expect(yearsInScope(new Date("2027-10-01T00:00:00Z"))).toEqual([2027]);
+  });
+});
+
+describe("CBAM official values (IR 2025/2621 as corrected by 2026/1740)", () => {
+  it("uses the country table, mark-up, benchmark and quarterly price", () => {
+    const r = computeLine(line({ cnCode: "7601 10 10", originCountry: "TR" }));
+    expect(r.basis).toBe("default");
+    expect(r.defaultSource).toMatchObject({ table: "country", total: 1.7 });
+    expect(r.embeddedT).toBeCloseTo(17, 6);
+    expect(r.markup).toBe(0.1);
+    expect(r.route).toBe("K");
+    expect(r.sefa).toBeCloseTo(0.975 * 1.423, 6);
+    expect(r.certificates).toBeCloseTo(10 * (1.7 * 1.1 - 0.975 * 1.423), 3);
+    expect(r.priceEur).toBe(75.36);
+    expect(r.priceProvisional).toBe(false);
+    expect(r.costEur).toBeCloseTo(r.certificates! * 75.36, 1);
+  });
+
+  it("falls back to Other countries, then to Annex IV when origin is unknown", () => {
+    expect(computeLine(line({ cnCode: "2523 29 00", originCountry: "TR" })).defaultSource?.table).toBe("other");
+    expect(computeLine(line({ cnCode: "7601 10 10", originCountry: "OTHER" })).defaultSource?.table).toBe("unknown_origin");
+  });
+
+  it("splits cement defaults into direct and indirect", () => {
+    const r = computeLine(line({ cnCode: "2523 29 00", originCountry: "CN" }));
+    expect(r.directT + r.indirectT).toBeCloseTo(r.embeddedT, 6);
+    expect(r.indirectT).toBeGreaterThan(0);
+  });
+
+  it("marks a later quarter's price as provisional", () => {
+    expect(computeLine(line({ cnCode: "7601 10 10", importDate: "2026-11-02" })).priceProvisional).toBe(true);
+  });
+
+  it("blocks electricity without a supplier value", () => {
+    const d = buildDraft(2026, [line({ cnCode: "2716 00 00", netMass: 5 })]);
+    expect(d.lines[0].basis).toBe("no_default");
+    expect(d.status).toBe("needs_data");
+  });
+
+  it("totals cost and flags short codes", () => {
+    const d = buildDraft(2026, [line({ id: 1, cnCode: "7601 10 10", netMass: 60 }), line({ id: 2, cnCode: "7208" })]);
+    expect(d.totals.costEur).toBeGreaterThan(0);
+    expect(d.issues.map((i) => i.kind)).toContain("short_cn");
+    expect(d.totals.costExact).toBe(false);
   });
 });
 

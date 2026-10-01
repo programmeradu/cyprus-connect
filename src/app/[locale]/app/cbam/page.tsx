@@ -37,14 +37,18 @@ interface Line {
 }
 interface DraftLine {
   id: number;
-  basis: "actual" | "default" | "mixed" | "unknown_cn";
+  basis: "actual" | "default" | "mixed" | "unknown_cn" | "no_default";
   embeddedT: number;
   unit: string;
   sector: string | null;
+  defaultSource?: null | { table: "country" | "other" | "unknown_origin"; tableName: string; total: number };
+  certificates?: number | null;
+  costEur?: number | null;
+  priceProvisional?: boolean;
 }
 interface Draft {
   dueDate: string;
-  totals: { lines: number; massTonnesCounted: number; electricityMWh: number; directT: number; indirectT: number; embeddedT: number; defaultShare: number };
+  totals: { lines: number; massTonnesCounted: number; electricityMWh: number; directT: number; indirectT: number; embeddedT: number; defaultShare: number; certificates?: number; costEur?: number; costMissingLines?: number; costProvisional?: boolean };
   bySupplier: Array<{ supplierName: string; lines: number; embeddedT: number; defaultLines: number }>;
   issues: Array<{ kind: string; message: string; supplierName?: string }>;
   lines: DraftLine[];
@@ -84,6 +88,7 @@ const BASIS_TONE: Record<DraftLine["basis"], "good" | "warn" | "bad"> = {
   mixed: "warn",
   default: "warn",
   unknown_cn: "bad",
+  no_default: "bad",
 };
 
 const CBAM = "/api/console/cbam";
@@ -98,7 +103,7 @@ export default function CbamPage() {
   );
   const statusLabel = useMemo(() => (s: string) => (s in STATUS_TONE ? t(`status.${s}` as "status.signed") : s), [t]);
   const [year, setYear] = useState<number | null>(null);
-  const [busy, setBusy] = useState<"run" | "upload" | number | null>(null);
+  const [busy, setBusy] = useState<"run" | "upload" | "pdf" | number | null>(null);
   const [note, setNote] = useState<{ tone: "good" | "warn"; text: string; details?: string[] } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const cbam = useWorkspaceResource<Data>(`${CBAM}${year ? `?year=${year}` : ""}`);
@@ -183,9 +188,34 @@ export default function CbamPage() {
     { key: "supplier", header: t("col.supplier"), render: (l) => <>{l.supplierName} · {l.originCountry}{l.installationId ? <><br /><span className="vck-quiet">{l.installationId}</span></> : null}</> },
     { key: "mass", header: t("col.mass"), numeric: true, render: (l) => `${n(l.netMass, 3)} ${basisById.get(l.id)?.unit ?? "t"}` },
     { key: "emb", header: t("col.embedded"), numeric: true, render: (l) => (basisById.has(l.id) ? n(basisById.get(l.id)!.embeddedT, 3) : t("runAgentCell")) },
+    { key: "src", header: t("col.source"), render: (l) => { const s = basisById.get(l.id)?.defaultSource; return s ? <>{t(`source.${s.table}`, { name: s.tableName })}<br /><span className="vck-quiet">{n(s.total, 3)} tCO₂e/t</span></> : "—"; } },
+    { key: "cost", header: t("col.cost"), numeric: true, render: (l) => { const b = basisById.get(l.id); return b && b.certificates != null && b.costEur != null ? <>{n(b.certificates, 2)}<br /><span className="vck-quiet">€{n(b.costEur, 0)}{b.priceProvisional ? "*" : ""}</span></> : "—"; } },
     { key: "basis", header: t("col.basis"), render: (l) => { const b = basisById.get(l.id); return b ? <State tone={BASIS_TONE[b.basis]}>{t(`basis.${b.basis}`)}</State> : <State tone="idle">{t("notDrafted")}</State>; } },
     { key: "x", header: "", render: (l) => <Btn variant="text" disabled={busy !== null} onClick={() => removeLine(l.id)} aria-label={t("removeLine", { id: l.id })}>{busy === l.id ? t("removing") : t("remove")}</Btn> },
   ];
+
+  const downloadPdf = async () => {
+    if (!decl || !data) return;
+    setBusy("pdf");
+    try {
+      const { downloadCbamPdf } = await import("@/lib/pdf/cbam");
+      await downloadCbamPdf(
+        {
+          year: data.year,
+          company: data.declarant.legalName ?? "Workspace",
+          declarant: data.declarant,
+          status: decl.status,
+          draftHash: decl.draftHash,
+          signedBy: decl.signedBy,
+          signedAt: decl.signedAt,
+          draft: decl.draft as unknown as import("@/lib/agents/cbam-calc").CbamDraft,
+        },
+        `cbam-declaration-${data.year}.pdf`,
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const signatureText = !decl
     ? null
@@ -217,6 +247,9 @@ export default function CbamPage() {
             {busy === "upload" ? t("uploading") : t("upload")}
             <input ref={fileRef} type="file" accept=".csv,text/csv" disabled={busy !== null} onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
           </label>
+          {decl && data && (
+            <Btn variant="quiet" disabled={busy !== null} onClick={downloadPdf}>{busy === "pdf" ? t("pdfBusy") : t("pdf")}</Btn>
+          )}
           <Btn variant="primary" onClick={runAgent} disabled={busy !== null}>{busy === "run" ? t("running") : t("run")}</Btn>
         </div>
       }
@@ -242,6 +275,15 @@ export default function CbamPage() {
                 <Reading label={t("r.embedded", { year: data.year })} value={n(draft.totals.embeddedT, 1)} unit="tCO₂e" note={t("r.split", { direct: n(draft.totals.directT, 1), indirect: n(draft.totals.indirectT, 1) })} />
                 <Reading label={t("r.mass")} value={n(draft.totals.massTonnesCounted, 1)} unit="t" tone={draft.totals.massTonnesCounted >= 50 ? "warn" : "flat"} delta={draft.totals.massTonnesCounted >= 50 ? t("r.above") : t("r.under")} note={t("r.massNote")} />
                 <Reading label={t("r.defaults")} value={n(draft.totals.defaultShare * 100, 0)} unit="%" tone={draft.totals.defaultShare > 0 ? "warn" : "good"} note={t("r.defaultsNote")} />
+                {draft.totals.costEur !== undefined && (
+                  <Reading
+                    label={t("r.cost")}
+                    value={`€${n(draft.totals.costEur, 0)}`}
+                    tone={draft.totals.costMissingLines ? "warn" : "flat"}
+                    delta={draft.totals.costMissingLines ? t("r.costMissing", { count: draft.totals.costMissingLines }) : undefined}
+                    note={t(draft.totals.costProvisional ? "r.costProvisional" : "r.costNote", { certs: n(draft.totals.certificates ?? 0, 1) })}
+                  />
+                )}
                 <Reading label={t("r.due")} value={dateLong(draft.dueDate)} note={statusLabel(decl!.status)} />
               </ReadingRail>
             ) : (
@@ -299,7 +341,7 @@ export default function CbamPage() {
             )}
 
             <Plate label={t("importLines", { year: data.year })} meta={String(data.lines.length)} action={<Btn variant="text" onClick={downloadTemplate}>{t("template")}</Btn>} flush
-              foot={t("linesFoot")}>
+              foot={<>{t("linesFoot")} {t("officialNote")}</>}>
               <div className="vck-cbam-table vck-cbam-table-wide">
                 <ConsoleTable rows={data.lines} rowKey={(l) => String(l.id)} columns={columns} empty={t("noLines")} />
               </div>

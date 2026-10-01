@@ -128,3 +128,16 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Set-up cut to one screen (name, company, website, industry, size, country) or "Let Verde fill it in" (sent to Verde on Home, approval before saving)
 - [x] Real company logos (website or work-email domain) on Leaderboard, Suppliers, Home and Settings; generated avatar only when none found
 - [ ] Live database: apply scripts/sql/0029_company_website.sql (founder)
+
+## Proven tools from the 106-tool review (2026-10-01)
+- [x] CBAM on official EU data: default values (IR 2025/2621 as corrected by 2026/1740, 121 countries + fallbacks), benchmarks (2025/2620), CSCF 100 % (2026/1862), CBAM factor, 2026 quarterly certificate prices; certificate count + € cost per line and total; public CBAM tool switched; supplier emails show the EU default they replace
+- [x] Removed unused packages: xero-node, intuit-oauth, @libsql/client
+- [ ] CBAM official export format (XSD): founder to download from the CBAM Registry (EU Login)
+- [ ] CBAM: add Q3/Q4 2026 certificate prices when published (5 Oct 2026, 4 Jan 2027) in src/lib/cbam/official.ts
+- [x] Premium PDFs: Board Summary, drafted reports and a new CBAM declaration PDF on one design system (brand fonts, Greek support, generated Cyprus cover photographs, charts, SHA-256 fingerprint on every page)
+- [ ] Public page where anyone can paste a PDF fingerprint and check it against Vuneli records
+- [ ] OpenSanctions supplier check (needs OPENSANCTIONS_API_KEY; commercial use is paid)
+- [ ] TED (EU tenders) + EUR-Lex feeds for Funding and Deadlines
+- [ ] axe-core accessibility checks + MSW mocks for outside services in tests
+- [ ] Promptfoo test set for Verde and agents
+- [ ] Docling trial on sample bills vs current reader (needs a separate service; Python)

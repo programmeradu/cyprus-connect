@@ -1417,7 +1417,7 @@
 /* CBAM tables scroll sideways on phones instead of splitting words mid-name. */
 .vc .vck-cbam-table .vck-table td { overflow-wrap: normal; word-break: normal; }
 .vc .vck-cbam-table .vck-table { min-width: 520px; }
-.vc .vck-cbam-table-wide .vck-table { min-width: 760px; }
+.vc .vck-cbam-table-wide .vck-table { min-width: 980px; }
 
 /* Agents page: per-agent controls and the step ledger. */
 .vc .vck-agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }

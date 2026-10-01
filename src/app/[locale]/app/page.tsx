@@ -21,7 +21,7 @@ import type { CompanyRecord } from "@/app/api/console/company/route";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import { fmtNumber, fmtSigned, toneFor } from "@/components/app/console/types";
 import { greetingFor, titleCase } from "@/components/app/dashboard/overview/shared";
-import { boardSummaryTable, exportFileName } from "@/components/app/console/export-csv";
+import { exportFileName } from "@/components/app/console/export-csv";
 import { WaitingForYou } from "@/components/app/dashboard/home/WaitingForYou";
 import { SetupChecklist } from "@/components/app/dashboard/home/SetupChecklist";
 import { FirstVisitTour } from "@/components/app/dashboard/home/FirstVisitTour";
@@ -87,14 +87,8 @@ export default function ConsolePage() {
   const exportSummary = async () => {
     setPdfBusy(true);
     try {
-      const { buildSectionPdf } = await import("@/lib/pdf/console-section-pdf");
-      const doc = buildSectionPdf({
-        workspaceName: workspace.name || "Workspace",
-        sectionLabel: "Board summary",
-        filterLabel: "All periods and sites",
-        table: boardSummaryTable(data),
-      });
-      doc.save(exportFileName(data, "overview", "pdf", "-board-summary"));
+      const { downloadBoardSummary } = await import("@/lib/pdf/board-summary");
+      await downloadBoardSummary(data, exportFileName(data, "overview", "pdf", "-board-summary"));
     } finally {
       setPdfBusy(false);
     }
