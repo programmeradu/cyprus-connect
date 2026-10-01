@@ -65,7 +65,8 @@ export function NextDeadlinePlate({ data }: { data: ConsoleOverviewData }) {
 
 export function WhatChangedPlate({ data }: { data: ConsoleOverviewData }) {
   const t = useTranslations("home.changed");
-  const insights = buildInsights(data).slice(0, 3);
+  const locale = useLocale();
+  const insights = buildInsights(data, 4, locale).slice(0, 3);
   return (
     <section className="vc-plate" aria-labelledby="vch-changed-title">
       <header>
