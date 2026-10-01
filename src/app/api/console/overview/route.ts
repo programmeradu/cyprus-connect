@@ -263,7 +263,7 @@ export async function GET(req: Request) {
       runs: runsOut,
       tasks: tasksOut,
       connections,
-      obligations: obs,
+      obligations: locale === "el" ? obs.map((o) => ({ ...o, title: o.titleEl ?? o.title, detail: o.reasonEl ?? o.detail })) : obs.map((o) => ({ ...o, detail: o.reason ?? o.detail })),
       events: eventsOut,
       generatedAt: new Date().toISOString(),
     });
