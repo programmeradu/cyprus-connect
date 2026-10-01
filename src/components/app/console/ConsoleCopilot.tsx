@@ -9,60 +9,70 @@
  * approves it. The command palette navigates, this reasons.
  */
 
-import Link from "next/link";
 import { invalidateWorkspace } from "@/components/app/console/workspace-store";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { Streamdown } from "streamdown";
 import { useConsole } from "./ConsoleData";
-import { IcoClose, IcoCheck, IcoVuneliAi } from "./icons";
+import { IcoClose, IcoVuneliAi } from "./icons";
 import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
-
-type Role = "user" | "assistant";
-
-interface Turn {
-  id: number;
-  role: Role;
-  content: string;
-  /** Set when the figure check found numbers not in the records, or quoted without a source. */
-  check?: string;
-}
-
-interface Proposal {
-  id: number;
-  messageId: number | null;
-  kind: string;
-  title: string;
-  summary: string;
-  status: "pending" | "approved" | "rejected" | "failed";
-  resultNote: string | null;
-  decidedBy: string | null;
-  deliverableHref?: string | null;
-  deliverableTitle?: string | null;
-}
-
-const KIND_LABEL: Record<string, string> = {
-  create_task: "Create a review task",
-  update_obligation: "Update an obligation",
-  log_reading: "Log a metric reading",
-  draft_report: "Draft a report",
-  update_company: "Fill in company details",
-};
-
-/** Only a draft takes real time, so only a draft says what it is doing. */
-const BUSY_LABEL: Record<string, string> = {
-  draft_report: "Drafting",
-};
-
-const STARTERS = [
-  "What changed in my emissions this period?",
-  "Which obligation is closest to its deadline?",
-  "Draft a review task for the largest data gap.",
-  "Draft the VSME report for this reporting period.",
-];
+import {
+  ActivityCard,
+  BillsCard,
+  DeadlinesCard,
+  DocumentCard,
+  FactsCard,
+  FootprintCard,
+  FundingCard,
+  ProposalCard,
+  SuppliersCard,
+  TOOL_LABEL,
+  verdeText,
+  type Lang,
+  type ProposalState,
+} from "./VerdeCards";
 
 function authHeaders(): Record<string, string> {
   const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
+
+/** The page the person is on, so Verde starts from it. */
+function pageOf(pathname: string | null): string {
+  const seg = (pathname ?? "").split("/").filter(Boolean);
+  const i = seg.indexOf("app");
+  const next = i === -1 ? undefined : seg[i + 1];
+  if (!next) return "home";
+  if (next === "compliance") return "deadlines";
+  if (next === "analytics" || next === "insights") return "footprint";
+  return next;
+}
+
+const STARTERS: Record<string, { en: string[]; el: string[] }> = {
+  home: {
+    en: ["What needs my attention this week?", "Which deadline is closest, and does it apply to us?", "Prepare a Board Summary I can share."],
+    el: ["Τι χρειάζεται την προσοχή μου αυτή την εβδομάδα;", "Ποια προθεσμία είναι πιο κοντά και μας αφορά;", "Ετοίμασε μια Σύνοψη για το Διοικητικό Συμβούλιο."],
+  },
+  footprint: {
+    en: ["What changed in my emissions this period?", "Where is most of our footprint coming from?", "Which data is missing from my footprint?"],
+    el: ["Τι άλλαξε στις εκπομπές μου αυτή την περίοδο;", "Από πού προέρχεται το μεγαλύτερο αποτύπωμα;", "Ποια δεδομένα λείπουν;"],
+  },
+  suppliers: {
+    en: ["Which suppliers need a check?", "Which suppliers have no email for data requests?", "Are any suppliers on the EU sanctions list?"],
+    el: ["Ποιοι προμηθευτές χρειάζονται έλεγχο;", "Ποιοι προμηθευτές δεν έχουν email;", "Υπάρχει προμηθευτής στη λίστα κυρώσεων της ΕΕ;"],
+  },
+  deadlines: {
+    en: ["Which deadlines apply to us and why?", "What do we still need to know to confirm the 'might apply' ones?", "Create a task for the closest deadline."],
+    el: ["Ποιες προθεσμίες μας αφορούν και γιατί;", "Τι λείπει για να επιβεβαιώσουμε όσες ίσως ισχύουν;", "Δημιούργησε εργασία για την πιο κοντινή προθεσμία."],
+  },
+  actions: {
+    en: ["Which funding calls could we qualify for?", "What would make us eligible for more grants?", "What should we do first to cut emissions?"],
+    el: ["Για ποιες χρηματοδοτήσεις μπορεί να πληρούμε τις προϋποθέσεις;", "Τι θα μας έκανε επιλέξιμους για περισσότερες;", "Τι να κάνουμε πρώτα για να μειώσουμε τις εκπομπές;"],
+  },
+};
 
 export const VERDE_ASK_EVENT = "vuneli:ask-verde";
 
@@ -80,516 +90,3 @@ export function askVerde(prompt?: string) {
   window.dispatchEvent(new CustomEvent(VERDE_ASK_EVENT, { detail: { prompt } }));
 }
 
-export function ConsoleCopilot() {
-  const { data, refresh } = useConsole();
-  const [open, setOpen] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [turns, setTurns] = useState<Turn[]>([]);
-  const [proposals, setProposals] = useState<Proposal[]>([]);
-  const [draft, setDraft] = useState("");
-  const [streaming, setStreaming] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [deciding, setDeciding] = useState<number | null>(null);
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  const pending = proposals.filter((p) => p.status === "pending");
-
-  /* Load the conversation the first time the panel opens. */
-  useEffect(() => {
-    if (!open || loaded) return;
-    let alive = true;
-    (async () => {
-      try {
-        const res = await fetch("/api/console/copilot", {
-          headers: { Accept: "application/json", ...authHeaders() },
-          credentials: "include",
-          cache: "no-store",
-        });
-        if (!res.ok) throw new Error(String(res.status));
-        const body = (await res.json()) as { messages: Turn[]; proposals: Proposal[] };
-        if (!alive) return;
-        setTurns(body.messages ?? []);
-        setProposals(body.proposals ?? []);
-      } catch {
-        if (alive) setNotice("The copilot could not read this workspace conversation.");
-      } finally {
-        if (alive) setLoaded(true);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [open, loaded]);
-
-  useEffect(() => {
-    if (open) inputRef.current?.focus();
-  }, [open, streaming]);
-
-  useEffect(() => {
-    const node = scrollRef.current;
-    if (node) node.scrollTop = node.scrollHeight;
-  }, [turns, proposals, streaming, open]);
-
-  /* Any page can open Verde with a prepared request (the Home checklist uses
-     this). The text is placed in the box for the person to edit and send. */
-  useEffect(() => {
-    const onAsk = (event: Event) => {
-      const prompt = (event as CustomEvent<{ prompt?: string }>).detail?.prompt;
-      setOpen(true);
-      if (prompt) setDraft(prompt);
-    };
-    window.addEventListener(VERDE_ASK_EVENT, onAsk);
-    return () => window.removeEventListener(VERDE_ASK_EVENT, onAsk);
-  }, []);
-
-  /* Escape closes, Cmd/Ctrl+J toggles. The panel must never trap the keyboard. */
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (open && event.key === "Escape") {
-        setOpen(false);
-        return;
-      }
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "j") {
-        event.preventDefault();
-        setOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  const send = useCallback(
-    async (override?: string) => {
-      const prompt = (override ?? draft).trim();
-      if (!prompt || streaming) return;
-      setDraft("");
-      setNotice(null);
-      setStreaming(true);
-
-      const localId = -Date.now();
-      setTurns((prev) => [
-        ...prev,
-        { id: localId, role: "user", content: prompt },
-        { id: localId + 1, role: "assistant", content: "" },
-      ]);
-
-      try {
-        const res = await fetch("/api/console/copilot", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeaders() },
-          credentials: "include",
-          body: JSON.stringify({ prompt }),
-        });
-
-        if (!res.ok || !res.body) {
-          const text = await res.text();
-          let message = "The copilot is not available right now.";
-          try {
-            message = (JSON.parse(text) as { message?: string }).message ?? message;
-          } catch {
-            /* keep the default */
-          }
-          throw new Error(message);
-        }
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let answer = "";
-        let touchedRecords = false;
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-          for (const line of lines) {
-            if (!line.startsWith("data: ")) continue;
-            let event: Record<string, unknown>;
-            try {
-              event = JSON.parse(line.slice(6)) as Record<string, unknown>;
-            } catch {
-              continue;
-            }
-            if (event.type === "delta" && typeof event.text === "string") {
-              answer += event.text;
-              setTurns((prev) => {
-                const copy = [...prev];
-                copy[copy.length - 1] = { id: localId + 1, role: "assistant", content: answer };
-                return copy;
-              });
-            } else if (event.type === "proposal" && event.proposal) {
-              setProposals((prev) => [event.proposal as Proposal, ...prev]);
-              touchedRecords = true;
-            } else if (event.type === "grounding") {
-              const unsupported = Array.isArray(event.unsupported) ? (event.unsupported as string[]) : [];
-              const check = unsupported.length
-                ? `Check before relying on this: ${unsupported.join(", ")} ${unsupported.length === 1 ? "is" : "are"} not in your records.`
-                : "Check before relying on this: a figure here is quoted without naming its record.";
-              setTurns((prev) => {
-                const copy = [...prev];
-                const last = copy[copy.length - 1];
-                if (last?.role === "assistant") copy[copy.length - 1] = { ...last, check };
-                return copy;
-              });
-            } else if (event.type === "error" && typeof event.message === "string") {
-              setNotice(event.message);
-            }
-          }
-        }
-
-        if (!answer.trim() && !touchedRecords) {
-          setNotice("The copilot returned an empty answer. Please ask again.");
-        }
-      } catch (error) {
-        setNotice(error instanceof Error ? error.message : "The copilot request failed.");
-        setTurns((prev) => prev.filter((t) => t.content.trim().length > 0 || t.role === "user"));
-      } finally {
-        setStreaming(false);
-      }
-    },
-    [draft, streaming],
-  );
-
-  /* A set-up handoff opens the panel, waits for the saved conversation to
-     load (so it is not overwritten), then sends the description once. */
-  useEffect(() => {
-    if (window.sessionStorage.getItem(VERDE_HANDOFF_KEY)) setOpen(true);
-  }, []);
-  useEffect(() => {
-    if (!loaded || streaming) return;
-    const handoff = window.sessionStorage.getItem(VERDE_HANDOFF_KEY);
-    if (!handoff) return;
-    window.sessionStorage.removeItem(VERDE_HANDOFF_KEY);
-    void send(handoff);
-  }, [loaded, streaming, send]);
-
-  const decide = useCallback(
-    async (id: number, decision: "approve" | "reject") => {
-      setDeciding(id);
-      setNotice(null);
-      try {
-        const res = await fetch("/api/console/copilot/proposal", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeaders() },
-          credentials: "include",
-          body: JSON.stringify({ id, decision }),
-        });
-        const body = (await res.json()) as { proposal?: Proposal; message?: string };
-        if (body.proposal) {
-          setProposals((prev) => prev.map((p) => (p.id === id ? body.proposal! : p)));
-        }
-        if (!res.ok) {
-          setNotice(body.message ?? "That act could not run.");
-        } else if (decision === "approve") {
-          // The records changed, so every page must re-read them.
-          refresh();
-          invalidateWorkspace(["/api/console/company", "/api/console/suppliers"]);
-        }
-      } catch {
-        setNotice("The decision could not be saved. Please try again.");
-      } finally {
-        setDeciding(null);
-      }
-    },
-    [refresh],
-  );
-
-  const clear = useCallback(async () => {
-    setTurns([]);
-    setNotice(null);
-    try {
-      await fetch("/api/console/copilot", {
-        method: "DELETE",
-        headers: authHeaders(),
-        credentials: "include",
-      });
-    } catch {
-      /* the conversation is already cleared on screen */
-    }
-  }, []);
-
-  const workspaceName = data?.workspace?.name ?? "your workspace";
-
-  return (
-    <>
-      {!open && (
-        <button
-          type="button"
-          className="vc-copilot-fab"
-          data-tour="verde"
-          onClick={() => setOpen(true)}
-          aria-label="Open the workspace copilot"
-        >
-          <span className="vc-copilot-fab-mark">
-            <CopilotMark small />
-          </span>
-          <span className="vc-copilot-fab-label">Ask Verde</span>
-          {pending.length > 0 && (
-            <span className="vc-copilot-fab-count">
-              {pending.length > 9 ? "9+" : pending.length}
-              <span className="sr-only"> pending approvals</span>
-            </span>
-          )}
-          <span className="vc-copilot-fab-key" aria-hidden>
-            ⌘J
-          </span>
-        </button>
-      )}
-
-      {open && (
-        <div
-          className="vc-copilot-scrim"
-          onClick={() => setOpen(false)}
-          onTouchStart={() => setOpen(false)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
-              setOpen(false);
-            }
-          }}
-          aria-label="Close Copilot"
-          title="Click outside to close Copilot (or press Esc)"
-        />
-      )}
-
-      {open && (
-        <section className="vc-copilot" role="dialog" aria-label="Workspace copilot">
-          <span className="vc-copilot-grip" aria-hidden />
-          <header className="vc-copilot-head">
-            <span className="vc-copilot-badge">
-              <CopilotMark small />
-            </span>
-            <div className="vc-copilot-title">
-              <strong>Copilot</strong>
-              <span>
-                <i className="vc-copilot-live" aria-hidden />
-                Reading {workspaceName}
-              </span>
-            </div>
-            <div className="vc-copilot-head-tools">
-              {pending.length > 0 && (
-                <span className="vc-copilot-head-pending">
-                  {pending.length} awaiting you
-                </span>
-              )}
-              {turns.length > 0 && (
-                <button type="button" onClick={clear} className="vc-copilot-text-btn">
-                  Clear
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Close the copilot"
-                className="vc-copilot-close"
-              >
-                <IcoClose size={13} />
-              </button>
-            </div>
-          </header>
-
-
-          <div className="vc-copilot-body" ref={scrollRef}>
-            {!loaded && <p className="vc-copilot-muted">Reading this workspace...</p>}
-
-            {loaded && turns.length === 0 && (
-              <div className="vc-copilot-empty">
-                <p>
-                  Ask about the records in this workspace. I quote the metric, obligation or run
-                  the answer comes from, and I never change anything without your approval.
-                </p>
-                <p className="vc-copilot-empty-label">Start with</p>
-                <ul>
-                  {STARTERS.map((starter, index) => (
-                    <li key={starter}>
-                      <button type="button" onClick={() => send(starter)}>
-                        <em className="vc-copilot-starter-no" aria-hidden>
-                          {String(index + 1).padStart(2, "0")}
-                        </em>
-                        <span>{starter}</span>
-                        <em className="vc-copilot-starter-go" aria-hidden>
-                          &rarr;
-                        </em>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-
-            {turns.map((turn, index) => (
-              <article key={turn.id} data-role={turn.role} className="vc-copilot-turn">
-                {turn.role === "user" ? (
-                  <p className="vc-copilot-said">{turn.content}</p>
-                ) : (
-                  <>
-                    <p className="vc-copilot-answer">
-                      {turn.content ||
-                        (streaming && index === turns.length - 1 ? (
-                          <span className="vc-copilot-thinking">
-                            <IcoVuneliAi size={13} /> Reading the records...
-                          </span>
-                        ) : (
-                          ""
-                        ))}
-                    </p>
-                    {turn.check && <p className="vc-copilot-check" role="note">{turn.check}</p>}
-                    {proposals
-                      .filter((p) => p.messageId !== null && p.messageId === turn.id)
-                      .map((p) => (
-                        <ProposalCard
-                          key={p.id}
-                          proposal={p}
-                          busy={deciding === p.id}
-                          onDecide={decide}
-                        />
-                      ))}
-                  </>
-                )}
-              </article>
-            ))}
-
-            {/* A proposal that arrived during this session has no persisted
-                turn to sit under, so it is shown at the end of the thread. */}
-            {proposals
-              .filter((p) => p.messageId === null || !turns.some((t) => t.id === p.messageId))
-              .filter((p) => p.status === "pending")
-              .map((p) => (
-                <ProposalCard
-                  key={p.id}
-                  proposal={p}
-                  busy={deciding === p.id}
-                  onDecide={decide}
-                />
-              ))}
-
-            {notice && <p className="vc-copilot-notice">{notice}</p>}
-          </div>
-
-          <footer className="vc-copilot-foot">
-            <div className="vc-copilot-field">
-              <textarea
-                ref={inputRef}
-                value={draft}
-                rows={1}
-                disabled={streaming}
-                placeholder="Ask about this workspace"
-                onChange={(event) => setDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    void send();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => void send()}
-                disabled={streaming || draft.trim().length === 0}
-                aria-label="Send the question"
-              >
-                <svg viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden>
-                  <path
-                    d="M2.6 8h9.4M8.4 4.2 12.4 8l-4 3.8"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-            </div>
-            <p className="vc-copilot-hint">
-              <span>Enter sends. Shift and Enter make a new line.</span>
-              <span>Every act waits for your approval.</span>
-            </p>
-          </footer>
-
-        </section>
-      )}
-    </>
-  );
-}
-
-function ProposalCard({
-  proposal,
-  busy,
-  onDecide,
-}: {
-  proposal: Proposal;
-  busy: boolean;
-  onDecide: (id: number, decision: "approve" | "reject") => void;
-}) {
-  const label = KIND_LABEL[proposal.kind] ?? "Proposed change";
-  const settled = proposal.status !== "pending";
-  const busyLabel = BUSY_LABEL[proposal.kind] ?? "Working";
-  const href = proposal.deliverableHref;
-
-  return (
-    <div className="vc-copilot-prop" data-status={proposal.status}>
-      <header>
-        <span className="vc-copilot-prop-kind">{label}</span>
-        {settled && <span className="vc-copilot-prop-state">{proposal.status}</span>}
-      </header>
-      <strong>{proposal.title}</strong>
-      <p>{proposal.summary}</p>
-      {settled ? (
-        <>
-          <p className="vc-copilot-prop-note">
-            {proposal.resultNote ?? "No further detail."}
-            {proposal.decidedBy ? ` (${proposal.decidedBy})` : ""}
-          </p>
-          {proposal.status === "approved" && href && (
-            <Link href={href as never} className="vc-copilot-prop-open">
-              <span>{proposal.deliverableTitle ?? "Open the result"}</span>
-              <svg viewBox="0 0 16 16" width="13" height="13" fill="none" aria-hidden>
-                <path
-                  d="M3 8h9.2M8.8 4.4 12.4 8l-3.6 3.6"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
-          )}
-        </>
-      ) : (
-        <div className="vc-copilot-prop-actions">
-          <button
-            type="button"
-            className="vc-copilot-approve"
-            disabled={busy}
-            onClick={() => onDecide(proposal.id, "approve")}
-          >
-            <IcoCheck size={12} />
-            {busy ? busyLabel : "Approve"}
-          </button>
-          <button
-            type="button"
-            className="vc-copilot-reject"
-            disabled={busy}
-            onClick={() => onDecide(proposal.id, "reject")}
-          >
-            Decline
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * The copilot mark: a measurement arc closing around a sprout. It reads as
- * instrument plus growth, which is what this panel does. It is not a sparkle.
- */
-/** The copilot wears the Vuneli two-leaf mark in brand colours, never a generic glyph. */
-function CopilotMark({ small }: { small?: boolean }) {
-  return <VuneliAiIcon size={small ? 18 : 24} brand />;
-}

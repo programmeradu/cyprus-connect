@@ -224,7 +224,7 @@ export function SuppliersCard({ out, lang }: { out: Out; lang: Lang }) {
                 <strong>{s.name}</strong>
                 <span>
                   {s.hasEmail ? "" : `${t.noEmail} · `}
-                  {s.sanctionsStatus === "clear" ? t.sanctionsClear : s.sanctionsStatus === "match" ? t.sanctionsHit : t.notChecked}
+                  {s.sanctionsStatus === "clear" ? t.sanctionsClear : s.sanctionsStatus === "possible_match" ? t.sanctionsHit : t.notChecked}
                   {s.registryStatus ? ` · ${s.registryStatus}` : ""}
                 </span>
               </span>
