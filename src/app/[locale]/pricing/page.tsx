@@ -28,7 +28,7 @@ export default function PricingPage() {
       <MarketingHeader />
 
       {/* ------------------------------------------------------------- Hero */}
-      <section className="relative isolate flex min-h-[76svh] w-full flex-col overflow-hidden sm:min-h-[70svh]">
+      <section data-dark-hero className="relative isolate flex min-h-[76svh] w-full flex-col overflow-hidden sm:min-h-[70svh]">
         <div className="absolute inset-0 -z-10">
           <Image
             src={heroPhoto}

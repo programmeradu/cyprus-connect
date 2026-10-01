@@ -75,7 +75,7 @@ export default function ToolsHubClient({
       <MarketingHeader />
 
       {/* ------------------------------------------------------------- Hero */}
-      <section className="relative isolate flex min-h-[62svh] w-full flex-col overflow-hidden sm:min-h-[58svh]">
+      <section data-dark-hero className="relative isolate flex min-h-[62svh] w-full flex-col overflow-hidden sm:min-h-[58svh]">
         <div className="absolute inset-0 -z-10">
           <Image
             src={heroPhoto}

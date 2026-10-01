@@ -116,7 +116,7 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
       <MarketingHeader />
 
       {/* Hero: context photograph, check form in the first view. */}
-      <section className="relative isolate overflow-hidden">
+      <section data-dark-hero className="relative isolate overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <Image src={heroPhoto} alt={t.heroAlt} fill priority sizes="100vw" placeholder="blur" className="object-cover object-[70%_center]" />
           <div className="absolute inset-0 bg-black/55" />

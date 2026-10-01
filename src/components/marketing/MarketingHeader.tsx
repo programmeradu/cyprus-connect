@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { useSession } from "@/lib/auth-client";
 import { useLocale, useTranslations } from "next-intl";
@@ -21,12 +22,25 @@ export function MarketingHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // "scrolled" means: the header is NOT over a dark hero photo. Pages mark
+  // their always-dark hero with data-dark-hero; pages without one start in
+  // theme colours straight away instead of white-on-light.
+  const pathname = usePathname();
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      const hero = document.querySelector<HTMLElement>("[data-dark-hero]");
+      setScrolled(!hero || hero.getBoundingClientRect().bottom <= 80);
+    };
     onScroll();
+    const raf = requestAnimationFrame(onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   return (
     <header
@@ -78,7 +92,7 @@ export function MarketingHeader() {
       )}
 
       {/* Mobile controls — right-aligned glass pill, never overlaps the wordmark */}
-      <div className="pointer-events-auto absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-0.5 rounded-full bg-black/25 px-1.5 py-1.5 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 md:hidden">
+      <div className={`pointer-events-auto absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-0.5 rounded-full ${scrolled ? "bg-[oklch(0.2_0.015_150)]/90 shadow-[0_12px_30px_-16px_rgba(0,0,0,0.5)]" : "bg-black/25"} px-1.5 py-1.5 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 transition-colors duration-300 md:hidden`}>
         <LanguageSwitcher overHero />
         <ThemeToggle overHero />
         <button
@@ -107,7 +121,7 @@ export function MarketingHeader() {
 
       {/* Desktop nav pill */}
       <div className="hidden w-full justify-center md:flex">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-black/25 px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
+        <div className={`pointer-events-auto flex items-center gap-1 rounded-full ${scrolled ? "bg-[oklch(0.2_0.015_150)]/90 shadow-[0_12px_30px_-16px_rgba(0,0,0,0.5)]" : "bg-black/25"} px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 transition-colors duration-300`}>
           <nav className="hidden items-center md:flex">
             <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("tools")}
