@@ -1830,3 +1830,22 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
   .vc .vck-intake-actions > * { flex: 1 1 auto; }
   .vc .vck-intake-head { flex-direction: column; }
 }
+
+/* Statement payees -> Suppliers pick list */
+.vc .vck-intake-payees-pick { border: 1px solid var(--vc-rule); border-radius: 12px; padding: 12px 14px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+.vc .vck-intake-payees-pick legend { padding: 0 4px; }
+.vc .vck-intake-payees-pick ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.vc .vck-intake-payee { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--vc-rule-soft); min-width: 0; }
+.vc .vck-intake-payee strong { display: block; color: var(--vc-ink); font-size: 14px; font-weight: 600; }
+.vc .vck-intake-payee .vck-meta { display: block; }
+.vc .vck-intake-payee[data-linked] { padding-left: 26px; }
+.vc .vck-intake-payee-amount { flex: none; font-family: var(--font-mono, ui-monospace, monospace); font-size: 13px; color: var(--vc-ink); }
+.vc .vck-intake-payees-sub { margin-top: 6px; }
+.vc .vck-intake-payees-more { justify-self: start; }
+.vc .vck-sup-hit-actions { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+.vc .vck-sup-skipped { margin-top: 16px; }
+.vc .vck-sup-skipped summary { cursor: pointer; padding: 8px 0; }
+@media (max-width: 520px) {
+  .vc .vck-intake-payee { align-items: flex-start; }
+  .vc .vck-sup-hit-actions { justify-content: flex-start; }
+}

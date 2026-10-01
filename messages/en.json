@@ -1550,7 +1550,14 @@
       "sanAgain": "Check sanctions again",
       "sanClearMsg": "{name}: no match on sanctions lists.",
       "sanMatchMsg": "{name}: possible sanctions match. Review the records before you pay or sign.",
-      "sanNotConnected": "The EU sanctions list is still downloading. Try again in a few minutes."
+      "sanNotConnected": "The EU sanctions list is still downloading. Try again in a few minutes.",
+      "alreadyMsg": "{payee} is already on your list as {name}. Its payments count there.",
+      "notSupplier": "Not a supplier",
+      "skippedMsg": "{name} won't be suggested again.",
+      "unskippedMsg": "{name} will be suggested again.",
+      "skippedTitle": "{count, plural, one {# payee you marked as not a supplier} other {# payees you marked as not a supplier}}",
+      "skippedFoot": "These are hidden from suggestions. Add one if you got it wrong.",
+      "suggestAgain": "Suggest again"
     },
     "intake": {
       "drop": {
@@ -1632,14 +1639,17 @@
         "keep": "Keep as evidence",
         "saving": "Saving…",
         "discard": "Discard",
-        "clear": "Clear"
+        "clear": "Clear",
+        "keepAndSuppliers": "{count, plural, one {Keep and add # supplier} other {Keep and add # suppliers}}"
       },
       "saved": {
         "figures": "{count, plural, one {Added to # month.} other {Added to # months.}} Home, your footprint and the agents see it now.",
         "evidence": "Kept as evidence. Verde and the agents can use it.",
         "duplicate": "This bill was already on file, so the earlier copy was kept.",
         "home": "Back to Home",
-        "footprint": "See your footprint"
+        "footprint": "See your footprint",
+        "suppliers": "{count, plural, one {# supplier added to your list.} other {# suppliers added to your list.}}",
+        "seeSuppliers": "See Suppliers"
       },
       "discardedBody": "Discarded. Nothing was kept.",
       "toasts": {
@@ -1654,6 +1664,27 @@
         "title": "Got a bill or a statement?",
         "body": "Drop it here or choose a file. We'll read it and show you what we found before anything is added.",
         "cta": "Add data"
+      },
+      "payees": {
+        "title": "Add payees to your Suppliers",
+        "body": "Tick the businesses you buy goods or services from. The ones you leave unticked won't be suggested again; you can still add them from the Suppliers page.",
+        "checking": "Checking your Suppliers list…",
+        "noneNew": "Everyone you paid is already on your list or looks like wages, tax or bank costs.",
+        "times": "{count, plural, one {# payment} other {# payments}}",
+        "onList": "{count, plural, one {Already on your list (# payee)} other {Already on your list (# payees)}}",
+        "countsFor": "Counted under {name}",
+        "showMore": "{count, plural, one {Show # more payee} other {Show # more payees}}",
+        "hideMore": "Hide",
+        "skippedBefore": "you skipped this before",
+        "reason": {
+          "payroll": "looks like wages",
+          "tax": "looks like tax or social insurance",
+          "cash": "cash withdrawal",
+          "bank": "bank fee or interest",
+          "transfer": "transfer between your accounts",
+          "loan": "loan repayment",
+          "card": "card repayment"
+        }
       }
     }
   },
