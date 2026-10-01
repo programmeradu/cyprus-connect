@@ -3,126 +3,144 @@ import { makePillar } from "./_factory";
 export const csrdReportingCyprus = makePillar({
   slug: "csrd-reporting-cyprus",
   category: "cyprus",
-  primaryKeyword: "CSRD reporting Cyprus",
+  primaryKeyword: "CSRD Cyprus",
   monthlyVolume: 0,
-  readingMinutes: 9,
-  relatedSlugs: ["csrd-reporting-guide","esg-software-cyprus","esrs-standards-explained","double-materiality-assessment"],
+  readingMinutes: 8,
+  publishedAt: "2026-07-08",
+  updatedAt: "2026-10-01",
+  relatedSlugs: ["csrd-reporting-guide", "vsme-reporting-guide", "green-loans-esg-data-smes", "esg-software-cyprus"],
   en: {
-  "title": "CSRD Reporting in Cyprus: Scope, Timeline, and Local Practicalities",
-  "metaTitle": "CSRD Cyprus 2026 — Local Scope, Timeline, Practicalities",
-  "metaDescription": "CSRD in Cyprus: which local companies are in scope, the transposition into Cyprus law, filing with the Registrar, and how banks and shipping fit in.",
-  "heroEyebrow": "Cyprus Regulatory",
-  "heroSubtitle": "CSRD lands on Cyprus with distinct local specifics: EAC grid factors, Registrar filing conventions, and a heavy concentration in shipping, financial services, and hospitality.",
-  "tocLabel": "On this page",
-  "introduction": [
-    "Cyprus transposed CSRD into national law via amendments to the Companies Law (Cap. 113). Roughly 40 Cypriot entities fall into Wave 1 or Wave 2, plus a long tail of subsidiaries consolidated into EU parents.",
-    "This guide is the local operator's cut of the EU directive — where the standard bites and where local practice differs."
-  ],
-  "sections": [
-    {
-      "heading": "Which Cypriot entities are in scope",
-      "body": [
-        "Wave 1 (FY2024): large public-interest entities >500 employees. Includes major listed banks and select shipping groups.",
-        "Wave 2 (FY2025): other large Cypriot companies meeting two of three thresholds (>250 employees, >€50m turnover, >€25m balance sheet).",
-        "Wave 3 (FY2026): listed Cypriot SMEs on the CSE, with a two-year opt-out to FY2028."
-      ]
-    },
-    {
-      "heading": "Filing and language conventions",
-      "body": [
-        "Reports filed with the Registrar of Companies as part of the annual management report. Greek or English is accepted for most filings; large listed entities typically file bilingually.",
-        "Digital tagging (XBRL) is required from year one of scope, aligned to the EU-wide ESEF schema."
-      ]
-    },
-    {
-      "heading": "Sector deep-dives",
-      "body": [
-        "Shipping: overlap with EU MRV and IMO reporting; auditors expect reconciliation between operational and disclosure figures.",
-        "Banking and insurance: Pillar 3 ESG, ECB climate stress tests, and CSRD form a triangle. Consolidate the data model.",
-        "Hospitality: energy and water are the material topics; sub-metering per property is now standard practice."
-      ]
-    }
-  ],
-  "keyTakeaways": [
-    "~40 Cypriot entities in Wave 1 + 2; listed SMEs from Wave 3.",
-    "File with the Registrar as part of the management report.",
-    "XBRL tagging required from year one.",
-    "Sector overlaps (shipping MRV, banking Pillar 3) shape the data model."
-  ],
-  "faq": [
-    {
-      "q": "Which authority supervises CSRD in Cyprus?",
-      "a": "CySEC supervises listed issuers' disclosures; the Registrar of Companies handles filing; ICPAC-registered auditors provide assurance."
-    },
-    {
-      "q": "Can I file in Greek only?",
-      "a": "Domestic filings, yes. Cross-border groups typically file bilingually for stakeholder consistency."
-    },
-    {
-      "q": "Is EU data residency required?",
-      "a": "Not by CSRD itself. GDPR and Cypriot data protection rules typically drive EU-only storage for reporting data."
-    }
-  ],
-  "ctaHeading": "CSRD-ready reporting for Cyprus entities",
-  "ctaBody": "Vuneli handles EAC grid factors, bilingual Greek/English output, Registrar-ready formats, and XBRL tagging out of the box."
-},
+    title: "CSRD in Cyprus After the Omnibus: Which Cypriot Companies Still Report",
+    metaTitle: "CSRD Cyprus 2026: Who Reports After the Omnibus",
+    metaDescription:
+      "What the 2025 CSRD simplification means for Cyprus: very few local companies stay in scope, but suppliers to large groups and bank borrowers will still need sustainability data.",
+    heroEyebrow: "Cyprus regulatory guide, updated October 2026",
+    heroSubtitle:
+      "With thresholds raised to more than 1,000 employees and €450 million turnover, only a handful of Cypriot companies will file CSRD reports. For everyone else, the real pressure comes from customers and banks.",
+    tocLabel: "On this page",
+    introduction: [
+      "Most businesses in Cyprus are small or micro enterprises. Even under the original CSRD scope only a limited number of local companies would have reported. After the Omnibus agreement of December 2025, that number falls to a small group of the largest banks, insurers, listed groups and international subsidiaries.",
+      "This does not mean sustainability data has stopped mattering. Cypriot banks must consider climate and environmental risks when they lend, EU customers are asking suppliers for emissions figures, and public funding calls increasingly ask for them too.",
+    ],
+    sections: [
+      {
+        heading: "Who in Cyprus is still in scope",
+        body: [
+          "Cypriot companies with more than 1,000 employees and net turnover above €450 million, on an individual or consolidated basis. Large banks and some listed groups are the obvious candidates.",
+          "Cyprus-based subsidiaries of large EU groups are usually covered through their parent's consolidated report rather than reporting separately, but they still have to supply data to the parent.",
+          "Holding and shipping structures registered in Cyprus need case-by-case analysis based on consolidated figures. Ask your auditor rather than relying on the registered office alone.",
+        ],
+      },
+      {
+        heading: "Where local businesses will feel it",
+        body: [
+          "Supplier questionnaires: hotels supplying international tour operators, food producers selling to EU retailers and contractors working for large groups will get data requests. Under the value-chain cap, those requests should not go beyond the voluntary SME standard (VSME).",
+          "Bank lending: Cypriot banks follow European Banking Authority loan origination guidelines and ECB expectations on climate risk, which means asking business borrowers about energy use, emissions and transition plans.",
+          "Funding and tenders: EU-funded programmes and many public tenders ask for environmental information, and some score it.",
+        ],
+      },
+      {
+        heading: "What a Cypriot SME should prepare",
+        body: [
+          "A yearly dataset following the VSME Basic Module: electricity from EAC bills, fuel for vehicles and generators, water, waste, headcount and basic policies.",
+          "Scope 2 emissions calculated with a published Cyprus grid factor, with the factor's source and year recorded. Cyprus's grid is still largely oil-fired, so electricity is often the biggest part of a small company's footprint.",
+          "Evidence kept with each figure: the bill, the meter reading or the invoice. That is what turns a number into something a bank or customer can rely on.",
+        ],
+      },
+    ],
+    keyTakeaways: [
+      "After the Omnibus, only Cypriot companies with more than 1,000 employees and €450 million turnover file CSRD reports.",
+      "Subsidiaries of large EU groups usually feed data into their parent's report.",
+      "Most local SMEs are affected through supplier questionnaires, bank lending and funding calls.",
+      "A sourced VSME-style dataset built from EAC bills and real records covers most requests.",
+    ],
+    faq: [
+      {
+        q: "Does my Cypriot SME have to file a CSRD report?",
+        a: "Almost certainly not. The thresholds are now more than 1,000 employees and more than €450 million turnover.",
+      },
+      {
+        q: "A large client sent us a long ESG questionnaire. Do we have to answer everything?",
+        a: "Under the value-chain cap, large reporting companies should not require more than the VSME standard from partners with fewer than 1,000 employees, apart from data that is customary in the sector. Answer what VSME covers, with evidence.",
+      },
+      {
+        q: "Which Cyprus grid emission factor should we use?",
+        a: "Use a published, dated factor and record the source, for example the national inventory or official EU datasets. Do not mix factors from different years without noting it.",
+      },
+      {
+        q: "Who supervises CSRD reporting in Cyprus?",
+        a: "Reports are part of the management report and checked by statutory auditors, with oversight by the Cyprus Public Audit Oversight Board. Listed companies are also supervised by the Cyprus Securities and Exchange Commission.",
+      },
+    ],
+    ctaHeading: "Be ready when a client or bank asks",
+    ctaBody:
+      "Vuneli reads your EAC and water bills, calculates emissions with published Cyprus factors and keeps the evidence behind every figure, so you can answer supplier and bank questions in minutes.",
+  },
   el: {
-  "title": "Αναφορά CSRD στην Κύπρο: Πεδίο, Χρονοδιάγραμμα, Πρακτικά",
-  "metaTitle": "CSRD Κύπρος 2026 — Τοπικό Πεδίο, Χρονοδιάγραμμα",
-  "metaDescription": "CSRD στην Κύπρο: ποιες τοπικές εταιρείες, μεταφορά σε εθνικό δίκαιο, κατάθεση στον Έφορο, τράπεζες και ναυτιλία.",
-  "heroEyebrow": "Κυπριακό Ρυθμιστικό",
-  "heroSubtitle": "Η CSRD στην Κύπρο έχει διακριτές τοπικές ιδιαιτερότητες: συντελεστές ΑΗΚ, κατάθεση στον Έφορο, συγκέντρωση σε ναυτιλία/χρηματοοικονομικά/φιλοξενία.",
-  "tocLabel": "Σε αυτή τη σελίδα",
-  "introduction": [
-    "Η Κύπρος μετέφερε τη CSRD μέσω τροποποιήσεων του Περί Εταιρειών Νόμου (Κεφ. 113). Περίπου 40 κυπριακές οντότητες εμπίπτουν σε Wave 1 ή 2.",
-    "Αυτός ο οδηγός είναι η τοπική εκδοχή της οδηγίας."
-  ],
-  "sections": [
-    {
-      "heading": "Ποιες οντότητες",
-      "body": [
-        "Wave 1 (FY2024): μεγάλες οντότητες δημοσίου συμφέροντος >500. Μεγάλες τράπεζες και ναυτιλιακοί όμιλοι.",
-        "Wave 2 (FY2025): άλλες μεγάλες εταιρείες.",
-        "Wave 3 (FY2026): εισηγμένες ΜμΕ ΧΑΚ, εξαίρεση έως FY2028."
-      ]
-    },
-    {
-      "heading": "Κατάθεση και γλώσσα",
-      "body": [
-        "Κατάθεση στον Έφορο Εταιρειών ως μέρος της ετήσιας έκθεσης. Ελληνικά ή αγγλικά.",
-        "Ψηφιακή σήμανση (XBRL) απαιτείται από το πρώτο έτος."
-      ]
-    },
-    {
-      "heading": "Τομείς",
-      "body": [
-        "Ναυτιλία: επικάλυψη με EU MRV και IMO.",
-        "Τράπεζες/ασφάλειες: Pillar 3 ESG, ECB stress tests, CSRD.",
-        "Φιλοξενία: ενέργεια και νερό είναι τα ουσιώδη θέματα."
-      ]
-    }
-  ],
-  "keyTakeaways": [
-    "~40 κυπριακές σε Waves 1+2· εισηγμένες ΜμΕ από Wave 3.",
-    "Κατάθεση στον Έφορο.",
-    "XBRL από το πρώτο έτος.",
-    "Οι τομεακές επικαλύψεις διαμορφώνουν το μοντέλο δεδομένων."
-  ],
-  "faq": [
-    {
-      "q": "Ποια αρχή εποπτεύει;",
-      "a": "CySEC για εισηγμένους· Έφορος για κατάθεση· ICPAC ελεγκτές για διασφάλιση."
-    },
-    {
-      "q": "Μόνο ελληνικά;",
-      "a": "Για εγχώρια, ναι· διασυνοριακοί όμιλοι δίγλωσσα."
-    },
-    {
-      "q": "Απαιτείται EU data residency;",
-      "a": "Όχι από CSRD· η GDPR το ωθεί."
-    }
-  ],
-  "ctaHeading": "CSRD αναφορές για κυπριακές οντότητες",
-  "ctaBody": "Η Vuneli χειρίζεται EAC συντελεστές, δίγλωσσο output, μορφή Εφόρου, και XBRL."
-},
+    title: "Η CSRD στην Κύπρο μετά το Omnibus: Ποιες Κυπριακές Εταιρείες Υποβάλλουν Ακόμη",
+    metaTitle: "CSRD Κύπρος 2026: Ποιοι Υποβάλλουν μετά το Omnibus",
+    metaDescription:
+      "Τι σημαίνει η απλοποίηση της CSRD για την Κύπρο: ελάχιστες εταιρείες παραμένουν υπόχρεες, αλλά προμηθευτές μεγάλων ομίλων και δανειολήπτες θα χρειάζονται δεδομένα βιωσιμότητας.",
+    heroEyebrow: "Κυπριακός ρυθμιστικός οδηγός, ενημέρωση Οκτωβρίου 2026",
+    heroSubtitle:
+      "Με όρια πάνω από 1.000 εργαζόμενους και €450 εκατ. κύκλο εργασιών, ελάχιστες κυπριακές εταιρείες θα υποβάλουν έκθεση CSRD. Για όλες τις άλλες, η πραγματική πίεση έρχεται από πελάτες και τράπεζες.",
+    tocLabel: "Σε αυτή τη σελίδα",
+    introduction: [
+      "Οι περισσότερες επιχειρήσεις στην Κύπρο είναι μικρές ή πολύ μικρές. Ακόμη και με το αρχικό πεδίο της CSRD λίγες τοπικές εταιρείες θα υπέβαλλαν. Μετά τη συμφωνία Omnibus του Δεκεμβρίου 2025, ο αριθμός περιορίζεται σε μια μικρή ομάδα μεγάλων τραπεζών, ασφαλιστικών, εισηγμένων ομίλων και διεθνών θυγατρικών.",
+      "Αυτό δεν σημαίνει ότι τα δεδομένα βιωσιμότητας έπαψαν να μετρούν. Οι κυπριακές τράπεζες πρέπει να λαμβάνουν υπόψη κλιματικούς κινδύνους όταν δανείζουν, πελάτες στην ΕΕ ζητούν στοιχεία εκπομπών από προμηθευτές και όλο και περισσότερες προσκλήσεις χρηματοδότησης τα ζητούν επίσης.",
+    ],
+    sections: [
+      {
+        heading: "Ποιοι στην Κύπρο παραμένουν υπόχρεοι",
+        body: [
+          "Κυπριακές εταιρείες με περισσότερους από 1.000 εργαζόμενους και καθαρό κύκλο εργασιών άνω των €450 εκατ., σε ατομική ή ενοποιημένη βάση. Μεγάλες τράπεζες και ορισμένοι εισηγμένοι όμιλοι είναι οι προφανείς περιπτώσεις.",
+          "Θυγατρικές μεγάλων ευρωπαϊκών ομίλων στην Κύπρο συνήθως καλύπτονται από την ενοποιημένη έκθεση της μητρικής, αλλά πρέπει να της παρέχουν δεδομένα.",
+          "Εταιρείες συμμετοχών και ναυτιλιακές δομές με έδρα στην Κύπρο χρειάζονται ανάλυση ανά περίπτωση με βάση τα ενοποιημένα στοιχεία. Συμβουλευτείτε τον ελεγκτή σας.",
+        ],
+      },
+      {
+        heading: "Πού θα το νιώσουν οι τοπικές επιχειρήσεις",
+        body: [
+          "Ερωτηματολόγια προμηθευτών: ξενοδοχεία που συνεργάζονται με διεθνείς tour operators, παραγωγοί τροφίμων που πουλούν σε ευρωπαϊκές αλυσίδες και εργολάβοι μεγάλων ομίλων θα λαμβάνουν αιτήματα. Βάσει του ορίου της αλυσίδας αξίας, δεν πρέπει να ξεπερνούν το εθελοντικό πρότυπο VSME.",
+          "Τραπεζικός δανεισμός: οι κυπριακές τράπεζες ακολουθούν τις κατευθυντήριες γραμμές της Ευρωπαϊκής Αρχής Τραπεζών για τη χορήγηση δανείων και τις προσδοκίες της ΕΚΤ για τον κλιματικό κίνδυνο, άρα ρωτούν για ενέργεια, εκπομπές και σχέδια μετάβασης.",
+          "Χρηματοδότηση και διαγωνισμοί: προγράμματα της ΕΕ και πολλοί δημόσιοι διαγωνισμοί ζητούν περιβαλλοντικές πληροφορίες και ορισμένοι τις βαθμολογούν.",
+        ],
+      },
+      {
+        heading: "Τι να ετοιμάσει μια κυπριακή ΜμΕ",
+        body: [
+          "Ένα ετήσιο σύνολο δεδομένων κατά τη Βασική Ενότητα του VSME: ρεύμα από λογαριασμούς ΑΗΚ, καύσιμα οχημάτων και γεννητριών, νερό, απόβλητα, προσωπικό και βασικές πολιτικές.",
+          "Εκπομπές Πεδίου 2 με δημοσιευμένο συντελεστή του κυπριακού δικτύου, με καταγεγραμμένη πηγή και έτος. Το δίκτυο της Κύπρου βασίζεται ακόμη κυρίως στο πετρέλαιο, οπότε το ρεύμα είναι συχνά το μεγαλύτερο μέρος του αποτυπώματος μιας μικρής εταιρείας.",
+          "Τεκμηρίωση για κάθε αριθμό: ο λογαριασμός, η ένδειξη μετρητή ή το τιμολόγιο. Αυτό κάνει έναν αριθμό αξιόπιστο για τράπεζα ή πελάτη.",
+        ],
+      },
+    ],
+    keyTakeaways: [
+      "Μετά το Omnibus, έκθεση CSRD υποβάλλουν μόνο κυπριακές εταιρείες με πάνω από 1.000 εργαζόμενους και €450 εκατ. κύκλο εργασιών.",
+      "Οι θυγατρικές μεγάλων ευρωπαϊκών ομίλων συνήθως τροφοδοτούν την έκθεση της μητρικής.",
+      "Οι περισσότερες ΜμΕ επηρεάζονται μέσω ερωτηματολογίων προμηθευτών, δανεισμού και προσκλήσεων χρηματοδότησης.",
+      "Ένα τεκμηριωμένο σύνολο τύπου VSME από λογαριασμούς ΑΗΚ και πραγματικά αρχεία καλύπτει τα περισσότερα αιτήματα.",
+    ],
+    faq: [
+      {
+        q: "Πρέπει η κυπριακή ΜμΕ μου να υποβάλει έκθεση CSRD;",
+        a: "Σχεδόν σίγουρα όχι. Τα όρια είναι πλέον πάνω από 1.000 εργαζόμενοι και πάνω από €450 εκατ. κύκλος εργασιών.",
+      },
+      {
+        q: "Μεγάλος πελάτης μάς έστειλε μακροσκελές ερωτηματολόγιο ESG. Πρέπει να απαντήσουμε σε όλα;",
+        a: "Οι μεγάλες υπόχρεες εταιρείες δεν πρέπει να απαιτούν από συνεργάτες κάτω των 1.000 εργαζομένων περισσότερα από το VSME, εκτός από δεδομένα συνήθη στον κλάδο. Απαντήστε όσα καλύπτει το VSME, με τεκμηρίωση.",
+      },
+      {
+        q: "Ποιον συντελεστή εκπομπών του κυπριακού δικτύου να χρησιμοποιήσουμε;",
+        a: "Έναν δημοσιευμένο, χρονολογημένο συντελεστή με καταγεγραμμένη πηγή, π.χ. από την εθνική απογραφή ή επίσημα σύνολα δεδομένων της ΕΕ. Μην αναμειγνύετε συντελεστές διαφορετικών ετών χωρίς σημείωση.",
+      },
+      {
+        q: "Ποιος εποπτεύει την αναφορά CSRD στην Κύπρο;",
+        a: "Οι εκθέσεις είναι μέρος της έκθεσης διαχείρισης και ελέγχονται από νόμιμους ελεγκτές, με εποπτεία από το Σώμα Εποπτείας Ελεγκτικού Επαγγέλματος. Οι εισηγμένες εποπτεύονται και από την Επιτροπή Κεφαλαιαγοράς Κύπρου.",
+      },
+    ],
+    ctaHeading: "Να είστε έτοιμοι όταν ρωτήσει πελάτης ή τράπεζα",
+    ctaBody:
+      "Η Vuneli διαβάζει τους λογαριασμούς ΑΗΚ και νερού, υπολογίζει εκπομπές με δημοσιευμένους κυπριακούς συντελεστές και κρατά την τεκμηρίωση κάθε αριθμού, ώστε να απαντάτε σε προμηθευτές και τράπεζες σε λίγα λεπτά.",
+  },
 });
