@@ -1,44 +1,9 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { getSupabaseServerConfig } from "@/lib/supabase/server";
+import { sql } from "drizzle-orm";
+import { db } from "@/db";
 
-// Cloudflare Workers cannot use the raw postgres-js TCP client that previously
-// backed this store. Supabase's HTTP API is Worker-safe and avoids port 5432.
-
-let supabase: SupabaseClient | null = null;
-
-const RETRYABLE_1016_ATTEMPTS = 3;
-
-async function isOriginDnsError(response: Response) {
-  if (response.status !== 530) return false;
-  const body = await response.clone().text();
-  return /error\s*1016|origin dns error/i.test(body);
-}
-
-async function fetchSupabaseWithRetry(input: RequestInfo | URL, init?: RequestInit) {
-  for (let attempt = 1; attempt <= RETRYABLE_1016_ATTEMPTS; attempt++) {
-    const response = await fetch(input, init);
-    if (!(await isOriginDnsError(response)) || attempt === RETRYABLE_1016_ATTEMPTS) {
-      return response;
-    }
-    await new Promise((resolve) => setTimeout(resolve, attempt * 250));
-  }
-  throw new Error("Unreachable retry state.");
-}
-
-function client() {
-  if (!supabase) {
-    const { url } = getSupabaseServerConfig();
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceRoleKey) {
-      throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for grant-alert storage.");
-    }
-    supabase = createClient(url, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-      global: { fetch: fetchSupabaseWithRetry },
-    });
-  }
-  return supabase;
-}
+// Grant-alert storage goes through the shared database client (Hyperdrive in
+// production, the transaction pooler in development), so it needs no extra
+// service key and sees the same database as every other page.
 
 export interface StoredMatch {
   id: number;
@@ -55,7 +20,14 @@ export interface StoredMatch {
   notified_at: string | null;
 }
 
-function mapMatch(row: Record<string, unknown>): StoredMatch {
+type Row = Record<string, unknown>;
+
+function iso(v: unknown): string | null {
+  if (v == null) return null;
+  return v instanceof Date ? v.toISOString() : String(v);
+}
+
+function mapMatch(row: Row): StoredMatch {
   return {
     id: Number(row.id),
     source: String(row.source),
@@ -67,28 +39,18 @@ function mapMatch(row: Record<string, unknown>): StoredMatch {
     deadline: typeof row.deadline === "string" ? row.deadline : null,
     score: Number(row.score ?? 0),
     reasons: String(row.reasons ?? ""),
-    first_seen_at: String(row.first_seen_at),
-    notified_at: typeof row.notified_at === "string" ? row.notified_at : null,
+    first_seen_at: iso(row.first_seen_at) ?? new Date(0).toISOString(),
+    notified_at: iso(row.notified_at),
   };
 }
 
-function missingSchemaMessage(error: { code?: string; message: string }) {
-  if (
-    error.code === "42P01" ||
-    error.code === "PGRST205" ||
-    /relation .* does not exist|could not find the table|schema cache/i.test(error.message)
-  ) {
-    return "Grant-alert tables are missing. Apply supabase/migrations/20260813_create_grant_alerts.sql first.";
-  }
-  return error.message || "Unable to access grant-alert storage. Apply supabase/migrations/20260813_create_grant_alerts.sql and retry.";
+async function rows(query: ReturnType<typeof sql>): Promise<Row[]> {
+  return (await db.execute(query)) as unknown as Row[];
 }
 
+/** Kept for callers; the tables are created by the grant-alerts migration. */
 export async function ensureSchema(): Promise<void> {
-  const { error } = await client()
-    .from("grant_opportunities")
-    .select("id")
-    .limit(1);
-  if (error) throw new Error(missingSchemaMessage(error));
+  await rows(sql`select 1 from grant_opportunities limit 1`);
 }
 
 export async function upsertOpportunity(row: {
@@ -103,88 +65,53 @@ export async function upsertOpportunity(row: {
   score: number;
   reasons: string;
 }): Promise<{ isNew: boolean; row: StoredMatch }> {
-  const c = client();
-  const existing = await c
-    .from("grant_opportunities")
-    .select("*")
-    .eq("source", row.source)
-    .eq("external_id", row.externalId)
-    .maybeSingle();
-  if (existing.error) throw new Error(missingSchemaMessage(existing.error));
-  if (existing.data) return { isNew: false, row: mapMatch(existing.data) };
-
-  const inserted = await c
-    .from("grant_opportunities")
-    .insert({
-      source: row.source,
-      external_id: row.externalId,
-      title: row.title,
-      summary: row.summary,
-      url: row.url,
-      program: row.program,
-      deadline: row.deadline,
-      published_at: row.publishedAt,
-      score: row.score,
-      reasons: row.reasons,
-    })
-    .select("*")
-    .single();
-  if (inserted.error?.code === "23505") {
-    const raced = await c
-      .from("grant_opportunities")
-      .select("*")
-      .eq("source", row.source)
-      .eq("external_id", row.externalId)
-      .single();
-    if (raced.error) throw new Error(missingSchemaMessage(raced.error));
-    return { isNew: false, row: mapMatch(raced.data) };
-  }
-  if (inserted.error) throw new Error(missingSchemaMessage(inserted.error));
-  return { isNew: true, row: mapMatch(inserted.data) };
+  const inserted = await rows(sql`
+    insert into grant_opportunities
+      (source, external_id, title, summary, url, program, deadline, published_at, score, reasons)
+    values (${row.source}, ${row.externalId}, ${row.title}, ${row.summary}, ${row.url},
+            ${row.program}, ${row.deadline}, ${row.publishedAt}, ${row.score}, ${row.reasons})
+    on conflict (source, external_id) do nothing
+    returning *
+  `);
+  if (inserted[0]) return { isNew: true, row: mapMatch(inserted[0]) };
+  const existing = await rows(sql`
+    select * from grant_opportunities where source = ${row.source} and external_id = ${row.externalId} limit 1
+  `);
+  return { isNew: false, row: mapMatch(existing[0]) };
 }
 
 export async function markNotified(id: number): Promise<void> {
-  const { error } = await client()
-    .from("grant_opportunities")
-    .update({ notified_at: new Date().toISOString() })
-    .eq("id", id);
-  if (error) throw new Error(missingSchemaMessage(error));
+  await rows(sql`update grant_opportunities set notified_at = now() where id = ${id}`);
 }
 
 export async function listActiveSubscribers(): Promise<{ email: string; sources: string[] }[]> {
-  const { data, error } = await client()
-    .from("grant_alert_subscriptions")
-    .select("email, sources")
-    .eq("active", true);
-  if (error) throw new Error(missingSchemaMessage(error));
-  return (data ?? []).map((row) => ({
-    email: row.email,
-    sources: String(row.sources).split(",").map((source: string) => source.trim()),
+  const data = await rows(sql`select email, sources from grant_alert_subscriptions where active = true`);
+  return data.map((r) => ({
+    email: String(r.email),
+    sources: String(r.sources).split(",").map((s) => s.trim()),
   }));
 }
 
+const DEFAULT_SOURCES = "eu-funding-tenders,research-gov-cy,invest-cyprus,kebe-oeb,accelerators";
+
 export async function upsertSubscription(email: string, sources?: string[]): Promise<void> {
-  const defaultSources = "eu-funding-tenders,research-gov-cy,invest-cyprus,kebe-oeb,accelerators";
-  const { error } = await client()
-    .from("grant_alert_subscriptions")
-    .upsert({ email, sources: sources?.length ? sources.join(",") : defaultSources, active: true }, { onConflict: "email" });
-  if (error) throw new Error(missingSchemaMessage(error));
+  const list = sources?.length ? sources.join(",") : DEFAULT_SOURCES;
+  await rows(sql`
+    insert into grant_alert_subscriptions (email, sources, active) values (${email}, ${list}, true)
+    on conflict (email) do update set sources = excluded.sources, active = true
+  `);
 }
 
 export async function deactivateSubscription(email: string): Promise<void> {
-  const { error } = await client()
-    .from("grant_alert_subscriptions")
-    .update({ active: false })
-    .eq("email", email);
-  if (error) throw new Error(missingSchemaMessage(error));
+  await rows(sql`update grant_alert_subscriptions set active = false where email = ${email}`);
+}
+
+export async function isSubscribed(email: string): Promise<boolean> {
+  const r = await rows(sql`select active from grant_alert_subscriptions where email = ${email} limit 1`);
+  return r[0]?.active === true;
 }
 
 export async function recentMatches(limit = 50): Promise<StoredMatch[]> {
-  const { data, error } = await client()
-    .from("grant_opportunities")
-    .select("*")
-    .order("first_seen_at", { ascending: false })
-    .limit(limit);
-  if (error) throw new Error(missingSchemaMessage(error));
-  return (data ?? []).map(mapMatch);
+  const data = await rows(sql`select * from grant_opportunities order by first_seen_at desc limit ${limit}`);
+  return data.map(mapMatch);
 }

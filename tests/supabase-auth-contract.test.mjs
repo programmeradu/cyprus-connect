@@ -49,14 +49,13 @@ test("legacy-account transition is explicit and safe to dry-run", async () => {
   assert.match(runbook, /password recovery/i);
 });
 
-test("grant alerts use Supabase HTTP storage rather than a raw Worker socket", async () => {
+test("grant alerts use the shared database client, not a service-role key", async () => {
   const [store, migration] = await Promise.all([
     read("src/lib/grant-alerts/store.ts"),
     read("supabase/migrations/20260813_create_grant_alerts.sql"),
   ]);
-  assert.match(store, /createClient/);
-  assert.match(store, /SUPABASE_SERVICE_ROLE_KEY/);
-  assert.match(store, /fetchSupabaseWithRetry/);
+  assert.match(store, /from "@\/db"/);
+  assert.doesNotMatch(store, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.doesNotMatch(store, /import postgres from/);
   assert.match(migration, /create table if not exists public\.grant_opportunities/i);
   assert.match(migration, /create table if not exists public\.grant_alert_subscriptions/i);

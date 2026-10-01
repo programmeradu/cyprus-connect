@@ -64,12 +64,14 @@ async function __vuneliScheduled(event, env, _ctx) {
     await run("keep-alive", "https://vuneli.com/api/keep-alive", { method: "GET" });
     return;
   }
-  const secret = env.CRON_SECRET ?? "vuneli-cron-grant-alerts-2026-cy";
-  await run(
-    "grant-alerts",
-    \`https://vuneli.com/api/cron/grant-alerts?secret=\${secret}\`,
-    { method: "POST" },
-  );
+  if (!env.CRON_SECRET) {
+    console.log("[grant-alerts cron] skipped: CRON_SECRET is not set");
+    return;
+  }
+  await run("grant-alerts", "https://vuneli.com/api/cron/grant-alerts", {
+    method: "POST",
+    headers: { "x-cron-secret": env.CRON_SECRET },
+  });
 }
 
 // ── Cloudflare Email Routing: forwarded utility bills ─────────────────────────
