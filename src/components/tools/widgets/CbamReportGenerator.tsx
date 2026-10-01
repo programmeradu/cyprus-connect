@@ -20,6 +20,10 @@ import {
   SECTOR_META,
   type CnCode,
 } from "@/data/tools/cbam-cn-codes";
+import officialDefaults from "@/data/cbam/widget-defaults.json";
+
+/** Official EU default values (IR 2025/2621 as corrected by 2026/1740): [direct, indirect, table]. */
+const OFFICIAL = officialDefaults as unknown as Record<string, Record<string, [number, number, string]>>;
 
 type Props = { locale: Locale };
 
@@ -96,8 +100,8 @@ const T = {
     reportTitle: "CBAM quarterly report draft",
     generatedOn: "Generated on",
     disclaimer:
-      "Draft only. Default embedded-emission values are applicable during the transitional period; from January 2026 you must use actual verified data. Validate in the CBAM Transitional Registry before submitting.",
-    sourcesNote: "Sources: Commission Regulation (EU) 2023/956 · Annex I default values (DG TAXUD, 2024).",
+      "Draft only. Empty factor fields use the EU's official default values for the country of origin; actual values from your supplier are better and usually lower. Electricity has no default here: enter your supplier's value. Check in the CBAM Registry before submitting.",
+    sourcesNote: "Sources: Regulation (EU) 2023/956 · default values from Implementing Regulation (EU) 2025/2621 as corrected by (EU) 2026/1740.",
     perLine: "Line breakdown",
     sector: "Sector",
     tCO2e: "tCO₂e",
@@ -138,8 +142,8 @@ const T = {
     reportTitle: "Προσχέδιο τριμηνιαίας αναφοράς CBAM",
     generatedOn: "Δημιουργήθηκε",
     disclaimer:
-      "Μόνο προσχέδιο. Οι προεπιλεγμένες τιμές ισχύουν μόνο για τη μεταβατική περίοδο· από τον Ιανουάριο 2026 απαιτούνται πραγματικά επαληθευμένα δεδομένα.",
-    sourcesNote: "Πηγές: Κανονισμός (ΕΕ) 2023/956 · Annex I default values (DG TAXUD, 2024).",
+      "Μόνο προσχέδιο. Τα κενά πεδία συντελεστών χρησιμοποιούν τις επίσημες προεπιλεγμένες τιμές της ΕΕ για τη χώρα προέλευσης· οι πραγματικές τιμές του προμηθευτή είναι καλύτερες και συνήθως χαμηλότερες. Για ηλεκτρική ενέργεια δεν υπάρχει προεπιλογή εδώ: εισαγάγετε την τιμή του προμηθευτή. Ελέγξτε στο Μητρώο CBAM πριν την υποβολή.",
+    sourcesNote: "Πηγές: Κανονισμός (ΕΕ) 2023/956 · προεπιλεγμένες τιμές από τον Εκτελεστικό Κανονισμό (ΕΕ) 2025/2621 όπως διορθώθηκε με τον (ΕΕ) 2026/1740.",
     perLine: "Ανάλυση γραμμών",
     sector: "Τομέας",
     tCO2e: "tCO₂e",
@@ -181,13 +185,16 @@ export default function CbamReportGenerator({ locale }: Props) {
   const enriched = useMemo(() => {
     return state.lines.map((ln) => {
       const cn = findCn(ln.cn);
-      const dEF = ln.directOverride !== "" ? Number(ln.directOverride) : cn?.defaultDirect ?? 0;
-      const iEF = ln.indirectOverride !== "" ? Number(ln.indirectOverride) : cn?.defaultIndirect ?? 0;
+      const official = OFFICIAL[ln.cn]?.[ln.country] ?? null;
+      const dDef = official?.[0] ?? 0;
+      const iDef = official?.[1] ?? 0;
+      const dEF = ln.directOverride !== "" ? Number(ln.directOverride) : dDef;
+      const iEF = ln.indirectOverride !== "" ? Number(ln.indirectOverride) : iDef;
       const direct = ln.quantity * dEF;
       const indirect = ln.quantity * iEF;
       const embedded = direct + indirect;
       const paid = Number(ln.carbonPricePaid || 0) * embedded;
-      return { ...ln, cnInfo: cn, dEF, iEF, direct, indirect, embedded, paid };
+      return { ...ln, cnInfo: cn, dDef, iDef, hasDefault: official !== null, dEF, iEF, direct, indirect, embedded, paid };
     });
   }, [state.lines]);
 
@@ -473,7 +480,7 @@ ${lines}
                       type="number"
                       min={0}
                       step={0.001}
-                      placeholder={String(r.cnInfo?.defaultDirect ?? 0)}
+                      placeholder={r.hasDefault ? String(r.dDef) : "—"}
                       value={r.directOverride}
                       onChange={(e) => setLine(r.id, { directOverride: e.target.value })}
                       className="w-24 border-0 border-b border-foreground/20 bg-transparent pb-0.5 text-right text-[12.5px] tabular-nums outline-none placeholder:text-foreground/30 focus:border-primary"
@@ -487,7 +494,7 @@ ${lines}
                       type="number"
                       min={0}
                       step={0.001}
-                      placeholder={String(r.cnInfo?.defaultIndirect ?? 0)}
+                      placeholder={r.hasDefault ? String(r.iDef) : "—"}
                       value={r.indirectOverride}
                       onChange={(e) => setLine(r.id, { indirectOverride: e.target.value })}
                       className="w-24 border-0 border-b border-foreground/20 bg-transparent pb-0.5 text-right text-[12.5px] tabular-nums outline-none placeholder:text-foreground/30 focus:border-primary"

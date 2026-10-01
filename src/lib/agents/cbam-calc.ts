@@ -7,20 +7,31 @@
  * - De minimis: an importer below 50 tonnes of CBAM goods a year (electricity
  *   and hydrogen excluded from the mass count) has no CBAM obligation.
  * - Embedded emissions = mass x specific embedded emissions (SEE). Indirect
- *   emissions count only where the sector has them in scope (cement and
- *   fertilisers; hydrogen per our table).
- * - Supplier actual values are preferred. A line without them falls back to
- *   our indicative default table, which is NOT the Commission's definitive
- *   default table with mark-ups. Such lines are flagged, never hidden.
- *
- * The founder must confirm these rules against the primary texts before the
- * first real filing (see docs/FOUNDER_EXTERNAL_SETUP.md).
+ *   emissions count only for cement and fertilisers.
+ * - Supplier actual values are preferred. A line without them uses the EU's
+ *   official default value for its country of origin (src/lib/cbam/official.ts),
+ *   falling back as the regulation says. Such lines are flagged, never hidden.
+ * - Certificates = mass x (SEE, with the default-value mark-up where defaults
+ *   are used) - free allocation adjustment (CBAM factor x CSCF x CBAM benchmark).
+ *   Carbon prices paid abroad are not deducted. Cost = certificates x the
+ *   official quarterly price; quarters with no published price are provisional.
  */
 
-import { CN_CODES, type CnCode } from "@/data/tools/cbam-cn-codes";
+import {
+  certificatePrice,
+  cbamFactor,
+  cscf,
+  lookupBenchmark,
+  lookupDefault,
+  lookupGood,
+  markupFor,
+  type CbamSector,
+  type GoodInfo,
+} from "@/lib/cbam/official";
 
 export const DE_MINIMIS_TONNES = 50;
-export const DRAFT_VERSION = 1;
+export const DRAFT_VERSION = 2;
+const INDIRECT_SECTORS = new Set<CbamSector>(["cement", "fertilisers"]);
 
 export interface CbamLineInput {
   id: number;
@@ -40,7 +51,7 @@ export interface CbamLineResult {
   id: number;
   cnCode: string;
   cnMatch: string | null;
-  sector: CnCode["sector"] | null;
+  sector: CbamSector | null;
   supplierName: string;
   originCountry: string;
   installationId: string | null;
@@ -48,13 +59,25 @@ export interface CbamLineResult {
   unit: "t" | "MWh";
   directSee: number | null;
   indirectSee: number | null;
-  basis: "actual" | "default" | "mixed" | "unknown_cn";
+  basis: "actual" | "default" | "mixed" | "unknown_cn" | "no_default";
   directT: number;
   indirectT: number;
   embeddedT: number;
+  /** Where the default value came from, when one is used. */
+  defaultSource: null | { table: "country" | "other" | "unknown_origin"; tableName: string; total: number; exact: boolean };
+  markup: number;
+  route: string | null;
+  /** Free allocation per tonne (tCO2e/t), null when it cannot be worked out. */
+  sefa: number | null;
+  certificates: number | null;
+  priceEur: number | null;
+  priceQuarter: string | null;
+  priceProvisional: boolean;
+  costEur: number | null;
+  costExact: boolean;
 }
 
-export type IssueKind = "unknown_cn" | "default_values" | "no_installation" | "wrong_year";
+export type IssueKind = "unknown_cn" | "default_values" | "no_installation" | "wrong_year" | "no_default" | "short_cn";
 
 export interface CbamIssue {
   kind: IssueKind;
@@ -76,6 +99,12 @@ export interface CbamDraft {
     indirectT: number;
     embeddedT: number;
     defaultShare: number;
+    /** Sum of line certificates; lines without a figure are listed in costMissingLines. */
+    certificates: number;
+    costEur: number;
+    costMissingLines: number;
+    costProvisional: boolean;
+    costExact: boolean;
   };
   bySector: Array<{ sector: string; massTonnes: number; embeddedT: number }>;
   bySupplier: Array<{ supplierName: string; lines: number; embeddedT: number; defaultLines: number }>;
@@ -86,22 +115,9 @@ export interface CbamDraft {
 
 const digits = (code: string) => code.replace(/\D/g, "");
 
-/**
- * The table entry for a declared CN code. A longer declared code matches its
- * table heading ("7601 10 00" -> "7601"); a shorter one ("2523 29") matches a
- * longer table code only when exactly one entry fits.
- */
-export function lookupCn(code: string): CnCode | null {
-  const d = digits(code);
-  if (d.length < 4) return null;
-  let best: CnCode | null = null;
-  for (const entry of CN_CODES) {
-    const e = digits(entry.code);
-    if (d.startsWith(e) && (!best || e.length > digits(best.code).length)) best = entry;
-  }
-  if (best) return best;
-  const wider = CN_CODES.filter((entry) => digits(entry.code).startsWith(d));
-  return wider.length === 1 ? wider[0] : null;
+/** The official CBAM good for a declared CN code, or null when it is not a CBAM good. */
+export function lookupCn(code: string): GoodInfo | null {
+  return lookupGood(code);
 }
 
 const round = (n: number, dp = 4) => Math.round(n * 10 ** dp) / 10 ** dp;
@@ -109,28 +125,55 @@ const round = (n: number, dp = 4) => Math.round(n * 10 ** dp) / 10 ** dp;
 export function computeLine(line: CbamLineInput): CbamLineResult {
   const cn = lookupCn(line.cnCode);
   const unit = cn?.sector === "electricity" ? "MWh" : "t";
+  const year = Number(line.importDate.slice(0, 4));
+  const base = {
+    id: line.id, cnCode: line.cnCode, supplierName: line.supplierName, originCountry: line.originCountry,
+    installationId: line.installationId, netMass: line.netMass, unit,
+  } as const;
+  const none = { defaultSource: null, markup: 0, route: null, sefa: null, certificates: null, priceEur: null, priceQuarter: null, priceProvisional: false, costEur: null, costExact: false };
   if (!cn) {
-    return {
-      id: line.id, cnCode: line.cnCode, cnMatch: null, sector: null,
-      supplierName: line.supplierName, originCountry: line.originCountry,
-      installationId: line.installationId, netMass: line.netMass, unit,
-      directSee: null, indirectSee: null, basis: "unknown_cn",
-      directT: 0, indirectT: 0, embeddedT: 0,
-    };
+    return { ...base, cnMatch: null, sector: null, directSee: null, indirectSee: null, basis: "unknown_cn", directT: 0, indirectT: 0, embeddedT: 0, ...none };
   }
-  const direct = line.directSee ?? cn.defaultDirect;
-  const indirect = cn.indirectInScope ? (line.indirectSee ?? cn.defaultIndirect) : 0;
+  const indirectInScope = INDIRECT_SECTORS.has(cn.sector);
+  const needsDefault = line.directSee === null || (indirectInScope && line.indirectSee === null);
+  const dv = needsDefault ? lookupDefault(line.cnCode, line.originCountry) : null;
+
+  if (needsDefault && !dv && line.directSee === null) {
+    // Electricity (IEA-licensed factors not shipped) or a good with no published default.
+    return { ...base, cnMatch: cn.code, sector: cn.sector, directSee: null, indirectSee: null, basis: "no_default", directT: 0, indirectT: 0, embeddedT: 0, ...none };
+  }
+
+  // Default split: Annex I gives direct/indirect for information; the total is what counts.
+  const dvIndirect = dv && indirectInScope ? dv.indirect ?? 0 : 0;
+  const dvDirect = dv ? dv.total - dvIndirect : 0;
+  const direct = line.directSee ?? dvDirect;
+  const indirect = indirectInScope ? (line.indirectSee ?? dvIndirect) : 0;
   const directActual = line.directSee !== null;
-  const indirectActual = !cn.indirectInScope || line.indirectSee !== null;
-  const basis = directActual && indirectActual ? "actual" : !directActual && !indirectActual ? "default" : "mixed";
+  const indirectActual = !indirectInScope || line.indirectSee !== null;
+  const basis = directActual && indirectActual ? "actual" : !directActual && (!indirectInScope || !indirectActual) ? "default" : "mixed";
   const directT = round(line.netMass * direct);
   const indirectT = round(line.netMass * indirect);
+  const embeddedT = round(directT + indirectT);
+
+  // Certificates and cost.
+  const markup = basis === "actual" ? 0 : markupFor(year, cn.sector);
+  const defaultPartPerT = (directActual ? 0 : direct) + (indirectActual ? 0 : indirect);
+  const seeForCertificates = direct + indirect + defaultPartPerT * markup;
+  const route = dv?.route ?? null;
+  const factor = cscf(year);
+  const bm = cn.sector === "electricity" ? null : lookupBenchmark(line.cnCode, year, route, basis === "actual" ? "a" : "b");
+  const sefa = factor !== null && bm ? round(cbamFactor(year) * factor * bm.value, 6) : cn.sector === "electricity" ? 0 : null;
+  const certificates = sefa === null ? null : round(Math.max(0, line.netMass * (seeForCertificates - sefa)), 4);
+  const price = certificatePrice(line.importDate);
+  const costEur = certificates !== null && price ? Math.round(certificates * price.eur * 100) / 100 : null;
   return {
-    id: line.id, cnCode: line.cnCode, cnMatch: cn.code, sector: cn.sector,
-    supplierName: line.supplierName, originCountry: line.originCountry,
-    installationId: line.installationId, netMass: line.netMass, unit,
-    directSee: direct, indirectSee: cn.indirectInScope ? indirect : null, basis,
-    directT, indirectT, embeddedT: round(directT + indirectT),
+    ...base, cnMatch: cn.code, sector: cn.sector,
+    directSee: direct, indirectSee: indirectInScope ? indirect : null, basis, directT, indirectT, embeddedT,
+    defaultSource: dv ? { table: dv.table, tableName: dv.tableName, total: dv.total, exact: dv.exact } : null,
+    markup, route, sefa, certificates,
+    priceEur: price?.eur ?? null, priceQuarter: price?.quarter ?? null, priceProvisional: price?.provisional ?? false,
+    costEur,
+    costExact: Boolean(cn.exact && (bm?.exact ?? cn.sector === "electricity") && (!dv || dv.exact) && basis !== "actual"),
   };
 }
 
@@ -147,7 +190,23 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
     issues.push({
       kind: "unknown_cn",
       lineIds: unknown.map((l) => l.id),
-      message: `${unknown.length} line(s) have a CN code that is not a CBAM good in our table. Check the code or remove the line.`,
+      message: `${unknown.length} line(s) have a CN code that is not a CBAM good. Check the code or remove the line.`,
+    });
+  }
+  const noDefault = lines.filter((l) => l.basis === "no_default");
+  if (noDefault.length) {
+    issues.push({
+      kind: "no_default",
+      lineIds: noDefault.map((l) => l.id),
+      message: `${noDefault.length} line(s) have no EU default value we can use (for electricity, the official factors are licensed separately). Enter the supplier's actual value.`,
+    });
+  }
+  const short = lines.filter((l) => l.basis !== "unknown_cn" && l.basis !== "no_default" && l.sector !== "electricity" && digits(l.cnCode).length < 8);
+  if (short.length) {
+    issues.push({
+      kind: "short_cn",
+      lineIds: short.map((l) => l.id),
+      message: `${short.length} line(s) have a CN code shorter than 8 digits, which covers several goods. We used the highest default value and the lowest benchmark, so the cost is on the high side. Add the full 8-digit code.`,
     });
   }
   const wrongYear = input.filter((l) => !l.importDate.startsWith(String(year)));
@@ -174,7 +233,7 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
         kind: "default_values",
         lineIds: s.defaultLines,
         supplierName,
-        message: `${supplierName}: ${s.defaultLines.length} line(s) use indicative default values. Ask the supplier for actual embedded emissions per installation.`,
+        message: `${supplierName}: ${s.defaultLines.length} line(s) use EU default values (with a mark-up when buying certificates). Ask the supplier for actual embedded emissions per installation.`,
       });
     }
     if (s.noInst.length) {
@@ -207,7 +266,9 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
   // Only electricity/hydrogen importers are not covered by the mass threshold.
   const hasUncountedGoods = lines.some((l) => l.sector === "electricity" || l.sector === "hydrogen");
   const belowThreshold = massTonnesCounted < DE_MINIMIS_TONNES && !hasUncountedGoods;
-  const blocking = issues.some((i) => i.kind === "unknown_cn" || i.kind === "wrong_year");
+  const blocking = issues.some((i) => i.kind === "unknown_cn" || i.kind === "wrong_year" || i.kind === "no_default");
+  const priced = lines.filter((l) => l.costEur !== null);
+  const scoped = lines.filter((l) => l.basis !== "unknown_cn");
 
   return {
     version: DRAFT_VERSION,
@@ -222,6 +283,11 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
       indirectT,
       embeddedT,
       defaultShare: embeddedT > 0 ? round(defaultT / embeddedT, 4) : 0,
+      certificates: round(priced.reduce((a, l) => a + (l.certificates ?? 0), 0), 3),
+      costEur: Math.round(priced.reduce((a, l) => a + (l.costEur ?? 0), 0) * 100) / 100,
+      costMissingLines: scoped.length - priced.length,
+      costProvisional: priced.some((l) => l.priceProvisional),
+      costExact: priced.length > 0 && priced.every((l) => l.costExact),
     },
     bySector: [...sectorMap.entries()]
       .map(([sector, v]) => ({ sector, massTonnes: round(v.massTonnes, 3), embeddedT: round(v.embeddedT, 3) }))

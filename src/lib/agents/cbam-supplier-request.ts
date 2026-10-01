@@ -56,21 +56,24 @@ export function buildSupplierRequest(p: SupplierRequestInput): SupplierRequest {
   const replyBy = replyByFor(p.dueDate);
 
   // Group by CN code and installation so the supplier sees each product once.
-  const groups = new Map<string, { cn: string; installation: string | null; origin: string; mass: number; unit: string }>();
+  const groups = new Map<string, { cn: string; installation: string | null; origin: string; mass: number; unit: string; dflt: number | null; markup: number }>();
   for (const l of lines) {
     const key = `${l.cnCode}|${l.installationId ?? ""}|${l.originCountry}`;
-    const g = groups.get(key) ?? { cn: l.cnCode, installation: l.installationId, origin: l.originCountry, mass: 0, unit: l.unit };
+    const g = groups.get(key) ?? { cn: l.cnCode, installation: l.installationId, origin: l.originCountry, mass: 0, unit: l.unit, dflt: l.basis !== "actual" ? l.defaultSource?.total ?? null : null, markup: l.markup ?? 0 };
     g.mass += l.netMass;
     groups.set(key, g);
   }
   const goods = [...groups.values()].map(
-    (g) => `- CN ${g.cn}, from ${g.origin}, ${fmt(g.mass)} ${g.unit}, installation: ${g.installation ?? "not known to us"}`,
+    (g) =>
+      `- CN ${g.cn}, from ${g.origin}, ${fmt(g.mass)} ${g.unit}, installation: ${g.installation ?? "not known to us"}` +
+      (g.dflt !== null ? `. Without your data, the EU default is ${fmt(g.dflt)} tCO2e per tonne${g.markup ? `, plus a ${Math.round(g.markup * 100)}% mark-up on certificates` : ""}` : ""),
   );
 
   const asks: string[] = [];
   if (needsInstallation) asks.push("The name, address and unique identifier of each installation that produced these goods.");
   if (needsDirect) asks.push("The specific direct embedded emissions of each good, in tCO2e per tonne, with the reporting period they cover.");
   if (needsIndirect) asks.push("The specific indirect embedded emissions (cement and fertilisers), in tCO2e per tonne, and the electricity emission factor you used.");
+  if (needsDirect) asks.push("The production route of each good (for example blast furnace, electric arc furnace with scrap, primary or secondary aluminium).");
   asks.push("The monitoring method you used, and whether a verifier checked the values.");
   asks.push("Any carbon price you paid in the country of origin for these goods, if applicable.");
 
@@ -86,7 +89,7 @@ export function buildSupplierRequest(p: SupplierRequestInput): SupplierRequest {
     ...asks.map((a, i) => `${i + 1}. ${a}`),
     "",
     "You can reply to this email with the values, or attach the European Commission's communication template for installation operators.",
-    `Please reply by ${longDate(replyBy)}. Without your actual values, we must use the default values, which are usually higher.`,
+    `Please reply by ${longDate(replyBy)}. Without your actual values, we must use the EU default values above, which are usually higher than actual values.`,
     "",
     "Thank you,",
     importer,
