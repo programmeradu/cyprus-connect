@@ -136,10 +136,10 @@
 // ---------- Part 4 Lines ----------
 #pagebreak()
 #part("4", "Import lines", lede: "Every line in the declaration, with the value basis and the EU default table used where no supplier value was given.")
-#grid-table((14mm, 2.1fr, 1fr, 1.1fr, 1.5fr, 0.9fr, 0.9fr), (left, left, right, left, left, right, right),
+#grid-table((18mm, 2.1fr, 1fr, 1.1fr, 1.5fr, 0.9fr, 0.9fr), (left, left, right, left, left, right, right),
   ("CN code", "Supplier · origin", "Net mass", "Basis", "Default used", "tCO₂e", "Cost"),
   d.lines.map(l => (
-    text(font: mono, size: 7.5pt, fill: ink)[#l.cn],
+    box(text(font: mono, size: 7.3pt, fill: ink)[#l.cn.replace(" ", "\u{00A0}")]),
     [#l.supplier · #l.origin #if l.inst != "" [\ #text(size: 6.8pt, fill: quiet, font: mono)[#l.inst]]],
     [#l.mass],
     text(fill: tone-c(l.basisTone), weight: 500)[#l.basis],
@@ -185,7 +185,7 @@
   block(stroke: 1pt + ink, inset: 8pt, width: 100%, height: 34mm)[
     #text(size: 6.8pt, fill: quiet)[#box(fill: ink, inset: (x: 2.5pt, y: 1pt), text(fill: white, weight: 600, size: 6pt)[10]) #h(3pt) Document fingerprint (SHA-256)]
     #v(4pt)
-    #text(font: mono, size: 7pt, fill: ink)[#d.hash]
+    #text(font: mono, size: 7pt, fill: ink)[#d.hash.clusters().chunks(4).map(c => c.join()).join(" ")]
     #v(2pt)
     #text(size: 6.8pt, fill: quiet)[Proves the figures are unchanged since export. Not a legal electronic signature.]
   ],

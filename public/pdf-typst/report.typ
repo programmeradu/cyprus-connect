@@ -122,8 +122,11 @@
 #pagebreak()
 
 #for (i, c) in d.chapters.enumerate() [
-  #chapter(c.n, c.title, i == 0)
-  #for p in c.paras [#p #parbreak()]
+  #block(breakable: false)[
+    #chapter(c.n, c.title, i == 0)
+    #if c.paras.len() > 0 and c.paras.at(0).len() < 900 [#c.paras.at(0)]
+  ]
+  #for (j, p) in c.paras.enumerate() { if j > 0 or c.paras.at(0).len() >= 900 [#p #parbreak()] }
   #if c.figures.len() > 0 {
     v(4pt)
     datatable((2.4fr, 1.3fr, 2.6fr), (left, right, left), ("Figure", "Value", "Source"),
