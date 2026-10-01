@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
+import { useState, useEffect } from "react";
+import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -14,15 +14,14 @@ import {
 } from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { isQaClient } from "@/lib/qa-bypass";
-import { DEFAULT_JURISDICTIONS, type AuditLog, type ComplianceDocument, type Regulation, type Settings } from "@/components/app/compliance/types";
+import { DEFAULT_JURISDICTIONS, type AuditLog, type ComplianceDocument, type Settings } from "@/components/app/compliance/types";
 import { OverviewTab } from "@/components/app/compliance/OverviewTab";
 import { EuFeedPanel } from "@/components/app/console/EuFeedPanel";
-import { RegulationsTab } from "@/components/app/compliance/RegulationsTab";
 import { DocumentsTab } from "@/components/app/compliance/DocumentsTab";
 import { AuditTab } from "@/components/app/compliance/AuditTab";
 import { SettingsTab } from "@/components/app/compliance/SettingsTab";
 
-type TabType = "overview" | "regulations" | "documents" | "audit" | "settings";
+type TabType = "overview" | "documents" | "audit" | "settings";
 
 export default function CompliancePage() {
   const t = useTranslations("dashboard.compliance");
@@ -47,35 +46,20 @@ export default function CompliancePage() {
     }
   }, [session, isPending, router]);
 
-  // Make sure this account has its Cyprus/EU framework rows (idempotent), then read the shared records.
-  const [ready, setReady] = useState(false);
-  const [initError, setInitError] = useState<string | null>(null);
-  const initializeCompliance = useCallback(async () => {
-    setInitError(null);
-    try {
-      await workspaceRequest("/api/compliance/regulations/init", { method: "POST" });
-      setReady(true);
-    } catch {
-      setInitError(t("toasts.initFailed"));
-    }
-  }, [t]);
-  useEffect(() => {
-    if (signedIn && !ready) void initializeCompliance();
-  }, [signedIn, ready, initializeCompliance]);
-
+  // Deadlines come from the shared rulebook (/api/console/obligations); this
+  // reads the drafted documents and settings.
+  const ready = signedIn;
   const data = useWorkspaceResource<{
     score?: number | null;
-    regulations?: Regulation[];
     documents?: ComplianceDocument[];
     settings?: Partial<Settings> | null;
   }>(ready ? "/api/compliance/data" : null);
   const logs = useWorkspaceResource<{ logs?: AuditLog[] }>(ready ? "/api/compliance/audit-logs" : null);
 
-  const regulations = data.data?.regulations ?? [];
   const documents = data.data?.documents ?? [];
   const auditLogs = logs.data?.logs ?? [];
-  const loading = !ready && !initError ? true : data.loading;
-  const pageError = initError ?? (data.error ? t("toasts.fetchFailed") : null);
+  const loading = data.loading;
+  const pageError = data.error ? t("toasts.fetchFailed") : null;
 
   useEffect(() => {
     const saved = data.data?.settings;
@@ -116,7 +100,6 @@ export default function CompliancePage() {
 
   const tabs: { value: TabType; label: string }[] = [
     { value: "overview", label: t("tabs.overview") },
-    { value: "regulations", label: t("tabs.regulations") },
     { value: "documents", label: t("tabs.documents") },
     { value: "audit", label: t("tabs.audit") },
     { value: "settings", label: t("tabs.settings") }
@@ -127,7 +110,7 @@ export default function CompliancePage() {
       signedOut={!qa && !isPending && !signedIn}
       loading={(!qa && isPending) || (signedIn && loading)}
       error={pageError}
-      onRetry={initError ? initializeCompliance : data.reload}
+      onRetry={data.reload}
       header={
         <PageHeader
           title={t("title")}
@@ -148,8 +131,7 @@ export default function CompliancePage() {
           onOpenDocuments={() => setActiveTab("documents")}
         />
       )}
-      {(activeTab === "overview" || activeTab === "regulations") && <EuFeedPanel source="eurlex" />}
-      {activeTab === "regulations" && <RegulationsTab regulations={regulations} />}
+      {activeTab === "overview" && <EuFeedPanel source="eurlex" />}
       {activeTab === "documents" && (
         <DocumentsTab documents={documents} onGenerate={handleGenerateReport} generating={generating} />
       )}
