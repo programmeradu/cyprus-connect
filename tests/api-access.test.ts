@@ -13,6 +13,7 @@ describe("isPublicApi", () => {
     "/api/auth/config",
     "/api/cron/grant-alerts",
     "/api/climate-trace/sectors",
+    "/api/logo",
   ])("allows %s", (p) => expect(isPublicApi(p)).toBe(true));
 
   it.each([

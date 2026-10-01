@@ -24,6 +24,7 @@ export const PUBLIC_API_PREFIXES = [
   "/api/climate-trace/",
   "/api/grant-alerts/subscribe",
   "/api/gemini/stream", // marketing assistant; rate-limited in the route
+  "/api/logo", // cached company logo proxy; returns public image or 404
 ] as const;
 
 /** Tools that only admins run; closed on the published site. */
