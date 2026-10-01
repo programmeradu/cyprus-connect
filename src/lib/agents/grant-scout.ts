@@ -2,13 +2,10 @@
  * Grant scout (agent "grants"). Deterministic, no AI cost per company: the AI
  * reads each call's rules once in the daily scan; this agent checks them
  * against the company, keeps only strong fits, and asks for the facts that
- * would confirm calls one answer away. Open questions about facts that are
- * now on file are closed.
+ * would confirm calls one answer away. Questions about facts now on file are
+ * closed by check_funding_fit.
  */
 
-import { and, eq, like } from "drizzle-orm";
-import { db } from "@/db";
-import { agentTasks } from "@/db/schema";
 import type { AgentRuntime } from "./runtime";
 
 export async function runGrantScout(rt: AgentRuntime) {
@@ -20,18 +17,6 @@ export async function runGrantScout(rt: AgentRuntime) {
   for (const f of facts) {
     const r = await rt.call("ask_company_fact", { fact: f.fact, opportunityIds: f.opportunityIds.slice(0, 50), titles: f.titles.slice(0, 50) });
     if (r.decision === "executed" && r.output?.created) asked += 1;
-  }
-
-  // Close questions whose fact is no longer missing on any shown call.
-  const stillMissing = new Set(facts.map((f) => `answer_fact:${f.fact}`));
-  const open = await db
-    .select({ id: agentTasks.id, pendingTool: agentTasks.pendingTool })
-    .from(agentTasks)
-    .where(and(eq(agentTasks.workspaceId, rt.ctx.workspaceId), eq(agentTasks.status, "open"), like(agentTasks.pendingTool, "answer_fact:%")));
-  for (const t of open) {
-    if (!stillMissing.has(t.pendingTool ?? "")) {
-      await db.update(agentTasks).set({ status: "resolved", result: "No longer needed" }).where(eq(agentTasks.id, t.id));
-    }
   }
 
   return {

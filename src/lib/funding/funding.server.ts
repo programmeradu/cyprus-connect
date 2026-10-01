@@ -4,9 +4,9 @@
  * whose rules have been read, and stores one verdict per call.
  */
 
-import { and, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, isNull, like, or, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { fundingMatches, grantOpportunities, user, workspaces } from "@/db/schema";
+import { agentTasks, fundingMatches, grantOpportunities, user, workspaces } from "@/db/schema";
 import { checkFit, yearsSince } from "./match";
 import { FACT_LABEL, sectorOf, type BusinessPicture, type FactKey, type RuleCheck, type Verdict } from "./rules";
 
@@ -90,6 +90,19 @@ export async function refreshFundingMatches(workspaceId: string): Promise<Refres
         set: { verdict: fit.verdict, met: fit.met, missing: fit.missing, failed: fit.failed, rulesHash: c.rulesHash, checkedAt: now },
       });
   }
+  // Questions whose fact no longer blocks any shown call are closed now, so
+  // answering one clears it from the queue straight away.
+  const stillMissing = new Set([...facts.keys()].map((f) => `answer_fact:${f}`));
+  const open = await db
+    .select({ id: agentTasks.id, pendingTool: agentTasks.pendingTool })
+    .from(agentTasks)
+    .where(and(eq(agentTasks.workspaceId, workspaceId), eq(agentTasks.status, "open"), like(agentTasks.pendingTool, "answer_fact:%")));
+  for (const t of open) {
+    if (!stillMissing.has(t.pendingTool ?? "")) {
+      await db.update(agentTasks).set({ status: "resolved", result: "Answered" }).where(eq(agentTasks.id, t.id));
+    }
+  }
+
   return {
     checked: calls.length,
     strong,
