@@ -24,6 +24,7 @@ import { greetingFor, titleCase } from "@/components/app/dashboard/overview/shar
 import { exportFileName } from "@/components/app/console/export-csv";
 import { WaitingForYou } from "@/components/app/dashboard/home/WaitingForYou";
 import { SetupChecklist } from "@/components/app/dashboard/home/SetupChecklist";
+import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
 import { FirstVisitTour } from "@/components/app/dashboard/home/FirstVisitTour";
 import { AgentsDidPlate, MoneyPlate, NextDeadlinePlate, WhatChangedPlate } from "@/components/app/dashboard/home/HomePlates";
 
@@ -143,7 +144,7 @@ export default function ConsolePage() {
               </div>
 
               <Link href={"/app/agents" as never} className="vc-add-agent" aria-label={t("workforceAria")}>
-                <span className="vc-add-agent-dot" aria-hidden="true" />
+                <VuneliAiIcon size={16} brand className="vc-add-agent-icon" />
                 <span className="vc-add-agent-label">{t("workforce")}</span>
                 <svg className="vc-add-agent-arrow" viewBox="0 0 16 16" aria-hidden="true">
                   <path d="M3.5 8h8M8 4.5 11.5 8 8 11.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
