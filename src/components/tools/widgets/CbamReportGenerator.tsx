@@ -23,7 +23,7 @@ import {
 import officialDefaults from "@/data/cbam/widget-defaults.json";
 
 /** Official EU default values (IR 2025/2621 as corrected by 2026/1740): [direct, indirect, table]. */
-const OFFICIAL = officialDefaults as Record<string, Record<string, [number, number, string]>>;
+const OFFICIAL = officialDefaults as unknown as Record<string, Record<string, [number, number, string]>>;
 
 type Props = { locale: Locale };
 
