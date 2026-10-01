@@ -788,6 +788,32 @@
         "draft": "Draft it",
         "redraft": "Draft again",
         "openDrafts": "See drafts"
+      },
+      "deadlines": {
+        "ongoing": "Ongoing, no single date",
+        "source": "Official source",
+        "addedByPerson": "Added by your team",
+        "underReview": "Law changed: under review",
+        "yes": "Yes",
+        "no": "No",
+        "addFacts": "Add staff and revenue",
+        "uploadBills": "Upload bills",
+        "appliesLabel": "Apply to you",
+        "appliesNote": "Worked out from your company facts",
+        "next90": "Next 90 days",
+        "mightLabel": "Need one answer",
+        "mightNote": "Answer to confirm or rule out",
+        "appliesTitle": "Deadlines that apply to you",
+        "appliesDescription": "Each one shows why it applies and the law behind it.",
+        "noneTitle": "No legal deadlines apply yet",
+        "noneBody": "Based on what we know about your company. Answer the questions below to be sure.",
+        "mightTitle": "Might apply",
+        "mightDescription": "One answer settles each of these.",
+        "notTitle": "Checked and not applicable ({count})",
+        "showWhy": "Show why each doesn't apply",
+        "voluntaryTitle": "Voluntary reports",
+        "voluntaryDescription": "No legal deadline. Banks and large customers often ask for the voluntary SME standard (VSME).",
+        "checkedAt": "Checked against the rulebook {date}. Laws are watched daily on EUR-Lex."
       }
     },
     "insights": {
@@ -2457,7 +2483,9 @@
         "hospitality": "Hospitality",
         "healthcare": "Healthcare",
         "finance": "Finance"
-      }
+      },
+      "yes": "Yes",
+      "no": "No"
     },
     "deadline": {
       "title": "Next deadline",

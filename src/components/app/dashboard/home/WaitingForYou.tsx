@@ -101,7 +101,13 @@ const FACT_QUESTION: Record<string, { en: string; el: string }> = {
   country: { en: "Which country is the company registered in?", el: "Σε ποια χώρα είναι εγγεγραμμένη η εταιρεία;" },
   sector: { en: "Which industry is the company in?", el: "Σε ποιον κλάδο δραστηριοποιείται η εταιρεία;" },
   company_age: { en: "When was the company registered?", el: "Πότε εγγράφηκε η εταιρεία;" },
+  cbam_goods: { en: "Do you import steel, aluminium, cement, fertilisers, hydrogen or electricity from outside the EU?", el: "Εισάγετε χάλυβα, αλουμίνιο, τσιμέντο, λιπάσματα, υδρογόνο ή ηλεκτρική ενέργεια από χώρες εκτός ΕΕ;" },
+  eudr_goods: { en: "Do you sell or export products made from cattle, cocoa, coffee, palm oil, rubber, soya or wood?", el: "Πουλάτε ή εξάγετε προϊόντα από βοοειδή, κακάο, καφέ, φοινικέλαιο, καουτσούκ, σόγια ή ξύλο;" },
+  consumer_claims: { en: "Do you sell to consumers with environmental claims or labels (for example 'eco', 'green', 'carbon neutral')?", el: "Πουλάτε σε καταναλωτές με περιβαλλοντικούς ισχυρισμούς ή σήματα (π.χ. «οικολογικό», «πράσινο», «ουδέτερο ως προς τον άνθρακα»);" },
 };
+
+/** Yes/no deadline facts and the company field each answer saves to. */
+const YES_NO: Record<string, string> = { cbam_goods: "importsCbamGoods", eudr_goods: "eudrCommodities", consumer_claims: "consumerClaims" };
 
 const INDUSTRIES = ["technology", "retail", "manufacturing", "hospitality", "healthcare", "finance"] as const;
 
@@ -113,6 +119,19 @@ function FactAnswer({ fact, disabled, onError }: { fact: string; disabled: boole
 
   if (fact === "company_age") {
     return <Link href="/app/settings" className="vch-btn" data-kind="primary">{t("lookUpRegistry")}</Link>;
+  }
+
+  if (YES_NO[fact]) {
+    const save = async (yes: boolean) => {
+      const ok = await run("/api/console/company", { method: "PATCH", body: { [YES_NO[fact]]: yes }, invalidates: ["/api/console/company", "/api/console/obligations", "/api/console/overview"] });
+      if (!ok) onError(t("failed"));
+    };
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        <button type="button" className="vch-btn" data-kind="primary" disabled={disabled || busy} onClick={() => save(true)}>{t("yes")}</button>
+        <button type="button" className="vch-btn" disabled={disabled || busy} onClick={() => save(false)}>{t("no")}</button>
+      </div>
+    );
   }
 
   const submit = async (e: React.FormEvent) => {

@@ -23,6 +23,10 @@ export interface CompanyRecord {
   country: string;
   sites: number;
   revenueEur: number | null;
+  /** Deadline facts; null = not answered yet. */
+  importsCbamGoods: boolean | null;
+  eudrCommodities: boolean | null;
+  consumerClaims: boolean | null;
   baselineYear: number;
   framework: string;
   /** Cyprus Registrar of Companies link, set only from the register. */
@@ -67,6 +71,9 @@ export const CompanyPatch = z
     sites: z.number().int().min(1, "A company has at least one site.").max(10_000).optional(),
     revenueEur: z.number().finite().min(0, "Revenue cannot be negative.").max(1e13).nullable().optional(),
     employees: z.number().int().min(1, "A company has at least one person.").max(1_000_000).nullable().optional(),
+    importsCbamGoods: z.boolean().nullable().optional(),
+    eudrCommodities: z.boolean().nullable().optional(),
+    consumerClaims: z.boolean().nullable().optional(),
   })
   .strict();
 
@@ -85,6 +92,9 @@ export const COMPANY_LABELS: Record<string, string> = {
   sites: "number of sites",
   revenueEur: "yearly revenue",
   employees: "number of employees",
+  importsCbamGoods: "CBAM imports",
+  eudrCommodities: "deforestation-rule products",
+  consumerClaims: "green claims to consumers",
 };
 
 export async function readCompany(accountId: string, workspaceId: string): Promise<CompanyRecord> {
@@ -95,7 +105,7 @@ export async function readCompany(accountId: string, workspaceId: string): Promi
       .where(eq(user.id, accountId))
       .limit(1),
     db
-      .select({ sites: workspaces.sites, revenueEur: workspaces.revenueEur, employeesExact: workspaces.employeesExact, baselineYear: workspaces.baselineYear, framework: workspaces.framework, country: workspaces.country,
+      .select({ sites: workspaces.sites, revenueEur: workspaces.revenueEur, employeesExact: workspaces.employeesExact, importsCbamGoods: workspaces.importsCbamGoods, eudrCommodities: workspaces.eudrCommodities, consumerClaims: workspaces.consumerClaims, baselineYear: workspaces.baselineYear, framework: workspaces.framework, country: workspaces.country,
         registrationNo: workspaces.registrationNo, registryType: workspaces.registryType, registryName: workspaces.registryName,
         registryStatus: workspaces.registryStatus, registryRegisteredOn: workspaces.registryRegisteredOn,
         registryAddress: workspaces.registryAddress, registryCheckedAt: workspaces.registryCheckedAt })
@@ -113,6 +123,9 @@ export async function readCompany(accountId: string, workspaceId: string): Promi
     country: (p?.country || w?.country || "CY").toUpperCase(),
     sites: w?.sites ?? 1,
     revenueEur: w?.revenueEur ?? null,
+    importsCbamGoods: w?.importsCbamGoods ?? null,
+    eudrCommodities: w?.eudrCommodities ?? null,
+    consumerClaims: w?.consumerClaims ?? null,
     baselineYear: w?.baselineYear ?? new Date().getFullYear(),
     framework: w?.framework ?? "VSME",
     registry: w?.registrationNo
@@ -165,6 +178,9 @@ export async function applyCompanyPatch(input: {
     if (body.revenueEur !== undefined) ws.revenueEur = body.revenueEur;
     if (body.employees !== undefined) ws.employeesExact = body.employees;
     else if (body.teamSize !== undefined) ws.employeesExact = null;
+    if (body.importsCbamGoods !== undefined) ws.importsCbamGoods = body.importsCbamGoods;
+    if (body.eudrCommodities !== undefined) ws.eudrCommodities = body.eudrCommodities;
+    if (body.consumerClaims !== undefined) ws.consumerClaims = body.consumerClaims;
     if (Object.keys(ws).length) await tx.update(workspaces).set(ws).where(eq(workspaces.id, workspaceId));
     await tx.insert(activityEvents).values({
       workspaceId,
@@ -186,6 +202,16 @@ export async function applyCompanyPatch(input: {
       await enqueue({ workspaceId, agentKey: "grants", trigger: "event", idempotencyKey: `grants:${workspaceId}:company:${Date.now()}` });
     } catch {
       // The daily Grant scout run catches up.
+    }
+  }
+
+  // Facts that decide which deadlines apply: re-match right away.
+  if (changed.some((k) => ["teamSize", "revenueEur", "employees", "importsCbamGoods", "eudrCommodities", "consumerClaims"].includes(k))) {
+    try {
+      const { refreshObligations } = await import("@/lib/obligations/obligations.server");
+      await refreshObligations(workspaceId);
+    } catch {
+      // The daily Deadline keeper run catches up.
     }
   }
 

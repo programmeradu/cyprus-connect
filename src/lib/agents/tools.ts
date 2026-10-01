@@ -24,6 +24,7 @@ import { sendEmail } from "@/lib/email/send";
 import type { RiskLevel } from "./policy";
 import { INTEGRATION_TOOLS } from "./tools-integrations";
 import { FUNDING_TOOLS } from "./tools-funding";
+import { OBLIGATION_TOOLS } from "./tools-obligations";
 
 export interface ToolContext {
   workspaceId: string;
@@ -399,6 +400,7 @@ export const TOOLS = {
   send_supplier_request: sendSupplierRequest,
   ...INTEGRATION_TOOLS,
   ...FUNDING_TOOLS,
+  ...OBLIGATION_TOOLS,
 } as const;
 
 export type ToolName = keyof typeof TOOLS;

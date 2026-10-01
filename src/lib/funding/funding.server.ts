@@ -97,7 +97,10 @@ export async function refreshFundingMatches(workspaceId: string): Promise<Refres
     .select({ id: agentTasks.id, pendingTool: agentTasks.pendingTool })
     .from(agentTasks)
     .where(and(eq(agentTasks.workspaceId, workspaceId), eq(agentTasks.status, "open"), like(agentTasks.pendingTool, "answer_fact:%")));
+  const fundingFacts = new Set(Object.keys(FACT_LABEL).map((f) => `answer_fact:${f}`));
   for (const t of open) {
+    // Deadline questions share the prefix; they are closed by the deadline matcher.
+    if (!fundingFacts.has(t.pendingTool ?? "")) continue;
     if (!stillMissing.has(t.pendingTool ?? "")) {
       await db.update(agentTasks).set({ status: "resolved", result: "Answered" }).where(eq(agentTasks.id, t.id));
     }
