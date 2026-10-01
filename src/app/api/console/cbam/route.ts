@@ -88,7 +88,7 @@ export async function GET(req: Request) {
     year,
     years,
     lines,
-    suppliers: suppliers.map((c) => ({ supplierName: c.supplierName, email: c.email, contactName: c.contactName })),
+    suppliers: suppliers.flatMap((c) => (c.email ? [c] : [])).map((c) => ({ supplierName: c.supplierName, email: c.email as string, contactName: c.contactName })),
     declarant: { ...who, replyToEmail: declarant?.replyToEmail ?? null },
     requests,
     pendingEmails,

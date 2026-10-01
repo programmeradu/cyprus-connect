@@ -223,3 +223,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## 2026-10-01 — Funding inside the Action plan
 - The hourly funding scan now runs only when `CRON_SECRET` is set in Cloudflare (the old built-in fallback key was public and has been removed). Set it if you have not.
 - Funding no longer needs `SUPABASE_SERVICE_ROLE_KEY`; nothing new to add.
+
+## Suppliers page (added 1 Oct 2026)
+- Run `scripts/sql/0028_suppliers.sql` on the live database before deploying (makes supplier email optional, adds register/WikiRate/bank columns). Already applied on the preview database.
+- Spend per supplier appears only once the live bank connection is working (see Bank of Cyprus callback above).

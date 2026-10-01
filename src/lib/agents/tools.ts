@@ -316,7 +316,7 @@ export const readCbamSuppliers = tool({
       }
     });
     return {
-      contacts: contacts.map((c) => ({ supplierName: c.supplierName, email: c.email, contactName: c.contactName })),
+      contacts: contacts.flatMap((c) => (c.email ? [{ supplierName: c.supplierName, email: c.email, contactName: c.contactName }] : [])),
       importerName: declarant?.legalName ?? null,
       replyTo: declarant?.replyToEmail ?? null,
       lastSent,
