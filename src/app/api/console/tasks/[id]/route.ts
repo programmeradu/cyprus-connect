@@ -3,7 +3,7 @@ import { readJson } from "@/lib/validate";
 import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { activityEvents, agentTasks, user as userTable, workspaces } from "@/db/schema";
+import { activityEvents, agentTasks, reports, user as userTable, workspaces } from "@/db/schema";
 import { bindSessionUser } from "@/lib/api-auth";
 import { executeApprovedTask, reopenTask } from "@/lib/agents/approvals";
 
@@ -107,5 +107,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return NextResponse.json({ id: result.id, status, acted: true, result: outcome.output });
     }
   }
-  return NextResponse.json({ id: result.id, status });
+  // A review of a drafted document: approving marks the draft reviewed, and the
+  // answer says where the document lives so the person is never left guessing.
+  const [draft] = await db
+    .select({ id: reports.id, title: reports.title })
+    .from(reports)
+    .where(and(eq(reports.taskId, result.id), eq(reports.workspaceId, ws.id)))
+    .limit(1);
+  if (draft && decision === "approve") {
+    await db.update(reports).set({ status: "in_review", updatedAt: new Date() }).where(eq(reports.id, draft.id));
+  }
+  return NextResponse.json({
+    id: result.id,
+    status,
+    deliverable: draft ? { href: `/app/reports/${draft.id}`, title: draft.title } : null,
+  });
 }

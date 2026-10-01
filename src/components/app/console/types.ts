@@ -83,6 +83,9 @@ export interface ConsoleTask {
   status: string;
   dueAt: string | null;
   createdAt: string;
+  /** The document this task came with (for example a drafted VSME report). */
+  deliverableHref?: string | null;
+  deliverableTitle?: string | null;
 }
 
 export interface ConsoleConnection {
