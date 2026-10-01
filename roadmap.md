@@ -182,3 +182,11 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Verde: deliverable layouts via json-render catalogue (deferred: fixed cards cover current documents)
 - [ ] Verde: update fixed answer tests (scripts/verde-eval.ts) to the tool-based prompt
 - [ ] Live: run migration 0040_copilot_parts.sql
+
+## Add data: one place to drop any document (2026-10-02)
+- [x] Homepage line "Made in Cyprus, ready for Europe" (EN/EL)
+- [x] Add data page: drop zone, recognises EAC/water bills, bank statements (CSV/Excel/PDF), invoices, usage sheets; rejects the rest with a reason; figures confirmed per month before saving
+- [x] Home "Got a bill or a statement?" card; task Upload buttons open a file picker; setup checklist points to Add data
+- [ ] Bank statement payees into the Suppliers list (shown on the card today, not yet saved as suppliers)
+- [ ] Other cities' water boards and other utilities (to discuss)
+- [ ] Signed-in check of Add data on vuneli.com with a real bill and statement

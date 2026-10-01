@@ -609,8 +609,8 @@
       }
     },
     "calculator": {
-      "title": "Monthly footprint",
-      "subtitle": "Record one month of energy, water, waste and travel. The footprint is worked out and shows on the dashboard at once.",
+      "title": "Add data",
+      "subtitle": "Drop a bill, statement or spreadsheet and we'll read it for you, or type a month's figures in yourself.",
       "subtitleShort": "Record your monthly carbon footprint",
       "form": {
         "title": "Record a month",
@@ -1551,6 +1551,110 @@
       "sanClearMsg": "{name}: no match on sanctions lists.",
       "sanMatchMsg": "{name}: possible sanctions match. Review the records before you pay or sign.",
       "sanNotConnected": "The EU sanctions list is still downloading. Try again in a few minutes."
+    },
+    "intake": {
+      "drop": {
+        "title": "Drop any document here",
+        "body": "Electricity and water bills, bank statements, fuel or waste invoices, or a spreadsheet of usage. We check what each one is, show you the figures and the line they came from, and add nothing until you say so.",
+        "choose": "Choose files",
+        "types": "PDF, photo (PNG, JPG, WebP), CSV or Excel. Up to 10 MB each, 10 at a time."
+      },
+      "tooMany": "You can add up to {max} files at a time. The rest were left out.",
+      "status": {
+        "reading": "Reading",
+        "rejected": "Not accepted",
+        "error": "Could not read",
+        "saved": "Added",
+        "discarded": "Discarded"
+      },
+      "readingBody": "Working out what this document is and what it says. This can take up to a minute.",
+      "kinds": {
+        "eac_bill": "EAC electricity bill",
+        "water_bill": "Water bill",
+        "bank_statement": "Bank statement",
+        "utility_invoice": "Utility invoice",
+        "fuel_receipt": "Fuel receipt",
+        "waste_invoice": "Waste invoice",
+        "consumption_sheet": "Usage spreadsheet"
+      },
+      "by": {
+        "code": "Recognised from its layout",
+        "ai": "Recognised by the reader"
+      },
+      "reject": {
+        "unsupported": "This file type can't be read. Use a PDF, a photo, a CSV or an Excel file.",
+        "scanned_pdf": "This PDF is a scanned picture with no text in it, and the reader for scanned files isn't switched on yet. Take a photo of the page and upload that instead.",
+        "not_relevant": "This doesn't look like something that feeds your footprint. We accept energy, water, fuel and waste bills or invoices, bank statements and usage spreadsheets.",
+        "no_figures": "We recognised the document but couldn't find a quantity with dates on it, like kWh, m³, kg or km. Money amounts alone aren't enough.",
+        "fuel_only": "This fuel receipt shows litres, but your footprint records car travel in kilometres. Enter the distance driven in the form below instead.",
+        "unreadable": "We couldn't read the figures clearly enough to trust them, so nothing was taken from it. A sharper scan or the original PDF usually works.",
+        "sheet_no_dates": "The spreadsheet has usage columns but no date or month column, so we can't tell which month each figure belongs to. Add a date or month column and upload it again.",
+        "bank_image": "Bank statements need to be the PDF or CSV export from your bank, not a photo, so every payment can be checked.",
+        "reader_off": "The document reader isn't set up on this site yet. You can still type figures in below.",
+        "seen": "What we saw: {detail}"
+      },
+      "warnings": {
+        "already_uploaded": "This bill is already on file. Its figures start unticked so nothing is counted twice.",
+        "period_not_ended": "Part of the billing period falls in a month that hasn't ended yet. That part is left out for now.",
+        "unverified_quote": "Some figures couldn't be matched word for word in the document. They start unticked. Check them against the document before you add them.",
+        "unit_dropped": "Some figures were in a unit we can't use for that line, so they were left out.",
+        "fuel_litres": "Fuel litres were found but aren't added, because car travel is recorded in kilometres.",
+        "spend_not_usage": "A bank statement shows money spent, not energy or water used, so it doesn't change your footprint figures. It's kept as evidence: these payments are matched to the bills you upload, and the payees help fill your suppliers list."
+      },
+      "review": {
+        "readFrom": "What the document says",
+        "quoteFound": "Found word for word in the document",
+        "readByCode": "Read and checked by the bill reader",
+        "checkByEye": "Couldn't be matched in the text. Check this by eye",
+        "toAdd": "Figures to add, by month",
+        "partMonth": "part of the month",
+        "valueFor": "{field} for {month}",
+        "already": "Already recorded: {value}",
+        "modeAdd": "Add to it",
+        "modeReplace": "Replace it",
+        "noClosedMonth": "None of the figures fall in a month that has ended, so there's nothing to add yet."
+      },
+      "bank": {
+        "period": "{count} payments out between {from} and {to}.",
+        "count": "{count} payments out.",
+        "none": "None of the payments matched electricity, fuel, water or freight.",
+        "payees": "Payees that matter for your footprint",
+        "times": "{count, plural, one {# payment} other {# payments}}",
+        "cat": {
+          "electricity": "Electricity",
+          "fuel": "Fuel",
+          "water": "Water",
+          "freight": "Freight and courier"
+        }
+      },
+      "actions": {
+        "add": "{count, plural, one {Add # figure} other {Add # figures}}",
+        "keep": "Keep as evidence",
+        "saving": "Saving…",
+        "discard": "Discard",
+        "clear": "Clear"
+      },
+      "saved": {
+        "figures": "{count, plural, one {Added to # month.} other {Added to # months.}} Home, your footprint and the agents see it now.",
+        "evidence": "Kept as evidence. Verde and the agents can use it.",
+        "duplicate": "This bill was already on file, so the earlier copy was kept.",
+        "home": "Back to Home",
+        "footprint": "See your footprint"
+      },
+      "discardedBody": "Discarded. Nothing was kept.",
+      "toasts": {
+        "added": "{count, plural, one {Figures added to # month.} other {Figures added to # months.}}",
+        "kept": "Document kept."
+      },
+      "errors": {
+        "generic": "That didn't work. Please try again."
+      },
+      "manualTitle": "Or type figures in",
+      "home": {
+        "title": "Got a bill or a statement?",
+        "body": "Drop it here or choose a file. We'll read it and show you what we found before anything is added.",
+        "cta": "Add data"
+      }
     }
   },
   "onboarding": {
@@ -2351,8 +2455,8 @@
     "road3Year": "2028",
     "road3Title": "Kept up to date on its own",
     "road3Body": "Supplier details, deadlines and funding stay current without you lifting a finger. When a task needs a licensed expert, we bring one in.",
-    "whyLocalTitle": "Made in Cyprus, for Cyprus",
-    "whyLocalDesc": "Vuneli knows EAC bills, the Cyprus power grid and the EU rules that apply here. And it works in Greek just as well as in English."
+    "whyLocalTitle": "Made in Cyprus, ready for Europe",
+    "whyLocalDesc": "Vuneli starts with what Cypriot businesses deal with every day: EAC and water bills, the island's power grid and its own deadlines. It follows the EU rules too, like VSME, CBAM and EUDR, so the same work holds up when a buyer or bank elsewhere in Europe asks. And it works in Greek just as well as in English."
   },
   "vision": {
     "badge": "Vision and roadmap, October 2026",
@@ -2546,9 +2650,9 @@
         "verde": "Which data source should I connect first for my company, and how?"
       },
       "figures": {
-        "title": "Add your first month of figures",
-        "why": "Electricity, fuel or spend for one month is enough to start.",
-        "cta": "Add figures",
+        "title": "Add your first bill or month of figures",
+        "why": "Drop an electricity or water bill, a bank statement or a spreadsheet, or type one month in. One month is enough to start.",
+        "cta": "Add data",
         "verde": "Help me log my first month of figures. Last month we used "
       },
       "suppliers": {

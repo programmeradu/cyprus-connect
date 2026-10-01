@@ -12,6 +12,7 @@ const EXEMPT: Record<string, string> = {
   "bank/sync/route.ts": "bank.server.ts records activity",
   "bank/disconnect/route.ts": "bank.server.ts records activity",
   "integrations/bill-inbox/route.ts": "bill-inbox.server.ts records activity",
+  "documents/intake/route.ts": "holds a pending reading only; the decision route records activity when kept",
 };
 const ROOT = "src/app/api/console";
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
