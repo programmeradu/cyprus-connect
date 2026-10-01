@@ -945,6 +945,8 @@ export const copilotMessages = pgTable('copilot_messages', {
   content: text('content').notNull(),
   /** Which records the answer read, so the reply can be audited. */
   citations: text('citations'),
+  /** AI SDK message parts (text, tool cards, checks); NULL on older rows. */
+  parts: jsonb('parts').$type<unknown[]>(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 

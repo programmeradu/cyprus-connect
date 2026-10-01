@@ -8,7 +8,10 @@
  * in /api/console/copilot/proposal.
  */
 
-import { aiChatStream, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
+import { aiErrorMessage, hasTextAi, textLanguageModel } from "@/lib/lovable-ai";
+import { createUIMessageStream, createUIMessageStreamResponse, isStepCount, streamText, toUIMessageStream, type UIMessage } from "ai";
+import { verdeTools } from "@/lib/copilot/tools.server";
+import { logger } from "@/lib/log";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
@@ -25,7 +28,7 @@ import {
 import { and, asc, desc, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { readCompany } from "@/lib/company-update.server";
-import { ACTION_MARKER, parseAction, systemPrompt } from "@/lib/copilot/prompt";
+import { toolSystemPrompt } from "@/lib/copilot/prompt";
 import { checkGrounding } from "@/lib/copilot/grounding";
 
 export const dynamic = "force-dynamic";
@@ -37,9 +40,6 @@ const HISTORY_LIMIT = 40;
  * "try again" hides an exhausted balance, and the person then retries
  * forever against a wall.
  */
-function providerMessage(error: unknown): string {
-  return aiErrorMessage(error);
-}
 
 /* ------------------------------------------------------------------ */
 /* Read                                                                 */
@@ -70,7 +70,13 @@ export async function GET() {
       .limit(30),
   ]);
 
-  return NextResponse.json({ messages, proposals, workspace: { name: workspace.name } });
+  // Older answers have no parts; they come back as one text part.
+  const uiMessages = messages.map((m) => ({
+    id: `db-${m.id}`,
+    role: m.role === "user" ? "user" : "assistant",
+    parts: Array.isArray(m.parts) && m.parts.length ? m.parts : [{ type: "text", text: m.content }],
+  }));
+  return NextResponse.json({ messages: uiMessages, proposals, workspace: { name: workspace.name } });
 }
 
 /** Clears the conversation. The proposals ledger is kept for the audit trail. */
@@ -189,35 +195,46 @@ async function buildBriefing(workspaceId: string, accountId: string) {
 /* Write and stream                                                     */
 /* ------------------------------------------------------------------ */
 
+const log = logger("api.console.copilot");
+
+const PAGES = new Set(["home", "footprint", "actions", "suppliers", "deadlines", "reports", "cbam", "agents", "integrations", "settings"]);
+
+function textOf(message: unknown): string {
+  const parts = (message as { parts?: Array<{ type?: string; text?: string }> })?.parts;
+  if (!Array.isArray(parts)) return "";
+  return parts
+    .filter((p) => p?.type === "text" && typeof p.text === "string")
+    .map((p) => p.text)
+    .join("\n")
+    .trim();
+}
+
 export async function POST(req: Request) {
-  const requestHeaders = await headers();
-  const resolved = await resolveConsoleSession(requestHeaders);
+  const resolved = await resolveConsoleSession(await headers());
   if (!resolved.ok) {
-    return NextResponse.json(
-      { error: resolved.error, message: resolved.message },
-      { status: resolved.status },
-    );
+    return NextResponse.json({ error: resolved.error, message: resolved.message }, { status: resolved.status });
   }
-  const { workspace } = resolved.session;
+  const { workspace, account } = resolved.session;
 
   let prompt = "";
+  let page: string | null = null;
+  let lang: "en" | "el" = "en";
   try {
-    const body = (await req.json()) as { prompt?: unknown };
-    prompt = typeof body.prompt === "string" ? body.prompt.trim() : "";
+    const body = (await req.json()) as { message?: unknown; prompt?: unknown; page?: unknown; lang?: unknown };
+    lang = body.lang === "el" ? "el" : "en";
+    prompt = typeof body.prompt === "string" ? body.prompt.trim() : textOf(body.message);
+    page = typeof body.page === "string" && PAGES.has(body.page) ? body.page : null;
   } catch {
     prompt = "";
   }
   if (!prompt) {
-    return NextResponse.json(
-      { error: "empty_prompt", message: "Write a question first." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "empty_prompt", message: "Write a question first." }, { status: 400 });
   }
   if (prompt.length > 4000) prompt = prompt.slice(0, 4000);
 
   if (!hasTextAi()) {
     return NextResponse.json(
-      { error: "ai_unavailable", message: "The copilot is not configured on this deployment." },
+      { error: "ai_unavailable", message: "Verde is not configured on this deployment." },
       { status: 503 },
     );
   }
@@ -230,112 +247,84 @@ export async function POST(req: Request) {
     .limit(HISTORY_LIMIT);
   history.reverse();
 
-  const briefing = await buildBriefing(workspace.id, resolved.session.account.id);
-  const instructions = systemPrompt(
-    workspace.name,
-    workspace.sector,
-    workspace.framework,
-    briefing,
-  );
+  const briefing = await buildBriefing(workspace.id, account.id);
+  const system = toolSystemPrompt(workspace.name, workspace.sector, workspace.framework, briefing, page, lang);
 
   const [userRow] = await db
     .insert(copilotMessages)
-    .values({ workspaceId: workspace.id, role: "user", content: prompt })
+    .values({ workspaceId: workspace.id, role: "user", content: prompt, parts: [{ type: "text", text: prompt }] })
     .returning();
 
-  const messages = [
-    { role: "system" as const, content: instructions },
-    ...history.map((m) => ({
-      role: m.role === "user" ? ("user" as const) : ("assistant" as const),
-      content: m.content,
-    })),
-    { role: "user" as const, content: prompt },
-  ];
+  const { provider, model } = await textLanguageModel();
+  const tools = verdeTools({ workspaceId: workspace.id, accountId: account.id });
 
-  const encoder = new TextEncoder();
+  const stream = createUIMessageStream({
+    execute: async ({ writer }) => {
+      writer.write({ type: "start", messageId: `db-pending-${userRow.id}` });
+      const result = streamText({
+        model,
+        system,
+        messages: [
+          ...history.map((m) => ({ role: m.role === "user" ? ("user" as const) : ("assistant" as const), content: m.content })),
+          { role: "user" as const, content: prompt },
+        ],
+        tools,
+        stopWhen: isStepCount(50),
+        ...(provider === "groq" ? { providerOptions: { groq: { reasoningEffort: "low" } } } : {}),
+      });
+      writer.merge(toUIMessageStream({ stream: result.stream, tools, sendStart: false, sendFinish: false, sendReasoning: false }));
 
-  const stream = new ReadableStream({
-    async start(controller) {
-      const send = (event: Record<string, unknown>) =>
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
-
-      send({ type: "user", id: userRow.id });
-
-      let full = "";
-      /** Text already sent to the browser. The action block is never sent. */
-      let emitted = 0;
-
-      const flush = (final: boolean) => {
-        const cut = full.indexOf(ACTION_MARKER);
-        // Hold back a short tail so a marker split across chunks is not shown.
-        const safeEnd =
-          cut !== -1 ? cut : final ? full.length : Math.max(0, full.length - ACTION_MARKER.length);
-        if (safeEnd > emitted) {
-          send({ type: "delta", text: full.slice(emitted, safeEnd) });
-          emitted = safeEnd;
-        }
-      };
-
+      // Every figure in the answer must appear in the records or a tool result.
+      const [text, steps] = await Promise.all([result.text, result.steps]);
+      const outputs = steps
+        .flatMap((step) => step.toolResults ?? [])
+        .map((r) => JSON.stringify((r as { output?: unknown }).output ?? ""))
+        .join("\n");
+      // Models often write dates with non-breaking hyphens; normalise before checking.
+      const grounding = checkGrounding(text.replace(/[\u2010-\u2013]/g, "-"), `${briefing}\n${outputs}`);
+      if (!grounding.ok) {
+        writer.write({ type: "data-grounding", data: { unsupported: grounding.unsupported, unsourced: grounding.unsourced } });
+      }
+      writer.write({ type: "finish" });
+    },
+    onError: (error) => {
+      log.error("stream failed", error);
+      return aiErrorMessage(error);
+    },
+    onEnd: async ({ responseMessage }) => {
       try {
-        for await (const text of aiChatStream({ messages })) {
-          full += text;
-          flush(false);
-        }
-        flush(true);
-
-        const visible = (full.indexOf(ACTION_MARKER) === -1
-          ? full
-          : full.slice(0, full.indexOf(ACTION_MARKER))
-        ).trim();
-
-        const [assistantRow] = await db
+        const parts = (responseMessage as UIMessage).parts ?? [];
+        const visible = parts
+          .filter((p): p is { type: "text"; text: string } => p.type === "text")
+          .map((p) => p.text)
+          .join("\n")
+          .trim();
+        const [row] = await db
           .insert(copilotMessages)
           .values({
             workspaceId: workspace.id,
             role: "assistant",
-            content: visible || "I could not produce an answer for that.",
+            content: visible || "I prepared the cards below.",
+            parts: parts as unknown[],
           })
           .returning();
-
-        const action = parseAction(full);
-        if (!action && full.includes(ACTION_MARKER)) {
-          console.warn("copilot action block could not be read", full.slice(full.indexOf(ACTION_MARKER), full.indexOf(ACTION_MARKER) + 600));
+        // Proposals filed during this answer belong to it.
+        const ids = parts
+          .map((p) => (p as { type?: string; output?: { proposalId?: number } }).type === "tool-propose_change"
+            ? (p as { output?: { proposalId?: number } }).output?.proposalId
+            : undefined)
+          .filter((id): id is number => typeof id === "number");
+        for (const id of ids) {
+          await db
+            .update(copilotProposals)
+            .set({ messageId: row.id })
+            .where(and(eq(copilotProposals.id, id), eq(copilotProposals.workspaceId, workspace.id)));
         }
-        if (action) {
-          const [proposal] = await db
-            .insert(copilotProposals)
-            .values({
-              workspaceId: workspace.id,
-              messageId: assistantRow.id,
-              kind: action.kind,
-              title: action.title.slice(0, 200),
-              summary: action.summary.slice(0, 500),
-              payload: JSON.stringify(action.payload),
-              status: "pending",
-            })
-            .returning();
-          send({ type: "proposal", proposal });
-        }
-
-        // Every figure in the answer must appear in the records Verde was given.
-        const grounding = checkGrounding(visible, briefing);
-        if (!grounding.ok) send({ type: "grounding", unsupported: grounding.unsupported, unsourced: grounding.unsourced });
-
-        send({ type: "done", id: assistantRow.id });
       } catch (error) {
-        console.error("copilot stream failed", error);
-        send({ type: "error", message: providerMessage(error) });
-      } finally {
-        controller.close();
+        log.error("saving the answer failed", error);
       }
     },
   });
 
-  return new NextResponse(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive",
-    },
-  });
+  return createUIMessageStreamResponse({ stream });
 }

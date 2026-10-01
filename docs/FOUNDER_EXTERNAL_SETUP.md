@@ -280,3 +280,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Still needs `LOVABLE_API_KEY` (or stays switched off): image creation in Studio and text embeddings. Without it those screens say so and charge nothing.
 - Optional: `GROQ_MODEL` changes the text model. Leave empty to use `openai/gpt-oss-120b`.
 - Check usage limits in the Groq console. On the free tier, busy times return "AI service is busy", and the daily agent and funding jobs retry on their next run.
+
+## Verde redesign (2026-10-01)
+- Run `scripts/sql/0040_copilot_parts.sql` on the live database before deploying (adds storage for Verde's answer cards). Applied to preview only.
+- Uses the same `GROQ_API_KEY`. No other setup.

@@ -555,3 +555,27 @@ export async function aiResponsesJson<T>(options: {
   if (refused || !text) return null;
   return parseJsonAnswer<T>(text);
 }
+
+/* ------------------------------------------------------- AI SDK model factory */
+
+/**
+ * The text model as an AI SDK language model, for streamed tool-using chat
+ * (Verde). Same switch as every other text call: Groq when keyed, else the
+ * Lovable gateway. Create it inside the request; env is read per call.
+ */
+export async function textLanguageModel() {
+  const groq = groqKey();
+  if (groq) {
+    const { createGroq } = await import("@ai-sdk/groq");
+    return { provider: "groq" as const, model: createGroq({ apiKey: groq })(process.env.GROQ_MODEL || GROQ_TEXT_MODEL) };
+  }
+  const key = lovableKey();
+  if (!key) throw new AiGatewayError(503, "AI is not configured on this deployment.");
+  const { createOpenAICompatible } = await import("@ai-sdk/openai-compatible");
+  const lovable = createOpenAICompatible({
+    name: "lovable",
+    baseURL: GATEWAY,
+    headers: { "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
+  });
+  return { provider: "lovable" as const, model: lovable(CHAT_MODEL) };
+}
