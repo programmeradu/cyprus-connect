@@ -235,7 +235,7 @@ function parseAction(raw: string): ParsedProposal | null {
   try {
     const parsed = JSON.parse(body) as ParsedProposal;
     if (!parsed || typeof parsed.kind !== "string") return null;
-    if (!["create_task", "update_obligation", "log_reading", "draft_report"].includes(parsed.kind))
+    if (!["create_task", "update_obligation", "log_reading", "draft_report", "update_company"].includes(parsed.kind))
       return null;
     if (typeof parsed.title !== "string" || typeof parsed.summary !== "string") return null;
     if (!parsed.payload || typeof parsed.payload !== "object") return null;
