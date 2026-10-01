@@ -1090,7 +1090,7 @@ export const fundingMatches = pgTable('funding_matches', {
   failed: jsonb('failed').$type<import('@/lib/funding/rules').RuleCheck[]>().notNull().default([]),
   rulesHash: text('rules_hash'),
   checkedAt: timestamp('checked_at', { withTimezone: true }).notNull().defaultNow(),
-}, (t) => [primaryKey({ columns: [t.workspaceId, t.opportunityId] })]);
+}, (t) => ({ pk: primaryKey({ columns: [t.workspaceId, t.opportunityId] }) }));
 
 /** Cached machine translations, keyed by source-text hash. scripts/sql/0036. */
 export const textTranslations = pgTable('text_translations', {
@@ -1098,4 +1098,4 @@ export const textTranslations = pgTable('text_translations', {
   locale: text('locale').notNull(),
   text: text('text').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-}, (t) => [primaryKey({ columns: [t.sourceHash, t.locale] })]);
+}, (t) => ({ pk: primaryKey({ columns: [t.sourceHash, t.locale] }) }));
