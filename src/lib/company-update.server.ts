@@ -164,6 +164,7 @@ export async function applyCompanyPatch(input: {
     if (body.sites !== undefined) ws.sites = body.sites;
     if (body.revenueEur !== undefined) ws.revenueEur = body.revenueEur;
     if (body.employees !== undefined) ws.employeesExact = body.employees;
+    else if (body.teamSize !== undefined) ws.employeesExact = null;
     if (Object.keys(ws).length) await tx.update(workspaces).set(ws).where(eq(workspaces.id, workspaceId));
     await tx.insert(activityEvents).values({
       workspaceId,
