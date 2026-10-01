@@ -41,7 +41,7 @@ export function CompanyLogo({
         justifyContent: "center",
         borderRadius: "50%",
         overflow: "hidden",
-        background: "var(--vc-card, var(--card))",
+        background: "var(--vc-window, var(--card))",
         boxShadow: "inset 0 0 0 1px var(--vc-rule, var(--border))",
         padding: pad,
       }}
