@@ -284,3 +284,6 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Verde redesign (2026-10-01)
 - Run `scripts/sql/0040_copilot_parts.sql` on the live database before deploying (adds storage for Verde's answer cards). Applied to preview only.
 - Uses the same `GROQ_API_KEY`. No other setup.
+
+## Content (2026-10-01)
+- Review the rewritten CBAM Cyprus guide and new EUDR and EU greenwashing guides on /en/learn before publishing; confirm the Department of Environment CBAM contact on gov.cy.
