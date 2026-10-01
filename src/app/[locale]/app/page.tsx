@@ -16,6 +16,8 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useConsole } from "@/components/app/console/ConsoleData";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
+import type { CompanyRecord } from "@/app/api/console/company/route";
 import { SignalChart } from "@/components/app/console/SignalChart";
 import { fmtNumber, fmtSigned, toneFor } from "@/components/app/console/types";
 import { greetingFor, titleCase } from "@/components/app/dashboard/overview/shared";
@@ -29,6 +31,7 @@ export default function ConsolePage() {
   const t = useTranslations("home");
   const { data, error, refresh } = useConsole();
   const [pdfBusy, setPdfBusy] = useState(false);
+  const company = useWorkspaceResource<CompanyRecord>("/api/console/company");
 
   /* Home shows one series: the total footprint. Other metrics live on Measure. */
   const focus = useMemo(() => {
