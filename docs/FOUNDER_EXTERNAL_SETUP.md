@@ -254,3 +254,6 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Next batch (2026-10-01)
 - Live database: apply scripts/sql/0033_home_tour.sql and scripts/sql/0034_supplier_sanctions.sql.
 - Live database: apply scripts/sql/0035_eu_sanctions_names.sql. The EU list then loads on the first supplier check and refreshes daily (needs CRON_SECRET). It covers EU asset freezes, not sectoral trade bans; UK/US lists are not included.
+
+## Learn check (needs you)
+- Sign in to the preview with your real account, open Learn → Generate, create one course and open a lesson. The automated test login can't open Learn (it is sent to the sign-in page), so this one check needs a real account.
