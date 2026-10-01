@@ -66,6 +66,23 @@ export async function readJson<T>(
   return parseJsonText(text, schema, maxBytes);
 }
 
+/** Reads a raw binary body (e.g. a forwarded email) with a size cap. */
+export async function readRawBody(request: Request, maxBytes: number): Promise<{ ok: true; bytes: Uint8Array } | { ok: false; response: NextResponse }> {
+  const declared = Number(request.headers.get("content-length") ?? "0");
+  if (Number.isFinite(declared) && declared > maxBytes) {
+    return { ok: false, response: bad(413, "The request is too large.", "BODY_TOO_LARGE") };
+  }
+  let bytes: Uint8Array;
+  try {
+    bytes = new Uint8Array(await request.arrayBuffer());
+  } catch {
+    return { ok: false, response: bad(400, "The request body could not be read.", "UNREADABLE_BODY") };
+  }
+  if (bytes.length === 0) return { ok: false, response: bad(400, "The request body is empty.", "EMPTY_BODY") };
+  if (bytes.length > maxBytes) return { ok: false, response: bad(413, "The request is too large.", "BODY_TOO_LARGE") };
+  return { ok: true, bytes };
+}
+
 /** Validates route/query values the same way as bodies. */
 export function parseValue<T>(value: unknown, schema: ZodType<T>): Parsed<T> {
   const parsed = schema.safeParse(value);

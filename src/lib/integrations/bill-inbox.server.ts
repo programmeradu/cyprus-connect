@@ -185,7 +185,7 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
   if (added > 0) {
     await db.insert(activityEvents).values({
       workspaceId: inbox.workspaceId,
-      actorType: "system",
+      actorType: "agent",
       actorName: "Bill inbox",
       verb: "added",
       object: added === 1 ? "1 forwarded bill" : `${added} forwarded bills`,
