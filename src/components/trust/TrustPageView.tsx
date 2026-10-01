@@ -67,7 +67,7 @@ export function TrustPageView({ locale, page }: { locale: Locale; page: TrustPag
       <MarketingHeader />
 
       {/* ------------------------------------------------------------ Masthead */}
-      <section className="relative isolate overflow-hidden bg-[oklch(0.19_0.02_150)] text-white">
+      <section data-dark-hero className="relative isolate overflow-hidden bg-[oklch(0.19_0.02_150)] text-white">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.06]"

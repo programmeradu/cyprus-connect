@@ -41,7 +41,7 @@ export function HeroCinematic() {
   const shot = HERO_SET[idx];
 
   return (
-    <section className="relative isolate z-20 flex min-h-[100svh] w-full flex-col">
+    <section data-dark-hero className="relative isolate z-20 flex min-h-[100svh] w-full flex-col">
       {/* Photographic backdrop - extends past the hero and dissolves (alpha mask)
           into the next section, so no flat wash of background colour appears
           over the photo in light mode. */}

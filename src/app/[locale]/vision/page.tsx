@@ -111,7 +111,7 @@ export default function VisionPage() {
       <MarketingHeader />
 
       {/* ---------------------------------------------------------------- Hero */}
-      <section className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden">
+      <section data-dark-hero className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <Image
             src={heroPhoto}

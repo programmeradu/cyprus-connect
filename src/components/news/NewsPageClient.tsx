@@ -266,7 +266,7 @@ export function NewsPageClient() {
       <MarketingHeader />
 
       {/* ------------------------------------------------------------- Hero */}
-      <section className="relative isolate flex min-h-[80svh] w-full flex-col overflow-hidden sm:min-h-[74svh]">
+      <section data-dark-hero className="relative isolate flex min-h-[80svh] w-full flex-col overflow-hidden sm:min-h-[74svh]">
         <div className="absolute inset-0 -z-10">
           <Image
             src={heroPhoto}

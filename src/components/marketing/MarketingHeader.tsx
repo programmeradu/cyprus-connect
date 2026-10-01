@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { useSession } from "@/lib/auth-client";
 import { useLocale, useTranslations } from "next-intl";
@@ -21,12 +22,25 @@ export function MarketingHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // "scrolled" means: the header is NOT over a dark hero photo. Pages mark
+  // their always-dark hero with data-dark-hero; pages without one start in
+  // theme colours straight away instead of white-on-light.
+  const pathname = usePathname();
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      const hero = document.querySelector<HTMLElement>("[data-dark-hero]");
+      setScrolled(!hero || hero.getBoundingClientRect().bottom <= 80);
+    };
     onScroll();
+    const raf = requestAnimationFrame(onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   return (
     <header
