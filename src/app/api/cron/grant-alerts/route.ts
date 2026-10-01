@@ -20,7 +20,10 @@ export async function GET(req: NextRequest) {
   }
   try {
     const summary = await runGrantAlerts();
-    return NextResponse.json({ ok: true, ...summary });
+    // Grant scout's daily run checks companies against whatever rules are read here.
+    const { extractPendingRules } = await import("@/lib/funding/extract.server");
+    const rules = await extractPendingRules().catch((e) => ({ read: 0, failed: 0, stoppedBy: `error ${logger("cron.grant-alerts").error("rule reading failed", e)}` }));
+    return NextResponse.json({ ok: true, ...summary, rules });
   } catch (e) {
     return NextResponse.json({ ok: false, error: "Scan failed.", ref: logger("cron.grant-alerts").error("scan failed", e) }, { status: 500 });
   }

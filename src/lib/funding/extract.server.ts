@@ -58,14 +58,19 @@ Rules:
 - requiredDocuments: documents the applicant must provide, short names, only if stated.
 - evidence: for every non-null rule, one short exact quote from the call text, with "rule" set to the field name.`;
 
-function sanitize(raw: CallRules | null): CallRules | null {
+const squash = (t: string) => t.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+
+/** sourceText given: a quote must really appear in the call text, or its rule is dropped. */
+function sanitize(raw: CallRules | null, sourceText?: string): CallRules | null {
   if (!raw || typeof raw !== "object") return null;
+  const haystack = sourceText === undefined ? null : squash(sourceText);
   const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) && v >= 0 ? v : null);
   const bool = (v: unknown) => (typeof v === "boolean" ? v : null);
   const strs = (v: unknown, max = 40) =>
     Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && x.trim().length > 0).map((x) => x.trim().slice(0, 120)).slice(0, max) : null;
   const evidence = (Array.isArray(raw.evidence) ? raw.evidence : [])
     .filter((e) => e && typeof e.rule === "string" && typeof e.quote === "string" && e.quote.trim())
+    .filter((e) => haystack === null || (squash(e.quote).length > 0 && haystack.includes(squash(e.quote))))
     .map((e) => ({ rule: e.rule.slice(0, 40), quote: e.quote.trim().slice(0, 300) }))
     .slice(0, 20);
   const quoted = new Set(evidence.map((e) => e.rule));
@@ -116,13 +121,14 @@ export async function extractPendingRules(): Promise<ExtractSummary> {
     const hash = await contentHashOf(r);
     if (r.rulesExtractedAt && r.rulesHash === hash) continue;
     try {
+      const callText = `Title: ${r.title}\nProgramme: ${r.program ?? "not stated"}\nDeadline: ${r.deadline ?? "not stated"}\n\nCall text:\n${r.summary || "(no text)"}`;
       const raw = await aiResponsesJson<CallRules>({
         system: SYSTEM,
-        user: `Title: ${r.title}\nProgramme: ${r.program ?? "not stated"}\nDeadline: ${r.deadline ?? "not stated"}\n\nCall text:\n${r.summary || "(no text)"}`,
+        user: callText,
         schemaName: "call_rules",
         schema: SCHEMA,
       });
-      const rules = sanitize(raw);
+      const rules = sanitize(raw, callText);
       await db
         .update(grantOpportunities)
         .set({ rules, rulesHash: hash, contentHash: hash, rulesExtractedAt: new Date() })
