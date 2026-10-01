@@ -1724,5 +1724,5 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 .vc .vck-section-nav a[data-active="true"] { background: var(--vc-well); color: var(--vc-ink); }
 .vc .vck-section-nav + main .vck-page { padding-top: 20px; }
 @media (max-width: 640px) {
-  .vc .vck-section-nav { padding: 14px 16px 0; }
+  .vc .vck-section-nav { padding: 14px 14px 0; }
 }
