@@ -51,6 +51,8 @@ const SCHEMA = {
 
 const SYSTEM = `You read the eligibility rules of one public funding call. Use only the call text given.
 Rules:
+- The text may include excerpts of official call documents (PDFs). A work programme can cover many topics: use only the parts about this call's title or identifier.
+- Quotes must be copied exactly from the text, including from the documents.
 - If the text does not clearly state a rule, return null for it. Never guess or use general knowledge about the programme.
 - countries: ISO-2 codes; "EU" when all EU member states are eligible; "ANY" when worldwide.
 - applicantTypes from: ${APPLICANT_TYPES.join(", ")}. "company" covers SMEs and enterprises. "consortium" only when applicants must be a group.
