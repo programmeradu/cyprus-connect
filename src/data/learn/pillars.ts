@@ -83,6 +83,8 @@ export const PILLAR_SLUGS = [
   "green-technology-examples",
   "how-to-choose-sustainability-analytics-software",
   "sustainability-software-needs-cyprus-smes",
+  "eudr-guide",
+  "eu-greenwashing-rules-2026",
 ] as const;
 
 
@@ -116,6 +118,8 @@ import { whatIsNetZero } from "./pillars/what-is-net-zero";
 import { greenTechnologyExamples } from "./pillars/green-technology-examples";
 import { howToChooseSustainabilityAnalyticsSoftware } from "./pillars/how-to-choose-sustainability-analytics-software";
 import { sustainabilitySoftwareNeedsCyprusSmes } from "./pillars/sustainability-software-needs-cyprus-smes";
+import { eudrGuide } from "./pillars/eudr-guide";
+import { euGreenwashingRules2026 } from "./pillars/eu-greenwashing-rules-2026";
 
 export const PILLARS: Record<PillarSlug, Pillar> = {
   "csrd-reporting-guide": csrdReportingGuide,
@@ -145,6 +149,8 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
   "green-technology-examples": greenTechnologyExamples,
   "how-to-choose-sustainability-analytics-software": howToChooseSustainabilityAnalyticsSoftware,
   "sustainability-software-needs-cyprus-smes": sustainabilitySoftwareNeedsCyprusSmes,
+  "eudr-guide": eudrGuide,
+  "eu-greenwashing-rules-2026": euGreenwashingRules2026,
 };
 
 export function getPillar(slug: string): Pillar | null {
