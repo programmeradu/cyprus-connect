@@ -2650,9 +2650,9 @@
         "verde": "Which data source should I connect first for my company, and how?"
       },
       "figures": {
-        "title": "Add your first month of figures",
-        "why": "Electricity, fuel or spend for one month is enough to start.",
-        "cta": "Add figures",
+        "title": "Add your first bill or month of figures",
+        "why": "Drop an electricity or water bill, a bank statement or a spreadsheet, or type one month in. One month is enough to start.",
+        "cta": "Add data",
         "verde": "Help me log my first month of figures. Last month we used "
       },
       "suppliers": {
