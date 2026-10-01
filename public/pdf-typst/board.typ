@@ -126,16 +126,18 @@
 
 // ---------- 02 Footprint ----------
 #section("02", "Footprint", summary: "Monthly emissions over the last twelve months. The latest month is shown in full colour.")
-#{
+#if d.months.len() == 0 {
+  block(fill: rgb("#F3F5F0"), inset: 10pt, width: 100%)[#text(weight: 600, fill: ink)[No footprint readings yet.] Upload an electricity bill or connect the bank account on the Connect page, and the footprint appears here.]
+} else {
   let pts = d.months
-  let mx = calc.max(..pts.map(p => p.value))
+  let mx = calc.max(1, ..pts.map(p => p.value))
   let h = 52mm
   set text(size: 7pt, fill: quiet, number-width: "tabular")
   grid(columns: (auto, 1fr), column-gutter: 6pt,
     // y axis labels
     box(height: h, {
       for i in range(0, 5) {
-        place(top + right, dy: h * (1 - i / 4) - 4pt, [#calc.round(mx * i / 4)])
+        place(top + right, dy: h * (1 - i / 4) - 4pt, [#calc.round(mx * i / 4, digits: if mx < 8 { 1 } else { 0 })])
       }
     }),
     box(width: 100%, height: h, {
