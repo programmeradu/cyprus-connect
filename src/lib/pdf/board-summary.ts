@@ -95,8 +95,9 @@ export async function buildBoardSummaryData(data: ConsoleOverviewData, generated
 }
 
 export async function downloadBoardSummary(data: ConsoleOverviewData, fileName: string) {
-  const { renderTypst, downloadBytes, siteBase } = await import("./typst-render");
+  const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
   const json = await buildBoardSummaryData(data);
   const bytes = await renderTypst("board.typ", json, { base: siteBase() });
+  await registerDocument("board-summary", json);
   downloadBytes(bytes, fileName);
 }

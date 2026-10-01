@@ -74,7 +74,9 @@ export async function buildReportData(r: PdfReport, generatedAt = new Date()) {
 }
 
 export async function downloadReport(r: PdfReport, fileName: string) {
-  const { renderTypst, downloadBytes, siteBase } = await import("./typst-render");
-  const bytes = await renderTypst("report.typ", await buildReportData(r), { base: siteBase() });
+  const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
+  const json = await buildReportData(r);
+  const bytes = await renderTypst("report.typ", json, { base: siteBase() });
+  await registerDocument("report", json);
   downloadBytes(bytes, fileName);
 }

@@ -93,4 +93,29 @@ export function downloadBytes(bytes: Uint8Array, fileName: string) {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
+/**
+ * Records the document so its QR code resolves on the public check page.
+ * Waits briefly; a failure never blocks the download, it is only logged.
+ */
+export async function registerDocument(kind: "board-summary" | "report" | "cbam", data: { hash: string; docId: unknown; company?: unknown; title?: unknown }, issuedAt = new Date()) {
+  const fallback = { "board-summary": "Board summary", report: "Sustainability report", cbam: "CBAM declaration" }[kind];
+  try {
+    const r = await fetch("/api/console/documents", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        hash: data.hash,
+        kind,
+        docId: String(data.docId),
+        title: String(data.title || fallback).slice(0, 200),
+        company: String(data.company || "Unnamed company").slice(0, 200),
+        issuedAt: issuedAt.toISOString(),
+      }),
+    });
+    if (!r.ok) console.warn("Document check record was not saved", r.status);
+  } catch (e) {
+    console.warn("Document check record was not saved", e);
+  }
+}
+
 export const siteBase = () => (typeof window === "undefined" ? "" : window.location.origin);

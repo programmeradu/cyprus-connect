@@ -120,7 +120,9 @@ export async function buildCbamData(d: CbamPdfInput, generatedAt = new Date()) {
 }
 
 export async function downloadCbamPdf(d: CbamPdfInput, fileName: string) {
-  const { renderTypst, downloadBytes, siteBase } = await import("./typst-render");
-  const bytes = await renderTypst("cbam.typ", await buildCbamData(d), { base: siteBase() });
+  const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
+  const json = await buildCbamData(d);
+  const bytes = await renderTypst("cbam.typ", json, { base: siteBase() });
+  await registerDocument("cbam", { ...json, title: `CBAM declaration ${json.year}` });
   downloadBytes(bytes, fileName);
 }
