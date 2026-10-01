@@ -671,12 +671,12 @@
       }
     },
     "compliance": {
-      "title": "AI Regulatory",
+      "title": "Deadlines",
       "titleAccent": "Autopilot",
-      "subtitle": "Automated compliance monitoring, reporting, and deadline management",
+      "subtitle": "Every report your business may owe in Cyprus and the EU, with the next step for each.",
       "healthLabel": "Compliance Health",
       "tabs": {
-        "overview": "Deadlines",
+        "overview": "All reports",
         "regulations": "Regulations",
         "documents": "Documents",
         "audit": "Audit Trail",

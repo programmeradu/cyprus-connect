@@ -13,6 +13,7 @@ import {
   ToolbarTabs,
 } from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
+import { isQaClient } from "@/lib/qa-bypass";
 import { DEFAULT_JURISDICTIONS, type AuditLog, type ComplianceDocument, type Regulation, type Settings } from "@/components/app/compliance/types";
 import { OverviewTab } from "@/components/app/compliance/OverviewTab";
 import { RegulationsTab } from "@/components/app/compliance/RegulationsTab";
@@ -34,9 +35,13 @@ export default function CompliancePage() {
   });
   const [generating, setGenerating] = useState(false);
   const writer = useWorkspaceAction();
+  // Preview QA mode: the server accepts the synthetic test identity.
+  const [qa, setQa] = useState(false);
+  useEffect(() => setQa(isQaClient()), []);
+  const signedIn = Boolean(session?.user) || qa;
 
   useEffect(() => {
-    if (!isPending && !session?.user) {
+    if (!isPending && !session?.user && !isQaClient()) {
       if (!APP_OPEN_ACCESS) router.push("/auth?redirect=/app/compliance");
     }
   }, [session, isPending, router]);
@@ -54,8 +59,8 @@ export default function CompliancePage() {
     }
   }, [t]);
   useEffect(() => {
-    if (session?.user && !ready) void initializeCompliance();
-  }, [session?.user, ready, initializeCompliance]);
+    if (signedIn && !ready) void initializeCompliance();
+  }, [signedIn, ready, initializeCompliance]);
 
   const data = useWorkspaceResource<{
     score?: number | null;
@@ -65,7 +70,6 @@ export default function CompliancePage() {
   }>(ready ? "/api/compliance/data" : null);
   const logs = useWorkspaceResource<{ logs?: AuditLog[] }>(ready ? "/api/compliance/audit-logs" : null);
 
-  const complianceScore = typeof data.data?.score === "number" ? data.data.score : null;
   const regulations = data.data?.regulations ?? [];
   const documents = data.data?.documents ?? [];
   const auditLogs = logs.data?.logs ?? [];
@@ -119,15 +123,14 @@ export default function CompliancePage() {
 
   return (
     <PageShell
-      signedOut={!isPending && !session?.user}
-      loading={isPending || (!!session?.user && loading)}
+      signedOut={!qa && !isPending && !signedIn}
+      loading={(!qa && isPending) || (signedIn && loading)}
       error={pageError}
       onRetry={initError ? initializeCompliance : data.reload}
       header={
         <PageHeader
           title={t("title")}
           purpose={t("subtitle")}
-          meta={complianceScore === null ? `${t("healthLabel")}: —` : `${t("healthLabel")}: ${complianceScore}%`}
         />
       }
       toolbar={

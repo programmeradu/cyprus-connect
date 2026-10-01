@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { complianceRegulations, complianceAuditLogs } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { requireVuneliUserId } from '@/lib/auth';
+import { requireUserIdOrQa as requireVuneliUserId } from '@/lib/api-auth';
 import { FRAMEWORKS } from '@/lib/compliance/frameworks';
 
 export async function POST(req: NextRequest) {

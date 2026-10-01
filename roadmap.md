@@ -114,8 +114,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Measure tab = Footprint + Insights + Add figures; Act tab = Reduce + Funding + Experts and offsets; Report tab = Obligations + CBAM + Drafting studio (section tabs under the top bar, phone dock too)
 - [x] Merged Insights into Footprint: one page with totals, live grid, monthly chart, obligations and cited advice; uncited AI tips and duplicate monthly table removed; /app/insights redirects; "Agent workforce" links fixed to /app/agents
 - [x] Act merged: Funding folded into Action plan (old link redirects); Experts and offsets kept as its own page with a pointer
-- [ ] Merge Report group (Obligations + CBAM + Drafting studio)
+- [x] Merge Report group: Deadlines home links each row to CBAM or the drafting flow; phone + desktop checked
 - [x] More holds only Deliverables and Benchmarks; Settings and Plan and usage live in the account menu; Learn off the menu
 - [ ] Home/dashboard redesign: on hold, founder to discuss
-- [ ] Suppliers list inside Act: to discuss
+- [ ] Suppliers page under Act (one list from bank, accounting, CBAM; approval-gated requests) — next
 - [x] Report: Obligations home is now one Deadlines list (soonest first, status, drafts, Draft/Open CBAM/See drafts per row)
