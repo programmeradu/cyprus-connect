@@ -12,6 +12,11 @@ const PAD: Record<string, string> = {
   el: "Πρακτικός οδηγός Vuneli για μικρές επιχειρήσεις στην Κύπρο και την ΕΕ.",
 };
 
+const SHORT_PADS: Record<string, string[]> = {
+  en: ["Explained for Cyprus and EU businesses by Vuneli.", "Explained by Vuneli."],
+  el: ["Επεξήγηση για επιχειρήσεις στην Κύπρο από το Vuneli.", "Επεξήγηση από το Vuneli."],
+};
+
 export function seoDescription(text: string, locale: string = "en", pad?: string): string {
   let t = text.replace(/\s+/g, " ").trim();
   if (t.length > MAX) {
@@ -25,9 +30,12 @@ export function seoDescription(text: string, locale: string = "en", pad?: string
     }
   }
   if (t.length < MIN) {
-    const extra = pad ?? PAD[locale === "el" ? "el" : "en"];
-    const joined = `${/[.!?…]$/.test(t) ? t : `${t}.`} ${extra}`;
-    if (joined.length <= MAX) t = joined;
+    const el = locale === "el";
+    const base = /[.!?…]$/.test(t) ? t : `${t}.`;
+    // Longest closing line that still fits; the short ones keep mid-length text above MIN.
+    const options = [pad ?? PAD[el ? "el" : "en"], ...SHORT_PADS[el ? "el" : "en"]];
+    const fit = options.map((x) => `${base} ${x}`).find((j) => j.length <= MAX);
+    if (fit) t = fit;
   }
   return t;
 }
