@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
 import type { BillInboxSummary } from "@/lib/integrations/bill-inbox.server";
 
@@ -60,6 +60,42 @@ export function InboxAddress() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/** What happened to the last forwarded email, so people can see it arrived. */
+function LastEmail({ inbox }: { inbox: BillInboxSummary }) {
+  const el = useLocale().startsWith("el");
+  const L = (en: string, gr: string) => (el ? gr : en);
+  if (!inbox.lastMessageAt) {
+    return <p className="vck-meta">{L("No email has arrived yet.", "Δεν έχει φτάσει ακόμη κανένα email.")}</p>;
+  }
+  const when = new Intl.DateTimeFormat(el ? "el-CY" : "en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(inbox.lastMessageAt));
+  if (inbox.confirmation) {
+    return (
+      <p className="vck-meta" style={{ overflowWrap: "anywhere" }}>
+        {L(`Last email ${when}: Gmail asked to confirm this address.`, `Τελευταίο email ${when}: το Gmail ζήτησε επιβεβαίωση.`)}{" "}
+        {inbox.confirmation.code && <>{L("Code: ", "Κωδικός: ")}<strong className="vck-num">{inbox.confirmation.code}</strong>. </>}
+        {inbox.confirmation.link && (
+          <a href={inbox.confirmation.link} target="_blank" rel="noopener noreferrer">{L("Open the confirmation", "Άνοιγμα επιβεβαίωσης")}</a>
+        )}
+      </p>
+    );
+  }
+  const added = inbox.lastResult.filter((r) => r.ok && !r.duplicate).length;
+  const from = inbox.lastMessageFrom ? L(` from ${inbox.lastMessageFrom}`, ` από ${inbox.lastMessageFrom}`) : "";
+  return (
+    <div className="vck-meta" style={{ overflowWrap: "anywhere" }} role="status">
+      <p style={{ margin: 0 }}>
+        <strong>{L(`Last email ${when}${from}: `, `Τελευταίο email ${when}${from}: `)}</strong>
+        {added === 1 ? L("1 bill added.", "προστέθηκε 1 λογαριασμός.") : L(`${added} bills added.`, `προστέθηκαν ${added} λογαριασμοί.`)}
+      </p>
+      {inbox.lastResult.filter((r) => !r.ok || r.duplicate).map((r, i) => (
+        <p key={i} style={{ margin: "2px 0 0" }}>
+          {r.file === "—" ? "" : `${r.file}: `}{r.duplicate ? L("already added", "υπάρχει ήδη") : r.reason}
+        </p>
+      ))}
     </div>
   );
 }
