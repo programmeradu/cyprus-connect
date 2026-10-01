@@ -68,7 +68,7 @@ const getRequestDb = cache(() => {
 
 // Kept on globalThis: the dev server loads this module once per route bundle,
 // and a module-level pool per bundle still exhausts the connection limit.
-const POOL_KEY = Symbol.for('vuneli.db.pool');
+const POOL_KEY = Symbol.for('vuneli.db.pool.v2');
 type Db = ReturnType<typeof drizzle<typeof schema>>;
 const store = globalThis as unknown as Record<symbol, Db | undefined>;
 
@@ -77,9 +77,13 @@ function getFallbackDb(): ReturnType<typeof drizzle<typeof schema>> {
   if (!fallbackDb) {
     const connStr = getConnectionString();
     const client = postgres(connStr, {
-      max: 3,
+      max: 5,
       prepare: false,
-      idle_timeout: 20,
+      // The hosted pooler silently drops idle sockets; a query sent on a
+      // dropped socket hangs forever. Retire sockets quickly so none go stale.
+      idle_timeout: 5,
+      max_lifetime: 120,
+      keep_alive: 10,
       connect_timeout: 10,
     });
     fallbackDb = drizzle(client, { schema });
