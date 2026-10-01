@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
   if (!domain) return NextResponse.json({ error: "A valid domain is required." }, { status: 400 });
 
   try {
-    const token = process.env.LOGO_DEV_TOKEN;
+    const token = process.env.LOGO_DEV_TOKEN || process.env.NEXT_PUBLIC_LOGO_DEV_KEY || process.env.LOGO_DEV_SECRET_KEY;
     const sources = [
       ...(token ? [`https://img.logo.dev/${domain}?token=${encodeURIComponent(token)}&size=128&format=png&fallback=404`] : []),
       `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${domain}&size=128`,
