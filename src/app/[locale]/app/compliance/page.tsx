@@ -70,7 +70,6 @@ export default function CompliancePage() {
   }>(ready ? "/api/compliance/data" : null);
   const logs = useWorkspaceResource<{ logs?: AuditLog[] }>(ready ? "/api/compliance/audit-logs" : null);
 
-  const complianceScore = typeof data.data?.score === "number" ? data.data.score : null;
   const regulations = data.data?.regulations ?? [];
   const documents = data.data?.documents ?? [];
   const auditLogs = logs.data?.logs ?? [];
@@ -132,7 +131,6 @@ export default function CompliancePage() {
         <PageHeader
           title={t("title")}
           purpose={t("subtitle")}
-          meta={complianceScore === null ? `${t("healthLabel")}: —` : `${t("healthLabel")}: ${complianceScore}%`}
         />
       }
       toolbar={
