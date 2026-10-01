@@ -2,6 +2,7 @@ import Link from "next/link";
 import { routing, type Locale } from "@/i18n/routing";
 import { getTrustContent, type TrustPageKey } from "@/content/trust";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { seoDescription } from "@/lib/seo-description";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
@@ -257,24 +258,26 @@ export function trustMetadataFor(locale: Locale, page: TrustPageKey) {
   const title = `${c.title} - Vuneli`;
   return {
     title,
-    description: c.intro.slice(0, 155),
+    description: seoDescription(c.intro, locale),
     alternates: {
       canonical: `${SITE_URL}/${locale}/${page}`,
       languages,
     },
     openGraph: {
       title,
-      description: c.intro.slice(0, 155),
+      description: seoDescription(c.intro, locale),
       url: `${SITE_URL}/${locale}/${page}`,
       siteName: "Vuneli",
       locale: locale === "el" ? "el_CY" : "en_US",
       alternateLocale: locale === "el" ? ["en_US"] : ["el_CY"],
       type: "article" as const,
+      images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: title }],
     },
     twitter: {
-      card: "summary" as const,
+      card: "summary_large_image" as const,
+      images: [`${SITE_URL}/og-image.png`],
       title,
-      description: c.intro.slice(0, 155),
+      description: seoDescription(c.intro, locale),
     },
   };
 }

@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import { GLOSSARY, GLOSSARY_SLUGS, getGlossaryEntry, type GlossaryEntry } from "@/data/learn/glossary";
 import { getPillar } from "@/data/learn/pillars";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
+import { seoDescription } from "@/lib/seo-description";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://vuneli.com").replace(/\/$/, "");
 
