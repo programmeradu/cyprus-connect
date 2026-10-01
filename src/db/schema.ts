@@ -813,6 +813,15 @@ export const cbamSuppliers = pgTable('cbam_suppliers', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+/** Bank payees a person said are not suppliers, so they are not suggested again (migration 0041). */
+export const supplierPayeeSkips = pgTable('supplier_payee_skips', {
+  workspaceId: text('workspace_id').notNull(),
+  payeeKey: text('payee_key').notNull(),
+  label: text('label').notNull(),
+  skippedBy: text('skipped_by'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+}, (t) => ({ pk: primaryKey({ columns: [t.workspaceId, t.payeeKey] }) }));
+
 /** Every supplier data request that was approved and actually sent. */
 export const cbamSupplierRequests = pgTable('cbam_supplier_requests', {
   id: serial('id').primaryKey(),

@@ -97,3 +97,72 @@ export function suggestNextSteps(suppliers: SupplierView[], untracked: PayeeTota
   for (const s of unchecked.slice(0, 3)) out.push({ kind: "check_registry", supplier: s.name, spend12m: s.spend12m });
   return out.slice(0, max);
 }
+
+// ── Payees read from an uploaded bank statement ──────────────────────────
+
+/** Why a payee is probably not a supplier. Shown to the person, never decided for them. */
+export type NotSupplier = "payroll" | "tax" | "cash" | "bank" | "transfer" | "loan" | "card";
+
+// Tested on the raw description (upper-case, Greek accents stripped), because
+// payeeKey removes words such as TRANSFER that matter here.
+const NOT_SUPPLIER: [NotSupplier, RegExp][] = [
+  ["payroll", /\b(SALARY|SALARIES|PAYROLL|WAGES?)\b|ΜΙΣΘΟΔΟΣ|ΜΙΣΘΟΙ|ΜΙΣΘΟΣ/],
+  ["tax", /\b(TAX|VAT|SOCIAL INSURANCE|INLAND REVENUE|GESY)\b|ΦΟΡΟΣ|ΦΟΡΟΥ|ΦΟΡΟΛΟΓ|ΦΠΑ|Φ\.Π\.Α|ΚΟΙΝΩΝΙΚΕΣ ΑΣΦΑΛΙΣΕΙΣ|ΓΕΣΥ/],
+  ["cash", /\b(ATM|CASH WITHDRAWAL)\b|ΑΝΑΛΗΨΗ/],
+  ["bank", /\b(BANK CHARGES?|CHARGES|FEES?|COMMISSION|INTEREST)\b|ΠΡΟΜΗΘΕΙΑ|ΤΡΑΠΕΖΙΚΑ ΕΞΟΔΑ|ΤΟΚΟΙ|ΤΟΚΟΣ/],
+  ["transfer", /\bOWN ACCOUNTS?\b|\bBETWEEN (MY )?ACCOUNTS\b|\bINTERNAL TRANSFER\b|ΙΔΙΟΥ ΛΟΓΑΡΙΑΣΜΟΥ|ΜΕΤΑΞΥ ΛΟΓΑΡΙΑΣΜΩΝ/],
+  ["loan", /\b(LOAN|MORTGAGE|INSTAL+MENT)\b|ΔΑΝΕΙ/],
+  ["card", /\b(CARD REPAYMENT|CREDIT CARD PAYMENT)\b|ΠΙΣΤΩΤΙΚΗΣ ΚΑΡΤΑΣ/],
+];
+
+function upperPlain(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().replace(/\s+/g, " ").trim();
+}
+
+/** The reason a payment is probably not to a supplier, or null. */
+export function notSupplierReason(description: string | null | undefined): NotSupplier | null {
+  if (!description) return null;
+  const t = upperPlain(description);
+  for (const [reason, re] of NOT_SUPPLIER) if (re.test(t)) return reason;
+  return null;
+}
+
+/** One money-out line from a statement, exactly as printed. */
+export interface StatementDebit { date: string; description: string; amount: number }
+export interface PayeeCandidate extends PayeeTotal { reason: NotSupplier | null }
+
+/** Payees on a statement, largest spend first, each with a reason if it is probably not a supplier. */
+export function payeeCandidates(debits: StatementDebit[], max = 60): PayeeCandidate[] {
+  const reasons = new Map<string, NotSupplier>();
+  const payments: Payment[] = [];
+  for (const d of debits) {
+    const key = payeeKey(d.description);
+    if (!key) continue;
+    const r = notSupplierReason(d.description);
+    if (r && !reasons.has(key)) reasons.set(key, r);
+    payments.push({ key, amount: d.amount, bookedOn: d.date });
+  }
+  return totalsByPayee(payments).slice(0, max).map((p) => ({ ...p, reason: reasons.get(p.key) ?? null }));
+}
+
+/** Same day, same amount, same payee: one payment, whichever door it came through. */
+export function paymentFingerprint(bookedOn: string, amount: number, key: string): string {
+  return `${bookedOn}|${Math.abs(amount).toFixed(2)}|${key}`;
+}
+
+/**
+ * The supplier on the list this payee already belongs to, or null. Matches a
+ * saved payee, the supplier name inside the payee, or the same name once
+ * "Ltd", punctuation and case are ignored.
+ */
+export function existingSupplierFor(
+  payee: { key: string; label: string },
+  suppliers: { supplierName: string; bankPayee: string | null }[],
+): string | null {
+  const label = norm(payee.label);
+  for (const s of suppliers) {
+    if (payeeMatches(payee.key, s) || payeeMatches(payee.key, { supplierName: s.supplierName, bankPayee: null })) return s.supplierName;
+    if (label.length >= 3 && norm(s.supplierName) === label) return s.supplierName;
+  }
+  return null;
+}

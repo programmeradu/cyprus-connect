@@ -10,6 +10,7 @@
 
 import type { FootprintKey } from "@/lib/emissions/footprint";
 import { categorise, type SpendCategory } from "@/lib/bank/categorize";
+import { payeeCandidates, type PayeeCandidate, type StatementDebit } from "@/lib/suppliers";
 import { parseAmount } from "@/lib/ocr/amounts";
 
 export type IntakeKind =
@@ -81,6 +82,10 @@ export interface BankSummary {
   lines: BankLine[];
   totals: Partial<Record<Exclude<SpendCategory, "other">, number>>;
   payees: { name: string; category: Exclude<SpendCategory, "other">; amount: number; count: number }[];
+  /** Every money-out line, as printed. Missing on statements read before suppliers were taken from them. */
+  debits?: StatementDebit[];
+  /** Who was paid, for the Suppliers list. Missing on older readings. */
+  candidates?: PayeeCandidate[];
 }
 
 export interface IntakeProposal {
@@ -328,6 +333,7 @@ export function readBankRows(rows: string[][]): BankSummary | null {
   if (date < 0 || desc < 0 || (debit < 0 && amount < 0)) return null;
 
   const lines: BankLine[] = [];
+  const debits: StatementDebit[] = [];
   let debitCount = 0;
   let first: string | null = null;
   let last: string | null = null;
@@ -348,16 +354,26 @@ export function readBankRows(rows: string[][]): BankSummary | null {
     if (last === null || d > (last as string)) last = d;
     debitCount++;
     const description = (r[desc] ?? "").slice(0, 200);
+    debits.push({ date: d, description, amount: Math.round(out * 100) / 100 });
     const c = categorise(description, "debit");
     if (c.category !== "other" && c.rule) {
       lines.push({ date: d, description, amount: Math.round(out * 100) / 100, category: c.category, rule: c.rule });
     }
   }
   if (debitCount === 0) return null;
-  return summariseBank(lines, debitCount, first, last);
+  return summariseBank(lines, debitCount, first, last, debits);
 }
 
-export function summariseBank(lines: BankLine[], debitCount: number, first: string | null, last: string | null): BankSummary {
+/** Lines kept per statement, so a year of daily card payments still fits. */
+const MAX_DEBITS = 3000;
+
+export function summariseBank(
+  lines: BankLine[],
+  debitCount: number,
+  first: string | null,
+  last: string | null,
+  debits: StatementDebit[] = [],
+): BankSummary {
   const totals: BankSummary["totals"] = {};
   const payeeMap = new Map<string, BankSummary["payees"][number]>();
   for (const l of lines) {
@@ -376,6 +392,8 @@ export function summariseBank(lines: BankLine[], debitCount: number, first: stri
     lines: lines.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 200),
     totals,
     payees: [...payeeMap.values()].sort((a, b) => b.amount - a.amount).slice(0, 20),
+    debits: debits.slice(0, MAX_DEBITS),
+    candidates: payeeCandidates(debits),
   };
 }
 

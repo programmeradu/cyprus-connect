@@ -7,6 +7,9 @@
  * PUT              add or update one supplier
  * POST             { action: "link_registry" | "unlink_registry" | "check_wikirate", name, ... }
  *                  re-reads the source on the server; nothing is trusted from the browser
+ * PATCH            { action: "add_payees", payees } adds bank payees, linking any that
+ *                  already belong to a supplier instead of making a second row;
+ *                  { action: "skip_payees" | "unskip_payees", ... } remembers "not a supplier"
  * DELETE ?name=    remove a supplier (CBAM import lines are not touched)
  *
  * Nothing here sends email. CBAM requests are drafted by Border and wait for
@@ -26,6 +29,8 @@ import {
   cbamImportLines,
   cbamSupplierRequests,
   cbamSuppliers,
+  documents,
+  supplierPayeeSkips,
 } from "@/db/schema";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { readJson } from "@/lib/validate";
@@ -35,7 +40,19 @@ import { findWikiRateCompany } from "@/lib/integrations/wikirate.server";
 import { screenCompany } from "@/lib/integrations/sanctions.server";
 import { suppliersNeedingData } from "@/lib/agents/cbam-supplier-request";
 import type { CbamDraft } from "@/lib/agents/cbam-calc";
-import { payeeKey, payeeMatches, suggestNextSteps, totalsByPayee, type Payment, type SupplierView } from "@/lib/suppliers";
+import {
+  existingSupplierFor,
+  notSupplierReason,
+  payeeKey,
+  payeeMatches,
+  paymentFingerprint,
+  suggestNextSteps,
+  totalsByPayee,
+  type NotSupplier,
+  type Payment,
+  type SupplierView,
+} from "@/lib/suppliers";
+import type { IntakeProposal } from "@/lib/documents/intake";
 
 export const dynamic = "force-dynamic";
 const log = logger("api.console.suppliers");
@@ -56,7 +73,7 @@ export async function GET() {
     const since = new Date();
     since.setUTCFullYear(since.getUTCFullYear() - 1);
 
-    const [rows, debits, cbamNames, [decl], sent, open] = await Promise.all([
+    const [rows, debits, cbamNames, [decl], sent, open, statements, skips] = await Promise.all([
       db.select().from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ws)).orderBy(asc(cbamSuppliers.supplierName)),
       db
         .select({ description: bankTransactions.description, amount: bankTransactions.amount, bookedOn: bankTransactions.bookedOn })
@@ -84,6 +101,15 @@ export async function GET() {
         .select({ id: agentTasks.id, pendingInput: agentTasks.pendingInput })
         .from(agentTasks)
         .where(and(eq(agentTasks.workspaceId, ws), eq(agentTasks.status, "open"), eq(agentTasks.pendingTool, "send_supplier_request"))),
+      // Statements kept through Add data. Documents belong to the workspace owner.
+      s.session.workspace.ownerUserId
+        ? db
+            .select({ parsedData: documents.parsedData })
+            .from(documents)
+            .where(and(eq(documents.userId, s.session.workspace.ownerUserId), eq(documents.uploadSource, "intake_bank_statement")))
+            .limit(200)
+        : Promise.resolve([] as { parsedData: string | null }[]),
+      db.select().from(supplierPayeeSkips).where(eq(supplierPayeeSkips.workspaceId, ws)),
     ]);
 
     let needing = new Set<string>();
@@ -107,11 +133,34 @@ export async function GET() {
     for (const r of sent) if (!lastSent.has(r.supplierName)) lastSent.set(r.supplierName, { sentAt: r.sentAt.toISOString(), approvedBy: r.approvedBy });
     const cbamLines = new Map(cbamNames.map((c) => [c.name, Number(c.lines)]));
 
-    const payments: Payment[] = debits.flatMap((d) => {
-      const key = payeeKey(d.description);
-      return key ? [{ key, amount: d.amount, bookedOn: d.bookedOn }] : [];
-    });
+    // Linked-bank payments first, then statement lines not already counted:
+    // the same day, amount and payee is one payment whichever way it arrived.
+    const seen = new Set<string>();
+    const reasons = new Map<string, NotSupplier>();
+    const payments: Payment[] = [];
+    const take = (description: string | null, amount: number, bookedOn: string) => {
+      const key = payeeKey(description);
+      if (!key) return;
+      const fp = paymentFingerprint(bookedOn, amount, key);
+      if (seen.has(fp)) return;
+      seen.add(fp);
+      const r = notSupplierReason(description);
+      if (r && !reasons.has(key)) reasons.set(key, r);
+      payments.push({ key, amount, bookedOn });
+    };
+    for (const d of debits) take(d.description, d.amount, d.bookedOn);
+    const sinceDay = isoDay(since);
+    for (const doc of statements) {
+      let lines: { date: string; description: string; amount: number }[] = [];
+      try {
+        lines = (JSON.parse(doc.parsedData ?? "{}") as { proposal?: IntakeProposal }).proposal?.bank?.debits ?? [];
+      } catch {
+        /* an unreadable reading only leaves that statement out */
+      }
+      for (const l of lines) if (l.date >= sinceDay) take(l.description, l.amount, l.date);
+    }
     const payees = totalsByPayee(payments);
+    const skipped = new Set(skips.map((k) => k.payeeKey));
 
     // Every name the list must show: saved rows plus CBAM suppliers not yet saved.
     const saved = new Map(rows.map((r) => [r.supplierName, r]));
@@ -151,7 +200,9 @@ export async function GET() {
       };
     });
 
-    const untracked = payees.filter((p) => !claimed.has(p.key));
+    // Wages, tax, fees and payees a person skipped are not suggested.
+    const untracked = payees.filter((p) => !claimed.has(p.key) && !skipped.has(p.key) && !reasons.has(p.key));
+    const skippedList = payees.filter((p) => !claimed.has(p.key) && skipped.has(p.key));
     const views: SupplierView[] = suppliers.map((x) => ({
       name: x.name,
       email: x.email,
@@ -169,6 +220,8 @@ export async function GET() {
       untrackedCount: untracked.length,
       suggestions: suggestNextSteps(views, untracked),
       bankPayments12m: payments.length,
+      skipped: skippedList.slice(0, 25),
+      skippedKeys: [...skipped],
       cbamYear: decl?.year ?? null,
     });
   } catch (error) {
@@ -306,5 +359,76 @@ export async function DELETE(req: Request) {
   } catch (error) {
     const ref = log.error("DELETE failed", error);
     return NextResponse.json({ message: "The supplier could not be removed.", ref }, { status: 500 });
+  }
+}
+
+const PayeeIn = z.object({ key: z.string().trim().min(3).max(48), label: z.string().trim().min(1).max(200) }).strict();
+const Bulk = z.discriminatedUnion("action", [
+  z.object({ action: z.literal("add_payees"), payees: z.array(PayeeIn).min(1).max(60) }).strict(),
+  z.object({ action: z.literal("skip_payees"), payees: z.array(PayeeIn).min(1).max(60) }).strict(),
+  z.object({ action: z.literal("unskip_payees"), keys: z.array(z.string().trim().min(3).max(48)).min(1).max(60) }).strict(),
+]);
+
+export async function PATCH(req: Request) {
+  const s = await session();
+  if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
+  const parsed = await readJson(req, Bulk);
+  if (!parsed.ok) return parsed.response;
+  const b = parsed.data;
+  const ws = s.session.workspace.id;
+  const who = s.session.account.name || s.session.account.email || s.session.account.id;
+  try {
+    if (b.action === "unskip_payees") {
+      for (const key of b.keys) {
+        await db.delete(supplierPayeeSkips).where(and(eq(supplierPayeeSkips.workspaceId, ws), eq(supplierPayeeSkips.payeeKey, key)));
+      }
+      return NextResponse.json({ saved: true });
+    }
+    if (b.action === "skip_payees") {
+      await db
+        .insert(supplierPayeeSkips)
+        .values(b.payees.map((p) => ({ workspaceId: ws, payeeKey: p.key, label: p.label, skippedBy: who })))
+        .onConflictDoNothing();
+      return NextResponse.json({ saved: true });
+    }
+
+    // add_payees: never a second row for a supplier that is already on the list.
+    const [rows, cbamNames] = await Promise.all([
+      db.select({ supplierName: cbamSuppliers.supplierName, bankPayee: cbamSuppliers.bankPayee }).from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ws)),
+      db.selectDistinct({ supplierName: cbamImportLines.supplierName }).from(cbamImportLines).where(eq(cbamImportLines.workspaceId, ws)),
+    ]);
+    const known = [...rows, ...cbamNames.filter((c) => !rows.some((r) => r.supplierName === c.supplierName)).map((c) => ({ supplierName: c.supplierName, bankPayee: null }))];
+    const added: string[] = [];
+    const already: { payee: string; supplier: string }[] = [];
+    for (const p of b.payees) {
+      const match = existingSupplierFor(p, known);
+      if (match) {
+        already.push({ payee: p.label, supplier: match });
+        continue;
+      }
+      const name = p.label.slice(0, 200);
+      const [row] = await db
+        .insert(cbamSuppliers)
+        .values({ workspaceId: ws, supplierName: name, source: "bank", bankPayee: p.key, updatedBy: who })
+        .onConflictDoNothing({ target: [cbamSuppliers.workspaceId, cbamSuppliers.supplierName] })
+        .returning({ id: cbamSuppliers.id });
+      if (row) {
+        added.push(name);
+        known.push({ supplierName: name, bankPayee: p.key });
+      } else {
+        already.push({ payee: p.label, supplier: name });
+      }
+    }
+    const keys = b.payees.map((p) => p.key);
+    for (const key of keys) {
+      await db.delete(supplierPayeeSkips).where(and(eq(supplierPayeeSkips.workspaceId, ws), eq(supplierPayeeSkips.payeeKey, key)));
+    }
+    if (added.length > 0) {
+      await logEvent(ws, who, added.length === 1 ? "added supplier" : `added ${added.length} suppliers`, added.slice(0, 5).join(", "), "From bank payments.");
+    }
+    return NextResponse.json({ added, already });
+  } catch (error) {
+    const ref = log.error("PATCH failed", error);
+    return NextResponse.json({ message: "The suppliers could not be saved.", ref }, { status: 500 });
   }
 }
