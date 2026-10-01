@@ -23,6 +23,7 @@ import {
   readBankRows,
   readConsumptionRows,
   recogniseText,
+  refuseText,
   sharesFor,
   summariseBank,
   toFootprintUnit,
