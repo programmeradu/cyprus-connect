@@ -290,3 +290,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Batch 2 (CSRD rewrites, green loans guide): have your accountant sanity-check the CSRD thresholds wording once the final Omnibus text is published in the Official Journal.
 - CBAM Registry file: the UI manual and the CarbonOps sample are not enough. Still needed: the official definitive-period CBAM declaration XSD + code lists (ask the CBAM helpdesk or Department of Environment).
 - Live errors seen on vuneli.com (Oct 1): Verde returns 500 and Home summary 503 — run pending live SQL migrations (incl. 0040_copilot_parts.sql) and redeploy; the compliance "Generate report" button no longer needs a Gemini key.
+
+## Approval and Deliverables fix (1 Oct 2026)
+- Redeploy to pick up the fix. Approving an old "VSME draft" task now writes the draft and links it from Deliverables. Clicking a task that was already decided no longer shows an error.
+- If Deliverables stays empty after approving a VSME draft, check that the live database has the `reports` table (migration list in this file) and send the error reference shown in the app.

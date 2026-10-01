@@ -88,6 +88,8 @@ export const PILLAR_SLUGS = [
   "green-loans-esg-data-smes",
   "cbam-default-values-explained",
   "cbam-authorisation-declarant-portal",
+  "cyprus-electricity-emission-factor",
+  "sustainability-document-requests-smes",
 ] as const;
 
 
@@ -126,6 +128,8 @@ import { euGreenwashingRules2026 } from "./pillars/eu-greenwashing-rules-2026";
 import { greenLoansEsgDataSmes } from "./pillars/green-loans-esg-data-smes";
 import { cbamDefaultValuesExplained } from "./pillars/cbam-default-values-explained";
 import { cbamAuthorisationDeclarantPortal } from "./pillars/cbam-authorisation-declarant-portal";
+import { cyprusElectricityEmissionFactor } from "./pillars/cyprus-electricity-emission-factor";
+import { sustainabilityDocumentRequestsSmes } from "./pillars/sustainability-document-requests-smes";
 
 export const PILLARS: Record<PillarSlug, Pillar> = {
   "csrd-reporting-guide": csrdReportingGuide,
@@ -160,6 +164,8 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
   "green-loans-esg-data-smes": greenLoansEsgDataSmes,
   "cbam-default-values-explained": cbamDefaultValuesExplained,
   "cbam-authorisation-declarant-portal": cbamAuthorisationDeclarantPortal,
+  "cyprus-electricity-emission-factor": cyprusElectricityEmissionFactor,
+  "sustainability-document-requests-smes": sustainabilityDocumentRequestsSmes,
 };
 
 export function getPillar(slug: string): Pillar | null {

@@ -6,6 +6,9 @@ import { db } from "@/db";
 import { activityEvents, agentTasks, reports, user as userTable, workspaces } from "@/db/schema";
 import { bindSessionUser } from "@/lib/api-auth";
 import { executeApprovedTask, reopenTask } from "@/lib/agents/approvals";
+import { logger } from "@/lib/log";
+
+const log = logger("console/tasks");
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +35,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { decision, note } = parsed.data;
 
   const [ws] = await db
-    .select({ id: workspaces.id })
+    .select()
     .from(workspaces)
     .where(eq(workspaces.ownerUserId, bound.userId))
     .limit(1);
@@ -73,6 +76,26 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   });
 
   if (!result) {
+    // A second click, or a stale list: if the task was already decided, say so
+    // calmly and point at its document instead of failing.
+    const [existing] = await db
+      .select({ id: agentTasks.id, status: agentTasks.status })
+      .from(agentTasks)
+      .where(and(eq(agentTasks.id, taskId), eq(agentTasks.workspaceId, ws.id)))
+      .limit(1);
+    if (existing && existing.status !== "open") {
+      const [doc] = await db
+        .select({ id: reports.id, title: reports.title })
+        .from(reports)
+        .where(and(eq(reports.taskId, existing.id), eq(reports.workspaceId, ws.id)))
+        .limit(1);
+      return NextResponse.json({
+        id: existing.id,
+        status: existing.status,
+        alreadyDecided: true,
+        deliverable: doc ? { href: `/app/reports/${doc.id}`, title: doc.title } : null,
+      });
+    }
     return NextResponse.json(
       { error: "This task is already decided or does not belong to your workspace." },
       { status: 409 },
@@ -109,13 +132,31 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   }
   // A review of a drafted document: approving marks the draft reviewed, and the
   // answer says where the document lives so the person is never left guessing.
-  const [draft] = await db
+  let [draft] = await db
     .select({ id: reports.id, title: reports.title })
     .from(reports)
     .where(and(eq(reports.taskId, result.id), eq(reports.workspaceId, ws.id)))
     .limit(1);
   if (draft && decision === "approve") {
     await db.update(reports).set({ status: "in_review", updatedAt: new Date() }).where(eq(reports.id, draft.id));
+  }
+  // A task that asks for a VSME draft but has none yet: approving it writes the
+  // draft now, so approval never ends in nothing.
+  if (!draft && decision === "approve" && /\bVSME\b/i.test(result.title)) {
+    try {
+      const { draftVsmeReport } = await import("@/lib/reports/vsme");
+      const made = await draftVsmeReport({
+        workspace: ws,
+        agentKey: result.agentKey,
+        taskId: result.id,
+        createdBy: actor?.name?.trim() || "Workspace owner",
+      });
+      draft = { id: made.id, title: made.title };
+    } catch (error) {
+      const ref = log.error("vsme draft on approval failed", error);
+      await reopenTask(result.id, ws.id, "The draft could not be written.");
+      return NextResponse.json({ error: "The draft could not be written. Please try again.", ref, reopened: true }, { status: 409 });
+    }
   }
   return NextResponse.json({
     id: result.id,

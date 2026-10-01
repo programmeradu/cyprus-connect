@@ -2488,7 +2488,8 @@
       "no": "No",
       "openDraft": "Open draft",
       "readyToast": "Saved to Deliverables: {title}",
-      "openShort": "Open"
+      "openShort": "Open",
+      "alreadyDecided": "This was already decided. The list is now up to date."
     },
     "deadline": {
       "title": "Next deadline",
