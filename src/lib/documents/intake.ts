@@ -217,7 +217,26 @@ export function periodOk(start: string, end: string): boolean {
 // ── Recognising text ─────────────────────────────────────────────────────
 
 const EAC_TEXT = /electricity authority of cyprus|αρχη ηλεκτρισμου|\beac\b|\bαηκ\b|\ba\.h\.k\b/;
-const WATER_TEXT = /water board|συμβουλιο υδατοπρομηθειας|υδατοπρομηθει|water supply/;
+// One reader for every Cyprus water supplier: the boards of Nicosia, Limassol
+// and Larnaca, and municipal or community supplies (Paphos, Paralimni, ...).
+const WATER_TEXT = /water board|συμβουλιο υδατοπρομηθειας|υδατοπρομηθει|water supply|υδρευσ|τελη νερου|water charges/;
+const WATER_UNIT = /m3|m³|κυβικ|\bκμ\b|consumption/;
+
+/** Bills that look like utilities but measure nothing the footprint uses. */
+const REFUSE_TEXT: [RegExp, string][] = [
+  [/συμβουλιο αποχετευσεων|sewerage board|τελη αποχετευσ|sewerage (charge|fee|levy)/, "Sewerage charge (based on the property, not water used)"],
+  [/cablenet|\bcyta\b|primetel|epic\b|\bcallsat\b|broadband|internet service/, "Telephone, internet or TV bill"],
+  [/δημοτικ[αο]\s+τελ|municipality tax|δημοτικος φορος|αδει[αε]ς|licen[cs]e fee|τελη σκυβαλων|refuse collection fee/, "Municipal tax, licence or fee"],
+];
+
+/** A short reason when the text is a known non-footprint bill, else null. */
+export function refuseText(text: string): string | null {
+  const t = normaliseForMatch(text);
+  // A water bill can mention sewerage as a line; it still counts as water.
+  if (WATER_TEXT.test(t) && WATER_UNIT.test(t)) return null;
+  for (const [re, why] of REFUSE_TEXT) if (re.test(t)) return why;
+  return null;
+}
 const BANK_TEXT = /\biban\b|account statement|statement of account|καταστασ[ηε]\s+λογαριασμου|opening balance|closing balance|υπολοιπο/;
 
 /** Recognises a document from its text with fixed rules. Null means "ask the reader". */
@@ -225,7 +244,7 @@ export function recogniseText(text: string): "eac_bill" | "water_bill" | "bank_s
   const t = normaliseForMatch(text);
   const bank = BANK_TEXT.test(t);
   const eac = EAC_TEXT.test(t) && /kwh/.test(t);
-  const water = WATER_TEXT.test(t) && /m3|m³|κυβικ/.test(t);
+  const water = WATER_TEXT.test(t) && WATER_UNIT.test(t);
   // A statement lists EAC and water board payments, so the statement wording wins.
   if (bank && /\biban\b/.test(t) && (/balance|υπολοιπο/.test(t))) return "bank_statement";
   if (eac) return "eac_bill";
