@@ -1049,7 +1049,7 @@
         "accelerators": "European Innovation Council"
       },
       "panelTitle": "Funding that could pay for it",
-      "panelBody": "Open EU and Cyprus calls found by the hourly scan, soonest deadline first. Check each call's rules before applying: many are for research groups, not single companies.",
+      "panelBody": "Grant scout checks every open call against your company and shows only the ones you fit, or are one answer away from.",
       "alertsOn": "Email alerts are on for {email}.",
       "alertsOff": "Get an email at {email} when a new call is found.",
       "turnOn": "Turn on alerts",
@@ -1059,7 +1059,18 @@
       "showFewer": "Show fewer",
       "noDeadline": "Rolling",
       "closesToday": "Closes today",
-      "daysLeft": "{days, plural, one {# day left} other {# days left}}"
+      "daysLeft": "{days, plural, one {# day left} other {# days left}}",
+      "strong": "Strong fit",
+      "needsInfo": "One answer away",
+      "why": "Why it fits",
+      "toConfirm": "To confirm",
+      "docs": "Usually needed",
+      "quote": "From the call",
+      "autoTranslated": "Translated automatically",
+      "checked": "Checked {count} calls",
+      "noFitTitle": "No strong fits right now",
+      "noFitBody": "Grant scout checks new calls daily. Calls you clearly don't fit stay hidden.",
+      "answerIn": "Answer in Waiting for you on Home."
     },
     "agents": {
       "title": "Agents",
@@ -2463,11 +2474,12 @@
       "title": "Money on the table",
       "all": "All funding",
       "loading": "Reading open funding calls…",
-      "empty": "No open funding call right now. We check every hour.",
+      "empty": "No strong fits yet. Grant scout checks new calls daily.",
       "closes": "{days, plural, one {closes in # day} other {closes in # days}}",
       "rolling": "open call",
-      "note": "Open EU and Cyprus calls. Check each call's rules to see if your company qualifies.",
-      "closesToday": "closes today"
+      "note": "Only calls Grant scout matched to your company.",
+      "closesToday": "closes today",
+      "oneAway": "One answer away"
     },
     "setup": {
       "title": "Finish setting up",
