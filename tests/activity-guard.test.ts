@@ -21,7 +21,7 @@ describe("shared activity record", () => {
     const missing = walk(ROOT)
       .filter((f) => f.endsWith("route.ts"))
       .filter((f) => /export (async function|const) (POST|PUT|PATCH|DELETE)\b/.test(readFileSync(f, "utf8")))
-      .map((f) => f.slice(ROOT.length + 1))
+      .map((f) => f.slice(ROOT.length + 1).replace(/\\/g, "/"))
       .filter((rel) => !EXEMPT[rel])
       .filter((rel) => !/recordActivity|activityEvents|logEvent/.test(readFileSync(join(ROOT, rel), "utf8")));
     expect(missing).toEqual([]);
