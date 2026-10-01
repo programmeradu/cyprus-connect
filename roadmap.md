@@ -182,3 +182,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Verde: deliverable layouts via json-render catalogue (deferred: fixed cards cover current documents)
 - [ ] Verde: update fixed answer tests (scripts/verde-eval.ts) to the tool-based prompt
 - [ ] Live: run migration 0040_copilot_parts.sql
+- [x] Content batch 1: CBAM Cyprus rewritten (authority corrected), EUDR guide, EU greenwashing rules guide (EN+EL, images)
+- [ ] Content batches 2-3 per docs/content/CONTENT_PLAN_2026-10.md (8 new articles; rewrite pre-Omnibus CSRD pages first)
+- [ ] Stripe: founder adds STRIPE_SECRET_KEY + NEXT_PUBLIC_PAYMENTS_CLIENT_TOKEN in Cloudflare; then webhook + test purchase
+- [ ] CBAM XSD: founder downloads from CBAM Registry and uploads

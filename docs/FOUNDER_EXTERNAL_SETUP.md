@@ -284,3 +284,11 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Verde redesign (2026-10-01)
 - Run `scripts/sql/0040_copilot_parts.sql` on the live database before deploying (adds storage for Verde's answer cards). Applied to preview only.
 - Uses the same `GROQ_API_KEY`. No other setup.
+
+## Stripe (own account, no Lovable Cloud) - added 2026-10-01
+- [ ] Create Stripe account (country: Cyprus). Developers > API keys: copy test secret + publishable keys.
+- [ ] Cloudflare: add `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_PAYMENTS_CLIENT_TOKEN`. Tell the agent; it will give the webhook URL, then add `PAYMENTS_SANDBOX_WEBHOOK_SECRET`.
+- [ ] Going live: finish Stripe business verification, swap to live keys, add `PAYMENTS_LIVE_WEBHOOK_SECRET`.
+
+## CBAM Registry file - added 2026-10-01
+- [ ] EU Login with two-step verification, open the CBAM Registry, download the latest declarant XML/XSD package, upload it to the agent.
