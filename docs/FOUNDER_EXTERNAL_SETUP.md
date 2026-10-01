@@ -297,3 +297,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Verde document drafter (2026-10-01)
 - Nothing to set up. Redeploy, then ask Verde e.g. "write our supplier code of conduct", approve, and check it opens in Deliverables.
+
+## Search visibility (2026-10-01)
+- After the next deploy, re-run the Ahrefs site audit. Don't run it while a deploy is still going: pages crawled mid-deploy can report "broken JavaScript" for files that are being replaced.
+- The deploy now pings IndexNow (Bing and others) on its own. Optional: add vuneli.com in Bing Webmaster Tools and import it from Google Search Console.
