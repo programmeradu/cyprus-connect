@@ -92,7 +92,23 @@ function getFallbackDb(): ReturnType<typeof drizzle<typeof schema>> {
   return fallbackDb;
 }
 
+/**
+ * Development only: a long-lived pool inside `next dev` stops answering after
+ * a while (queries queue forever while the database itself is idle). A short
+ * lived client per use avoids that; the transaction pooler has room for it.
+ */
+function getDevDb(): Db {
+  const client = postgres(getConnectionString(), {
+    max: 1,
+    prepare: false,
+    idle_timeout: 1,
+    connect_timeout: 10,
+  });
+  return drizzle(client, { schema });
+}
+
 function getDbInstance(): ReturnType<typeof drizzle<typeof schema>> {
+  if (IS_DEV) return getDevDb();
   // Without Hyperdrive (tests, local dev, the preview) there is no pooler in
   // front of Postgres. React.cache only scopes inside a React render, so in
   // API routes it would open a fresh client on every access and exhaust the
