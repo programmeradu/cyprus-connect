@@ -1,6 +1,6 @@
 "use client";
 
-import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
+import { CompanyLogo } from "@/components/app/console/CompanyLogo";
 import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/lib/user-context";
@@ -20,6 +20,7 @@ interface LeaderboardEntry {
   rank: number;
   name?: string;
   companyName?: string;
+  logoDomain?: string | null;
   totalCredits: number;
   actionsCompleted: number;
   recentActions?: { category: string; title: string; points: number }[];
@@ -48,7 +49,7 @@ export default function LeaderboardPage() {
       header: t("x.company"),
       render: (row) => (
         <div className="flex min-w-0 items-center gap-2.5">
-          <ConsoleAvatar seed={row.companyName || row.name || "vuneli"} size={28} styleKey="shapes" alt="" />
+          <CompanyLogo name={row.companyName || row.name || "vuneli"} domain={row.logoDomain} size={28} />
           <div className="min-w-0">
           <p className="font-medium break-words">{row.companyName || row.name}</p>
           {user && row.userId === user.id && (
@@ -99,7 +100,7 @@ export default function LeaderboardPage() {
             {topThree.map((entry) => (
               <div key={entry.userId} className="vck-card p-4">
                 <div className="mb-2 flex items-center gap-2.5">
-                  <ConsoleAvatar seed={entry.companyName || entry.name || "vuneli"} size={32} styleKey="shapes" alt="" />
+                  <CompanyLogo name={entry.companyName || entry.name || "vuneli"} domain={entry.logoDomain} size={32} />
                   <p className="vck-label">#{entry.rank}</p>
                 </div>
                 <p className="text-sm font-medium break-words mb-1">{entry.companyName || entry.name}</p>

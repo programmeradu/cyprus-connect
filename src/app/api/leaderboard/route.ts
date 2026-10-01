@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { user, userActions, actions } from '@/db/schema';
 import { gt, desc, eq, sql } from 'drizzle-orm';
+import { logoDomain } from '@/lib/company-logo';
 
 export async function GET(request: NextRequest) {
   try {
@@ -29,6 +30,8 @@ export async function GET(request: NextRequest) {
         name: user.name,
         companyName: user.companyName,
         totalCredits: user.totalCredits,
+        website: user.companyWebsite,
+        email: user.email,
       })
       .from(user)
       .where(gt(user.totalCredits, 0))
@@ -37,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     // Get action counts and details for each user
     const leaderboardWithActions = await Promise.all(
-      topUsers.map(async (userRecord, index) => {
+      topUsers.map(async ({ website, email, ...userRecord }, index) => {
         // Get count of completed actions
         const completedActions = await db
           .select({
@@ -66,6 +69,8 @@ export async function GET(request: NextRequest) {
         return {
           rank: index + 1,
           ...userRecord,
+          // Only the company domain leaves the server, never the email address.
+          logoDomain: logoDomain(website, email),
           actionsCompleted: actionCount,
           recentActions: recentActions.filter(a => a.title !== null), // Filter out any null joins
         };

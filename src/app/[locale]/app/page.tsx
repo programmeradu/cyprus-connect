@@ -11,7 +11,7 @@
  * Every figure is read from /api/console/overview; nothing is written by hand.
  */
 
-import { ConsoleAvatar } from "@/components/app/console/ConsoleAvatar";
+import { CompanyLogo } from "@/components/app/console/CompanyLogo";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -106,7 +106,7 @@ export default function ConsolePage() {
             <aside className="vc-team-card vch-team-card">
               <div className="vc-owner-row">
                 <span className="vc-owner-avatar">
-                  <ConsoleAvatar seed={workspace.name ?? "Vuneli"} size={30} styleKey="shapes" alt="" />
+                  <CompanyLogo name={workspace.name ?? "Vuneli"} domain={company.data?.logoDomain} size={30} />
                 </span>
                 <span>
                   <small>
