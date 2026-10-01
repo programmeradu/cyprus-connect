@@ -551,6 +551,15 @@ export const workspaces = pgTable('workspaces', {
   ownerRole: text('owner_role'),
   ownerAvatar: text('owner_avatar'),
   isDemo: boolean('is_demo').notNull().default(false),
+  /** Cyprus Registrar of Companies link (scripts/sql/0027). Set only from the register. */
+  registrationNo: text('registration_no'),
+  /** Register type code: C company, P partnership, B business name, O overseas. */
+  registryType: text('registry_type'),
+  registryName: text('registry_name'),
+  registryStatus: text('registry_status'),
+  registryRegisteredOn: text('registry_registered_on'),
+  registryAddress: text('registry_address'),
+  registryCheckedAt: timestamp('registry_checked_at'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
@@ -632,6 +641,8 @@ export const agentJobs = pgTable('agent_jobs', {
   runId: integer('run_id'),
   error: text('error'),
   requestedBy: text('requested_by'),
+  /** Plain-words goal for a planning agent (scripts/sql/0027). */
+  goal: text('goal'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   finishedAt: timestamp('finished_at'),
 });
