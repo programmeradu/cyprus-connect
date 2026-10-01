@@ -56,6 +56,7 @@ interface Data {
   suggestions: Suggestion[];
   bankPayments12m: number;
   cbamYear: number | null;
+  skipped?: Payee[];
 }
 interface RegistryHit { name: string; displayNo: string; registrationNo: string; status: string; active: boolean; typeLabel: string }
 
@@ -327,9 +328,29 @@ export default function SuppliersPage() {
   const addPayee = async (p: { key: string; label: string }) => {
     setAdding(p.key);
     try {
-      await workspaceRequest(PATH, { method: "PUT", body: { name: p.label, bankPayee: p.key, source: "bank" } });
+      const r = await workspaceRequest<{ added: string[]; already: { payee: string; supplier: string }[] }>(PATH, {
+        method: "PATCH",
+        body: { action: "add_payees", payees: [{ key: p.key, label: p.label }] },
+      });
       invalidateWorkspace([PATH]);
-      say(t("addedMsg", { name: p.label }));
+      const same = r.already[0];
+      say(same ? t("alreadyMsg", { payee: p.label, name: same.supplier }) : t("addedMsg", { name: p.label }));
+    } catch (e) {
+      say(errText(e, t("saveFailed")), "warn");
+    } finally {
+      setAdding(null);
+    }
+  };
+
+  const skipPayee = async (p: { key: string; label: string }, undo = false) => {
+    setAdding(p.key);
+    try {
+      await workspaceRequest(PATH, {
+        method: "PATCH",
+        body: undo ? { action: "unskip_payees", keys: [p.key] } : { action: "skip_payees", payees: [{ key: p.key, label: p.label }] },
+      });
+      invalidateWorkspace([PATH]);
+      say(undo ? t("unskippedMsg", { name: p.label }) : t("skippedMsg", { name: p.label }));
     } catch (e) {
       say(errText(e, t("saveFailed")), "warn");
     } finally {
@@ -408,11 +429,35 @@ export default function SuppliersPage() {
                   <strong>{p.label}</strong>
                   <span className="vck-cbam-note">{money(p.total)} · {t("payments", { count: p.count })} · {t("lastPaid", { date: day(p.lastPaid) })}</span>
                 </div>
-                <Btn variant="quiet" disabled={adding !== null} onClick={() => addPayee(p)}>{adding === p.key ? t("saving") : t("addThis")}</Btn>
+                <div className="vck-sup-hit-actions">
+                  <Btn variant="quiet" disabled={adding !== null} onClick={() => addPayee(p)}>{adding === p.key ? t("saving") : t("addThis")}</Btn>
+                  <Btn variant="text" disabled={adding !== null} onClick={() => void skipPayee(p)}>{t("notSupplier")}</Btn>
+                </div>
               </li>
             ))}
           </ul>
         </Plate>
+      )}
+
+      {d && (d.skipped?.length ?? 0) > 0 && (
+        <details className="vck-sup-skipped">
+          <summary className="vck-label">{t("skippedTitle", { count: d.skipped!.length })}</summary>
+          <p className="vck-cbam-note">{t("skippedFoot")}</p>
+          <ul className="vck-sup-hits">
+            {d.skipped!.map((p) => (
+              <li key={p.key}>
+                <div className="min-w-0">
+                  <strong className="break-words">{p.label}</strong>
+                  <span className="vck-cbam-note">{money(p.total)} · {t("payments", { count: p.count })}</span>
+                </div>
+                <div className="vck-sup-hit-actions">
+                  <Btn variant="quiet" disabled={adding !== null} onClick={() => addPayee(p)}>{t("addThis")}</Btn>
+                  <Btn variant="text" disabled={adding !== null} onClick={() => void skipPayee(p, true)}>{t("suggestAgain")}</Btn>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </details>
       )}
     </ConsolePage>
   );
