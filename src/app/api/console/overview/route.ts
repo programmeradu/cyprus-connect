@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
 import {
+  cbamImportLines,
   workspaces,
   metricDefinitions,
   metricReadings,
@@ -60,10 +61,8 @@ export async function GET(req: Request) {
       header: requestHeaders.get(QA_HEADER),
     });
 
-    console.log("[overview] Step 1: getSession");
     const session = qa ? null : await auth.api.getSession({ headers: requestHeaders });
     const account = qa ? { ...QA_ACCOUNT } : session?.user;
-    console.log("[overview] Step 1 done, account:", account?.id);
 
     if (!account) {
       return NextResponse.json(
@@ -93,7 +92,6 @@ export async function GET(req: Request) {
         .onConflictDoNothing();
     }
 
-    console.log("[overview] Step 2: workspace lookup");
     let [workspace] = await db
       .select()
       .from(workspaces)
@@ -102,7 +100,6 @@ export async function GET(req: Request) {
 
     /** First visit after sign-up: give the account its own empty workspace. */
     if (!workspace) {
-      console.log("[overview] Step 2b: creating workspace");
       const [profile] = await db
         .select()
         .from(userTable)
@@ -145,117 +142,64 @@ export async function GET(req: Request) {
       );
     }
 
-    console.log("[overview] Step 3: loadCompanyWorkspace");
     // Company facts come from their one home (see company.server.ts).
     workspace = await loadCompanyWorkspace(account.id, workspace);
     const workspaceId = workspace.id;
-    console.log("[overview] Step 3 done, workspaceId:", workspaceId);
 
-    console.log("[overview] Step 4: Promise.all starting");
     const [defs, readings, roster, runs, tasks, connections, obs, events] =
       await Promise.all([
         (async () => {
-          console.log("[overview] Q: defs start");
           const r = await db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder));
-          console.log("[overview] Q: defs done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: readings start");
           const r = await db.select().from(metricReadings).where(eq(metricReadings.workspaceId, workspaceId)).orderBy(asc(metricReadings.periodStart));
-          console.log("[overview] Q: readings done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: roster start");
           const r = await db.select().from(agents).orderBy(asc(agents.sortOrder));
-          console.log("[overview] Q: roster done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: runs start");
           const r = await db.select().from(agentRuns).where(and(eq(agentRuns.workspaceId, workspaceId), ne(agentRuns.trigger, "sample"))).orderBy(desc(agentRuns.startedAt)).limit(20);
-          console.log("[overview] Q: runs done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: tasks start");
           const r = await db.select().from(agentTasks).where(and(eq(agentTasks.workspaceId, workspaceId), eq(agentTasks.status, "open"))).orderBy(asc(agentTasks.dueAt)).limit(20);
-          console.log("[overview] Q: tasks done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: connections start");
           const r = await liveConnections(account.id, workspaceId);
-          console.log("[overview] Q: connections done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: obs start");
           let r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
-          if (r.length === 0) {
-            await db
-              .insert(obligations)
-              .values([
-                {
-                  id: `${workspaceId}_cbam_q3`,
-                  workspaceId,
-                  framework: "CBAM",
-                  title: "Q3 2026 declaration",
-                  dueDate: "2026-11-30",
-                  status: "planned",
-                  progressPct: 0,
-                  agentKey: "cbam",
-                  detail: "Quarterly declaration of embedded emissions for covered imports under EU CBAM.",
-                },
-                {
-                  id: `${workspaceId}_vsme_2026`,
-                  workspaceId,
-                  framework: "VSME",
-                  title: "Voluntary disclosure 2026",
-                  dueDate: "2026-12-31",
-                  status: "planned",
-                  progressPct: 0,
-                  agentKey: "reporter",
-                  detail: "EFRAG basic module sustainability disclosures requested by banks and corporate buyers.",
-                },
-                {
-                  id: `${workspaceId}_csrd_w3`,
-                  workspaceId,
-                  framework: "CSRD",
-                  title: "Wave 3 first report",
-                  dueDate: "2027-01-01",
-                  status: "planned",
-                  progressPct: 0,
-                  agentKey: "auditor",
-                  detail: "Double materiality assessment and ESRS data collection for upstream supply chains.",
-                },
-                {
-                  id: `${workspaceId}_energy_audit`,
-                  workspaceId,
-                  framework: "Cyprus law",
-                  title: "Energy audit renewal",
-                  dueDate: "2027-03-31",
-                  status: "planned",
-                  progressPct: 0,
-                  agentKey: "advisor",
-                  detail: "Periodic energy efficiency audit under Cyprus national law.",
-                },
-              ])
-              .onConflictDoNothing();
-            r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          // Only deadlines that apply: the first annual CBAM declaration (2026 imports,
+          // due 30 Sep 2027 under Regulation (EU) 2025/2083) when the workspace records CBAM goods.
+          if (!r.some((o) => o.framework === "CBAM")) {
+            const [hasCbam] = await db.select({ id: cbamImportLines.id }).from(cbamImportLines).where(eq(cbamImportLines.workspaceId, workspaceId)).limit(1);
+            if (hasCbam) {
+              await db.insert(obligations).values({
+                id: `${workspaceId}_cbam_annual_2026`,
+                workspaceId,
+                framework: "CBAM",
+                title: "Annual CBAM declaration for 2026 imports",
+                dueDate: "2027-09-30",
+                status: "planned",
+                progressPct: 0,
+                agentKey: "cbam",
+                detail: "First annual declaration of embedded emissions for CBAM goods imported in 2026. Source: Regulation (EU) 2025/2083 amending Regulation (EU) 2023/956, Article 6.",
+              }).onConflictDoNothing();
+              r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+            }
           }
-          console.log("[overview] Q: obs done");
           return r;
         })(),
         (async () => {
-          console.log("[overview] Q: events start");
           const r = await db.select().from(activityEvents).where(eq(activityEvents.workspaceId, workspaceId)).orderBy(desc(activityEvents.createdAt)).limit(12);
-          console.log("[overview] Q: events done");
           return r;
         })(),
       ]);
-    console.log("[overview] Step 4: Promise.all done");
 
     /** Fold the flat reading rows into one series per metric. */
     const series: Record<
@@ -304,9 +248,7 @@ export async function GET(req: Request) {
       };
     });
 
-    console.log("[overview] Step 5: rosterFor start");
     const agentsResult = await rosterFor(workspaceId, roster, Object.keys(RUNNABLE_AGENTS));
-    console.log("[overview] Step 5: rosterFor done");
 
     // Agent-written notes are English; Greek pages get cached translations.
     const locale = localeOf(req.headers);
