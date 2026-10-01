@@ -29,6 +29,8 @@ export type FeedItem = {
   source: "ted" | "eurlex";
   title: string;
   titleLang: string;
+  /** Official Greek title (EUR-Lex), when published. */
+  titleEl?: string | null;
   url: string;
   publishedAt: string;
   deadline: string | null;
@@ -139,11 +141,13 @@ export function parseEurLex(json: unknown): FeedItem[] {
     if (!celex || !title || !published || seen.has(celex)) continue;
     seen.add(celex);
     const corrigendum = /R\(\d+\)$/.test(celex);
+    const titleEl = b.titleEl?.value?.replace(/\s+/g, " ").trim() || null;
     out.push({
       id: `eurlex:${celex}`,
       source: "eurlex",
       title: title.slice(0, 600),
       titleLang: "en",
+      titleEl: titleEl ? titleEl.slice(0, 600) : null,
       url: `https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:${encodeURIComponent(celex)}`,
       publishedAt: published,
       deadline: null,
@@ -194,13 +198,17 @@ const LAW_REGEX = "emission|carbon|CBAM|sustainab|taxonomy|energy|electricity|re
 export async function fetchEuLaw(today = new Date()): Promise<FeedItem[]> {
   const since = ymd(new Date(today.getTime() - 183 * 86_400_000));
   const query = `PREFIX cdm: <http://publications.europa.eu/ontology/cdm#>
-SELECT DISTINCT ?celex ?date ?title WHERE {
+SELECT DISTINCT ?celex ?date ?title ?titleEl WHERE {
   ?w cdm:resource_legal_id_celex ?celex ; cdm:work_date_document ?date .
   FILTER(?date >= "${since}"^^xsd:date)
   FILTER(REGEX(STR(?celex), "^3[0-9]{4}[RLD]"))
   ?e cdm:expression_belongs_to_work ?w ; cdm:expression_title ?title ;
      cdm:expression_uses_language <http://publications.europa.eu/resource/authority/language/ENG> .
   FILTER(REGEX(?title, "${LAW_REGEX}", "i"))
+  OPTIONAL {
+    ?eel cdm:expression_belongs_to_work ?w ; cdm:expression_title ?titleEl ;
+         cdm:expression_uses_language <http://publications.europa.eu/resource/authority/language/ELL> .
+  }
 } ORDER BY DESC(?date) LIMIT 300`;
   const json = await timed(SPARQL_URL, {
     method: "POST",
@@ -221,6 +229,7 @@ async function store(items: FeedItem[]) {
       source: x.source,
       title: x.title,
       titleLang: x.titleLang,
+      titleEl: x.titleEl ?? null,
       url: x.url,
       publishedAt: x.publishedAt,
       deadline: x.deadline,
@@ -238,7 +247,7 @@ async function store(items: FeedItem[]) {
       .onConflictDoUpdate({
         target: euFeedItems.id,
         set: {
-          title: sql`excluded.title`, url: sql`excluded.url`, deadline: sql`excluded.deadline`, buyer: sql`excluded.buyer`,
+          title: sql`excluded.title`, titleEl: sql`coalesce(excluded.title_el, ${euFeedItems.titleEl})`, url: sql`excluded.url`, deadline: sql`excluded.deadline`, buyer: sql`excluded.buyer`,
           valueEur: sql`excluded.value_eur`, actType: sql`excluded.act_type`, topics: sql`excluded.topics`, cpv: sql`excluded.cpv`,
           green: sql`excluded.green`, fetchedAt: sql`excluded.fetched_at`,
         },
@@ -306,6 +315,7 @@ export async function readEuFeed(source: "ted" | "eurlex", opts: { greenOnly?: b
       source: r.source as FeedItem["source"],
       title: r.title,
       titleLang: r.titleLang,
+      titleEl: r.titleEl ?? null,
       url: r.url,
       publishedAt: String(r.publishedAt),
       deadline: r.deadline ? String(r.deadline) : null,
