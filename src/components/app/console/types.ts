@@ -153,17 +153,20 @@ export const toneFor = (delta: number, goodDirection: "up" | "down") => {
   return improving ? ("good" as const) : ("bad" as const);
 };
 
-export const relativeTime = (iso: string | null) => {
-  if (!iso) return "never";
+export const relativeTime = (iso: string | null, locale: string = "en") => {
+  const el = locale === "el";
+  if (!iso) return el ? "ποτέ" : "never";
   const diff = Date.now() - new Date(iso).getTime();
   const min = Math.round(diff / 60_000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min}m ago`;
+  if (min < 1) return el ? "μόλις τώρα" : "just now";
+  const ago = (n: number, en: string, gr: string) => (el ? `πριν από ${n} ${gr}` : `${n}${en} ago`);
+  if (min < 60) return ago(min, "m", "λεπ.");
   const hrs = Math.round(min / 60);
-  if (hrs < 24) return `${hrs}h ago`;
+  if (hrs < 24) return ago(hrs, "h", hrs === 1 ? "ώρα" : "ώρες");
   const days = Math.round(hrs / 24);
-  if (days < 30) return `${days}d ago`;
-  return `${Math.round(days / 30)}mo ago`;
+  if (days < 30) return ago(days, "d", days === 1 ? "ημέρα" : "ημέρες");
+  const months = Math.round(days / 30);
+  return ago(months, "mo", months === 1 ? "μήνα" : "μήνες");
 };
 
 export const daysUntil = (iso: string) => {
