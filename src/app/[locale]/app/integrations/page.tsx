@@ -813,7 +813,7 @@ function IntegrationsContent() {
           value={`${linkedCount} / ${linkableCount}`}
           note={L("accounts you can link", "λογαριασμοί προς σύνδεση")}
         />
-        <Reading label={L("Planned", "Προγραμματισμένες")} value={scheduledCount} note={L("no controls until they work", "χωρίς κουμπιά μέχρι να λειτουργούν")} />
+        <Reading label={L("Coming soon", "Έρχονται σύντομα")} value={scheduledCount} note={L("no controls until they work", "χωρίς κουμπιά μέχρι να λειτουργούν")} />
         <Reading label={L("Sources in use", "Πηγές σε χρήση")} value={`${coverage}%`} note={<Bar pct={coverage} />} />
       </ReadingRail>
 
