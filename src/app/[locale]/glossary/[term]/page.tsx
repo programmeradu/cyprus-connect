@@ -29,16 +29,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     ? `${entry.term} - Ορισμός | Vuneli Γλωσσάρι`
     : `${entry.term} - Definition & Meaning | Vuneli Glossary`;
 
-  let description = definition;
-  if (definition.length > 158) {
-    description = definition.slice(0, 155) + "...";
-  } else if (definition.length < 115) {
-    const suffix = isEl
-      ? " Μάθετε τι σημαίνει και πώς εφαρμόζεται στις επιχειρήσεις με το Vuneli."
-      : " Learn what this means and how it applies to ESG compliance at Vuneli.";
-    const combined = definition.endsWith(".") ? `${definition}${suffix}` : `${definition}.${suffix}`;
-    description = combined.length <= 158 ? combined : combined.slice(0, 155) + "...";
-  }
+  const description = seoDescription(
+    definition,
+    safeLocale,
+    isEl
+      ? "Τι σημαίνει και πώς εφαρμόζεται στις επιχειρήσεις, από το Vuneli."
+      : "What it means and how it applies to businesses, explained by Vuneli.",
+  );
 
   const url = `${SITE_URL}/${safeLocale}/glossary/${term}`;
   const languages: Record<string, string> = {};

@@ -297,7 +297,7 @@ export function SiteFooter() {
             <li><Link href={`/${locale}`} className={linkCls}>{t.home}</Link></li>
             <li><Link href={`/${locale}/pricing`} className={linkCls}>{t.pricing}</Link></li>
             <li><Link href={`/${locale}/tools`} className={linkCls}>{t.tools}</Link></li>
-            <li><Link href={`/${locale}/app`} className={linkCls}>{locale === "el" ? "Πίνακας" : "Dashboard"}</Link></li>
+            <li><Link href={`/${locale}/auth`} className={linkCls}>{locale === "el" ? "Σύνδεση" : "Sign in"}</Link></li>
           </ul>
         </div>
 
