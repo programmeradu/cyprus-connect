@@ -130,24 +130,27 @@
   block(fill: rgb("#F3F5F0"), inset: 10pt, width: 100%)[#text(weight: 600, fill: ink)[No footprint readings yet.] Upload an electricity bill or connect the bank account on the Connect page, and the footprint appears here.]
 } else {
   let pts = d.months
-  let mx = calc.max(1, ..pts.map(p => p.value))
+  let mx0 = calc.max(0, ..pts.map(p => p.value))
+  let mx = if mx0 > 0 { mx0 } else { 1 }
+  let slots = calc.max(12, pts.len())
+  let pad = slots - pts.len()
   let h = 52mm
   set text(size: 7pt, fill: quiet, number-width: "tabular")
   grid(columns: (auto, 1fr), column-gutter: 6pt,
     // y axis labels
     box(height: h, {
       for i in range(0, 5) {
-        place(top + right, dy: h * (1 - i / 4) - 4pt, [#calc.round(mx * i / 4, digits: if mx < 8 { 1 } else { 0 })])
+        place(top + right, dy: h * (1 - i / 4) - 4pt, [#calc.round(mx * i / 4, digits: if mx < 4 { 2 } else if mx < 40 { 1 } else { 0 })])
       }
     }),
     box(width: 100%, height: h, {
       for i in range(0, 5) { place(top, dy: h * (1 - i / 4), line(length: 100%, stroke: if i == 0 { 0.6pt + ink } else { 0.3pt + hair })) }
-      grid(columns: (1fr,) * pts.len(), column-gutter: 5pt, align: bottom,
-        ..pts.enumerate().map(((i, p)) => box(width: 100%, height: h, align(bottom, rect(width: 100%, height: h * p.value / mx, fill: if i == pts.len() - 1 { accent } else { rgb("#AFC2A5") }, stroke: none)))))
+      grid(columns: (1fr,) * slots, column-gutter: 5pt, align: bottom,
+        ..range(pad).map(_ => []), ..pts.enumerate().map(((i, p)) => box(width: 100%, height: h, align(bottom, rect(width: 100%, height: h * p.value / mx, fill: if i == pts.len() - 1 { accent } else { rgb("#AFC2A5") }, stroke: none)))))
     }),
   )
   v(-2pt)
-  pad(left: 18pt, grid(columns: (1fr,) * pts.len(), column-gutter: 5pt, align: center, ..pts.map(p => [#p.label])))
+  pad(left: 18pt, grid(columns: (1fr,) * slots, column-gutter: 5pt, align: center, ..range(pad).map(_ => []), ..pts.map(p => [#p.label])))
   v(4pt)
   text(size: 7.5pt, fill: quiet)[Unit: #d.unit. Sources: #d.sources.join(", ").]
 }
