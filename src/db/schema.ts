@@ -1,4 +1,4 @@
-import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, real, integer, boolean, timestamp, uuid, primaryKey, jsonb, date, numeric, bigserial } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 export const sustainabilityMetrics = pgTable('sustainability_metrics', {
@@ -1039,5 +1039,20 @@ export const euFeedItems = pgTable('eu_feed_items', {
   topics: text('topics').array().notNull().default(sql`'{}'::text[]`),
   cpv: text('cpv').array().notNull().default(sql`'{}'::text[]`),
   green: boolean('green').notNull().default(false),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** EU Consolidated Financial Sanctions List, one row per entity name/alias. scripts/sql/0035. */
+export const euSanctionsNames = pgTable('eu_sanctions_names', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  entityId: text('entity_id').notNull(),
+  name: text('name').notNull(),
+  tokens: text('tokens').array().notNull(),
+  subjectType: text('subject_type').notNull(),
+  programme: text('programme'),
+  country: text('country'),
+  designated: date('designated'),
+  url: text('url'),
+  listDate: text('list_date'),
   fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
 });

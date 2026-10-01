@@ -77,6 +77,11 @@ async function __vuneliScheduled(event, env, _ctx) {
     method: "POST",
     headers: { "x-cron-secret": env.CRON_SECRET },
   });
+  // EU sanctions list: the route downloads at most once every 20 hours.
+  await run("sanctions-list", "https://vuneli.com/api/cron/sanctions-list", {
+    method: "POST",
+    headers: { "x-cron-secret": env.CRON_SECRET },
+  });
 }
 
 // ── Cloudflare Email Routing: forwarded utility bills ─────────────────────────

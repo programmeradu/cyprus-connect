@@ -1502,14 +1502,14 @@
       "emptyBodyBank": "Add the businesses you pay from the list below, or add a supplier by hand.",
       "connectBank": "Connect your bank",
       "sanctions": "Sanctions lists",
-      "sanClear": "No match on EU, UN, UK or US sanctions lists (OpenSanctions, checked {date})",
+      "sanClear": "No match on the EU consolidated sanctions list (checked {date})",
       "sanReview": "{count, plural, one {# possible match} other {# possible matches}} to review (checked {date}). A name match is not proof; open each record and compare details.",
       "sanScore": "{pct}% name match",
       "checkSanctions": "Check sanctions lists",
       "sanAgain": "Check sanctions again",
       "sanClearMsg": "{name}: no match on sanctions lists.",
       "sanMatchMsg": "{name}: possible sanctions match. Review the records before you pay or sign.",
-      "sanNotConnected": "Sanctions checks are not connected yet. Add an OpenSanctions key to turn them on."
+      "sanNotConnected": "The EU sanctions list is still downloading. Try again in a few minutes."
     }
   },
   "onboarding": {

@@ -1,37 +1,34 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { parseMatchResponse, screenCompany } from "@/lib/integrations/sanctions.server";
+import { describe, expect, it } from "vitest";
+import { nameScore, nameTokens, parseEuCsv } from "@/lib/integrations/sanctions.server";
 
-const answer = { responses: { q: { results: [
-  { id: "NK-abc", caption: "Acme Trading LLC", schema: "Company", score: 0.91, match: true, datasets: ["eu_fsf", "us_ofac_sdn"], last_change: "2026-09-01T00:00:00", properties: { jurisdiction: ["ru"], programId: ["RUS"] } },
-  { id: "NK-low", caption: "Acme Bakery", schema: "Company", score: 0.41, match: false, properties: {} },
-] } } };
+const H = "fileGenerationDate;Entity_LogicalId;Entity_DesignationDate;Entity_SubjectType_ClassificationCode;Entity_Regulation_Programme;Entity_Regulation_PublicationUrl;NameAlias_WholeName;Address_CountryIso2Code";
+const csv = (rows: string[]) => "\uFEFF" + [H, ...rows].join("\n");
 
-describe("OpenSanctions", () => {
-  afterEach(() => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); });
-  it("keeps only above-threshold matches, with source link", () => {
-    const hits = parseMatchResponse(answer);
-    expect(hits).toHaveLength(1);
-    expect(hits[0]).toMatchObject({ name: "Acme Trading LLC", score: 0.91, countries: ["ru"], url: "https://www.opensanctions.org/entities/NK-abc/" });
+describe("EU sanctions list", () => {
+  it("normalizes names: accents, punctuation and legal forms do not count", () => {
+    expect(nameTokens("ООО «Acme-Trading», LLC")).toEqual(["acme", "trading"]);
+    expect(nameTokens("Café Société S.A.")).toEqual(["cafe", "societe"]);
+    expect(nameTokens("Ltd")).toEqual([]);
   });
-  it("rejects an unexpected answer instead of calling it clear", () => {
-    expect(() => parseMatchResponse({ error: "x" })).toThrow();
+  it("scores against the longer name, so a shared word alone is not a match", () => {
+    expect(nameScore(["acme", "trading"], ["acme", "trading"])).toBe(1);
+    expect(nameScore(["acme", "bakery"], ["acme", "trading"])).toBe(0.5);
+    expect(nameScore([], ["x"])).toBe(0);
+    expect(nameScore(["rosneft", "aero"], ["rosneft", "aero", "fuel"])).toBe(0.85);
+    expect(nameScore(["sberbank"], ["sberbank", "europe"])).toBe(0.5);
   });
-  it("is not configured without a key, and never guesses", async () => {
-    vi.stubEnv("OPENSANCTIONS_API_KEY", "");
-    expect(await screenCompany({ name: "Acme" })).toEqual({ ok: false, reason: "not_configured" });
+  it("parses the official CSV: one row per entity name, keeps country, link and list date", () => {
+    const { generated, rows } = parseEuCsv(csv([
+      '2026-09-30;13;2022-03-15;enterprise;RUS;https://eur-lex.europa.eu/x;"Acme ""Trading"" LLC";',
+      "2026-09-30;13;2022-03-15;enterprise;RUS;https://eur-lex.europa.eu/x;Acme \"Trading\" LLC;RU",
+      "2026-09-30;14;bad;person;IRN;javascript:x;John Doe;",
+    ]));
+    expect(generated).toBe("2026-09-30");
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toMatchObject({ entityId: "13", tokens: ["acme", "trading"], country: "RU", programme: "RUS", designated: "2022-03-15", url: "https://eur-lex.europa.eu/x" });
+    expect(rows[1]).toMatchObject({ designated: null, url: null });
   });
-  it("sends the key, the Cyprus register number, and maps outcomes (offline)", async () => {
-    vi.stubEnv("OPENSANCTIONS_API_KEY", "k");
-    const f = vi.fn(async () => new Response(JSON.stringify(answer), { status: 200 }));
-    vi.stubGlobal("fetch", f);
-    const r = await screenCompany({ name: "Acme", country: "CY", registrationNo: "HE 123" });
-    expect(r.ok && r.status).toBe("possible_match");
-    const [, init] = f.mock.calls[0] as unknown as [string, RequestInit];
-    expect((init.headers as Record<string, string>).Authorization).toBe("ApiKey k");
-    expect(JSON.parse(init.body as string).queries.q.properties).toEqual({ name: ["Acme"], jurisdiction: ["cy"], registrationNumber: ["HE123"] });
-    f.mockResolvedValueOnce(new Response("no", { status: 401 }));
-    expect(await screenCompany({ name: "Acme" })).toEqual({ ok: false, reason: "rejected" });
-    f.mockRejectedValueOnce(new Error("down"));
-    expect(await screenCompany({ name: "Acme" })).toEqual({ ok: false, reason: "unavailable" });
+  it("refuses a file that is not the EU list instead of storing nothing", () => {
+    expect(() => parseEuCsv("a;b\n1;2")).toThrow();
   });
 });
