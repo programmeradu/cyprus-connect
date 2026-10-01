@@ -173,27 +173,22 @@ export async function GET(req: Request) {
           return r;
         })(),
         (async () => {
-          let r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
-          // Only deadlines that apply: the first annual CBAM declaration (2026 imports,
-          // due 30 Sep 2027 under Regulation (EU) 2025/2083) when the workspace records CBAM goods.
-          if (!r.some((o) => o.framework === "CBAM")) {
-            const [hasCbam] = await db.select({ id: cbamImportLines.id }).from(cbamImportLines).where(eq(cbamImportLines.workspaceId, workspaceId)).limit(1);
-            if (hasCbam) {
-              await db.insert(obligations).values({
-                id: `${workspaceId}_cbam_annual_2026`,
-                workspaceId,
-                framework: "CBAM",
-                title: "Annual CBAM declaration for 2026 imports",
-                dueDate: "2027-09-30",
-                status: "planned",
-                progressPct: 0,
-                agentKey: "cbam",
-                detail: "First annual declaration of embedded emissions for CBAM goods imported in 2026. Source: Regulation (EU) 2025/2083 amending Regulation (EU) 2023/956, Article 6.",
-              }).onConflictDoNothing();
-              r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          const load = () => db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          let r = await load();
+          // First visit after the rulebook arrived: match now instead of waiting for the daily run.
+          if (!r.some((o) => o.ruleId)) {
+            try {
+              // The old hand-added CBAM row is now produced by the rulebook.
+              await db.delete(obligations).where(and(eq(obligations.id, `${workspaceId}_cbam_annual_2026`), eq(obligations.workspaceId, workspaceId)));
+              const { refreshObligations } = await import("@/lib/obligations/obligations.server");
+              await refreshObligations(workspaceId);
+              r = await load();
+            } catch (e) {
+              logger("api.console.overview").error("deadline match failed", e);
             }
           }
-          return r;
+          // Home shows only dated deadlines that apply (or were added by a person).
+          return r.filter((o) => (o.match === null || o.match === "applies") && /^\d{4}-\d{2}-\d{2}$/.test(o.dueDate));
         })(),
         (async () => {
           const r = await db.select().from(activityEvents).where(eq(activityEvents.workspaceId, workspaceId)).orderBy(desc(activityEvents.createdAt)).limit(12);
