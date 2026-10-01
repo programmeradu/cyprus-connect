@@ -4,6 +4,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import Image from "next/image";
 import heroPhoto from "@/assets/verify-hero-boardroom.jpg";
 import footerPhoto from "@/assets/verify-document-footer.jpg";
+import sealImage from "@/assets/verify-seal.png";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { findIssuedDocument, normaliseCode } from "@/lib/document-verify.server";
 
@@ -157,19 +158,17 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
       <main className="mx-auto max-w-6xl px-5 sm:px-8">
         {valid && (
           <section aria-live="polite" className="py-14 sm:py-16">
-            <div className={`rounded-2xl border bg-card p-6 shadow-[0_30px_60px_-40px_rgba(0,0,0,0.35)] sm:p-10 ${doc ? "border-primary/35" : "border-destructive/35"}`}>
+            <div className={`rounded-2xl border bg-card p-6 shadow-[0_30px_60px_-40px_rgba(0,0,0,0.35)] sm:p-10 ${doc ? "border-[var(--accent-lime)] ring-1 ring-foreground/10" : "border-foreground/20"}`}>
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="max-w-xl">
-                  <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${doc ? "text-primary" : "text-destructive"}`}>{doc ? doc.docId : code.slice(0, 16)}</p>
+                  <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${doc ? "text-foreground/70" : "text-destructive"}`}>{doc ? doc.docId : code.slice(0, 16)}</p>
                   <h2 className="mt-3 font-[family-name:var(--editorial-display)] text-[1.9rem] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[2.3rem]">
                     {doc ? t.found : t.notFound}
                   </h2>
                   <p className="mt-3 text-[15.5px] leading-[1.65] text-muted-foreground">{doc ? t.foundBody : t.notFoundBody}</p>
                 </div>
                 {doc && (
-                  <div aria-hidden className="hidden h-16 w-16 shrink-0 lg:flex items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-primary">
-                    <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
-                  </div>
+                  <Image src={sealImage} alt="" aria-hidden width={160} height={160} className="order-first h-28 w-28 shrink-0 -rotate-6 drop-shadow-[0_12px_18px_rgba(0,0,0,0.18)] sm:h-36 sm:w-36 lg:order-none lg:h-40 lg:w-40" />
                 )}
               </div>
               {doc && (
