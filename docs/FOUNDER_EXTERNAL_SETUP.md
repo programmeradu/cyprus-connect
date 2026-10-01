@@ -287,3 +287,4 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Content (2026-10-01)
 - Review the rewritten CBAM Cyprus guide and new EUDR and EU greenwashing guides on /en/learn before publishing; confirm the Department of Environment CBAM contact on gov.cy.
+- Batch 2 (CSRD rewrites, green loans guide): have your accountant sanity-check the CSRD thresholds wording once the final Omnibus text is published in the Official Journal.
