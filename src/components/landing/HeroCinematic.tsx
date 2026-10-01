@@ -15,7 +15,7 @@ import avatar2 from "@/assets/avatar-advisor-2.jpg";
 /**
  * HeroCinematic — full-bleed Cyprus cinematic photography behind a bold
  * editorial hero. Rotates one of four photos per reload. No eyebrows,
- * premium display-weight Fraunces type, chartreuse lime CTA.
+ * premium display-weight Commissioner type, chartreuse lime CTA.
  *
  * The photo carries through to the next section (no hard bottom edge) via
  * a long scrim fade rather than a hard cut.

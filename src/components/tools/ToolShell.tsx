@@ -34,14 +34,14 @@ type Props = {
 };
 
 const SANS: React.CSSProperties = {
-  fontFamily: '"Instrument Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif',
+  fontFamily: "var(--editorial-sans)",
   fontFeatureSettings: '"ss01", "cv11"',
   fontVariantNumeric: "tabular-nums",
   letterSpacing: "-0.005em",
 };
 
 const DISPLAY: React.CSSProperties = {
-  fontFamily: '"FrauncesAmpFix", "Fraunces", ui-serif, Georgia, serif',
+  fontFamily: "var(--editorial-display)",
   fontOpticalSizing: "auto",
   letterSpacing: "-0.02em",
 };

@@ -11,7 +11,7 @@ import heroPhoto from "@/assets/hub-news-press.jpg";
 /**
  * /news - the Vuneli wire.
  *
- * House rules: Fraunces display + Instrument Sans body, cinematic hero so the
+ * House rules: Commissioner headings + body, Source Serif italic accents, cinematic hero so the
  * fixed header stays legible, hairline ledger rows, numerals for hierarchy,
  * no pills, no icons, readable metadata (medium weight, normal tracking).
  */

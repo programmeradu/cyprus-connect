@@ -15,7 +15,7 @@ import heroPhoto from "@/assets/hub-tools-desk.jpg";
  * filterable directory. One list, one mental model - no stacked category
  * chapters that make the page read like five separate pages.
  *
- * House rules: Fraunces for titles only, Instrument Sans for everything else,
+ * House rules: Commissioner throughout, Source Serif for italic accents,
  * hairline rules, square-cornered bordered tabs (no pills), no decorative icons.
  */
 
