@@ -23,7 +23,7 @@ OVERRIDES = {
     "Moldova, Republic of": "MD", "Congo, Democratic Republic of": "CD", "Congo": "CG",
     "Bolivia": "BO", "Venezuela": "VE", "Laos": "LA", "Syria": "SY", "Tanzania": "TZ",
     "Brunei": "BN", "Côte d'Ivoire": "CI", "Cote d'Ivoire": "CI", "Korea, Democratic People's Republic of (North Korea)": "KP",
-    "Ivory Coast": "CI", "Palestine": "PS", "Occupied Palestinian Territory": "PS", "Macao": "MO", "Hong Kong": "HK",
+    "Ivory Coast": "CI", "New Caledonia and dependencies": "NC", "Falkland Islands": "FK", "Saint Pierre and Miquelon": "PM", "Palestine": "PS", "Occupied Palestinian Territory": "PS", "Macao": "MO", "Hong Kong": "HK",
 }
 
 def iso(name: str) -> str:
