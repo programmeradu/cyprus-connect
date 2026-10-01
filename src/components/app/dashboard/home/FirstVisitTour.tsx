@@ -2,12 +2,17 @@
 
 /**
  * A short guided first visit. Each step rings a real part of Home with the
- * lime accent and places a small card beside it. Shown once per workspace;
+ * lime accent and places a small card beside it. Shown once per account
+ * (stored on the account, so a new device does not show it again); the
+ * browser copy only bridges the moment before the account answer arrives.
  * "Replay the tour" in the account menu starts it again.
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { invalidateWorkspace, useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
+
+const TOUR_PATH = "/api/console/tour";
 
 const STEPS = ["footprint", "waiting", "deadline", "verde", "nav"] as const;
 type Step = (typeof STEPS)[number];
@@ -32,23 +37,47 @@ export function FirstVisitTour({ workspaceId }: { workspaceId: string }) {
   const [box, setBox] = useState<Box | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardPos, setCardPos] = useState<{ top: number; left: number } | null>(null);
+  const status = useWorkspaceResource<{ done: boolean }>(TOUR_PATH);
+  const { run } = useWorkspaceAction();
+  const decided = useRef(false);
 
-  /* Decide after hydration, so the server and first paint agree. */
+  /* Replay from the account menu or ?tour=1 always shows it. */
   useEffect(() => {
     try {
       const url = new URL(window.location.href);
       if (url.searchParams.get("tour") === "1") {
         url.searchParams.delete("tour");
         window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+        decided.current = true;
         setIndex(0);
-      } else if (localStorage.getItem(keyFor(workspaceId)) !== "1") setIndex(0);
+      }
     } catch {
-      /* storage blocked: skip the tour rather than show it on every visit */
+      /* ignore */
     }
-    const replay = () => setIndex(0);
+    const replay = () => {
+      decided.current = true;
+      setIndex(0);
+    };
     window.addEventListener(TOUR_REPLAY_EVENT, replay);
     return () => window.removeEventListener(TOUR_REPLAY_EVENT, replay);
-  }, [workspaceId]);
+  }, []);
+
+  /* Decide once the account answers. A browser that already finished the
+     tour (before it was stored on the account) copies that to the account
+     instead of showing it again. If the account cannot be read, stay quiet. */
+  useEffect(() => {
+    if (decided.current || !status.data) return;
+    decided.current = true;
+    if (status.data.done) return;
+    let localDone = false;
+    try {
+      localDone = localStorage.getItem(keyFor(workspaceId)) === "1";
+    } catch {
+      /* ignore */
+    }
+    if (localDone) void run(TOUR_PATH, { body: { action: "done" }, invalidates: [TOUR_PATH] });
+    else setIndex(0);
+  }, [status.data, workspaceId, run]);
 
   /* Steps whose target is not on screen (for example the queue is hidden on a
      narrow layout) are skipped instead of pointing at nothing. */
@@ -63,7 +92,10 @@ export function FirstVisitTour({ workspaceId }: { workspaceId: string }) {
     }
     setIndex(null);
     setBox(null);
-  }, [workspaceId]);
+    void run(TOUR_PATH, { body: { action: "done" }, invalidates: [TOUR_PATH] }).then((r) => {
+      if (!r) invalidateWorkspace([TOUR_PATH]);
+    });
+  }, [workspaceId, run]);
 
   const measure = useCallback(() => {
     if (!step) return;

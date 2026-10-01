@@ -122,7 +122,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Report: Obligations home is now one Deadlines list (soonest first, status, drafts, Draft/Open CBAM/See drafts per row)
 
 - [x] Home redesign: today view, guided first visit, self-ticking setup checklist, Verde fills company details (approval-gated), board summary PDF, shared approval queue on Agents.
-- [ ] Home tour completion is remembered per browser only; move to account profile if needed.
+- [x] Home tour completion stored on the account.
 
 ## Onboarding + logos (2026-10-01)
 - [x] Set-up cut to one screen (name, company, website, industry, size, country) or "Let Verde fill it in" (sent to Verde on Home, approval before saving)
@@ -155,3 +155,13 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] EU tenders (TED) + EUR-Lex feeds
 - [ ] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Verify page: replace deep-green result border with black/grey/lemon; replace basic checkmark with generated stamp
+
+## Next batch (agreed 2026-10-01)
+- [x] PDF details inside every PDF (document number, fingerprint, issue date)
+- [x] Home tour remembered per account
+- [x] OpenSanctions supplier check built (Suppliers page + Verde tool); live checks wait on OPENSANCTIONS_API_KEY
+- [ ] Automatic accessibility checks + offline tests for outside services
+- [ ] Verde answer tests (no invented figures, sources required)
+- [ ] Docling proposal (written)
+- [ ] Last agent + CBAM actions on the shared activity record
+- [ ] Learn signed-in check with a real course; Weaver + Compass live run; Greek + dark mode check

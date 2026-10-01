@@ -75,8 +75,11 @@ export async function buildReportData(r: PdfReport, generatedAt = new Date()) {
 
 export async function downloadReport(r: PdfReport, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
-  const json = await buildReportData(r);
-  const bytes = await renderTypst("report.typ", json, { base: siteBase() });
-  await registerDocument("report", json);
+  const { stampPdfDetails } = await import("./pdf-details");
+  const issuedAt = new Date();
+  const json = await buildReportData(r, issuedAt);
+  const raw = await renderTypst("report.typ", json, { base: siteBase() });
+  const bytes = await stampPdfDetails(raw, { kind: "report", docId: String(json.docId), hash: json.hash, issuedAt, title: String(json.title || "Sustainability report"), company: String(json.company || "Unnamed company") });
+  await registerDocument("report", json, issuedAt);
   downloadBytes(bytes, fileName);
 }

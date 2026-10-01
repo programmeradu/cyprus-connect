@@ -96,8 +96,11 @@ export async function buildBoardSummaryData(data: ConsoleOverviewData, generated
 
 export async function downloadBoardSummary(data: ConsoleOverviewData, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
-  const json = await buildBoardSummaryData(data);
-  const bytes = await renderTypst("board.typ", json, { base: siteBase() });
-  await registerDocument("board-summary", json);
+  const { stampPdfDetails } = await import("./pdf-details");
+  const issuedAt = new Date();
+  const json = await buildBoardSummaryData(data, issuedAt);
+  const raw = await renderTypst("board.typ", json, { base: siteBase() });
+  const bytes = await stampPdfDetails(raw, { kind: "board-summary", docId: String(json.docId), hash: json.hash, issuedAt, title: "Board summary", company: String(json.company || "Unnamed company") });
+  await registerDocument("board-summary", json, issuedAt);
   downloadBytes(bytes, fileName);
 }

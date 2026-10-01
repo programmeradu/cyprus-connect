@@ -32,6 +32,9 @@ interface Supplier {
   registryCheckedAt: string | null;
   wikirateUrl: string | null;
   wikirateCheckedAt: string | null;
+  sanctionsCheckedAt: string | null;
+  sanctionsStatus: "clear" | "possible_match" | null;
+  sanctionsHits: { id: string; name: string; score: number; countries: string[]; url: string }[];
   spend12m: number;
   payments12m: number;
   lastPaid: string | null;
@@ -191,6 +194,15 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
       invalidateWorkspace([PATH]);
       return r.found ? t("wikiFound", { name: s.name }) : t("wikiNone", { name: s.name });
     });
+  const screen = () =>
+    run("sanctions", async () => {
+      const r = await workspaceRequest<{ status: "clear" | "possible_match" }>(PATH, { method: "POST", body: { action: "check_sanctions", name: s.name } }).catch((e: unknown) => {
+        // The server answers in English; show the not-connected case in the page language.
+        throw new Error(errText(e, "").includes("not connected") ? t("sanNotConnected") : errText(e, t("saveFailed")));
+      });
+      invalidateWorkspace([PATH]);
+      return r.status === "clear" ? t("sanClearMsg", { name: s.name }) : t("sanMatchMsg", { name: s.name });
+    });
   const unlink = () =>
     run("unlink", async () => {
       await workspaceRequest(PATH, { method: "POST", body: { action: "unlink_registry", name: s.name } });
@@ -239,6 +251,26 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
               : s.wikirateCheckedAt ? t("wikiNotListed", { date: day(s.wikirateCheckedAt) }) : t("notChecked")}
           </dd>
         </div>
+        <div className={s.sanctionsStatus === "possible_match" ? "vck-sup-wide" : undefined}>
+          <dt>{t("sanctions")}</dt>
+          <dd>
+            {s.sanctionsStatus === "clear" && t("sanClear", { date: day(s.sanctionsCheckedAt!) })}
+            {s.sanctionsStatus === "possible_match" && (
+              <>
+                <span className="vck-warn-text">{t("sanReview", { count: s.sanctionsHits.length, date: day(s.sanctionsCheckedAt!) })}</span>
+                <ul className="vck-sup-hits">
+                  {s.sanctionsHits.map((h) => (
+                    <li key={h.id}>
+                      <a href={h.url} target="_blank" rel="noreferrer" className="vck-link break-words">{h.name}</a>
+                      {h.countries.length > 0 && ` · ${h.countries.join(", ").toUpperCase()}`} · {t("sanScore", { pct: Math.round(h.score * 100) })}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {!s.sanctionsStatus && t("notChecked")}
+          </dd>
+        </div>
         {s.cbamLines > 0 && <div><dt>CBAM</dt><dd>{t("cbamLines", { count: s.cbamLines })}</dd></div>}
         {s.notes && <div className="vck-sup-wide"><dt>{t("notes")}</dt><dd>{s.notes}</dd></div>}
       </dl>
@@ -268,6 +300,7 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
           ? <Btn variant="text" onClick={unlink} disabled={busy !== null}>{t("unlink")}</Btn>
           : <Btn variant="quiet" onClick={() => setReg(!reg)}>{reg ? t("close") : t("checkRegistry")}</Btn>}
         <Btn variant="quiet" onClick={wiki} disabled={busy !== null}>{busy === "wiki" ? t("working") : s.wikirateCheckedAt ? t("wikiAgain") : t("checkWiki")}</Btn>
+        <Btn variant="quiet" onClick={screen} disabled={busy !== null}>{busy === "sanctions" ? t("working") : s.sanctionsCheckedAt ? t("sanAgain") : t("checkSanctions")}</Btn>
         {s.saved && s.cbamLines === 0 && <Btn variant="text" onClick={remove} disabled={busy !== null}>{t("remove")}</Btn>}
       </div>
       {s.lastPaid && <p className="vck-cbam-note vck-quiet">{t("lastPaid", { date: day(s.lastPaid) })}</p>}

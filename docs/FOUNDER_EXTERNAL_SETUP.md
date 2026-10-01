@@ -250,3 +250,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## EU tenders + law feeds (2026-10-01)
 - Live database: apply scripts/sql/0032_eu_feed_items.sql (and 0031_document_fingerprints.sql if not yet applied). No API keys needed; the hourly Cloudflare cron refreshes them using CRON_SECRET.
+
+## Next batch (2026-10-01)
+- Live database: apply scripts/sql/0033_home_tour.sql and scripts/sql/0034_supplier_sanctions.sql.
+- OpenSanctions: buy a commercial licence/API key at opensanctions.org, then add OPENSANCTIONS_API_KEY in Cloudflare. Until then the Suppliers page says sanctions checks are not connected.

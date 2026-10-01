@@ -121,8 +121,11 @@ export async function buildCbamData(d: CbamPdfInput, generatedAt = new Date()) {
 
 export async function downloadCbamPdf(d: CbamPdfInput, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
-  const json = await buildCbamData(d);
-  const bytes = await renderTypst("cbam.typ", json, { base: siteBase() });
-  await registerDocument("cbam", { ...json, title: `CBAM declaration ${json.year}` });
+  const { stampPdfDetails } = await import("./pdf-details");
+  const issuedAt = new Date();
+  const json = await buildCbamData(d, issuedAt);
+  const raw = await renderTypst("cbam.typ", json, { base: siteBase() });
+  const bytes = await stampPdfDetails(raw, { kind: "cbam", docId: String(json.docId), hash: json.hash, issuedAt, title: `CBAM declaration ${json.year}`, company: String(json.company || "Unnamed company") });
+  await registerDocument("cbam", { ...json, title: `CBAM declaration ${json.year}` }, issuedAt);
   downloadBytes(bytes, fileName);
 }

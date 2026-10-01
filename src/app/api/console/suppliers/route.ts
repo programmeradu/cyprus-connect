@@ -32,6 +32,7 @@ import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
 import { lookupRegistry } from "@/lib/integrations/registry.server";
 import { findWikiRateCompany } from "@/lib/integrations/wikirate.server";
+import { screenCompany } from "@/lib/integrations/sanctions.server";
 import { suppliersNeedingData } from "@/lib/agents/cbam-supplier-request";
 import type { CbamDraft } from "@/lib/agents/cbam-calc";
 import { payeeKey, payeeMatches, suggestNextSteps, totalsByPayee, type Payment, type SupplierView } from "@/lib/suppliers";
@@ -137,6 +138,9 @@ export async function GET() {
         registryCheckedAt: r?.registryCheckedAt?.toISOString() ?? null,
         wikirateUrl: r?.wikirateUrl ?? null,
         wikirateCheckedAt: r?.wikirateCheckedAt?.toISOString() ?? null,
+        sanctionsCheckedAt: r?.sanctionsCheckedAt?.toISOString() ?? null,
+        sanctionsStatus: r?.sanctionsStatus ?? null,
+        sanctionsHits: r?.sanctionsHits ?? [],
         spend12m,
         payments12m: mine.reduce((a, p) => a + p.count, 0),
         lastPaid,
@@ -226,6 +230,7 @@ const Act = z.discriminatedUnion("action", [
   z.object({ action: z.literal("link_registry"), name: z.string().trim().min(1).max(200), registrationNo: z.string().trim().min(1).max(20) }).strict(),
   z.object({ action: z.literal("unlink_registry"), name: z.string().trim().min(1).max(200) }).strict(),
   z.object({ action: z.literal("check_wikirate"), name: z.string().trim().min(1).max(200) }).strict(),
+  z.object({ action: z.literal("check_sanctions"), name: z.string().trim().min(1).max(200) }).strict(),
 ]);
 
 const REG_FAIL: Record<string, { status: number; message: string }> = {
@@ -263,6 +268,18 @@ export async function POST(req: Request) {
         .where(where);
       await logEvent(ws, who, "linked company register entry", b.name, `${r.company.name} (${r.company.displayNo}), ${r.company.status}.`);
       return NextResponse.json({ saved: true, company: { name: r.company.name, displayNo: r.company.displayNo, status: r.company.status } });
+    }
+    if (b.action === "check_sanctions") {
+      const [row] = await db.select({ regNo: cbamSuppliers.registrationNo, regName: cbamSuppliers.registryName }).from(cbamSuppliers).where(where).limit(1);
+      // A linked Cyprus register entry gives the legal name, number and country.
+      const r = await screenCompany({ name: row?.regName || b.name, country: row?.regNo ? "cy" : null, registrationNo: row?.regNo ?? null });
+      if (!r.ok) {
+        const message = r.reason === "not_configured" ? "Sanctions checks are not connected yet." : r.reason === "rejected" ? "OpenSanctions refused the key. Check the key in settings." : "OpenSanctions did not answer. Try again in a minute.";
+        return NextResponse.json({ error: r.reason, message }, { status: 503 });
+      }
+      await db.update(cbamSuppliers).set({ sanctionsCheckedAt: new Date(r.checkedAt), sanctionsStatus: r.status, sanctionsHits: r.hits }).where(where);
+      await logEvent(ws, who, "screened supplier against sanctions lists", b.name, r.status === "clear" ? "No match on OpenSanctions sanctions lists." : `${r.hits.length} possible match(es) to review.`);
+      return NextResponse.json({ saved: true, status: r.status, hits: r.hits });
     }
     const w = await findWikiRateCompany(b.name);
     if (!w.ok && w.reason !== "not_found") {

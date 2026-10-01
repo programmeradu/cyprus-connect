@@ -19,6 +19,7 @@ import { eacSummary } from "@/lib/integrations/eac.server";
 import { waterSummary } from "@/lib/integrations/water.server";
 import { bankSummary } from "@/lib/bank/bank.server";
 import { readEuFeed } from "@/lib/integrations/eu-feeds.server";
+import { screenCompany } from "@/lib/integrations/sanctions.server";
 import type { ToolDef } from "./tools";
 
 function tool<I extends z.ZodType, O>(def: ToolDef<I, O>): ToolDef<I, O> {
@@ -226,7 +227,17 @@ export const readEuLaw = tool({
   run: async (_ctx, input) => readEuFeed("eurlex", { topic: input.topic, limit: input.limit }),
 });
 
+export const screenSanctions = tool({
+  name: "screen_sanctions",
+  risk: 0,
+  description:
+    "Screen a company name against official sanctions lists (EU, UN, UK, US and others, via OpenSanctions). Returns 'clear' or possible matches with score and source link. A possible match must be reviewed by a person; never state that a company is sanctioned.",
+  input: z.object({ name: z.string().min(2).max(200), country: z.string().length(2).optional(), registrationNo: z.string().max(30).optional() }),
+  run: async (_ctx, input) => screenCompany(input),
+});
+
 export const INTEGRATION_TOOLS = {
+  screen_sanctions: screenSanctions,
   read_company_profile: readCompanyProfile,
   search_company_registry: searchCompanyRegistry,
   lookup_company_registry: lookupCompanyRegistry,

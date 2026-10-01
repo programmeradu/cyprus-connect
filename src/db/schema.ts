@@ -68,6 +68,8 @@ export const user = pgTable("user", {
   timezone: text('timezone'),
   energyZone: text('energy_zone'),
   aiCreditsBalance: integer('ai_credits_balance').notNull().default(50),
+  // Home guided tour finished or skipped (migration 0033); null = show it.
+  homeTourDoneAt: timestamp('home_tour_done_at'),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),
@@ -797,6 +799,10 @@ export const cbamSuppliers = pgTable('cbam_suppliers', {
   registryCheckedAt: timestamp('registry_checked_at'),
   wikirateUrl: text('wikirate_url'),
   wikirateCheckedAt: timestamp('wikirate_checked_at'),
+  // Last OpenSanctions screening (migration 0034).
+  sanctionsCheckedAt: timestamp('sanctions_checked_at'),
+  sanctionsStatus: text('sanctions_status'),
+  sanctionsHits: jsonb('sanctions_hits').$type<import('@/lib/integrations/sanctions.server').SanctionsHit[]>().notNull().default([]),
   updatedBy: text('updated_by'),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
