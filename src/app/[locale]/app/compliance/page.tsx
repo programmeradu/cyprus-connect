@@ -149,6 +149,7 @@ export default function CompliancePage() {
           onOpenDocuments={() => setActiveTab("documents")}
         />
       )}
+      {(activeTab === "overview" || activeTab === "regulations") && <EuFeedPanel source="eurlex" />}
       {activeTab === "regulations" && <RegulationsTab regulations={regulations} />}
       {activeTab === "documents" && (
         <DocumentsTab documents={documents} onGenerate={handleGenerateReport} generating={generating} />
