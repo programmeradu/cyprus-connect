@@ -103,7 +103,7 @@ export default function CbamPage() {
   );
   const statusLabel = useMemo(() => (s: string) => (s in STATUS_TONE ? t(`status.${s}` as "status.signed") : s), [t]);
   const [year, setYear] = useState<number | null>(null);
-  const [busy, setBusy] = useState<"run" | "upload" | number | null>(null);
+  const [busy, setBusy] = useState<"run" | "upload" | "pdf" | number | null>(null);
   const [note, setNote] = useState<{ tone: "good" | "warn"; text: string; details?: string[] } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const cbam = useWorkspaceResource<Data>(`${CBAM}${year ? `?year=${year}` : ""}`);

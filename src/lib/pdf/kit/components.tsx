@@ -197,7 +197,7 @@ export function Callout({ tone = "info", title, children }: { tone?: "info" | "w
   );
 }
 
-export function Para({ children, style }: { children: React.ReactNode; style?: object }) {
+export function Para({ children, style }: { children: React.ReactNode; style?: import("@react-pdf/renderer").Styles[string] }) {
   return <Text style={[{ fontSize: 9.5, color: C.body, lineHeight: 1.55, marginBottom: 8 }, style ?? {}]}>{children}</Text>;
 }
 
