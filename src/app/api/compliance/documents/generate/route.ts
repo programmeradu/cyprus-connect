@@ -3,11 +3,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { complianceDocuments, complianceAuditLogs, emissions, user } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { aiChat, aiErrorMessage, hasTextAi } from '@/lib/lovable-ai';
+import { logger } from '@/lib/log';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 import { requireUserIdOrQa as requireVuneliUserId } from '@/lib/api-auth';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +17,10 @@ export async function POST(req: NextRequest) {
 
     if (!framework) {
       return NextResponse.json({ error: 'Framework is required' }, { status: 400 });
+    }
+
+    if (!hasTextAi()) {
+      return NextResponse.json({ error: 'Report writing is not available right now.' }, { status: 503 });
     }
 
     // Check + deduct AI credits (single source of truth: user.aiCreditsBalance)
@@ -37,7 +41,6 @@ export async function POST(req: NextRequest) {
       .limit(6);
 
     // Generate AI report
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
     
     const prompt = `Generate a comprehensive ${framework} compliance report for the following company:
 
@@ -58,8 +61,16 @@ Please generate a detailed compliance report following ${framework} standards. I
 
 Format the report professionally with clear sections.`;
 
-    const result = await model.generateContent(prompt);
-    const reportContent = result.response.text();
+    const reportContent = (await aiChat({
+      messages: [
+        { role: 'system', content: 'You write compliance report drafts. Use only the figures given. Where data is missing, say it is missing; never invent numbers, dates or certifications.' },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.2,
+    })).trim();
+    if (!reportContent) {
+      return NextResponse.json({ error: 'No draft was produced. Please try again.' }, { status: 502 });
+    }
 
 
     // Due date comes from the shared framework list; every new report starts as a draft.
@@ -98,9 +109,9 @@ Format the report professionally with clear sections.`;
       document: document[0]
     });
   } catch (error) {
-    console.error('Error generating document:', error);
+    const ref = logger('api.compliance.generate').error('document generation failed', error);
     return NextResponse.json(
-      { error: 'Failed to generate document' },
+      { error: aiErrorMessage(error) || 'Failed to generate document', ref },
       { status: 500 }
     );
   }
