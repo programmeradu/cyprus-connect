@@ -128,8 +128,11 @@ async function __vuneliEmail(message, env, _ctx) {
     message.setReject("The message is larger than 15 MB.");
     return;
   }
+  console.log(\`[bill-email] received to=\${message.to} from=\${message.from} size=\${message.rawSize}\`);
   const raw = await new Response(message.raw).arrayBuffer();
-  const res = await env.WORKER_SELF_REFERENCE.fetch("https://vuneli.com/api/public/inbound/bill-email", {
+  let res;
+  try {
+    res = await env.WORKER_SELF_REFERENCE.fetch("https://vuneli.com/api/public/inbound/bill-email", {
     method: "POST",
     headers: {
       "content-type": "message/rfc822",
@@ -138,9 +141,17 @@ async function __vuneliEmail(message, env, _ctx) {
     },
     body: raw,
   });
+  } catch (err) {
+    console.log("[bill-email] forward failed: " + (err && err.message ? err.message : String(err)));
+    message.setReject("Vuneli could not read this message just now. Please upload the bill in Add data.");
+    return;
+  }
   const body = await res.text();
   console.log(\`[bill-email] status=\${res.status} body=\${body.slice(0, 300)}\`);
-  if (res.status === 404) message.setReject("Unknown bill inbox address.");
+  // Never fail silently: the sender gets a bounce that says what went wrong.
+  if (res.status === 404) message.setReject("Unknown bill inbox address. Copy the current address from Vuneli > Add data.");
+  else if (res.status === 401) message.setReject("This bill inbox is not set up correctly yet (secret mismatch).");
+  else if (!res.ok) message.setReject("Vuneli could not read this message just now. Please upload the bill in Add data.");
 }
 // ─────────────────────────────────────────────────────────────────────────────
 `;

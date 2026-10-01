@@ -135,10 +135,18 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
   const [inbox] = await db.select().from(billInboxes).where(eq(billInboxes.token, token)).limit(1);
   if (!inbox) return { status: 404, results: [] };
 
-  const mail = await PostalMime.parse(raw);
+  const now = new Date();
+  let mail: Awaited<ReturnType<typeof PostalMime.parse>>;
+  try {
+    mail = await PostalMime.parse(raw);
+  } catch {
+    // Record the arrival anyway, so the person sees the email reached Vuneli.
+    const failed: InboxResult[] = [{ file: "—", kind: null, ok: false, duplicate: false, reason: "The email arrived but could not be opened. Please upload the bill in Add data." }];
+    await db.update(billInboxes).set({ lastMessageAt: now, lastMessageFrom: null, lastMessageSubject: null, lastResult: failed }).where(eq(billInboxes.userId, inbox.userId));
+    return { status: 200, results: failed };
+  }
   const from = mail.from?.address?.slice(0, 200) ?? null;
   const subject = mail.subject?.slice(0, 200) ?? null;
-  const now = new Date();
 
   const confirm = gmailConfirmation(from, subject, mail.text);
   if (confirm) {
