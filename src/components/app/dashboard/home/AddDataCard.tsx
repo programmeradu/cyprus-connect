@@ -6,6 +6,8 @@
  */
 
 import { useRef, useState } from "react";
+import Image from "next/image";
+import readerImage from "@/assets/intake-reader.png";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { ACCEPT, stashFiles } from "@/components/app/intake/pending-files";
@@ -38,6 +40,17 @@ export function AddDataCard() {
         send(Array.from(e.dataTransfer.files));
       }}
     >
+      <div className="vch-adddata-stage" aria-hidden="true">
+        {/* Three kinds of paper take turns dropping into the reader. */}
+        <span className="vch-sheet" data-kind="bill">
+          <i /><i /><i /><b />
+        </span>
+        <span className="vch-sheet" data-kind="statement">
+          <i /><i /><i /><i />
+        </span>
+        <span className="vch-sheet" data-kind="sheet" />
+        <Image src={readerImage} alt="" width={200} height={223} className="vch-adddata-reader" priority={false} />
+      </div>
       <div className="vch-adddata-copy">
         <h2 id="vch-adddata-title">{t("home.title")}</h2>
         <p>{t("home.body")}</p>
