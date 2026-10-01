@@ -117,25 +117,25 @@ export default function AnalyticsPage() {
             <MetricRow>
               <Metric
                 label={t("totalEmissions")}
-                value={analyticsData.metrics.totalEmissions.value.toFixed(1)}
+                value={analyticsData.metrics.totalEmissions.value.toFixed(2)}
                 unit={t("tonsPerYear")}
                 {...yoyDelta(analyticsData.metrics.totalEmissions.change)}
               />
               <Metric
                 label={t("energy")}
-                value={analyticsData.metrics.energy.value.toFixed(1)}
+                value={analyticsData.metrics.energy.value.toFixed(2)}
                 unit={t("tonsPerYear")}
                 {...yoyDelta(analyticsData.metrics.energy.change)}
               />
               <Metric
                 label={t("water")}
-                value={analyticsData.metrics.water.value.toFixed(1)}
+                value={analyticsData.metrics.water.value.toFixed(2)}
                 unit={t("tonsPerYear")}
                 {...yoyDelta(analyticsData.metrics.water.change)}
               />
               <Metric
                 label={t("waste")}
-                value={analyticsData.metrics.waste.value.toFixed(1)}
+                value={analyticsData.metrics.waste.value.toFixed(2)}
                 unit={t("tonsPerYear")}
                 {...yoyDelta(analyticsData.metrics.waste.change)}
               />
