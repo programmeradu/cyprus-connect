@@ -774,13 +774,27 @@ export const cbamDeclarations = pgTable('cbam_declarations', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-/** Who to email at each CBAM supplier. One row per supplier name in a workspace. */
+/**
+ * The workspace supplier list (CBAM and every other supplier). One row per
+ * supplier name. Email is optional; CBAM requests need it. scripts/sql/0021, 0028.
+ */
 export const cbamSuppliers = pgTable('cbam_suppliers', {
   id: serial('id').primaryKey(),
   workspaceId: text('workspace_id').notNull(),
   supplierName: text('supplier_name').notNull(),
-  email: text('email').notNull(),
+  email: text('email'),
   contactName: text('contact_name'),
+  /** manual | bank | cbam */
+  source: text('source').notNull().default('manual'),
+  /** The bank payment description this supplier was added from, used to sum spend. */
+  bankPayee: text('bank_payee'),
+  notes: text('notes'),
+  registrationNo: text('registration_no'),
+  registryName: text('registry_name'),
+  registryStatus: text('registry_status'),
+  registryCheckedAt: timestamp('registry_checked_at'),
+  wikirateUrl: text('wikirate_url'),
+  wikirateCheckedAt: timestamp('wikirate_checked_at'),
   updatedBy: text('updated_by'),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
