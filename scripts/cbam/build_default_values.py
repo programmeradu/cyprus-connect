@@ -63,7 +63,7 @@ for t in soup.find_all("table"):
     data = {}
     for r in rows[1 if is_iv else 2:]:
         c = cells(r)
-        if len(c) < 5:
+        if len(c) < (4 if is_iv else 5):
             continue
         code = re.sub(r"\D", "", c[0])
         if len(code) < 4:
