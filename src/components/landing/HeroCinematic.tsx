@@ -186,22 +186,22 @@ export function HeroCinematic() {
                 alt=""
                 width={40}
                 height={40}
-                className="h-10 w-10 rounded-full border-2 border-background object-cover"
+                className="h-10 w-10 rounded-full border-2 border-white/70 object-cover"
               />
               <Image
                 src={avatar2}
                 alt=""
                 width={40}
                 height={40}
-                className="h-10 w-10 rounded-full border-2 border-background object-cover"
+                className="h-10 w-10 rounded-full border-2 border-white/70 object-cover"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-[14px] font-semibold leading-tight text-foreground">
+              <span className="text-[14px] font-semibold leading-tight text-white">
                 {el ? "Μιλήστε με σύμβουλο στην Κύπρο" : "Talk to a Cyprus advisor"}
               </span>
               <span
-                className="text-[12.5px] leading-tight text-foreground/65"
+                className="text-[12.5px] leading-tight text-white/75"
                 style={{ fontFamily: "var(--editorial-sans)" }}
               >
                 {el ? "Δωρεάν συνάντηση 20 λεπτών" : "Free 20-minute consultation"}
