@@ -23,8 +23,10 @@ OVERRIDES = {
     "Moldova, Republic of": "MD", "Congo, Democratic Republic of": "CD", "Congo": "CG",
     "Bolivia": "BO", "Venezuela": "VE", "Laos": "LA", "Syria": "SY", "Tanzania": "TZ",
     "Brunei": "BN", "Côte d'Ivoire": "CI", "Cote d'Ivoire": "CI", "Korea, Democratic People's Republic of (North Korea)": "KP",
-    "Ivory Coast": "CI", "New Caledonia and dependencies": "NC", "Falkland Islands": "FK", "Saint Pierre and Miquelon": "PM", "Palestine": "PS", "Occupied Palestinian Territory": "PS", "Macao": "MO", "Hong Kong": "HK",
+    "Ivory Coast": "CI", "New Caledonia and dependencies": "NC", "North Korea (Democratic People’s Republic of Korea)": "KP", "Falkland Islands": "FK", "Saint Pierre and Miquelon": "PM", "Palestine": "PS", "Occupied Palestinian Territory": "PS", "Macao": "MO", "Hong Kong": "HK",
 }
+
+MISSING: list[str] = []
 
 def iso(name: str) -> str:
     if name in OVERRIDES:
@@ -32,7 +34,8 @@ def iso(name: str) -> str:
     try:
         return pycountry.countries.lookup(name).alpha_2
     except LookupError:
-        raise SystemExit(f"Add a country code for {name!r} to OVERRIDES")
+        MISSING.append(name)
+        return "??"
 
 def num(v: str):
     v = v.strip().replace(" ", "")
@@ -85,6 +88,8 @@ for t in soup.find_all("table"):
     else:
         countries[iso(head)] = {"name": head, "rows": data}
 
+if MISSING:
+    raise SystemExit(f"Add country codes to OVERRIDES for: {MISSING}")
 assert other and len(other) > 200, "Other countries table missing"
 assert len(countries) > 100, f"only {len(countries)} countries parsed"
 out = {
