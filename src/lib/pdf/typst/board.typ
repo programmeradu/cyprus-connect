@@ -24,7 +24,7 @@
     if counter(page).get().first() > 1 [
       #set text(size: 7.5pt, fill: quiet)
       #grid(columns: (1fr, auto), align: (left + bottom, right + bottom),
-        [#text(font: serif, weight: 600, size: 10pt, fill: ink)[Vuneli] #h(6pt) #box(height: 8pt, line(angle: 90deg, length: 8pt, stroke: 0.5pt + rule-c)) #h(6pt) Board summary],
+        [#box(baseline: 1.5pt, image("logo.svg", height: 9pt)) #h(6pt) #box(height: 8pt, line(angle: 90deg, length: 8pt, stroke: 0.5pt + rule-c)) #h(6pt) Board summary],
         [#d.company],
       )
       #v(-4pt)
@@ -82,7 +82,7 @@
 // ---------- Cover ----------
 #page(margin: (top: 22mm, bottom: 0mm, left: 22mm, right: 22mm), header: none, footer: none)[
   #grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
-    text(font: serif, weight: 600, size: 15pt, fill: ink)[Vuneli],
+    box(image("logo.svg", height: 16pt)),
     text(size: 8pt, fill: quiet)[#d.issued #h(8pt) #text(font: mono)[#d.docId]],
   )
   #v(-2pt)

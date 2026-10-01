@@ -144,7 +144,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 
 ## Premium PDFs + public check + EU feeds (plan: .lovable/plan/premium-pdfs-public-fingerprint-check-eu-tenders-feed-and-re-2026-10-01.md)
 - [x] Engine bake-off: Typst sample Board Summary (Source Serif 4 + IBM Plex, running header/footer, ruled tables, contour motif, QR) in src/lib/pdf/typst/
-- [ ] Founder sign-off on the sample design (waiting)
+- [x] Founder approved direction; logo in header; per-document styles (Board Summary light, report bold forest cover)
+- [ ] CBAM style (official form look)
 - [ ] Convert Board Summary, report and CBAM to Typst (browser WebAssembly), Greek check
 - [ ] Public /verify page + document_fingerprints table
 - [ ] TED tenders + EUR-Lex watch feeds
