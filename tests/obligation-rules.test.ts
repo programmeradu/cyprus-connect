@@ -54,7 +54,7 @@ describe("deadline rulebook", () => {
 
 describe("law watch", () => {
   it("builds a safe query and skips corrigenda", () => {
-    expect(amendmentsQuery(["32023R0956", 'x"; DROP'], "2025-01-01")).toContain('"32023R0956","XDROP"');
+    expect(amendmentsQuery(["32023R0956", 'x"; DROP'], "2025-01-01")).toContain(`"32023R0956","DROP"`);
     const rows = parseAmendments({ results: { bindings: [
       { base: { value: "32023R1115" }, celex: { value: "32026R2102" }, date: { value: "2026-07-13" } },
       { base: { value: "32023R1115" }, celex: { value: "32023R1115R(01)" }, date: { value: "2024-01-01" } },
