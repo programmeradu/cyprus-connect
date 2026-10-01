@@ -19,7 +19,7 @@ export const euGreenwashingRules2026 = makePillar({
     title: "The EU's New Greenwashing Rules: What Changed on 27 September 2026",
     metaTitle: "EU Greenwashing Rules 2026: What You Can Still Say",
     metaDescription:
-      "Since 27 Sep 2026, EU law bans vague green claims and offset-based 'climate neutral' product claims. What changed, and what happened to the Green Claims Directive.",
+      "Since 27 Sep 2026, EU law bans vague green claims and offset-based 'climate neutral' claims. What changed, and what became of the Green Claims Directive.",
     heroEyebrow: "EU consumer law",
     heroSubtitle:
       "Since 27 September 2026, telling consumers a product is 'eco-friendly' or 'climate neutral' without proof can be an unfair commercial practice everywhere in the EU. The separate Green Claims Directive was never adopted.",
@@ -110,7 +110,7 @@ export const euGreenwashingRules2026 = makePillar({
     title: "Οι νέοι κανόνες της ΕΕ κατά του greenwashing: Τι άλλαξε στις 27 Σεπτεμβρίου 2026",
     metaTitle: "Κανόνες ΕΕ κατά του greenwashing 2026",
     metaDescription:
-      "Από 27/9/2026 η ΕΕ απαγορεύει αόριστους πράσινους ισχυρισμούς και το «κλιματικά ουδέτερο» βάσει αντισταθμίσεων. Τι άλλαξε και τι έγινε με τους Πράσινους Ισχυρισμούς.",
+      "Από 27/9/2026 η ΕΕ απαγορεύει αόριστους πράσινους ισχυρισμούς και το «κλιματικά ουδέτερο» με αντισταθμίσεις. Τι άλλαξε και τι έγινε με τους Πράσινους Ισχυρισμούς.",
     heroEyebrow: "Δίκαιο καταναλωτή ΕΕ",
     heroSubtitle:
       "Από τις 27 Σεπτεμβρίου 2026, το να λέτε στους καταναλωτές ότι ένα προϊόν είναι «φιλικό προς το περιβάλλον» ή «κλιματικά ουδέτερο» χωρίς απόδειξη μπορεί να είναι αθέμιτη εμπορική πρακτική σε όλη την ΕΕ. Η ξεχωριστή Οδηγία για τους Πράσινους Ισχυρισμούς δεν υιοθετήθηκε ποτέ.",
