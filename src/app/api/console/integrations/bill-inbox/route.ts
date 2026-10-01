@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
   if (!resolved.ok) {
     return NextResponse.json({ error: resolved.error, message: resolved.message }, { status: resolved.status });
   }
-  const body = request.headers.get("content-length") === "0" ? { ok: true as const, data: {} } : await readJson(request, z.object({ rotate: z.boolean().optional() }));
+  const body = await readJson(request, z.object({ rotate: z.boolean().default(false) }));
   if (!body.ok) return body.response;
   try {
-    const r = await openBillInbox(resolved.session.account.id, resolved.session.workspace.id, !!(body.data as { rotate?: boolean }).rotate);
+    const r = await openBillInbox(resolved.session.account.id, resolved.session.workspace.id, body.data.rotate);
     if (!r) return NextResponse.json({ error: "not_configured", message: "Bill forwarding is not set up yet." }, { status: 503 });
     return NextResponse.json(r);
   } catch (error) {

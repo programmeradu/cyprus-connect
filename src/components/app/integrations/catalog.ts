@@ -129,10 +129,10 @@ export const CONNECTORS: Connector[] = [
   },
   {
     id: "eac",
-    name: "Electricity Authority of Cyprus",
+    name: "Electricity bills (EAC)",
     desc: {
-      en: "EAC has no public connection, so you upload the bill. Vuneli reads the period, kWh and amount, and keeps the bill as evidence.",
-      el: "Η ΑΗΚ δεν έχει δημόσια σύνδεση, οπότε ανεβάζετε τον λογαριασμό. Η Vuneli διαβάζει περίοδο, kWh και ποσό, και κρατά τον λογαριασμό ως τεκμήριο.",
+      en: "EAC has no public connection. Forward your EAC e-bills to your Vuneli address, or upload them. Vuneli reads the period, kWh and amount, keeps each bill as evidence and checks it against your bank payments.",
+      el: "Η ΑΗΚ δεν έχει δημόσια σύνδεση. Προωθήστε τους ηλεκτρονικούς λογαριασμούς ΑΗΚ στη διεύθυνσή σας στη Vuneli ή ανεβάστε τους. Η Vuneli διαβάζει περίοδο, kWh και ποσό, κρατά κάθε λογαριασμό ως τεκμήριο και τον ελέγχει με τις πληρωμές της τράπεζας.",
     },
     gives: {
       en: "Scope 2 electricity from each bill, at the published Cyprus grid factor.",
@@ -143,14 +143,14 @@ export const CONNECTORS: Connector[] = [
     light: "/integrations/eac-light.png",
     dark: "/integrations/eac-dark.png",
     markHeight: 30,
-    source: "Your EAC bills (PDF or photo)",
+    source: "Your EAC bills: forwarded e-bills or uploads",
   },
   {
     id: "water",
-    name: "Water Board of Nicosia",
+    name: "Water bills",
     desc: {
-      en: "Water boards have no public connection, so you upload the bill. Vuneli reads the period, m³ and amount. Limassol, Larnaca and Paphos bills are read too.",
-      el: "Τα συμβούλια υδατοπρομήθειας δεν έχουν δημόσια σύνδεση, οπότε ανεβάζετε τον λογαριασμό. Η Vuneli διαβάζει περίοδο, m³ και ποσό. Διαβάζονται και λογαριασμοί Λεμεσού, Λάρνακας και Πάφου.",
+      en: "Water boards have no public connection. Forward your water e-bills to your Vuneli address, or upload them. Nicosia, Limassol, Larnaca and Paphos bills are read, and each is checked against your bank payments.",
+      el: "Τα συμβούλια υδατοπρομήθειας δεν έχουν δημόσια σύνδεση. Προωθήστε τους ηλεκτρονικούς λογαριασμούς νερού στη διεύθυνσή σας στη Vuneli ή ανεβάστε τους. Διαβάζονται λογαριασμοί Λευκωσίας, Λεμεσού, Λάρνακας και Πάφου, και ο καθένας ελέγχεται με τις πληρωμές της τράπεζας.",
     },
     gives: {
       en: "Scope 3 water supply and treatment from each bill, at the published factor.",
@@ -161,7 +161,7 @@ export const CONNECTORS: Connector[] = [
     light: "/integrations/wbn.png",
     dark: "/integrations/wbn.png",
     markHeight: 30,
-    source: "Your water board bills (PDF or photo)",
+    source: "Your water board bills: forwarded e-bills or uploads",
     href: "https://www.wbn.org.cy",
   },
   {
