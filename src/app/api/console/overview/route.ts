@@ -1,4 +1,5 @@
 import { cachedTranslations, localeOf } from "@/lib/translate.server";
+import { isRunLabel, shortSummary } from "@/lib/agents/plain-summary";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
@@ -146,7 +147,7 @@ export async function GET(req: Request) {
     workspace = await loadCompanyWorkspace(account.id, workspace);
     const workspaceId = workspace.id;
 
-    const [defs, readings, roster, runs, tasks, connections, obs, events] =
+    const [defs, readings, roster, runs, tasks, connections, obs, rawEvents] =
       await Promise.all([
         (async () => {
           const r = await db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder));
@@ -244,6 +245,13 @@ export async function GET(req: Request) {
     });
 
     const agentsResult = await rosterFor(workspaceId, roster, Object.keys(RUNNABLE_AGENTS));
+
+    // Home shows a plain summary of each run, never markdown, internal keys or run numbers.
+    const events = rawEvents.map((x) =>
+      x.actorType === "agent"
+        ? { ...x, object: isRunLabel(x.object) ? "" : x.object, detail: x.detail ? shortSummary(x.detail) || null : null }
+        : x,
+    );
 
     // Agent-written notes are English; Greek pages get cached translations.
     const locale = localeOf(req.headers);
