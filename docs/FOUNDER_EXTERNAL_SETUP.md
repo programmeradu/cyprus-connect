@@ -239,3 +239,6 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Download the official CBAM declaration XML format (XSD) from the CBAM Registry (needs your EU Login with 2FA) and send it to me so the export can be checked against it.
 - OpenSanctions supplier check needs an API key; commercial use is paid (opensanctions.org/api). Decide if you want it.
 - Electricity CBAM default factors are IEA data under a non-commercial licence, so the app does not include them; electricity imports need the supplier's own value.
+
+## PDFs (2026-10-01)
+- Nothing to set up. Cover photographs are AI-generated illustrations and say so in small print on the cover; swap in your own photography any time by replacing the files in public/pdf-art/.

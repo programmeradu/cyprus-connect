@@ -134,7 +134,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Removed unused packages: xero-node, intuit-oauth, @libsql/client
 - [ ] CBAM official export format (XSD): founder to download from the CBAM Registry (EU Login)
 - [ ] CBAM: add Q3/Q4 2026 certificate prices when published (5 Oct 2026, 4 Jan 2027) in src/lib/cbam/official.ts
-- [ ] pdf-lib tamper-evident stamp on Board Summary and CBAM PDFs
+- [x] Premium PDFs: Board Summary, drafted reports and a new CBAM declaration PDF on one design system (brand fonts, Greek support, generated Cyprus cover photographs, charts, SHA-256 fingerprint on every page)
+- [ ] Public page where anyone can paste a PDF fingerprint and check it against Vuneli records
 - [ ] OpenSanctions supplier check (needs OPENSANCTIONS_API_KEY; commercial use is paid)
 - [ ] TED (EU tenders) + EUR-Lex feeds for Funding and Deadlines
 - [ ] axe-core accessibility checks + MSW mocks for outside services in tests
