@@ -36,7 +36,6 @@
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.1.1",
-    "@libsql/client": "^0.15.15",
     "@number-flow/react": "^0.5.10",
     "@paystack/inline-js": "^2.22.7",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -107,7 +106,6 @@
     "framer-motion": "^12.23.24",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.4.2",
-    "intuit-oauth": "^4.2.2",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.552.0",
     "mini-svg-data-uri": "^1.4.4",
@@ -150,7 +148,6 @@
     "unpdf": "^1.8.1",
     "vaul": "^1.1.2",
     "vite": "^8.1.4",
-    "xero-node": "^13.2.0",
     "xlsx": "^0.18.5",
     "zod": "^4.1.12"
   },

@@ -106,7 +106,7 @@ export function buildRegistryXml(
     x += el("OperatorName", l.supplierName, p4);
     x += el("InstallationId", l.installationId, p4);
     x += `${p4}<NetMass unit="${l.unit === "MWh" ? "MWh" : "t"}">${num(l.netMass)}</NetMass>\n`;
-    x += el("EmissionsBasis", l.basis === "actual" ? "ACTUAL" : l.basis === "unknown_cn" ? "INVALID" : "DEFAULT", p4);
+    x += el("EmissionsBasis", l.basis === "actual" ? "ACTUAL" : l.basis === "unknown_cn" ? "INVALID" : l.basis === "no_default" ? "MISSING" : "DEFAULT", p4);
     x += el("SpecificDirectEmbeddedEmissions", l.directSee === null ? null : num(l.directSee), p4);
     x += el("SpecificIndirectEmbeddedEmissions", l.indirectSee === null ? null : num(l.indirectSee), p4);
     x += el("DirectEmbeddedEmissionsTCO2e", num(l.directT), p4);

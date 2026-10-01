@@ -43,7 +43,7 @@ Also fixed: the cron jobs (grant alerts, keep-alive, agents) were attached in a 
 | 1 | Set `CRON_SECRET` (any long random value) | Cloudflare dashboard → Workers → vuneli → Settings → Variables (secret) | Without it the 15-minute heartbeat skips, so agents only run when you click "Run". | Evidence agent and CBAM agent running on their own |
 | 2 | Set `GEMINI_API_KEY` | Cloudflare Worker secrets (same place) | Photo/scan bill reading and the copilot need it. | Bill photo OCR |
 | 3 | Confirm the CBAM rules the agent uses, against the official texts: annual declaration due **30 September** of the following year; **50 tonne** yearly exemption (electricity and hydrogen not counted); default values still allowed in the definitive period | EUR-Lex: Regulation (EU) 2023/956 and amending Regulation (EU) 2025/2083; DG TAXUD CBAM page | The agent's deadlines and "below threshold" answer depend on these. I applied them from memory of the amendment; they must be checked before any customer relies on them. | Selling the CBAM agent |
-| 4 | Get the Commission's **definitive-period default values table** (with mark-ups) and the full Annex I CN code list | DG TAXUD CBAM page (published implementing acts) | Our built-in defaults are the older indicative table and miss some steel codes (e.g. 7209, 7211, 7219–7229). Lines on defaults are flagged, but the numbers must be the official ones. | Accurate CBAM figures |
+| 4 | ~~Get the official default values~~ **Done 2026-10-01**: built in from IR 2025/2621 as corrected by 2026/1740, with benchmarks (2025/2620) and 2026 certificate prices. Still to do: add the Q3 2026 price after 5 October and Q4 after 4 January (tell me and I'll add it), and spot-check 3 lines against the EUR-Lex tables | EUR-Lex; DG TAXUD price page | The cost figure for later quarters uses the latest published price until then and is marked with *. | Accurate CBAM cost |
 | 5 | One real customer customs export (anonymised is fine) | A Cyprus importer of steel, aluminium, cement or fertiliser; or your customs broker | Tells us the real column layout so upload works without reformatting. | First paid CBAM pilot |
 
 ## Still open from earlier turns
@@ -234,3 +234,8 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## 2026-10-01 — Company logos and simpler set-up
 - Run `scripts/sql/0029_company_website.sql` on the live database before deploying (adds the company website field). Preview already has it.
 - Optional: add a Logo.dev secret token as `LOGO_DEV_TOKEN` in Cloudflare for sharper logos. Without it, logos come from each company's own site icon.
+
+## Proven-tools follow-ups (2026-10-01)
+- Download the official CBAM declaration XML format (XSD) from the CBAM Registry (needs your EU Login with 2FA) and send it to me so the export can be checked against it.
+- OpenSanctions supplier check needs an API key; commercial use is paid (opensanctions.org/api). Decide if you want it.
+- Electricity CBAM default factors are IEA data under a non-commercial licence, so the app does not include them; electricity imports need the supplier's own value.
