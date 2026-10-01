@@ -167,9 +167,12 @@ export function lookupBenchmark(code: string, year: number, route: string | null
     const routed = route ? inPeriod.filter((e) => e[1] === route) : [];
     const pool = routed.length ? routed : inPeriod;
     if (!routed.length && new Set(pool.map((e) => e[0])).size > 1) {
-      // 5.1: several alloy grades for one code -> the highest benchmark applies.
-      if (!route || !pool.some((e) => e[1])) return Math.max(...pool.map((e) => e[0]));
-      exact = false;
+      if (pool.some((e) => e[1])) {
+        // Production route unknown: the lowest benchmark gives the highest cost, never an understatement.
+        exact = false;
+        return Math.min(...pool.map((e) => e[0]));
+      }
+      // 5.1: several alloy grades for one code without a route -> the highest benchmark applies.
     }
     return Math.max(...pool.map((e) => e[0]));
   });
