@@ -17,7 +17,6 @@ import { EcosystemRail } from "@/components/landing/EcosystemRail";
 import { HowItWorksSteps } from "@/components/landing/HowItWorksSteps";
 
 import sectionCtaImg from "@/assets/section-cta-dawn.jpg";
-import testimonialBranch from "@/assets/testimonial-impact-curve.png";
 import accentJourneyPath from "@/assets/accent-journey-path.png";
 import accentWindCurrents from "@/assets/accent-wind-currents.png";
 import {
@@ -125,13 +124,11 @@ export default function Home() {
           <div className="lg:col-span-5">
             <h2 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
 
-              Discover the{" "}
-              <span className="italic text-muted-foreground">autonomous ESG vision</span>
+              {tL("visionTitleA")}{" "}
+              <span className="italic text-muted-foreground">{tL("visionTitleB")}</span>
             </h2>
             <p className="mt-6 max-w-md text-[16.5px] leading-[1.6] text-foreground/70 sm:text-[17.5px]">
-              Vuneli is building an always-on fleet of digital colleagues. They read EAC bills,
-              prepare CBAM reports, and chase Scope 3 supplier data across Cyprus, without a
-              spreadsheet in the loop.
+              {tL("visionBody")}
             </p>
             <div className="mt-10">
               <Link
@@ -139,7 +136,7 @@ export default function Home() {
                 className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-6 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]"
                 style={{ fontFamily: "var(--editorial-display)" }}
               >
-                Explore vision and roadmap
+                {tL("visionCta")}
               </Link>
             </div>
           </div>
@@ -147,24 +144,9 @@ export default function Home() {
           <div className="lg:col-span-7 lg:pt-4">
             <ul className="divide-y divide-border/60 border-y border-border/60">
               {[
-                {
-                  year: "2026",
-                  title: "Cyprus data spine",
-                  body: "EAC bill ingestion, bank and accounting connectors, and a verified Cyprus emission factor set behind every number.",
-                  Glyph: GlyphDataSpine,
-                },
-                {
-                  year: "2027",
-                  title: "Digital ESG colleagues",
-                  body: "Agents draft VSME and CSRD disclosures, flag gaps, and hand a reviewer a clear audit trail before filing.",
-                  Glyph: GlyphColleagues,
-                },
-                {
-                  year: "2028",
-                  title: "Continuous assurance",
-                  body: "Live CBAM and Scope 3 monitoring across the supply chain, with grant matches and reduction plans that update themselves.",
-                  Glyph: GlyphAssurance,
-                },
+                { year: tL("road1Year"), title: tL("road1Title"), body: tL("road1Body"), Glyph: GlyphDataSpine },
+                { year: tL("road2Year"), title: tL("road2Title"), body: tL("road2Body"), Glyph: GlyphColleagues },
+                { year: tL("road3Year"), title: tL("road3Title"), body: tL("road3Body"), Glyph: GlyphAssurance },
               ].map((it) => (
                 <li
                   key={it.year}
@@ -220,34 +202,6 @@ export default function Home() {
         <HowItWorksSteps />
 
       </div>
-
-      <SectionDivider />
-
-      {/* TESTIMONIAL */}
-      <section className="relative z-20 mx-auto max-w-5xl overflow-hidden px-4 py-24 sm:px-6 sm:py-32">
-        {/* Editorial impact-curve - transparent line art blending into the page,
-            allowed to extend past the section into the CTA below */}
-        <img
-          src={testimonialBranch.src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className="pointer-events-none absolute -top-6 right-2 z-20 hidden w-[320px] max-w-none select-none opacity-60 mix-blend-multiply dark:opacity-80 dark:mix-blend-screen sm:block sm:w-[520px] lg:w-[680px] lg:-top-16 lg:-right-12"
-        />
-
-        <div className="relative max-w-3xl">
-          <blockquote className="font-[family-name:var(--editorial-serif)] text-[28px] italic leading-[1.18] tracking-[-0.015em] text-foreground sm:text-[46px] sm:leading-[1.1]">
-            &ldquo;{tL("testimonialQuoteA")}{" "}
-            <span className="not-italic">{tL("testimonialQuoteB")}</span>&rdquo;
-          </blockquote>
-          <div className="mt-10 flex flex-wrap items-baseline gap-x-5 gap-y-1 text-[15px]">
-            <span className="font-semibold tracking-[-0.01em] text-foreground">{tL("testimonialAuthor")}</span>
-            <span className="text-foreground/60">{tL("testimonialRole")}</span>
-            <span className="hidden text-border sm:inline">/</span>
-            <span className="text-foreground/60">{tL("testimonialImpact")}</span>
-          </div>
-        </div>
-      </section>
 
       <SectionDivider />
 

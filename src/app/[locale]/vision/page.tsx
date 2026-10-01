@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { LearnLinksSection } from "@/components/learn/LearnLinksSection";
 import heroPhoto from "@/assets/vision-hero-photography.png";
@@ -25,47 +26,69 @@ import ctaDawnPhoto from "@/assets/section-cta-dawn.jpg";
 const ACCENT_BUTTON =
   "inline-flex h-11 items-center justify-center whitespace-nowrap rounded-full bg-[var(--accent-lime)] px-6 text-[15px] font-semibold tracking-[-0.01em] text-[var(--accent-lime-foreground)] shadow-[0_10px_30px_-12px_color-mix(in_oklab,var(--accent-lime)_55%,transparent)] transition-transform hover:scale-[1.02]";
 
-type Row = {
-  feature: string;
-  category: string;
-  status: "tagShipped" | "tagBeta" | "tagRoadmap" | "tagFuture";
-  metric: string;
+type Status = "tagShipped" | "tagBeta" | "tagRoadmap" | "tagFuture";
+type Cat = "measure" | "act" | "report" | "comply" | "connect" | "agents";
+type Row = { en: string; el: string; category: Cat; status: Status; refEn: string; refEl: string };
+
+const CAT_LABEL: Record<"all" | Cat, { en: string; el: string }> = {
+  all: { en: "All", el: "Όλα" },
+  measure: { en: "Measure", el: "Μέτρηση" },
+  act: { en: "Act", el: "Δράση" },
+  report: { en: "Report", el: "Αναφορές" },
+  comply: { en: "Comply", el: "Συμμόρφωση" },
+  connect: { en: "Connect", el: "Συνδέσεις" },
+  agents: { en: "Agents", el: "Πράκτορες" },
 };
 
+// Only what works end to end is "Live". Keep this list honest: move a row
+// only after the flow has been run with real data.
 const REGISTER: Row[] = [
-  { feature: "Scope 1, 2 and 3 emissions calculator", category: "Measure", status: "tagShipped", metric: "Cyprus baseline" },
-  { feature: "EAC grid factor calibration, 610 gCO₂ per kWh", category: "Measure", status: "tagShipped", metric: "CERA regulated" },
-  { feature: "EAC bill reading from PDF", category: "Measure", status: "tagShipped", metric: "Six second ingest" },
-  { feature: "VSME report builder", category: "Report", status: "tagShipped", metric: "EFRAG standard" },
-  { feature: "EU Taxonomy check and double materiality matrix", category: "Report", status: "tagShipped", metric: "Audit ready" },
-  { feature: "Course generation and signed certificates", category: "Learn", status: "tagShipped", metric: "Verifiable record" },
-  { feature: "CBAM declaration and XML export", category: "Comply", status: "tagBeta", metric: "EU registry XML" },
-  { feature: "EAC tariff switch and CERA classification advice", category: "Reduce", status: "tagBeta", metric: "€200 to €1,200 saved" },
-  { feature: "SoftOne and Epsilon Net read connectors", category: "Integrations", status: "tagRoadmap", metric: "SOAP and REST" },
-  { feature: "Bank of Cyprus and Hellenic Bank account feeds", category: "Integrations", status: "tagRoadmap", metric: "PSD2 access" },
-  { feature: "WhatsApp supplier data collection", category: "Integrations", status: "tagRoadmap", metric: "Greek and English" },
-  { feature: "Cyprus SME Sustainability Index", category: "Analytics", status: "tagFuture", metric: "Quarterly benchmark" },
-  { feature: "Regulatory horizon scanner", category: "Comply", status: "tagFuture", metric: "Official Journal sync" },
+  { en: "Verde consultant: answers with sources, drafts documents for approval", el: "Verde: απαντήσεις με πηγές, σχέδια εγγράφων για έγκριση", category: "agents", status: "tagShipped", refEn: "Saved to Deliverables", refEl: "Αποθήκευση στα Παραδοτέα" },
+  { en: "Weaver and Compass planning agents", el: "Πράκτορες σχεδιασμού Weaver και Compass", category: "agents", status: "tagShipped", refEn: "Every outbound step approved", refEl: "Έγκριση κάθε εξερχόμενου βήματος" },
+  { en: "EAC electricity and Nicosia water bill reading", el: "Ανάγνωση λογαριασμών ΑΗΚ και Συμβουλίου Υδατοπρομήθειας Λευκωσίας", category: "measure", status: "tagShipped", refEn: "Upload or email inbox", refEl: "Ανέβασμα ή email" },
+  { en: "Bills matched to bank payments", el: "Αντιστοίχιση λογαριασμών με τραπεζικές πληρωμές", category: "measure", status: "tagShipped", refEn: "One record per bill", refEl: "Μία εγγραφή ανά λογαριασμό" },
+  { en: "Deadlines matched to your business, with EU law watch", el: "Προθεσμίες για την επιχείρησή σας, με παρακολούθηση νομοθεσίας ΕΕ", category: "comply", status: "tagShipped", refEn: "EUR-Lex amendments", refEl: "Τροποποιήσεις EUR-Lex" },
+  { en: "CBAM calculations with official EU default values", el: "Υπολογισμοί CBAM με τις επίσημες προκαθορισμένες τιμές ΕΕ", category: "comply", status: "tagShipped", refEn: "121 country tables", refEl: "121 πίνακες χωρών" },
+  { en: "Supplier list with EU sanctions screening", el: "Λίστα προμηθευτών με έλεγχο κυρώσεων ΕΕ", category: "act", status: "tagShipped", refEn: "EU consolidated list, daily", refEl: "Ενοποιημένη λίστα ΕΕ, καθημερινά" },
+  { en: "Grant scout: only the funding calls you can win", el: "Ανιχνευτής χρηματοδοτήσεων: μόνο όσες μπορείτε να κερδίσετε", category: "act", status: "tagShipped", refEn: "Rules quoted from source", refEl: "Όροι αυτολεξεί από την πηγή" },
+  { en: "VSME and Board Summary reports", el: "Αναφορές VSME και Σύνοψη Διοικητικού Συμβουλίου", category: "report", status: "tagShipped", refEn: "EFRAG VSME", refEl: "EFRAG VSME" },
+  { en: "Print-grade PDFs with a public fingerprint check", el: "PDF υψηλής ποιότητας με δημόσιο έλεγχο αποτυπώματος", category: "report", status: "tagShipped", refEn: "vuneli.com/verify", refEl: "vuneli.com/verify" },
+  { en: "Companies Registrar lookup and WikiRate supplier data", el: "Αναζήτηση στο Τμήμα Εφόρου Εταιρειών και στοιχεία WikiRate", category: "connect", status: "tagShipped", refEn: "Public registers", refEl: "Δημόσια μητρώα" },
+  { en: "EU tenders and EU law feeds", el: "Ροές δημόσιων διαγωνισμών και νομοθεσίας ΕΕ", category: "connect", status: "tagShipped", refEn: "TED and EUR-Lex", refEl: "TED και EUR-Lex" },
+  { en: "Bank of Cyprus account feed", el: "Σύνδεση λογαριασμών Τράπεζας Κύπρου", category: "connect", status: "tagBeta", refEn: "Open banking (PSD2)", refEl: "Open banking (PSD2)" },
+  { en: "Other EU banks and accounting tools (QuickBooks, Xero and more)", el: "Άλλες τράπεζες ΕΕ και λογιστικά (QuickBooks, Xero κ.ά.)", category: "connect", status: "tagBeta", refEn: "Salt Edge and Nango", refEl: "Salt Edge και Nango" },
+  { en: "Generated courses with certificates", el: "Μαθήματα με πιστοποιητικά", category: "report", status: "tagBeta", refEn: "Learn", refEl: "Μάθηση" },
+  { en: "CBAM report in the official EU Registry format", el: "Έκθεση CBAM στην επίσημη μορφή του Μητρώου ΕΕ", category: "comply", status: "tagRoadmap", refEn: "Needs the official schema", refEl: "Απαιτεί το επίσημο σχήμα" },
+  { en: "Scanned and photographed bills", el: "Σαρωμένοι και φωτογραφημένοι λογαριασμοί", category: "measure", status: "tagRoadmap", refEn: "Image-reading AI", refEl: "AI ανάγνωσης εικόνων" },
+  { en: "Peer comparison for Cyprus sectors", el: "Σύγκριση με κυπριακούς κλάδους", category: "measure", status: "tagRoadmap", refEn: "After 12 months of data", refEl: "Μετά από 12 μήνες δεδομένων" },
+  { en: "CY Login for government services", el: "CY Login για κρατικές υπηρεσίες", category: "connect", status: "tagFuture", refEn: "gov.cy", refEl: "gov.cy" },
+  { en: "Hand-off to vetted Cypriot experts", el: "Παραπομπή σε ελεγμένους Κύπριους ειδικούς", category: "act", status: "tagFuture", refEn: "Licensed work only", refEl: "Μόνο αδειοδοτημένες εργασίες" },
 ];
 
-const CATEGORIES = ["All", "Measure", "Report", "Reduce", "Learn", "Comply", "Integrations", "Analytics"];
+const CATEGORIES = ["all", "measure", "act", "report", "comply", "connect", "agents"] as const;
 
 export default function VisionPage() {
   const t = useTranslations("vision");
 
-  const [category, setCategory] = useState("All");
+  const lang = useLocale() === "el" ? "el" : "en";
+  const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("all");
   const [query, setQuery] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", org: "", segment: "importer" });
-  const [submitted, setSubmitted] = useState(false);
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return REGISTER.filter(
+    return REGISTER.map((r) => ({
+      key: r.en,
+      feature: r[lang],
+      category: CAT_LABEL[r.category][lang],
+      cat: r.category,
+      metric: lang === "el" ? r.refEl : r.refEn,
+      status: r.status,
+    })).filter(
       (r) =>
-        (category === "All" || r.category === category) &&
-        (q === "" || r.feature.toLowerCase().includes(q) || r.category.toLowerCase().includes(q) || r.metric.toLowerCase().includes(q)),
+        (category === "all" || r.cat === category) &&
+        (q === "" || [r.feature, r.category, r.metric].some((x) => x.toLowerCase().includes(q))),
     );
-  }, [category, query]);
+  }, [category, query, lang]);
 
   const quarters = [
     { n: "01", title: t("q1Title"), body: t("q1Desc"), media: officePhoto, alt: "A Nicosia office desk with a printed reporting checklist" },
@@ -366,7 +389,7 @@ export default function VisionPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="mt-2 h-11 w-full rounded-md border border-border bg-background px-4 text-[15px] font-medium text-foreground outline-none transition-colors placeholder:text-foreground/40 focus:border-foreground"
-                placeholder="CBAM, EAC, Scope 3"
+                placeholder={lang === "el" ? "CBAM, ΑΗΚ, προμηθευτές" : "CBAM, EAC, suppliers"}
               />
             </div>
 
@@ -385,7 +408,7 @@ export default function VisionPage() {
                         : "border-border bg-background text-foreground/70 hover:border-foreground/40 hover:text-foreground",
                     ].join(" ")}
                   >
-                    {c}
+                    {CAT_LABEL[c][lang]}
                   </button>
                 ))}
               </div>
@@ -407,7 +430,7 @@ export default function VisionPage() {
               <ul>
                 {rows.map((r) => (
                   <li
-                    key={r.feature}
+                    key={r.key}
                     className="grid grid-cols-1 gap-2 border-b border-border/60 py-5 transition-colors hover:bg-background/70 md:grid-cols-12 md:items-center md:gap-6"
                   >
                     <div className="md:col-span-6">
@@ -445,88 +468,21 @@ export default function VisionPage() {
             {t("waitlistSubtitle")}
           </p>
 
-          <div className="mt-10 max-w-xl">
-            {submitted ? (
-              <p className="border-l-2 border-[var(--accent-lime)] bg-background/70 py-4 pl-5 pr-4 text-[16px] font-semibold leading-[1.55] text-foreground">
-                {t("waitlistSuccess")}
-              </p>
-            ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (form.email) setSubmitted(true);
-                }}
-                className="grid grid-cols-1 gap-5 sm:grid-cols-2"
-              >
-                <Field id="v-name" label={t("waitlistNamePh")}>
-                  <input
-                    id="v-name"
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className={FIELD_CLASS}
-                  />
-                </Field>
-                <Field id="v-email" label={t("waitlistEmailPh")}>
-                  <input
-                    id="v-email"
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className={FIELD_CLASS}
-                  />
-                </Field>
-                <Field id="v-org" label={t("waitlistOrgPh")}>
-                  <input
-                    id="v-org"
-                    required
-                    value={form.org}
-                    onChange={(e) => setForm({ ...form, org: e.target.value })}
-                    className={FIELD_CLASS}
-                  />
-                </Field>
-                <Field id="v-segment" label={t("waitlistSegmentPh")}>
-                  <select
-                    id="v-segment"
-                    value={form.segment}
-                    onChange={(e) => setForm({ ...form, segment: e.target.value })}
-                    className={FIELD_CLASS}
-                  >
-                    <option value="importer">{t("segImporter")}</option>
-                    <option value="hotel">{t("segHotel")}</option>
-                    <option value="shipping">{t("segShipping")}</option>
-                    <option value="accountant">{t("segAccountant")}</option>
-                    <option value="other">{t("segOther")}</option>
-                  </select>
-                </Field>
-
-                <div className="sm:col-span-2">
-                  <button type="submit" className={`${ACCENT_BUTTON} w-full sm:w-auto`}>
-                    {t("waitlistSubmit")}
-                  </button>
-                </div>
-              </form>
-            )}
+          <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3">
+            <Link href="/auth" className={ACCENT_BUTTON}>
+              {t("waitlistSubmit")}
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-[15px] font-medium text-foreground/75 underline decoration-foreground/30 underline-offset-[6px] transition-colors hover:text-foreground hover:decoration-foreground/70"
+            >
+              {t("waitlistPricing")}
+            </Link>
           </div>
         </div>
       </section>
 
       <LearnLinksSection />
-    </div>
-  );
-}
-
-const FIELD_CLASS =
-  "h-11 w-full rounded-md border border-border bg-background/85 px-4 text-[15px] font-medium text-foreground outline-none transition-colors focus:border-foreground";
-
-function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label htmlFor={id} className="block text-[13px] font-semibold uppercase tracking-[0.1em] text-foreground/60">
-        {label}
-      </label>
-      <div className="mt-2">{children}</div>
     </div>
   );
 }
