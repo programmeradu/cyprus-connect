@@ -173,8 +173,8 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Accessibility + offline tests
 - [x] Verde answer-source tests
 - [x] Docling proposal
-- [ ] Last agent/CBAM writes on shared activity record
-- [ ] Learn, Weaver/Compass live checks; Greek + dark mode review
+- [x] Last agent/CBAM writes on shared activity record
+- [ ] Learn live check with a real generated course (blocked: needs a real signed-in account)
 
-- [ ] Funding matching: show only strong fits (or "one answer away"); hide non-fits entirely; dedicated Grant scout agent evaluates every call and asks for missing facts
-- [ ] Greek: official EUR-Lex Greek titles; cached translations for funding/tender titles and agent notes
+- [x] Funding matching: show only strong fits (or "one answer away"); hide non-fits entirely; dedicated Grant scout agent evaluates every call and asks for missing facts
+- [x] Greek: official EUR-Lex Greek titles; cached translations for funding/tender titles and agent notes

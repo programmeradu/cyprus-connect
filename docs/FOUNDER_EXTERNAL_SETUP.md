@@ -257,3 +257,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Learn check (needs you)
 - Sign in to the preview with your real account, open Learn → Generate, create one course and open a lesson. The automated test login can't open Learn (it is sent to the sign-in page), so this one check needs a real account.
+
+## Funding matching (Grant scout)
+- Run `scripts/sql/0036_funding_matching.sql` on the live database (after 0035).
+- Live Cloudflare needs `LOVABLE_API_KEY` set so the daily funding scan can read call rules (max 40 calls/day).

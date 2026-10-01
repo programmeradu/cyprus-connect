@@ -98,6 +98,35 @@ export async function contentHashOf(c: { title: string; summary: string; program
   return sha256Hex(stableStringify({ t: c.title, s: c.summary, p: c.program, d: c.deadline }));
 }
 
+/**
+ * Official English conditions and description for an EU Funding & Tenders
+ * topic (the public SEDIA search API). Null when unavailable; the call is then
+ * read from its stored summary only, which usually leaves it hidden.
+ */
+async function euTopicText(url: string): Promise<string | null> {
+  const id = url.match(/topic-details\/([A-Za-z0-9._-]+)/)?.[1];
+  if (!id) return null;
+  try {
+    const form = new FormData();
+    form.append("query", new Blob([JSON.stringify({ bool: { must: [{ terms: { language: ["en"] } }, { terms: { identifier: [id] } }] } })], { type: "application/json" }));
+    form.append("languages", new Blob([JSON.stringify(["en"])], { type: "application/json" }));
+    const res = await fetch(`https://api.tech.ec.europa.eu/search-api/prod/rest/search?apiKey=SEDIA&text=${encodeURIComponent(`"${id}"`)}&pageSize=5`, {
+      method: "POST",
+      body: form,
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { results?: { metadata?: Record<string, string[] | undefined> }[] };
+    const m = json.results?.find((r) => r.metadata?.topicConditions?.[0] || r.metadata?.descriptionByte?.[0])?.metadata;
+    if (!m) return null;
+    const clean = (h?: string) => (h ?? "").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+    const text = [`Conditions: ${clean(m.topicConditions?.[0])}`, `Description: ${clean(m.descriptionByte?.[0])}`].join("\n\n");
+    return text.slice(0, 9000);
+  } catch {
+    return null;
+  }
+}
+
 export interface ExtractSummary { read: number; failed: number; stoppedBy: string | null }
 
 /** Reads rules for calls never read or whose text changed. Stops on credit or access errors. */
@@ -118,10 +147,14 @@ export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractS
   let failed = 0;
   for (const r of rows) {
     if (read >= limit) break;
-    const hash = await contentHashOf(r);
-    if (r.rulesExtractedAt && r.rulesHash === hash) continue;
     try {
-      const callText = `Title: ${r.title}\nProgramme: ${r.program ?? "not stated"}\nDeadline: ${r.deadline ?? "not stated"}\n\nCall text:\n${r.summary || "(no text)"}`;
+      const official = r.source === "eu-funding-tenders" ? await euTopicText(r.url) : null;
+      const callText = `Title: ${r.title}\nProgramme: ${r.program ?? "not stated"}\nDeadline: ${r.deadline ?? "not stated"}\n\nCall text:\n${official ?? r.summary ?? "(no text)"}`;
+      const hash = await sha256Hex(callText);
+      if (r.rulesExtractedAt && r.rulesHash === hash) {
+        await db.update(grantOpportunities).set({ contentHash: hash }).where(eq(grantOpportunities.id, r.id));
+        continue;
+      }
       const raw = await aiResponsesJson<CallRules>({
         system: SYSTEM,
         user: callText,
