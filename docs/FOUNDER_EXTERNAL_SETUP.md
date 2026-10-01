@@ -230,3 +230,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Home redesign (1 Oct 2026)
 - Nothing to set up outside the app. Verde company fill-in uses the existing AI key.
+
+## 2026-10-01 — Company logos and simpler set-up
+- Run `scripts/sql/0029_company_website.sql` on the live database before deploying (adds the company website field). Preview already has it.
+- Optional: add a Logo.dev secret token as `LOGO_DEV_TOKEN` in Cloudflare for sharper logos. Without it, logos come from each company's own site icon.

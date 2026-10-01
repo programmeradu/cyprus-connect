@@ -38,7 +38,7 @@ export default function OnboardingPage() {
   const locale = useLocale();
   const router = useRouter();
   const { refetchUser, updatePreferences } = useUser();
-  const { data: _s } = useSession(); const session = { user: { id: "qa", name: "QA Agent", email: "maria@hellenicbank.com" } } as any; const isSessionLoading = false; void _s;
+  const { data: session, isPending: isSessionLoading } = useSession();
   const writer = useWorkspaceAction();
 
   const [name, setName] = useState("");
