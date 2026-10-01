@@ -210,7 +210,7 @@ export default function ConsolePage() {
 
 
               <Link
-                href={"/app/insights" as never}
+                href={"/app/agents" as never}
                 className="vc-add-agent"
                 aria-label="Open the agent workforce"
               >

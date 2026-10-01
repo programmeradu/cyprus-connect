@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useEffect } from "react";
+import { LiveInsights } from "@/components/app/console/LiveInsights";
 import { useTranslations } from "next-intl";
 import { ExportReportButton } from "@/components/app/ExportReportButton";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import { useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import {
   PageShell,
   PageHeader,
@@ -13,8 +14,7 @@ import {
   DataTable,
   Metric,
   MetricRow,
-  Empty,
-  AiUnavailable
+  Empty
 } from "@/components/app/console/kit";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 
@@ -40,13 +40,6 @@ interface AnalyticsData {
   currentPeriod: { month: number; year: number } | null;
 }
 
-interface AIInsights {
-  observations: string[];
-  recommendations: string[];
-  highlights: string[];
-  risks: string[];
-}
-
 export default function AnalyticsPage() {
   const t = useTranslations("dashboard.analytics");
   const tc = useTranslations("common");
@@ -58,56 +51,13 @@ export default function AnalyticsPage() {
   const analytics = useWorkspaceResource<{ data: AnalyticsData }>(
     userId ? `/api/analytics?userId=${encodeURIComponent(userId)}` : null,
   );
-  const profile = useWorkspaceResource<Record<string, unknown>>(userId ? `/api/users/${userId}` : null);
   const analyticsData = analytics.data?.data ?? null;
-
-  const [aiInsights, setAiInsights] = useState<AIInsights | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState(false);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       if (!APP_OPEN_ACCESS) router.push("/auth?redirect=" + encodeURIComponent(window.location.pathname));
     }
   }, [session, isPending, router]);
-
-  const fetchAIInsights = useCallback(
-    async (data: AnalyticsData) => {
-      setAiLoading(true);
-      setAiError(false);
-      try {
-        const p = profile.data ?? {};
-        const res = await workspaceRequest<{ insights: AIInsights }>("/api/analytics/insights", {
-          method: "POST",
-          body: {
-            metricsData: data.metrics,
-            emissionsBreakdown: data.emissionsBreakdown,
-            monthlyTrend: data.monthlyTrend,
-            industryComparison: data.industryComparison,
-            userProfile: {
-              companyName: typeof p.companyName === "string" ? p.companyName : undefined,
-              companyIndustry: typeof p.companyIndustry === "string" ? p.companyIndustry : undefined,
-              teamSize: typeof p.teamSize === "string" || typeof p.teamSize === "number" ? p.teamSize : undefined,
-            },
-          },
-        });
-        setAiInsights(res.insights);
-      } catch {
-        setAiError(true);
-      } finally {
-        setAiLoading(false);
-      }
-    },
-    [profile.data],
-  );
-
-  // Ask for insights once per fresh copy of the numbers (and once the profile is known).
-  const insightsFor = useRef<AnalyticsData | null>(null);
-  useEffect(() => {
-    if (!analyticsData || profile.loading || insightsFor.current === analyticsData) return;
-    insightsFor.current = analyticsData;
-    void fetchAIInsights(analyticsData);
-  }, [analyticsData, profile.loading, fetchAIInsights]);
 
   const refreshing = analytics.refreshing;
   const handleRefresh = () => {
@@ -195,28 +145,6 @@ export default function AnalyticsPage() {
             />
           </Section>
 
-          <Section title={t("monthlyTrend")}>
-            <DataTable
-              columns={[
-                { key: "month", header: t("x.month"), render: (r) => r.month },
-                { key: "value", header: t("x.emissions"), numeric: true, render: (r) => t("tons", { value: r.value.toFixed(1) }) },
-                {
-                  key: "change",
-                  header: t("x.change"),
-                  numeric: true,
-                  render: (r) => (
-                    <span className="vck-tag" data-tone={r.change < 0 ? "positive" : "caution"}>
-                      {r.change > 0 ? "+" : ""}
-                      {r.change.toFixed(1)}%
-                    </span>
-                  )
-                }
-              ]}
-              rows={analyticsData.monthlyTrend.slice(0, 6)}
-              rowKey={(r) => r.month}
-            />
-          </Section>
-
           <Section title={t("benchmarking")}>
             {analyticsData.industryComparison ? (
               <MetricRow columns={3}>
@@ -233,38 +161,7 @@ export default function AnalyticsPage() {
             )}
           </Section>
 
-          <Section title={t("aiTitle")}>
-            {aiError ? (
-              <AiUnavailable feature="generate AI insights for this analysis" onRetry={() => fetchAIInsights(analyticsData)} />
-            ) : aiInsights ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h3 className="vck-label mb-3">{t("topRecommendations")}</h3>
-                  <ul className="space-y-2">
-                    {aiInsights.recommendations.slice(0, 3).map((rec, index) => (
-                      <li key={index} className="vck-inset px-3 py-2.5 text-sm break-words">
-                        {rec}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="vck-label mb-3">{t("keyHighlights")}</h3>
-                  <ul className="space-y-2">
-                    {aiInsights.highlights.map((highlight, index) => (
-                      <li key={index} className="vck-inset px-3 py-2.5 text-sm break-words">
-                        {highlight}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ) : aiLoading ? (
-              <Empty title={t("x.generating")} body={t("x.generatingBody")} />
-            ) : (
-              <Empty title={t("x.noInsights")} body={t("x.noInsightsBody")} />
-            )}
-          </Section>
+          <LiveInsights />
         </>
       )}
     </PageShell>

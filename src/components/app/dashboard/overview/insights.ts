@@ -55,7 +55,7 @@ export function buildInsights(data: ConsoleOverviewData, limit = 4): Insight[] {
       label: "Agent run",
       headline: `${failedRuns.length} run${failedRuns.length === 1 ? "" : "s"} need a review`,
       detail: failedRuns[0].summary ?? "Open the workforce to read the run log.",
-      href: "/app/insights",
+      href: "/app/agents",
       linkLabel: "Open the agent workforce",
     });
   }
