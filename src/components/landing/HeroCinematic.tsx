@@ -167,8 +167,8 @@ export function HeroCinematic() {
               role="tooltip"
               className="pointer-events-none absolute bottom-[calc(100%+12px)] right-0 w-[280px] translate-y-1 rounded-2xl border border-white/30 bg-background/90 p-4 text-left opacity-0 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.45)] backdrop-blur-2xl transition duration-200 group-hover/advisor:translate-y-0 group-hover/advisor:opacity-100 group-focus-visible/advisor:translate-y-0 group-focus-visible/advisor:opacity-100 dark:border-white/10"
             >
-              <span className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-lime,#d9f99d)]/60 px-2 py-0.5 text-[11px] font-semibold text-foreground">
-                <span className="h-1.5 w-1.5 rounded-full bg-foreground/70" aria-hidden="true" />
+              <span className="mb-1.5 inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-lime)] px-2 py-0.5 text-[11px] font-semibold text-[var(--accent-lime-foreground)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-lime-foreground)]" aria-hidden="true" />
                 {el ? "Σύντομα" : "Coming soon"}
               </span>
               <p className="text-[13.5px] font-semibold leading-snug text-foreground">
