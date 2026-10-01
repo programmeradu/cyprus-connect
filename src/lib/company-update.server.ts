@@ -163,5 +163,18 @@ export async function applyCompanyPatch(input: {
     });
   });
 
+  // Facts that decide funding fit: re-check right away and let Grant scout
+  // close or raise questions. Never blocks the save.
+  if (changed.some((k) => ["industry", "teamSize", "country", "revenueEur"].includes(k))) {
+    try {
+      const { refreshFundingMatches } = await import("@/lib/funding/funding.server");
+      await refreshFundingMatches(workspaceId);
+      const { enqueue } = await import("@/lib/agents/orchestrator");
+      await enqueue({ workspaceId, agentKey: "grants", trigger: "event", idempotencyKey: `grants:${workspaceId}:company:${Date.now()}` });
+    } catch {
+      // The daily Grant scout run catches up.
+    }
+  }
+
   return { company: await readCompany(accountId, workspaceId), changed };
 }
