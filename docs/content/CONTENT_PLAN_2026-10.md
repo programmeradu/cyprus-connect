@@ -10,8 +10,7 @@ Voice: Vuneli team. Every guide ships EN + EL, its own hero image, sourced facts
 - Batch 4: Cyprus electricity emission factor (new), SME document checklist + Verde product update (new)
 - Batch 5: VSME guide (full rewrite: Recommendation 2025/1710, B1-B11/C1-C9, Omnibus value-chain cap; removed unsourced cost figures)
 
+- Batch 6: ESRS (simplified ESRS C(2026)5010, Omnibus I 2026/470), double materiality (lighter assessment, VSME has none), EU Taxonomy (Delegated Reg 2026/73, 10% threshold); new heroes for DM and Taxonomy
+
 ## Next
-- ESRS explained refresh (simplified ESRS)
-- Double materiality refresh (lighter post-Omnibus scope)
-- EU Taxonomy refresh (2025 simplification, materiality threshold)
 - Research-led: what Cypriot SMEs are actually asked for by banks and buyers (needs real interviews before publishing)
