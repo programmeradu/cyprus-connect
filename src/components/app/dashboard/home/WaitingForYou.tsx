@@ -34,11 +34,12 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   const decide = async (task: ConsoleTask, decision: "approve" | "reject") => {
     setBusy(task.id);
     setFailed(null);
-    const ok = await run<{ deliverable?: { href: string; title: string } | null }>(`/api/console/tasks/${task.id}`, {
+    const ok = await run<{ alreadyDecided?: boolean; deliverable?: { href: string; title: string } | null }>(`/api/console/tasks/${task.id}`, {
       body: { decision },
       invalidates: ["/api/console/agents", "/api/console/overview", "/api/console/reports"],
     });
     if (!ok) setFailed({ id: task.id, message: t("failed") });
+    else if (ok.alreadyDecided && !ok.deliverable) toast.info(t("alreadyDecided"));
     else if (ok.deliverable && decision === "approve") {
       const { href, title } = ok.deliverable;
       toast.success(t("readyToast", { title }), {
