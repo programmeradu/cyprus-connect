@@ -208,3 +208,9 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - WIKIRATE_API_KEY is saved in the preview. Add the same value in Cloudflare (Workers → Settings → Variables, as a secret) before deploying. It now shows the 26 Cyprus companies on WikiRate (earlier filter was wrong and showed global companies).
 - Water bill reader added (Nicosia, Limassol, Larnaca, Paphos). Tested on the Bank of Cyprus sample set: Nicosia sample read correctly (1 m³, 27/11/2009–01/02/2010, €20.43). The other water samples are blank forms and were correctly refused. Sewerage and EAC bills were correctly refused.
 - Still needed: 1–2 real, recent water bills (any board) to confirm on today's layout.
+
+## Government & payments access (researched 2026-10-01)
+- **CY Login (gov.cy sign-in):** email the Digital Services Factory (dsf.dmrid.gov.cy) asking to join as a private-sector relying party for "Sign in with CY Login". Expect 2–6 months for approval.
+- **Companies Registrar:** nothing to apply for. The company register is published free on data.gov.cy. Optional: a paid live-lookup service (~$5 per 1,000 lookups) if we want real-time checks.
+- **JCC:** ask JCC for a JCCgateway merchant account (SaaS subscriptions, recurring card payments) and a fee quote. Sandbox is available as soon as the account exists.
+- **WikiRate:** add WIKIRATE_API_KEY to Cloudflare secrets.
