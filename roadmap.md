@@ -155,3 +155,13 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] EU tenders (TED) + EUR-Lex feeds
 - [ ] Remaining tools: OpenSanctions, pdf-lib metadata, axe/MSW, Promptfoo, Docling proposal
 - [x] Verify page: replace deep-green result border with black/grey/lemon; replace basic checkmark with generated stamp
+
+## Next batch (agreed 2026-10-01)
+- [ ] PDF details inside every PDF (document number, fingerprint, issue date)
+- [ ] Home tour remembered per account
+- [ ] OpenSanctions supplier check (live checks need OPENSANCTIONS_API_KEY)
+- [ ] Automatic accessibility checks + offline tests for outside services
+- [ ] Verde answer tests (no invented figures, sources required)
+- [ ] Docling proposal (written)
+- [ ] Last agent + CBAM actions on the shared activity record
+- [ ] Learn signed-in check with a real course; Weaver + Compass live run; Greek + dark mode check
