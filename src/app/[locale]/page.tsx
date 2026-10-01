@@ -122,7 +122,7 @@ export default function Home() {
       <section className="relative overflow-hidden border-y border-border/50 bg-muted/25">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
-            <h2 className="font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
+            <h2 className="font-[family-name:var(--editorial-display)] font-semibold text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.4rem]">
 
               {tL("visionTitleA")}{" "}
               <span className="italic text-muted-foreground">{tL("visionTitleB")}</span>
@@ -159,7 +159,7 @@ export default function Home() {
                     <it.Glyph className="h-10 w-10 shrink-0 text-foreground/70 sm:mt-0.5 sm:h-14 sm:w-14" />
                   </div>
                   <div className="mt-4 min-w-0 sm:mt-0">
-                    <h3 className="font-[family-name:var(--editorial-serif)] text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
+                    <h3 className="font-[family-name:var(--editorial-display)] font-semibold text-[22px] leading-[1.15] tracking-[-0.015em] sm:text-[26px]">
                       {it.title}
                     </h3>
                     <p className="mt-3 text-[16px] leading-[1.55] text-foreground/65 sm:text-[17px]">
@@ -233,7 +233,7 @@ export default function Home() {
         </div>
 
         <div className="relative mx-auto max-w-4xl px-4 py-24 sm:px-6 sm:py-36">
-          <h2 className="font-[family-name:var(--editorial-serif)] text-[2.6rem] leading-[1.02] tracking-[-0.025em] sm:text-[4.2rem]">
+          <h2 className="font-[family-name:var(--editorial-display)] font-semibold text-[2.6rem] leading-[1.02] tracking-[-0.025em] sm:text-[4.2rem]">
             {tL("ctaTitleA")} <span className="italic text-muted-foreground">{tL("ctaTitleB")}</span>
           </h2>
           <p className="mt-7 max-w-xl font-[family-name:var(--editorial-serif)] text-[20px] italic leading-[1.45] text-foreground/75 sm:text-[24px]">

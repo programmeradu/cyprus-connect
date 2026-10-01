@@ -18,7 +18,7 @@ import ctaDawnPhoto from "@/assets/section-cta-dawn.jpg";
 /**
  * /vision - the public strategy document.
  *
- * House rules respected: Fraunces display + Instrument Sans body only (no
+ * House rules respected: Commissioner headings + body, Source Serif italic accents only (no
  * mono, no thin weights), no decorative icons, no pill badges, no colour
  * chips, hairline rules and numerals for hierarchy, context photography only.
  */

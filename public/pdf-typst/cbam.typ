@@ -10,9 +10,10 @@
 #let warn = rgb("#94531A")
 #let bad = rgb("#9B2C2C")
 #let eu = rgb("#1F3A68")
-#let serif = ("Source Serif 4 24pt",)
-#let sans = ("IBM Plex Sans",)
-#let mono = ("IBM Plex Mono", "IBM Plex Sans")
+#let display = ("Commissioner",)
+#let accent-font = ("Source Serif 4 24pt",)
+#let sans = ("Commissioner",)
+#let mono = ("IBM Plex Mono", "Commissioner")
 #let short-fp = d.hash.slice(0, 16)
 #let tone-c(t) = if t == "good" { accent } else if t == "warn" { warn } else if t == "bad" { bad } else { body-c }
 
@@ -79,7 +80,7 @@
   [
     #text(size: 8pt, weight: 600, fill: eu)[EUROPEAN UNION · CARBON BORDER ADJUSTMENT MECHANISM]
     #v(2pt)
-    #text(font: serif, size: 26pt, weight: 600, fill: ink)[CBAM declaration #str(d.year)]
+    #text(font: display, size: 26pt, weight: 600, fill: ink)[CBAM declaration #str(d.year)]
     #v(-2pt)
     #text(size: 10pt, fill: body-c)[Annual declaration working paper for #text(weight: 600)[#d.company]]
   ],
@@ -106,7 +107,7 @@
 #grid(columns: (1fr,) * 4, stroke: (x, y) => (left: if x > 0 { 0.4pt + rule-c } else { none }), inset: (x: 7pt, y: 2pt),
   ..d.kpis.map(k => [
     #text(size: 7pt, fill: quiet)[#k.label] \
-    #text(font: serif, size: 18pt, weight: 600, fill: tone-c(k.tone), number-width: "tabular")[#k.value]#if k.unit != "" [#h(2pt)#text(size: 8pt, fill: quiet)[#k.unit]] \
+    #text(font: display, size: 18pt, weight: 600, fill: tone-c(k.tone), number-width: "tabular")[#k.value]#if k.unit != "" [#h(2pt)#text(size: 8pt, fill: quiet)[#k.unit]] \
     #text(size: 7pt, fill: quiet)[#k.note]
   ]))
 #for n in d.notes {
