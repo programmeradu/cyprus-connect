@@ -105,3 +105,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Deleted migration endpoint (had a password written in code); receipt reading fixed (PDF + photo), tied to signed-in account
 - [ ] Receipt reading: photos need GEMINI_API_KEY; bill parser misses kWh/account number on some layouts
 - [ ] Rotate any credentials that may have leaked while `/api/users` was open (published site too)
+- [x] Registrar of Companies lookup/link in Settings + Integrations tile; agents can check Cyprus suppliers
+- [x] WikiRate supplier checks + peer comparison (unit/year checks, no partial-year comparisons); old mock client removed
+- [x] JCC removed (Stripe chosen; Stripe billing not built yet)
+- [ ] Planner agents (Weaver, Compass) need a live run to confirm AI tool-calling works end to end
