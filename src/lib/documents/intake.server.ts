@@ -152,7 +152,10 @@ Rules:
 async function general(userId: string, bytes: Uint8Array, mime: string, text: string | null): Promise<IntakeResult> {
   const content: unknown[] = [{ type: "text", text: GENERAL_PROMPT }];
   if (text) content.push({ type: "text", text: `---\n${text.slice(0, TEXT_BUDGET)}` });
-  else content.push({ type: "image_url", image_url: { url: `data:${mime};base64,${Buffer.from(bytes).toString("base64")}` } });
+  else {
+    const url = `data:${mime};base64,${Buffer.from(bytes).toString("base64")}`;
+    content.push(mime.startsWith("image/") ? { type: "image_url", image_url: { url } } : { type: "file", file: { filename: "document.pdf", file_data: url } });
+  }
   const answer = await aiChatRaw([{ role: "user", content }], 0);
   const parsed = parseJsonAnswer<{ document_type?: string; description?: string; figures?: unknown[] }>(answer);
   if (!parsed) return { ok: false, code: "unreadable" };
@@ -196,7 +199,7 @@ async function general(userId: string, bytes: Uint8Array, mime: string, text: st
       verified: text ? quoteSupports(text, quote, Number(f.value)) : false,
     });
   }
-  if (figures.length === 0) return { ok: false, code: warnings.includes("fuel_litres") ? "no_figures" : "no_figures", detail: description };
+  if (figures.length === 0) return { ok: false, code: warnings.includes("fuel_litres") ? "fuel_only" : "no_figures", detail: description };
   return { ok: true, proposal: finish(kind, "ai", figures, { warnings, description }) };
 }
 

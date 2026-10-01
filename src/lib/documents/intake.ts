@@ -27,6 +27,7 @@ export type RejectCode =
   | "scanned_pdf"
   | "not_relevant"
   | "no_figures"
+  | "fuel_only"
   | "unreadable"
   | "sheet_no_dates"
   | "bank_image"
