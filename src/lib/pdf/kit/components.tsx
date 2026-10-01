@@ -139,7 +139,9 @@ export function InnerPage({ docTitle, company, hash, children, orientation = "po
           <Text style={s.mono}>SHA-256 {shortPrint(hash)}</Text>
         </Text>
       </View>
-      <Text fixed style={{ position: "absolute", bottom: 34, right: MARGIN, fontSize: 7.5, lineHeight: 1, color: C.quiet }} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
+      <View fixed style={{ position: "absolute", bottom: 34, right: MARGIN }} render={({ pageNumber, totalPages }) => (
+        <Text style={{ fontSize: 7.5, lineHeight: 1, color: C.quiet }}>{`${pageNumber} / ${totalPages}`}</Text>
+      )} />
     </Page>
   );
 }
