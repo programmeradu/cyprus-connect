@@ -42,10 +42,21 @@ interface Item {
   taskId?: number;
 }
 
+type Group = "needs" | "reading" | "done" | "rejected";
+const GROUPS: Group[] = ["needs", "reading", "done", "rejected"];
+function groupOf(phase: Phase["name"]): Group {
+  if (phase === "review" || phase === "saving") return "needs";
+  if (phase === "reading") return "reading";
+  if (phase === "saved" || phase === "discarded") return "done";
+  return "rejected";
+}
+
 export function DocumentIntake() {
   const t = useTranslations("dashboard.intake");
   const [items, setItems] = useState<Item[]>([]);
+  const [phases, setPhases] = useState<Record<string, Phase["name"]>>({});
   const [dragging, setDragging] = useState(false);
+  const [pageDrag, setPageDrag] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const seq = useRef(0);
 
@@ -62,30 +73,78 @@ export function DocumentIntake() {
     add(takeStashedFiles());
   }, [add]);
 
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    add(Array.from(e.dataTransfer.files).map((file) => ({ file })));
-  };
+  // The whole page takes a drop, not just the box.
+  useEffect(() => {
+    let depth = 0;
+    const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
+    const enter = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth += 1;
+      setPageDrag(true);
+    };
+    const leave = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) setPageDrag(false);
+    };
+    const over = (e: DragEvent) => {
+      if (hasFiles(e)) e.preventDefault();
+    };
+    const drop = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth = 0;
+      setPageDrag(false);
+      setDragging(false);
+      add(Array.from(e.dataTransfer?.files ?? []).map((file) => ({ file })));
+    };
+    window.addEventListener("dragenter", enter);
+    window.addEventListener("dragleave", leave);
+    window.addEventListener("dragover", over);
+    window.addEventListener("drop", drop);
+    return () => {
+      window.removeEventListener("dragenter", enter);
+      window.removeEventListener("dragleave", leave);
+      window.removeEventListener("dragover", over);
+      window.removeEventListener("drop", drop);
+    };
+  }, [add]);
+
+  const report = useCallback((key: string, name: Phase["name"]) => {
+    setPhases((cur) => (cur[key] === name ? cur : { ...cur, [key]: name }));
+  }, []);
+  const remove = (key: string) => setItems((cur) => cur.filter((x) => x.key !== key));
+
+  const counts = useMemo(() => {
+    const c: Record<Group, number> = { needs: 0, reading: 0, done: 0, rejected: 0 };
+    for (const it of items) c[groupOf(phases[it.key] ?? "reading")] += 1;
+    return c;
+  }, [items, phases]);
+  const finished = counts.done + counts.rejected;
+  const compact = items.length > 0;
 
   return (
     <div className="vck-intake">
+      {pageDrag && (
+        <div className="vck-intake-overlay" aria-hidden="true">
+          <p>{t("overlay")}</p>
+        </div>
+      )}
       <div
         className="vck-intake-drop"
         data-dragging={dragging || undefined}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragging(true);
-        }}
+        data-compact={compact || undefined}
+        onDragOver={() => setDragging(true)}
         onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
       >
-        <p className="vck-intake-drop-title">{t("drop.title")}</p>
-        <p className="vck-meta">{t("drop.body")}</p>
+        <div className="vck-intake-drop-copy">
+          <p className="vck-intake-drop-title">{compact ? t("dropCompact") : t("drop.title")}</p>
+          <p className="vck-meta">{compact ? t("drop.types") : t("drop.body")}</p>
+        </div>
         <button type="button" className="vck-btn vck-btn-primary" onClick={() => input.current?.click()}>
-          {t("drop.choose")}
+          {compact ? t("chooseMore") : t("drop.choose")}
         </button>
-        <p className="vck-meta vck-intake-drop-types">{t("drop.types")}</p>
+        {!compact && <p className="vck-meta vck-intake-drop-types">{t("drop.types")}</p>}
         <input
           ref={input}
           type="file"
@@ -101,11 +160,42 @@ export function DocumentIntake() {
       </div>
 
       {items.length > 0 && (
-        <ul className="vck-intake-list" aria-live="polite">
-          {items.map((it) => (
-            <IntakeCard key={it.key} item={it} onRemove={() => setItems((cur) => cur.filter((x) => x.key !== it.key))} />
-          ))}
-        </ul>
+        <>
+          <div className="vck-intake-summary">
+            <p aria-live="polite">
+              {GROUPS.filter((g) => counts[g] > 0)
+                .map((g) => t(`summary.${g}`, { count: counts[g] }))
+                .join(" · ")}
+            </p>
+            {finished > 0 && (
+              <button
+                type="button"
+                className="vck-btn"
+                onClick={() => setItems((cur) => cur.filter((x) => !["done", "rejected"].includes(groupOf(phases[x.key] ?? "reading"))))}
+              >
+                {t("clearFinished")}
+              </button>
+            )}
+          </div>
+          <ul className="vck-intake-list">
+            {GROUPS.map((g, gi) =>
+              counts[g] > 0 ? (
+                <li key={`h-${g}`} className="vck-intake-group" style={{ order: gi * 2 }} aria-hidden="true">
+                  {t(`queue.${g}`)} <span>{counts[g]}</span>
+                </li>
+              ) : null,
+            )}
+            {items.map((it) => (
+              <IntakeCard
+                key={it.key}
+                item={it}
+                order={GROUPS.indexOf(groupOf(phases[it.key] ?? "reading")) * 2 + 1}
+                onPhase={(name) => report(it.key, name)}
+                onRemove={() => remove(it.key)}
+              />
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
