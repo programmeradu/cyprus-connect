@@ -101,7 +101,7 @@ export async function contentHashOf(c: { title: string; summary: string; program
 export interface ExtractSummary { read: number; failed: number; stoppedBy: string | null }
 
 /** Reads rules for calls never read or whose text changed. Stops on credit or access errors. */
-export async function extractPendingRules(): Promise<ExtractSummary> {
+export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractSummary> {
   if (!hasLovableAi()) return { read: 0, failed: 0, stoppedBy: "ai_not_configured" };
   const today = new Date().toISOString().slice(0, 10);
   const rows = await db
@@ -113,11 +113,11 @@ export async function extractPendingRules(): Promise<ExtractSummary> {
         or(isNull(grantOpportunities.rulesExtractedAt), sql`${grantOpportunities.contentHash} is distinct from ${grantOpportunities.rulesHash}`),
       ),
     )
-    .limit(MAX_PER_RUN * 3);
+    .limit(limit * 3);
   let read = 0;
   let failed = 0;
   for (const r of rows) {
-    if (read >= MAX_PER_RUN) break;
+    if (read >= limit) break;
     const hash = await contentHashOf(r);
     if (r.rulesExtractedAt && r.rulesHash === hash) continue;
     try {
