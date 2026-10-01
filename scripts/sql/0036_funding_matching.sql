@@ -42,3 +42,8 @@ VALUES ('grants', 'Grant scout', 'Funding matching',
         'Checks every open funding call against the company and shows only strong fits; asks for the facts needed to confirm the rest.',
         'daily', 'suggest', 'active', 100, 'spine', 9)
 ON CONFLICT (key) DO NOTHING;
+
+-- An earlier seed named this agent "Forager"; the approved name is Grant scout.
+UPDATE agents SET name = 'Grant scout', role = 'Funding matching',
+  mission = 'Checks every open funding call against the company and shows only strong fits; asks for the facts needed to confirm the rest.'
+WHERE key = 'grants';
