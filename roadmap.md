@@ -173,7 +173,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Accessibility + offline tests
 - [x] Verde answer-source tests
 - [x] Docling proposal
-- [ ] Last agent/CBAM writes on shared activity record
+- [x] Last agent/CBAM writes on shared activity record
 - [ ] Learn live check with a real generated course (blocked: needs a real signed-in account)
 
 - [x] Funding matching: show only strong fits (or "one answer away"); hide non-fits entirely; dedicated Grant scout agent evaluates every call and asks for missing facts
