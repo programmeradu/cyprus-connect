@@ -247,3 +247,6 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Run `scripts/sql/0031_document_fingerprints.sql` on the live database before deploying, or PDF QR codes will show "Not in our register".
 - PDFs load the typesetting engine from cdn.jsdelivr.net; if a Content-Security-Policy is added later, allow it in `connect-src`.
 - PDFs downloaded before this release are not in the register.
+
+## EU tenders + law feeds (2026-10-01)
+- Live database: apply scripts/sql/0032_eu_feed_items.sql (and 0031_document_fingerprints.sql if not yet applied). No API keys needed; the hourly Cloudflare cron refreshes them using CRON_SECRET.
