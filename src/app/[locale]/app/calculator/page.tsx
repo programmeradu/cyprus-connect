@@ -116,9 +116,9 @@ export default function CalculatorPage() {
 
   return (
     <PageShell header={<PageHeader title={t("title")} purpose={t("subtitle")} />}>
-      <Section title={ti("drop.title")}>
+      <section aria-label={ti("drop.title")}>
         <DocumentIntake />
-      </Section>
+      </section>
 
       {result && (
         <Section
