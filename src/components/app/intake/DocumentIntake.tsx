@@ -16,9 +16,23 @@ import { Link } from "@/i18n/navigation";
 import { invalidateWorkspace, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { FOOTPRINT_KEYS, type FootprintKey } from "@/lib/emissions/footprint";
 import type { IntakeProposal, RejectCode, MonthShare } from "@/lib/documents/intake";
+import { existingSupplierFor, type PayeeCandidate } from "@/lib/suppliers";
 import { ACCEPT, takeStashedFiles, type PendingFile } from "./pending-files";
 
 const EMISSIONS = "/api/console/emissions";
+const SUPPLIERS = "/api/console/suppliers";
+
+interface SupplierList {
+  suppliers: { name: string; bankPayee: string | null }[];
+  skippedKeys?: string[];
+}
+
+/** A statement payee, sorted for the pick list. */
+interface PayeePick extends PayeeCandidate {
+  /** The supplier already on the list that this payee belongs to. */
+  existing: string | null;
+  skippedBefore: boolean;
+}
 const INVALIDATES = [EMISSIONS, "/api/console/insights", "/api/console/overview", "/api/emissions", "/api/dashboard", "/api/analytics", "/api/actions", "/api/studio", "/api/console/integrations"];
 const MAX_FILES = 10;
 
@@ -119,7 +133,7 @@ type Phase =
   | { name: "error"; message: string }
   | { name: "review"; id: number; proposal: IntakeProposal }
   | { name: "saving"; id: number; proposal: IntakeProposal }
-  | { name: "saved"; months: number; evidenceOnly: boolean; duplicate: boolean }
+  | { name: "saved"; months: number; evidenceOnly: boolean; duplicate: boolean; suppliers: number }
   | { name: "discarded" };
 
 interface Row {
@@ -170,6 +184,8 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
   const tc = useTranslations("dashboard.calculator");
   const locale = useLocale();
   const history = useWorkspaceResource<{ months: RecordedMonth[] }>(EMISSIONS);
+  const supplierList = useWorkspaceResource<SupplierList>(SUPPLIERS);
+  const [picked, setPicked] = useState<Set<string>>(new Set());
   const [phase, setPhase] = useState<Phase>({ name: "reading" });
   const [rows, setRows] = useState<Row[] | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
@@ -208,6 +224,12 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
   }, [phase, rows, months, existing]);
 
   const proposal = phase.name === "review" || phase.name === "saving" ? phase.proposal : null;
+  const picks = useMemo<PayeePick[]>(() => {
+    const cands = proposal?.bank?.candidates ?? [];
+    const known = (supplierList.data?.suppliers ?? []).map((x) => ({ supplierName: x.name, bankPayee: x.bankPayee }));
+    const skipped = new Set(supplierList.data?.skippedKeys ?? []);
+    return cands.map((c) => ({ ...c, existing: existingSupplierFor(c, known), skippedBefore: skipped.has(c.key) }));
+  }, [proposal, supplierList.data]);
   const chosen = (rows ?? []).filter((r) => r.include && Number(r.value.replace(",", ".")) > 0);
 
   const confirm = async () => {
@@ -229,11 +251,23 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
         await workspaceRequest(EMISSIONS, { method: "POST", body });
       }
       const kept = await workspaceRequest<{ duplicate?: boolean }>(`/api/console/documents/intake/${phase.id}`, { method: "POST", body: { decision: "accept" } });
+      // Ticked payees join Suppliers. Unticked ones the person saw are remembered as "not a supplier".
+      let supplierCount = 0;
+      const open = picks.filter((p) => !p.existing);
+      const toAdd = open.filter((p) => picked.has(p.key)).map((p) => ({ key: p.key, label: p.label }));
+      const toSkip = open.filter((p) => !picked.has(p.key) && !p.reason && !p.skippedBefore).map((p) => ({ key: p.key, label: p.label }));
+      if (toAdd.length > 0) {
+        const r = await workspaceRequest<{ added: string[] }>(SUPPLIERS, { method: "PATCH", body: { action: "add_payees", payees: toAdd } });
+        supplierCount = r.added.length;
+      }
+      if (toSkip.length > 0) {
+        await workspaceRequest(SUPPLIERS, { method: "PATCH", body: { action: "skip_payees", payees: toSkip } }).catch(() => undefined);
+      }
       if (item.taskId) {
         await workspaceRequest(`/api/console/tasks/${item.taskId}`, { method: "POST", body: { decision: "approve" } }).catch(() => undefined);
       }
-      invalidateWorkspace([...INVALIDATES, "/api/console/agents"]);
-      setPhase({ name: "saved", months: byMonth.size, evidenceOnly: byMonth.size === 0, duplicate: Boolean(kept.duplicate) });
+      invalidateWorkspace([...INVALIDATES, "/api/console/agents", SUPPLIERS]);
+      setPhase({ name: "saved", months: byMonth.size, evidenceOnly: byMonth.size === 0, duplicate: Boolean(kept.duplicate), suppliers: supplierCount });
       toast.success(byMonth.size ? t("toasts.added", { count: byMonth.size }) : t("toasts.kept"));
     } catch (e) {
       invalidateWorkspace(INVALIDATES);
@@ -298,9 +332,11 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
           <p className="break-words">
             {phase.duplicate ? t("saved.duplicate") : phase.evidenceOnly ? t("saved.evidence") : t("saved.figures", { count: phase.months })}
           </p>
+          {phase.suppliers > 0 && <p className="break-words">{t("saved.suppliers", { count: phase.suppliers })}</p>}
           <div className="vck-intake-actions">
             <Link href="/app" className="vck-btn">{t("saved.home")}</Link>
             {!phase.evidenceOnly && <Link href="/app/analytics" className="vck-btn">{t("saved.footprint")}</Link>}
+            {phase.suppliers > 0 && <Link href="/app/suppliers" className="vck-btn">{t("saved.seeSuppliers")}</Link>}
           </div>
         </div>
       )}
@@ -380,6 +416,24 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
 
           {proposal.bank && <BankView bank={proposal.bank} money={money} dateLabel={dateLabel} />}
 
+          {picks.length > 0 && (
+            <PayeePicker
+              picks={picks}
+              picked={picked}
+              loading={supplierList.data === undefined}
+              disabled={phase.name === "saving"}
+              money={money}
+              onToggle={(key, on) =>
+                setPicked((cur) => {
+                  const next = new Set(cur);
+                  if (on) next.add(key);
+                  else next.delete(key);
+                  return next;
+                })
+              }
+            />
+          )}
+
           {failure && <p className="vck-intake-error break-words" role="alert">{failure}</p>}
 
           <div className="vck-intake-actions">
@@ -389,7 +443,13 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
               disabled={phase.name === "saving" || rows === null || (proposal.figures.length > 0 && chosen.length === 0)}
               onClick={() => void confirm()}
             >
-              {phase.name === "saving" ? t("actions.saving") : chosen.length > 0 ? t("actions.add", { count: chosen.length }) : t("actions.keep")}
+              {phase.name === "saving"
+                ? t("actions.saving")
+                : chosen.length > 0
+                  ? t("actions.add", { count: chosen.length })
+                  : picked.size > 0
+                    ? t("actions.keepAndSuppliers", { count: picked.size })
+                    : t("actions.keep")}
             </button>
             <button type="button" className="vck-btn" disabled={phase.name === "saving"} onClick={() => void discard()}>
               {t("actions.discard")}
@@ -444,5 +504,78 @@ function BankView({
         </>
       )}
     </div>
+  );
+}
+
+function PayeePicker({
+  picks,
+  picked,
+  loading,
+  disabled,
+  money,
+  onToggle,
+}: {
+  picks: PayeePick[];
+  picked: Set<string>;
+  loading: boolean;
+  disabled: boolean;
+  money: Intl.NumberFormat;
+  onToggle: (key: string, on: boolean) => void;
+}) {
+  const t = useTranslations("dashboard.intake.payees");
+  const [showMore, setShowMore] = useState(false);
+  const linked = picks.filter((p) => p.existing);
+  const open = picks.filter((p) => !p.existing && !p.reason && !p.skippedBefore);
+  const more = picks.filter((p) => !p.existing && (p.reason || p.skippedBefore));
+
+  const row = (p: PayeePick) => (
+    <li key={p.key} className="vck-intake-payee">
+      <label className="vck-intake-tick">
+        <input type="checkbox" checked={picked.has(p.key)} disabled={disabled} onChange={(e) => onToggle(p.key, e.target.checked)} />
+        <span className="min-w-0">
+          <strong className="break-words">{p.label}</strong>
+          <span className="vck-meta break-words">
+            {t("times", { count: p.count })}
+            {p.reason ? ` · ${t(`reason.${p.reason}`)}` : p.skippedBefore ? ` · ${t("skippedBefore")}` : ""}
+          </span>
+        </span>
+      </label>
+      <span className="vck-intake-payee-amount">{money.format(p.total)}</span>
+    </li>
+  );
+
+  return (
+    <fieldset className="vck-intake-payees-pick" disabled={disabled || loading}>
+      <legend className="vck-label">{t("title")}</legend>
+      <p className="vck-meta break-words">{loading ? t("checking") : t("body")}</p>
+
+      {open.length > 0 ? <ul>{open.map(row)}</ul> : !loading && <p className="vck-meta break-words">{t("noneNew")}</p>}
+
+      {linked.length > 0 && (
+        <>
+          <p className="vck-label vck-intake-payees-sub">{t("onList", { count: linked.length })}</p>
+          <ul>
+            {linked.map((p) => (
+              <li key={p.key} className="vck-intake-payee" data-linked>
+                <span className="min-w-0">
+                  <strong className="break-words">{p.label}</strong>
+                  <span className="vck-meta break-words">{t("countsFor", { name: p.existing ?? "" })}</span>
+                </span>
+                <span className="vck-intake-payee-amount">{money.format(p.total)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {more.length > 0 && (
+        <>
+          <button type="button" className="vck-btn vck-btn-quiet vck-intake-payees-more" aria-expanded={showMore} onClick={() => setShowMore(!showMore)}>
+            {showMore ? t("hideMore") : t("showMore", { count: more.length })}
+          </button>
+          {showMore && <ul>{more.map(row)}</ul>}
+        </>
+      )}
+    </fieldset>
   );
 }
