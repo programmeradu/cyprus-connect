@@ -1790,7 +1790,7 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 .vc .vck-intake-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .vc .vck-intake-file { font-weight: 650; color: var(--vc-ink); overflow-wrap: anywhere; }
 .vc .vck-intake-head .vck-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 4px; }
-.vc .vck-tag[data-tone="negative"] { color: var(--vc-negative, var(--destructive)); }
+.vc .vck-tag[data-tone="negative"] { color: var(--vc-bad-text); }
 .vc .vck-intake-by { overflow-wrap: anywhere; }
 .vc .vck-intake-reading { animation: vck-intake-pulse 1.4s ease-in-out infinite; }
 @keyframes vck-intake-pulse { 50% { opacity: 0.5; } }
@@ -1822,7 +1822,7 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 .vc .vck-intake-payees { display: grid; list-style: none; margin: 0; padding: 0; }
 .vc .vck-intake-payees li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 8px 0; border-top: 1px solid var(--vc-rule-soft); }
 .vc .vck-intake-payees li > :last-child { grid-row: 1 / 3; grid-column: 2; align-self: center; font-family: var(--vc-mono, ui-monospace, monospace); }
-.vc .vck-intake-error { color: var(--vc-negative, var(--destructive)); }
+.vc .vck-intake-error { color: var(--vc-bad-text); }
 .vc .vck-intake-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 @media (max-width: 560px) {
   .vc .vck-intake-row { grid-template-columns: 1fr; }
