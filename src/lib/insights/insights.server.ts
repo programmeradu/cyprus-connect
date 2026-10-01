@@ -3,7 +3,7 @@
  * Nothing here is estimated or filled in: a part that has no data is null.
  */
 
-import { and, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { emissions, obligations, workspaces } from "@/db/schema";
 import { logger } from "@/lib/log";
