@@ -283,6 +283,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Verde redesign (2026-10-01)
 - Run `scripts/sql/0040_copilot_parts.sql` on the live database before deploying (adds storage for Verde's answer cards). Applied to preview only.
+- Run `scripts/sql/0041_supplier_payee_skips.sql` on the live database before deploying (remembers bank payees marked "not a supplier"). Applied to preview only.
 - Uses the same `GROQ_API_KEY`. No other setup.
 
 ## Content (2026-10-01)
