@@ -354,6 +354,9 @@ export async function POST(req: Request) {
           .returning();
 
         const action = parseAction(full);
+        if (!action && full.includes(ACTION_MARKER)) {
+          console.warn("copilot action block could not be read", full.slice(full.indexOf(ACTION_MARKER), full.indexOf(ACTION_MARKER) + 600));
+        }
         if (action) {
           const [proposal] = await db
             .insert(copilotProposals)
