@@ -265,6 +265,6 @@
 @media (max-width: 520px) {
   .vch-adddata-stage { width: 84px; height: 88px; }
   .vch-adddata-reader { width: 80px; }
-  .vch-sheet { left: 22px; width: 36px; height: 32px; }
+  .vch-sheet { left: 22px; top: -12px; width: 36px; height: 32px; }
   .vch-adddata .vch-btn { flex: 1 1 100%; }
 }
