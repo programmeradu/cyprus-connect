@@ -42,10 +42,21 @@ interface Item {
   taskId?: number;
 }
 
+type Group = "needs" | "reading" | "done" | "rejected";
+const GROUPS: Group[] = ["needs", "reading", "done", "rejected"];
+function groupOf(phase: Phase["name"]): Group {
+  if (phase === "review" || phase === "saving") return "needs";
+  if (phase === "reading") return "reading";
+  if (phase === "saved" || phase === "discarded") return "done";
+  return "rejected";
+}
+
 export function DocumentIntake() {
   const t = useTranslations("dashboard.intake");
   const [items, setItems] = useState<Item[]>([]);
+  const [phases, setPhases] = useState<Record<string, Phase["name"]>>({});
   const [dragging, setDragging] = useState(false);
+  const [pageDrag, setPageDrag] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const seq = useRef(0);
 
@@ -62,30 +73,78 @@ export function DocumentIntake() {
     add(takeStashedFiles());
   }, [add]);
 
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    add(Array.from(e.dataTransfer.files).map((file) => ({ file })));
-  };
+  // The whole page takes a drop, not just the box.
+  useEffect(() => {
+    let depth = 0;
+    const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
+    const enter = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth += 1;
+      setPageDrag(true);
+    };
+    const leave = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) setPageDrag(false);
+    };
+    const over = (e: DragEvent) => {
+      if (hasFiles(e)) e.preventDefault();
+    };
+    const drop = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth = 0;
+      setPageDrag(false);
+      setDragging(false);
+      add(Array.from(e.dataTransfer?.files ?? []).map((file) => ({ file })));
+    };
+    window.addEventListener("dragenter", enter);
+    window.addEventListener("dragleave", leave);
+    window.addEventListener("dragover", over);
+    window.addEventListener("drop", drop);
+    return () => {
+      window.removeEventListener("dragenter", enter);
+      window.removeEventListener("dragleave", leave);
+      window.removeEventListener("dragover", over);
+      window.removeEventListener("drop", drop);
+    };
+  }, [add]);
+
+  const report = useCallback((key: string, name: Phase["name"]) => {
+    setPhases((cur) => (cur[key] === name ? cur : { ...cur, [key]: name }));
+  }, []);
+  const remove = (key: string) => setItems((cur) => cur.filter((x) => x.key !== key));
+
+  const counts = useMemo(() => {
+    const c: Record<Group, number> = { needs: 0, reading: 0, done: 0, rejected: 0 };
+    for (const it of items) c[groupOf(phases[it.key] ?? "reading")] += 1;
+    return c;
+  }, [items, phases]);
+  const finished = counts.done + counts.rejected;
+  const compact = items.length > 0;
 
   return (
     <div className="vck-intake">
+      {pageDrag && (
+        <div className="vck-intake-overlay" aria-hidden="true">
+          <p>{t("overlay")}</p>
+        </div>
+      )}
       <div
         className="vck-intake-drop"
         data-dragging={dragging || undefined}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragging(true);
-        }}
+        data-compact={compact || undefined}
+        onDragOver={() => setDragging(true)}
         onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
       >
-        <p className="vck-intake-drop-title">{t("drop.title")}</p>
-        <p className="vck-meta">{t("drop.body")}</p>
+        <div className="vck-intake-drop-copy">
+          <p className="vck-intake-drop-title">{compact ? t("dropCompact") : t("drop.title")}</p>
+          <p className="vck-meta">{compact ? t("drop.types") : t("drop.body")}</p>
+        </div>
         <button type="button" className="vck-btn vck-btn-primary" onClick={() => input.current?.click()}>
-          {t("drop.choose")}
+          {compact ? t("chooseMore") : t("drop.choose")}
         </button>
-        <p className="vck-meta vck-intake-drop-types">{t("drop.types")}</p>
+        {!compact && <p className="vck-meta vck-intake-drop-types">{t("drop.types")}</p>}
         <input
           ref={input}
           type="file"
@@ -101,11 +160,42 @@ export function DocumentIntake() {
       </div>
 
       {items.length > 0 && (
-        <ul className="vck-intake-list" aria-live="polite">
-          {items.map((it) => (
-            <IntakeCard key={it.key} item={it} onRemove={() => setItems((cur) => cur.filter((x) => x.key !== it.key))} />
-          ))}
-        </ul>
+        <>
+          <div className="vck-intake-summary">
+            <p aria-live="polite">
+              {GROUPS.filter((g) => counts[g] > 0)
+                .map((g) => t(`summary.${g}`, { count: counts[g] }))
+                .join(" · ")}
+            </p>
+            {finished > 0 && (
+              <button
+                type="button"
+                className="vck-btn"
+                onClick={() => setItems((cur) => cur.filter((x) => !["done", "rejected"].includes(groupOf(phases[x.key] ?? "reading"))))}
+              >
+                {t("clearFinished")}
+              </button>
+            )}
+          </div>
+          <ul className="vck-intake-list">
+            {GROUPS.map((g, gi) =>
+              counts[g] > 0 ? (
+                <li key={`h-${g}`} className="vck-intake-group" style={{ order: gi * 2 }} aria-hidden="true">
+                  {t(`queue.${g}`)} <span>{counts[g]}</span>
+                </li>
+              ) : null,
+            )}
+            {items.map((it) => (
+              <IntakeCard
+                key={it.key}
+                item={it}
+                order={GROUPS.indexOf(groupOf(phases[it.key] ?? "reading")) * 2 + 1}
+                onPhase={(name) => report(it.key, name)}
+                onRemove={() => remove(it.key)}
+              />
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
@@ -165,7 +255,17 @@ function rowsFrom(p: IntakeProposal, existing: (y: number, m: number, k: Footpri
     .sort((a, b) => a.year - b.year || a.month - b.month || FOOTPRINT_KEYS.indexOf(a.key) - FOOTPRINT_KEYS.indexOf(b.key));
 }
 
-function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
+function periodOf(p: IntakeProposal): { from: string; to: string } | null {
+  if (p.figures.length > 0) {
+    const from = p.figures.map((f) => f.periodStart).sort()[0];
+    const to = p.figures.map((f) => f.periodEnd).sort().at(-1)!;
+    return { from, to };
+  }
+  if (p.bank?.periodStart && p.bank.periodEnd) return { from: p.bank.periodStart, to: p.bank.periodEnd };
+  return null;
+}
+
+function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: number; onPhase: (name: Phase["name"]) => void; onRemove: () => void }) {
   const t = useTranslations("dashboard.intake");
   const tc = useTranslations("dashboard.calculator");
   const locale = useLocale();
@@ -206,6 +306,10 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
   useEffect(() => {
     if (phase.name === "review" && rows === null && months !== undefined) setRows(rowsFrom(phase.proposal, existing));
   }, [phase, rows, months, existing]);
+
+  useEffect(() => {
+    onPhase(phase.name);
+  }, [phase.name, onPhase]);
 
   const proposal = phase.name === "review" || phase.name === "saving" ? phase.proposal : null;
   const chosen = (rows ?? []).filter((r) => r.include && Number(r.value.replace(",", ".")) > 0);
@@ -258,54 +362,73 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
 
   const update = (id: string, patch: Partial<Row>) => setRows((cur) => (cur ?? []).map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
+  const finished = phase.name === "rejected" || phase.name === "error" || phase.name === "saved" || phase.name === "discarded";
+  const tone = phase.name === "saved" ? "positive" : phase.name === "rejected" || phase.name === "error" ? "negative" : undefined;
+
+  if (finished) {
+    const line =
+      phase.name === "rejected" ? (phase.detail ?? t(`reject.${phase.code}`))
+        : phase.name === "error" ? phase.message
+        : phase.name === "saved" ? (phase.duplicate ? t("saved.duplicate") : phase.evidenceOnly ? t("saved.evidence") : t("saved.figures", { count: phase.months }))
+        : t("discardedBody");
+    return (
+      <li className="vck-intake-row-done" style={{ order }} data-tone={tone}>
+        <details>
+          <summary>
+            <span className="vck-intake-done-status">{status}</span>
+            <span className="vck-intake-done-file">{item.file.name}</span>
+            <span className="vck-intake-done-line">{line}</span>
+          </summary>
+          <div className="vck-intake-done-more">
+            {phase.name === "rejected" && (
+              <>
+                <p>{t(`reject.${phase.code}`)}</p>
+                {phase.detail && <p className="vck-meta">{t("reject.seen", { detail: phase.detail })}</p>}
+              </>
+            )}
+            {phase.name === "error" && <p role="alert">{phase.message}</p>}
+            {phase.name === "saved" && (
+              <div className="vck-intake-actions">
+                {!phase.evidenceOnly && <a href="#recorded-months" className="vck-btn">{t("saved.months")}</a>}
+                {!phase.evidenceOnly && <Link href="/app/analytics" className="vck-btn">{t("saved.footprint")}</Link>}
+                {phase.evidenceOnly && <Link href="/app/suppliers" className="vck-btn">{t("saved.suppliers")}</Link>}
+              </div>
+            )}
+          </div>
+        </details>
+        <button type="button" className="vck-btn" onClick={onRemove} aria-label={`${t("actions.clear")}: ${item.file.name}`}>
+          {t("actions.clear")}
+        </button>
+      </li>
+    );
+  }
+
+  const span = proposal ? periodOf(proposal) : null;
+
   return (
-    <li className="vck-card vck-intake-card" data-phase={phase.name}>
+    <li className="vck-card vck-intake-card" data-phase={phase.name} style={{ order }}>
       <header className="vck-intake-head">
         <div className="min-w-0">
-          <p className="vck-intake-file">{item.file.name}</p>
-          <p className="vck-meta">
-            <span className="vck-tag" data-tone={phase.name === "saved" ? "positive" : phase.name === "rejected" || phase.name === "error" ? "negative" : undefined}>
-              {status}
-            </span>
-            {proposal && (
-              <span className="vck-intake-by">
-                {proposal.recognisedBy === "code" ? t("by.code") : t("by.ai")}
-                {proposal.description ? ` · ${proposal.description}` : ""}
-              </span>
-            )}
+          <p className="vck-intake-title">
+            {proposal ? t(`kinds.${proposal.kind}`) : status}
+            {span && <span className="vck-intake-span"> · {dateLabel(span.from)} – {dateLabel(span.to)}</span>}
           </p>
+          <p className="vck-intake-file">{item.file.name}</p>
+          {proposal && (
+            <p className="vck-meta vck-intake-by">
+              {proposal.recognisedBy === "code" ? t("by.code") : t("by.ai")}
+              {proposal.description ? `. ${proposal.description}` : ""}
+            </p>
+          )}
         </div>
-        {(phase.name === "rejected" || phase.name === "error" || phase.name === "saved" || phase.name === "discarded") && (
-          <button type="button" className="vck-btn" onClick={onRemove}>
-            {t("actions.clear")}
-          </button>
-        )}
       </header>
 
-      {phase.name === "reading" && <p className="vck-meta vck-intake-reading">{t("readingBody")}</p>}
-
-      {phase.name === "rejected" && (
-        <div className="vck-intake-body">
-          <p className="break-words">{t(`reject.${phase.code}`)}</p>
-          {phase.detail && <p className="vck-meta break-words">{t("reject.seen", { detail: phase.detail })}</p>}
+      {phase.name === "reading" && (
+        <div className="vck-intake-reading">
+          <span className="vck-intake-bar" aria-hidden="true" />
+          <p className="vck-meta">{t("readingBody")}</p>
         </div>
       )}
-
-      {phase.name === "error" && <p className="vck-intake-body break-words" role="alert">{phase.message}</p>}
-
-      {phase.name === "saved" && (
-        <div className="vck-intake-body">
-          <p className="break-words">
-            {phase.duplicate ? t("saved.duplicate") : phase.evidenceOnly ? t("saved.evidence") : t("saved.figures", { count: phase.months })}
-          </p>
-          <div className="vck-intake-actions">
-            <Link href="/app" className="vck-btn">{t("saved.home")}</Link>
-            {!phase.evidenceOnly && <Link href="/app/analytics" className="vck-btn">{t("saved.footprint")}</Link>}
-          </div>
-        </div>
-      )}
-
-      {phase.name === "discarded" && <p className="vck-meta vck-intake-body">{t("discardedBody")}</p>}
 
       {proposal && (
         <div className="vck-intake-body">
@@ -322,15 +445,21 @@ function IntakeCard({ item, onRemove }: { item: Item; onRemove: () => void }) {
               <p className="vck-label">{t("review.readFrom")}</p>
               <ul>
                 {proposal.figures.map((f, i) => (
-                  <li key={i} className="break-words">
-                    <strong>
-                      {tc(`fields.${f.key}`)}: {number.format(f.value)} {tc(`units.${f.key}`)}
-                    </strong>{" "}
-                    <span className="vck-meta">
-                      {dateLabel(f.periodStart)} – {dateLabel(f.periodEnd)}
-                    </span>
-                    {f.quote && <q className="vck-intake-quote">{f.quote}</q>}
-                    <span className="vck-meta vck-intake-check">{f.verified ? (f.quote ? t("review.quoteFound") : t("review.readByCode")) : t("review.checkByEye")}</span>
+                  <li key={i} data-verified={f.verified || undefined}>
+                    <div className="vck-intake-src-main">
+                      <strong>{tc(`fields.${f.key}`)}</strong>
+                      <span className="vck-intake-src-num">{number.format(f.value)} {tc(`units.${f.key}`)}</span>
+                    </div>
+                    <p className="vck-meta">
+                      {dateLabel(f.periodStart)} – {dateLabel(f.periodEnd)}.{" "}
+                      <span className="vck-intake-check">{f.verified ? (f.quote ? t("review.quoteFound") : t("review.readByCode")) : t("review.checkByEye")}</span>
+                    </p>
+                    {f.quote && (
+                      <details className="vck-intake-quote-wrap">
+                        <summary>{t("review.showLine")}</summary>
+                        <q className="vck-intake-quote">{f.quote}</q>
+                      </details>
+                    )}
                   </li>
                 ))}
               </ul>

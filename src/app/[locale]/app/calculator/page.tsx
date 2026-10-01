@@ -8,13 +8,15 @@
  * so the dashboard, actions, Report Visuals and agents all see the new month.
  */
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Link } from "@/i18n/navigation";
 import { DocumentIntake } from "@/components/app/intake/DocumentIntake";
+import { InboxAddress } from "@/components/app/intake/InboxAddress";
+import { YearStrip } from "@/components/app/intake/YearStrip";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
-import { PageShell, PageHeader, Section, DataTable, Metric, MetricRow, Empty } from "@/components/app/console/kit";
+import { PageShell, PageHeader, DataTable, Metric, MetricRow, Empty } from "@/components/app/console/kit";
 import { FOOTPRINT_KEYS, isFutureMonth, previousMonth, type FootprintKey, type FootprintLine } from "@/lib/emissions/footprint";
 
 const PATH = "/api/console/emissions";
@@ -67,6 +69,9 @@ export default function CalculatorPage() {
   const [period, setPeriod] = useState(defaultPeriod);
   const [amounts, setAmounts] = useState<Amounts>(EMPTY);
   const [result, setResult] = useState<SavedFootprint | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
+  const formRef = useRef<HTMLElement>(null);
+  const toForm = () => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const monthName = useMemo(() => {
     const fmt = new Intl.DateTimeFormat(locale === "el" ? "el-CY" : "en-GB", { month: "long", timeZone: "UTC" });
@@ -95,7 +100,7 @@ export default function CalculatorPage() {
       setResult(saved);
       setAmounts(EMPTY);
       toast.success(t("toasts.saved", { period: periodLabel(saved.year, saved.month) }));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      toForm();
     }
   };
 
@@ -103,7 +108,16 @@ export default function CalculatorPage() {
     setResult(null);
     setPeriod({ year: m.year, month: m.month });
     setAmounts(Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, m[k] > 0 ? String(m[k]) : ""])) as Amounts);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    toForm();
+  };
+
+  const pick = (year: number, month: number) => {
+    const m = months.find((x) => x.year === year && x.month === month);
+    if (m) return edit(m);
+    setResult(null);
+    setPeriod({ year, month });
+    setAmounts(EMPTY);
+    toForm();
   };
 
   const change = (row: RecordedMonth) => {
@@ -116,15 +130,36 @@ export default function CalculatorPage() {
 
   return (
     <PageShell header={<PageHeader title={t("title")} purpose={t("subtitle")} />}>
-      <section aria-label={ti("drop.title")}>
-        <DocumentIntake />
-      </section>
+      <div className="vck-adddata">
+        <section className="vck-adddata-main" aria-label={ti("drop.title")}>
+          <DocumentIntake />
+        </section>
+        <aside className="vck-adddata-side">
+          <InboxAddress />
+          <YearStrip months={months} selected={period} onPick={pick} />
+          <div className="vck-accepts">
+            <p className="vck-strip-title">{ti("accept.title")}</p>
+            <ul>
+              {(["eac_bill", "water_bill", "utility_invoice", "waste_invoice", "bank_statement", "consumption_sheet"] as const).map((k) => (
+                <li key={k}>{ti(`kinds.${k}`)}</li>
+              ))}
+            </ul>
+            <p className="vck-meta">{ti("accept.not")}</p>
+          </div>
+        </aside>
+      </div>
+
+      <section ref={formRef} className="vck-manual" aria-labelledby="vck-manual-title">
+        <div className="vck-manual-head">
+          <div className="min-w-0">
+            <h2 id="vck-manual-title">{result ? t("result.title", { period: periodLabel(result.year, result.month) }) : ti("manualTitle")}</h2>
+            <p className="vck-meta">{result ? (result.replaced ? t("result.replaced") : null) : t("form.description")}</p>
+          </div>
+          <span className="vck-tag">{t("form.region", { country })}</span>
+        </div>
 
       {result && (
-        <Section
-          title={t("result.title", { period: periodLabel(result.year, result.month) })}
-          description={result.replaced ? t("result.replaced") : undefined}
-        >
+        <div className="vck-manual-body">
           <MetricRow>
             <Metric
               label={t("result.total")}
@@ -172,17 +207,12 @@ export default function CalculatorPage() {
               {t("result.another")}
             </button>
           </div>
-        </Section>
+        </div>
       )}
 
       {!result && (
-        <Section
-          title={ti("manualTitle")}
-          description={t("form.description")}
-          action={<span className="vck-tag">{t("form.region", { country })}</span>}
-        >
-          <form onSubmit={submit} className="vck-card p-5 sm:p-6 max-w-2xl" noValidate>
-            <div className="grid grid-cols-2 gap-3 mb-5">
+          <form onSubmit={submit} className="vck-manual-body" noValidate>
+            <div className="vck-manual-period">
               <label className="block min-w-0">
                 <span className="vck-label block mb-1.5">{t("form.month")}</span>
                 <select
@@ -216,27 +246,21 @@ export default function CalculatorPage() {
               </label>
             </div>
 
-            {existing && (
-              <p className="vck-inset px-3 py-2.5 mb-5 text-sm break-words" role="status">
-                {t("form.replaceNotice", { period: periodLabel(existing.year, existing.month) })}
-              </p>
-            )}
-
-            <div className="grid sm:grid-cols-2 gap-4 mb-5">
+            <div className="vck-manual-fields">
               {FOOTPRINT_KEYS.map((k) => (
                 <label key={k} className="block min-w-0">
                   <span className="vck-label block mb-1.5">{t(`fields.${k}`)}</span>
-                  <div className="flex items-stretch">
+                  <div className="vck-manual-input">
                     <input
                       type="text"
                       inputMode="decimal"
                       autoComplete="off"
                       value={amounts[k]}
                       onChange={(e) => setAmounts((a) => ({ ...a, [k]: e.target.value.replace(/[^\d.,]/g, "").slice(0, 12) }))}
-                      className="w-full min-w-0 px-3 py-2.5 rounded-l-md text-sm"
+                      placeholder="0"
                       aria-describedby={`unit-${k}`}
                     />
-                    <span id={`unit-${k}`} className="vck-inset px-3 min-w-[4.75rem] flex items-center justify-center text-sm rounded-r-md whitespace-nowrap">
+                    <span id={`unit-${k}`}>
                       {t(`units.${k}`)}
                     </span>
                   </div>
@@ -250,17 +274,29 @@ export default function CalculatorPage() {
               </p>
             )}
 
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button type="submit" className="vck-btn vck-btn-primary justify-center sm:flex-1" disabled={!hasValue || save.busy}>
+            <div className="vck-manual-foot">
+              <p className="vck-meta" role="status">
+                {existing
+                  ? t("form.replaceNotice", { period: periodLabel(existing.year, existing.month) })
+                  : !hasValue
+                    ? t("form.needValue")
+                    : null}
+              </p>
+              <button type="submit" className="vck-btn vck-btn-primary" disabled={!hasValue || save.busy}>
                 {save.busy ? t("form.saving") : t("form.save")}
               </button>
             </div>
-            {!hasValue && <p className="vck-meta mt-3 break-words">{t("form.needValue")}</p>}
           </form>
-        </Section>
       )}
+      </section>
 
-      <Section title={t("history.title")} description={months.length ? t("history.description") : undefined}>
+      <section id="recorded-months" className="vck-months" aria-labelledby="vck-months-title">
+        <div className="vck-manual-head">
+          <div className="min-w-0">
+            <h2 id="vck-months-title">{t("history.title")}</h2>
+            {months.length > 0 && <p className="vck-meta">{t("history.description")}</p>}
+          </div>
+        </div>
         {history.loading ? (
           <p className="vck-meta">…</p>
         ) : history.error ? (
@@ -273,26 +309,56 @@ export default function CalculatorPage() {
         ) : months.length === 0 ? (
           <Empty title={t("history.emptyTitle")} body={t("history.emptyBody")} />
         ) : (
-          <DataTable
-            columns={[
-              { key: "month", header: t("history.month"), render: (m) => periodLabel(m.year, m.month) },
-              { key: "total", header: t("history.total"), numeric: true, render: (m) => `${tonnes(m.totalTonnes)} t` },
-              { key: "change", header: t("history.change"), numeric: true, hideOnMobile: true, render: change },
-              {
-                key: "edit",
-                header: "",
-                render: (m) => (
-                  <button type="button" className="vck-btn" onClick={() => edit(m)}>
-                    {t("history.edit")}
-                  </button>
-                ),
-              },
-            ]}
-            rows={months}
-            rowKey={(m) => `${m.year}-${m.month}`}
-          />
+          <table className="vck-months-table">
+            <thead>
+              <tr>
+                <th scope="col">{t("history.month")}</th>
+                <th scope="col" className="num">{t("history.total")}</th>
+                <th scope="col" className="num vck-hide-sm">{t("history.change")}</th>
+                <th scope="col"><span className="sr-only">{t("history.edit")}</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {months.map((m) => {
+                const id = `${m.year}-${m.month}`;
+                const expanded = open === id;
+                return (
+                  <Fragment key={id}>
+                    <tr data-open={expanded || undefined}>
+                      <th scope="row">
+                        <button type="button" className="vck-months-toggle" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : id)}>
+                          <span aria-hidden="true">{expanded ? "−" : "+"}</span> {periodLabel(m.year, m.month)}
+                        </button>
+                      </th>
+                      <td className="num">{tonnes(m.totalTonnes)} t</td>
+                      <td className="num vck-hide-sm">{change(m)}</td>
+                      <td className="act">
+                        <button type="button" className="vck-btn" onClick={() => edit(m)}>
+                          {t("history.edit")}
+                        </button>
+                      </td>
+                    </tr>
+                    {expanded && (
+                      <tr className="vck-months-detail">
+                        <td colSpan={4}>
+                          <dl>
+                            {FOOTPRINT_KEYS.map((k) => (
+                              <div key={k}>
+                                <dt>{t(`fields.${k}`)}</dt>
+                                <dd>{m[k] > 0 ? `${number.format(m[k])} ${t(`units.${k}`)}` : "—"}</dd>
+                              </div>
+                            ))}
+                          </dl>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </tbody>
+          </table>
         )}
-      </Section>
+      </section>
 
     </PageShell>
   );
