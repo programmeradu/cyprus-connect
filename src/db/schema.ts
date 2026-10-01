@@ -548,6 +548,8 @@ export const workspaces = pgTable('workspaces', {
   sites: integer('sites').notNull().default(1),
   /** Yearly revenue in euro, entered by the owner in Settings. Null = not given. */
   revenueEur: real('revenue_eur'),
+  /** Exact staff number given by the company; overrides the profile size band. */
+  employeesExact: integer('employees_exact'),
   country: text('country').notNull().default('CY'),
   baselineYear: integer('baseline_year').notNull().default(2025),
   framework: text('framework').notNull().default('VSME'),

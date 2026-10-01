@@ -33,6 +33,9 @@ CREATE TABLE IF NOT EXISTS text_translations (
 -- Official Greek title for EUR-Lex acts.
 ALTER TABLE eu_feed_items ADD COLUMN IF NOT EXISTS title_el text;
 
+-- Exact staff number when the company gives one (size bands cannot settle every limit).
+ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS employees_exact integer;
+
 -- The Grant scout agent.
 INSERT INTO agents (key, name, role, mission, cadence, autonomy, status, health_score, glyph, sort_order)
 VALUES ('grants', 'Grant scout', 'Funding matching',

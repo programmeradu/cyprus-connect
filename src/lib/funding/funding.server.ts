@@ -24,8 +24,8 @@ export async function businessPicture(workspaceId: string): Promise<BusinessPict
   const fallback = ws.employees > 0 ? ws.employees : null;
   return {
     country: (p?.country || ws.country || "").toUpperCase() || null,
-    employees: band ? band.lo : fallback,
-    employeesMax: band ? band.hi : fallback,
+    employees: ws.employeesExact ?? (band ? band.lo : fallback),
+    employeesMax: ws.employeesExact ?? (band ? band.hi : fallback),
     revenueEur: ws.revenueEur ?? null,
     companyAgeYears: yearsSince(ws.registryRegisteredOn),
     sector: sectorOf(p?.industry || ws.sector),
