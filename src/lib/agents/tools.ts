@@ -22,6 +22,7 @@ import {
 } from "@/db/schema";
 import { sendEmail } from "@/lib/email/send";
 import type { RiskLevel } from "./policy";
+import { INTEGRATION_TOOLS } from "./tools-integrations";
 
 export interface ToolContext {
   workspaceId: string;
@@ -395,6 +396,7 @@ export const TOOLS = {
   read_cbam_suppliers: readCbamSuppliers,
   withdraw_approval_request: withdrawApprovalRequest,
   send_supplier_request: sendSupplierRequest,
+  ...INTEGRATION_TOOLS,
 } as const;
 
 export type ToolName = keyof typeof TOOLS;
