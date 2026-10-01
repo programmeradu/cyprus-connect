@@ -85,6 +85,7 @@ export const PILLAR_SLUGS = [
   "sustainability-software-needs-cyprus-smes",
   "eudr-guide",
   "eu-greenwashing-rules-2026",
+  "green-loans-esg-data-smes",
 ] as const;
 
 
@@ -120,6 +121,7 @@ import { howToChooseSustainabilityAnalyticsSoftware } from "./pillars/how-to-cho
 import { sustainabilitySoftwareNeedsCyprusSmes } from "./pillars/sustainability-software-needs-cyprus-smes";
 import { eudrGuide } from "./pillars/eudr-guide";
 import { euGreenwashingRules2026 } from "./pillars/eu-greenwashing-rules-2026";
+import { greenLoansEsgDataSmes } from "./pillars/green-loans-esg-data-smes";
 
 export const PILLARS: Record<PillarSlug, Pillar> = {
   "csrd-reporting-guide": csrdReportingGuide,
@@ -151,6 +153,7 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
   "sustainability-software-needs-cyprus-smes": sustainabilitySoftwareNeedsCyprusSmes,
   "eudr-guide": eudrGuide,
   "eu-greenwashing-rules-2026": euGreenwashingRules2026,
+  "green-loans-esg-data-smes": greenLoansEsgDataSmes,
 };
 
 export function getPillar(slug: string): Pillar | null {
