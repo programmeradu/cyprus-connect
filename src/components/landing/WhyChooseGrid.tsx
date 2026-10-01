@@ -197,11 +197,11 @@ export function WhyChooseGrid() {
                 className="mb-3 text-2xl leading-tight text-card-foreground"
                 style={{ fontFamily: display }}
               >
-                Built for the Mediterranean.
+                {t("whyLocalTitle")}
               </h3>
             </div>
             <p className="mt-2 text-base leading-relaxed text-card-foreground/85">
-              Tuned to Cyprus grid data, EU CSRD wave 3, and local utility feeds. No US-first defaults, no bolt-on translations.
+              {t("whyLocalDesc")}
             </p>
           </article>
         </div>

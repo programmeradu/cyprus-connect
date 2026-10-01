@@ -16,9 +16,9 @@
   },
   "hero": {
     "badge": "A sustainability consultant for businesses in Cyprus",
-    "titleLine1": "The sustainability consultant",
-    "titleLine2": "that's always on",
-    "titleLine3": "your side of the table",
+    "titleLine1": "The sustainability",
+    "titleLine2": "consultant that's always",
+    "titleLine3": "on your side of the table",
     "subtitle": "Vuneli keeps an eye on your bills, suppliers and EU deadlines, does the paperwork in the background, and only taps you on the shoulder when something needs your yes.",
     "ctaPrimary": "Start with one bill",
     "ctaSecondary": "See how it works"
@@ -2350,7 +2350,9 @@
     "road2Body": "Live bank and accounting feeds, scanned bills, CBAM Registry files, and comparisons with other businesses in your sector in Cyprus.",
     "road3Year": "2028",
     "road3Title": "Kept up to date on its own",
-    "road3Body": "Supplier details, deadlines and funding stay current without you lifting a finger. When a task needs a licensed expert, we bring one in."
+    "road3Body": "Supplier details, deadlines and funding stay current without you lifting a finger. When a task needs a licensed expert, we bring one in.",
+    "whyLocalTitle": "Made in Cyprus, for Cyprus",
+    "whyLocalDesc": "Vuneli knows EAC bills, the Cyprus power grid and the EU rules that apply here. It speaks Greek as well as English, written properly rather than machine-translated."
   },
   "vision": {
     "badge": "Vision and roadmap, October 2026",
