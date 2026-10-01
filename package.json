@@ -30,6 +30,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^4.0.54",
+    "@ai-sdk/react": "^4.0.129",
     "@babel/parser": "^7.28.5",
     "@dicebear/collection": "^9.4.2",
     "@dicebear/core": "9.2.4",
@@ -85,6 +87,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/three": "^0.178.0",
     "@vitejs/plugin-react": "^6.0.3",
+    "ai": "^7.0.126",
     "archiver": "^7.0.1",
     "atmn": "^0.0.28",
     "bcrypt": "^6.0.0",
@@ -140,6 +143,7 @@
     "sharp": "^0.34.5",
     "simplex-noise": "^4.0.3",
     "sonner": "^2.0.6",
+    "streamdown": "^2.7.0",
     "stripe": "^20.0.0",
     "swiper": "^14.0.2",
     "tailwind-merge": "^3.3.1",
