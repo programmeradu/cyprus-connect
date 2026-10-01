@@ -237,7 +237,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Proven-tools follow-ups (2026-10-01)
 - Download the official CBAM declaration XML format (XSD) from the CBAM Registry (needs your EU Login with 2FA) and send it to me so the export can be checked against it.
-- OpenSanctions supplier check needs an API key; commercial use is paid (opensanctions.org/api). Decide if you want it.
+- Supplier sanctions check now uses the free official EU sanctions list; no key or payment needed.
 - Electricity CBAM default factors are IEA data under a non-commercial licence, so the app does not include them; electricity imports need the supplier's own value.
 
 ## PDFs (2026-10-01)
@@ -253,4 +253,4 @@ Use: read business account transactions to find fuel, electricity and freight sp
 
 ## Next batch (2026-10-01)
 - Live database: apply scripts/sql/0033_home_tour.sql and scripts/sql/0034_supplier_sanctions.sql.
-- OpenSanctions: buy a commercial licence/API key at opensanctions.org, then add OPENSANCTIONS_API_KEY in Cloudflare. Until then the Suppliers page says sanctions checks are not connected.
+- Live database: apply scripts/sql/0035_eu_sanctions_names.sql. The EU list then loads on the first supplier check and refreshes daily (needs CRON_SECRET). It covers EU asset freezes, not sectoral trade bans; UK/US lists are not included.

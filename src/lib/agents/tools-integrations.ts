@@ -231,7 +231,7 @@ export const screenSanctions = tool({
   name: "screen_sanctions",
   risk: 0,
   description:
-    "Screen a company name against the EU Consolidated Financial Sanctions List (binding in Cyprus; it includes UN listings adopted by the EU). Returns 'clear' or possible matches with score and source link. A possible match must be reviewed by a person; never state that a company is sanctioned.",
+    "Screen a company name against the EU Consolidated Financial Sanctions List (binding in Cyprus; it includes UN listings adopted by the EU). It covers asset freezes, not sectoral trade bans such as Regulation 833/2014. Returns 'clear' or possible matches with score and source link. A possible match must be reviewed by a person; never state that a company is sanctioned.",
   input: z.object({ name: z.string().min(2).max(200), country: z.string().length(2).optional(), registrationNo: z.string().max(30).optional() }),
   run: async (_ctx, input) => screenCompany(input),
 });

@@ -165,3 +165,12 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Docling proposal (written)
 - [ ] Last agent + CBAM actions on the shared activity record
 - [ ] Learn signed-in check with a real course; Weaver + Compass live run; Greek + dark mode check
+
+## Quality pass (2026-10)
+- [x] PDF details inside every PDF; Home tour per account
+- [x] Supplier sanctions check on the free official EU list (stored, daily refresh, local matching); OpenSanctions dropped (paid)
+- [ ] Accessibility + offline tests
+- [ ] Verde answer-source tests
+- [ ] Docling proposal
+- [ ] Last agent/CBAM writes on shared activity record
+- [ ] Learn, Weaver/Compass live checks; Greek + dark mode review
