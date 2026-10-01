@@ -274,11 +274,11 @@ export async function POST(req: Request) {
       // A linked Cyprus register entry gives the legal name, number and country.
       const r = await screenCompany({ name: row?.regName || b.name, country: row?.regNo ? "cy" : null, registrationNo: row?.regNo ?? null });
       if (!r.ok) {
-        const message = r.reason === "not_configured" ? "Sanctions checks are not connected yet." : r.reason === "rejected" ? "OpenSanctions refused the key. Check the key in settings." : "OpenSanctions did not answer. Try again in a minute.";
+        const message = r.reason === "not_loaded" ? "The EU sanctions list could not be downloaded yet. Try again in a few minutes." : "The sanctions check did not finish. Try again in a minute.";
         return NextResponse.json({ error: r.reason, message }, { status: 503 });
       }
       await db.update(cbamSuppliers).set({ sanctionsCheckedAt: new Date(r.checkedAt), sanctionsStatus: r.status, sanctionsHits: r.hits }).where(where);
-      await logEvent(ws, who, "screened supplier against sanctions lists", b.name, r.status === "clear" ? "No match on OpenSanctions sanctions lists." : `${r.hits.length} possible match(es) to review.`);
+      await logEvent(ws, who, "screened supplier against sanctions lists", b.name, r.status === "clear" ? `No match on the EU consolidated sanctions list (list of ${r.listDate || "today"}).` : `${r.hits.length} possible match(es) to review.`);
       return NextResponse.json({ saved: true, status: r.status, hits: r.hits });
     }
     const w = await findWikiRateCompany(b.name);

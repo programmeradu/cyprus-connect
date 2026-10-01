@@ -124,9 +124,9 @@ export function parseEuCsv(text: string): { generated: string | null; rows: List
 }
 
 async function listState(): Promise<{ count: number; fetchedAt: Date | null; listDate: string | null }> {
-  const [r] = await db.execute<{ count: number; fetched_at: Date | null; list_date: string | null }>(
+  const [r] = (await db.execute(
     sql`SELECT count(*)::int AS count, max(fetched_at) AS fetched_at, max(list_date) AS list_date FROM eu_sanctions_names`,
-  ).then((x) => (Array.isArray(x) ? x : (x as { rows: never[] }).rows));
+  )) as unknown as { count: number; fetched_at: Date | null; list_date: string | null }[];
   return { count: r?.count ?? 0, fetchedAt: r?.fetched_at ? new Date(r.fetched_at) : null, listDate: r?.list_date ?? null };
 }
 
