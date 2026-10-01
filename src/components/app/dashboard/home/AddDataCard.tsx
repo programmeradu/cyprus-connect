@@ -60,12 +60,6 @@ export function AddDataCard() {
         <p>{t("home.body")}</p>
       </div>
 
-      <div className="vch-adddata-flow" aria-hidden="true">
-        <span className="vch-tag">kWh</span>
-        <span className="vch-tag">m³</span>
-        <span className="vch-tag">km</span>
-        <Image src={vaultImage} alt="" width={200} height={202} className="vch-adddata-vault" />
-      </div>
 
       <button type="button" className="vch-btn" data-kind="primary" onClick={() => input.current?.click()}>
         {t("home.cta")}
