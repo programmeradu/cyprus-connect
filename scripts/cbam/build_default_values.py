@@ -23,7 +23,7 @@ OVERRIDES = {
     "Moldova, Republic of": "MD", "Congo, Democratic Republic of": "CD", "Congo": "CG",
     "Bolivia": "BO", "Venezuela": "VE", "Laos": "LA", "Syria": "SY", "Tanzania": "TZ",
     "Brunei": "BN", "Côte d'Ivoire": "CI", "Cote d'Ivoire": "CI", "Korea, Democratic People's Republic of (North Korea)": "KP",
-    "Palestine": "PS", "Occupied Palestinian Territory": "PS", "Macao": "MO", "Hong Kong": "HK",
+    "Ivory Coast": "CI", "Palestine": "PS", "Occupied Palestinian Territory": "PS", "Macao": "MO", "Hong Kong": "HK",
 }
 
 def iso(name: str) -> str:
@@ -32,7 +32,7 @@ def iso(name: str) -> str:
     try:
         return pycountry.countries.lookup(name).alpha_2
     except LookupError:
-        return pycountry.countries.search_fuzzy(name)[0].alpha_2
+        raise SystemExit(f"Add a country code for {name!r} to OVERRIDES")
 
 def num(v: str):
     v = v.strip().replace(" ", "")
