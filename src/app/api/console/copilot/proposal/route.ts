@@ -22,6 +22,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { draftVsmeReport } from "@/lib/reports/vsme";
+import { draftDocument } from "@/lib/reports/document";
 import { COMPANY_LABELS, CompanyPatch, applyCompanyPatch } from "@/lib/company-update.server";
 
 export const dynamic = "force-dynamic";
@@ -151,6 +152,39 @@ export async function POST(req: Request) {
       deliverableHref = `/app/reports/${report.id}`;
       deliverableTitle = report.title;
       note = `Draft ready: ${report.title}`;
+    } else if (proposal.kind === "draft_document") {
+      const [task] = await db
+        .insert(agentTasks)
+        .values({
+          workspaceId: workspace.id,
+          agentKey: "copilot",
+          kind: "review",
+          title: proposal.title.slice(0, 200),
+          detail: asString(payload.purpose) ?? proposal.summary,
+          severity: "normal",
+          status: "open",
+        })
+        .returning();
+      let doc: Awaited<ReturnType<typeof draftDocument>>;
+      try {
+        doc = await draftDocument({
+          workspace,
+          accountId: account.id,
+          documentType: asString(payload.documentType),
+          title: asString(payload.title) ?? proposal.title,
+          purpose: asString(payload.purpose) ?? proposal.summary,
+          audience: asString(payload.audience),
+          taskId: task?.id ?? null,
+          proposalId: proposal.id,
+          createdBy: actor,
+        });
+      } catch (error) {
+        if (task) await db.delete(agentTasks).where(eq(agentTasks.id, task.id));
+        throw error;
+      }
+      deliverableHref = `/app/reports/${doc.id}`;
+      deliverableTitle = doc.title;
+      note = `Draft ready: ${doc.title}`;
     } else if (proposal.kind === "create_task") {
       const title = asString(payload.title) ?? proposal.title;
       const agentKey = asString(payload.agentKey);

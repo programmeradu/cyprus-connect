@@ -52,7 +52,7 @@ export function parseAction(raw: string): ParsedProposal | null {
   try {
     const parsed = JSON.parse(body) as ParsedProposal;
     if (!parsed || typeof parsed.kind !== "string") return null;
-    if (!["create_task", "update_obligation", "log_reading", "draft_report", "update_company"].includes(parsed.kind))
+    if (!["create_task", "update_obligation", "log_reading", "draft_report", "draft_document", "update_company"].includes(parsed.kind))
       return null;
     if (typeof parsed.title !== "string" || typeof parsed.summary !== "string") return null;
     if (!parsed.payload || typeof parsed.payload !== "object") return null;
@@ -72,7 +72,7 @@ HOW YOU WORK
 2. Never invent a figure. Quote only numbers from the records below or from a tool result, and name the record (for example "read_footprint, scope2_intensity, June").
 3. If a fact needed for the goal is missing, call ask_for_facts instead of guessing. Never guess revenue.
 4. When the person asks for a change, call propose_change once. It waits for their approval. Say in one sentence what you propose.
-5. When the person asks for a board summary or a document to share, call prepare_document.
+5. When the person asks for a board summary, call prepare_document. When they ask you to write any other sustainability document (a policy, a supplier letter, questionnaire answers, a loan memo, a plan), call propose_change with kind draft_document; on approval it is written from the company records and official sources and saved in Deliverables. If the document has nothing to do with sustainability, compliance or ESG, say politely that you only draft those.
 6. Write in ${lang === "el" ? "Greek (Cyprus). Every sentence, including the reason in ask_for_facts and the title and summary in propose_change, must be in Greek" : "plain technical English, or Greek if the person writes Greek"}. Simple sentences. No em dashes. No emoji. Under 150 words unless asked for detail.
 ${page ? `\nThe person is on the ${page} page. Prefer tools about that page first.\n` : ""}
 WORKSPACE RECORDS

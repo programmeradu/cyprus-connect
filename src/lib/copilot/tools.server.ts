@@ -34,7 +34,7 @@ export const ASKABLE_FACTS = [
   "consumerClaims",
 ] as const;
 
-const PROPOSAL_KINDS = ["create_task", "update_obligation", "log_reading", "draft_report", "update_company"] as const;
+const PROPOSAL_KINDS = ["create_task", "update_obligation", "log_reading", "draft_report", "draft_document", "update_company"] as const;
 
 const day = (d: Date | string | null | undefined) => (d ? new Date(d).toISOString().slice(0, 10) : null);
 
@@ -203,7 +203,7 @@ export function verdeTools(ctx: ToolContext) {
 
     propose_change: tool({
       description:
-        "Propose one change for a person to approve. Never runs by itself. Kinds: create_task {agentKey|null,title,detail,severity high|normal|low,dueAt YYYY-MM-DD|null}; update_obligation {obligationId,status on_track|at_risk|late|complete,progressPct}; log_reading {metricKey,periodLabel,periodStart YYYY-MM-DD,value}; draft_report {agentKey|null,periodLabel,detail}; update_company {any of companyName,industry,teamSize 1-10|11-50|51-200|201-500|500+,website,country,sites,revenueEur}.",
+        "Propose one change for a person to approve. Never runs by itself. Kinds: create_task {agentKey|null,title,detail,severity high|normal|low,dueAt YYYY-MM-DD|null}; update_obligation {obligationId,status on_track|at_risk|late|complete,progressPct}; log_reading {metricKey,periodLabel,periodStart YYYY-MM-DD,value}; draft_report {agentKey|null,periodLabel,detail} (VSME report only); draft_document {documentType one of sustainability_policy|supplier_code|supplier_data_request|buyer_questionnaire|green_loan_memo|energy_plan|environmental_claims_review|other_sustainability, title, purpose, audience} for any other sustainability document (policy, letter, questionnaire answers, loan memo, plan); never for documents unrelated to sustainability, compliance or ESG; update_company {any of companyName,industry,teamSize 1-10|11-50|51-200|201-500|500+,website,country,sites,revenueEur}.",
       inputSchema: z.object({
         kind: z.enum(PROPOSAL_KINDS),
         title: z.string(),

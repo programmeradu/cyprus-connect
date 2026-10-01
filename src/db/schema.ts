@@ -955,7 +955,7 @@ export const copilotProposals = pgTable('copilot_proposals', {
   id: serial('id').primaryKey(),
   workspaceId: text('workspace_id').notNull(),
   messageId: integer('message_id'),
-  /** create_task | update_obligation | log_reading | draft_report */
+  /** create_task | update_obligation | log_reading | draft_report | draft_document | update_company */
   kind: text('kind').notNull(),
   title: text('title').notNull(),
   summary: text('summary').notNull(),
