@@ -1,0 +1,148 @@
+/* Home ("what needs me today"). Built on the console tokens and the existing
+   vc-plate surface, so light and dark follow the rest of the console. */
+
+.vch-deck { gap: clamp(12px, 1.4vw, 18px); padding-bottom: 28px; }
+
+.vch-grid-primary,
+.vch-grid-secondary { display: grid; gap: clamp(12px, 1.4vw, 18px); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) {
+  .vch-grid-primary { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+  .vch-grid-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1240px) {
+  .vch-grid-secondary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.vch-home .vc-plate > header > span { font-weight: 650; color: var(--vc-ink); font-size: 0.95rem; }
+.vch-home .vc-plate > header > strong { font-variant-numeric: tabular-nums; color: var(--vc-ink-2); font-weight: 650; }
+.vch-home .vc-plate > header > strong[data-tone="warn"] { color: var(--vc-warn); }
+.vch-home .vc-plate > header > strong[data-tone="bad"] { color: var(--vc-bad); }
+
+.vch-empty { margin: 0; color: var(--vc-ink-2); font-size: 0.9rem; line-height: 1.5; }
+.vch-meta { margin: 0; color: var(--vc-ink-3); font-size: 0.82rem; font-weight: 550; line-height: 1.45; }
+.vch-error { margin: 4px 0 0; color: var(--vc-bad); font-size: 0.82rem; font-weight: 600; }
+
+/* Buttons: one shape, three weights. */
+.vch-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 34px; padding: 0 14px; border-radius: 999px;
+  font: inherit; font-size: 0.84rem; font-weight: 650; line-height: 1.1; text-align: center;
+  color: var(--vc-ink); background: var(--vc-well); border: 1px solid var(--vc-rule);
+  cursor: pointer; text-decoration: none; white-space: normal;
+  transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+.vch-btn:hover:not(:disabled) { border-color: var(--vc-ink-3); }
+.vch-btn:active:not(:disabled) { transform: translateY(1px); }
+.vch-btn:disabled { opacity: 0.55; cursor: default; }
+.vch-btn:focus-visible, .vch-link:focus-visible { outline: 2px solid var(--vc-lime); outline-offset: 2px; }
+.vch-btn[data-kind="primary"] { background: var(--vc-lime); color: var(--vc-lime-ink); border-color: transparent; }
+.vch-btn[data-kind="ghost"] { background: transparent; }
+
+.vch-link {
+  background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+  font-size: 0.84rem; font-weight: 650; color: var(--vc-ink-2);
+  text-decoration: underline; text-decoration-color: var(--vc-rule); text-underline-offset: 3px;
+}
+.vch-link:hover { color: var(--vc-ink); text-decoration-color: currentColor; }
+.vch-ext { color: var(--vc-ink); font-weight: 650; text-decoration: none; }
+.vch-ext:hover { text-decoration: underline; }
+
+/* Hero adjustments: fewer switches, same look. */
+.vch-team-card { gap: 16px; }
+.vch-health { display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid var(--vc-rule); }
+.vch-health > span { font-size: 0.8rem; font-weight: 650; color: var(--vc-ink-2); }
+.vch-health > p { margin: 0; font-size: 0.92rem; font-weight: 600; color: var(--vc-ink); line-height: 1.4; }
+.vch-health .vch-link { justify-self: start; }
+.vch-summary-btn { flex-shrink: 0; }
+.vch-measure-link { align-self: flex-start; margin-top: 6px; }
+.vch-hero-empty { display: grid; gap: 6px; padding: 28px 0; max-width: 46ch; }
+.vch-hero-empty strong { font-size: 1.1rem; color: var(--vc-ink); }
+.vch-hero-empty p { margin: 0; color: var(--vc-ink-2); line-height: 1.5; }
+
+/* Waiting for you */
+.vch-task-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.vch-task-list > li {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 4px 12px; align-items: start;
+  padding: 12px 0; border-bottom: 1px solid var(--vc-rule);
+}
+.vch-task-list > li:last-child { border-bottom: 0; }
+.vch-task-list > li > i { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--vc-well); color: var(--vc-ink-2); margin-top: 1px; }
+.vch-task-list > li[data-severity="high"] > i { background: var(--vc-lime-soft); color: var(--vc-ink); }
+.vch-task-copy { min-width: 0; display: grid; gap: 3px; }
+.vch-task-copy strong { color: var(--vc-ink); font-weight: 650; line-height: 1.35; overflow-wrap: anywhere; }
+.vch-task-copy p { margin: 0; color: var(--vc-ink-2); font-size: 0.86rem; line-height: 1.45; overflow-wrap: anywhere; }
+.vch-task-copy small { color: var(--vc-ink-3); font-size: 0.8rem; font-weight: 550; }
+.vch-task-actions { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+@media (min-width: 720px) {
+  .vch-task-list > li { grid-template-columns: 22px minmax(0, 1fr) auto; }
+  .vch-task-actions { grid-column: 3; margin-top: 0; justify-content: flex-end; }
+}
+
+/* Next deadline */
+.vch-deadline-body { display: grid; gap: 8px; }
+.vch-deadline-body > small { color: var(--vc-ink-3); font-weight: 650; font-size: 0.8rem; }
+.vch-deadline-body > strong { color: var(--vc-ink); font-size: 1.05rem; line-height: 1.3; overflow-wrap: anywhere; }
+.vch-deadline-body > p { margin: 0; color: var(--vc-ink-2); font-size: 0.88rem; line-height: 1.45; }
+.vch-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 4px; }
+.vch-grid-note { margin: auto 0 0; padding-top: 10px; border-top: 1px solid var(--vc-rule); font-size: 0.82rem; font-weight: 600; color: var(--vc-ink-2); }
+
+/* Signals and feeds */
+.vch-signal-list, .vch-feed { list-style: none; margin: 0; padding: 0; display: grid; }
+.vch-signal-list > li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--vc-rule); }
+.vch-signal-list > li:last-child, .vch-feed > li:last-child { border-bottom: 0; }
+.vch-signal-list strong { color: var(--vc-ink); font-weight: 650; line-height: 1.35; display: block; }
+.vch-signal-list p { margin: 2px 0 0; color: var(--vc-ink-2); font-size: 0.84rem; line-height: 1.45; }
+.vch-feed > li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--vc-rule); }
+.vch-feed > li > p { margin: 0; color: var(--vc-ink-2); font-size: 0.88rem; line-height: 1.4; overflow-wrap: anywhere; }
+.vch-feed > li > p strong { color: var(--vc-ink); font-weight: 650; }
+.vch-feed > li > small { grid-column: 1; color: var(--vc-ink-3); font-size: 0.8rem; line-height: 1.4; overflow-wrap: anywhere; }
+.vch-feed > li > time { grid-column: 2; grid-row: 1; color: var(--vc-ink-3); font-size: 0.8rem; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* Setup checklist */
+.vch-setup {
+  display: grid; gap: 14px; padding: clamp(18px, 1.8vw, 24px);
+  border-radius: 26px; border: 1px solid var(--vc-rule);
+  background: linear-gradient(180deg, rgba(246, 251, 242, 0.42), rgba(236, 245, 238, 0.26));
+}
+.dark .vch-setup { background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035)); }
+.vch-setup > header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.vch-setup h2 { margin: 0; font-size: 1.15rem; font-weight: 700; color: var(--vc-ink); }
+.vch-setup header p { margin: 4px 0 0; color: var(--vc-ink-2); font-size: 0.9rem; }
+.vch-setup-meter { width: min(220px, 100%); height: 6px; border-radius: 999px; background: var(--vc-well); overflow: hidden; }
+.vch-setup-meter > span { display: block; height: 100%; background: var(--vc-lime); border-radius: inherit; transition: width 0.4s ease; }
+.vch-setup ol { list-style: none; margin: 0; padding: 0; display: grid; }
+.vch-setup li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 6px 12px; align-items: start; padding: 12px 0; border-top: 1px solid var(--vc-rule); }
+.vch-setup-tick { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--vc-ink-3); display: grid; place-items: center; margin-top: 1px; }
+.vch-setup li[data-done="true"] .vch-setup-tick { background: var(--vc-lime); border-color: transparent; color: var(--vc-lime-ink); }
+.vch-setup li[data-next="true"] .vch-setup-tick { border-color: var(--vc-ink); }
+.vch-setup-copy strong { color: var(--vc-ink); font-weight: 650; }
+.vch-setup li[data-done="true"] .vch-setup-copy strong { color: var(--vc-ink-2); text-decoration: line-through; text-decoration-color: var(--vc-rule); }
+.vch-setup-copy p { margin: 2px 0 0; color: var(--vc-ink-2); font-size: 0.86rem; line-height: 1.45; }
+.vch-setup-actions { grid-column: 2; display: flex; flex-wrap: wrap; gap: 8px; }
+@media (min-width: 760px) {
+  .vch-setup li { grid-template-columns: 24px minmax(0, 1fr) auto; align-items: center; }
+  .vch-setup-actions { grid-column: 3; justify-content: flex-end; }
+}
+
+/* Guided first visit */
+.vch-tour { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+.vch-tour-ring {
+  position: fixed; border-radius: 22px; pointer-events: none;
+  box-shadow: 0 0 0 2px var(--vc-lime), 0 0 0 9999px rgba(12, 18, 17, 0.45);
+  transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+.vch-tour-card {
+  position: fixed; pointer-events: auto; width: min(340px, calc(100vw - 24px));
+  display: grid; gap: 8px; padding: 18px; border-radius: 20px;
+  background: var(--vc-rail); color: var(--vc-ink); border: 1px solid var(--vc-rail-rule);
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.45);
+}
+.vch-tour-card small { color: var(--vc-ink-3); font-size: 0.8rem; font-weight: 650; }
+.vch-tour-card strong { font-size: 1.05rem; font-weight: 700; }
+.vch-tour-card p { margin: 0; color: var(--vc-ink-2); font-size: 0.9rem; line-height: 1.5; }
+.vch-tour-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 6px; }
+.vch-tour-actions > span { display: flex; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { .vch-tour-ring, .vch-setup-meter > span { transition: none; } }
+.vch-agents-queue { margin-bottom: 18px; }
+.vch-focus-side { display: inline-flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+@media (max-width: 640px) { .vch-focus-side { align-items: flex-start; text-align: left; } }

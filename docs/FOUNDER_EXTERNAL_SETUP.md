@@ -227,3 +227,6 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Suppliers page (added 1 Oct 2026)
 - Run `scripts/sql/0028_suppliers.sql` on the live database before deploying (makes supplier email optional, adds register/WikiRate/bank columns). Already applied on the preview database.
 - Spend per supplier appears only once the live bank connection is working (see Bank of Cyprus callback above).
+
+## Home redesign (1 Oct 2026)
+- Nothing to set up outside the app. Verde company fill-in uses the existing AI key.

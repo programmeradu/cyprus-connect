@@ -12,3 +12,5 @@ Scoped rules: `src/lib/agents/AGENTS.md` (agent runtime, approvals, CBAM), `src/
 - Cron and email handlers are attached to the worker's default export by `scripts/inject-scheduled-handler.mjs`. Why: Cloudflare ignores named-export handlers.
 - In development the DB client is short-lived per use on the pooler's transaction port (6543); production uses Hyperdrive. Why: a long-lived pool in `next dev` stalls and the session port caps at 15 clients.
 - Every supplier lives in one list (`cbam_suppliers`, email optional), read and written via `/api/console/suppliers`; CBAM, agents and the Suppliers page share it, and bank spend is matched by `src/lib/suppliers.ts`. Why: one copy of each supplier, so a change shows everywhere.
+- Company details are read/written only through `src/lib/company-update.server.ts`; the company API and Verde's `update_company` approval both call it. Why: one validation and audit path whether a person or Verde makes the change.
+- Home (`/app`) is a single "today" view built from `src/components/app/dashboard/home/`; the approval queue component `WaitingForYou` is shared with Agents. Why: one queue, no tabbed duplicate of other pages.

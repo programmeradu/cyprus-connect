@@ -206,7 +206,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const moreActive = MORE_ITEMS.some((item) => onPage(path, item.href));
 
   return (
-    <header className="vc-nav" ref={bar}>
+    <header className="vc-nav" ref={bar} data-tour="nav">
       <Link href={"/app" as never} className="vc-brand flex items-center text-foreground transition-opacity hover:opacity-90" aria-label="Vuneli console home">
         <VuneliWordmark className="block h-5 w-auto sm:h-5.5" />
       </Link>
@@ -391,6 +391,9 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
               </p>
               <Link href={"/app/settings" as never} role="menuitem" onClick={() => setAccount(false)}>
                 Workspace settings
+              </Link>
+              <Link href={"/app?tour=1" as never} role="menuitem" onClick={() => setAccount(false)}>
+                Replay the Home tour
               </Link>
               <Link href={"/app/billing" as never} role="menuitem" onClick={() => setAccount(false)}>
                 Plan and usage

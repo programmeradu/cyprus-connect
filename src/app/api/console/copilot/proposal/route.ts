@@ -22,6 +22,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { draftVsmeReport } from "@/lib/reports/vsme";
+import { COMPANY_LABELS, CompanyPatch, applyCompanyPatch } from "@/lib/company-update.server";
 
 export const dynamic = "force-dynamic";
 
@@ -211,6 +212,25 @@ export async function POST(req: Request) {
         confidence: 0.9,
       });
       note = `Reading logged: ${def.label} ${value} ${def.unit} for ${periodLabel}`;
+    } else if (proposal.kind === "update_company") {
+      // Same validation and audit path as the company form.
+      const parsed = CompanyPatch.safeParse(payload);
+      if (!parsed.success) {
+        throw new Error(parsed.error.issues[0]?.message ?? "The company details are not valid.");
+      }
+      const { changed } = await applyCompanyPatch({
+        accountId: account.id,
+        workspaceId: workspace.id,
+        actorName: `Verde, approved by ${actor}`,
+        actorType: "agent",
+        body: parsed.data,
+        via: "from a Verde proposal",
+      });
+      note = changed.length
+        ? `Company details saved: ${changed.map((k) => COMPANY_LABELS[k]).join(", ")}.`
+        : "Nothing changed. Your company details already matched.";
+      deliverableHref = "/app/settings";
+      deliverableTitle = "Check your company details";
     } else {
       throw new Error("That kind of act is not supported.");
     }

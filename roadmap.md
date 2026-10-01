@@ -120,3 +120,6 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] Suppliers page under Act: one list (saved, CBAM, bank payees), 12-month spend, register + WikiRate checks, next steps; CBAM emails stay approval-gated
 - [ ] Suppliers: read payees from accounting systems once Nango live keys are in (blocked: live keys)
 - [x] Report: Obligations home is now one Deadlines list (soonest first, status, drafts, Draft/Open CBAM/See drafts per row)
+
+- [x] Home redesign: today view, guided first visit, self-ticking setup checklist, Verde fills company details (approval-gated), board summary PDF, shared approval queue on Agents.
+- [ ] Home tour completion is remembered per browser only; move to account profile if needed.

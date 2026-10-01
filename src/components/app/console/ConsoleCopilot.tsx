@@ -10,6 +10,7 @@
  */
 
 import Link from "next/link";
+import { invalidateWorkspace } from "@/components/app/console/workspace-store";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useConsole } from "./ConsoleData";
 import { IcoClose, IcoCheck, IcoVuneliAi } from "./icons";
@@ -41,6 +42,7 @@ const KIND_LABEL: Record<string, string> = {
   update_obligation: "Update an obligation",
   log_reading: "Log a metric reading",
   draft_report: "Draft a report",
+  update_company: "Fill in company details",
 };
 
 /** Only a draft takes real time, so only a draft says what it is doing. */
@@ -58,6 +60,14 @@ const STARTERS = [
 function authHeaders(): Record<string, string> {
   const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null;
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export const VERDE_ASK_EVENT = "vuneli:ask-verde";
+
+/** Opens Verde with a request ready to send. */
+export function askVerde(prompt?: string) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(VERDE_ASK_EVENT, { detail: { prompt } }));
 }
 
 export function ConsoleCopilot() {
@@ -111,6 +121,18 @@ export function ConsoleCopilot() {
     const node = scrollRef.current;
     if (node) node.scrollTop = node.scrollHeight;
   }, [turns, proposals, streaming, open]);
+
+  /* Any page can open Verde with a prepared request (the Home checklist uses
+     this). The text is placed in the box for the person to edit and send. */
+  useEffect(() => {
+    const onAsk = (event: Event) => {
+      const prompt = (event as CustomEvent<{ prompt?: string }>).detail?.prompt;
+      setOpen(true);
+      if (prompt) setDraft(prompt);
+    };
+    window.addEventListener(VERDE_ASK_EVENT, onAsk);
+    return () => window.removeEventListener(VERDE_ASK_EVENT, onAsk);
+  }, []);
 
   /* Escape closes, Cmd/Ctrl+J toggles. The panel must never trap the keyboard. */
   useEffect(() => {
@@ -231,6 +253,7 @@ export function ConsoleCopilot() {
         } else if (decision === "approve") {
           // The records changed, so every page must re-read them.
           refresh();
+          invalidateWorkspace(["/api/console/company", "/api/console/suppliers"]);
         }
       } catch {
         setNotice("The decision could not be saved. Please try again.");
@@ -263,13 +286,14 @@ export function ConsoleCopilot() {
         <button
           type="button"
           className="vc-copilot-fab"
+          data-tour="verde"
           onClick={() => setOpen(true)}
           aria-label="Open the workspace copilot"
         >
           <span className="vc-copilot-fab-mark">
             <CopilotMark small />
           </span>
-          <span className="vc-copilot-fab-label">Ask Copilot</span>
+          <span className="vc-copilot-fab-label">Ask Verde</span>
           {pending.length > 0 && (
             <span className="vc-copilot-fab-count">
               {pending.length > 9 ? "9+" : pending.length}
