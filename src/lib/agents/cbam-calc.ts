@@ -150,7 +150,7 @@ export function computeLine(line: CbamLineInput): CbamLineResult {
   const indirect = indirectInScope ? (line.indirectSee ?? dvIndirect) : 0;
   const directActual = line.directSee !== null;
   const indirectActual = !indirectInScope || line.indirectSee !== null;
-  const basis = directActual && indirectActual ? "actual" : !directActual && !indirectActual ? "default" : "mixed";
+  const basis = directActual && indirectActual ? "actual" : !directActual && (!indirectInScope || !indirectActual) ? "default" : "mixed";
   const directT = round(line.netMass * direct);
   const indirectT = round(line.netMass * indirect);
   const embeddedT = round(directT + indirectT);
@@ -201,12 +201,12 @@ export function buildDraft(year: number, input: CbamLineInput[]): CbamDraft {
       message: `${noDefault.length} line(s) have no EU default value we can use (for electricity, the official factors are licensed separately). Enter the supplier's actual value.`,
     });
   }
-  const short = lines.filter((l) => l.basis !== "unknown_cn" && l.basis !== "no_default" && !lookupCn(l.cnCode)?.exact);
+  const short = lines.filter((l) => l.basis !== "unknown_cn" && l.basis !== "no_default" && l.sector !== "electricity" && digits(l.cnCode).length < 8);
   if (short.length) {
     issues.push({
       kind: "short_cn",
       lineIds: short.map((l) => l.id),
-      message: `${short.length} line(s) have a short CN code that covers several goods. We used the highest default value and the lowest benchmark, so the cost is on the high side. Add the full 8-digit code.`,
+      message: `${short.length} line(s) have a CN code shorter than 8 digits, which covers several goods. We used the highest default value and the lowest benchmark, so the cost is on the high side. Add the full 8-digit code.`,
     });
   }
   const wrongYear = input.filter((l) => !l.importDate.startsWith(String(year)));
