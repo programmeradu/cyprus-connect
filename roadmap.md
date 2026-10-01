@@ -118,3 +118,4 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [x] More holds only Deliverables and Benchmarks; Settings and Plan and usage live in the account menu; Learn off the menu
 - [ ] Home/dashboard redesign: on hold, founder to discuss
 - [ ] Suppliers list inside Act: to discuss
+- [x] Report: Obligations home is now one Deadlines list (soonest first, status, drafts, Draft/Open CBAM/See drafts per row)

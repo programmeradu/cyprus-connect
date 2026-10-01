@@ -676,7 +676,7 @@
       "subtitle": "Automated compliance monitoring, reporting, and deadline management",
       "healthLabel": "Compliance Health",
       "tabs": {
-        "overview": "Overview",
+        "overview": "Deadlines",
         "regulations": "Regulations",
         "documents": "Documents",
         "audit": "Audit Trail",
@@ -772,6 +772,18 @@
         "noUpdatesTitle": "No upcoming deadlines",
         "noUpdatesBody": "The next deadlines of the rules you track will show here.",
         "noActivityBody": "Actions you take on this page, such as making a report or changing settings, are recorded here."
+      },
+      "board": {
+        "title": "Deadlines",
+        "description": "Every report you may owe, soonest first, with the next step for each.",
+        "daysLeft": "{days, plural, one {# day left} other {# days left}}",
+        "voluntary": "voluntary",
+        "noDraft": "No draft yet",
+        "drafts": "{count, plural, one {# draft} other {# drafts}}",
+        "openCbam": "Open CBAM",
+        "draft": "Draft it",
+        "redraft": "Draft again",
+        "openDrafts": "See drafts"
       }
     },
     "insights": {
