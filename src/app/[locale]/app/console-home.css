@@ -173,3 +173,16 @@
   max-width: 100%;
 }
 .vch-input:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 1px; }
+
+/* Add data: drop a bill or statement from Home */
+.vch-adddata {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px;
+  padding: clamp(16px, 1.6vw, 20px) clamp(18px, 1.8vw, 24px);
+  border-radius: 22px; border: 1.5px dashed var(--vc-rule);
+  transition: border-color 150ms ease-out, background 150ms ease-out;
+}
+.vch-adddata[data-dragging] { border-color: var(--vc-lime); background: var(--vc-well); }
+.vch-adddata-copy { flex: 1 1 280px; min-width: 0; }
+.vch-adddata h2 { margin: 0; font-size: 1.02rem; font-weight: 700; color: var(--vc-ink); }
+.vch-adddata p { margin: 3px 0 0; color: var(--vc-ink-2); font-size: 0.88rem; line-height: 1.45; }
+@media (max-width: 520px) { .vch-adddata .vch-btn { flex: 1 1 100%; } }

@@ -21,7 +21,7 @@ export const SECTIONS: Section[] = [
     key: "measure",
     pages: [
       { href: "/app/analytics", label: { en: "Footprint", el: "Αποτύπωμα" } },
-      { href: "/app/calculator", label: { en: "Add figures", el: "Προσθήκη στοιχείων" } },
+      { href: "/app/calculator", label: { en: "Add data", el: "Προσθήκη δεδομένων" } },
     ],
   },
   {
