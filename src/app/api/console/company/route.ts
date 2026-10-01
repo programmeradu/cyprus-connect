@@ -62,7 +62,7 @@ const LABELS: Record<string, string> = {
   revenueEur: "yearly revenue",
 };
 
-export async function read(accountId: string, workspaceId: string): Promise<CompanyRecord> {
+async function read(accountId: string, workspaceId: string): Promise<CompanyRecord> {
   const [[p], [w]] = await Promise.all([
     db
       .select({ companyName: user.companyName, industry: user.companyIndustry, teamSize: user.teamSize, country: user.countryCode })
