@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { getControls, isRunnable, setAgentPaused, setPaused } from "@/lib/agents/orchestrator";
 
 export const dynamic = "force-dynamic";
@@ -40,8 +41,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "bad_request", message: "Unknown or not-yet-runnable agent." }, { status: 400 });
     }
     await setAgentPaused(workspace.id, agentKey, paused, note, by);
+    await recordActivity(resolved.session, paused ? "paused agent" : "resumed agent", agentKey, note);
   } else {
     await setPaused(workspace.id, paused, note, by);
+    await recordActivity(resolved.session, paused ? "paused all agents" : "resumed all agents", "Agents", note);
   }
   return NextResponse.json(await getControls(workspace.id));
 }

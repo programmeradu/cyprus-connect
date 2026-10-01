@@ -533,11 +533,11 @@
 }
 
 .vc-copilot-prop[data-status="approved"] .vc-copilot-prop-state {
-  color: var(--vc-good);
+  color: var(--vc-good-text);
 }
 
 .vc-copilot-prop[data-status="failed"] .vc-copilot-prop-state {
-  color: var(--vc-bad);
+  color: var(--vc-bad-text);
 }
 
 .vc-copilot-prop strong {
@@ -770,4 +770,17 @@
 }
 .vc-copilot-prop-open:hover svg {
   transform: translateX(2px);
+}
+
+/* Figure check note under an answer (see src/lib/copilot/grounding.ts). */
+.vc .vc-copilot-check {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--vc-lime);
+  background: var(--vc-lime-soft);
+  color: var(--vc-ink);
+  font-size: 13px;
+  line-height: 1.45;
+  border-radius: 6px;
+  overflow-wrap: anywhere;
 }

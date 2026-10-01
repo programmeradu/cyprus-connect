@@ -113,8 +113,8 @@
   white-space: nowrap;
 }
 
-.vc-side-series button > em[data-tone="good"] { color: var(--vc-good); }
-.vc-side-series button > em[data-tone="bad"] { color: var(--vc-bad); }
+.vc-side-series button > em[data-tone="good"] { color: var(--vc-good-text); }
+.vc-side-series button > em[data-tone="bad"] { color: var(--vc-bad-text); }
 
 /* ---------- signal chart: scale, axis and footing -------------------- */
 
@@ -379,7 +379,7 @@
   white-space: nowrap;
 }
 
-.vc-plate > header strong[data-tone="warn"] { color: var(--vc-warn); }
+.vc-plate > header strong[data-tone="warn"] { color: var(--vc-warn-text); }
 
 .vc-plate-tight { gap: 10px; }
 
@@ -746,7 +746,7 @@
   overflow-wrap: anywhere;
 }
 
-.vc-pop li[data-severity="high"] strong { color: var(--vc-bad); }
+.vc-pop li[data-severity="high"] strong { color: var(--vc-bad-text); }
 
 .vc-pop li span {
   font-size: 12.5px;
@@ -1484,7 +1484,7 @@
   margin: 4px 0 0;
   font-size: 12px;
   font-weight: 700;
-  color: var(--vc-bad);
+  color: var(--vc-bad-text);
   overflow-wrap: anywhere;
 }
 

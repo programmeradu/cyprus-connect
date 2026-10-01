@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { readJson } from "@/lib/validate";
 import { db } from "@/db";
 import { bankLinks } from "@/db/schema";
@@ -82,7 +83,7 @@ export async function DELETE() {
       .update(bankLinks)
       .set({ status: "revoked" })
       .where(and(eq(bankLinks.workspaceId, workspace.id), eq(bankLinks.provider, "saltedge")));
-
+    await recordActivity(resolved.session, "unlinked bank", "Salt Edge");
     return NextResponse.json({ ok: true });
   } catch (error) {
     const ref = log.error("Salt Edge disconnect failed", error);

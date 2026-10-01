@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { readJson } from "@/lib/validate";
 import { db } from "@/db";
 import { integrations } from "@/db/schema";
@@ -113,7 +114,7 @@ export async function DELETE(request: NextRequest) {
         .set({ isActive: false })
         .where(and(eq(integrations.userId, account.id), eq(integrations.integrationType, "nango")));
     }
-
+    await recordActivity(resolved.session, "disconnected", integrationId || "Accounting software");
     return NextResponse.json({ ok: true });
   } catch (error) {
     const ref = log.error("Nango disconnect failed", error);

@@ -175,8 +175,8 @@ export default function PrivacySettingsPage() {
           ) : (
             <div className="space-y-3">
               <div>
-                <label className="vck-label block mb-1.5">{t.confirmTitle}</label>
-                <input
+                <label className="vck-label block mb-1.5" htmlFor="privacy-confirm">{t.confirmTitle}</label>
+                <input id="privacy-confirm"
                   type="text"
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}

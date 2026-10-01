@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { enqueue, isPlanner, isRunnable, tick } from "@/lib/agents/orchestrator";
 import { sha256Hex } from "@/lib/agents/hash";
 import { hasLovableAi } from "@/lib/lovable-ai";
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
     requestedBy: account.name || account.email || account.id,
     goal,
   });
+  await recordActivity(resolved.session, "started agent run", agentKey, goal ? `Goal: ${goal}` : null);
   if (!jobId) return NextResponse.json({ error: "enqueue_failed", message: "Could not queue the run." }, { status: 500 });
 
   let report;

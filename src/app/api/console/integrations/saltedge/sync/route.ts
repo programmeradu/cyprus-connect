@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { syncSaltEdgeConnection } from "@/lib/bank/saltedge.server";
 import { logger } from "@/lib/log";
 
@@ -17,6 +18,7 @@ export async function POST() {
 
   try {
     const result = await syncSaltEdgeConnection(workspace.id);
+    await recordActivity(resolved.session, "read bank payments again", "Salt Edge");
     return NextResponse.json(result);
   } catch (error) {
     const ref = log.error("Salt Edge manual sync failed", error);

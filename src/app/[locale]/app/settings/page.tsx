@@ -241,8 +241,8 @@ function SettingsContent() {
           <Section title={t("profileInformation")}>
             <div className="vck-card p-4 space-y-4">
               <div>
-                <label className="vck-label block mb-1.5">{t("yourName")}</label>
-                <input
+                <label className="vck-label block mb-1.5" htmlFor="your-name">{t("yourName")}</label>
+                <input id="your-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -250,13 +250,13 @@ function SettingsContent() {
                 />
               </div>
               <div>
-                <label className="vck-label block mb-1.5">{t("email")}</label>
-                <input type="email" value={email} disabled className={`${inputClass} opacity-60 cursor-not-allowed`} />
+                <label className="vck-label block mb-1.5" htmlFor="your-email">{t("email")}</label>
+                <input id="your-email" type="email" value={email} disabled className={`${inputClass} opacity-60 cursor-not-allowed`} />
                 <p className="vck-meta mt-1.5">{t("emailLocked")}</p>
               </div>
               <div>
-                <label className="vck-label block mb-1.5">{t("companyName")}</label>
-                <input
+                <label className="vck-label block mb-1.5" htmlFor="company-name">{t("companyName")}</label>
+                <input id="company-name"
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
@@ -286,8 +286,8 @@ function SettingsContent() {
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="vck-label block mb-1.5">{t("industry")}</label>
-                  <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputClass}>
+                  <label className="vck-label block mb-1.5" htmlFor="company-industry">{t("industry")}</label>
+                  <select id="company-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputClass}>
                     <option value="">{t("selectIndustry")}</option>
                     <option value="technology">{t("industries.technology")}</option>
                     <option value="manufacturing">{t("industries.manufacturing")}</option>
@@ -302,8 +302,8 @@ function SettingsContent() {
                   </select>
                 </div>
                 <div>
-                  <label className="vck-label block mb-1.5">{t("companySize")}</label>
-                  <select value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className={inputClass}>
+                  <label className="vck-label block mb-1.5" htmlFor="company-size">{t("companySize")}</label>
+                  <select id="company-size" value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className={inputClass}>
                     <option value="">{t("selectTeamSize")}</option>
                     <option value="1-10">{t("teamSizes.1-10")}</option>
                     <option value="11-50">{t("teamSizes.11-50")}</option>

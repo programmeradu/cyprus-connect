@@ -68,3 +68,5 @@ next-env.d.ts
 
 # Downloaded OCR sample docs (re-fetch with research/datasets/fetch_samples.py)
 research/datasets/samples/
+test-results/
+playwright-report/

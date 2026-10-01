@@ -169,9 +169,9 @@
   color: var(--vc-ink);
 }
 
-.vc .vck-plate-head > strong[data-tone="good"] { color: var(--vc-good); }
-.vc .vck-plate-head > strong[data-tone="bad"] { color: var(--vc-bad); }
-.vc .vck-plate-head > strong[data-tone="warn"] { color: var(--vc-warn); }
+.vc .vck-plate-head > strong[data-tone="good"] { color: var(--vc-good-text); }
+.vc .vck-plate-head > strong[data-tone="bad"] { color: var(--vc-bad-text); }
+.vc .vck-plate-head > strong[data-tone="warn"] { color: var(--vc-warn-text); }
 
 .vc .vck-plate-body {
   padding: 16px 18px;
@@ -289,9 +289,9 @@
 }
 
 .vc .vck-reading-foot b { font-variant-numeric: tabular-nums; font-weight: 700; }
-.vc .vck-reading-foot b[data-tone="good"] { color: var(--vc-good); }
-.vc .vck-reading-foot b[data-tone="bad"] { color: var(--vc-bad); }
-.vc .vck-reading-foot b[data-tone="warn"] { color: var(--vc-warn); }
+.vc .vck-reading-foot b[data-tone="good"] { color: var(--vc-good-text); }
+.vc .vck-reading-foot b[data-tone="bad"] { color: var(--vc-bad-text); }
+.vc .vck-reading-foot b[data-tone="warn"] { color: var(--vc-warn-text); }
 .vc .vck-reading-foot b[data-tone="flat"] { color: var(--vc-ink-3); }
 
 /* ---- ledger ------------------------------------------------------ */
@@ -384,10 +384,10 @@
   padding-top: 1px;
 }
 
-.vc .vck-ledger-value[data-tone="good"] { color: var(--vc-good); }
-.vc .vck-ledger-value[data-tone="bad"] { color: var(--vc-bad); }
-.vc .vck-ledger-value[data-tone="warn"] { color: var(--vc-warn); }
-.vc .vck-ledger-value[data-tone="live"] { color: var(--vc-good); }
+.vc .vck-ledger-value[data-tone="good"] { color: var(--vc-good-text); }
+.vc .vck-ledger-value[data-tone="bad"] { color: var(--vc-bad-text); }
+.vc .vck-ledger-value[data-tone="warn"] { color: var(--vc-warn-text); }
+.vc .vck-ledger-value[data-tone="live"] { color: var(--vc-good-text); }
 .vc .vck-ledger-value[data-tone="idle"] { color: var(--vc-ink-3); }
 
 /* ---- table ------------------------------------------------------- */
@@ -812,9 +812,9 @@
   color: var(--vc-ink-2);
 }
 
-.vc .vck-tag[data-tone="positive"] { color: var(--vc-good); }
-.vc .vck-tag[data-tone="caution"] { color: var(--vc-warn); }
-.vc .vck-tag[data-tone="critical"] { color: var(--vc-bad); }
+.vc .vck-tag[data-tone="positive"] { color: var(--vc-good-text); }
+.vc .vck-tag[data-tone="caution"] { color: var(--vc-warn-text); }
+.vc .vck-tag[data-tone="critical"] { color: var(--vc-bad-text); }
 
 /* Dialogs portal out of `.vc`, so the overlay is not scoped. */
 .vck-overlay {
@@ -1411,7 +1411,7 @@
 .vc .vck-cbam-actions label.vck-btn { cursor: pointer; }
 .vc .vck-cbam-actions input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .vc .vck-cbam-note { margin: 0; font-size: 14px; line-height: 1.55; color: var(--vc-ink-2); overflow-wrap: anywhere; }
-.vc .vck-cbam-note[data-tone="warn"] { color: var(--vc-warn, var(--vc-ink)); }
+.vc .vck-cbam-note[data-tone="warn"] { color: var(--vc-warn-text, var(--vc-ink)); }
 .vc .vck-cbam-hash { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; color: var(--vc-ink-3); }
 .vc .vck-cbam-year { min-height: 38px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--vc-rule); background: var(--vc-well); color: var(--vc-ink); font-size: 14px; }
 /* CBAM tables scroll sideways on phones instead of splitting words mid-name. */
@@ -1737,7 +1737,7 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 .vc .vck-sup-facts > div { min-width: 0; }
 .vc .vck-sup-hits { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 4px; }
 .vc .vck-sup-hits li { overflow-wrap: anywhere; }
-.vc .vck-warn-text { color: var(--vc-warn, var(--vc-ink)); font-weight: 500; }
+.vc .vck-warn-text { color: var(--vc-warn-text, var(--vc-ink)); font-weight: 500; }
 .vc .vck-sup-facts dt { font-size: 12px; color: var(--vc-ink-3); }
 .vc .vck-sup-facts dd { margin: 2px 0 0; font-size: 14px; color: var(--vc-ink); overflow-wrap: anywhere; line-height: 1.5; }
 .vc .vck-sup-wide { grid-column: 1 / -1; }
@@ -1770,5 +1770,5 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 .vc .vco-verde-copy { min-width: 0; display: flex; flex-direction: column; }
 .vc .vco-verde-kicker { margin: 0 0 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--vc-ink-2); }
 .vc .vco-verde-actions { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
-.vc .vco-error { margin: 12px 0 0; font-size: 13.5px; color: var(--vc-bad); }
+.vc .vco-error { margin: 12px 0 0; font-size: 13.5px; color: var(--vc-bad-text); }
 .vc .vco-foot-line { margin-top: clamp(12px, 2vh, 18px); padding-top: 12px; border-top: 1px solid var(--vc-rule); }

@@ -11,6 +11,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { cbamDeclarants, cbamSuppliers } from "@/db/schema";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,7 @@ export async function PUT(req: Request) {
         target: [cbamSuppliers.workspaceId, cbamSuppliers.supplierName],
         set: { email: b.email, contactName: b.contactName, updatedBy: who, updatedAt: now },
       });
+    await recordActivity(s.session, "saved supplier contact", b.supplierName, b.contactName ? `${b.contactName} <${b.email}>` : b.email);
     return NextResponse.json({ saved: true });
   }
   const values = { legalName: b.legalName, eori: b.eori, accountNumber: b.accountNumber, replyToEmail: b.replyToEmail, updatedBy: who, updatedAt: now };
@@ -65,6 +67,7 @@ export async function PUT(req: Request) {
     .insert(cbamDeclarants)
     .values({ workspaceId: ws, ...values })
     .onConflictDoUpdate({ target: cbamDeclarants.workspaceId, set: values });
+  await recordActivity(s.session, "updated CBAM declarant", b.legalName || "Declarant profile", b.eori ? `EORI ${b.eori}` : null);
   return NextResponse.json({ saved: true });
 }
 
@@ -76,5 +79,6 @@ export async function DELETE(req: Request) {
   await db
     .delete(cbamSuppliers)
     .where(and(eq(cbamSuppliers.workspaceId, s.session.workspace.id), eq(cbamSuppliers.supplierName, name)));
+  await recordActivity(s.session, "removed supplier contact", name);
   return NextResponse.json({ deleted: true });
 }

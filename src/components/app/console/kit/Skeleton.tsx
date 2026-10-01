@@ -41,7 +41,7 @@ export const ChartSkeleton = ({ height = 210 }: { height?: number }) => (
 
 /** The whole deck while the workspace read is in flight. */
 export const DeckSkeleton = () => (
-  <div className="vck-deck" aria-busy="true" aria-label="Loading the workspace">
+  <div className="vck-deck" role="status" aria-busy="true" aria-label="Loading the workspace">
     <ReadingSkeleton />
     <div className="vck-grid vck-grid-2">
       <PlateSkeleton rows={4} />

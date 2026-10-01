@@ -57,7 +57,7 @@ export const SkeletonCards = ({ count = 3 }: { count?: number }) => (
 
 /** The default page scaffold: a reading rail and a table. */
 export const PageSkeleton = () => (
-  <div className="vck-deck" aria-busy="true">
+  <div className="vck-deck" role="status" aria-busy="true" aria-label="Loading">
     <SkeletonMetricRow />
     <SkeletonTable />
   </div>

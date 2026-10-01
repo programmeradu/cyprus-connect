@@ -3,14 +3,12 @@ import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
 
 import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
-import { loadStripe } from "@stripe/stripe-js";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { formatCurrency } from "@/hooks/useCurrencyFormatter";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface PricingTableProps {
   currentPlanId?: string;

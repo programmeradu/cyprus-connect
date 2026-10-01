@@ -22,6 +22,8 @@ interface Turn {
   id: number;
   role: Role;
   content: string;
+  /** Set when the figure check found numbers not in the records, or quoted without a source. */
+  check?: string;
 }
 
 interface Proposal {
@@ -222,6 +224,17 @@ export function ConsoleCopilot() {
             } else if (event.type === "proposal" && event.proposal) {
               setProposals((prev) => [event.proposal as Proposal, ...prev]);
               touchedRecords = true;
+            } else if (event.type === "grounding") {
+              const unsupported = Array.isArray(event.unsupported) ? (event.unsupported as string[]) : [];
+              const check = unsupported.length
+                ? `Check before relying on this: ${unsupported.join(", ")} ${unsupported.length === 1 ? "is" : "are"} not in your records.`
+                : "Check before relying on this: a figure here is quoted without naming its record.";
+              setTurns((prev) => {
+                const copy = [...prev];
+                const last = copy[copy.length - 1];
+                if (last?.role === "assistant") copy[copy.length - 1] = { ...last, check };
+                return copy;
+              });
             } else if (event.type === "error" && typeof event.message === "string") {
               setNotice(event.message);
             }
@@ -426,6 +439,7 @@ export function ConsoleCopilot() {
                           ""
                         ))}
                     </p>
+                    {turn.check && <p className="vc-copilot-check" role="note">{turn.check}</p>}
                     {proposals
                       .filter((p) => p.messageId !== null && p.messageId === turn.id)
                       .map((p) => (

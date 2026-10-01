@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { recordActivity } from "@/lib/activity.server";
 import { readUpload, parseValue, type UploadKind } from "@/lib/validate";
 import { hasLovableAi } from "@/lib/lovable-ai";
 import { readWaterBill, saveWaterBill, deleteWaterBill } from "@/lib/integrations/water.server";
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
     const read = await readWaterBill(up.bytes, mime);
     if (!read.ok) return NextResponse.json({ error: "unreadable", message: read.reason }, { status: 422 });
     const saved = await saveWaterBill(resolved.session.account.id, up.file.name || "water-bill", mime, up.bytes, read.bill);
+    if (!saved.duplicate) await recordActivity(resolved.session, "uploaded water bill", up.file.name || "water bill");
     return NextResponse.json({ bill: read.bill, duplicate: saved.duplicate, id: saved.id });
   } catch (error) {
     const ref = log.error("Water bill read failed", error);
@@ -52,6 +54,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const ok = await deleteWaterBill(resolved.session.account.id, parsed.data);
     if (!ok) return NextResponse.json({ message: "That bill was not found." }, { status: 404 });
+    await recordActivity(resolved.session, "removed water bill", `#${parsed.data}`);
     return NextResponse.json({ ok: true });
   } catch (error) {
     const ref = log.error("Water bill delete failed", error);
