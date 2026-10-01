@@ -22,7 +22,7 @@
   header: context if counter(page).get().first() > 1 {
     set text(size: 7.5pt, fill: quiet)
     grid(columns: (1fr, auto), align: (left + bottom, right + bottom), column-gutter: 12pt,
-      [#box(baseline: 1.5pt, image("logo.svg", height: 9pt)) #h(6pt) #box(height: 8pt, line(angle: 90deg, length: 8pt, stroke: 0.5pt + rule-c)) #h(6pt) #d.framework report #if d.draft [#h(6pt) #text(fill: warn, weight: 600)[Draft]]],
+      [#box(baseline: 1.5pt, image("logo.svg", height: 9pt)) #h(6pt) #box(height: 8pt, line(angle: 90deg, length: 8pt, stroke: 0.5pt + rule-c)) #h(6pt) #d.headLabel #if d.draft [#h(6pt) #text(fill: warn, weight: 600)[Draft]]],
       [#d.company #h(4pt) · #h(4pt) #d.period])
     v(-4pt); line(length: 100%, stroke: 0.6pt + accent)
   },

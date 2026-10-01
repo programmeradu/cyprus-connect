@@ -48,6 +48,11 @@ const EUDR_REG: LibrarySource = {
   url: "https://eur-lex.europa.eu/eli/reg/2023/1115/oj",
   use: "Due diligence information and geolocation duties",
 };
+const EUDR_PAGE: LibrarySource = {
+  label: "European Commission: Regulation on deforestation-free products (guidance and dates)",
+  url: "https://environment.ec.europa.eu/topics/forests/deforestation/regulation-deforestation-free-products_en",
+  use: "Current application dates and official guidance",
+};
 const EU_SANCTIONS: LibrarySource = {
   label: "EU consolidated financial sanctions list",
   url: "https://data.europa.eu/data/datasets/consolidated-list-of-persons-groups-and-entities-subject-to-eu-financial-sanctions",
@@ -130,6 +135,13 @@ export const DOCUMENT_TYPES: DocumentType[] = [
     sources: [GREEN_CLAIMS],
   },
   {
+    key: "eudr_due_diligence",
+    label: "EUDR due diligence statement",
+    audience: "Competent authority, customers",
+    outline: ["Does EUDR apply to us", "Products and commodities in scope", "Information we collect", "Risk assessment", "Risk mitigation", "Review and record keeping"],
+    sources: [EUDR_REG, EUDR_PAGE],
+  },
+  {
     key: "other_sustainability",
     label: "Sustainability document",
     audience: "As stated in the request",
@@ -137,6 +149,29 @@ export const DOCUMENT_TYPES: DocumentType[] = [
     sources: [EFRAG_VSME, GHG_PROTOCOL],
   },
 ];
+
+/** Extra sources for a free-form request, picked by plain keywords in the request. */
+const KEYWORD_SOURCES: Array<[RegExp, LibrarySource[]]> = [
+  [/eudr|deforest|αποψίλ/i, [EUDR_REG, EUDR_PAGE]],
+  [/cbam|carbon border|import/i, [CBAM_REG]],
+  [/claim|green ?wash|marketing|label/i, [GREEN_CLAIMS]],
+  [/loan|bank|lend|financ/i, [LMA_GLP, EU_TAXONOMY]],
+  [/taxonomy/i, [EU_TAXONOMY]],
+  [/energy|audit|efficien/i, [ENERGY_EFF, CY_ENERGY]],
+  [/supplier|sanction|due diligence/i, [UN_GUIDING, EU_SANCTIONS]],
+];
+
+/** Picks the type; a free-form request falls back to a type matched by keywords, then to "other". */
+export function resolveDocument(key: string | null | undefined, request: string): { type: DocumentType; sources: LibrarySource[] } {
+  let type = DOCUMENT_TYPES.find((t) => t.key === key);
+  if (!type || type.key === "other_sustainability") {
+    if (/eudr|deforest/i.test(request)) type = DOCUMENT_TYPES.find((t) => t.key === "eudr_due_diligence");
+  }
+  type ??= DOCUMENT_TYPES[DOCUMENT_TYPES.length - 1];
+  const extra = type.key === "other_sustainability" ? KEYWORD_SOURCES.filter(([re]) => re.test(request)).flatMap(([, s]) => s) : [];
+  const sources = [...extra, ...type.sources].filter((s, i, all) => all.findIndex((x) => x.url === s.url) === i).slice(0, 6);
+  return { type, sources };
+}
 
 export function documentType(key: string | null | undefined): DocumentType {
   return DOCUMENT_TYPES.find((t) => t.key === key) ?? DOCUMENT_TYPES[DOCUMENT_TYPES.length - 1];
