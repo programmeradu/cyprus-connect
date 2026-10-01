@@ -28,6 +28,7 @@ export const SECTIONS: Section[] = [
     key: "act",
     pages: [
       { href: "/app/actions", label: { en: "Action plan", el: "Σχέδιο δράσης" } },
+      { href: "/app/suppliers", label: { en: "Suppliers", el: "Προμηθευτές" } },
       { href: "/app/marketplace", label: { en: "Experts and offsets", el: "Ειδικοί και αντισταθμίσεις" } },
     ],
   },
