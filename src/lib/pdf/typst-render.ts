@@ -13,8 +13,8 @@ import QRCode from "qrcode";
 const WASM_URL = "https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler@0.6.0/pkg/typst_ts_web_compiler_bg.wasm";
 
 const FONT_FILES = [
-  "IBMPlexSans-400", "IBMPlexSans-400i", "IBMPlexSans-500", "IBMPlexSans-500i",
-  "IBMPlexSans-600", "IBMPlexSans-600i", "IBMPlexSans-700", "IBMPlexSans-700i",
+  "Commissioner-400", "Commissioner-400i", "Commissioner-500", "Commissioner-500i",
+  "Commissioner-600", "Commissioner-600i", "Commissioner-700", "Commissioner-700i",
   "SourceSerif4-400", "SourceSerif4-400i", "SourceSerif4-600", "SourceSerif4-600i",
   "SourceSerif4-700", "SourceSerif4-700i", "IBMPlexMono-400",
 ];

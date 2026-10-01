@@ -11,7 +11,7 @@
 #let bad = rgb("#9B2C2C")
 #let eu = rgb("#1F3A68")
 #let display = ("Commissioner",)
-#let accent = ("Source Serif 4 24pt",)
+#let accent-font = ("Source Serif 4 24pt",)
 #let sans = ("Commissioner",)
 #let mono = ("IBM Plex Mono", "Commissioner")
 #let short-fp = d.hash.slice(0, 16)

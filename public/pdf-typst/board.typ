@@ -8,7 +8,7 @@
 #let accent = rgb("#3F5F33")
 #let warn = rgb("#94531A")
 #let display = ("Commissioner",)
-#let accent = ("Source Serif 4 24pt",)
+#let accent-font = ("Source Serif 4 24pt",)
 #let sans = ("Commissioner",)
 #let mono = ("IBM Plex Mono", "Commissioner")
 
@@ -50,7 +50,7 @@
   v(14pt)
   block(breakable: false, below: 10pt)[
     #grid(columns: (22pt, 1fr), column-gutter: 6pt,
-      text(font: accent, style: "italic", size: 15pt, weight: 400, fill: accent)[#n],
+      text(font: accent-font, style: "italic", size: 15pt, weight: 400, fill: accent)[#n],
       text(font: display, size: 15pt, weight: 600, fill: ink)[#title],
     )
     #v(-2pt)

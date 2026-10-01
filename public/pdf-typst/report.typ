@@ -10,7 +10,7 @@
 #let pale = rgb("#A8C496")
 #let warn = rgb("#94531A")
 #let display = ("Commissioner",)
-#let accent = ("Source Serif 4 24pt",)
+#let accent-font = ("Source Serif 4 24pt",)
 #let sans = ("Commissioner",)
 #let mono = ("IBM Plex Mono", "Commissioner")
 #let short-fp = d.hash.slice(0, 16)
@@ -39,7 +39,7 @@
 #let chapter(n, title, first) = {
   if not first { v(18pt) }
   block(below: 12pt, breakable: false)[
-    #text(font: accent, style: "italic", size: 40pt, weight: 400, fill: pale)[#n]
+    #text(font: accent-font, style: "italic", size: 40pt, weight: 400, fill: pale)[#n]
     #v(-30pt)
     #text(font: display, size: 20pt, weight: 600, fill: ink)[#title]
     #v(-2pt)
@@ -100,7 +100,7 @@
 #v(8pt)
 #for c in d.chapters [
   #grid(columns: (16mm, 1fr, auto), align: (left + horizon, left + horizon, right + horizon),
-    text(font: accent, style: "italic", size: 15pt, fill: pale)[#c.n],
+    text(font: accent-font, style: "italic", size: 15pt, fill: pale)[#c.n],
     text(font: display, size: 12pt, weight: 600, fill: ink)[#c.title],
     text(size: 8pt, fill: quiet)[#if c.gaps.len() > 0 [#c.gaps.len() open gap#if c.gaps.len() > 1 [s]]])
   #v(-6pt)
