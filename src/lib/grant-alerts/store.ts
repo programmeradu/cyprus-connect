@@ -112,6 +112,8 @@ export async function isSubscribed(email: string): Promise<boolean> {
 }
 
 export async function recentMatches(limit = 50): Promise<StoredMatch[]> {
-  const data = await rows(sql`select * from grant_opportunities order by first_seen_at desc limit ${limit}`);
+  const data = await rows(sql`select * from grant_opportunities
+    where deadline is null or left(deadline, 10) >= to_char(current_date, 'YYYY-MM-DD')
+    order by deadline nulls last, first_seen_at desc limit ${limit}`);
   return data.map(mapMatch);
 }

@@ -215,7 +215,7 @@ Return ONLY valid JSON:
         </PageToolbar>
       }
     >
-      <Section title={t("title")}>
+      <Section title={t("progress")}>
         <MetricRow columns={3}>
           <Metric label={t("completed")} value={completedCount} />
           <Metric label={t("available")} value={availableCount} />
@@ -248,7 +248,7 @@ Return ONLY valid JSON:
         </Section>
       )}
 
-      <Section title={aiActions.length > 0 ? t("standardSection") : t("title")}>
+      <Section title={aiActions.length > 0 ? t("standardSection") : t("steps")}>
         {regularActions.length === 0 && aiActions.length === 0 ? (
           <Empty
             title="No actions available yet"

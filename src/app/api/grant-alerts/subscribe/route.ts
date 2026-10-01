@@ -62,7 +62,7 @@ export async function DELETE(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const matches = await recentMatches(30);
+    const matches = await recentMatches(100);
     const s = await resolveConsoleSession(req.headers).catch(() => null);
     const email = s?.ok ? s.session.account.email?.trim().toLowerCase() ?? null : null;
     const subscription = email ? { email, active: await isSubscribed(email) } : null;
