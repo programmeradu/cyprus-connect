@@ -240,7 +240,7 @@ export function DataTable({ columns, rows, width = CONTENT_W, foot, empty = "Not
   };
   return (
     <View style={{ width }}>
-      <View fixed style={{ flexDirection: "row", borderBottomWidth: 0.75, borderBottomColor: C.ink, marginLeft: -5, marginRight: -5 }}>
+      <View style={{ flexDirection: "row", borderBottomWidth: 0.75, borderBottomColor: C.ink, marginLeft: -5, marginRight: -5 }}>
         {columns.map((c, i) => (
           <View key={i} style={{ width: widths[i], paddingVertical: 5, paddingHorizontal: 5 }}>
             <Text style={{ fontSize: 6.8, fontWeight: 600, color: C.quiet, letterSpacing: 0.7, textTransform: "uppercase", textAlign: c.align ?? "left" }}>{c.label}</Text>
