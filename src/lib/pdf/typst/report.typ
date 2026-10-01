@@ -86,7 +86,7 @@
   #v(10pt)
   #for (i, c) in d.chapters.enumerate() [
     #grid(columns: (16mm, 1fr), row-gutter: 0pt,
-      text(font: serif, size: 18pt, fill: pale)[#str(i + 1).clusters().len() == 1 and "0" + str(i + 1) or str(i + 1)],
+      text(font: serif, size: 18pt, fill: pale)[#if i < 9 { "0" + str(i + 1) } else { str(i + 1) }],
       [#text(font: serif, size: 13pt, weight: 600, fill: ink)[#c.title] \ #text(size: 8.5pt, fill: quiet)[#c.intro]])
     #line(length: 100%, stroke: 0.3pt + hair)
   ]
