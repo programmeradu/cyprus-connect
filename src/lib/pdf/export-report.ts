@@ -6,14 +6,15 @@ export interface ReportData {
   periodYear: number;
   periodMonth: number;
   totalEmissions: number;
-  yoyChange: number;
+  /** null when there is no same month last year to compare with. */
+  yoyChange: number | null;
   emissionsBreakdown: {
     electricity: { value: number; percentage: number };
     gas: { value: number; percentage: number };
     transportation: { value: number; percentage: number };
     other: { value: number; percentage: number };
   };
-  monthlyTrend: Array<{ month: string; value: number; change: number }>;
+  monthlyTrend: Array<{ month: string; value: number; change: number | null }>;
   industryComparison: {
     yourPerformance: number;
     industryAverage: number;
@@ -88,16 +89,18 @@ export function generateSustainabilityReport(data: ReportData): jsPDF {
   
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text('tons CO2e/year', 25, yPosition + 27);
+  doc.text('tonnes CO2e, latest month', 25, yPosition + 27);
   
-  // YoY Change Badge
+  // YoY Change Badge (only when last year's month exists)
+  if (data.yoyChange !== null) {
     const changeColor: [number, number, number] = data.yoyChange < 0 ? primaryGreen : [239, 68, 68];
-  doc.setFillColor(...changeColor);
-  doc.roundedRect(25, yPosition + 29, 25, 5, 1, 1, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`${data.yoyChange.toFixed(1)}% YoY`, 27, yPosition + 32.5);
+    doc.setFillColor(...changeColor);
+    doc.roundedRect(25, yPosition + 29, 25, 5, 1, 1, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${data.yoyChange > 0 ? '+' : ''}${data.yoyChange.toFixed(1)}% YoY`, 27, yPosition + 32.5);
+  }
 
   // Industry Comparison Card
   if (data.industryComparison) {
@@ -204,10 +207,12 @@ export function generateSustainabilityReport(data: ReportData): jsPDF {
     doc.text(month.month, 25, yPosition + 5);
     doc.text(`${month.value.toFixed(2)} tons`, 100, yPosition + 5);
     
-    const changeColor: [number, number, number] = month.change < 0 ? primaryGreen : [239, 68, 68];
-    doc.setTextColor(...changeColor);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`${month.change > 0 ? '+' : ''}${month.change.toFixed(1)}%`, 150, yPosition + 5);
+    if (month.change !== null) {
+      const changeColor: [number, number, number] = month.change < 0 ? primaryGreen : [239, 68, 68];
+      doc.setTextColor(...changeColor);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${month.change > 0 ? '+' : ''}${month.change.toFixed(1)}%`, 150, yPosition + 5);
+    }
     
     yPosition += 7;
   });

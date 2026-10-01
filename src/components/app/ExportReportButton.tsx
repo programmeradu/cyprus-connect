@@ -6,7 +6,7 @@ import { generateSustainabilityReport, ReportData } from '@/lib/pdf/export-repor
 export function ExportReportButton({
   userId,
   analyticsData,
-  companyName = "Pilot Enterprise",
+  companyName = "Your company",
 }: {
   userId?: string;
   analyticsData?: any;
@@ -53,59 +53,30 @@ export function ExportReportButton({
       }
 
       if (!generatedOnServer) {
-        // Fallback: Generate client-side PDF using present analyticsData or sample template
+        // Client-side fallback uses only the figures on screen. With no
+        // recorded figures there is nothing honest to export.
+        if (!analyticsData?.metrics || !analyticsData?.emissionsBreakdown) {
+          toast.error(t('noData'));
+          return;
+        }
         const now = new Date();
+        const total: number = analyticsData.metrics.totalEmissions.value;
         const fallbackData: ReportData = {
           companyName,
-          reportDate: now.toLocaleDateString('en-GB', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          }),
-          periodYear: analyticsData?.currentPeriod?.year || now.getFullYear(),
-          periodMonth: analyticsData?.currentPeriod?.month || now.getMonth() + 1,
-          totalEmissions: analyticsData?.metrics?.totalEmissions?.value ?? 42.8,
-          yoyChange: analyticsData?.metrics?.totalEmissions?.change ?? -4.2,
-          emissionsBreakdown: analyticsData?.emissionsBreakdown || {
-            electricity: { value: 18.5, percentage: 43 },
-            gas: { value: 12.0, percentage: 28 },
-            transportation: { value: 8.2, percentage: 19 },
-            other: { value: 4.1, percentage: 10 },
-          },
-          monthlyTrend: analyticsData?.monthlyTrend || [
-            { month: 'Nov', value: 46.2, change: -1.2 },
-            { month: 'Dec', value: 45.0, change: -2.6 },
-            { month: 'Jan', value: 44.5, change: -1.1 },
-            { month: 'Feb', value: 43.8, change: -1.6 },
-            { month: 'Mar', value: 43.1, change: -1.6 },
-            { month: 'Apr', value: 42.8, change: -0.7 },
-          ],
-          industryComparison: analyticsData?.industryComparison || {
-            yourPerformance: 3.56,
-            industryAverage: 4.20,
-            betterBy: 15.2,
-          },
+          reportDate: now.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }),
+          periodYear: analyticsData.currentPeriod?.year ?? now.getFullYear(),
+          periodMonth: analyticsData.currentPeriod?.month ?? now.getMonth() + 1,
+          totalEmissions: total,
+          yoyChange: analyticsData.metrics.totalEmissions.change ?? null,
+          emissionsBreakdown: analyticsData.emissionsBreakdown,
+          monthlyTrend: analyticsData.monthlyTrend ?? [],
+          industryComparison: analyticsData.industryComparison ?? null,
           insights: {
-            observations: [
-              `Total verified emissions: ${(analyticsData?.metrics?.totalEmissions?.value ?? 42.8).toFixed(1)} tons CO2e`,
-              'Electricity and HVAC account for the majority of the current profile footprint',
-              'Consistent downward trend recorded over the trailing 6 months'
-            ],
-            recommendations: [
-              'Continue monitoring electricity consumption via EAC smart metering',
-              'Review solar self-generation feasibility under Cyprus net-billing scheme',
-              'Maintain consistent data collection for CBAM / CSRD readiness'
-            ],
-            highlights: [
-              'Cyprus enterprise pilot sustainability profile active',
-              'Tracking Scope 1 & 2 emissions in accordance with EU GHG protocol',
-              'On schedule to hit verified annual reduction milestones'
-            ],
-            risks: [
-              'Seasonal summer peak cooling expected to elevate Scope 2 electricity',
-              'Regular verification required to preserve compliance audit trail'
-            ]
-          }
+            observations: [`Recorded emissions for the latest month: ${total.toFixed(2)} tonnes CO2e (published reference factors).`],
+            recommendations: [],
+            highlights: [],
+            risks: [],
+          },
         };
 
         const doc = generateSustainabilityReport(fallbackData);
