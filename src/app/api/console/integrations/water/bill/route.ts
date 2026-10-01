@@ -10,7 +10,7 @@ import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { recordActivity } from "@/lib/activity.server";
 import { readUpload, parseValue, type UploadKind } from "@/lib/validate";
-import { hasLovableAi } from "@/lib/lovable-ai";
+import { hasDocumentAi } from "@/lib/lovable-ai";
 import { readWaterBill, saveWaterBill, deleteWaterBill } from "@/lib/integrations/water.server";
 import { logger } from "@/lib/log";
 
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   if (!resolved.ok) {
     return NextResponse.json({ error: resolved.error, message: resolved.message }, { status: resolved.status });
   }
-  if (!hasLovableAi()) {
+  if (!hasDocumentAi()) {
     return NextResponse.json({ error: "not_configured", message: "The bill reader is not set up yet." }, { status: 503 });
   }
   const up = await readUpload(request, "file", KINDS);

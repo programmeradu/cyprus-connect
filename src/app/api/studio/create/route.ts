@@ -12,7 +12,7 @@ import { actions, emissions, mediaGenerations, user, userActions } from "@/db/sc
 import { bindSessionUser } from "@/lib/api-auth";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
-import { aiChat, aiErrorMessage, aiImage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChat, aiErrorMessage, aiImage, hasImageAi } from "@/lib/lovable-ai";
 import { generateImage } from "@/lib/generators";
 import { uploadBase64Image } from "@/lib/supabase";
 import { checkAndDeductAiCredits, refundAiCredits } from "@/lib/ai-credits";
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.ok) return parsed.response;
   const { brief, context, aspectRatio, sourceId } = parsed.data;
 
-  if (!hasLovableAi()) {
+  if (!hasImageAi()) {
     return NextResponse.json({ message: "Image making is not switched on for this workspace yet." }, { status: 503 });
   }
 

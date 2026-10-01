@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { aiEmbed, aiErrorMessage, EMBEDDING_MODEL, hasLovableAi } from "@/lib/lovable-ai";
+import { aiEmbed, aiErrorMessage, EMBEDDING_MODEL, hasEmbeddingAi } from "@/lib/lovable-ai";
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!hasLovableAi()) {
+    if (!hasEmbeddingAi()) {
       return NextResponse.json(
         { error: "AI is not configured on this deployment." },
         { status: 503 }

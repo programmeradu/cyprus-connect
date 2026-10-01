@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { logger } from "@/lib/log";
-import { aiChat, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChat, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
 import { complianceSummary, footprintMonths, gridToday } from "@/lib/insights/insights.server";
 import { shiftGain } from "@/lib/insights/grid";
 import { buildAdvicePrompt, parseAdvice, type Fact } from "@/lib/insights/advice";
@@ -22,7 +22,7 @@ export async function POST() {
   if (!resolved.ok) {
     return NextResponse.json({ error: resolved.error, message: resolved.message }, { status: resolved.status });
   }
-  if (!hasLovableAi()) {
+  if (!hasTextAi()) {
     return NextResponse.json({ message: "The AI service is not set up yet, so no advice was written." }, { status: 503 });
   }
   const { account, workspace } = resolved.session;

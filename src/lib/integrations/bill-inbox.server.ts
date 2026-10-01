@@ -14,7 +14,7 @@ import { eq } from "drizzle-orm";
 import PostalMime from "postal-mime";
 import { db } from "@/db";
 import { activityEvents, billInboxes } from "@/db/schema";
-import { hasLovableAi } from "@/lib/lovable-ai";
+import { hasDocumentAi } from "@/lib/lovable-ai";
 import { checkUpload } from "@/lib/validate";
 import { readEacBill, saveEacBill } from "./eac.server";
 import { readWaterBill, saveWaterBill } from "./water.server";
@@ -163,7 +163,7 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
       continue;
     }
     read++;
-    if (!hasLovableAi()) {
+    if (!hasDocumentAi()) {
       results.push({ file: name, kind: null, ok: false, duplicate: false, reason: "The bill reader is not set up yet." });
       continue;
     }

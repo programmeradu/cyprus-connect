@@ -12,7 +12,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { textTranslations } from "@/db/schema";
 import { sha256Hex } from "@/lib/agents/hash";
-import { aiResponsesJson, AiGatewayError, hasLovableAi } from "@/lib/lovable-ai";
+import { aiResponsesJson, AiGatewayError, hasTextAi } from "@/lib/lovable-ai";
 import { logger } from "@/lib/log";
 
 const log = logger("translate");
@@ -45,7 +45,7 @@ const SCHEMA = {
 };
 
 async function translateAndStore(texts: string[], locale: "el"): Promise<void> {
-  if (!hasLovableAi() || Date.now() < pausedUntil) return;
+  if (!hasTextAi() || Date.now() < pausedUntil) return;
   for (let start = 0; start < texts.length; start += CHUNK) {
     const chunk = texts.slice(start, start + CHUNK);
     try {

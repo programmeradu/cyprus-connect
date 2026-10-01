@@ -1,5 +1,5 @@
 import { uploadBase64Image } from "./supabase";
-import { aiImage, hasLovableAi } from "./lovable-ai";
+import { aiImage, hasImageAi } from "./lovable-ai";
 
 export interface GenerationResult {
   url: string;
@@ -56,7 +56,7 @@ export async function generateImage(
   prompt: string,
   aspectRatio: string = "1:1"
 ): Promise<GenerationResult> {
-  if (!hasLovableAi()) {
+  if (!hasImageAi()) {
     throw new Error("AI is not configured on this deployment.");
   }
 

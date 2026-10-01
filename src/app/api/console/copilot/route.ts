@@ -8,7 +8,7 @@
  * in /api/console/copilot/proposal.
  */
 
-import { aiChatStream, aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiChatStream, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
@@ -215,7 +215,7 @@ export async function POST(req: Request) {
   }
   if (prompt.length > 4000) prompt = prompt.slice(0, 4000);
 
-  if (!hasLovableAi()) {
+  if (!hasTextAi()) {
     return NextResponse.json(
       { error: "ai_unavailable", message: "The copilot is not configured on this deployment." },
       { status: 503 },

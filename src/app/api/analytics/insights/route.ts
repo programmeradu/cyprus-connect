@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { aiChat, aiErrorMessage, hasLovableAi } from '@/lib/lovable-ai';
+import { aiChat, aiErrorMessage, hasTextAi } from '@/lib/lovable-ai';
 import { bindSessionUser } from "@/lib/api-auth";
 import { z } from "zod";
 import { readJson } from "@/lib/validate";
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    if (!hasLovableAi()) {
+    if (!hasTextAi()) {
       return NextResponse.json({
         error: 'AI is not set up',
         message: 'AI insights need the AI service, which is not set up on this site yet.',

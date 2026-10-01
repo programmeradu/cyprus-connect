@@ -11,7 +11,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { documents } from "@/db/schema";
-import { aiChatRaw, hasLovableAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChatRaw, hasDocumentAi, parseJsonAnswer } from "@/lib/lovable-ai";
 import { REFERENCE_FACTORS } from "@/lib/emissions/reference-factors";
 
 export const EAC_SOURCE = "eac_bill";
@@ -139,7 +139,7 @@ export async function eacSummary(userId: string): Promise<EacSummary> {
   const f = REFERENCE_FACTORS.electricity;
   const bills = await eacBills(userId);
   return {
-    readerReady: hasLovableAi(),
+    readerReady: hasDocumentAi(),
     factor: { kgPerKwh: f.kgCo2ePerUnit, source: f.source, vintage: f.vintage },
     bills: bills.slice(0, 6),
     totalKwh: bills.reduce((s, b) => s + b.kwh, 0),

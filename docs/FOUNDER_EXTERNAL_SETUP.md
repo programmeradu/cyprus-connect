@@ -272,3 +272,11 @@ Use: read business account transactions to find fuel, electricity and freight sp
   `UPDATE law_watch SET reviewed_at = now(), reviewed_note = '...' WHERE amending_celex = '32026R2102';`
 - Before relying on deadlines with customers, have a lawyer check the rulebook against `docs/research/DEADLINES_2026-10-01.md`.
 
+
+## AI provider: Groq (2026-10-01)
+- Done by founder: `GROQ_API_KEY` added to Cloudflare. All text AI now uses it: Verde, the planning agents, Grant scout rule reading, Greek translations, Deadlines, course creation, weekly news notes and bill reading.
+- To do: redeploy the Worker so the new secret is picked up, then open Verde and ask one question to confirm.
+- Bill reading with Groq only: photos and normal PDFs work. Scanned PDFs (pictures inside a PDF) are refused with a clear message, because Groq cannot read PDF files directly.
+- Still needs `LOVABLE_API_KEY` (or stays switched off): image creation in Studio and text embeddings. Without it those screens say so and charge nothing.
+- Optional: `GROQ_MODEL` changes the text model. Leave empty to use `openai/gpt-oss-120b`.
+- Check usage limits in the Groq console. On the free tier, busy times return "AI service is busy", and the daily agent and funding jobs retry on their next run.

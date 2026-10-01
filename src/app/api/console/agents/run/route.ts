@@ -11,7 +11,7 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { recordActivity } from "@/lib/activity.server";
 import { enqueue, isPlanner, isRunnable, tick } from "@/lib/agents/orchestrator";
 import { sha256Hex } from "@/lib/agents/hash";
-import { hasLovableAi } from "@/lib/lovable-ai";
+import { hasTextAi } from "@/lib/lovable-ai";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
 
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
   if (goal && !isPlanner(agentKey)) {
     return NextResponse.json({ error: "no_goals", message: "This agent follows a fixed routine and does not take goals." }, { status: 400 });
   }
-  if (isPlanner(agentKey) && !hasLovableAi()) {
+  if (isPlanner(agentKey) && !hasTextAi()) {
     return NextResponse.json({ error: "ai_off", message: "This agent needs AI, which is not configured on this deployment." }, { status: 503 });
   }
 

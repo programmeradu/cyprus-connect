@@ -7,7 +7,7 @@
 import { and, eq, isNull, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { grantOpportunities } from "@/db/schema";
-import { aiResponsesJson, AiGatewayError, hasLovableAi } from "@/lib/lovable-ai";
+import { aiResponsesJson, AiGatewayError, hasTextAi } from "@/lib/lovable-ai";
 import { sha256Hex, stableStringify } from "@/lib/agents/hash";
 import { logger } from "@/lib/log";
 import { pdfLinksIn, pdfLinksOnPage, readCallDocuments, type CallDocument } from "./call-documents.server";
@@ -154,7 +154,7 @@ export interface ExtractSummary { read: number; failed: number; stoppedBy: strin
 
 /** Reads rules for calls never read or whose text changed. Stops on credit or access errors. */
 export async function extractPendingRules(limit = MAX_PER_RUN): Promise<ExtractSummary> {
-  if (!hasLovableAi()) return { read: 0, failed: 0, stoppedBy: "ai_not_configured" };
+  if (!hasTextAi()) return { read: 0, failed: 0, stoppedBy: "ai_not_configured" };
   const today = new Date().toISOString().slice(0, 10);
   const rows = await db
     .select()

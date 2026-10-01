@@ -4,7 +4,7 @@ import { checkAndDeductAiCredits, refundAiCredits } from "@/lib/ai-credits";
 import { bindSessionUser } from "@/lib/api-auth";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
-import { aiErrorMessage, hasLovableAi } from "@/lib/lovable-ai";
+import { aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
 import { CourseGenerationError, generateCourse } from "@/lib/learn/course-generator.server";
 
 const log = logger("api.learn.generate-course");
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
   const auth = await bindSessionUser(request, claimed);
   if (!auth.ok) return auth.response;
 
-  if (!hasLovableAi()) {
+  if (!hasTextAi()) {
     return NextResponse.json(
       { error: "AI is not set up", message: "Course creation needs the AI service, which is not set up on this site yet." },
       { status: 503 },
