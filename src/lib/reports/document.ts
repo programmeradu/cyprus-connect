@@ -20,7 +20,7 @@ import { shownCalls } from "@/lib/funding/funding.server";
 import { eacSummary } from "@/lib/integrations/eac.server";
 import { waterSummary } from "@/lib/integrations/water.server";
 import { logger } from "@/lib/log";
-import { documentType } from "./document-library";
+import { resolveDocument } from "./document-library";
 import type { DraftedReport, ReportFigure, ReportSection } from "./vsme";
 
 const log = logger("document-draft");
@@ -50,7 +50,7 @@ function gaps(v: unknown): string[] {
 }
 
 /** Every record the drafter may quote, as labelled lines. Failures read as "not available". */
-async function gatherRecords(workspace: typeof workspaces.$inferSelect, accountId: string): Promise<{ lines: string; sources: Record<string, unknown> }> {
+async function gatherRecords(workspace: typeof workspaces.$inferSelect, accountId: string): Promise<{ lines: string; sources: Record<string, unknown>; company: Awaited<ReturnType<typeof readCompany>> | null }> {
   const safe = <T,>(p: Promise<T>) => p.catch((error) => (log.error("record read failed", { error }), null));
   const [company, defs, readings, obligations, suppliers, funding, eac, water] = await Promise.all([
     safe(readCompany(accountId, workspace.id)),
@@ -114,6 +114,7 @@ async function gatherRecords(workspace: typeof workspaces.$inferSelect, accountI
 
   return {
     lines,
+    company: c,
     sources: {
       company: Boolean(c),
       metrics: metricLines.length,
@@ -138,13 +139,25 @@ export async function draftDocument(input: {
   createdBy?: string | null;
 }): Promise<DraftedReport> {
   const { workspace } = input;
-  const type = documentType(input.documentType);
+  const { type, sources: librarySources } = resolveDocument(input.documentType, `${input.title} ${input.purpose}`);
   const title = text(input.title, 160) || type.label;
   const audience = text(input.audience, 120) || type.audience;
   const periodLabel = String(new Date().getFullYear());
-  const { lines, sources } = await gatherRecords(workspace, input.accountId);
+  const { lines, sources, company } = await gatherRecords(workspace, input.accountId);
 
-  const library = type.sources.map((s, i) => `[S${i + 1}] ${s.label} (${s.url}): ${s.use}`).join("\n");
+  // A duty the company has not confirmed is stated up front, never assumed.
+  const APPLIES: Record<string, { fact: boolean | null | undefined; ask: string }> = {
+    eudr_due_diligence: { fact: company?.eudrCommodities, ask: "whether the company places cattle, cocoa, coffee, oil palm, rubber, soya or wood products (or goods made from them) on the EU market or exports them" },
+    environmental_claims_review: { fact: company?.consumerClaims, ask: "whether the company makes environmental claims to consumers" },
+  };
+  const gate = APPLIES[type.key];
+  const applicability = gate && gate.fact !== true
+    ? gate.fact === false
+      ? `The company record says the company does not do this, so this duty probably does not apply. Draft only a short statement explaining that, plus what would change it.`
+      : `The company record does not yet say ${gate.ask}. Start the first section by stating that the duty applies only if so, and add this question to its gaps. Do not write as if the duty applies.`
+    : "";
+
+  const library = librarySources.map((s, i) => `[S${i + 1}] ${s.label} (${s.url}): ${s.use}`).join("\n");
   const outline = type.outline.length
     ? type.outline.map((h, i) => `${i + 1}. ${h}`).join("\n")
     : "Choose 4 to 8 headings that fit the request.";
@@ -162,7 +175,10 @@ RULES
 2. Rules, definitions and duties come only from LIBRARY. Cite them inline as [S1], [S2]. Never cite anything else.
 3. If a section needs a fact the records lack, write what is needed in plain words and add it to "gaps". No placeholders like [X].
 4. Write as the company ("we"), plain English, short sentences, active voice. No em dashes, no emoji, no marketing words.
-5. Each "body" is 60 to 180 words. "figures" quote only record values; "source" names the record, for example "metric_readings: scope2_intensity, 2026".
+5. Never commit the company to a process, schedule, audit, certification, project, supplier step or deadline that the records do not show. Where a section needs a decision, describe briefly what the LIBRARY requires and add "Decide: ..." to "gaps".
+6. Cite a source only for what its LIBRARY line says it covers. Use only figures that matter for this document; do not pad with unrelated figures (a carbon footprint does not belong in a deforestation statement).
+7. Dates and deadlines come only from LIBRARY or RECORDS. If unsure of a current date, say "check the current date at [Sn]".
+${applicability ? `8. APPLICABILITY: ${applicability}\n` : ""}9. Each "body" is 60 to 180 words. "figures" quote only record values; "source" names the record, for example "metric_readings: scope2_intensity, 2026".
 
 OUTLINE
 ${outline}
@@ -212,7 +228,7 @@ One entry per outline heading, in order.`;
   sections.push({
     code: "S",
     title: "Sources",
-    body: type.sources.map((s, i) => `[S${i + 1}] ${s.label}. ${s.url}`).join("\n"),
+    body: librarySources.map((s, i) => `[S${i + 1}] ${s.label}. ${s.url}`).join("\n"),
     figures: [],
     gaps: [],
   });
@@ -231,7 +247,7 @@ One entry per outline heading, in order.`;
     proposalId: input.proposalId ?? null,
     summary,
     sections: JSON.stringify(sections),
-    sources: JSON.stringify({ documentType: type.key, library: type.sources.map((s) => s.url), ...sources }),
+    sources: JSON.stringify({ documentType: type.key, library: librarySources.map((s) => s.url), ...sources }),
     createdBy: input.createdBy ?? null,
   });
 
