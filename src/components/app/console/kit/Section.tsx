@@ -10,6 +10,8 @@ interface SectionProps {
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  /** Anchor so other pages can link straight to this block. */
+  id?: string;
 }
 
 /**
@@ -21,10 +23,11 @@ export const Section = ({
   description,
   action,
   children,
-  className = ""
+  className = "",
+  id
 }: SectionProps) => {
   return (
-    <section className={`vck-section ${className}`}>
+    <section id={id} className={`vck-section ${className}`}>
       {(title || action) && (
         <div className="vck-section-head">
           <div>

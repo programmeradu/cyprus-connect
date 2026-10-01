@@ -386,9 +386,9 @@
       }
     },
     "actions": {
-      "title": "Green Actions",
+      "title": "Action plan",
       "subtitleLoad": "All recommended actions to improve your sustainability",
-      "subtitle": "AI-powered recommendations based on your data",
+      "subtitle": "Steps to cut your footprint, with funding and expert help in one place.",
       "completed": "Completed Actions",
       "available": "Available",
       "creditsEarned": "Credits Earned",
@@ -427,7 +427,14 @@
         "impactLow": "Low Impact",
         "impactMedium": "Medium Impact",
         "impactHigh": "High Impact"
-      }
+      },
+      "expertsTitle": "Expert help and offsets",
+      "expertsBody": "Verified offset projects and local specialists you can bring in for a step.",
+      "expertsCount": "{count, plural, =0 {No verified listings yet} one {# verified listing} other {# verified listings}}",
+      "expertsEmpty": "We only list projects and experts we have checked. None are listed yet.",
+      "expertsOpen": "Open experts and offsets",
+      "progress": "Progress",
+      "steps": "Steps"
     },
     "settings": {
       "title": "Settings",
@@ -1023,8 +1030,20 @@
         "research-gov-cy": "Research & Innovation Foundation (Cyprus)",
         "invest-cyprus": "Invest Cyprus",
         "kebe-oeb": "OEB / KEBE",
-        "accelerators": "Accelerators"
-      }
+        "accelerators": "European Innovation Council"
+      },
+      "panelTitle": "Funding that could pay for it",
+      "panelBody": "Open EU and Cyprus calls found by the hourly scan, soonest deadline first. Check each call's rules before applying: many are for research groups, not single companies.",
+      "alertsOn": "Email alerts are on for {email}.",
+      "alertsOff": "Get an email at {email} when a new call is found.",
+      "turnOn": "Turn on alerts",
+      "turnOff": "Turn off alerts",
+      "signIn": "Sign in to get email alerts.",
+      "showAll": "Show all {count}",
+      "showFewer": "Show fewer",
+      "noDeadline": "Rolling",
+      "closesToday": "Closes today",
+      "daysLeft": "{days, plural, one {# day left} other {# days left}}"
     },
     "agents": {
       "title": "Agents",

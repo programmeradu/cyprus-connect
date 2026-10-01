@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { useWorkspaceAction, useWorkspaceResource, workspaceRequest } from "@/components/app/console/workspace-store";
 import { useTranslations } from "next-intl";
 import { ActionCard } from "@/components/app/ActionCard";
+import { FundingPanel } from "@/components/app/console/FundingPanel";
+import { ExpertsPanel } from "@/components/app/console/ExpertsPanel";
 import { BulbIcon, BoltIcon, FireIcon, WaterIcon, LeafIcon, RecycleIcon, TargetIcon } from "@/components/icons/CustomIcons";
 import { toast } from "sonner";
 import { useUser } from "@/lib/user-context";
@@ -213,7 +215,7 @@ Return ONLY valid JSON:
         </PageToolbar>
       }
     >
-      <Section title={t("title")}>
+      <Section title={t("progress")}>
         <MetricRow columns={3}>
           <Metric label={t("completed")} value={completedCount} />
           <Metric label={t("available")} value={availableCount} />
@@ -246,7 +248,7 @@ Return ONLY valid JSON:
         </Section>
       )}
 
-      <Section title={aiActions.length > 0 ? t("standardSection") : t("title")}>
+      <Section title={aiActions.length > 0 ? t("standardSection") : t("steps")}>
         {regularActions.length === 0 && aiActions.length === 0 ? (
           <Empty
             title="No actions available yet"
@@ -269,6 +271,9 @@ Return ONLY valid JSON:
           </div>
         )}
       </Section>
+
+      <FundingPanel />
+      <ExpertsPanel />
     </PageShell>
   );
 }

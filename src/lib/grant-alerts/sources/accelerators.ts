@@ -1,64 +1,57 @@
 import type { RawOpportunity } from "../types";
 
-// Curated climate/sustainability accelerator open-call feeds. Kept small and
-// resilient — each entry pulls a listing page and extracts cohort/programme
-// links. Add more over time.
+// European Innovation Council open calls, read from the EIC "funding
+// opportunities" page. Only cards marked "Call status: Open" with a call link
+// are kept: programme overviews, portfolio pages and news items are not calls
+// a company can apply to. The next future deadline is taken from the card.
 
-const FEEDS: { url: string; program: string; linkPattern: RegExp; base: string }[] = [
-  {
-    url: "https://www.climate-kic.org/programmes/",
-    program: "EIT Climate-KIC",
-    linkPattern: /<a[^>]+href="(?<href>https:\/\/www\.climate-kic\.org\/programmes\/[^"']+)"[^>]*>(?<title>[^<]{6,200})<\/a>/gi,
-    base: "https://www.climate-kic.org",
-  },
-  {
-    url: "https://katapult.vc/programs/",
-    program: "Katapult",
-    linkPattern: /<a[^>]+href="(?<href>https:\/\/katapult\.vc\/[^"']+)"[^>]*>(?<title>[^<]{6,200})<\/a>/gi,
-    base: "https://katapult.vc",
-  },
-  {
-    url: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
-    program: "EIC Accelerator",
-    linkPattern: /<a[^>]+href="(?<href>[^"']+eic[^"']+)"[^>]*>(?<title>[^<]{10,200})<\/a>/gi,
-    base: "https://eic.ec.europa.eu",
-  },
-];
+const PAGE = "https://eic.ec.europa.eu/eic-funding-opportunities_en";
+const BASE = "https://eic.ec.europa.eu";
+
+const CARD =
+  /Call status:\s*(?<status>[^<]+)<\/span>[\s\S]*?<a\s+href="(?<href>[^"]*calls-proposals\/[^"]+)"[\s\S]*?>(?<title>[^<]{4,200})<\/a>[\s\S]*?ecl-content-block__description">(?<desc>[\s\S]*?)<\/div>/gi;
+
+function text(html: string): string {
+  return html.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+}
+
+/** "7.01.2026 | 4.03.2026" -> first date on or after today, as YYYY-MM-DD. */
+export function nextDeadline(desc: string, today = new Date()): string | null {
+  const day = today.toISOString().slice(0, 10);
+  const dates = [...desc.matchAll(/\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/g)]
+    .map(([, d, m, y]) => `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`)
+    .filter((iso) => iso >= day)
+    .sort();
+  return dates[0] ?? null;
+}
 
 export async function fetchAcceleratorOpportunities(): Promise<RawOpportunity[]> {
+  const res = await fetch(PAGE, { headers: { "User-Agent": "Mozilla/5.0 (Vuneli funding scan)" }, cache: "no-store" });
+  if (!res.ok) throw new Error(`EIC page returned ${res.status}`);
+  const html = await res.text();
   const out: RawOpportunity[] = [];
-  for (const feed of FEEDS) {
-    try {
-      const res = await fetch(feed.url, {
-        headers: { "User-Agent": "Vuneli-GrantAlerts/1.0" },
-        cache: "no-store",
-      });
-      if (!res.ok) continue;
-      const html = await res.text();
-      const seen = new Set<string>();
-      for (const m of html.matchAll(feed.linkPattern)) {
-        const href = m.groups?.href?.trim();
-        const title = m.groups?.title?.replace(/\s+/g, " ").trim();
-        if (!href || !title) continue;
-        const url = href.startsWith("http") ? href : `${feed.base}${href}`;
-        const id = url.replace(/[?#].*$/, "");
-        if (seen.has(id)) continue;
-        seen.add(id);
-        out.push({
-          source: "accelerators",
-          externalId: id,
-          title,
-          summary: `${title} - ${feed.program}`,
-          url,
-          program: feed.program,
-          deadline: null,
-          publishedAt: null,
-          tags: [feed.program],
-        });
-      }
-    } catch (e) {
-      console.warn(`[grant-alerts] accelerator ${feed.program} failed:`, (e as Error).message);
-    }
+  const seen = new Set<string>();
+  for (const m of html.matchAll(CARD)) {
+    const g = m.groups!;
+    if (!/open|forthcoming/i.test(g.status)) continue;
+    const url = g.href.startsWith("http") ? g.href : `${BASE}${g.href}`;
+    if (seen.has(url)) continue;
+    seen.add(url);
+    const desc = text(g.desc);
+    const deadline = nextDeadline(desc);
+    if (/deadline/i.test(desc) && !deadline) continue; // every listed date has passed
+    const title = text(g.title);
+    out.push({
+      source: "accelerators",
+      externalId: url,
+      title,
+      summary: `${desc} (European Innovation Council, SME innovation funding)`,
+      url,
+      program: "European Innovation Council",
+      deadline,
+      publishedAt: null,
+      tags: ["eic", "sme", "innovation"],
+    });
   }
-  return out.slice(0, 60);
+  return out;
 }

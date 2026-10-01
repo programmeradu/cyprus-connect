@@ -219,3 +219,7 @@ Use: read business account transactions to find fuel, electricity and freight sp
 - Apply `scripts/sql/0027_registry_and_goals.sql` on the live database (already applied on preview).
 - Add `WIKIRATE_API_KEY` to Cloudflare secrets so supplier checks and peer comparison work live.
 - No key needed for the Registrar of Companies: it reads the official open register on data.gov.cy (updated monthly, CC BY 4.0).
+
+## 2026-10-01 — Funding inside the Action plan
+- The hourly funding scan now runs only when `CRON_SECRET` is set in Cloudflare (the old built-in fallback key was public and has been removed). Set it if you have not.
+- Funding no longer needs `SUPABASE_SERVICE_ROLE_KEY`; nothing new to add.
