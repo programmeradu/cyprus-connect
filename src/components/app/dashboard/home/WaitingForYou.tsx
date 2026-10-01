@@ -90,7 +90,7 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
                     <Link href="/app/agents" className="vch-btn" data-kind="primary">{t("open")}</Link>
                   ) : (
                     <button type="button" className="vch-btn" data-kind="primary" disabled={busy !== null} onClick={() => void decide(task, "approve")}>
-                      {busy === task.id ? t("saving") : t("approve")}
+                      {busy === task.id ? t("saving") : actsOnApprove(task) ? t("approve") : t("markDone")}
                     </button>
                   )}
                   <button type="button" className="vch-btn" disabled={busy !== null} onClick={() => void decide(task, "reject")}>
@@ -110,6 +110,15 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
       )}
     </section>
   );
+}
+
+/**
+ * Only some tasks carry an act: an agent's held tool call, a drafted document,
+ * or a VSME draft request. The rest are reminders a person handles, so the
+ * button says "Mark done" and never implies something will run.
+ */
+function actsOnApprove(task: ConsoleTask): boolean {
+  return Boolean(task.pendingTool) || Boolean(task.deliverableHref) || /\bVSME\b/i.test(task.title);
 }
 
 const FACT_QUESTION: Record<string, { en: string; el: string }> = {
