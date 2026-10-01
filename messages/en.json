@@ -672,6 +672,19 @@
       "toasts": {
         "saved": "Footprint saved for {period}.",
         "extracted": "Amounts filled in from the bill. Check them before you save."
+      },
+      "strip": {
+        "title": "Your year at a glance",
+        "prev": "Previous year",
+        "next": "Next year",
+        "count": "{recorded} of {open} months recorded.",
+        "hint": "Choose a month to type in or correct its figures.",
+        "state": {
+          "full": "Recorded",
+          "part": "Partly",
+          "empty": "Missing",
+          "future": "Not yet"
+        }
       }
     },
     "compliance": {
@@ -1612,7 +1625,8 @@
         "already": "Already recorded: {value}",
         "modeAdd": "Add to it",
         "modeReplace": "Replace it",
-        "noClosedMonth": "None of the figures fall in a month that has ended, so there's nothing to add yet."
+        "noClosedMonth": "None of the figures fall in a month that has ended, so there's nothing to add yet.",
+        "showLine": "Show the line it came from"
       },
       "bank": {
         "period": "{count} payments out between {from} and {to}.",
@@ -1639,7 +1653,9 @@
         "evidence": "Kept as evidence. Verde and the agents can use it.",
         "duplicate": "This bill was already on file, so the earlier copy was kept.",
         "home": "Back to Home",
-        "footprint": "See your footprint"
+        "footprint": "See your footprint",
+        "months": "See the month",
+        "suppliers": "Go to Suppliers"
       },
       "discardedBody": "Discarded. Nothing was kept.",
       "toasts": {
@@ -1654,6 +1670,35 @@
         "title": "Got a bill or a statement?",
         "body": "Drop it here or choose a file. We'll read it and show you what we found before anything is added.",
         "cta": "Add data"
+      },
+      "overlay": "Drop to read these files",
+      "dropCompact": "Add more documents",
+      "chooseMore": "Choose more files",
+      "clearFinished": "Clear finished",
+      "queue": {
+        "needs": "Needs your check",
+        "reading": "Reading",
+        "done": "Done",
+        "rejected": "Not accepted"
+      },
+      "summary": {
+        "needs": "{count, plural, one {# needs your check} other {# need your check}}",
+        "reading": "{count} reading",
+        "done": "{count} done",
+        "rejected": "{count} not accepted"
+      },
+      "inbox": {
+        "title": "Forward bills by email",
+        "body": "Set your email to auto-forward EAC and water board e-bills here. Each one is read when it arrives.",
+        "intro": "Get a private address and your e-bills arrive here on their own.",
+        "get": "Get my address",
+        "getting": "Making the address…",
+        "copy": "Copy",
+        "copied": "Copied"
+      },
+      "accept": {
+        "title": "What we can read",
+        "not": "Internet, phone, software and other service invoices don't feed your footprint, so they are turned away."
       }
     }
   },
