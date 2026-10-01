@@ -1,392 +1,273 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+/**
+ * Sign-up set-up: one screen. It asks only for the company facts every page
+ * and Verde need from day one. Everything else (data sources, suppliers,
+ * agents) is on the Home checklist, and the Home tour introduces the app, so
+ * nothing here repeats them.
+ *
+ * Two ways through: fill in the short form, or describe the business in a
+ * sentence and let Verde propose the details for approval on Home.
+ */
+
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { useUser } from "@/lib/user-context";
 import { useSession } from "@/lib/auth-client";
-import { toast } from "sonner";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
-import { Check } from "lucide-react";
-import { DocumentUpload } from "@/components/app/DocumentUpload";
-import { UtilityBillData } from "@/lib/ocr/types";
-import { useLocale, useTranslations } from "next-intl";
 import { APP_OPEN_ACCESS } from "@/lib/open-access";
 import { ConsoleHeader, DeckSkeleton } from "@/components/app/console/kit";
-import { NangoModal } from "@/components/app/integrations/NangoModal";
-import type { IntegrationsData } from "@/app/api/console/integrations/route";
-import step3Plant from "@/assets/onboarding-step3-plant.png";
+import { CompanyLogo } from "@/components/app/console/CompanyLogo";
+import { handOffToVerde } from "@/components/app/console/ConsoleCopilot";
+import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
+import { logoDomain, normalizeDomain } from "@/lib/company-logo";
+import type { CompanyRecord } from "@/app/api/console/company/route";
 import step1Welcome from "@/assets/onboarding-step1-welcome.png";
 import step2Company from "@/assets/onboarding-step2-company.png";
-import step2Utility from "@/assets/onboarding-step2-utility.png";
-import step2Accounting from "@/assets/onboarding-step2-accounting.png";
-import step2Manual from "@/assets/onboarding-step2-manual.png";
-import step4Console from "@/assets/onboarding-step4-console.png";
+
+const INDUSTRIES = ["technology", "retail", "manufacturing", "hospitality", "healthcare", "finance"] as const;
+const TEAM_SIZES = ["1-10", "11-50", "51-200", "201-500", "500+"] as const;
+/** Cyprus first, then the rest of the EU/EEA and the UK. */
+const COUNTRIES = ["CY", "GR", "AT", "BE", "BG", "HR", "CZ", "DK", "EE", "FI", "FR", "DE", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "NO", "IS", "LI", "CH", "GB"];
+const MIN_DESCRIPTION = 12;
 
 export default function OnboardingPage() {
   const t = useTranslations("onboarding");
+  const locale = useLocale();
   const router = useRouter();
   const { refetchUser, updatePreferences } = useUser();
   const { data: session, isPending: isSessionLoading } = useSession();
-  const [step, setStep] = useState(1);
-  const [companyName, setCompanyName] = useState("");
-  const [industry, setIndustry] = useState("");
-  const [teamSize, setTeamSize] = useState("");
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [uploadType, setUploadType] = useState<'utility' | 'manual' | null>(null);
-  const [isLoadingUserData, setIsLoadingUserData] = useState(true);
-  const [accountingOpen, setAccountingOpen] = useState(false);
-  const locale = useLocale();
-  const integrationsRes = useWorkspaceResource<IntegrationsData>("/api/console/integrations");
-
-  // Where the visitor is, from the shared record (used to preset currency and timezone).
-  const geo = useWorkspaceResource<{ countryCode?: string; currency?: string; timezone?: string }>("/api/geolocation");
-  const detectedLocation =
-    geo.data?.countryCode && geo.data.currency && geo.data.timezone
-      ? { countryCode: geo.data.countryCode, currency: geo.data.currency, timezone: geo.data.timezone }
-      : null;
   const writer = useWorkspaceAction();
 
-  // Redirect if not authenticated
+  const [name, setName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [website, setWebsite] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [teamSize, setTeamSize] = useState("");
+  const [country, setCountry] = useState("");
+  const [description, setDescription] = useState("");
+  const [busy, setBusy] = useState<"form" | "verde" | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const geo = useWorkspaceResource<{ countryCode?: string; currency?: string; timezone?: string }>("/api/geolocation");
+  const company = useWorkspaceResource<CompanyRecord>(session?.user ? "/api/console/company" : null);
+
   useEffect(() => {
-    if (!isSessionLoading && !session?.user) {
-      if (!APP_OPEN_ACCESS) router.push("/auth");
-    }
+    if (!isSessionLoading && !session?.user && !APP_OPEN_ACCESS) router.push("/auth");
   }, [session, isSessionLoading, router]);
 
-  // Fetch and populate name and email from authenticated session
+  // Prefill from the account and anything already saved, never overwriting typing.
   useEffect(() => {
-    if (!isSessionLoading && session?.user) {
-      setName(session.user.name || "");
-      setEmail(session.user.email || "");
-      setIsLoadingUserData(false);
-    } else if (!isSessionLoading) {
-      setIsLoadingUserData(false);
+    if (session?.user?.name) setName((v) => v || session.user.name || "");
+  }, [session?.user?.name]);
+  useEffect(() => {
+    const c = company.data;
+    if (!c) return;
+    setCompanyName((v) => v || c.companyName || "");
+    setWebsite((v) => v || c.website || "");
+    setIndustry((v) => v || c.industry || "");
+    setTeamSize((v) => v || c.teamSize || "");
+  }, [company.data]);
+  useEffect(() => {
+    const detected = geo.data?.countryCode?.toUpperCase();
+    setCountry((v) => v || (detected && COUNTRIES.includes(detected) ? detected : "CY"));
+  }, [geo.data?.countryCode]);
+
+  const countryNames = useMemo(() => {
+    const dn = new Intl.DisplayNames([locale === "el" ? "el" : "en"], { type: "region" });
+    return COUNTRIES.map((code) => ({ code, label: dn.of(code) ?? code }));
+  }, [locale]);
+
+  const websiteDomain = normalizeDomain(website);
+  const websiteInvalid = website.trim().length > 0 && !websiteDomain;
+  const previewDomain = websiteDomain ?? logoDomain(null, session?.user?.email);
+  const formReady = Boolean(name.trim() && companyName.trim() && industry && teamSize && country && !websiteInvalid);
+  const verdeReady = Boolean(name.trim() && description.trim().length >= MIN_DESCRIPTION);
+
+  /** Saves the person's name, marks set-up done and stores location defaults. */
+  const finishAccount = async () => {
+    const saved = await writer.run(`/api/users?id=${encodeURIComponent(session!.user.id)}`, {
+      method: "PUT",
+      body: { name: name.trim(), onboardingCompleted: true },
+      invalidates: ["/api/users", "/api/leaderboard"],
+    });
+    if (!saved) return false;
+    if (geo.data?.currency && geo.data.timezone) {
+      await updatePreferences({ preferredCurrency: geo.data.currency, timezone: geo.data.timezone, countryCode: country || geo.data.countryCode });
     }
-  }, [session, isSessionLoading]);
-
-  const handleComplete = async () => {
-    if (!session?.user?.id) {
-      toast.error(t("toasts.noSession"));
-      if (!APP_OPEN_ACCESS) router.push("/auth");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // The signed-in account already exists; onboarding fills in its company facts once.
-      const saved = await writer.run(`/api/users?id=${encodeURIComponent(session.user.id)}`, {
-        method: "PUT",
-        body: {
-          name,
-          companyName,
-          companyIndustry: industry,
-          teamSize,
-          sustainabilityGoals: ["reduce-carbon", "energy-efficiency"],
-          onboardingCompleted: true
-        },
-        invalidates: ["/api/users", "/api/analytics", "/api/leaderboard", "/api/actions"]
-      });
-      if (!saved) {
-        toast.error(t("toasts.updateFail"));
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Save detected location preferences
-      if (detectedLocation && session?.user?.id) {
-        await updatePreferences({
-          preferredCurrency: detectedLocation.currency,
-          countryCode: detectedLocation.countryCode,
-          timezone: detectedLocation.timezone,
-        });
-      }
-      
-      await refetchUser();
-      
-      localStorage.setItem("onboarding_completed", "true");
-      
-      toast.success(t("toasts.welcome"));
-      
-      router.push("/app");
-    } catch (error) {
-      console.error("Onboarding error:", error);
-      toast.error(t("toasts.genericError"));
-      setIsSubmitting(false);
-    }
-  };
-
-  const canProceed = () => {
-    if (step === 2) {
-      return name && email && companyName && industry && teamSize;
-    }
+    await refetchUser();
+    localStorage.setItem("onboarding_completed", "true");
     return true;
   };
 
-  const handleUploadClick = (type: 'utility' | 'accounting' | 'manual') => {
-    if (type === 'utility' || type === 'manual') {
-      setUploadType(type);
-      setShowUploadDialog(true);
-    } else if (type === 'accounting') {
-      setAccountingOpen(true);
+  const submitForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!session?.user?.id || !formReady || busy) return;
+    setBusy("form");
+    setFormError(null);
+    try {
+      // Company facts go through the one company record every page reads.
+      const saved = await writer.run("/api/console/company", {
+        method: "PATCH",
+        body: { companyName: companyName.trim(), website: websiteDomain, industry, teamSize, country },
+        invalidates: ["/api/console", "/api/users", "/api/analytics", "/api/leaderboard"],
+      });
+      if (!saved) {
+        setFormError(writer.error ?? t("toasts.updateFail"));
+        return;
+      }
+      if (!(await finishAccount())) {
+        setFormError(t("toasts.updateFail"));
+        return;
+      }
+      toast.success(t("toasts.welcome"));
+      router.push(`/${locale}/app`);
+    } catch {
+      setFormError(t("toasts.genericError"));
+    } finally {
+      setBusy(null);
     }
   };
 
-  const handleUploadComplete = (data: UtilityBillData) => {
-    toast.success(t("toasts.extracted", { type: data.usageType ?? "" }));
-    setShowUploadDialog(false);
+  const askVerdeToFill = async () => {
+    if (!session?.user?.id || !verdeReady || busy) return;
+    setBusy("verde");
+    setFormError(null);
+    try {
+      if (!(await finishAccount())) {
+        setFormError(t("toasts.updateFail"));
+        return;
+      }
+      handOffToVerde(t("verde.prompt", { text: description.trim() }));
+      router.push(`/${locale}/app`);
+    } catch {
+      setFormError(t("toasts.genericError"));
+    } finally {
+      setBusy(null);
+    }
   };
 
-  // Show loading state while fetching session data
-  if (isLoadingUserData || isSessionLoading) {
+  if (isSessionLoading) {
     return (
       <div className="vck-page" aria-busy="true" aria-label={t("loading")}>
         <DeckSkeleton />
       </div>
     );
   }
-
-  if (!session?.user) {
-    return null;
-  }
+  if (!session?.user) return null;
 
   const inputCls =
-    "vco-input w-full h-10 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-well)] text-[14px] text-[var(--vc-ink)] focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-70";
-  const stepMotion = {
-    initial: { opacity: 0, y: 12 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -12 },
-    transition: { duration: 0.22, ease: "easeOut" as const },
-  };
-  const sources = [
-    { key: "utility" as const, img: step2Utility.src, primary: true },
-    { key: "accounting" as const, img: step2Accounting.src, primary: false },
-    { key: "manual" as const, img: step2Manual.src, primary: false },
-  ];
+    "vco-input w-full h-10 px-3 rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-window)] text-[14px] text-[var(--vc-ink)] focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-70";
 
   return (
     <div className="vck-page vco">
       <ConsoleHeader title={t("frame.title")} purpose={t("frame.purpose")} />
-      <ol className="vco-rail" aria-label={t("frame.stepOf", { n: step })}>
-        {(t.raw("frame.rail") as string[]).map((label, i) => {
-          const n = i + 1;
-          const state = n < step ? "done" : n === step ? "current" : "next";
-          return (
-            <li key={label} data-state={state} aria-current={state === "current" ? "step" : undefined}>
-              <span className="vco-rail-n vck-num">{state === "done" ? <Check className="h-3.5 w-3.5" aria-hidden /> : n}</span>
-              <span className="vco-rail-label">{label}</span>
-            </li>
-          );
-        })}
-      </ol>
       <div className="vco-body">
-        <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.section key="step1" {...stepMotion} className="vco-plate">
-              <div className="vco-split">
-                <div className="vco-art">
-                  <div aria-hidden className="vco-art-shadow" />
-                  <img src={step1Welcome.src} alt={t("step1.imageAlt")} width={1024} height={1024} />
-                </div>
-                <div className="vco-copy">
-                  <h2 className="vco-title">{t("step1.title")}</h2>
-                  <p className="vco-lead">{t("step1.heading")}</p>
-                  <ul className="vco-checks">
-                    {(t.raw("step1.features") as string[]).map((feature) => (
-                      <li key={feature}>
-                        <span className="vco-check" aria-hidden><Check className="h-3 w-3" /></span>
-                        {feature}
-                      </li>
+        <section className="vco-plate">
+          <div className="vco-two">
+            <form className="vco-form vck-inset" onSubmit={submitForm} noValidate>
+              <div className="vco-form-head">
+                <h2>{t("form.title")}</h2>
+                <img src={step2Company.src} alt="" aria-hidden width={1024} height={1024} />
+              </div>
+              <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
+                <label className="block">
+                  <span className="block vck-label mb-1.5">{t("form.yourName")}</span>
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} className={inputCls} autoComplete="name" required />
+                </label>
+                <label className="block">
+                  <span className="block vck-label mb-1.5">{t("form.companyName")}</span>
+                  <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder={t("form.companyNamePlaceholder")} className={inputCls} autoComplete="organization" required />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="block vck-label mb-1.5">{t("form.website")}</span>
+                  <span className="flex items-center gap-3">
+                    <CompanyLogo name={companyName || "vuneli"} domain={previewDomain} size={40} />
+                    <input
+                      type="text"
+                      inputMode="url"
+                      autoComplete="url"
+                      value={website}
+                      onChange={(e) => setWebsite(e.target.value)}
+                      placeholder="acme.com.cy"
+                      aria-invalid={websiteInvalid || undefined}
+                      aria-describedby="vco-website-help"
+                      className={`${inputCls} min-w-0 flex-1`}
+                    />
+                  </span>
+                  <span id="vco-website-help" className={`block vck-meta mt-1.5 ${websiteInvalid ? "text-[var(--vc-bad)]" : ""}`}>
+                    {websiteInvalid ? t("form.websiteInvalid") : t("form.websiteHelp")}
+                  </span>
+                </label>
+                <label className="block">
+                  <span className="block vck-label mb-1.5">{t("form.industry")}</span>
+                  <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputCls} required>
+                    <option value="">{t("step2.selectIndustry")}</option>
+                    {INDUSTRIES.map((k) => (
+                      <option key={k} value={k}>{t(`step2.industries.${k}`)}</option>
                     ))}
-                  </ul>
-                  <p className="vco-note">{t("step1.description")}</p>
-                  <div className="vco-actions">
-                    <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(2)}>
-                      {t("step1.getStarted")}
-                    </button>
-                  </div>
-                </div>
+                    {industry && !(INDUSTRIES as readonly string[]).includes(industry) && <option value={industry}>{industry}</option>}
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="block vck-label mb-1.5">{t("form.teamSize")}</span>
+                  <select value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className={inputCls} required>
+                    <option value="">{t("step2.selectTeamSize")}</option>
+                    {TEAM_SIZES.map((k) => (
+                      <option key={k} value={k}>{t(`step2.teamSizes.${k}`)}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="block vck-label mb-1.5">{t("form.country")}</span>
+                  <select value={country} onChange={(e) => setCountry(e.target.value)} className={inputCls} required>
+                    {countryNames.map((c) => (
+                      <option key={c.code} value={c.code}>{c.label}</option>
+                    ))}
+                  </select>
+                </label>
               </div>
-            </motion.section>
-          )}
-
-          {step === 2 && (
-            <motion.section key="step2" {...stepMotion} className="vco-plate">
-              <div className="vco-plate-head">
-                <div className="min-w-0">
-                  <h2 className="vco-title">{t("step2.title")}</h2>
-                  <p className="vco-sub">{t("step2.subtitle")}</p>
-                </div>
-              </div>
-
-              <div className="vco-two">
-                <div className="vco-form vck-inset">
-                  <div className="vco-form-head">
-                    <h3>{t("step2.companyHeader")}</h3>
-                    <img src={step2Company.src} alt="" aria-hidden width={1024} height={1024} />
-                  </div>
-                  <div className="grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-2">
-                    <label className="block">
-                      <span className="block vck-label mb-1.5">{t("step2.yourName")}</span>
-                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("step2.yourNamePlaceholder")} className={inputCls} autoComplete="name" />
-                    </label>
-                    <label className="block">
-                      <span className="block vck-label mb-1.5">{t("step2.email")}</span>
-                      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("step2.emailPlaceholder")} className={inputCls} disabled />
-                    </label>
-                    <label className="block">
-                      <span className="block vck-label mb-1.5">{t("step2.companyName")}</span>
-                      <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder={t("step2.companyNamePlaceholder")} className={inputCls} autoComplete="organization" />
-                    </label>
-                    <label className="block">
-                      <span className="block vck-label mb-1.5">{t("step2.industry")}</span>
-                      <select value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputCls}>
-                        <option value="">{t("step2.selectIndustry")}</option>
-                        {["technology", "retail", "manufacturing", "hospitality", "healthcare", "finance"].map((k) => (
-                          <option key={k} value={k}>{t(`step2.industries.${k}`)}</option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="block sm:col-span-2">
-                      <span className="block vck-label mb-1.5">{t("step2.teamSize")}</span>
-                      <select value={teamSize} onChange={(e) => setTeamSize(e.target.value)} className={inputCls}>
-                        <option value="">{t("step2.selectTeamSize")}</option>
-                        {["1-10", "11-50", "51-200", "201-500", "500+"].map((k) => (
-                          <option key={k} value={k}>{t(`step2.teamSizes.${k}`)}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                </div>
-
-                <ul className="vco-sources">
-                  {sources.map((s) => (
-                    <li key={s.key} className="vco-source">
-                      <img src={s.img} alt="" aria-hidden width={1024} height={1024} loading="lazy" />
-                      <div className="min-w-0">
-                        <h3>{t(`step2.${s.key}.title`)}</h3>
-                        <p>{t(`step2.${s.key}.desc`)}</p>
-                      </div>
-                      <button
-                        className={`vck-btn ${s.primary ? "vck-btn-primary" : ""} vco-source-btn`}
-                        onClick={() => handleUploadClick(s.key)}
-                      >
-                        {t(`step2.${s.key}.cta`)}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="vco-foot">
-                <button onClick={() => setStep(1)} className="vco-back">{t("step2.back")}</button>
-                <p className="vco-foot-note">{t("step2.security")}</p>
-                <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(3)} disabled={!canProceed()}>
-                  {t("step2.next")}
+              <div className="vco-form-actions">
+                <button type="submit" className="vck-btn vck-btn-primary px-6" disabled={!formReady || busy !== null}>
+                  {busy === "form" ? t("form.saving") : t("form.submit")}
                 </button>
               </div>
-            </motion.section>
-          )}
+            </form>
 
-          {step === 3 && (
-            <motion.section key="step3" {...stepMotion} className="vco-plate">
-              <div className="vco-split">
-                <div className="vco-art">
-                  <div aria-hidden className="vco-art-shadow" />
-                  <img src={step3Plant.src} alt="A smiling young plant in a pot, with green credit coins and a check mark around it" width={1024} height={1024} />
-                </div>
-                <div className="vco-copy">
-                  <h2 className="vco-title">{t("step3.title")}</h2>
-                  <p className="vco-lead">{t("step3.heading")}</p>
-                  <p className="vco-note">{t("step3.description")}</p>
-                  <dl className="vco-facts">
-                    <div><dt>{t("step3.greenCredits")}</dt><dd>{t("step3.creditsEarned")}</dd></div>
-                    <div><dt>{t("step3.leaderboard")}</dt><dd>{t("step3.yourRank")}</dd></div>
-                  </dl>
-                  <div className="vco-actions">
-                    <button className="vck-btn vck-btn-primary px-6" onClick={() => setStep(4)}>{t("step3.explore")}</button>
-                    <button onClick={() => setStep(2)} className="vco-back">{t("step3.back")}</button>
-                    <button onClick={() => setStep(4)} className="vco-back underline underline-offset-4">{t("step3.skip")}</button>
-                  </div>
-                </div>
+            <div className="vco-verde">
+              <div className="vco-verde-art" aria-hidden>
+                <img src={step1Welcome.src} alt="" width={1024} height={1024} />
               </div>
-            </motion.section>
-          )}
+              <div className="vco-verde-copy">
+                <p className="vco-verde-kicker"><VuneliAiIcon className="h-4 w-4" aria-hidden /> {t("verde.kicker")}</p>
+                <h2 className="vco-title">{t("verde.title")}</h2>
+                <p className="vco-sub">{t("verde.body")}</p>
+                <label className="block mt-3">
+                  <span className="sr-only">{t("verde.label")}</span>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value.slice(0, 600))}
+                    placeholder={t("verde.placeholder")}
+                    rows={3}
+                    className="vco-input w-full rounded-[0.375rem] border border-[var(--vc-rule)] bg-[var(--vc-window)] px-3 py-2.5 text-[14px] leading-relaxed text-[var(--vc-ink)] focus:outline-none focus:ring-2 focus:ring-primary/30 resize-y min-h-[88px]"
+                  />
+                </label>
+                <div className="vco-verde-actions">
+                  <button type="button" className="vck-btn px-5" onClick={askVerdeToFill} disabled={!verdeReady || busy !== null}>
+                    {busy === "verde" ? t("form.saving") : t("verde.cta")}
+                  </button>
+                  {!name.trim() && <span className="vck-meta">{t("verde.needName")}</span>}
+                </div>
+                <p className="vck-meta mt-2">{t("verde.approval")}</p>
+              </div>
+            </div>
+          </div>
 
-          {step === 4 && (
-            <motion.section key="step4" {...stepMotion} className="vco-plate">
-              <div className="vco-split">
-                <div className="vco-art">
-                  <div aria-hidden className="vco-art-shadow" />
-                  <img src={step4Console.src} alt="A console tablet with a rising chart and gauge, a leaf coin, a check mark and a flag" width={1024} height={1024} />
-                </div>
-                <div className="vco-copy">
-                  <h2 className="vco-title">{t("step4.title")}</h2>
-                  <p className="vco-sub">{t("step4.subtitle")}</p>
-                  <ul className="vco-features">
-                    {(t.raw("step4.features") as Array<{ title: string; desc: string }>).map((feature) => (
-                      <li key={feature.title}>
-                        <h3>{feature.title}</h3>
-                        <p>{feature.desc}</p>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="vco-actions">
-                    <button className="vck-btn vck-btn-primary px-8" onClick={handleComplete} disabled={isSubmitting}>
-                      {isSubmitting ? t("step4.settingUp") : t("step4.cta")}
-                    </button>
-                    <button onClick={() => setStep(3)} className="vco-back">{t("step4.back")}</button>
-                  </div>
-                </div>
-              </div>
-            </motion.section>
-          )}
-        </AnimatePresence>
-
-        {/* Upload Dialog */}
-        {showUploadDialog && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-foreground/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-            onClick={() => setShowUploadDialog(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="vck-overlay p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">
-                  {uploadType === 'utility' ? t("upload.utilityTitle") : t("upload.documentTitle")}
-                </h3>
-                <button
-                  onClick={() => setShowUploadDialog(false)}
-                  className="w-8 h-8 rounded-lg hover:bg-muted/50 flex items-center justify-center transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-              <p className="text-sm text-muted-foreground mb-6">
-                {uploadType === 'utility' ? t("upload.descUtility") : t("upload.descDocument")}
-              </p>
-              <DocumentUpload onUploadComplete={handleUploadComplete} />
-            </motion.div>
-          </motion.div>
-        )}
-      <NangoModal
-        open={accountingOpen}
-        onOpenChange={setAccountingOpen}
-        locale={locale === "el" ? "el" : "en"}
-        configured={Boolean(integrationsRes.data?.nango.configured)}
-      />
+          {formError && <p role="alert" className="vco-error">{formError}</p>}
+          <p className="vco-foot-note vco-foot-line">{t("step2.security")}</p>
+        </section>
       </div>
     </div>
   );
