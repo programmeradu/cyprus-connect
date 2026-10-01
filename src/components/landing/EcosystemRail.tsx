@@ -27,7 +27,7 @@ export function EcosystemRail() {
     <section className="py-16 sm:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-6 sm:grid-cols-12 sm:items-end sm:gap-12">
-          <h2 className="sm:col-span-6 font-[family-name:var(--editorial-serif)] text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
+          <h2 className="sm:col-span-6 font-[family-name:var(--editorial-display)] font-semibold text-[2.4rem] leading-[1.02] tracking-[-0.025em] sm:text-[3.5rem]">
             {t("beyondTitleA")}{" "}
             <span className="italic text-muted-foreground">{t("beyondTitleB")}</span>
           </h2>

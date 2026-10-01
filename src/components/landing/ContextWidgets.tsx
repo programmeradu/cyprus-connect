@@ -43,7 +43,7 @@ const COPY = {
     titleA: "Where you are,",
     titleB: "what matters",
     subtitle:
-      "Live signals for your location - the grid, the calendar, and the headlines shaping sustainability decisions right now.",
+      "What's happening around you right now: how clean the power grid is, which deadlines are coming up and the news worth knowing.",
     gridLabel: "Grid intensity",
     gridSub: "gCO₂ / kWh",
     gridRenewables: "renewables",
@@ -58,7 +58,7 @@ const COPY = {
     titleA: "Πού βρίσκεστε,",
     titleB: "τι έχει σημασία",
     subtitle:
-      "Ζωντανά σήματα για την τοποθεσία σας - δίκτυο, ημερολόγιο και ειδήσεις που διαμορφώνουν αποφάσεις βιωσιμότητας.",
+      "Τι συμβαίνει γύρω σας αυτή τη στιγμή: πόσο καθαρό είναι το ηλεκτρικό δίκτυο, ποιες προθεσμίες πλησιάζουν και ποιες ειδήσεις αξίζει να ξέρετε.",
     gridLabel: "Ένταση δικτύου",
     gridSub: "gCO₂ / kWh",
     gridRenewables: "ΑΠΕ",
