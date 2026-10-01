@@ -61,7 +61,7 @@ export async function bindSessionUser(
 }
 
 /** Signed-in user id, or the synthetic QA id for valid preview QA requests. Throws like requireVuneliUserId. */
-export async function requireUserIdOrQa(headers: Headers): Promise<string> {
+export async function requireUserIdOrQa(headers: Headers): Promise<string | null> {
   const qa = isQaRequest({ cookie: readCookie(headers, QA_COOKIE), header: headers.get(QA_HEADER) });
   return qa ? QA_ACCOUNT.id : requireVuneliUserId(headers);
 }
