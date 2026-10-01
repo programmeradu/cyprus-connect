@@ -2,13 +2,14 @@
 
 ## What the user gets
 
-**Funding on Action plan and Home shows only the calls this business could plausibly win.** Each call gets one of three labels:
+**The app is not another list of public calls.** A dedicated agent, **Grant scout**, checks every call behind the scenes. The business only sees two kinds of result:
 
-- **Likely fits**: every rule we can check is met.
-- **Could fit, need info**: nothing rules it out, but a fact or document is missing. The card says exactly what is missing, for example "Yearly revenue" or "Proof of SME status".
-- **Not a fit**: hidden by default. A "Show all calls" switch shows them with the reason, for example "Only for companies with more than 50 staff".
+- **Strong fit**: every rule we can check is met and the topic matches what the business does. Shown on Action plan, and the best one on Home.
+- **One answer away**: the call looks strong, but a fact or document is needed to confirm it, for example "Yearly revenue" or "Proof of SME status". It appears as Grant scout's question, not as a listing, and becomes a Strong fit, or disappears, once answered.
 
-Each card says why it fits, in plain words, and links to the official source. When information is missing, an agent asks for it the way a consultant would. It asks one question per missing fact, groups requests across calls, and never asks twice for something already on file. Once the business answers or uploads a document, the matches update.
+Everything else, including non-fits, weak topic matches and calls with too many unknowns, is never shown. There is no "show all" switch, because the public portals already list everything.
+
+Each Strong fit says why it fits, in plain words, quotes the rule it meets, and links to the official call. Grant scout asks the way a consultant would: one question per missing fact, grouped across calls ("Add yearly revenue: confirms 2 calls"), never asking twice for something on file. When nothing fits, the page says so honestly and when Grant scout last checked.
 
 ## How matching works
 
@@ -39,8 +40,8 @@ Each card says why it fits, in plain words, and links to the official source. Wh
    Rules it can't read stay "unknown". Unknown rules never count as met or as failed. The same extraction is reused for every business, so cost stays flat as the user base grows.
 2. **Build the business picture from the shared company record.** It includes company facts, sites, revenue, staff, sector, country, Registry record (age, legal form), bill and bank data, uploaded documents and footprint. It reads the same source every page uses.
 3. **The match check is fixed code, not AI judgment.** Each rule is compared to the picture: met, failed or missing. The result can be reproduced and explained, and the result for each call is stored with the reasons.
-4. **Rank.** Likely fits come first, then those needing info, each ordered by deadline and how closely the topic fits the company's sector and footprint.
-5. **Ask for what's missing.** A new "Grant scout" agent (risk 1, internal only) gathers the missing facts across the top calls. It creates one task for each fact, such as "Add yearly revenue (unlocks 3 calls)". Each task has an input or an upload slot. Answers save to the company record through the existing company-update path, then matching re-runs. Verde can answer these too, still with approval.
+4. **Keep only strong candidates.** A call is shown only when no rule fails, the topic match to the company's sector and footprint passes a fixed threshold, and at most two facts are missing. Results are ordered by deadline.
+5. **Grant scout agent (risk 1, internal only).** It runs on the existing agent queue after each daily refresh and whenever company facts change. It reviews every call, stores the verdicts, and turns missing facts on strong candidates into grouped tasks with an input or upload slot. Answers save through the existing company-update path and trigger a re-check. Its run shows on Agents like every other agent; it can be paused and its steps are recorded. Verde can answer its questions too, still with approval.
 6. **Honest limits.** "Likely fits" means the stated rules are met. It is not a promise of an award. The page says so once, plainly.
 
 ## Greek text still in English
