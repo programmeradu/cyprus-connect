@@ -5,7 +5,7 @@
 
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { complianceRegulations, emissions } from "@/db/schema";
+import { emissions, obligations, workspaces } from "@/db/schema";
 import { logger } from "@/lib/log";
 import { parseGrid, type GridToday } from "./grid";
 
