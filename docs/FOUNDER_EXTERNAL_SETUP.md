@@ -310,4 +310,4 @@ What to do:
 1. Deploy first, wait ~5 minutes, then start the Ahrefs crawl (or schedule the crawl at a time you don't deploy).
 2. Re-run the crawl now; the JavaScript/CSS errors should clear.
 3. Optional, permanent fix (keeps older files available during deploys — "skew protection", experimental in OpenNext): create a Cloudflare API token with "Workers Scripts: Read", then tell Vuneli's builder so it can be switched on. Needs: CF_WORKERS_SCRIPTS_API_TOKEN, CF_ACCOUNT_ID, CF_WORKER_NAME, CF_PREVIEW_DOMAIN (your workers.dev subdomain) as build variables.
-4. The 30 short glossary descriptions are already fixed in the code; they go live with the next deploy.
+4. The short glossary descriptions (English and Greek) are fixed in the code and checked: all 104 now fall between 110 and 158 characters. They go live with the next deploy.
