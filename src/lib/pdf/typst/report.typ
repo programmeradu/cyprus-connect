@@ -38,7 +38,7 @@
   pagebreak(weak: true)
   block(below: 16pt)[
     #text(font: serif, size: 54pt, weight: 400, fill: pale)[#n]
-    #v(-30pt)
+    #v(-44pt)
     #text(font: serif, size: 24pt, weight: 600, fill: ink)[#title]
     #v(2pt)
     #line(length: 32mm, stroke: 2pt + accent)
@@ -54,7 +54,7 @@
     stroke: (x, y) => (top: if y == 0 { 0.8pt + ink } else { none },
       bottom: if y == 0 { 0.5pt + ink } else if y == rows.len() { 0.8pt + ink } else { 0.3pt + hair }),
     table.header(..header.map(h => text(size: 7.5pt, weight: 600, fill: ink)[#h])),
-    ..rows.flatten())
+    ..rows.enumerate().map(((i, r)) => if i == rows.len() - 1 and d.at("boldLast", default: true) { r.map(x => strong(x)) } else { r }).flatten())
 }
 
 // ---------- Cover: full-bleed forest ----------
