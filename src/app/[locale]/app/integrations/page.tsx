@@ -725,7 +725,7 @@ function IntegrationsContent() {
         return (
           <p className="vci-tile-note">
             {L("Find your company in Settings to link its register entry.", "Βρείτε την εταιρεία σας στις Ρυθμίσεις για να συνδέσετε την εγγραφή της.")}{" "}
-            <a href={`/${lang === "el" ? "el" : "en"}/app/settings`}>{L("Open Settings", "Άνοιγμα Ρυθμίσεων")}</a>
+            <a href={`/${locale}/app/settings`}>{L("Open Settings", "Άνοιγμα Ρυθμίσεων")}</a>
           </p>
         );
       }
