@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { ConsolePage, Plate, Reading, ReadingRail, Btn, Bar } from "@/components/app/console/kit";
 import { useWorkspaceAction, useWorkspaceResource } from "@/components/app/console/workspace-store";
-import { ConnectorTile } from "@/components/app/integrations/ConnectorTile";
+import { ConnectorTile, type TileFact } from "@/components/app/integrations/ConnectorTile";
 import { SaltEdgeModal } from "@/components/app/integrations/SaltEdgeModal";
 import { NangoModal } from "@/components/app/integrations/NangoModal";
 import { BillInboxBlock, BillPaymentsBlock, billPayNote } from "@/components/app/integrations/BillChecks";
@@ -888,7 +888,7 @@ function IntegrationsContent() {
             <p className="vci-group-note">{CATEGORY_NOTE[cat][locale]}</p>
             <div className="vci-grid">
               {items.map((c) => (
-                <ConnectorTile key={c.id} connector={c} locale={locale} status={statusFor(c)} action={actionFor(c)} detail={detailFor(c)} />
+                <ConnectorTile key={c.id} connector={c} locale={locale} status={statusFor(c)} action={actionFor(c)} detail={detailFor(c)} facts={factsFor(c)} />
               ))}
             </div>
           </Plate>
