@@ -92,7 +92,7 @@ export function MarketingHeader() {
       )}
 
       {/* Mobile controls — right-aligned glass pill, never overlaps the wordmark */}
-      <div className="pointer-events-auto absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-0.5 rounded-full bg-black/25 px-1.5 py-1.5 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 md:hidden">
+      <div className={`pointer-events-auto absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-0.5 rounded-full ${scrolled ? `}bg-[oklch(0.2_0.015_150)]/90 shadow-[0_12px_30px_-16px_rgba(0,0,0,0.5)]" : "bg-black/25"} transition-colors duration-300 px-1.5 py-1.5 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 md:hidden">
         <LanguageSwitcher overHero />
         <ThemeToggle overHero />
         <button
@@ -121,7 +121,7 @@ export function MarketingHeader() {
 
       {/* Desktop nav pill */}
       <div className="hidden w-full justify-center md:flex">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-black/25 px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
+        <div className={`pointer-events-auto flex items-center gap-1 rounded-full ${scrolled ? `}bg-[oklch(0.2_0.015_150)]/90 shadow-[0_12px_30px_-16px_rgba(0,0,0,0.5)]" : "bg-black/25"} transition-colors duration-300 px-3 py-2 ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150">
           <nav className="hidden items-center md:flex">
             <Link href="/tools" className="rounded-full px-4 py-1.5 text-[14px] font-medium text-white/85 transition-colors hover:text-white">
               {tNav("tools")}
