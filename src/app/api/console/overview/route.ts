@@ -192,7 +192,59 @@ export async function GET(req: Request) {
         })(),
         (async () => {
           console.log("[overview] Q: obs start");
-          const r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          let r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          if (r.length === 0) {
+            await db
+              .insert(obligations)
+              .values([
+                {
+                  id: `${workspaceId}_cbam_q3`,
+                  workspaceId,
+                  framework: "CBAM",
+                  title: "Q3 2026 declaration",
+                  dueDate: "2026-11-30",
+                  status: "planned",
+                  progressPct: 0,
+                  agentKey: "cbam",
+                  detail: "Quarterly declaration of embedded emissions for covered imports under EU CBAM.",
+                },
+                {
+                  id: `${workspaceId}_vsme_2026`,
+                  workspaceId,
+                  framework: "VSME",
+                  title: "Voluntary disclosure 2026",
+                  dueDate: "2026-12-31",
+                  status: "planned",
+                  progressPct: 0,
+                  agentKey: "reporter",
+                  detail: "EFRAG basic module sustainability disclosures requested by banks and corporate buyers.",
+                },
+                {
+                  id: `${workspaceId}_csrd_w3`,
+                  workspaceId,
+                  framework: "CSRD",
+                  title: "Wave 3 first report",
+                  dueDate: "2027-01-01",
+                  status: "planned",
+                  progressPct: 0,
+                  agentKey: "auditor",
+                  detail: "Double materiality assessment and ESRS data collection for upstream supply chains.",
+                },
+                {
+                  id: `${workspaceId}_energy_audit`,
+                  workspaceId,
+                  framework: "Cyprus law",
+                  title: "Energy audit renewal",
+                  dueDate: "2027-03-31",
+                  status: "planned",
+                  progressPct: 0,
+                  agentKey: "advisor",
+                  detail: "Periodic energy efficiency audit under Cyprus national law.",
+                },
+              ])
+              .onConflictDoNothing();
+            r = await db.select().from(obligations).where(eq(obligations.workspaceId, workspaceId)).orderBy(asc(obligations.dueDate));
+          }
           console.log("[overview] Q: obs done");
           return r;
         })(),

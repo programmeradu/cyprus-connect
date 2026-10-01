@@ -1,16 +1,29 @@
 /* Home ("what needs me today"). Built on the console tokens and the existing
    vc-plate surface, so light and dark follow the rest of the console. */
 
-.vch-deck { gap: clamp(12px, 1.4vw, 18px); padding-bottom: 28px; }
+.vch-deck {
+  gap: clamp(18px, 2vw, 28px);
+  padding-bottom: clamp(72px, 8vw, 104px);
+}
 
 .vch-grid-primary,
-.vch-grid-secondary { display: grid; gap: clamp(12px, 1.4vw, 18px); grid-template-columns: minmax(0, 1fr); }
+.vch-grid-secondary {
+  display: grid;
+  gap: clamp(16px, 1.8vw, 24px);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+}
 @media (min-width: 900px) {
   .vch-grid-primary { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
   .vch-grid-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (min-width: 1240px) {
   .vch-grid-secondary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.vch-grid-primary > .vc-plate,
+.vch-grid-secondary > .vc-plate {
+  height: 100%;
 }
 
 .vch-home .vc-plate > header > span { font-weight: 650; color: var(--vc-ink); font-size: 0.95rem; }
