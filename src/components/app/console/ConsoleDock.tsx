@@ -11,15 +11,15 @@
 
 import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
-import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoVuneliAi, IcoMenu } from "./icons";
+import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoMeasure, IcoAct, IcoVuneliAi, IcoMenu } from "./icons";
 import { MORE_ITEMS, navActive } from "./ConsoleTopbar";
 import { navText, onPage } from "./nav-sections";
 import { useLocale } from "next-intl";
 
 const DOCK_ITEMS = [
   { href: "/app", label: "Home", icon: IcoGrid },
-  { href: "/app/analytics", label: "Measure", icon: IcoPulse, section: "measure" },
-  { href: "/app/actions", label: "Act", icon: IcoLeaf, section: "act" },
+  { href: "/app/analytics", label: "Measure", icon: IcoMeasure, section: "measure" },
+  { href: "/app/actions", label: "Act", icon: IcoAct, section: "act" },
   { href: "/app/compliance", label: "Report", icon: IcoDoc, section: "report" },
   { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
 ];

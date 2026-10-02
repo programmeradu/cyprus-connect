@@ -18,7 +18,7 @@ import {
   IcoGrid,
   IcoLeaf,
   IcoPlug,
-  IcoPulse,
+  IcoPulse, IcoMeasure, IcoAct,
   IcoSearch,
   IcoVuneliAi,
 } from "./icons";
@@ -30,8 +30,8 @@ import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
 export const NAV_ITEMS = [
   { href: "/app", label: "Home", icon: IcoGrid },
-  { href: "/app/analytics", label: "Measure", icon: IcoPulse, section: "measure" },
-  { href: "/app/actions", label: "Act", icon: IcoLeaf, section: "act" },
+  { href: "/app/analytics", label: "Measure", icon: IcoMeasure, section: "measure" },
+  { href: "/app/actions", label: "Act", icon: IcoAct, section: "act" },
   { href: "/app/compliance", label: "Report", icon: IcoDoc, section: "report" },
   { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
   { href: "/app/integrations", label: "Connect", icon: IcoPlug },
