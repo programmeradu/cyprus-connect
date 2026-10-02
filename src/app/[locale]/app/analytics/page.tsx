@@ -135,7 +135,7 @@ function AnalyticsPage() {
                 label={t("water")}
                 value={(analyticsData.metrics.water.usageM3 ?? 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}
                 unit="m³"
-                note={analyticsData.metrics.water.value > 0 ? `${co2(analyticsData.metrics.water.value, t).value} ${co2(analyticsData.metrics.water.value, t).unit} CO₂e` : undefined}
+                note={analyticsData.metrics.water.value > 0 ? `${co2(analyticsData.metrics.water.value, t).value} ${co2(analyticsData.metrics.water.value, t).unit}` : undefined}
                 {...yoyDelta(analyticsData.metrics.water.change)}
               />
               <Metric

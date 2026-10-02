@@ -212,7 +212,9 @@
         "noInsights": "No insights yet",
         "noInsightsBody": "Insights are written automatically once analytics data is available."
       },
-      "latestMonth": "Latest month"
+      "latestMonth": "Latest month",
+      "kgMonth": "kg CO₂e this month",
+      "tonsMonth": "t CO₂e this month"
     },
     "marketplace": {
       "titleA": "Carbon Offset",
