@@ -4,7 +4,7 @@ Scoped rules: `src/lib/agents/AGENTS.md` (agent runtime, approvals, CBAM), `src/
 
 - Schema changes are plain SQL in `scripts/sql/`, mirrored in `src/db/schema.ts`. Why: drizzle folder is read-only; one migration path.
 - API bodies/uploads go through `src/lib/validate.ts`; `tests/api-input-guard.test.ts` enforces it. Why: caps and checks in one place.
-- Server errors use `logger(scope).error` (`src/lib/log.ts`); routes return its ref, never the raw error. Why: findable, no leaks.
+- Server errors use `logger(scope).error` (`src/lib/log.ts`); routes return its ref, never the raw error. Why: findable, safe.
 - Admin rights live only in `user_roles`, checked by `src/lib/admin-auth.ts`; QA identity is never admin. Why: profile edits can't grant admin.
 - /app pages read/write only via `workspace-store.ts` (`useWorkspaceResource`/`useWorkspaceAction`); `tests/app-data-guard.test.ts` enforces it. Why: one data copy.
 - Company facts have one home (profile: name/industry/size/country; workspace: sites/revenue), read via `company.server.ts`, written via `/api/console/company`. Why: one company everywhere.
@@ -23,4 +23,4 @@ Scoped rules: `src/lib/agents/AGENTS.md` (agent runtime, approvals, CBAM), `src/
 - Legal deadlines come from one fixed rulebook (`src/lib/obligations/rulebook.ts`) matched per workspace into `obligations` (applies/might/not, reason, source) by `obligations.server.ts`; rows people edit or add are never overwritten. EUR-Lex amendments to a rule's base law are stored in `law_watch` and mark the rule "under review" until a person confirms it. Why: deadlines only for businesses they apply to, reproducible, and no AI ever rewrites a legal date.
 - Model calls go only through `src/lib/lovable-ai.ts` (text: Groq if keyed, else Lovable gateway; images/embeddings: Lovable); gate features with `hasTextAi`/`hasDocumentAi`/`hasImageAi`/`hasEmbeddingAi`. Why: one provider switch.
 - All /app document uploads go through one intake reader (`src/lib/documents/`, `/api/console/documents/intake`); nothing is saved until the person confirms. Why: one door, no silent or duplicate figures.
-- Stripe: own account, one `STRIPE_SECRET_KEY` (prefix = test/live), webhook `/api/public/payments/webhook` dedupes via `stripe_events`; plan lists match built features. Why: no client-chosen mode or unkept promises.
+- Stripe: own account, one `STRIPE_SECRET_KEY` (prefix = test/live), webhook `/api/public/payments/webhook` dedupes via `stripe_events`; plan lists match built features. Why: no client-chosen mode, no unkept promises.
