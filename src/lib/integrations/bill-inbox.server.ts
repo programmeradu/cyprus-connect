@@ -200,5 +200,57 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
       detail: results.filter((r) => r.ok && !r.duplicate).map((r) => `${r.kind}: ${r.file}`).join(", ").slice(0, 400),
     });
   }
+  await sendReceipt(mail, from, subject, results);
   return { status: 200, results };
+}
+
+const AUTOMATED_SENDER = /^(no-?reply|do-?not-?reply|mailer-daemon|postmaster|bounces?|notifications?|alerts?)([+._-]|@)/i;
+
+/**
+ * Tells the sender their email reached Vuneli and what came of each file.
+ * Skipped for automated senders (auto-forwarded utility e-bills keep the
+ * board's no-reply address) so we never answer machines or create mail loops.
+ * A failed send is logged and never affects the bill result.
+ */
+async function sendReceipt(
+  mail: Awaited<ReturnType<typeof PostalMime.parse>>,
+  from: string | null,
+  subject: string | null,
+  results: InboxResult[],
+): Promise<void> {
+  if (!from || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(from)) return;
+  const domain = inboxDomain();
+  if (AUTOMATED_SENDER.test(from) || (domain && from.toLowerCase().endsWith("@" + domain))) return;
+  const header = (k: string) => mail.headers?.find((h) => h.key.toLowerCase() === k)?.value?.toLowerCase() ?? "";
+  const auto = header("auto-submitted");
+  if ((auto && auto !== "no") || /bulk|list|junk/.test(header("precedence")) || header("list-id")) return;
+
+  const lines = results.map((r) =>
+    r.ok
+      ? `- ${r.file}: ${r.duplicate ? "already in Vuneli, not added twice" : `added as ${r.kind === "electricity" ? "an electricity" : "a water"} bill`}`
+      : `- ${r.file === "—" ? "This email" : r.file}: not added. ${r.reason ?? ""}`.trim(),
+  );
+  const added = results.filter((r) => r.ok && !r.duplicate).length;
+  const text = [
+    "Hello,",
+    "",
+    `We received your email${subject ? ` "${subject}"` : ""} at Vuneli.`,
+    "",
+    ...lines,
+    "",
+    added > 0
+      ? "You can review the figures in Vuneli under Add data."
+      : "Nothing was added. You can upload the bill directly in Vuneli under Add data.",
+    "",
+    "This is an automatic message, there's no need to reply.",
+    "",
+    "Γεια σας, λάβαμε το email σας στη Vuneli. Δείτε τα αποτελέσματα στην ενότητα «Προσθήκη δεδομένων».",
+  ].join("\n");
+
+  try {
+    const { sendEmail } = await import("@/lib/email/send");
+    await sendEmail({ to: from, subject: subject ? `Received: ${subject}`.slice(0, 200) : "We received your bill", text });
+  } catch (error) {
+    console.log(`[bill-email] receipt not sent: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }
