@@ -20,6 +20,7 @@
 #set par(leading: 0.66em, spacing: 1.15em, justify: true)
 
 #set page(paper: "a4", margin: (top: 30mm, bottom: 24mm, left: 24mm, right: 24mm),
+  background: context if counter(page).get().first() > 1 { place(top + left, image("strip-band.jpg", width: 100%, height: 11mm, fit: "cover")) },
   header: context if counter(page).get().first() > 1 {
     set text(size: 7.5pt, fill: quiet)
     grid(columns: (1fr, auto), align: (left + bottom, right + bottom), column-gutter: 12pt,
