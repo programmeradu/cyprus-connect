@@ -420,7 +420,9 @@ export const offsetPurchases = pgTable('offset_purchases', {
   projectId: integer('project_id').notNull().references(() => offsetProjects.id, { onDelete: 'cascade' }),
   tonsPurchased: real('tons_purchased').notNull(),
   pricePaid: real('price_paid').notNull(),
-  stripePaymentId: text('stripe_payment_id').notNull(),
+  stripePaymentId: text('stripe_payment_id').notNull().unique(),
+  stripeInvoiceId: text('stripe_invoice_id'),
+  platformFeeCents: integer('platform_fee_cents'),
   certificateUrl: text('certificate_url'),
   certificateNumber: text('certificate_number').unique(),
   status: text('status').notNull(),
@@ -453,8 +455,18 @@ export const subscriptions = pgTable('subscriptions', {
   currentPeriodEnd: text('current_period_end'),
   cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
   trialEnd: text('trial_end'),
+  billingInterval: text('billing_interval'), // month | year
+  collectionMethod: text('collection_method'), // charge_automatically | send_invoice
   createdAt: text('created_at').notNull(),
   updatedAt: text('updated_at').notNull(),
+});
+
+// Each Stripe webhook event is handled once (scripts/sql/0042_stripe_billing.sql).
+export const stripeEvents = pgTable('stripe_events', {
+  id: text('id').primaryKey(),
+  type: text('type').notNull(),
+  livemode: boolean('livemode').notNull().default(false),
+  receivedAt: timestamp('received_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const paymentHistory = pgTable('payment_history', {
