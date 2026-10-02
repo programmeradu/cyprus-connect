@@ -1,4 +1,4 @@
-import { createStripeClient, type StripeEnv } from './server';
+import { createStripeClient } from './server';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlanId } from './config';
 import { db } from '@/db';
 import { subscriptions, paymentHistory, creditPurchases, user } from '@/db/schema';
@@ -53,11 +53,10 @@ export async function ensureFreeSubscription(userId: string) {
  * then falls back to email match, then creates.
  */
 export async function getOrCreateStripeCustomer(
-  env: StripeEnv,
   userId: string,
   email: string,
 ): Promise<string> {
-  const stripe = createStripeClient(env);
+  const stripe = createStripeClient();
 
   // 1) Local shortcut: reuse the customer id we already know about.
   const existing = await db
@@ -65,7 +64,16 @@ export async function getOrCreateStripeCustomer(
     .from(subscriptions)
     .where(eq(subscriptions.userId, userId))
     .limit(1);
-  if (existing[0]?.stripeCustomerId) return existing[0].stripeCustomerId;
+  // A customer id from the other mode (test vs live) is not valid here, so
+  // confirm it still exists before reusing it.
+  if (existing[0]?.stripeCustomerId) {
+    try {
+      const c = await stripe.customers.retrieve(existing[0].stripeCustomerId);
+      if (!('deleted' in c && c.deleted)) return c.id;
+    } catch {
+      // unknown in this mode — fall through and find or create one
+    }
+  }
 
   // 2) Search Stripe by userId metadata (survives DB resets, avoids dupes).
   if (/^[a-zA-Z0-9_-]+$/.test(userId)) {
