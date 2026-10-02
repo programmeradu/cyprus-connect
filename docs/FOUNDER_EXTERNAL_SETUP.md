@@ -346,3 +346,7 @@ What to do:
 ## Add data page (Oct 2026)
 - No new keys or migrations needed. After deploy, sign in and drop the EAC bill, the water bill and a bank CSV on **Add data** to check them.
 - Scanned (picture-only) PDFs are refused until the image-capable AI key (Gemini/Lovable gateway) is added; photos work with Groq.
+
+## Bill inbox (bills.vuneli.com) — 2 Oct 2026
+- Deploy the latest code: the app now forwards non-bill vuneli.com mail to your Gmail, and Worker logging stays on.
+- After deploying, the catch-all email rule is switched from "drop" to the app (done from chat once deploy is confirmed). Optional: set `MAIL_FALLBACK_TO` on the Worker to change where non-bill mail goes.
