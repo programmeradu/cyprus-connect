@@ -23,7 +23,7 @@ interface AnalyticsData {
   metrics: {
     totalEmissions: { value: number; change: number | null };
     energy: { value: number; change: number | null };
-    water: { value: number; change: number | null };
+    water: { value: number; change: number | null; usageM3?: number };
     waste: { value: number; change: number | null };
   };
   emissionsBreakdown: {
@@ -39,6 +39,12 @@ interface AnalyticsData {
     betterBy: number;
   } | null;
   currentPeriod: { month: number; year: number } | null;
+}
+
+/** Small footprints read as 0.00 t; show them in kg so a real figure never looks empty. */
+function co2(tonnes: number, t: (k: string) => string): { value: string; unit: string } {
+  if (tonnes > 0 && tonnes < 0.1) return { value: (tonnes * 1000).toLocaleString(undefined, { maximumFractionDigits: tonnes * 1000 < 10 ? 2 : 0 }), unit: t("kgMonth") };
+  return { value: tonnes.toFixed(2), unit: t("tonsMonth") };
 }
 
 export default function AnalyticsPage() {
@@ -117,26 +123,24 @@ export default function AnalyticsPage() {
             <MetricRow>
               <Metric
                 label={t("totalEmissions")}
-                value={analyticsData.metrics.totalEmissions.value.toFixed(2)}
-                unit={t("tonsPerYear")}
+                {...co2(analyticsData.metrics.totalEmissions.value, t)}
                 {...yoyDelta(analyticsData.metrics.totalEmissions.change)}
               />
               <Metric
                 label={t("energy")}
-                value={analyticsData.metrics.energy.value.toFixed(2)}
-                unit={t("tonsPerYear")}
+                {...co2(analyticsData.metrics.energy.value, t)}
                 {...yoyDelta(analyticsData.metrics.energy.change)}
               />
               <Metric
                 label={t("water")}
-                value={analyticsData.metrics.water.value.toFixed(2)}
-                unit={t("tonsPerYear")}
+                value={(analyticsData.metrics.water.usageM3 ?? 0).toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                unit="m³"
+                note={analyticsData.metrics.water.value > 0 ? `${co2(analyticsData.metrics.water.value, t).value} ${co2(analyticsData.metrics.water.value, t).unit}` : undefined}
                 {...yoyDelta(analyticsData.metrics.water.change)}
               />
               <Metric
                 label={t("waste")}
-                value={analyticsData.metrics.waste.value.toFixed(2)}
-                unit={t("tonsPerYear")}
+                {...co2(analyticsData.metrics.waste.value, t)}
                 {...yoyDelta(analyticsData.metrics.waste.change)}
               />
             </MetricRow>

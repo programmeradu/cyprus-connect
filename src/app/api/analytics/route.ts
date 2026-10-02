@@ -142,6 +142,8 @@ export async function GET(request: NextRequest) {
       },
       water: {
         value: cur ? cur.water : 0,
+        // Water's footprint is tiny, so the amount used (m³) is what people recognise.
+        usageM3: currentEmissions ? (Number(currentEmissions.water) || 0) / 1000 : 0,
         change: cur && prevT ? calculateYoYChange(cur.water, prevT.water) : null
       },
       waste: {
