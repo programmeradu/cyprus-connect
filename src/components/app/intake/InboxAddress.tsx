@@ -83,13 +83,18 @@ function LastEmail({ inbox }: { inbox: BillInboxSummary }) {
       </p>
     );
   }
-  const added = inbox.lastResult.filter((r) => r.ok && !r.duplicate).length;
+  const added = inbox.lastResult.filter((r) => r.ok && !r.duplicate && !r.pending).length;
+  const waiting = inbox.lastResult.filter((r) => r.pending).length;
   const from = inbox.lastMessageFrom ? L(` from ${inbox.lastMessageFrom}`, ` από ${inbox.lastMessageFrom}`) : "";
   return (
     <div className="vck-meta" style={{ overflowWrap: "anywhere" }} role="status">
       <p style={{ margin: 0 }}>
         <strong>{L(`Last email ${when}${from}: `, `Τελευταίο email ${when}${from}: `)}</strong>
-        {added === 1 ? L("1 bill added.", "προστέθηκε 1 λογαριασμός.") : L(`${added} bills added.`, `προστέθηκαν ${added} λογαριασμοί.`)}
+        {waiting > 0
+          ? waiting === 1
+            ? L("1 bill read and waiting for your check below.", "1 λογαριασμός διαβάστηκε και περιμένει τον έλεγχό σας παρακάτω.")
+            : L(`${waiting} bills read and waiting for your check below.`, `${waiting} λογαριασμοί διαβάστηκαν και περιμένουν τον έλεγχό σας παρακάτω.`)
+          : added === 1 ? L("1 bill added.", "προστέθηκε 1 λογαριασμός.") : L(`${added} bills added.`, `προστέθηκαν ${added} λογαριασμοί.`)}
       </p>
       {inbox.lastResult.filter((r) => !r.ok || r.duplicate).map((r, i) => (
         <p key={i} style={{ margin: "2px 0 0" }}>
