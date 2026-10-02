@@ -95,34 +95,42 @@ export async function closeBillInbox(userId: string): Promise<boolean> {
   return r.length > 0;
 }
 
-async function readOne(
-  userId: string,
-  fileName: string,
-  bytes: Uint8Array,
-  mime: string,
-  first: "electricity" | "water",
-): Promise<InboxResult> {
-  const order: ("electricity" | "water")[] = first === "electricity" ? ["electricity", "water"] : ["water", "electricity"];
-  const reasons: string[] = [];
-  for (const kind of order) {
-    if (kind === "water") {
-      const r = await readWaterBill(bytes, mime);
-      if (r.ok) {
-        const s = await saveWaterBill(userId, fileName, mime, bytes, r.bill);
-        return { file: fileName, kind, ok: true, duplicate: s.duplicate, reason: null };
-      }
-      reasons.push(r.reason);
-    } else {
-      const r = await readEacBill(bytes, mime);
-      if (r.ok) {
-        const s = await saveEacBill(userId, fileName, mime, bytes, r.bill);
-        return { file: fileName, kind, ok: true, duplicate: s.duplicate, reason: null };
-      }
-      reasons.push(r.reason);
-    }
+/**
+ * Reads one attachment with the same intake reader as an Add data upload and
+ * holds it as a pending document. Like an upload, nothing reaches company
+ * figures until the person checks it in Add data and presses add.
+ */
+async function readOne(userId: string, fileName: string, bytes: Uint8Array, kind: "pdf" | "png" | "jpeg" | "webp"): Promise<InboxResult> {
+  const result = await readDocument(userId, bytes, kind);
+  if (!result.ok) {
+    return { file: fileName, kind: null, ok: false, duplicate: false, reason: result.detail ? `Not added: ${result.detail}` : REJECT_TEXT[result.code] ?? "Not read as a bill Vuneli can use." };
   }
-  return { file: fileName, kind: null, ok: false, duplicate: false, reason: "Not read as an EAC or water bill. " + reasons[0] };
+  const p = result.proposal;
+  const billKind = p.kind === "eac_bill" ? "electricity" : p.kind === "water_bill" ? "water" : null;
+  if (p.warnings.includes("already_uploaded")) return { file: fileName, kind: billKind, ok: true, duplicate: true, reason: null };
+  const now = new Date().toISOString();
+  await db.insert(documents).values({
+    userId,
+    fileName: fileName.replace(/[\\/\x00-\x1f]+/g, "_").slice(0, 200),
+    fileType: kind,
+    fileSize: bytes.length,
+    fileUrl: `data:${mimeFor(kind)};base64,${Buffer.from(bytes).toString("base64")}`,
+    uploadSource: PENDING_SOURCE,
+    processingStatus: "proposed",
+    parsedData: JSON.stringify({ proposal: p, bill: result.bill ?? null, via: "email" }),
+    createdAt: now,
+    updatedAt: now,
+  });
+  return { file: fileName, kind: billKind, ok: true, duplicate: false, reason: null, pending: true };
 }
+
+const REJECT_TEXT: Partial<Record<string, string>> = {
+  not_relevant: "This doesn't look like a bill Vuneli can use for your footprint.",
+  unreadable: "The usage or billing period couldn't be read, so nothing was guessed.",
+  scanned_pdf: "This PDF is a scan with no text. Please upload a clear photo in Add data.",
+  no_figures: "No usage figures with dates were found.",
+  reader_off: "The bill reader is not set up yet.",
+};
 
 /**
  * Handles one forwarded message. Returns 404 for an unknown address so the
