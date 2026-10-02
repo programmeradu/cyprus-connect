@@ -20,7 +20,7 @@ const FONT_FILES = [
 ];
 
 /** Static files every template may reference by bare name. */
-const SHARED_ASSETS = ["logo.svg", "logo-white.svg", "contours-soft.png", "contours-ondark.png"];
+const SHARED_ASSETS = ["logo.svg", "logo-white.svg", "contours-soft.png", "contours-ondark.png", "cover-band.jpg", "strip-band.jpg"];
 
 export type TypstTemplate = "board.typ" | "report.typ" | "cbam.typ";
 
