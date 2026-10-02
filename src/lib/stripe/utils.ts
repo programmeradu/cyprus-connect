@@ -191,3 +191,50 @@ export async function recordCreditPurchase(
 export function getSubscriptionPlanDetails(planId: SubscriptionPlanId) {
   return SUBSCRIPTION_PLANS[planId];
 }
+
+/** Where Stripe sends people back to. Never taken from the request body. */
+export function appBaseUrl(req: { url: string }): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL;
+  return (configured || new URL(req.url).origin).replace(/\/+$/, '');
+}
+
+export function billingPageUrl(req: { url: string }, locale: 'en' | 'el', query = ''): string {
+  return `${appBaseUrl(req)}/${locale}/app/billing${query ? `?${query}` : ''}`;
+}
+
+export type InvoiceSummary = {
+  id: string;
+  number: string | null;
+  createdAt: string;
+  amount: number; // cents
+  currency: string;
+  status: string; // draft | open | paid | uncollectible | void
+  description: string;
+  hostedUrl: string | null;
+  pdfUrl: string | null;
+  dueDate: string | null;
+};
+
+/** Pure, exported for tests: a Stripe invoice -> what the Plan page shows. */
+export function summariseInvoice(inv: any): InvoiceSummary {
+  const line = inv.lines?.data?.[0];
+  return {
+    id: inv.id,
+    number: inv.number ?? null,
+    createdAt: new Date((inv.created ?? 0) * 1000).toISOString(),
+    amount: inv.status === 'paid' ? inv.amount_paid ?? inv.total ?? 0 : inv.amount_due ?? inv.total ?? 0,
+    currency: inv.currency || 'eur',
+    status: inv.status || 'open',
+    description: inv.description || line?.description || 'Vuneli',
+    hostedUrl: inv.hosted_invoice_url ?? null,
+    pdfUrl: inv.invoice_pdf ?? null,
+    dueDate: inv.due_date ? new Date(inv.due_date * 1000).toISOString() : null,
+  };
+}
+
+/** Finalised invoices (receipts and bank-transfer bills) for one customer. */
+export async function listInvoicesForCustomer(customerId: string, limit = 24): Promise<InvoiceSummary[]> {
+  const stripe = createStripeClient();
+  const res = await stripe.invoices.list({ customer: customerId, limit });
+  return res.data.filter((i) => i.status !== 'draft').map(summariseInvoice);
+}
