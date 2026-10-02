@@ -147,7 +147,7 @@ async function __vuneliEmail(message, env, _ctx) {
     method: "POST",
     headers: {
       "content-type": "message/rfc822",
-      "x-inbound-secret": env.INBOUND_EMAIL_SECRET,
+      "x-inbound-secret": String(env.INBOUND_EMAIL_SECRET).trim(),
       "x-envelope-to": message.to,
     },
     body: raw,
