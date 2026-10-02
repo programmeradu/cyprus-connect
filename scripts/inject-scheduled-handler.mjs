@@ -119,6 +119,17 @@ async function __vuneliEmail(message, env, _ctx) {
   if (env.HYPERDRIVE?.connectionString) {
     process.env.HYPERDRIVE_URL = env.HYPERDRIVE.connectionString;
   }
+  // The zone catch-all routes here so every <token>@bills address works.
+  // Mail for any other vuneli.com address is passed on to the founder inbox.
+  const __billDomain = String(env.BILL_INBOX_DOMAIN || "bills.vuneli.com").trim().toLowerCase();
+  const __toDomain = String(message.to || "").split("@").pop().toLowerCase();
+  if (__toDomain !== __billDomain) {
+    const __fallback = String(env.MAIL_FALLBACK_TO || "samueladu1970@gmail.com").trim();
+    console.log(\`[bill-email] non-bill address to=\${message.to}; forwarding\`);
+    try { await message.forward(__fallback); }
+    catch (err) { console.log("[bill-email] fallback forward failed: " + (err && err.message ? err.message : String(err))); }
+    return;
+  }
   if (!env.INBOUND_EMAIL_SECRET) {
     console.log("[bill-email] refused: INBOUND_EMAIL_SECRET is not set");
     message.setReject("This bill inbox is not set up yet.");
