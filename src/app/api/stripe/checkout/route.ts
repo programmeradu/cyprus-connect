@@ -1,121 +1,98 @@
-import { logger } from "@/lib/log";
+import { logger } from '@/lib/log';
 import { NextRequest, NextResponse } from 'next/server';
-import { createStripeClient, resolvePriceIdFromLookupKey, getStripeErrorMessage } from '@/lib/stripe/server';
-import { resolveStripeEnvFromRequest } from '@/lib/stripe/env';
-import {
-  SUBSCRIPTION_PLANS,
-  CREDIT_PACKAGES,
-  resolveStripeVariant,
-} from '@/lib/stripe/config';
-import { getOrCreateStripeCustomer, ensureFreeSubscription } from '@/lib/stripe/utils';
-import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
+import { z } from 'zod';
+import type Stripe from 'stripe';
+import {
+  createStripeClient,
+  resolvePriceIdFromLookupKey,
+  StripeNotConfiguredError,
+} from '@/lib/stripe/server';
+import { CREDIT_PACKAGES, lookupKeyFor } from '@/lib/stripe/config';
+import { getOrCreateStripeCustomer, ensureFreeSubscription, billingPageUrl } from '@/lib/stripe/utils';
+import { auth } from '@/lib/auth';
+import { readJson } from '@/lib/validate';
 
+const log = logger('api.stripe.checkout');
+
+const bodySchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('subscription'),
+    planId: z.enum(['pro', 'enterprise']),
+    interval: z.enum(['month', 'year']).default('month'),
+    locale: z.enum(['en', 'el']).default('en'),
+  }),
+  z.object({
+    type: z.literal('credits'),
+    packageId: z.enum(['small', 'medium', 'large']),
+    locale: z.enum(['en', 'el']).default('en'),
+  }),
+]);
+
+/**
+ * Starts a Stripe Checkout page. VAT is worked out by Stripe Tax from the
+ * billing address; a business can enter its VAT number so EU reverse charge
+ * applies. Card and SEPA Direct Debit are offered (all prices are EUR).
+ */
 export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session?.user) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 });
 
-    const body = await req.json();
-    const { type, planId, packageId, successUrl, cancelUrl, currency, locale } = body;
+    const parsed = await readJson(req, bodySchema);
+    if (!parsed.ok) return parsed.response;
+    const body = parsed.data;
 
-    const env = resolveStripeEnvFromRequest(req);
-    const stripe = createStripeClient(env);
-
-    // Guarantee a Free-tier row exists first — used as fallback if payment
-    // is cancelled and needed for the customer id backfill below.
+    const stripe = createStripeClient();
     await ensureFreeSubscription(session.user.id);
-    const customerId = await getOrCreateStripeCustomer(env, session.user.id, session.user.email);
-    const variant = resolveStripeVariant(currency);
-    const isEur = variant === 'eur';
+    const customerId = await getOrCreateStripeCustomer(session.user.id, session.user.email);
 
-    // Full compliance handling: Stripe handles tax + fraud + disputes +
-    // support end-to-end for buyers in the ~80 supported countries and
-    // falls back to tax calculation only for buyers elsewhere. Adds +3.5%
-    // per transaction. Customer bank statements show `LINK.COM* …`.
-    const managedPayments = { managed_payments: { enabled: true } as any };
+    const common = {
+      customer: customerId,
+      locale: body.locale as Stripe.Checkout.SessionCreateParams.Locale,
+      success_url: billingPageUrl(req, body.locale, 'checkout=success&session_id={CHECKOUT_SESSION_ID}'),
+      cancel_url: billingPageUrl(req, body.locale, 'checkout=canceled'),
+      automatic_tax: { enabled: true },
+      tax_id_collection: { enabled: true },
+      billing_address_collection: 'required' as const,
+      customer_update: { address: 'auto' as const, name: 'auto' as const },
+      payment_method_types: ['card', 'sepa_debit'] as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
+      allow_promotion_codes: true,
+    };
 
-    let checkoutSession;
-
-    if (type === 'subscription') {
-      const plan = SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS];
-      const lookupKey = isEur ? plan?.priceIdEur : plan?.priceId;
-      if (!plan || !lookupKey) {
-        return NextResponse.json(
-          { error: `Invalid plan or missing ${variant.toUpperCase()} price` },
-          { status: 400 },
-        );
-      }
-      const priceId = await resolvePriceIdFromLookupKey(stripe, lookupKey);
-
-      checkoutSession = await stripe.checkout.sessions.create({
-        customer: customerId,
+    let checkout: Stripe.Checkout.Session;
+    if (body.type === 'subscription') {
+      const priceId = await resolvePriceIdFromLookupKey(stripe, lookupKeyFor(body.planId, body.interval));
+      const meta = { userId: session.user.id, planId: body.planId, interval: body.interval, type: 'subscription' };
+      checkout = await stripe.checkout.sessions.create({
+        ...common,
         mode: 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url:
-          successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
-        cancel_url:
-          cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
-        locale: (locale === 'el' ? 'el' : 'en') as 'el' | 'en',
-        metadata: {
-          userId: session.user.id,
-          planId: plan.id,
-          type: 'subscription',
-          currency: variant,
-          managed_payments: 'true',
-        },
-        subscription_data: {
-          metadata: { userId: session.user.id, planId: plan.id, currency: variant },
-        },
-        ...managedPayments,
-      } as any);
-    } else if (type === 'credits') {
-      const package_ = CREDIT_PACKAGES[packageId as keyof typeof CREDIT_PACKAGES];
-      const lookupKey = isEur ? package_?.priceIdEur : package_?.priceId;
-      if (!package_ || !lookupKey) {
-        return NextResponse.json(
-          { error: `Invalid package or missing ${variant.toUpperCase()} price` },
-          { status: 400 },
-        );
-      }
-      const priceId = await resolvePriceIdFromLookupKey(stripe, lookupKey);
-
-      checkoutSession = await stripe.checkout.sessions.create({
-        customer: customerId,
+        metadata: meta,
+        subscription_data: { metadata: meta },
+      });
+    } else {
+      const pack = CREDIT_PACKAGES[body.packageId];
+      const priceId = await resolvePriceIdFromLookupKey(stripe, pack.lookupKey);
+      const meta = { userId: session.user.id, type: 'credits', packageId: pack.id, credits: String(pack.credits) };
+      checkout = await stripe.checkout.sessions.create({
+        ...common,
         mode: 'payment',
         line_items: [{ price: priceId, quantity: 1 }],
-        success_url:
-          successUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing&success=true`,
-        cancel_url:
-          cancelUrl || `${process.env.NEXT_PUBLIC_APP_URL}/app/settings?tab=billing`,
-        locale: (locale === 'el' ? 'el' : 'en') as 'el' | 'en',
-        payment_intent_data: {
-          description: `${package_.credits} AI Credits`,
-          metadata: {
-            userId: session.user.id,
-            type: 'credits',
-            packageId: package_.id,
-            credits: package_.credits.toString(),
-            currency: variant,
-          },
-        },
-        metadata: {
-          userId: session.user.id,
-          type: 'credits',
-          packageId: package_.id,
-          credits: package_.credits.toString(),
-          managed_payments: 'true',
-        },
-        ...managedPayments,
-      } as any);
-    } else {
-      return NextResponse.json({ error: 'Invalid checkout type' }, { status: 400 });
+        metadata: meta,
+        payment_intent_data: { description: `${pack.credits} AI credits`, metadata: meta },
+        // A proper VAT invoice for one-off purchases too.
+        invoice_creation: { enabled: true, invoice_data: { metadata: meta } },
+      });
     }
 
-    return NextResponse.json({ sessionId: checkoutSession.id, url: checkoutSession.url });
-  } catch (error: any) {
+    return NextResponse.json({ sessionId: checkout.id, url: checkout.url });
+  } catch (error) {
+    if (error instanceof StripeNotConfiguredError) {
+      return NextResponse.json({ error: error.message, code: 'PAYMENTS_OFF' }, { status: 503 });
+    }
     return NextResponse.json(
-      { error: 'Failed to create checkout session', ref: logger("api.stripe.checkout").error('request failed', error) },
+      { error: 'Could not open the payment page. Please try again.', ref: log.error('checkout failed', error) },
       { status: 500 },
     );
   }
