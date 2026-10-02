@@ -206,7 +206,7 @@
 .vch-adddata-stage { position: relative; flex: 0 0 auto; width: 112px; height: 116px; overflow: hidden; }
 .vch-adddata-reader, .vch-adddata-vault {
   position: absolute; bottom: 0; height: auto; z-index: 2;
-  filter: drop-shadow(0 10px 14px color-mix(in oklab, var(--vc-ink) 22%, transparent));
+  filter: drop-shadow(0 10px 14px rgb(0 0 0 / 0.28)); /* a shadow is always dark, in both themes */
 }
 .vch-adddata-reader { left: 0; width: 104px; }
 .vch-sheet {
