@@ -98,7 +98,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
         const features = t.raw(`features.${plan.id as "free" | "pro" | "enterprise"}`) as string[];
         const intervalLabel = plan.interval ? t(`intervals.${interval}`) : null;
         const displayPrice = priceFor(plan.id, interval);
-        const priceLabel = formatCurrency(displayPrice, currency, locale);
+        const priceLabel = formatCurrency(displayPrice, "EUR", locale);
 
         return (
           <div

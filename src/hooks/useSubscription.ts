@@ -49,11 +49,9 @@ export function useSubscription(): UseSubscriptionReturn {
       setError(null);
       
       const token = localStorage.getItem('bearer_token');
-      const { getStripeEnvironmentOrSandbox } = await import('@/lib/stripe/env');
       const response = await fetch('/api/stripe/subscription', {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
       });
 

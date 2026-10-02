@@ -24,7 +24,7 @@ const bodySchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('credits'),
-    packageId: z.enum(['small', 'medium', 'large']),
+    packageId: z.enum(['small', 'medium', 'large', 'credits_100', 'credits_500', 'credits_1000']),
     locale: z.enum(['en', 'el']).default('en'),
   }),
 ]);
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         subscription_data: { metadata: meta },
       });
     } else {
-      const pack = CREDIT_PACKAGES[body.packageId];
+      const pack = Object.entries(CREDIT_PACKAGES).find(([k, v]) => k === body.packageId || v.id === body.packageId)![1];
       const priceId = await resolvePriceIdFromLookupKey(stripe, pack.lookupKey);
       const meta = { userId: session.user.id, type: 'credits', packageId: pack.id, credits: String(pack.credits) };
       checkout = await stripe.checkout.sessions.create({
