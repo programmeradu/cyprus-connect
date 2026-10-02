@@ -18,8 +18,12 @@ const MAX_EMAIL_BYTES = 15 * 1024 * 1024;
 
 function authorized(req: NextRequest): boolean {
   const expected = process.env.INBOUND_EMAIL_SECRET?.trim();
-  const given = req.headers.get("x-inbound-secret") ?? "";
-  if (!expected || given.length !== expected.length) return false;
+  const given = (req.headers.get("x-inbound-secret") ?? "").trim();
+  if (!expected || given.length !== expected.length) {
+    // Lengths only — never the values — so a mismatch can be diagnosed.
+    console.log(`[bill-email] auth mismatch: expected=${expected ? expected.length : "unset"} given=${given.length}`);
+    return false;
+  }
   return timingSafeEqual(Buffer.from(given), Buffer.from(expected));
 }
 
