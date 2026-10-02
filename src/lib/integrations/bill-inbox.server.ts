@@ -13,14 +13,13 @@
 import { eq } from "drizzle-orm";
 import PostalMime from "postal-mime";
 import { db } from "@/db";
-import { activityEvents, billInboxes } from "@/db/schema";
+import { activityEvents, billInboxes, documents } from "@/db/schema";
 import { hasDocumentAi } from "@/lib/lovable-ai";
 import { checkUpload } from "@/lib/validate";
-import { readEacBill, saveEacBill } from "./eac.server";
-import { readWaterBill, saveWaterBill } from "./water.server";
-import { billHint, gmailConfirmation, newInboxToken, tokenFromAddress } from "./bill-inbox";
+import { readDocument, mimeFor } from "@/lib/documents/intake.server";
+import { gmailConfirmation, newInboxToken, tokenFromAddress } from "./bill-inbox";
 
-const MIME = { pdf: "application/pdf", png: "image/png", jpeg: "image/jpeg", webp: "image/webp" } as const;
+const PENDING_SOURCE = "intake_pending";
 const MAX_ATTACHMENTS = 5;
 /** Logos and signature images are small; a photographed bill is not. */
 const MIN_IMAGE_BYTES = 30 * 1024;
@@ -184,7 +183,7 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
       continue;
     }
     try {
-      results.push(await readOne(inbox.userId, name, bytes, MIME[verdict.kind as keyof typeof MIME], billHint(from, subject, name) ?? "water"));
+      results.push(await readOne(inbox.userId, name, bytes, verdict.kind as "pdf" | "png" | "jpeg" | "webp"));
     } catch {
       results.push({ file: name, kind: null, ok: false, duplicate: false, reason: "The bill could not be read just now." });
     }
@@ -203,8 +202,8 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
       workspaceId: inbox.workspaceId,
       actorType: "agent",
       actorName: "Bill inbox",
-      verb: "added",
-      object: added === 1 ? "1 forwarded bill" : `${added} forwarded bills`,
+      verb: "read",
+      object: added === 1 ? "1 forwarded bill, waiting for your check in Add data" : `${added} forwarded bills, waiting for your check in Add data`,
       detail: results.filter((r) => r.ok && !r.duplicate).map((r) => `${r.kind}: ${r.file}`).join(", ").slice(0, 400),
     });
   }
@@ -235,7 +234,7 @@ async function sendReceipt(
 
   const lines = results.map((r) =>
     r.ok
-      ? `- ${r.file}: ${r.duplicate ? "already in Vuneli, not added twice" : `added as ${r.kind === "electricity" ? "an electricity" : "a water"} bill`}`
+      ? `- ${r.file}: ${r.duplicate ? "already in Vuneli, not added twice" : `read${r.kind ? ` as ${r.kind === "electricity" ? "an electricity" : "a water"} bill` : ""}, waiting for your check in Add data`}`
       : `- ${r.file === "—" ? "This email" : r.file}: not added. ${r.reason ?? ""}`.trim(),
   );
   const added = results.filter((r) => r.ok && !r.duplicate).length;
@@ -247,7 +246,7 @@ async function sendReceipt(
     ...lines,
     "",
     added > 0
-      ? "You can review the figures in Vuneli under Add data."
+      ? "Open Add data in Vuneli to check the figures and add them to your footprint."
       : "Nothing was added. You can upload the bill directly in Vuneli under Add data.",
     "",
     "This is an automatic message, there's no need to reply.",
