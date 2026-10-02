@@ -22,6 +22,7 @@
 #set par(leading: 0.6em, spacing: 1em)
 
 #set page(paper: "a4", margin: (top: 27mm, bottom: 22mm, left: 18mm, right: 18mm),
+  background: place(top + left, image("strip-band.jpg", width: 100%, height: 11mm, fit: "cover")),
   header: context {
     set text(size: 7.5pt, fill: quiet)
     grid(columns: (auto, 1fr, auto), align: (left + horizon, center + horizon, right + horizon), column-gutter: 10pt,
