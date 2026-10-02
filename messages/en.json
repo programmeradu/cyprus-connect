@@ -26,7 +26,7 @@
   "pricing": {
     "titleA": "Simple, Transparent",
     "titleB": "Pricing",
-    "subtitle": "Choose the perfect plan for your sustainability journey. All plans include our core features with no hidden fees.",
+    "subtitle": "Three plans, prices include Cyprus VAT. Pay monthly, or yearly and get two months free.",
     "vatNoticeCY": "Prices shown include Cyprus VAT (19%). Invoices are issued by Vuneli in EUR.",
     "eurNotice": "Cyprus-only checkout in EUR.",
     "faqTitleA": "Frequently Asked",
@@ -36,13 +36,13 @@
       "q1": "Can I change plans at any time?",
       "a1": "Yes! You can upgrade or downgrade your plan at any time. Changes are prorated and reflected in your next billing cycle.",
       "q2": "What payment methods do you accept?",
-      "a2": "For EU customers (including Cyprus), we accept all major credit and debit cards (Visa, Mastercard, American Express) via Stripe, in EUR. SEPA Direct Debit is available on annual plans.",
+      "a2": "Card or SEPA Direct Debit, in EUR, through Stripe. Enterprise customers can also pay by invoice and bank transfer.",
       "q3": "What happens to unused AI credits?",
-      "a3": "AI credits reset monthly on your billing date. Professional includes 500 credits/month; Enterprise is unlimited.",
+      "a3": "Monthly AI credits come with your plan: 100 on Free, 1,000 on Pro and 10,000 on Enterprise. You can buy extra credit packs any time.",
       "q4": "What happens if I cancel?",
-      "a4": "You can cancel any time. Your account stays active until the end of the current billing period, then moves to the free plan.",
-      "q5": "Do you offer discounts for annual billing?",
-      "a5": "Yes - contact sales for annual billing with up to 20% savings."
+      "a4": "You can cancel any time from Settings, Plan. Your plan stays active until the end of the period you paid for, then moves to Free.",
+      "q5": "Is there a discount for paying yearly?",
+      "a5": "Yes. Yearly plans cost ten months, so you get two months free."
     },
     "ctaTitleA": "Ready to Start Your",
     "ctaTitleB": "Sustainability Journey?",
@@ -1934,39 +1934,34 @@
       },
       "features": {
         "free": [
-          "Basic carbon calculator",
-          "Up to 10 actions per month",
-          "Monthly sustainability reports",
-          "Email support",
-          "100 AI credits/month"
+          "Footprint from the bills you upload or forward by email",
+          "Legal deadlines that apply to your business",
+          "Verde, your copilot, with 100 AI credits a month",
+          "Up to 10 agent actions a month"
         ],
         "pro": [
           "Everything in Free",
-          "Unlimited actions",
-          "Advanced carbon analytics",
-          "Weekly sustainability insights",
-          "Priority email support",
-          "1,000 AI credits/month",
-          "Up to 5 team members",
-          "3 integrations (QuickBooks, Xero, etc.)",
-          "Custom branded reports",
-          "API access"
+          "Unlimited agent actions",
+          "1,000 AI credits a month",
+          "Board Summary and report PDFs anyone can verify",
+          "Supplier list with EU sanctions screening",
+          "Funding calls matched to your business",
+          "Priority email support"
         ],
         "enterprise": [
           "Everything in Pro",
-          "Unlimited team members",
-          "Unlimited integrations",
-          "White-label reports",
-          "Dedicated account manager",
-          "Custom AI model training",
-          "SLA guarantee (99.9% uptime)",
-          "10,000 AI credits/month",
-          "Advanced compliance tools",
-          "API rate limit: 100k/day",
-          "SSO & advanced security"
+          "10,000 AI credits a month",
+          "CBAM reports with official EU values",
+          "Pay by invoice and bank transfer",
+          "Set-up help from the Vuneli team"
         ]
       },
-      "vatIncluded": "Incl. {pct}% VAT (Cyprus)"
+      "vatIncluded": "Incl. {pct}% VAT (Cyprus)",
+      "billingCycle": "Billing cycle",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlySaving": "Yearly: two months free",
+      "paymentsOff": "Payments aren't switched on yet. Please try again soon."
     },
     "dashboard": {
       "signInRequired": "Please sign in to view billing information",
@@ -1995,6 +1990,27 @@
         "failed": "failed",
         "pending": "pending",
         "refunded": "refunded"
+      },
+      "pastDueTitle": "Your last payment didn't go through",
+      "pastDueBody": "Your plan keeps working for now. Pay the open invoice or update your card or bank details.",
+      "payNow": "Pay now",
+      "updatePayment": "Update payment details",
+      "sortPayment": "Sort out payment",
+      "paidByInvoice": "Paid by invoice and bank transfer",
+      "invoicesTitle": "Invoices",
+      "invoicesHint": "VAT invoices for every payment. Download the PDF for your accountant.",
+      "invoicesUnavailable": "Invoices can't be loaded right now. Please try again later.",
+      "noInvoices": "No invoices yet",
+      "testMode": "Test mode: payments here are not real.",
+      "paymentsOffBanner": "Payments aren't switched on yet, so plans can't be bought right now.",
+      "invoice": {
+        "paid": "Paid",
+        "open": "Open",
+        "overdue": "Overdue",
+        "void": "Cancelled",
+        "uncollectible": "Unpaid",
+        "due": "due {date}",
+        "downloadAria": "Download invoice {number} as PDF"
       }
     }
   },
