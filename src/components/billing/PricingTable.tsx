@@ -1,8 +1,5 @@
 "use client";
-import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
-
-
-import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE } from "@/lib/stripe/config";
+import { SUBSCRIPTION_PLANS, CYPRUS_VAT_RATE, priceFor, type BillingInterval } from "@/lib/stripe/config";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -16,11 +13,11 @@ interface PricingTableProps {
 
 export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
+  const [interval, setInterval] = useState<BillingInterval>("month");
   const router = useRouter();
   const locale = useLocale();
   // Vuneli is Cyprus-only: every plan is billed in EUR, in both locales.
   const isEur = true;
-  const currency = "EUR";
 
   const t = useTranslations("billing.pricingTable");
 
@@ -42,14 +39,13 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
         headers: {
  "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
- "X-Stripe-Env": getStripeEnvironmentOrSandbox(),
         },
-        body: JSON.stringify({ type: "subscription", planId, currency, locale }),
+        body: JSON.stringify({ type: "subscription", planId, interval, locale: locale === "el" ? "el" : "en" }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || t("checkoutFailed"));
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.code === "PAYMENTS_OFF" ? t("paymentsOff") : error.error || t("checkoutFailed"));
       }
 
       const { url } = await response.json();
@@ -74,16 +70,34 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
   ];
 
   return (
+    <div>
+    <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+      <div role="radiogroup" aria-label={t("billingCycle")} className="inline-flex rounded-full border border-border/70 bg-muted/30 p-1">
+        {(["month", "year"] as const).map((iv) => (
+          <button
+            key={iv}
+            type="button"
+            role="radio"
+            aria-checked={interval === iv}
+            onClick={() => setInterval(iv)}
+            className={`h-9 rounded-full px-4 text-[14px] font-semibold transition-colors ${
+              interval === iv ? "bg-foreground text-background" : "text-foreground/70 hover:text-foreground"
+            }`}
+          >
+            {iv === "month" ? t("monthly") : t("yearly")}
+          </button>
+        ))}
+      </div>
+      <span className="text-[13.5px] font-medium text-foreground/60">{t("yearlySaving")}</span>
+    </div>
     <div className="grid grid-cols-1 gap-px bg-border/60 md:grid-cols-3">
       {plans.map((plan, index) => {
         const isCurrentPlan = plan.id === currentPlanId;
         const isPopular = Boolean((plan as any).popular);
         const planName = t(`planNames.${plan.id as "free" | "pro" | "enterprise"}`);
         const features = t.raw(`features.${plan.id as "free" | "pro" | "enterprise"}`) as string[];
-        const intervalLabel = plan.interval
-          ? t(`intervals.${plan.interval as "month" | "year"}`)
-          : null;
-        const displayPrice = isEur ? plan.priceEur : plan.price;
+        const intervalLabel = plan.interval ? t(`intervals.${interval}`) : null;
+        const displayPrice = priceFor(plan.id, interval);
         const priceLabel = formatCurrency(displayPrice, currency, locale);
 
         return (
@@ -174,6 +188,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
           </div>
         );
       })}
+    </div>
     </div>
   );
 };
