@@ -1022,7 +1022,8 @@ export const billInboxes = pgTable('bill_inboxes', {
   lastMessageAt: timestamp('last_message_at'),
   lastMessageFrom: text('last_message_from'),
   lastMessageSubject: text('last_message_subject'),
-  lastResult: jsonb('last_result').$type<{ file: string; kind: 'water' | 'electricity' | null; ok: boolean; duplicate: boolean; reason: string | null }[]>().notNull().default([]),
+  // pending: read and waiting in Add data for the person to check (nothing counted yet).
+  lastResult: jsonb('last_result').$type<{ file: string; kind: 'water' | 'electricity' | null; ok: boolean; duplicate: boolean; reason: string | null; pending?: boolean }[]>().notNull().default([]),
   confirmation: jsonb('confirmation').$type<{ provider: 'gmail'; code: string | null; link: string | null; at: string } | null>(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

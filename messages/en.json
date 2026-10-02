@@ -1699,7 +1699,8 @@
       "accept": {
         "title": "What we can read",
         "not": "Internet, phone, software and other service invoices don't feed your footprint, so they are turned away."
-      }
+      },
+      "viaEmail": "Arrived by email"
     }
   },
   "onboarding": {
