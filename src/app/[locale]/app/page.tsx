@@ -25,6 +25,7 @@ import { exportFileName } from "@/components/app/console/export-csv";
 import { WaitingForYou } from "@/components/app/dashboard/home/WaitingForYou";
 import { SetupChecklist } from "@/components/app/dashboard/home/SetupChecklist";
 import { AddDataCard } from "@/components/app/dashboard/home/AddDataCard";
+import { BillingNotice } from "@/components/app/dashboard/home/BillingNotice";
 import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
 import { FirstVisitTour } from "@/components/app/dashboard/home/FirstVisitTour";
 import { AgentsDidPlate, MoneyPlate, NextDeadlinePlate, WhatChangedPlate } from "@/components/app/dashboard/home/HomePlates";
@@ -202,6 +203,7 @@ export default function ConsolePage() {
         </div>
 
         <div className="vc-deck vch-deck">
+          <BillingNotice />
           <SetupChecklist data={data} />
           <AddDataCard />
 

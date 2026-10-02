@@ -230,7 +230,7 @@ export const BillingDashboard = () => {
           <p className="mt-1 text-xs text-muted-foreground">{t('pastDueBody')}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {openInvoice?.hostedUrl && (
-              <a href={openInvoice.hostedUrl} target="_blank" rel="noopener noreferrer" className="vch-btn vch-btn--primary text-xs">
+              <a href={openInvoice.hostedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground">
                 {t('payNow')}
               </a>
             )}
