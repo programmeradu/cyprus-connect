@@ -1,35 +1,32 @@
 "use client";
 
-/**
- * Renders a banner at the top of any payments page so preview users see
- * they're in test mode. Hidden in live mode with a valid token; shows a
- * red "not configured" banner when the token is missing (project published
- * before Stripe go-live finished).
- */
-const clientToken =
-  process.env.NEXT_PUBLIC_PAYMENTS_CLIENT_TOKEN ||
-  process.env.VITE_PAYMENTS_CLIENT_TOKEN;
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import type { PaymentsStatus } from "@/lib/stripe/env";
 
+/**
+ * Tells people on the Plan page when payments are in test mode or not
+ * switched on yet. The server decides the mode from the Stripe key.
+ */
 export function PaymentTestModeBanner() {
-  if (!clientToken) {
-    return (
-      <div
-        className="w-full bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-center text-sm font-medium text-amber-900 dark:text-amber-200"
-        role="status"
-      >
-        Billing is currently in private preview for Cyprus pilot enterprises. Reach out to advisors to activate your tier.
-      </div>
-    );
-  }
-  if (clientToken.startsWith("pk_test_")) {
-    return (
-      <div
-        className="w-full bg-amber-500/10 border-b border-amber-500/20 px-4 py-2.5 text-center text-sm font-medium text-amber-900 dark:text-amber-200"
-        role="status"
-      >
-        Preview / test billing mode active for Cyprus pilot enterprises. Reach out to advisors to configure production settlements.
-      </div>
-    );
-  }
-  return null;
+  const t = useTranslations("billing.dashboard");
+  const [status, setStatus] = useState<PaymentsStatus | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/stripe/status", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => alive && setStatus(s))
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  if (!status || status.mode === "live") return null;
+  return (
+    <div role="status" className="w-full border-b border-amber-500/25 bg-amber-500/10 px-4 py-2.5 text-center text-sm font-medium text-amber-900 dark:text-amber-200">
+      {status.configured ? t("testMode") : t("paymentsOffBanner")}
+    </div>
+  );
 }

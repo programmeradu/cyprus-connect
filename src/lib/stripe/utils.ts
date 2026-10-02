@@ -1,4 +1,4 @@
-import { createStripeClient, type StripeEnv } from './server';
+import { createStripeClient } from './server';
 import { SUBSCRIPTION_PLANS, type SubscriptionPlanId } from './config';
 import { db } from '@/db';
 import { subscriptions, paymentHistory, creditPurchases, user } from '@/db/schema';
@@ -53,11 +53,10 @@ export async function ensureFreeSubscription(userId: string) {
  * then falls back to email match, then creates.
  */
 export async function getOrCreateStripeCustomer(
-  env: StripeEnv,
   userId: string,
   email: string,
 ): Promise<string> {
-  const stripe = createStripeClient(env);
+  const stripe = createStripeClient();
 
   // 1) Local shortcut: reuse the customer id we already know about.
   const existing = await db
@@ -65,7 +64,16 @@ export async function getOrCreateStripeCustomer(
     .from(subscriptions)
     .where(eq(subscriptions.userId, userId))
     .limit(1);
-  if (existing[0]?.stripeCustomerId) return existing[0].stripeCustomerId;
+  // A customer id from the other mode (test vs live) is not valid here, so
+  // confirm it still exists before reusing it.
+  if (existing[0]?.stripeCustomerId) {
+    try {
+      const c = await stripe.customers.retrieve(existing[0].stripeCustomerId);
+      if (!('deleted' in c && c.deleted)) return c.id;
+    } catch {
+      // unknown in this mode — fall through and find or create one
+    }
+  }
 
   // 2) Search Stripe by userId metadata (survives DB resets, avoids dupes).
   if (/^[a-zA-Z0-9_-]+$/.test(userId)) {
@@ -182,4 +190,51 @@ export async function recordCreditPurchase(
 
 export function getSubscriptionPlanDetails(planId: SubscriptionPlanId) {
   return SUBSCRIPTION_PLANS[planId];
+}
+
+/** Where Stripe sends people back to. Never taken from the request body. */
+export function appBaseUrl(req: { url: string }): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL;
+  return (configured || new URL(req.url).origin).replace(/\/+$/, '');
+}
+
+export function billingPageUrl(req: { url: string }, locale: 'en' | 'el', query = ''): string {
+  return `${appBaseUrl(req)}/${locale}/app/billing${query ? `?${query}` : ''}`;
+}
+
+export type InvoiceSummary = {
+  id: string;
+  number: string | null;
+  createdAt: string;
+  amount: number; // cents
+  currency: string;
+  status: string; // draft | open | paid | uncollectible | void
+  description: string;
+  hostedUrl: string | null;
+  pdfUrl: string | null;
+  dueDate: string | null;
+};
+
+/** Pure, exported for tests: a Stripe invoice -> what the Plan page shows. */
+export function summariseInvoice(inv: any): InvoiceSummary {
+  const line = inv.lines?.data?.[0];
+  return {
+    id: inv.id,
+    number: inv.number ?? null,
+    createdAt: new Date((inv.created ?? 0) * 1000).toISOString(),
+    amount: inv.status === 'paid' ? inv.amount_paid ?? inv.total ?? 0 : inv.amount_due ?? inv.total ?? 0,
+    currency: inv.currency || 'eur',
+    status: inv.status || 'open',
+    description: inv.description || line?.description || 'Vuneli',
+    hostedUrl: inv.hosted_invoice_url ?? null,
+    pdfUrl: inv.invoice_pdf ?? null,
+    dueDate: inv.due_date ? new Date(inv.due_date * 1000).toISOString() : null,
+  };
+}
+
+/** Finalised invoices (receipts and bank-transfer bills) for one customer. */
+export async function listInvoicesForCustomer(customerId: string, limit = 24): Promise<InvoiceSummary[]> {
+  const stripe = createStripeClient();
+  const res = await stripe.invoices.list({ customer: customerId, limit });
+  return res.data.filter((i) => i.status !== 'draft').map(summariseInvoice);
 }

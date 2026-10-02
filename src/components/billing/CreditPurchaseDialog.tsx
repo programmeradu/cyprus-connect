@@ -1,5 +1,4 @@
 "use client";
-import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -35,7 +34,6 @@ export const CreditPurchaseDialog = ({ open, onOpenChange }: CreditPurchaseDialo
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
-          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
         body: JSON.stringify({
           type: 'credits',

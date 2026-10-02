@@ -1,30 +1,36 @@
-// Client-safe Stripe configuration (no secrets)
-// This file can be imported by both client and server code
+// Client-safe Stripe configuration (no secrets).
+// Imported by both browser and server code.
+//
+// Every plan lists only what the product does today. Feature wording lives
+// in messages/{en,el}.json under billing.pricingTable.features; the English
+// copy below must match it (tests/stripe-billing.test.ts checks this and
+// rejects promises of things that are not built).
 
-// Cyprus VAT (standard rate, 2026). Applied automatically by Stripe Tax
-// when the customer's billing country is CY. The constant is exported for
-// UI-side "incl. 19% VAT" hints only — never for computing charges.
+// Cyprus VAT (standard rate). Stripe Tax applies it at checkout; this
+// constant is only for the "incl. 19% VAT" hint, never for charging.
 export const CYPRUS_VAT_RATE = 0.19;
 
-// Subscription Plans Configuration.
-// Prices are gross EUR for the EU (Cyprus-based merchant) and gross USD
-// for the rest of the world. Stripe Tax computes VAT from the billing
-// address at checkout; the shown prices are tax-inclusive for EU customers.
+export type BillingInterval = 'month' | 'year';
+
+/** Yearly price = 10 x monthly (two months free). */
+export const YEARLY_MONTHS_CHARGED = 10;
+
+// Prices are gross EUR (VAT included). Lookup keys are stable names that
+// exist in both test and live Stripe (created by scripts/stripe-setup.ts).
 export const SUBSCRIPTION_PLANS = {
   free: {
     id: 'free',
     name: 'Free',
     price: 0,
     priceEur: 0,
-    priceId: null,
-    priceIdEur: null,
+    priceYearEur: 0,
+    lookupKeys: null,
     interval: null,
     features: [
-      'Basic carbon calculator',
-      'Up to 10 actions per month',
-      'Monthly sustainability reports',
-      'Email support',
-      '100 AI credits/month',
+      'Footprint from the bills you upload or forward by email',
+      'Legal deadlines that apply to your business',
+      'Verde, your copilot, with 100 AI credits a month',
+      'Up to 10 agent actions a month',
     ],
     limits: {
       actionsPerMonth: 10,
@@ -41,23 +47,19 @@ export const SUBSCRIPTION_PLANS = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 49,
+    price: 45,
     priceEur: 45,
-    // Stable lookup_keys created in Lovable Payments (test + live parity)
-    priceId: 'pro_monthly_usd',
-    priceIdEur: 'pro_monthly_eur',
+    priceYearEur: 45 * YEARLY_MONTHS_CHARGED,
+    lookupKeys: { month: 'pro_monthly_eur', year: 'pro_yearly_eur' },
     interval: 'month',
     features: [
       'Everything in Free',
-      'Unlimited actions',
-      'Advanced carbon analytics',
-      'Weekly sustainability insights',
+      'Unlimited agent actions',
+      '1,000 AI credits a month',
+      'Board Summary and report PDFs anyone can verify',
+      'Supplier list with EU sanctions screening',
+      'Funding calls matched to your business',
       'Priority email support',
-      '1,000 AI credits/month',
-      'Up to 5 team members',
-      '3 integrations (QuickBooks, Xero, etc.)',
-      'Custom branded reports',
-      'API access',
     ],
     limits: {
       actionsPerMonth: -1,
@@ -74,23 +76,17 @@ export const SUBSCRIPTION_PLANS = {
   enterprise: {
     id: 'enterprise',
     name: 'Enterprise',
-    price: 199,
+    price: 185,
     priceEur: 185,
-    priceId: 'enterprise_monthly_usd',
-    priceIdEur: 'enterprise_monthly_eur',
+    priceYearEur: 185 * YEARLY_MONTHS_CHARGED,
+    lookupKeys: { month: 'enterprise_monthly_eur', year: 'enterprise_yearly_eur' },
     interval: 'month',
     features: [
       'Everything in Pro',
-      'Unlimited team members',
-      'Unlimited integrations',
-      'White-label reports',
-      'Dedicated account manager',
-      'Custom AI model training',
-      'SLA guarantee (99.9% uptime)',
-      '10,000 AI credits/month',
-      'Advanced compliance tools',
-      'API rate limit: 100k/day',
-      'SSO & advanced security',
+      '10,000 AI credits a month',
+      'CBAM reports with official EU values',
+      'Pay by invoice and bank transfer',
+      'Set-up help from the Vuneli team',
     ],
     limits: {
       actionsPerMonth: -1,
@@ -106,45 +102,41 @@ export const SUBSCRIPTION_PLANS = {
   },
 } as const;
 
-// Credit packages for one-time purchases
+// One-time AI credit packs (EUR, VAT included).
 export const CREDIT_PACKAGES = {
-  small: {
-    id: 'credits_100',
-    credits: 100,
-    price: 9.99,
-    priceEur: 8.99,
-    priceId: 'credits_100_usd',
-    priceIdEur: 'credits_100_eur',
-  },
-  medium: {
-    id: 'credits_500',
-    credits: 500,
-    price: 39.99,
-    priceEur: 35.99,
-    priceId: 'credits_500_usd',
-    priceIdEur: 'credits_500_eur',
-    discount: 20,
-  },
-  large: {
-    id: 'credits_1000',
-    credits: 1000,
-    price: 69.99,
-    priceEur: 62.99,
-    priceId: 'credits_1000_usd',
-    priceIdEur: 'credits_1000_eur',
-    discount: 30,
-  },
-
+  small: { id: 'credits_100', credits: 100, price: 8.99, priceEur: 8.99, lookupKey: 'credits_100_eur' },
+  medium: { id: 'credits_500', credits: 500, price: 35.99, priceEur: 35.99, lookupKey: 'credits_500_eur', discount: 20 },
+  large: { id: 'credits_1000', credits: 1000, price: 62.99, priceEur: 62.99, lookupKey: 'credits_1000_eur', discount: 30 },
 } as const;
 
 export type SubscriptionPlanId = keyof typeof SUBSCRIPTION_PLANS;
+export type PaidPlanId = Exclude<SubscriptionPlanId, 'free'>;
 export type CreditPackageId = keyof typeof CREDIT_PACKAGES;
 
-/**
- * Resolve which Stripe currency variant to charge based on the requested
- * currency. EUR prices are used for EU/Cyprus checkouts (Stripe Tax then
- * layers 19% VAT for CY customers); USD is the default elsewhere.
- */
-export function resolveStripeVariant(currency?: string): 'eur' | 'usd' {
-  return (currency || '').toUpperCase() === 'EUR' ? 'eur' : 'usd';
+export function lookupKeyFor(planId: PaidPlanId, interval: BillingInterval): string {
+  return SUBSCRIPTION_PLANS[planId].lookupKeys[interval];
 }
+
+/** Pure: lookup key -> plan + interval. Unknown keys map to free. */
+export function planFromLookupKey(lookupKey?: string | null): { planId: SubscriptionPlanId; interval: BillingInterval | null } {
+  for (const id of ['pro', 'enterprise'] as const) {
+    const keys = SUBSCRIPTION_PLANS[id].lookupKeys;
+    if (lookupKey === keys.month) return { planId: id, interval: 'month' };
+    if (lookupKey === keys.year) return { planId: id, interval: 'year' };
+  }
+  // Older keys from the first integration (e.g. "pro_monthly_usd").
+  if (lookupKey?.startsWith('pro_')) return { planId: 'pro', interval: lookupKey.includes('year') ? 'year' : 'month' };
+  if (lookupKey?.startsWith('enterprise_')) return { planId: 'enterprise', interval: lookupKey.includes('year') ? 'year' : 'month' };
+  return { planId: 'free', interval: null };
+}
+
+export function priceFor(planId: SubscriptionPlanId, interval: BillingInterval): number {
+  const p = SUBSCRIPTION_PLANS[planId];
+  return interval === 'year' ? p.priceYearEur : p.priceEur;
+}
+
+/**
+ * Vuneli's share of each marketplace sale, recorded on the order. Placeholder
+ * at the low end of the 10-15% range discussed; confirm before listings go live.
+ */
+export const MARKETPLACE_FEE_RATE = 0.1;

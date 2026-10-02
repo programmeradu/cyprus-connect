@@ -243,7 +243,18 @@ Use: read business account transactions to find fuel, electricity and freight sp
 ## Government & payments access (researched 2026-10-01)
 - **CY Login (gov.cy sign-in):** email the Digital Services Factory (dsf.dmrid.gov.cy) asking to join as a private-sector relying party for "Sign in with CY Login". Expect 2–6 months for approval.
 - **Companies Registrar:** nothing to apply for. The company register is published free on data.gov.cy. Optional: a paid live-lookup service (~$5 per 1,000 lookups) if we want real-time checks.
-- **Payments:** Stripe is the chosen billing provider (JCC dropped). Stripe billing is not built yet; when it is, you will need a Stripe account and its keys added to Cloudflare.
+- **Payments (Stripe, your own account):** the app side is built (subscriptions monthly/yearly, VAT, SEPA, invoices, bank-transfer billing for bigger customers). To switch it on:
+  1. Create the Stripe account with country **Cyprus**. In Settings > Tax, turn on Stripe Tax, set your origin address and add your Cyprus VAT number.
+  2. Settings > Payment methods: turn on **SEPA Direct Debit** and **Bank transfers**. Settings > Invoices: add your company details and turn on emailing finalised invoices and receipts.
+  3. Settings > Billing > Customer portal: turn on plan switching (Pro and Enterprise, monthly and yearly), payment method updates, invoice history and cancel at period end.
+  4. In Cloudflare, add `STRIPE_SECRET_KEY` (start with the `sk_test_...` key).
+  5. Developers > Webhooks: add `https://vuneli.com/api/public/payments/webhook` with events `customer.subscription.created/updated/deleted`, `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`, `invoice.paid`, `invoice.payment_failed`, `invoice.overdue`. Put its signing secret in Cloudflare as `STRIPE_WEBHOOK_SECRET`.
+  6. Create the prices once: `STRIPE_SECRET_KEY=sk_test_... bun scripts/stripe-setup.ts` (or ask me to run it).
+  7. Run `scripts/sql/0042_stripe_billing.sql` on the live database.
+  8. Do one test purchase with card `4242 4242 4242 4242`. Then repeat steps 4–6 with the live key and live webhook.
+  - To bill a bigger customer by invoice: an admin calls `POST /api/admin/billing/invoice-subscription` (email, plan, interval, company name, address, VAT number). Stripe emails the invoice; it is due in 30 days.
+  - Confirm the marketplace fee (set to 10% for now) before any listing goes live.
+  - The old Lovable payments variables (`STRIPE_SANDBOX_API_KEY`, `PAYMENTS_*_WEBHOOK_SECRET`, `NEXT_PUBLIC_PAYMENTS_CLIENT_TOKEN`) are no longer used and can be removed.
 - **WikiRate:** add WIKIRATE_API_KEY to Cloudflare secrets.
 
 ## Company register link and WikiRate checks (added 2026-10-01)

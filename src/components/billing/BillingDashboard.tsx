@@ -1,5 +1,4 @@
 "use client";
-import { getStripeEnvironmentOrSandbox } from "@/lib/stripe/env";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -11,35 +10,36 @@ import { CreditBalance } from "./UsageMeter";
 import { toast } from "sonner";
 import { useTranslations, useLocale } from "next-intl";
 
-interface PaymentHistoryItem {
-  id: number;
+interface InvoiceItem {
+  id: string;
+  number: string | null;
+  createdAt: string;
   amount: number;
   currency: string;
   status: string;
-  paymentType: string;
   description: string;
-  createdAt: string;
-  gateway?: string;
+  hostedUrl: string | null;
+  pdfUrl: string | null;
+  dueDate: string | null;
 }
 
 interface BillingData {
+  paymentsOn: boolean;
   subscription: {
-    gateway: string;
     status: string;
     planId: string;
     planName: string;
     price: number;
     currency: string;
-    interval?: string;
-    currentPeriodEnd?: string;
+    interval: 'month' | 'year';
+    collectionMethod: string;
+    currentPeriodEnd?: string | null;
     cancelAtPeriodEnd?: boolean;
   } | null;
-  paymentHistory: PaymentHistoryItem[];
-  purchases: {
-    credits: number;
-    totalSpent: number;
-    lastPurchase: string | null;
-  };
+  hasBillingAccount: boolean;
+  invoices: InvoiceItem[];
+  invoicesError: boolean;
+  purchases: { credits: number };
 }
 
 export const BillingDashboard = () => {
@@ -53,6 +53,7 @@ export const BillingDashboard = () => {
   const [loadingCredits, setLoadingCredits] = useState(true);
   const t = useTranslations("billing.dashboard");
   const tPlanNames = useTranslations("billing.pricingTable.planNames");
+  const tFeatures = useTranslations("billing.pricingTable.features");
   const locale = useLocale();
 
   // Fetch credit balance
@@ -76,7 +77,6 @@ export const BillingDashboard = () => {
       const response = await fetch(`/api/users/${session.user.id}/credits`, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
       });
 
@@ -112,7 +112,6 @@ export const BillingDashboard = () => {
       const response = await fetch('/api/billing/complete', {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
       });
 
@@ -144,11 +143,8 @@ export const BillingDashboard = () => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
-          'X-Stripe-Env': getStripeEnvironmentOrSandbox(),
         },
-        body: JSON.stringify({
-          returnUrl: window.location.href,
-        }),
+        body: JSON.stringify({ locale: locale === 'el' ? 'el' : 'en' }),
       });
 
       if (!response.ok) {
@@ -161,7 +157,7 @@ export const BillingDashboard = () => {
       if (isInIframe) {
         window.parent.postMessage({ type: "OPEN_EXTERNAL_URL", data: { url } }, "*");
       } else {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        window.location.href = url;
       }
     } catch (error: any) {
       console.error('Billing portal error:', error);
@@ -208,216 +204,138 @@ export const BillingDashboard = () => {
     }).format(amount / 100);
   };
 
-  const currentSubscription = billingData?.subscription || {
-    gateway: 'none',
-    status: 'free',
-    planId: plan.id,
-    planName: plan.name,
-    price: plan.price,
-    currency: 'USD',
-  };
+  const sub = billingData?.subscription ?? null;
+  const planId = sub?.planId ?? plan.id;
+  const planLabel = planId === 'free' || planId === 'pro' || planId === 'enterprise' ? tPlanNames(planId) : plan.name;
+  const features = tFeatures.raw(planId === 'pro' || planId === 'enterprise' ? planId : 'free') as string[];
+  const invoices = billingData?.invoices ?? [];
+  const struggling = sub && (sub.status === 'past_due' || sub.status === 'unpaid');
+  const openInvoice = invoices.find((i) => i.status === 'open');
 
-  const paymentHistory = billingData?.paymentHistory || [];
+  const invoiceStatus = (i: InvoiceItem) => {
+    if (i.status === 'paid') return { label: t('invoice.paid'), cls: 'text-primary' };
+    if (i.status === 'open') {
+      const overdue = i.dueDate && new Date(i.dueDate) < new Date();
+      return overdue ? { label: t('invoice.overdue'), cls: 'text-destructive' } : { label: t('invoice.open'), cls: 'text-foreground' };
+    }
+    if (i.status === 'void') return { label: t('invoice.void'), cls: 'text-muted-foreground' };
+    return { label: t('invoice.uncollectible'), cls: 'text-destructive' };
+  };
 
   return (
     <div className="space-y-4">
-      {/* AI Credits Balance */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
+      {struggling && (
+        <div role="alert" className="vck-card border-destructive/40 p-4">
+          <p className="text-sm font-semibold">{t('pastDueTitle')}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t('pastDueBody')}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {openInvoice?.hostedUrl && (
+              <a href={openInvoice.hostedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground">
+                {t('payNow')}
+              </a>
+            )}
+            <PremiumButton variant="outline" size="sm" className="text-xs" onClick={handleManageBilling} disabled={managingBilling}>
+              {t('updatePayment')}
+            </PremiumButton>
+          </div>
+        </div>
+      )}
+
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         {loadingCredits ? (
           <div className="vck-card p-4 animate-pulse">
             <div className="h-6 bg-muted rounded w-32 mb-3" />
             <div className="h-8 bg-muted rounded w-20" />
           </div>
         ) : (
-          <CreditBalance
-            balance={creditBalance}
-            monthlyAllocation={plan.limits.aiCredits}
-            onPurchaseClick={() => setShowCreditDialog(true)}
-          />
+          <CreditBalance balance={creditBalance} monthlyAllocation={plan.limits.aiCredits} onPurchaseClick={() => setShowCreditDialog(true)} />
         )}
       </motion.div>
 
-      {/* Current Plan */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.05 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
         <div className="vck-card p-4">
-          <div className="flex items-start justify-between mb-3">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("currentPlan")}</h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl font-bold text-primary">
-                  {(() => {
-                    const pid = currentSubscription.planId;
-                    if (pid === 'free' || pid === 'pro' || pid === 'enterprise') {
-                      return tPlanNames(pid);
-                    }
-                    return currentSubscription.planName;
-                  })()}
-                </span>
-                {currentSubscription.price > 0 && (
+          <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+            <div className="min-w-0">
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">{t('currentPlan')}</h3>
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-xl font-bold text-primary">{planLabel}</span>
+                {sub && sub.price > 0 && (
                   <span className="text-muted-foreground text-xs">
-                    €{currentSubscription.price}/{t(`intervals.${(currentSubscription.interval as 'month' | 'year') || 'month'}`)}
+                    {formatAmount(sub.price * 100, 'eur')} / {t(`intervals.${sub.interval}`)}
                   </span>
                 )}
               </div>
-              {currentSubscription.gateway !== 'none' && (
-                <div className="mt-1 flex items-center gap-1.5">
-                  <span className="text-[10px] text-muted-foreground">{t("via")}</span>
-                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted">
-                    {currentSubscription.gateway === 'stripe' ? 'Stripe' : currentSubscription.gateway}
-                  </span>
-                </div>
+              {sub?.collectionMethod === 'send_invoice' && (
+                <p className="mt-1 text-xs text-muted-foreground">{t('paidByInvoice')}</p>
               )}
             </div>
-            {currentSubscription.status === 'active' && currentSubscription.planId !== 'free' && (
-              <PremiumButton
-                variant="outline"
-                size="sm"
-                className="text-xs py-1 h-auto"
-                onClick={handleManageBilling}
-                disabled={managingBilling}
-              >
-                {managingBilling ? t("loading") : t("manage")}
+            {billingData?.hasBillingAccount && (
+              <PremiumButton variant="outline" size="sm" className="text-xs py-1 h-auto" onClick={handleManageBilling} disabled={managingBilling}>
+                {managingBilling ? t('loading') : t('manage')}
               </PremiumButton>
             )}
           </div>
 
-          {/* Billing Period */}
-          {currentSubscription.currentPeriodEnd && (
-            <div className="mb-3">
-              <div className="text-xs text-muted-foreground">
-                {currentSubscription.cancelAtPeriodEnd ? (
-                  <span className="text-destructive font-medium">
-                    {t("cancelsOn", { date: formatDate(currentSubscription.currentPeriodEnd) })}
-                  </span>
-                ) : (
-                  <>{t("renewsOn", { date: formatDate(currentSubscription.currentPeriodEnd) })}</>
-                )}
-              </div>
-            </div>
+          {sub?.currentPeriodEnd && (
+            <p className="mb-3 text-xs text-muted-foreground">
+              {sub.cancelAtPeriodEnd ? (
+                <span className="text-destructive font-medium">{t('cancelsOn', { date: formatDate(sub.currentPeriodEnd) })}</span>
+              ) : (
+                t('renewsOn', { date: formatDate(sub.currentPeriodEnd) })
+              )}
+            </p>
           )}
 
-          {/* Features */}
-          <div className="grid md:grid-cols-2 gap-2">
-            {plan.features.slice(0, 4).map((feature, idx) => (
-              <div key={idx} className="flex items-start gap-1.5 text-xs">
-                <svg
-                  className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M5 13l4 4L19 7"
-                  />
+          <ul className="grid md:grid-cols-2 gap-2">
+            {features.map((feature, idx) => (
+              <li key={idx} className="flex items-start gap-1.5 text-xs">
+                <svg aria-hidden className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                 </svg>
                 <span className="text-muted-foreground">{feature}</span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </motion.div>
 
-      {/* Purchase Summary */}
-      {billingData?.purchases && billingData.purchases.totalSpent > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <div className="vck-card p-4">
-            <h3 className="text-sm font-medium mb-3">{t("purchaseSummary")}</h3>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="text-center">
-                <div className="text-xl font-bold text-primary">
-                  {billingData.purchases.credits.toLocaleString(locale)}
-                </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">{t("creditsPurchased")}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-primary">
-                  ${(billingData.purchases.totalSpent / 100).toFixed(2)}
-                </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">{t("totalSpent")}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-xs font-medium text-muted-foreground">
-                  {billingData.purchases.lastPurchase ? formatDate(billingData.purchases.lastPurchase) : t("notAvailable")}
-                </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">{t("lastPurchase")}</div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Payment History */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
         <div className="vck-card p-4">
-          <h3 className="text-sm font-medium mb-3">{t("paymentHistory")}</h3>
-          
-          {paymentHistory.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground">
-              <div className="text-sm">{t("noPaymentHistory")}</div>
-            </div>
+          <h3 className="text-sm font-medium mb-1">{t('invoicesTitle')}</h3>
+          <p className="mb-3 text-xs text-muted-foreground">{t('invoicesHint')}</p>
+          {billingData?.invoicesError ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">{t('invoicesUnavailable')}</p>
+          ) : invoices.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">{t('noInvoices')}</p>
           ) : (
-            <div className="space-y-1.5">
-              {paymentHistory.slice(0, 10).map((payment) => (
-                <div
-                  key={payment.id}
-                  className="flex items-center justify-between px-3 py-3 border-b border-[var(--vc-rule-soft)] last:border-b-0"
-                >
-                  <div className="flex items-center gap-2">
-                    <div>
-                      <div className="font-medium text-xs">{payment.description}</div>
-                      <div className="text-[10px] text-muted-foreground flex items-center gap-1.5">
-                        {formatDate(payment.createdAt)}
-                        {payment.gateway && (
-                          <>
-                            <span>•</span>
-                            <span className="font-medium">
-                              {payment.gateway === 'stripe' ? 'Stripe' :
-                               payment.gateway}
-                            </span>
-                          </>
-                        )}
+            <ul>
+              {invoices.slice(0, 24).map((inv) => {
+                const st = invoiceStatus(inv);
+                return (
+                  <li key={inv.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-1 py-3 border-b border-[var(--vc-rule-soft)] last:border-b-0">
+                    <div className="min-w-0 flex-1 basis-48">
+                      <div className="text-xs font-medium break-words">{inv.description}</div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {formatDate(inv.createdAt)}
+                        {inv.number ? ` · ${inv.number}` : ''}
+                        {inv.status === 'open' && inv.dueDate ? ` · ${t('invoice.due', { date: formatDate(inv.dueDate) })}` : ''}
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-xs">
-                      {formatAmount(payment.amount, payment.currency)}
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="text-xs font-semibold tabular-nums">{formatAmount(inv.amount, inv.currency)}</div>
+                        <div className={`text-[11px] ${st.cls}`}>{st.label}</div>
+                      </div>
+                      {inv.status === 'open' && inv.hostedUrl ? (
+                        <a href={inv.hostedUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold underline underline-offset-2">{t('payNow')}</a>
+                      ) : inv.pdfUrl ? (
+                        <a href={inv.pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold underline underline-offset-2" aria-label={t('invoice.downloadAria', { number: inv.number ?? inv.id })}>PDF</a>
+                      ) : null}
                     </div>
-                    <div className={`text-[10px] ${
-                      payment.status === 'succeeded' ? 'text-primary' :
-                      payment.status === 'failed' ? 'text-destructive' :
-                      'text-muted-foreground'
-                    }`}>
-                      {(() => {
-                        const s = payment.status as 'succeeded' | 'failed' | 'pending' | 'refunded';
-                        if (s === 'succeeded' || s === 'failed' || s === 'pending' || s === 'refunded') {
-                          return t(`status.${s}`);
-                        }
-                        return payment.status;
-                      })()}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
       </motion.div>

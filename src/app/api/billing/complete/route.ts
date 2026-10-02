@@ -1,79 +1,63 @@
-import { logger } from "@/lib/log";
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { logger } from '@/lib/log';
+import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { desc, eq } from 'drizzle-orm';
+import { auth } from '@/lib/auth';
 import { db } from '@/db';
-import { creditPurchases, paymentHistory, subscriptions } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
-import { SUBSCRIPTION_PLANS } from '@/lib/stripe/config';
+import { creditPurchases, subscriptions } from '@/db/schema';
+import { SUBSCRIPTION_PLANS, priceFor, type SubscriptionPlanId } from '@/lib/stripe/config';
+import { isStripeConfigured } from '@/lib/stripe/server';
+import { listInvoicesForCustomer, type InvoiceSummary } from '@/lib/stripe/utils';
 
-export async function GET(req: NextRequest) {
+const log = logger('api.billing.complete');
+
+// Everything the Plan page shows, in one call.
+export async function GET() {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    if (!session?.user) return NextResponse.json({ error: 'Please sign in.' }, { status: 401 });
     const userId = session.user.id;
 
-    const userSubscription = await db
-      .select()
-      .from(subscriptions)
-      .where(eq(subscriptions.userId, userId))
-      .orderBy(desc(subscriptions.createdAt))
-      .limit(1);
+    const [sub] = await db.select().from(subscriptions).where(eq(subscriptions.userId, userId)).orderBy(desc(subscriptions.createdAt)).limit(1);
+    const credits = await db.select().from(creditPurchases).where(eq(creditPurchases.userId, userId));
 
-    const creditPurchaseRecords = await db
-      .select()
-      .from(creditPurchases)
-      .where(eq(creditPurchases.userId, userId))
-      .orderBy(desc(creditPurchases.createdAt));
-
-    const paymentRecords = await db
-      .select()
-      .from(paymentHistory)
-      .where(eq(paymentHistory.userId, userId))
-      .orderBy(desc(paymentHistory.createdAt))
-      .limit(50);
-
-    const totalCredits = creditPurchaseRecords.reduce(
-      (sum, purchase) => sum + (purchase.creditsPurchased || 0),
-      0,
-    );
-    const totalSpent =
-      creditPurchaseRecords.reduce((sum, p) => sum + (p.amountPaid || 0), 0) +
-      paymentRecords.reduce((sum, p) => sum + p.amount, 0);
-    const lastPurchase = paymentRecords[0]?.createdAt ?? creditPurchaseRecords[0]?.createdAt ?? null;
-
-    const currentSubscription = userSubscription[0];
-    let subscriptionData: any = null;
-    if (currentSubscription && currentSubscription.status === 'active') {
-      const plan =
-        SUBSCRIPTION_PLANS[currentSubscription.planId as keyof typeof SUBSCRIPTION_PLANS] ||
-        SUBSCRIPTION_PLANS.free;
-      subscriptionData = {
-        gateway: 'stripe',
-        status: currentSubscription.status,
-        planId: currentSubscription.planId,
-        planName: plan.name,
-        price: plan.price,
-        currency: 'USD',
-        interval: plan.interval,
-        currentPeriodEnd: currentSubscription.currentPeriodEnd,
-        cancelAtPeriodEnd: currentSubscription.cancelAtPeriodEnd || false,
-      };
+    let invoices: InvoiceSummary[] = [];
+    let invoicesError = false;
+    if (sub?.stripeCustomerId && isStripeConfigured()) {
+      try {
+        invoices = await listInvoicesForCustomer(sub.stripeCustomerId);
+      } catch (e) {
+        invoicesError = true;
+        log.warn('invoices unavailable', { ref: log.error('invoice list failed', e) });
+      }
     }
 
-    const enhancedPayments = paymentRecords.map((payment) => ({ ...payment, gateway: 'stripe' }));
+    const planId = (sub?.planId || 'free') as SubscriptionPlanId;
+    const interval = (sub?.billingInterval === 'year' ? 'year' : 'month') as 'month' | 'year';
+    const plan = SUBSCRIPTION_PLANS[planId] || SUBSCRIPTION_PLANS.free;
+    const paid = planId !== 'free' && sub?.stripeSubscriptionId;
 
     return NextResponse.json({
-      subscription: subscriptionData,
-      paymentHistory: enhancedPayments,
-      purchases: { credits: totalCredits, totalSpent, lastPurchase },
+      paymentsOn: isStripeConfigured(),
+      subscription: paid
+        ? {
+            status: sub!.status,
+            planId,
+            planName: plan.name,
+            price: priceFor(planId, interval),
+            currency: 'EUR',
+            interval,
+            collectionMethod: sub!.collectionMethod || 'charge_automatically',
+            currentPeriodEnd: sub!.currentPeriodEnd,
+            cancelAtPeriodEnd: !!sub!.cancelAtPeriodEnd,
+          }
+        : null,
+      hasBillingAccount: !!sub?.stripeCustomerId,
+      invoices,
+      invoicesError,
+      purchases: { credits: credits.reduce((s, p) => s + (p.creditsPurchased || 0), 0) },
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: 'Failed to get billing data', ref: logger("api.billing.complete").error('request failed', error) },
-      { status: 500 },
-    );
+  } catch (error) {
+    return NextResponse.json({ error: 'Could not load billing.', ref: log.error('request failed', error) }, { status: 500 });
   }
 }
