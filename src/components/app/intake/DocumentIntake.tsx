@@ -19,7 +19,8 @@ import type { IntakeProposal, RejectCode, MonthShare } from "@/lib/documents/int
 import { ACCEPT, takeStashedFiles, type PendingFile } from "./pending-files";
 
 const EMISSIONS = "/api/console/emissions";
-const INVALIDATES = [EMISSIONS, "/api/console/insights", "/api/console/overview", "/api/emissions", "/api/dashboard", "/api/analytics", "/api/actions", "/api/studio", "/api/console/integrations"];
+const INTAKE = "/api/console/documents/intake";
+const INVALIDATES = [EMISSIONS, INTAKE, "/api/console/insights", "/api/console/overview", "/api/emissions", "/api/dashboard", "/api/analytics", "/api/actions", "/api/studio", "/api/console/integrations"];
 const MAX_FILES = 10;
 
 interface RecordedMonth {
@@ -38,8 +39,18 @@ type IntakeAnswer =
 
 interface Item {
   key: string;
-  file: File;
+  fileName: string;
+  /** A new upload; absent for a document already read on the server (e.g. a bill that came by email). */
+  file?: File;
   taskId?: number;
+  preread?: { id: number; proposal: IntakeProposal; via: "email" | "upload" };
+}
+
+interface PendingDoc {
+  id: number;
+  fileName: string;
+  proposal: IntakeProposal;
+  via: "email" | "upload";
 }
 
 type Group = "needs" | "reading" | "done" | "rejected";
@@ -65,13 +76,26 @@ export function DocumentIntake() {
     setItems((cur) => {
       const room = Math.max(0, MAX_FILES - cur.length);
       if (files.length > room) toast.info(t("tooMany", { max: MAX_FILES }));
-      return [...files.slice(0, room).map((f) => ({ key: `f${++seq.current}`, file: f.file, taskId: f.taskId })), ...cur];
+      return [...files.slice(0, room).map((f) => ({ key: `f${++seq.current}`, fileName: f.file.name, file: f.file, taskId: f.taskId })), ...cur];
     });
   }, [t]);
 
   useEffect(() => {
     add(takeStashedFiles());
   }, [add]);
+
+  // Documents read on the server but not yet checked (bills forwarded by email) wait here too.
+  const waiting = useWorkspaceResource<{ pending: PendingDoc[] }>(INTAKE);
+  const shown = useRef(new Set<number>());
+  useEffect(() => {
+    const list = (waiting.data?.pending ?? []).filter((d) => !shown.current.has(d.id));
+    if (list.length === 0) return;
+    for (const d of list) shown.current.add(d.id);
+    setItems((cur) => [
+      ...list.map((d) => ({ key: `p${d.id}`, fileName: d.fileName, preread: { id: d.id, proposal: d.proposal, via: d.via } })),
+      ...cur,
+    ]);
+  }, [waiting.data]);
 
   // The whole page takes a drop, not just the box.
   useEffect(() => {
@@ -270,7 +294,7 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
   const tc = useTranslations("dashboard.calculator");
   const locale = useLocale();
   const history = useWorkspaceResource<{ months: RecordedMonth[] }>(EMISSIONS);
-  const [phase, setPhase] = useState<Phase>({ name: "reading" });
+  const [phase, setPhase] = useState<Phase>(item.preread ? { name: "review", id: item.preread.id, proposal: item.preread.proposal } : { name: "reading" });
   const [rows, setRows] = useState<Row[] | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
   const started = useRef(false);
@@ -292,6 +316,7 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
   useEffect(() => {
     if (started.current) return;
     started.current = true;
+    if (!item.file) return;
     const form = new FormData();
     form.append("file", item.file);
     workspaceRequest<IntakeAnswer>("/api/console/documents/intake", { method: "POST", body: form })
@@ -376,7 +401,7 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
         <details>
           <summary>
             <span className="vck-intake-done-status">{status}</span>
-            <span className="vck-intake-done-file">{item.file.name}</span>
+            <span className="vck-intake-done-file">{item.fileName}</span>
             <span className="vck-intake-done-line">{line}</span>
           </summary>
           <div className="vck-intake-done-more">
@@ -396,7 +421,7 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
             )}
           </div>
         </details>
-        <button type="button" className="vck-btn" onClick={onRemove} aria-label={`${t("actions.clear")}: ${item.file.name}`}>
+        <button type="button" className="vck-btn" onClick={onRemove} aria-label={`${t("actions.clear")}: ${item.fileName}`}>
           {t("actions.clear")}
         </button>
       </li>
@@ -413,7 +438,10 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
             {proposal ? t(`kinds.${proposal.kind}`) : status}
             {span && <span className="vck-intake-span"> · {dateLabel(span.from)} – {dateLabel(span.to)}</span>}
           </p>
-          <p className="vck-intake-file">{item.file.name}</p>
+          <p className="vck-intake-file">
+            {item.fileName}
+            {item.preread?.via === "email" && <span className="vck-meta"> · {t("viaEmail")}</span>}
+          </p>
           {proposal && (
             <p className="vck-meta vck-intake-by">
               {proposal.recognisedBy === "code" ? t("by.code") : t("by.ai")}
