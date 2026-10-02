@@ -15,7 +15,7 @@ const log = logger('api.stripe.subscription');
 
 function paymentsOff(error: unknown) {
   return error instanceof StripeNotConfiguredError
-    ? NextResponse.json({ error: error.message, code: 'PAYMENTS_OFF' }, { status: 503 })
+    ? NextResponse.json({ error: 'Payments are not switched on yet.', code: 'PAYMENTS_OFF' }, { status: 503 })
     : null;
 }
 

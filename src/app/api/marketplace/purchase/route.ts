@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof StripeNotConfiguredError) {
-      return NextResponse.json({ error: error.message, code: "PAYMENTS_OFF" }, { status: 503 });
+      return NextResponse.json({ error: 'Payments are not switched on yet.', code: "PAYMENTS_OFF" }, { status: 503 });
     }
     const ref = log.error("Error creating purchase", error);
     return NextResponse.json(

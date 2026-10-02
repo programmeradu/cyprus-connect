@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ sessionId: checkout.id, url: checkout.url });
   } catch (error) {
     if (error instanceof StripeNotConfiguredError) {
-      return NextResponse.json({ error: error.message, code: 'PAYMENTS_OFF' }, { status: 503 });
+      return NextResponse.json({ error: 'Payments are not switched on yet.', code: 'PAYMENTS_OFF' }, { status: 503 });
     }
     return NextResponse.json(
       { error: 'Could not open the payment page. Please try again.', ref: log.error('checkout failed', error) },

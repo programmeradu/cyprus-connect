@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ subscriptionId: sub.id, status: sub.status });
   } catch (error) {
     if (error instanceof StripeNotConfiguredError) {
-      return NextResponse.json({ error: error.message, code: 'PAYMENTS_OFF' }, { status: 503 });
+      return NextResponse.json({ error: 'Payments are not switched on yet.', code: 'PAYMENTS_OFF' }, { status: 503 });
     }
     // Stripe's own message (e.g. an invalid VAT number) helps the admin fix the input.
     const ref = log.error('invoice subscription failed', error);
