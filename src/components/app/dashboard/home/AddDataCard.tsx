@@ -10,7 +10,8 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { ACCEPT, stashFiles } from "@/components/app/intake/pending-files";
 import readerImage from "@/assets/intake-reader.png";
 
@@ -19,6 +20,10 @@ export function AddDataCard() {
   const router = useRouter();
   const input = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
+  // Documents already read (bills forwarded by email) that wait for the person's check.
+  const waiting = useWorkspaceResource<{ pending: { id: number; via: "email" | "upload" }[] }>("/api/console/documents/intake");
+  const pending = waiting.data?.pending ?? [];
+  const fromEmail = pending.filter((d) => d.via === "email").length;
 
   const send = (files: File[]) => {
     if (files.length === 0) return;
@@ -30,6 +35,7 @@ export function AddDataCard() {
     <section
       className="vch-adddata"
       data-dragging={dragging || undefined}
+      data-waiting={pending.length > 0 || undefined}
       aria-labelledby="vch-adddata-title"
       onDragOver={(e) => {
         e.preventDefault();
@@ -54,14 +60,32 @@ export function AddDataCard() {
       </div>
 
       <div className="vch-adddata-copy">
-        <h2 id="vch-adddata-title">{t("home.title")}</h2>
-        <p>{t("home.body")}</p>
+        {pending.length > 0 ? (
+          <>
+            <p className="vch-adddata-flag" role="status">
+              <span className="vch-adddata-count">{pending.length}</span>
+              {fromEmail === pending.length ? t("home.waitingEmail", { count: pending.length }) : t("home.waiting", { count: pending.length })}
+            </p>
+            <h2 id="vch-adddata-title">{t("home.waitingTitle")}</h2>
+            <p>{t("home.waitingBody")}</p>
+          </>
+        ) : (
+          <>
+            <h2 id="vch-adddata-title">{t("home.title")}</h2>
+            <p>{t("home.body")}</p>
+          </>
+        )}
       </div>
 
-
-      <button type="button" className="vch-btn" data-kind="primary" onClick={() => input.current?.click()}>
-        {t("home.cta")}
-      </button>
+      {pending.length > 0 ? (
+        <Link href="/app/calculator" className="vch-btn" data-kind="primary">
+          {t("home.review", { count: pending.length })}
+        </Link>
+      ) : (
+        <button type="button" className="vch-btn" data-kind="primary" onClick={() => input.current?.click()}>
+          {t("home.cta")}
+        </button>
+      )}
       <input
         ref={input}
         type="file"

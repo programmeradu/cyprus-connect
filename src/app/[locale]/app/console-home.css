@@ -189,6 +189,18 @@
 .vch-adddata-copy { flex: 1 1 260px; min-width: 0; }
 .vch-adddata h2 { margin: 0; font-size: 1.08rem; font-weight: 700; color: var(--vc-ink); }
 .vch-adddata p { margin: 4px 0 0; color: var(--vc-ink-2); font-size: 0.9rem; line-height: 1.5; max-width: 58ch; }
+/* Bills already read (e.g. forwarded by email) are waiting: the card asks for a check. */
+.vch-adddata[data-waiting] { border-style: solid; border-color: color-mix(in oklab, var(--vc-lime) 70%, var(--vc-rule)); }
+.vch-adddata p.vch-adddata-flag {
+  display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 0 0 6px; color: var(--vc-ink); font-size: 0.8rem; font-weight: 650;
+}
+.vch-adddata-count {
+  display: inline-grid; place-items: center; min-width: 1.5rem; height: 1.5rem; padding: 0 6px;
+  border-radius: 999px; background: var(--vc-lime); color: var(--vc-lime-ink);
+  font-family: var(--font-mono, ui-monospace), monospace; font-size: 0.78rem; font-weight: 700;
+}
+.vch-adddata a.vch-btn { text-decoration: none; white-space: nowrap; }
 
 /* Left: papers drop into the reader's slot, one after another. */
 .vch-adddata-stage { position: relative; flex: 0 0 auto; width: 112px; height: 116px; overflow: hidden; }

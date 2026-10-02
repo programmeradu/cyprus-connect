@@ -1669,7 +1669,12 @@
       "home": {
         "title": "Got a bill or a statement?",
         "body": "Drop it here or choose a file. We'll read it and show you what we found before anything is added.",
-        "cta": "Add data"
+        "cta": "Add data",
+        "waitingEmail": "{count, plural, one {bill arrived by email} other {bills arrived by email}}",
+        "waiting": "{count, plural, one {document waiting} other {documents waiting}}",
+        "waitingTitle": "Check before it counts",
+        "waitingBody": "We read the figures and dates. Have a quick look, then add them to your footprint.",
+        "review": "{count, plural, one {Review bill} other {Review # bills}}"
       },
       "overlay": "Drop to read these files",
       "dropCompact": "Add more documents",
