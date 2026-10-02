@@ -42,6 +42,26 @@ export const IcoPulse = (p: IcoProps) => (
   </S>
 );
 
+/** Measure: a gauge whose needle is a Vuneli leaf. */
+export const IcoMeasure = (p: IcoProps) => (
+  <S {...p}>
+    <path d="M3.5 17a8.5 8.5 0 0 1 17 0" />
+    <path d="M12 8.5V10M6 11l1.06 1.06M18 11l-1.06 1.06M3.5 17H5M19 17h1.5" />
+    <path d="M12 17c0-3.6 1.9-6 5-7-.3 3.3-2.2 6-5 7Z" />
+    <circle cx="12" cy="17" r="1" />
+  </S>
+);
+
+/** Act: a sprout whose stem grows into a forward arrow. */
+export const IcoAct = (p: IcoProps) => (
+  <S {...p}>
+    <path d="M7.5 20.5c0-6.4 3.4-10.6 10-12.5" />
+    <path d="M13.2 6.6 18 7.7l-1.2 4.8" />
+    <path d="M8.6 15.4C5.6 15.6 3.6 14 3 11c3-.2 5 1.4 5.6 4.4Z" />
+    <path d="M4 20.5h7" />
+  </S>
+);
+
 export const IcoAgents = (p: IcoProps) => (
   <S {...p}>
     <circle cx="12" cy="8" r="3.2" />

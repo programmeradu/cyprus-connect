@@ -11,7 +11,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
   IcoGrid,
-  IcoPulse,
+  IcoPulse, IcoMeasure, IcoAct,
   IcoAgents,
   IcoShield,
   IcoLeaf,
@@ -34,9 +34,9 @@ const GROUPS: { title: string; items: Item[] }[] = [
     title: "Console",
     items: [
       { href: "/app", label: "Overview", icon: IcoGrid },
-      { href: "/app/analytics", label: "Measure", icon: IcoPulse },
+      { href: "/app/analytics", label: "Measure", icon: IcoMeasure },
       { href: "/app/compliance", label: "Report", icon: IcoDoc },
-      { href: "/app/actions", label: "Reduce", icon: IcoLeaf },
+      { href: "/app/actions", label: "Reduce", icon: IcoAct },
     ],
   },
   {
