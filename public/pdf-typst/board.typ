@@ -82,14 +82,14 @@
 }
 
 // ---------- Cover ----------
-#page(margin: (top: 22mm, bottom: 0mm, left: 22mm, right: 22mm), header: none, footer: none, background: place(top + left, image("cover-band.jpg", width: 100%)))[
+#page(margin: (top: 76mm, bottom: 0mm, left: 22mm, right: 22mm), header: none, footer: none, background: place(top + left, image("cover-band.jpg", width: 100%)))[
   #grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
     box(image("logo.svg", height: 16pt)),
     text(size: 8pt, fill: quiet)[#d.issued #h(8pt) #text(font: mono)[#d.docId]],
   )
   #v(-2pt)
   #line(length: 100%, stroke: 0.8pt + ink)
-  #v(62mm)
+  #v(30mm)
   #text(size: 10pt, weight: 500, fill: accent)[Board summary]
   #v(4pt)
   #block(width: 88%)[#text(font: display, size: 34pt, weight: 600, fill: ink, tracking: -0.3pt)[#par(leading: 0.28em)[#d.company]]]
