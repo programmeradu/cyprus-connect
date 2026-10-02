@@ -5,7 +5,9 @@ import { offsetProjects } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import Stripe from "stripe";
+import { createStripeClient, StripeNotConfiguredError } from "@/lib/stripe/server";
+import { MARKETPLACE_FEE_RATE } from "@/lib/stripe/config";
+import { billingPageUrl, appBaseUrl, getOrCreateStripeCustomer } from "@/lib/stripe/utils";
 import { readJson } from '@/lib/validate';
 import { logger } from '@/lib/log';
 
@@ -17,10 +19,8 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2025-12-15.clover" as any,
-  });
   try {
+    const stripe = createStripeClient();
     // Get authenticated user
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) {
@@ -58,32 +58,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Stripe checkout session
+    // Registry-linked listings only (see marketplace memory); none are live yet.
+    const unitAmount = Math.round(projectData.pricePerTon * 100);
+    const quantity = Math.round(tons);
+    const platformFeeCents = Math.round(unitAmount * quantity * MARKETPLACE_FEE_RATE);
+    const customerId = await getOrCreateStripeCustomer(session.user.id, session.user.email);
+    const meta = {
+      userId: session.user.id,
+      projectId: projectId.toString(),
+      tons: String(quantity),
+      type: "carbon_offset",
+      platformFeeCents: String(platformFeeCents),
+    };
     const checkoutSession = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      customer: customerId,
+      mode: "payment",
+      payment_method_types: ["card", "sepa_debit"],
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "eur",
             product_data: {
-              name: `${projectData.name} - Carbon Offset`,
-              description: `${tons} tons of CO2 offset`,
-              images: projectData.imageUrl ? [projectData.imageUrl] : [],
+              name: `${projectData.name} - carbon credits`,
+              description: `${quantity} t CO2e, retired on the project's registry`,
+              images: projectData.imageUrl?.startsWith("https://") ? [projectData.imageUrl] : [],
             },
-            unit_amount: Math.round(projectData.pricePerTon * 100),
+            unit_amount: unitAmount,
           },
-          quantity: Math.round(tons),
+          quantity,
         },
       ],
-      mode: "payment",
-      success_url: `${process.env.BETTER_AUTH_URL}/app/marketplace/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.BETTER_AUTH_URL}/app/marketplace?canceled=true`,
-      metadata: {
-        userId: session.user.id,
-        projectId: projectId.toString(),
-        tons: tons.toString(),
-        type: "carbon_offset",
-      },
+      billing_address_collection: "required",
+      customer_update: { address: "auto", name: "auto" },
+      tax_id_collection: { enabled: true },
+      invoice_creation: { enabled: true, invoice_data: { metadata: meta } },
+      payment_intent_data: { description: `${projectData.name} - ${quantity} t CO2e`, metadata: meta },
+      success_url: `${appBaseUrl(request)}/en/app/marketplace?purchase=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: billingPageUrl(request, "en").replace("/app/billing", "/app/marketplace") + "?canceled=true",
+      metadata: meta,
     });
 
     return NextResponse.json({
@@ -91,6 +103,9 @@ export async function POST(request: NextRequest) {
       sessionId: checkoutSession.id
     });
   } catch (error) {
+    if (error instanceof StripeNotConfiguredError) {
+      return NextResponse.json({ error: error.message, code: "PAYMENTS_OFF" }, { status: 503 });
+    }
     const ref = log.error("Error creating purchase", error);
     return NextResponse.json(
       { error: "Failed to create purchase.", ref },

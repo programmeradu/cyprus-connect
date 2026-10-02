@@ -134,3 +134,9 @@ export function priceFor(planId: SubscriptionPlanId, interval: BillingInterval):
   const p = SUBSCRIPTION_PLANS[planId];
   return interval === 'year' ? p.priceYearEur : p.priceEur;
 }
+
+/**
+ * Vuneli's share of each marketplace sale, recorded on the order. Placeholder
+ * at the low end of the 10-15% range discussed; confirm before listings go live.
+ */
+export const MARKETPLACE_FEE_RATE = 0.1;
