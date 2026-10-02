@@ -41,13 +41,13 @@ interface AnalyticsData {
   currentPeriod: { month: number; year: number } | null;
 }
 
-export default /** Small footprints read as 0.00 t; show them in kg so a real figure never looks empty. */
+/** Small footprints read as 0.00 t; show them in kg so a real figure never looks empty. */
 function co2(tonnes: number, t: (k: string) => string): { value: string; unit: string } {
   if (tonnes > 0 && tonnes < 0.1) return { value: (tonnes * 1000).toLocaleString(undefined, { maximumFractionDigits: tonnes * 1000 < 10 ? 2 : 0 }), unit: t("kgMonth") };
   return { value: tonnes.toFixed(2), unit: t("tonsMonth") };
 }
 
-function AnalyticsPage() {
+export default function AnalyticsPage() {
   const t = useTranslations("dashboard.analytics");
   const tc = useTranslations("common");
   const { data: session, isPending } = useSession();
