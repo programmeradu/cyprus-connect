@@ -227,7 +227,7 @@ async function sendReceipt(
 
   const lines = results.map((r) =>
     r.ok
-      ? `- ${r.file}: ${r.duplicate ? "already in Vuneli, not added twice" : `added as ${r.kind === "eac" ? "an electricity" : "a water"} bill`}`
+      ? `- ${r.file}: ${r.duplicate ? "already in Vuneli, not added twice" : `added as ${r.kind === "electricity" ? "an electricity" : "a water"} bill`}`
       : `- ${r.file === "—" ? "This email" : r.file}: not added. ${r.reason ?? ""}`.trim(),
   );
   const added = results.filter((r) => r.ok && !r.duplicate).length;
