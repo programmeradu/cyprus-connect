@@ -22,3 +22,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Price setup failed', ref }, { status: 500 });
   }
 }
+
+/** Admin only. Lets the Plan page know to show the admin tools. */
+export async function GET(req: NextRequest) {
+  const admin = await requireAdmin(req);
+  if (!admin.ok) return admin.response;
+  return NextResponse.json({ admin: true, mode: currentStripeMode() }, { headers: { 'Cache-Control': 'no-store' } });
+}
