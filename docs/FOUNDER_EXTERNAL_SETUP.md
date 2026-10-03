@@ -362,3 +362,10 @@ What to do:
 - Deploy the latest code: the app now forwards non-bill vuneli.com mail to your Gmail, and Worker logging stays on.
 - After deploying, the catch-all email rule is switched from "drop" to the app (done from chat once deploy is confirmed). Optional: set `MAIL_FALLBACK_TO` on the Worker to change where non-bill mail goes.
 - Bill receipts: the app now emails the sender a "we received your bill" note. It only sends once `RESEND_API_KEY` and `EMAIL_FROM` are set on the Cloudflare Worker (neither is set as of 2 Oct 2026).
+
+## Stripe — after keys are in Cloudflare (2026-10-02)
+1. Deploy the latest code.
+2. Signed in as admin, open Settings → Plan and press **Set up prices in Stripe** (test key first).
+3. Run the database step: `scripts/sql/0042_stripe_billing.sql` on the live database.
+4. Buy Pro with test card 4242 4242 4242 4242; check the Plan page shows Pro and an invoice.
+5. Swap in the live keys in Cloudflare and press the button once more.
