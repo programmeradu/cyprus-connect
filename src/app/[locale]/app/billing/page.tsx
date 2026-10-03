@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BillingDashboard } from "@/components/billing/BillingDashboard";
 import { PricingTable } from "@/components/billing/PricingTable";
+import { AdminStripeTools } from "@/components/billing/AdminStripeTools";
 import { PaymentTestModeBanner } from "@/components/billing/PaymentTestModeBanner";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
@@ -42,6 +43,7 @@ export default function BillingPage() {
       }
     >
       <PaymentTestModeBanner />
+      <AdminStripeTools />
 
       {activeTab === 'overview' ? (
         <BillingDashboard />
