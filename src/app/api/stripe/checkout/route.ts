@@ -56,7 +56,6 @@ export async function POST(req: NextRequest) {
       tax_id_collection: { enabled: true },
       billing_address_collection: 'required' as const,
       customer_update: { address: 'auto' as const, name: 'auto' as const },
-      payment_method_types: ['card', 'sepa_debit'] as Stripe.Checkout.SessionCreateParams.PaymentMethodType[],
       allow_promotion_codes: true,
     };
 
