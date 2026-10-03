@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       collection_method: 'send_invoice',
       days_until_due: b.daysUntilDue,
       automatic_tax: { enabled: true },
-      payment_settings: { payment_method_types: ['customer_balance', 'sepa_debit', 'card'] },
+      // Methods come from the Stripe dashboard (Invoices settings), so turning on SEPA or bank transfer there needs no code change.
       metadata: meta,
     });
 

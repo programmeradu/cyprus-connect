@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
     const checkoutSession = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "payment",
-      payment_method_types: ["card", "sepa_debit"],
       line_items: [
         {
           price_data: {

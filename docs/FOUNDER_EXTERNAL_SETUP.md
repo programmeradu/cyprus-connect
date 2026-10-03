@@ -369,3 +369,4 @@ What to do:
 3. Run the database step: `scripts/sql/0042_stripe_billing.sql` on the live database.
 4. Buy Pro with test card 4242 4242 4242 4242; check the Plan page shows Pro and an invoice.
 5. Swap in the live keys in Cloudflare and press the button once more.
+- 2026-10-03 live check: prices exist, VAT handling on (CY), checkout opens (card only). Still missing: webhook endpoint (none in Stripe), SEPA off, no VAT registration added in Stripe Tax. Code now takes payment methods from the Stripe dashboard.
