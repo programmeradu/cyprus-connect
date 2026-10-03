@@ -43,6 +43,7 @@ export default function BillingPage() {
       }
     >
       <PaymentTestModeBanner />
+      <AdminStripeTools />
 
       {activeTab === 'overview' ? (
         <BillingDashboard />
