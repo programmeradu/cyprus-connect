@@ -235,6 +235,40 @@ export function verdeTools(ctx: ToolContext) {
       inputSchema: z.object({ kind: z.enum(["board_summary"]), note: z.string().describe("One sentence on what it contains.") }),
       execute: async ({ kind, note }) => ({ kind, note: note.slice(0, 240) }),
     }),
+
+    upgrade_plan: tool({
+      description:
+        "Suggest or offer a subscription plan upgrade when the person wants a feature locked in their current plan (e.g. Pro for unlimited agent actions, 1,000 AI credits, verified PDF reports, sanctions screening, grant scout; Enterprise for CBAM reports with official EU values, 10,000 AI credits, invoicing/bank transfer) or when they ask to upgrade. Shows a direct Stripe Checkout card with plan details, pricing, and live status verification.",
+      inputSchema: z.object({
+        targetPlanId: z.enum(["pro", "enterprise"]).describe("The plan to upgrade to ('pro' or 'enterprise')."),
+        interval: z.enum(["month", "year"]).default("month").describe("Billing interval: 'month' (default) or 'year' (includes 2 months free)."),
+        reason: z.string().describe("Clear, concise reason explaining which capability requires this upgrade."),
+      }),
+      execute: async ({ targetPlanId, interval, reason }) => {
+        const { getUserSubscription } = await import("@/lib/stripe/utils");
+        const { SUBSCRIPTION_PLANS } = await import("@/lib/stripe/config");
+
+        const sub = await getUserSubscription(ctx.accountId);
+        const currentPlanId = (sub?.planId || "free") as keyof typeof SUBSCRIPTION_PLANS;
+        const targetPlan = SUBSCRIPTION_PLANS[targetPlanId];
+        const currentPlan = SUBSCRIPTION_PLANS[currentPlanId] || SUBSCRIPTION_PLANS.free;
+
+        const priceEur = interval === "year" ? targetPlan.priceYearEur : targetPlan.priceEur;
+
+        return {
+          source: "subscription_plans",
+          currentPlanId,
+          currentPlanName: currentPlan.name,
+          targetPlanId,
+          targetPlanName: targetPlan.name,
+          interval,
+          priceEur,
+          features: targetPlan.features,
+          reason: reason.slice(0, 300),
+          status: sub?.status || "active",
+        };
+      },
+    }),
   };
 }
 

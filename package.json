@@ -40,6 +40,7 @@
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.1.1",
+    "@jungherz-de/glasskit": "^1.19.1",
     "@myriaddreamin/typst-ts-web-compiler": "0.6.0",
     "@myriaddreamin/typst.ts": "0.6.0",
     "@number-flow/react": "^0.5.10",

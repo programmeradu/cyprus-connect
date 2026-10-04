@@ -8,7 +8,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { IcoCheck } from "./icons";
+import { IcoArrowUpRight, IcoCheck, IcoCoin } from "./icons";
 
 export type Lang = "en" | "el";
 
@@ -51,6 +51,18 @@ const T = {
     ran: "Checked",
     checking: "Checking",
     failed: "Could not read",
+    upgrade: "Upgrade plan",
+    planUpgrade: "Subscription plan",
+    upgradeTo: "Upgrade to",
+    checkingStatus: "Checking status...",
+    checkStatus: "Check status",
+    planActive: "Active",
+    upgradeSuccess: "Your plan is upgraded and active!",
+    checkoutFail: "Could not open Stripe Checkout. Please try again.",
+    monthly: "month",
+    yearly: "year",
+    billedMonthly: "per month",
+    billedYearly: "per year (2 months free)",
   },
   el: {
     footprint: "Στοιχεία αποτυπώματος",
@@ -90,6 +102,18 @@ const T = {
     ran: "Έλεγξε",
     checking: "Ελέγχει",
     failed: "Δεν διαβάστηκε",
+    upgrade: "Αναβάθμιση πλάνου",
+    planUpgrade: "Συνδρομητικό πλάνο",
+    upgradeTo: "Αναβάθμιση σε",
+    checkingStatus: "Έλεγχος κατάστασης...",
+    checkStatus: "Έλεγχος κατάστασης",
+    planActive: "Ενεργό",
+    upgradeSuccess: "Το πλάνο σας αναβαθμίστηκε επιτυχώς!",
+    checkoutFail: "Δεν ήταν δυνατό το άνοιγμα του Stripe Checkout. Δοκιμάστε ξανά.",
+    monthly: "μήνα",
+    yearly: "έτος",
+    billedMonthly: "ανά μήνα",
+    billedYearly: "ανά έτος (2 μήνες δωρεάν)",
   },
 } as const;
 
@@ -107,6 +131,7 @@ export const TOOL_LABEL: Record<string, { en: string; el: string }> = {
   ask_for_facts: { en: "what is missing", el: "τι λείπει" },
   propose_change: { en: "a change for your approval", el: "μια αλλαγή για έγκριση" },
   prepare_document: { en: "a document", el: "ένα έγγραφο" },
+  upgrade_plan: { en: "plan upgrade", el: "αναβάθμιση πλάνου" },
 };
 
 const FACT_LABEL: Record<string, { en: string; el: string; type: "number" | "text" | "bool" }> = {
@@ -518,6 +543,162 @@ export function DocumentCard({ out, lang, onDownload }: { out: Out; lang: Lang; 
           }}
         >
           {busy ? t.preparing : t.download}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+export function UpgradePlanCard({
+  out,
+  lang,
+  onUpgraded,
+}: {
+  out: Out;
+  lang: Lang;
+  onUpgraded?: () => void;
+}) {
+  const t = T[lang];
+  const [busy, setBusy] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string>(String(out.currentPlanId ?? "free"));
+
+  const targetPlanId = String(out.targetPlanId ?? "pro") as "pro" | "enterprise";
+  const targetPlanName = String(out.targetPlanName ?? (targetPlanId === "enterprise" ? "Enterprise" : "Pro"));
+  const interval = (out.interval === "year" ? "year" : "month") as "month" | "year";
+  const priceEur = Number(out.priceEur ?? (targetPlanId === "enterprise" ? (interval === "year" ? 1850 : 185) : interval === "year" ? 450 : 45));
+  const features = Array.isArray(out.features) ? (out.features as string[]) : [];
+  const reason = String(out.reason ?? "");
+
+  const isAlreadyTarget = currentPlan.toLowerCase() === targetPlanId.toLowerCase();
+
+  const handleCheckout = async () => {
+    setBusy(true);
+    setError(null);
+    setStatusMessage(null);
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          type: "subscription",
+          planId: targetPlanId,
+          interval,
+          locale: lang,
+        }),
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || t.checkoutFail);
+      }
+      window.location.href = data.url;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.checkoutFail);
+      setBusy(false);
+    }
+  };
+
+  const checkStatus = async () => {
+    setChecking(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/stripe/subscription", {
+        credentials: "include",
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Could not check status");
+      const data = (await res.json()) as { subscription?: { planId?: string; status?: string } };
+      const activePlan = data.subscription?.planId ?? "free";
+      setCurrentPlan(activePlan);
+      if (activePlan.toLowerCase() === targetPlanId.toLowerCase()) {
+        setStatusMessage(t.upgradeSuccess);
+        onUpgraded?.();
+      } else {
+        setStatusMessage(
+          lang === "el"
+            ? `Τρέχον πλάνο: ${activePlan.toUpperCase()} (${data.subscription?.status ?? "active"})`
+            : `Current plan: ${activePlan.toUpperCase()} (${data.subscription?.status ?? "active"})`,
+        );
+      }
+    } catch {
+      setError(lang === "el" ? "Αποτυχία ελέγχου κατάστασης." : "Status check failed.");
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <section className="vv-card vv-upgrade-card">
+      <header className="vv-card-head">
+        <strong>{t.planUpgrade}</strong>
+        <span className="vv-card-source">
+          Stripe · {interval === "year" ? t.billedYearly : t.billedMonthly}
+        </span>
+      </header>
+
+      <div className="vv-plan-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
+        <p className="vv-prop-title" style={{ fontSize: "1.05rem", fontWeight: 700 }}>
+          {targetPlanName}
+        </p>
+        <span className="vv-plan-price" style={{ fontSize: "1.2rem", fontWeight: 750, fontVariantNumeric: "tabular-nums" }}>
+          €{priceEur} <small style={{ fontSize: "0.78rem", fontWeight: 500, opacity: 0.8 }}>/{interval === "year" ? t.yearly : t.monthly}</small>
+        </span>
+      </div>
+
+      {reason && <p className="vv-reason">{reason}</p>}
+
+      {features.length > 0 && (
+        <ul className="vv-plan-features" style={{ listStyle: "none", margin: "4px 0", padding: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+          {features.slice(0, 5).map((f, i) => (
+            <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: "0.82rem", lineHeight: 1.35 }}>
+              <span style={{ color: "var(--vc-good-text, #10b981)", flexShrink: 0, marginTop: 1 }}>
+                <IcoCheck size={13} />
+              </span>
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {error && (
+        <p className="vv-error" role="alert">
+          {error}
+        </p>
+      )}
+
+      {statusMessage && (
+        <p className="vv-done" role="status">
+          <IcoCheck size={14} /> {statusMessage}
+        </p>
+      )}
+
+      <div className="vv-actions" style={{ marginTop: 4 }}>
+        {!isAlreadyTarget ? (
+          <button
+            type="button"
+            className="vv-primary"
+            disabled={busy || checking}
+            onClick={handleCheckout}
+          >
+            <IcoCoin size={14} /> {busy ? t.working : `${t.upgradeTo} ${targetPlanName}`}
+            <IcoArrowUpRight size={13} />
+          </button>
+        ) : (
+          <span className="vv-done" style={{ alignSelf: "center" }}>
+            <IcoCheck size={14} /> {t.planActive}
+          </span>
+        )}
+
+        <button
+          type="button"
+          className="vv-secondary"
+          disabled={checking || busy}
+          onClick={checkStatus}
+        >
+          {checking ? t.checkingStatus : t.checkStatus}
         </button>
       </div>
     </section>

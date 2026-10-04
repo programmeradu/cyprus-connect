@@ -35,6 +35,19 @@ describe("Verde figure check", () => {
     expect(parseAction('x ```action\n{"kind":"create_task","title":"t","summary":"s","payload":{}}\n```')?.kind).toBe("create_task");
     expect(parseAction('```action\n{"kind":"delete_everything","title":"t","summary":"s","payload":{}}\n```')).toBeNull();
   });
+  it("passes upgrade plan tool output with price and tier", () => {
+    const toolOutput = JSON.stringify({
+      source: "subscription_plans",
+      currentPlanId: "free",
+      targetPlanId: "pro",
+      priceEur: 45,
+      interval: "month",
+    });
+    const answer = "You can upgrade to the Pro plan for 45 EUR per month on Stripe.";
+    const r = checkGrounding(answer, `${B}\n${toolOutput}`);
+    expect(r.ok).toBe(true);
+    expect(r.unsupported).toEqual([]);
+  });
 });
 
 import { dropRepeatedParagraphs } from "@/lib/agents/planner";

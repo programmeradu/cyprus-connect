@@ -969,3 +969,9 @@
 }
 .vv-empty-state button:hover { background: color-mix(in oklab, var(--vc-lime) 22%, transparent); }
 .vv-empty-state em { font-style: normal; opacity: 0.6; }
+
+@media (max-width: 760px) {
+  .vc-copilot-fab {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+}

@@ -30,6 +30,7 @@ import {
   ProposalCard,
   SuppliersCard,
   TOOL_LABEL,
+  UpgradePlanCard,
   verdeText,
   type Lang,
   type ProposalState,
@@ -356,6 +357,7 @@ export function ConsoleCopilot() {
       case "read_activity": card = <ActivityCard out={out} lang={lang} />; break;
       case "ask_for_facts": card = <FactsCard out={out} lang={lang} onSaved={factsSaved} authHeaders={authHeaders} />; break;
       case "prepare_document": card = <DocumentCard out={out} lang={lang} onDownload={downloadBoard} />; break;
+      case "upgrade_plan": card = <UpgradePlanCard out={out} lang={lang} onUpgraded={refresh} />; break;
       case "propose_change": {
         const id = out.proposalId as number | undefined;
         const p = id !== undefined ? byId.get(id) : undefined;
