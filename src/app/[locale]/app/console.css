@@ -1791,7 +1791,14 @@
 }
 .vc .vc-filter select:focus-visible { outline: 2px solid var(--vc-ink); outline-offset: 2px; }
 .vc .vc-filter select:disabled { opacity: 0.6; cursor: not-allowed; }
-.vc .vc-filter select option { color: #1a1f1b; }
+.vc .vc-filter select option {
+  background-color: var(--vc-rail, #ffffff);
+  color: var(--vc-ink, #1a1f1b);
+}
+.dark .vc .vc-filter select option {
+  background-color: var(--vc-rail, #1c1c1c);
+  color: var(--vc-ink, #f2f3f1);
+}
 .vc .vc-filter-note {
   flex: 1 1 260px;
   margin: 0;

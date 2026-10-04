@@ -896,6 +896,16 @@
   border-color: var(--vc-rule);
 }
 
+.vc select option {
+  background-color: var(--vc-rail, #ffffff);
+  color: var(--vc-ink, #1c2827);
+}
+
+.dark .vc select option {
+  background-color: var(--vc-rail, #1c1c1c);
+  color: var(--vc-ink, #f2f3f1);
+}
+
 .vc input::placeholder,
 .vc textarea::placeholder { color: var(--vc-ink-3); }
 
