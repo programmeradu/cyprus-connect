@@ -190,3 +190,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Bank statement payees into the Suppliers list (shown on the card today, not yet saved as suppliers)
 - [ ] Other cities' water boards and other utilities (to discuss)
 - [ ] Signed-in check of Add data on vuneli.com with a real bill and statement
+
+## Action plan rebuild (plan: Action plan costed projects + proof)
+- [ ] Approve plan, then build: schema, catalog/maths, verification, page, dossier
+- [x] Compliance > Documents downloads the designed report PDF instead of a .md text file

@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Section, DataTable, Empty } from "@/components/app/console/kit";
 import type { DataTableColumn as Column } from "@/components/app/console/kit";
 import { FRAMEWORKS } from "@/lib/compliance/frameworks";
+import { useUser } from "@/lib/user-context";
+import { markdownToSections } from "@/lib/pdf/markdown-sections";
 import type { ComplianceDocument } from "./types";
 
 export function DocumentsTab({
@@ -17,6 +20,9 @@ export function DocumentsTab({
   generating: boolean;
 }) {
   const t = useTranslations("dashboard.compliance");
+  const { user } = useUser();
+  const companyName = user?.companyName ?? "";
+  const [busyId, setBusyId] = useState<number | null>(null);
   const statusLabel = (s: string) =>
     s === "submitted" ? t("status.submitted") : s === "ready" ? t("status.ready") : t("status.draft");
   const statusTone = (s: string) => (s === "submitted" ? "positive" : s === "ready" ? "caution" : undefined);
@@ -54,21 +60,36 @@ export function DocumentsTab({
         <button
           type="button"
           className="vck-btn"
-          disabled={!doc.content}
-          onClick={() => {
-            if (doc.content) {
-              const blob = new Blob([doc.content], { type: "text/markdown" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `${doc.title}.md`;
-              a.click();
-              URL.revokeObjectURL(url);
+          disabled={!doc.content || busyId === doc.id}
+          aria-busy={busyId === doc.id}
+          onClick={async () => {
+            if (!doc.content) return;
+            setBusyId(doc.id);
+            try {
+              const { downloadReport } = await import("@/lib/pdf/report");
+              const { summary, sections } = markdownToSections(doc.content);
+              await downloadReport(
+                {
+                  title: doc.title,
+                  framework: doc.framework,
+                  periodLabel: String(new Date(doc.generatedAt).getFullYear()),
+                  status: doc.status,
+                  workspaceName: companyName || doc.title,
+                  agentName: null,
+                  summary,
+                  sections,
+                },
+                `${doc.title.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "")}.pdf`,
+              );
               toast.success(t("toasts.downloaded"));
+            } catch {
+              toast.error(t("toasts.generateFailed"));
+            } finally {
+              setBusyId(null);
             }
           }}
         >
-          {t("documents.download")}
+          {busyId === doc.id ? "…" : t("documents.download")}
         </button>
       )
     }
