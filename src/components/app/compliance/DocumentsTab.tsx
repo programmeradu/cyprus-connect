@@ -1,11 +1,40 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Section, DataTable, Empty } from "@/components/app/console/kit";
 import type { DataTableColumn as Column } from "@/components/app/console/kit";
 import { FRAMEWORKS } from "@/lib/compliance/frameworks";
+import { useUser } from "@/lib/user-context";
+import type { PdfSection } from "@/lib/pdf/report";
 import type { ComplianceDocument } from "./types";
+
+/** Turns a drafted markdown report into the sections the designed report PDF expects. */
+export function markdownToSections(md: string): { summary: string | null; sections: PdfSection[] } {
+  const clean = (s: string) =>
+    s
+      .replace(/\*\*(.+?)\*\*/g, "$1")
+      .replace(/(^|\s)\*(.+?)\*/g, "$1$2")
+      .replace(/^\s*[-*]\s+/gm, "• ")
+      .replace(/^#{1,6}\s+/gm, "")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  const sections: PdfSection[] = [];
+  const intro: string[] = [];
+  let current: { title: string; lines: string[] } | null = null;
+  for (const line of md.split(/\r?\n/)) {
+    const h = line.match(/^#{1,3}\s+(.+)$/) ?? line.match(/^\*\*(\d+\.\s.+?)\*\*\s*$/);
+    if (h) {
+      if (current) sections.push({ code: "", title: clean(current.title), body: clean(current.lines.join("\n")), figures: [], gaps: [] });
+      current = { title: h[1].replace(/^\d+[.)]\s*/, ""), lines: [] };
+    } else (current ? current.lines : intro).push(line);
+  }
+  if (current) sections.push({ code: "", title: clean(current.title), body: clean(current.lines.join("\n")), figures: [], gaps: [] });
+  const summary = clean(intro.join("\n")) || null;
+  if (sections.length === 0) return { summary: null, sections: [{ code: "", title: "Report", body: summary ?? "", figures: [], gaps: [] }] };
+  return { summary, sections: sections.filter((s) => s.title || s.body) };
+}
 
 export function DocumentsTab({
   documents,
@@ -17,6 +46,9 @@ export function DocumentsTab({
   generating: boolean;
 }) {
   const t = useTranslations("dashboard.compliance");
+  const { user } = useUser();
+  const companyName = user?.companyName ?? "";
+  const [busyId, setBusyId] = useState<number | null>(null);
   const statusLabel = (s: string) =>
     s === "submitted" ? t("status.submitted") : s === "ready" ? t("status.ready") : t("status.draft");
   const statusTone = (s: string) => (s === "submitted" ? "positive" : s === "ready" ? "caution" : undefined);
@@ -54,21 +86,36 @@ export function DocumentsTab({
         <button
           type="button"
           className="vck-btn"
-          disabled={!doc.content}
-          onClick={() => {
-            if (doc.content) {
-              const blob = new Blob([doc.content], { type: "text/markdown" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `${doc.title}.md`;
-              a.click();
-              URL.revokeObjectURL(url);
+          disabled={!doc.content || busyId === doc.id}
+          aria-busy={busyId === doc.id}
+          onClick={async () => {
+            if (!doc.content) return;
+            setBusyId(doc.id);
+            try {
+              const { downloadReport } = await import("@/lib/pdf/report");
+              const { summary, sections } = markdownToSections(doc.content);
+              await downloadReport(
+                {
+                  title: doc.title,
+                  framework: doc.framework,
+                  periodLabel: String(new Date(doc.generatedAt).getFullYear()),
+                  status: doc.status,
+                  workspaceName: companyName || doc.title,
+                  agentName: null,
+                  summary,
+                  sections,
+                },
+                `${doc.title.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "")}.pdf`,
+              );
               toast.success(t("toasts.downloaded"));
+            } catch {
+              toast.error(t("toasts.generateFailed"));
+            } finally {
+              setBusyId(null);
             }
           }}
         >
-          {t("documents.download")}
+          {busyId === doc.id ? "…" : t("documents.download")}
         </button>
       )
     }
