@@ -1139,17 +1139,17 @@
 }
 
 .vc .vck-link {
-  color: var(--vc-ink, #1a1f1b);
+  color: var(--vc-ink);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--vc-ink, #1a1f1b) 26%, transparent);
+  border-bottom: 1px solid var(--vc-rule);
   padding-bottom: 1px;
   transition: border-color 0.16s ease, color 0.16s ease;
 }
 .vc .vck-link:hover {
-  color: var(--vc-accent-ink, #3f5c34);
-  border-bottom-color: currentColor;
+  color: var(--vc-ink);
+  border-bottom-color: var(--vc-ink);
 }
 
 .vc .vck-cell-stack {
@@ -1161,13 +1161,13 @@
 .vc .vck-cell-stack small {
   font-size: 12.5px;
   line-height: 1.5;
-  color: var(--vc-quiet, #5d6a5e);
+  color: var(--vc-ink-3);
 }
 
 .vc .vcr-lede {
   font-size: 15px;
   line-height: 1.62;
-  color: var(--vc-ink, #1a1f1b);
+  color: var(--vc-ink);
   max-width: 74ch;
   margin: 0;
 }
@@ -1189,8 +1189,8 @@
   font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--vc-accent-ink, #3f5c34);
-  background: color-mix(in srgb, var(--vc-accent-ink, #3f5c34) 10%, transparent);
+  color: var(--vc-lime-ink);
+  background: var(--vc-lime);
   border-radius: 999px;
   padding: 3px 9px;
   flex: none;
@@ -1200,12 +1200,12 @@
   font-weight: 650;
   line-height: 1.35;
   margin: 0;
-  color: var(--vc-ink, #1a1f1b);
+  color: var(--vc-ink);
 }
 .vc .vcr-sec > p {
   font-size: 14.5px;
   line-height: 1.68;
-  color: var(--vc-ink, #1a1f1b);
+  color: var(--vc-ink-2);
   margin: 0;
 }
 
@@ -1216,8 +1216,8 @@
   margin: 16px 0 0;
 }
 .vc .vcr-figs > div {
-  background: color-mix(in srgb, var(--vc-sage, #e8efe4) 40%, transparent);
-  border: 1px solid color-mix(in srgb, var(--vc-ink, #1a1f1b) 9%, transparent);
+  background: var(--vc-well);
+  border: 1px solid var(--vc-rule);
   border-radius: 13px;
   padding: 12px 14px;
   display: flex;
@@ -1227,7 +1227,7 @@
 .vc .vcr-figs dt {
   font-size: 12px;
   font-weight: 600;
-  color: var(--vc-quiet, #5d6a5e);
+  color: var(--vc-ink-3);
   line-height: 1.4;
 }
 .vc .vcr-figs dd {
@@ -1240,20 +1240,21 @@
   font-size: 16px;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
-  color: var(--vc-ink, #1a1f1b);
+  color: var(--vc-ink);
   line-height: 1.3;
 }
 .vc .vcr-figs dd small {
   font-size: 11.5px;
   line-height: 1.45;
-  color: var(--vc-quiet, #5d6a5e);
+  color: var(--vc-ink-3);
 }
 
 .vc .vcr-gaps {
   margin-top: 14px;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px dashed color-mix(in srgb, var(--vc-ink, #1a1f1b) 20%, transparent);
+  border: 1px dashed var(--vc-rule);
+  background: var(--vc-well);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1263,7 +1264,7 @@
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--vc-quiet, #5d6a5e);
+  color: var(--vc-warn-text);
 }
 .vc .vcr-gaps ul {
   margin: 0;
@@ -1274,12 +1275,12 @@
   gap: 4px;
 }
 .vc .vcr-gaps li::marker {
-  color: color-mix(in srgb, var(--vc-ink, #1a1f1b) 40%, transparent);
+  color: var(--vc-rule);
 }
 .vc .vcr-gaps li {
   font-size: 13.5px;
   line-height: 1.55;
-  color: var(--vc-ink, #1a1f1b);
+  color: var(--vc-ink-2);
 }
 
 @media (max-width: 640px) {
