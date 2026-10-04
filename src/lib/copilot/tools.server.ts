@@ -238,7 +238,7 @@ export function verdeTools(ctx: ToolContext) {
 
     upgrade_plan: tool({
       description:
-        "Suggest or offer a subscription plan upgrade when the person wants a feature locked in their current plan (e.g. Pro for unlimited agent actions, 1,000 AI credits, verified PDF reports, sanctions screening, grant scout; Enterprise for CBAM reports with official EU values, 10,000 AI credits, invoicing/bank transfer) or when they ask to upgrade. Shows a direct Stripe Checkout card with plan details, pricing, and live status verification.",
+        "Offer or suggest a subscription plan upgrade when the person needs a higher-tier capability or asks to upgrade. IMPORTANT: Calling this tool ONLY displays an interactive Stripe Checkout card to the person. It does NOT charge or upgrade the plan itself. The upgrade only takes effect after the person clicks the card and completes Stripe Checkout. In your written response, instruct the person to complete the checkout using the card, and never claim their plan has already been upgraded.",
       inputSchema: z.object({
         targetPlanId: z.enum(["pro", "enterprise"]).describe("The plan to upgrade to ('pro' or 'enterprise')."),
         interval: z.enum(["month", "year"]).default("month").describe("Billing interval: 'month' (default) or 'year' (includes 2 months free)."),
@@ -266,6 +266,7 @@ export function verdeTools(ctx: ToolContext) {
           features: targetPlan.features,
           reason: reason.slice(0, 300),
           status: sub?.status || "active",
+          requiresUserAction: "The user must click 'Upgrade to " + targetPlan.name + "' on the card and complete payment on Stripe.",
         };
       },
     }),
