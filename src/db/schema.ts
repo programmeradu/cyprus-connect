@@ -1140,3 +1140,33 @@ export const textTranslations = pgTable('text_translations', {
   text: text('text').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => ({ pk: primaryKey({ columns: [t.sourceHash, t.locale] }) }));
+
+/** Action plan projects (scripts/sql/0043). Confirmed only by evidence, never by a tick. */
+export const actionProjects = pgTable('action_projects', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull(),
+  type: text('type').notNull(),
+  stage: text('stage').notNull().default('under_way'),
+  inputs: jsonb('inputs').$type<import('@/lib/actions/catalog').ProjectInputs>().notNull().default({}),
+  startedOn: text('started_on').notNull(),
+  installedOn: text('installed_on'),
+  confirmedAt: timestamp('confirmed_at', { withTimezone: true }),
+  confirmedFigures: jsonb('confirmed_figures').$type<Record<string, unknown>>(),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Evidence attached to an action project: a read invoice or a confirmed bank payment. */
+export const actionEvidence = pgTable('action_evidence', {
+  id: serial('id').primaryKey(),
+  projectId: integer('project_id').notNull().references(() => actionProjects.id, { onDelete: 'cascade' }),
+  workspaceId: text('workspace_id').notNull(),
+  kind: text('kind').notNull(),
+  documentId: integer('document_id'),
+  bankTransactionId: integer('bank_transaction_id'),
+  fileName: text('file_name'),
+  quotes: jsonb('quotes').$type<{ supplier?: string; date?: string; item?: string; amount?: string }>().notNull().default({}),
+  createdBy: text('created_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
