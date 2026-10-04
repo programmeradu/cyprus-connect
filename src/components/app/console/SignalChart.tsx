@@ -159,7 +159,7 @@ export function SignalChart({ metric, emptyNote }: { metric: ConsoleMetric; empt
           />
         ))}
 
-        <path d={geom.area} fill={`url(#vcFill-${metric.key})`} filter={`url(#vcGlow-${metric.key})`} />
+        <path d={geom.area} fill={`url(#vcFill-${metric.key})`} />
         <path
           d={geom.line}
           stroke="currentColor"

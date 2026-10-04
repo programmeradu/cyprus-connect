@@ -9,12 +9,10 @@
 
 .vc {
   --vc-page: #878d8e;
-  --vc-page-glow: rgba(214, 228, 220, 0.18);
+  --vc-page-glow: transparent;
   --vc-window: #94adad;
-  --vc-hero-grad: radial-gradient(90% 120% at 72% 26%, rgba(228, 238, 215, 0.52), transparent 58%),
-    radial-gradient(70% 90% at 22% 10%, rgba(226, 238, 236, 0.36), transparent 60%),
-    linear-gradient(112deg, #a0b8ba 0%, #a7c0bd 40%, #b0c7bb 66%, #a4bcb5 100%);
-  --vc-deck: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.05));
+  --vc-hero-grad: #94adad;
+  --vc-deck: transparent;
   --vc-deck-col: rgba(255, 255, 255, 0.035);
   --vc-ink: #1c2827;
   --vc-ink-2: rgba(28, 40, 39, 0.92);
@@ -52,12 +50,10 @@
 
 .dark .vc {
   --vc-page: #171717;
-  --vc-page-glow: rgba(255, 255, 255, 0.06);
-  --vc-window: #242626;
-  --vc-hero-grad: radial-gradient(88% 124% at 74% 14%, rgba(150, 176, 150, 0.16), transparent 60%),
-    radial-gradient(70% 96% at 18% 4%, rgba(255, 255, 255, 0.07), transparent 62%),
-    linear-gradient(112deg, #2b2d2c 0%, #303332 42%, #343837 68%, #2c2f2e 100%);
-  --vc-deck: linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.032));
+  --vc-page-glow: transparent;
+  --vc-window: #1e2020;
+  --vc-hero-grad: #1e2020;
+  --vc-deck: transparent;
   --vc-deck-col: rgba(255, 255, 255, 0.035);
   --vc-ink: #f2f3f1;
   --vc-ink-2: rgba(242, 243, 241, 0.86);
