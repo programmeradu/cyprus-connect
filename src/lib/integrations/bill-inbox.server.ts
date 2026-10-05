@@ -14,7 +14,7 @@ import { eq } from "drizzle-orm";
 import PostalMime from "postal-mime";
 import { db } from "@/db";
 import { activityEvents, billInboxes, documents } from "@/db/schema";
-import { hasDocumentAi } from "@/lib/lovable-ai";
+import { hasDocumentAi } from "@/lib/vuneli-ai";
 import { checkUpload } from "@/lib/validate";
 import { readDocument, mimeFor } from "@/lib/documents/intake.server";
 import { gmailConfirmation, newInboxToken, tokenFromAddress } from "./bill-inbox";

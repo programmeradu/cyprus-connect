@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
-import { aiChat, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
+import { aiChat, aiErrorMessage, hasTextAi } from "@/lib/vuneli-ai";
 
 export async function POST(req: Request) {
   try {

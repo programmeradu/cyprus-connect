@@ -12,7 +12,7 @@ import { actions, emissions, mediaGenerations, user, userActions } from "@/db/sc
 import { bindSessionUser } from "@/lib/api-auth";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
-import { aiChat, aiErrorMessage, aiImage, hasImageAi } from "@/lib/lovable-ai";
+import { aiChat, aiErrorMessage, aiImage, hasImageAi } from "@/lib/vuneli-ai";
 import { generateImage } from "@/lib/generators";
 import { uploadBase64Image } from "@/lib/supabase";
 import { checkAndDeductAiCredits, refundAiCredits } from "@/lib/ai-credits";

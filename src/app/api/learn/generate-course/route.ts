@@ -4,7 +4,7 @@ import { checkAndDeductAiCredits, refundAiCredits } from "@/lib/ai-credits";
 import { bindSessionUser } from "@/lib/api-auth";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
-import { aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
+import { aiErrorMessage, hasTextAi } from "@/lib/vuneli-ai";
 import { CourseGenerationError, generateCourse } from "@/lib/learn/course-generator.server";
 
 const log = logger("api.learn.generate-course");

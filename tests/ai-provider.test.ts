@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { aiChat, aiResponsesJson, aiChatRaw, hasTextAi, hasImageAi, AiGatewayError } from "@/lib/lovable-ai";
+import { aiChat, aiResponsesJson, aiChatRaw, hasTextAi, hasImageAi, AiGatewayError } from "@/lib/vuneli-ai";
 
 const realFetch = globalThis.fetch;
 afterEach(() => {

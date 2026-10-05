@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { aiErrorMessage, aiImage, hasImageAi } from "@/lib/lovable-ai";
+import { aiErrorMessage, aiImage, hasImageAi } from "@/lib/vuneli-ai";
 
 export async function POST(req: Request) {
   try {

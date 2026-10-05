@@ -11,7 +11,7 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { recordActivity } from "@/lib/activity.server";
 import { enqueue, isPlanner, isRunnable, tick } from "@/lib/agents/orchestrator";
 import { sha256Hex } from "@/lib/agents/hash";
-import { hasTextAi } from "@/lib/lovable-ai";
+import { hasTextAi } from "@/lib/vuneli-ai";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
 

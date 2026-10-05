@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { aiChatStream, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
+import { aiChatStream, aiErrorMessage, hasTextAi } from "@/lib/vuneli-ai";
 import { checkRateLimit, createRateLimitHeaders, getRequestIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
 
 // Public (marketing assistant), so input is bounded and callers are rate-limited.

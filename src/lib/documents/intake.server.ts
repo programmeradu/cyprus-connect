@@ -9,7 +9,7 @@
  */
 
 import * as XLSX from "xlsx";
-import { aiChatRaw, hasDocumentAi, hasImageAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChatRaw, hasDocumentAi, hasImageAi, parseJsonAnswer } from "@/lib/vuneli-ai";
 import { readEacBill, eacBills, type EacBill } from "@/lib/integrations/eac.server";
 import { readWaterBill, waterBills, type WaterBill } from "@/lib/integrations/water.server";
 import type { UploadKind } from "@/lib/validate";

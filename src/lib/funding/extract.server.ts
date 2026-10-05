@@ -7,7 +7,7 @@
 import { and, eq, isNull, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { grantOpportunities } from "@/db/schema";
-import { aiResponsesJson, AiGatewayError, hasTextAi } from "@/lib/lovable-ai";
+import { aiResponsesJson, AiGatewayError, hasTextAi } from "@/lib/vuneli-ai";
 import { sha256Hex, stableStringify } from "@/lib/agents/hash";
 import { logger } from "@/lib/log";
 import { pdfLinksIn, pdfLinksOnPage, readCallDocuments, type CallDocument } from "./call-documents.server";

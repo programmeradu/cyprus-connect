@@ -12,7 +12,7 @@
 import { z } from "zod";
 import { db } from "@/db";
 import { courses, courseModules, lessons, notifications } from "@/db/schema";
-import { aiChat, CHAT_MODEL_PRO } from "@/lib/lovable-ai";
+import { aiChat, CHAT_MODEL_PRO } from "@/lib/vuneli-ai";
 import { generateImage } from "@/lib/generators";
 import { logger } from "@/lib/log";
 import { sanitizeLessonContent, sanitizeLessonHtml } from "./sanitize-lesson";

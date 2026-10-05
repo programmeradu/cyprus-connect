@@ -30,7 +30,7 @@ import { runGrantScout } from "./grant-scout";
 import { runDeadlineKeeper } from "./deadline-keeper";
 import { runCbamAgent } from "./cbam-agent";
 import { runPlanner } from "./planner";
-import { hasTextAi } from "@/lib/lovable-ai";
+import { hasTextAi } from "@/lib/vuneli-ai";
 
 const LEASE_MS = 5 * 60_000;
 

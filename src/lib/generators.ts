@@ -1,5 +1,5 @@
 import { uploadBase64Image } from "./supabase";
-import { aiImage, hasImageAi } from "./lovable-ai";
+import { aiImage, hasImageAi } from "./vuneli-ai";
 
 export interface GenerationResult {
   url: string;

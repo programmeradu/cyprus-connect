@@ -14,7 +14,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { documents } from "@/db/schema";
-import { aiChatRaw, hasDocumentAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChatRaw, hasDocumentAi, parseJsonAnswer } from "@/lib/vuneli-ai";
 import { REFERENCE_FACTORS } from "@/lib/emissions/reference-factors";
 
 export const WATER_SOURCE = "water_bill";

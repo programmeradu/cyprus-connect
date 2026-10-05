@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { aiChat, hasTextAi } from "@/lib/lovable-ai";
+import { aiChat, hasTextAi } from "@/lib/vuneli-ai";
 
 /**
  * "Vuneli takes" - three short analyst notes written from the live Cyprus

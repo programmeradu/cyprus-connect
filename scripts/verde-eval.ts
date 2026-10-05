@@ -6,7 +6,7 @@
  *
  *   bun run scripts/verde-eval.ts        (needs LOVABLE_API_KEY)
  */
-import { aiChat } from "@/lib/lovable-ai";
+import { aiChat } from "@/lib/vuneli-ai";
 import { systemPrompt, ACTION_MARKER } from "@/lib/copilot/prompt";
 import { checkGrounding } from "@/lib/copilot/grounding";
 import { FIXED_BRIEFING, VERDE_QUESTIONS } from "../tests/verde-fixtures";

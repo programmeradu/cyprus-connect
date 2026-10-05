@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { aiEmbed, aiErrorMessage, EMBEDDING_MODEL, hasEmbeddingAi } from "@/lib/lovable-ai";
+import { aiEmbed, aiErrorMessage, EMBEDDING_MODEL, hasEmbeddingAi } from "@/lib/vuneli-ai";
 
 export async function POST(req: Request) {
   try {

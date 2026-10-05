@@ -12,7 +12,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { textTranslations } from "@/db/schema";
 import { sha256Hex } from "@/lib/agents/hash";
-import { aiResponsesJson, AiGatewayError, hasTextAi } from "@/lib/lovable-ai";
+import { aiResponsesJson, AiGatewayError, hasTextAi } from "@/lib/vuneli-ai";
 import { logger } from "@/lib/log";
 
 const log = logger("translate");

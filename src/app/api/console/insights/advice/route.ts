@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { logger } from "@/lib/log";
-import { aiChat, aiErrorMessage, hasTextAi } from "@/lib/lovable-ai";
+import { aiChat, aiErrorMessage, hasTextAi } from "@/lib/vuneli-ai";
 import { complianceSummary, footprintMonths, gridToday } from "@/lib/insights/insights.server";
 import { shiftGain } from "@/lib/insights/grid";
 import { buildAdvicePrompt, parseAdvice, type Fact } from "@/lib/insights/advice";

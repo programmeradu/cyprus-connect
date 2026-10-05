@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { aiChat, aiErrorMessage, hasTextAi } from '@/lib/lovable-ai';
+import { aiChat, aiErrorMessage, hasTextAi } from '@/lib/vuneli-ai';
 import { bindSessionUser } from "@/lib/api-auth";
 import { z } from "zod";
 import { readJson } from "@/lib/validate";

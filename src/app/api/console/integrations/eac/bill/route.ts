@@ -10,7 +10,7 @@ import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { recordActivity } from "@/lib/activity.server";
 import { readUpload, parseValue, type UploadKind } from "@/lib/validate";
-import { hasDocumentAi } from "@/lib/lovable-ai";
+import { hasDocumentAi } from "@/lib/vuneli-ai";
 import { readEacBill, saveEacBill, deleteEacBill } from "@/lib/integrations/eac.server";
 import { logger } from "@/lib/log";
 

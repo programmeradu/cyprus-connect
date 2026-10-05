@@ -10,7 +10,7 @@ import { z } from "zod";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { recordActivity } from "@/lib/activity.server";
 import { readUpload, parseValue, type UploadKind } from "@/lib/validate";
-import { hasDocumentAi } from "@/lib/lovable-ai";
+import { hasDocumentAi } from "@/lib/vuneli-ai";
 import { readWaterBill, saveWaterBill, deleteWaterBill } from "@/lib/integrations/water.server";
 import { logger } from "@/lib/log";
 

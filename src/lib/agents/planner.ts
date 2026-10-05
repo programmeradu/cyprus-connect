@@ -11,7 +11,7 @@
  */
 
 import { z } from "zod";
-import { aiToolTurn, aiErrorMessage, type ToolSpec, type ToolTurnMessage } from "@/lib/lovable-ai";
+import { aiToolTurn, aiErrorMessage, type ToolSpec, type ToolTurnMessage } from "@/lib/vuneli-ai";
 import { StepLimitError, type AgentRuntime } from "./runtime";
 import { TOOLS, type ToolName } from "./tools";
 import { sha256Hex, stableStringify } from "./hash";

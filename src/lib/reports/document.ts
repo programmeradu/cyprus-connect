@@ -13,7 +13,7 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { cbamSuppliers, metricDefinitions, metricReadings, reports, workspaces } from "@/db/schema";
-import { aiChat, hasTextAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChat, hasTextAi, parseJsonAnswer } from "@/lib/vuneli-ai";
 import { readCompany } from "@/lib/company-update.server";
 import { listObligations } from "@/lib/obligations/obligations.server";
 import { shownCalls } from "@/lib/funding/funding.server";

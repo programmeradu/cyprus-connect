@@ -8,7 +8,7 @@
  * in /api/console/copilot/proposal.
  */
 
-import { aiErrorMessage, hasTextAi, textLanguageModel } from "@/lib/lovable-ai";
+import { aiErrorMessage, hasTextAi, textLanguageModel } from "@/lib/vuneli-ai";
 import { createUIMessageStream, createUIMessageStreamResponse, isStepCount, streamText, toUIMessageStream, type UIMessage } from "ai";
 import { verdeTools } from "@/lib/copilot/tools.server";
 import { logger } from "@/lib/log";

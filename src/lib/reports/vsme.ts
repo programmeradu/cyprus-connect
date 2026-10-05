@@ -21,7 +21,7 @@ import {
 } from "@/db/schema";
 import { and, asc, eq } from "drizzle-orm";
 import { VSME_BASIC } from "@/data/tools/vsme-basic-module";
-import { aiChat, hasTextAi, parseJsonAnswer } from "@/lib/lovable-ai";
+import { aiChat, hasTextAi, parseJsonAnswer } from "@/lib/vuneli-ai";
 
 export interface ReportFigure {
   label: string;

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { complianceDocuments, complianceAuditLogs, emissions, user } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
-import { aiChat, aiErrorMessage, hasTextAi } from '@/lib/lovable-ai';
+import { aiChat, aiErrorMessage, hasTextAi } from '@/lib/vuneli-ai';
 import { logger } from '@/lib/log';
 import { checkAndDeductAiCredits } from '@/lib/ai-credits';
 import { requireUserIdOrQa as requireVuneliUserId } from '@/lib/api-auth';

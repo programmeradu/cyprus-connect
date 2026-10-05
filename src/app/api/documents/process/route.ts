@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import { aiChatRaw, hasDocumentAi } from "@/lib/lovable-ai";
+import { aiChatRaw, hasDocumentAi } from "@/lib/vuneli-ai";
 import { readUpload } from "@/lib/validate";
 import { logger } from "@/lib/log";
 
