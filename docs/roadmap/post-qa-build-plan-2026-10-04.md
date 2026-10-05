@@ -8,7 +8,7 @@ Sources:
 > **Check before building.** Some tools named below came from AI research and have not been checked. Confirm each one exists, is maintained and does what is claimed before relying on it. In particular: "OntoESG", the "Bank of Cyprus B2B API" (we would need a corporate data-sharing agreement), "CitationGraph", Accord Project (inactive, and more than we need), and Typia's "C++ speed" claim.
 >
 > Every choice must also follow `AGENTS.md`:
-> - **Model calls** go only through the router `src/lib/lovable-ai.ts`. It sends text calls to Groq when `GROQ_API_KEY` is set, otherwise to the Lovable gateway; images and embeddings go to Lovable. BAML, DSPy and Instructor must sit behind it or be dropped.
+> - **Model calls** go only through the router `src/lib/vuneli-ai.ts`. It sends text calls to Groq when `GROQ_API_KEY` is set, otherwise to the Lovable gateway; images and embeddings go to Lovable. BAML, DSPy and Instructor must sit behind it or be dropped.
 > - **PDFs** already use Typst in the browser (`src/lib/pdf/typst-render.ts`).
 > - **Bill email** already arrives via Cloudflare Email Routing → worker `email` handler.
 > - **Uploads** go through the one intake reader (`src/lib/documents/`).
@@ -69,7 +69,7 @@ Since the EU Omnibus I change, CSRD only covers companies with more than 1,000 e
 
 ### 2. Bill and receipt intake (F20/F26, F21, F28/F29)
 - **DocTR** (Mindee): OCR that copes with skewed or crumpled photos. *Python, so it would need a separate service.*
-- **BAML** (boundaryml.com): enforces a fixed structure on AI extraction (Greek VAT IDs, diesel litres, tariff tiers). *Must call models through `lovable-ai.ts`.*
+- **BAML** (boundaryml.com): enforces a fixed structure on AI extraction (Greek VAT IDs, diesel litres, tariff tiers). *Must call models through `vuneli-ai.ts`.*
 - **unpdf** (PDF.js-based): fast text and page count at the edge. Reject empty or locked PDFs before calling vision models.
 
 ### 3. Fingerprints and audit trail (F114, F80, F88, F57)
@@ -119,7 +119,7 @@ Since the EU Omnibus I change, CSRD only covers companies with more than 1,000 e
 
 1. **Email in.** Use the existing Cloudflare Email Routing and worker `email` handler (same pattern as bill email). `postal-mime` extracts the attachments, then the work goes to a queue.
 2. **Layout and tables.** LlamaParse, or Microsoft Table-Transformer, for PDFs. SheetJS or Univer for Excel (cell positions, validation rules, formulas).
-3. **Matching.** Embeddings (via `lovable-ai.ts`) compared against our ESG knowledge base (GHG Protocol, VSME, CSRD), then a structured match to fields, e.g. "ISO 50001 EMS?" → `governance.iso50001_status`. Yes/no answers are converted to the client's dropdown options.
+3. **Matching.** Embeddings (via `vuneli-ai.ts`) compared against our ESG knowledge base (GHG Protocol, VSME, CSRD), then a structured match to fields, e.g. "ISO 50001 EMS?" → `governance.iso50001_status`. Yes/no answers are converted to the client's dropdown options.
 4. **Review screen.** Green (>95%) filled from verified bills. Amber (70–95%) inferred, needs confirmation. Red (<70%) no data yet, with an upload box right there.
 5. **Fill the original file.** Excel: write the cells and keep formulas and formatting (ExcelJS in JS; OpenPyXL needs Python). PDF: fill AcroForm fields (pdf-lib in JS; PyMuPDF for XFA). Add a verification appendix with fingerprints.
 
