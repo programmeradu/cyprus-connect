@@ -16,6 +16,7 @@ const TOOL_LABELS: Record<string, { verb: string; kind: "read" | "write" | "outw
   sign_cbam_declaration: { verb: "Signature of the CBAM declaration", kind: "legal" },
   read_cbam_suppliers: { verb: "Read supplier contacts and past requests", kind: "read" },
   withdraw_approval_request: { verb: "Withdrew an out-of-date request", kind: "write" },
+  close_evidence_task: { verb: "Closed an evidence request that is now covered", kind: "write" },
   send_supplier_request: { verb: "Email to a supplier asking for CBAM data", kind: "outward" },
   read_company_profile: { verb: "Read the company record", kind: "read" },
   search_company_registry: { verb: "Searched the Cyprus Registrar of Companies", kind: "read" },
@@ -43,6 +44,7 @@ const EL_VERBS: Record<string, string> = {
   sign_cbam_declaration: "Υπογραφή της δήλωσης CBAM",
   read_cbam_suppliers: "Διάβασε επαφές προμηθευτών και προηγούμενα αιτήματα",
   withdraw_approval_request: "Απέσυρε ένα παρωχημένο αίτημα",
+  close_evidence_task: "Έκλεισε αίτημα τεκμηρίωσης που πλέον καλύπτεται",
   send_supplier_request: "Email σε προμηθευτή για δεδομένα CBAM",
   read_company_profile: "Διάβασε τα στοιχεία της εταιρείας",
   search_company_registry: "Αναζήτησε στο Μητρώο Εταιρειών Κύπρου",
@@ -104,7 +106,17 @@ function decisionLabel_(decision: string): { label: string; tone: Tone } {
   }
 }
 
-export function runStatusLabel(status: string, locale: LabelLocale = "en"): { label: string; tone: Tone } {
+export function runStatusLabel(
+  status: string,
+  locale: LabelLocale = "en",
+  failedSteps = 0,
+): { label: string; tone: Tone } {
+  if (failedSteps > 0 && (status === "succeeded" || status === "finished")) {
+    return {
+      label: locale === "el" ? "Ολοκληρώθηκε με σφάλματα" : "Finished with errors",
+      tone: "warn",
+    };
+  }
   const r = runStatusLabel_(status);
   return locale === "el" && EL_STATUS[status] ? { ...r, label: EL_STATUS[status] } : r;
 }

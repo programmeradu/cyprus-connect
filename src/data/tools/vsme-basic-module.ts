@@ -48,6 +48,7 @@ export const VSME_BASIC: VsmeDisclosure[] = [
       { id: "vat", type: "shorttext", label: { en: "VAT / registration number", el: "Αριθμός ΦΠΑ / εγγραφής" } },
       { id: "country", type: "shorttext", label: { en: "Country of registration", el: "Χώρα εγγραφής" } },
       { id: "period", type: "shorttext", label: { en: "Reporting period", el: "Περίοδος αναφοράς" }, hint: { en: "e.g. 1 Jan – 31 Dec 2025", el: "π.χ. 1 Ιαν – 31 Δεκ 2025" } },
+      { id: "netRevenue", type: "number", label: { en: "Net revenue (€M)", el: "Καθαρά έσοδα (€ εκ.)" }, unit: "€M", hint: { en: "Used to calculate GHG revenue intensity in B3 (e.g. 2.5 for €2,500,000)", el: "Χρησιμοποιείται για τον υπολογισμό έντασης GHG στο B3 (π.χ. 2,5 για €2.500.000)" } },
       {
         id: "option",
         type: "select",

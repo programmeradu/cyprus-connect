@@ -45,6 +45,7 @@ async function loadSource(userId: string): Promise<StudioSource> {
       totalCo2e: emissions.totalCo2e,
       electricity: emissions.electricity,
       gas: emissions.gas,
+      water: emissions.water,
       transport: emissions.transport,
       periodMonth: emissions.periodMonth,
       periodYear: emissions.periodYear,

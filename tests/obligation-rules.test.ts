@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { RULES, evaluateAll, isMicroOrSmall, nextCbamDeclaration, type ObligationFacts } from "@/lib/obligations/rulebook";
 import { amendmentsQuery, parseAmendments } from "@/lib/obligations/law-watch.server";
+import { annualiseEacKwh } from "@/lib/obligations/obligations.server";
 
 const base: ObligationFacts = {
   employees: null, employeesMax: null, revenueEur: null, cbamTonnesByYear: {}, cbamNoThresholdGoods: false,
@@ -49,6 +50,19 @@ describe("deadline rulebook", () => {
     expect(get({ electricityKwh12m: 20_000 }, "energy_audit").match).toBe("not");
     expect(get({ electricityKwh12m: 1_500_000 }, "energy_audit").match).toBe("might");
     expect(get({ electricityKwh12m: 3_000_000 }, "energy_audit").match).toBe("applies");
+  });
+
+  it("annualises EAC bills accurately for energy audit evaluation", () => {
+    // QA case: two EAC bills (1840 kWh and 1520 kWh)
+    const bills = [
+      { kwh: 1840, periodStart: "2026-06-01", periodEnd: "2026-07-31" },
+      { kwh: 1520, periodStart: "2026-08-01", periodEnd: "2026-09-30" },
+    ];
+    const annualKwh = annualiseEacKwh(bills);
+    expect(annualKwh).toBeGreaterThan(9000);
+    expect(annualKwh).toBeLessThan(12000);
+    // 10,000 kWh is ~0.036 TJ, which rules out the 10 TJ audit obligation
+    expect(get({ electricityKwh12m: annualKwh }, "energy_audit").match).toBe("not");
   });
 });
 

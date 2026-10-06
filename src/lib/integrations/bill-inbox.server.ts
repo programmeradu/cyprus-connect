@@ -124,6 +124,8 @@ async function readOne(userId: string, fileName: string, bytes: Uint8Array, kind
 }
 
 const REJECT_TEXT: Partial<Record<string, string>> = {
+  corrupt_pdf: "This file is damaged and can't be opened.",
+  empty_page: "This page is empty.",
   not_relevant: "This doesn't look like a bill Vuneli can use for your footprint.",
   unreadable: "The usage or billing period couldn't be read, so nothing was guessed.",
   scanned_pdf: "This PDF is a scan with no text. Please upload a clear photo in Add data.",

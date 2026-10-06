@@ -20,9 +20,41 @@ const isNoThresholdCn = (cn: string) => {
   return c.startsWith("2716") || c.startsWith("28041000");
 };
 
+import { eacBills } from "@/lib/integrations/eac.server";
+
+/** Annualise electricity kWh from EAC bills when metric readings are not recorded. */
+export function annualiseEacKwh(bills: { kwh: number; periodStart?: string; periodEnd?: string }[]): number {
+  if (!bills.length) return 0;
+  let totalKwh = 0;
+  let totalDays = 0;
+  for (const b of bills) {
+    if (typeof b.kwh !== "number" || b.kwh <= 0) continue;
+    totalKwh += b.kwh;
+    if (b.periodStart && b.periodEnd) {
+      const start = new Date(b.periodStart).getTime();
+      const end = new Date(b.periodEnd).getTime();
+      const days = Math.round((end - start) / 86_400_000);
+      totalDays += isNaN(days) || days <= 0 ? 61 : days;
+    } else {
+      totalDays += 61;
+    }
+  }
+  if (totalKwh === 0) return 0;
+  if (totalDays >= 365) {
+    return Math.round((totalKwh / totalDays) * 365);
+  }
+  const effectiveDays = Math.max(30, totalDays);
+  return Math.round((totalKwh / effectiveDays) * 365);
+}
+
 export async function obligationFacts(workspaceId: string): Promise<ObligationFacts | null> {
   const [ws] = await db
-    .select({ importsCbamGoods: workspaces.importsCbamGoods, eudrCommodities: workspaces.eudrCommodities, consumerClaims: workspaces.consumerClaims })
+    .select({
+      importsCbamGoods: workspaces.importsCbamGoods,
+      eudrCommodities: workspaces.eudrCommodities,
+      consumerClaims: workspaces.consumerClaims,
+      ownerUserId: workspaces.ownerUserId,
+    })
     .from(workspaces)
     .where(eq(workspaces.id, workspaceId))
     .limit(1);
@@ -46,6 +78,15 @@ export async function obligationFacts(workspaceId: string): Promise<ObligationFa
     .select({ value: metricReadings.value })
     .from(metricReadings)
     .where(and(eq(metricReadings.workspaceId, workspaceId), eq(metricReadings.metricKey, "electricity_kwh"), gte(metricReadings.periodStart, since)));
+
+  let electricityKwh12m: number | null = kwh.length ? kwh.reduce((s, r) => s + r.value, 0) : null;
+  if (electricityKwh12m === null && ws.ownerUserId) {
+    const bills = await eacBills(ws.ownerUserId);
+    if (bills.length > 0) {
+      electricityKwh12m = annualiseEacKwh(bills);
+    }
+  }
+
   return {
     employees: biz?.employees ?? null,
     employeesMax: biz?.employeesMax ?? null,
@@ -55,7 +96,7 @@ export async function obligationFacts(workspaceId: string): Promise<ObligationFa
     importsCbamGoods: lines.length ? true : ws.importsCbamGoods,
     eudrCommodities: ws.eudrCommodities,
     consumerClaims: ws.consumerClaims,
-    electricityKwh12m: kwh.length ? kwh.reduce((s, r) => s + r.value, 0) : null,
+    electricityKwh12m,
   };
 }
 

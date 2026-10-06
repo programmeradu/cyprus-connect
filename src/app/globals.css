@@ -147,6 +147,7 @@
 }
 
 :root {
+  color-scheme: light;
   --radius: 0.5rem; /* Design-rule scale: rounded-sm 4px · rounded-md 6px (buttons/inputs) · rounded-lg 8px (cards) · rounded-xl 12px (modals). */
   
   /* Premium Green Sustainability Palette - Light Mode */
@@ -208,6 +209,7 @@
 
 
 .dark {
+  color-scheme: dark;
   /* ChatGPT grey — a true neutral ramp (zero chroma), not a tinted one.
      Surfaces step 0.20 → 0.24 → 0.27 → 0.30 so cards, popovers and inputs
      separate by value alone. No backdrop-blur needed to fake depth.
@@ -476,6 +478,15 @@ h1, h2, h3, h4, h5, h6, p, span, a, button, label, li {
 }
 
 /* Ensure select dropdown options have explicit contrast in both modes */
+select {
+  color-scheme: light;
+}
+
+.dark select,
+[data-theme="dark"] select {
+  color-scheme: dark;
+}
+
 select option {
   background-color: #ffffff;
   color: #1a1f1b;
@@ -485,6 +496,15 @@ select option {
 [data-theme="dark"] select option {
   background-color: #212121;
   color: #f5f5f5;
+}
+
+select option:disabled {
+  color: #88928c;
+}
+
+.dark select option:disabled,
+[data-theme="dark"] select option:disabled {
+  color: #6e7370;
 }
 
 

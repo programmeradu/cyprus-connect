@@ -7,7 +7,10 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { VuneliWordmark } from "@/components/brand/VuneliWordmark";
@@ -71,6 +74,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const router = useRouter();
   const path = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
 
+  const [mounted, setMounted] = useState(false);
   const [palette, setPalette] = useState(false);
   const [queue, setQueue] = useState(false);
   const [account, setAccount] = useState(false);
@@ -78,6 +82,10 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const [query, setQuery] = useState("");
   const field = useRef<HTMLInputElement>(null);
   const bar = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   /** Everything searchable is built from the loaded workspace records. */
   const entries = useMemo<Entry[]>(() => {
@@ -94,9 +102,47 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         title: item.label,
         detail: item.detail,
       })),
+      {
+        href: "/app/cbam",
+        group: "Go to",
+        title: "CBAM Declarations",
+        detail: "Quarterly carbon border adjustment mechanism filings & goods",
+      },
+      {
+        href: "/app/suppliers",
+        group: "Go to",
+        title: "Suppliers",
+        detail: "Supply chain carbon accounting and EU sanctions screening",
+      },
+      {
+        href: "/app/settings",
+        group: "Go to",
+        title: "Workspace Settings",
+        detail: "Company profile, sector, sites and revenue facts",
+      },
+      {
+        href: "/app/billing",
+        group: "Go to",
+        title: "Billing & Plan",
+        detail: "Subscription tier, invoices and usage",
+      },
+      {
+        href: "/app/calculator",
+        group: "Go to",
+        title: "Add Data & Footprint",
+        detail: "Upload EAC bills, water bills, fuel receipts, invoices",
+      },
     ];
 
     if (!data) return list;
+    for (const task of data.tasks ?? []) {
+      list.push({
+        href: "/app#waiting",
+        group: "Waiting for you",
+        title: task.title,
+        detail: `${task.kind} · ${task.detail ?? ""}`,
+      });
+    }
     for (const agent of data.agents) {
       list.push({ href: "/app/agents", group: "Agents", title: agent.name, detail: agent.role });
     }
@@ -191,6 +237,11 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
       if (!res.ok) throw new Error(body?.error ?? "The decision was not saved. Try again.");
       setDecided((prev) => new Set(prev).add(id));
       refresh();
+      if (decision === "reject") {
+        toast.info(locale === "el" ? "Το στοιχείο απορρίφθηκε από την ουρά." : "Item dismissed from queue.");
+      } else {
+        toast.success(locale === "el" ? "Το στοιχείο εγκρίθηκε." : "Item approved.");
+      }
     } catch (err) {
       setDecideError({ id, message: err instanceof Error ? err.message : "The decision was not saved." });
     } finally {
@@ -203,6 +254,18 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const avatarSeed = workspace?.ownerName ?? workspace?.name ?? "Vuneli";
   const open = (href: string) => {
     setPalette(false);
+    if (href.startsWith("/app#")) {
+      router.push("/app" as never);
+      if (typeof window !== "undefined") {
+        const hash = href.split("#")[1];
+        window.setTimeout(() => {
+          const el = document.getElementById(hash);
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+          else window.location.hash = hash;
+        }, 60);
+      }
+      return;
+    }
     router.push(href as never);
   };
   const moreActive = MORE_ITEMS.some((item) => onPage(path, item.href));
@@ -254,7 +317,11 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                   href={item.href as never}
                   role="menuitem"
                   data-active={onPage(path, item.href)}
-                  onClick={() => setMore(false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setMore(false);
+                    router.push(item.href as never);
+                  }}
                 >
                   <strong>{navText(item.label, locale)}</strong>
                   <span>{navText(item.detail, locale)}</span>
@@ -273,7 +340,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         <button
           type="button"
           className="vc-iconbtn"
-          aria-label="Search the workspace"
+          aria-label={navText("Search the workspace", locale)}
           aria-expanded={palette}
           onClick={() => setPalette(true)}
         >
@@ -287,8 +354,8 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
             data-alert={tasks.length > 0}
             aria-label={
               tasks.length === 0
-                ? "Approval queue, nothing waiting"
-                : `Approval queue, ${tasks.length} waiting`
+                ? (locale === "el" ? "Ουρά εγκρίσεων, καμία εκκρεμότητα" : "Approval queue, nothing waiting")
+                : (locale === "el" ? `Ουρά εγκρίσεων, ${tasks.length} εκκρεμούν` : `Approval queue, ${tasks.length} waiting`)
             }
             aria-expanded={queue}
             onClick={() => {
@@ -305,20 +372,20 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
           </button>
 
           {queue && (
-            <div className="vc-pop vc-pop-queue" role="dialog" aria-label="Approval queue">
+            <div className="vc-pop vc-pop-queue" role="dialog" aria-label={navText("Approval queue", locale)}>
               <header>
                 <span className="vc-pop-title">
-                  <strong>Waiting on a person</strong>
+                  <strong>{locale === "el" ? "Αναμονή έγκρισης" : "Waiting on a person"}</strong>
                   <b className="vc-pop-count" data-empty={tasks.length === 0}>
                     {tasks.length}
                   </b>
                 </span>
-                <button type="button" onClick={() => setQueue(false)} aria-label="Close queue">
+                <button type="button" onClick={() => setQueue(false)} aria-label={locale === "el" ? "Κλείσιμο ουράς" : "Close queue"}>
                   <IcoClose size={13} />
                 </button>
               </header>
               {tasks.length === 0 ? (
-                <p className="vc-pop-empty">The queue is clear. Agents have nothing to escalate.</p>
+                <p className="vc-pop-empty">{navText("The queue is clear. Agents have nothing to escalate.", locale)}</p>
               ) : (
                 <>
                   <ul>
@@ -356,12 +423,12 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                     ))}
                   </ul>
                   {tasks.length > 6 && (
-                    <p className="vc-pop-more">{tasks.length - 6} more in the queue</p>
+                    <p className="vc-pop-more">{tasks.length - 6} {navText("more in the queue", locale)}</p>
                   )}
                 </>
               )}
-              <Link href={"/app/compliance" as never} className="vc-pop-cta" onClick={() => setQueue(false)}>
-                Open the full queue
+              <Link href={"/app/agents#waiting-queue" as never} className="vc-pop-cta" onClick={() => setQueue(false)}>
+                {navText("Open the full queue", locale)}
               </Link>
             </div>
           )}
@@ -372,7 +439,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
           <button
             type="button"
             className="vc-avatar"
-            aria-label="Account menu"
+            aria-label={navText("Account menu", locale)}
             aria-expanded={account}
             onClick={() => {
               setAccount((v) => !v);
@@ -383,37 +450,48 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
           </button>
 
           {account && (
-            <div className="vc-pop vc-pop-narrow" role="menu" aria-label="Account">
+            <div className="vc-pop vc-pop-narrow" role="menu" aria-label={navText("Account menu", locale)}>
               <header className="vc-pop-identity">
                 <ConsoleAvatar seed={avatarSeed} size={30} alt="" />
-                <strong>{workspace?.ownerName ?? "Signed in"}</strong>
+                <strong>{workspace?.ownerName ?? navText("Signed in", locale)}</strong>
               </header>
               <p className="vc-pop-empty">
-                {workspace ? `${workspace.name} · ${workspace.sector.charAt(0).toUpperCase()}${workspace.sector.slice(1)} · ${workspace.sites} ${workspace.sites === 1 ? "site" : "sites"}` : "Loading the workspace"}
+                {workspace ? `${workspace.name} · ${workspace.sector.charAt(0).toUpperCase()}${workspace.sector.slice(1)} · ${workspace.sites} ${workspace.sites === 1 ? "site" : "sites"}` : navText("Loading the workspace", locale)}
               </p>
               <Link href={"/app/settings" as never} role="menuitem" onClick={() => setAccount(false)}>
-                Workspace settings
+                {navText("Workspace settings", locale)}
               </Link>
               <Link href={"/app?tour=1" as never} role="menuitem" onClick={() => setAccount(false)}>
-                Replay the Home tour
+                {navText("Replay the Home tour", locale)}
               </Link>
               <Link href={"/app/billing" as never} role="menuitem" onClick={() => setAccount(false)}>
-                Plan and usage
+                {navText("Plan and usage", locale)}
               </Link>
               <Link href={"/" as never} role="menuitem" onClick={() => setAccount(false)}>
-                Leave the console
+                {navText("Leave the console", locale)}
               </Link>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={async () => {
+                  setAccount(false);
+                  await authClient.signOut().catch(() => {});
+                  window.location.href = `/${locale}/auth`;
+                }}
+              >
+                {navText("Sign out", locale)}
+              </button>
             </div>
           )}
         </div>
       </div>
 
-      {palette && (
+      {palette && mounted && typeof document !== "undefined" && createPortal(
         <div className="vc-palette-scrim" role="presentation" onClick={() => setPalette(false)}>
           <div
             className="vc-palette"
             role="dialog"
-            aria-label="Search the workspace"
+            aria-label={navText("Search the workspace", locale)}
             onClick={(event) => event.stopPropagation()}
           >
             <div className="vc-palette-field">
@@ -422,8 +500,8 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
                 ref={field}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search agents, obligations, connections, metrics"
-                aria-label="Search the workspace"
+                placeholder={navText("Search agents, obligations, connections, metrics, suppliers", locale)}
+                aria-label={navText("Search the workspace", locale)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" && results[0]) open(results[0].href);
                 }}
@@ -446,7 +524,8 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
               </ul>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

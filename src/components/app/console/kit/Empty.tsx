@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Link } from "@/i18n/navigation";
 
 /**
  * A designed empty state: what is missing, why, and one thing to do.
@@ -26,9 +27,15 @@ export function Empty({
       {children}
       {action &&
         (action.href ? (
-          <a className="vck-btn" href={action.href}>
-            {action.label}
-          </a>
+          action.href.startsWith("/") ? (
+            <Link className="vck-btn" href={action.href as never}>
+              {action.label}
+            </Link>
+          ) : (
+            <a className="vck-btn" href={action.href}>
+              {action.label}
+            </a>
+          )
         ) : (
           <button type="button" className="vck-btn" onClick={action.onClick}>
             {action.label}

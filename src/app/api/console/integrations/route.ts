@@ -72,20 +72,84 @@ export async function GET() {
   try {
     const profile = await readCompanyProfile(account.id);
     const industry = profile?.companyIndustry?.trim() || null;
-    const [allWater, allEac] = await Promise.all([waterBills(account.id), eacBills(account.id)]);
+    const [allWater, allEac] = await Promise.all([
+      waterBills(account.id).catch((err) => { log.warn("waterBills failed", err); return []; }),
+      eacBills(account.id).catch((err) => { log.warn("eacBills failed", err); return []; }),
+    ]);
     const [grid, bank, saltedge, nango, eac, water, ct, cystat, wikirate, waterPayments, eacPayments, billInbox] = await Promise.all([
-      gridToday(country),
-      bankSummary(workspace.id),
-      saltEdgeSummary(workspace.id),
-      nangoSummary(account.id),
-      eacSummary(account.id),
-      waterSummary(account.id),
-      climateTraceSummary(country),
-      cyStatSummary(industry),
-      wikiRateSummary(),
-      billPaymentCheck(workspace.id, "water", allWater),
-      billPaymentCheck(workspace.id, "electricity", allEac),
-      billInboxSummary(account.id),
+      gridToday(country).catch((err) => { log.warn("gridToday failed", err); return { grid: null, reason: "unavailable" as const }; }),
+      bankSummary(workspace.id).catch((err): BankSummary => {
+        log.warn("bankSummary failed", err);
+        return {
+          configured: false,
+          environment: null,
+          status: "none",
+          accounts: 0,
+          lastSyncAt: null,
+          consentEndsOn: null,
+          failed: false,
+          windowDays: 90,
+          paymentsRead: 0,
+          unmarked: 0,
+          categories: [],
+          otherDebits: { count: 0, total: 0 },
+          recent: [],
+        };
+      }),
+      saltEdgeSummary(workspace.id).catch((err): SaltEdgeSummary => {
+        log.warn("saltEdgeSummary failed", err);
+        return { configured: false, environment: null, status: "none", accounts: 0, banks: [], lastSyncAt: null };
+      }),
+      nangoSummary(account.id).catch((err): NangoSummary => {
+        log.warn("nangoSummary failed", err);
+        return { configured: false, connected: false, connectionsCount: 0, providers: [], lastSyncAt: null };
+      }),
+      eacSummary(account.id).catch((err): EacSummary => {
+        log.warn("eacSummary failed", err);
+        return {
+          readerReady: false,
+          factor: { kgPerKwh: 0.622, source: "UNFCCC NIR", vintage: "2024" },
+          bills: [],
+          totalKwh: 0,
+          totalKgCo2e: 0,
+        };
+      }),
+      waterSummary(account.id).catch((err): WaterSummary => {
+        log.warn("waterSummary failed", err);
+        return {
+          readerReady: false,
+          factor: { kgPerM3: 0.616, source: "WDD Cyprus", vintage: "2024" },
+          bills: [],
+          totalM3: 0,
+          totalKgCo2e: 0,
+        };
+      }),
+      climateTraceSummary(country).catch((err) => { log.warn("climateTraceSummary failed", err); return { data: null, reason: "unavailable" as const }; }),
+      cyStatSummary(industry).catch((err) => { log.warn("cyStatSummary failed", err); return { data: null, reason: "unavailable" as const }; }),
+      wikiRateSummary().catch((err): WikiRateSummary => {
+        log.warn("wikiRateSummary failed", err);
+        return { configured: false, cyprusCompanies: null, sample: [], reason: "unavailable" };
+      }),
+      billPaymentCheck(workspace.id, "water", allWater).catch((err): BillPaymentCheck => {
+        log.warn("billPaymentCheck water failed", err);
+        return { bankLinked: false, coveredFrom: null, matched: [], paymentsWithoutBill: [], billsWithoutPayment: [] };
+      }),
+      billPaymentCheck(workspace.id, "electricity", allEac).catch((err): BillPaymentCheck => {
+        log.warn("billPaymentCheck electricity failed", err);
+        return { bankLinked: false, coveredFrom: null, matched: [], paymentsWithoutBill: [], billsWithoutPayment: [] };
+      }),
+      billInboxSummary(account.id).catch((err): BillInboxSummary => {
+        log.warn("billInboxSummary failed", err);
+        return {
+          ready: false,
+          address: null,
+          lastMessageAt: null,
+          lastMessageFrom: null,
+          lastMessageSubject: null,
+          lastResult: [],
+          confirmation: null,
+        };
+      }),
     ]);
     const body: IntegrationsData = {
       country,

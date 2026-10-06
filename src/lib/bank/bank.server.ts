@@ -5,10 +5,11 @@
 
 import { and, desc, eq, gte, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { activityEvents, bankLinks, bankTransactions } from "@/db/schema";
+import { activityEvents, bankLinks, bankTransactions, documents, workspaces } from "@/db/schema";
 import { bocConfig, statement, BocError } from "./boc.server";
 import { syncSaltEdgeConnection } from "./saltedge.server";
 import { SPEND_CATEGORIES, categorise, consentExpired, directionOf, parseBocDate, type SpendCategory } from "./categorize";
+import type { IntakeProposal } from "@/lib/documents/intake";
 
 export const SYNC_DAYS = 90;
 
@@ -138,7 +139,52 @@ export async function bankSummary(workspaceId: string): Promise<BankSummary> {
     otherDebits: { count: 0, total: 0 },
     recent: [],
   };
-  if (!link || link.status === "pending") return base;
+  if (!link || link.status === "pending") {
+    // If no active live bank link, check for uploaded/imported bank statements (F59)
+    const [ws] = await db.select({ ownerUserId: workspaces.ownerUserId }).from(workspaces).where(eq(workspaces.id, workspaceId)).limit(1);
+    if (ws?.ownerUserId) {
+      const docRows = await db
+        .select({ parsedData: documents.parsedData })
+        .from(documents)
+        .where(and(eq(documents.userId, ws.ownerUserId), eq(documents.uploadSource, "intake_bank_statement"), eq(documents.processingStatus, "completed")));
+
+      for (const row of docRows) {
+        try {
+          const parsed = JSON.parse(row.parsedData ?? "{}") as { proposal?: IntakeProposal; bank?: IntakeProposal["bank"] };
+          const bank = parsed.proposal?.bank || parsed.bank;
+          if (bank) {
+            base.paymentsRead += bank.debitCount;
+            if (bank.totals) {
+              for (const [cat, total] of Object.entries(bank.totals)) {
+                const hit = base.categories.find((c) => c.category === cat);
+                if (hit && typeof total === "number") {
+                  hit.total += total;
+                  hit.count += bank.lines.filter((l) => l.category === cat).length;
+                }
+              }
+            }
+            if (Array.isArray(bank.lines)) {
+              for (const l of bank.lines) {
+                base.recent.push({
+                  bookedOn: l.date,
+                  amount: l.amount,
+                  currency: "EUR",
+                  category: l.category as SpendCategory,
+                  rule: l.rule,
+                  description: l.description,
+                });
+              }
+            }
+          }
+        } catch {
+          // ignore parsing error
+        }
+      }
+      base.recent.sort((a, b) => b.bookedOn.localeCompare(a.bookedOn));
+      base.recent = base.recent.slice(0, 10);
+    }
+    return base;
+  }
 
   const since = new Date(Date.now() - SYNC_DAYS * 86_400_000).toISOString().slice(0, 10);
   const scope = and(eq(bankTransactions.linkId, link.id), gte(bankTransactions.bookedOn, since));

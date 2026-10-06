@@ -8,9 +8,10 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { db } from "@/db";
-import { activityEvents, reports } from "@/db/schema";
+import { activityEvents, complianceDocuments, reports } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
+import { markdownToSections } from "@/lib/pdf/markdown-sections";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,41 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
   }
   const { id } = await ctx.params;
   const row = await load(id, resolved.session.workspace.id);
-  if (!row) {
+  if (!row && resolved.session.workspace.ownerUserId) {
+    const compId = id.startsWith("doc-") ? parseInt(id.slice(4), 10) : parseInt(id, 10);
+    if (!Number.isNaN(compId)) {
+      const [compDoc] = await db
+        .select()
+        .from(complianceDocuments)
+        .where(
+          and(
+            eq(complianceDocuments.id, compId),
+            eq(complianceDocuments.userId, resolved.session.workspace.ownerUserId),
+          ),
+        )
+        .limit(1);
+      if (compDoc) {
+        const { summary, sections } = markdownToSections(compDoc.content || "");
+        const date = new Date(compDoc.generatedAt || compDoc.createdAt);
+        const year = Number.isNaN(date.getFullYear()) ? new Date().getFullYear() : date.getFullYear();
+        return NextResponse.json({
+          report: {
+            id: `doc-${compDoc.id}`,
+            framework: compDoc.framework,
+            title: compDoc.title,
+            periodLabel: String(year),
+            status: compDoc.status === "ready" ? "in_review" : compDoc.status === "submitted" ? "final" : "draft",
+            agentKey: "compliance",
+            agentName: "Verde Compliance Agent",
+            summary: summary || null,
+            sections,
+            createdAt: new Date(compDoc.createdAt),
+            updatedAt: new Date(compDoc.updatedAt),
+          },
+          workspace: { name: resolved.session.workspace.name },
+        });
+      }
+    }
     return NextResponse.json(
       { error: "not_found", message: "This report is not in your workspace." },
       { status: 404 },
@@ -80,12 +115,6 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   const { workspace, account } = resolved.session;
   const { id } = await ctx.params;
   const row = await load(id, workspace.id);
-  if (!row) {
-    return NextResponse.json(
-      { error: "not_found", message: "This report is not in your workspace." },
-      { status: 404 },
-    );
-  }
 
   let status = "";
   try {
@@ -98,6 +127,63 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     return NextResponse.json(
       { error: "bad_request", message: "Send a status of draft, in_review or final." },
       { status: 400 },
+    );
+  }
+
+  if (!row && workspace.ownerUserId) {
+    const compId = id.startsWith("doc-") ? parseInt(id.slice(4), 10) : parseInt(id, 10);
+    if (!Number.isNaN(compId)) {
+      const [compDoc] = await db
+        .select()
+        .from(complianceDocuments)
+        .where(
+          and(
+            eq(complianceDocuments.id, compId),
+            eq(complianceDocuments.userId, workspace.ownerUserId),
+          ),
+        )
+        .limit(1);
+      if (compDoc) {
+        const compStatus = status === "in_review" ? "ready" : status === "final" ? "submitted" : "draft";
+        const [updatedComp] = await db
+          .update(complianceDocuments)
+          .set({ status: compStatus, updatedAt: new Date().toISOString() })
+          .where(eq(complianceDocuments.id, compDoc.id))
+          .returning();
+
+        await db.insert(activityEvents).values({
+          workspaceId: workspace.id,
+          actorType: "human",
+          actorName: account?.name ?? account?.email ?? "A person",
+          verb: "updated",
+          object: compDoc.title,
+          detail: `Report status set to ${status.replace("_", " ")}.`,
+        });
+
+        const { summary, sections } = markdownToSections(updatedComp.content || "");
+        const date = new Date(updatedComp.generatedAt || updatedComp.createdAt);
+        const year = Number.isNaN(date.getFullYear()) ? new Date().getFullYear() : date.getFullYear();
+        return NextResponse.json({
+          report: {
+            id: `doc-${updatedComp.id}`,
+            framework: updatedComp.framework,
+            title: updatedComp.title,
+            periodLabel: String(year),
+            status,
+            agentKey: "compliance",
+            agentName: "Verde Compliance Agent",
+            summary: summary || null,
+            sections,
+            createdAt: new Date(updatedComp.createdAt),
+            updatedAt: new Date(updatedComp.updatedAt),
+          },
+        });
+      }
+    }
+
+    return NextResponse.json(
+      { error: "not_found", message: "This report is not in your workspace." },
+      { status: 404 },
     );
   }
 

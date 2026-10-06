@@ -4,10 +4,11 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useSession } from "@/lib/auth-client";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 /** `overHero`: the header sits on the always-dark hero photo, so use light glass. */
 export const SubscriptionBadge = ({ overHero = false }: { overHero?: boolean }) => {
+  const locale = useLocale();
   const tPlans = useTranslations("billing.planNames");
   const { data: session, isPending: isSessionPending } = useSession();
   const { plan, isLoading } = useSubscription();
@@ -25,7 +26,7 @@ export const SubscriptionBadge = ({ overHero = false }: { overHero?: boolean }) 
   const badgeIcon = planId === "enterprise" ? "👑" : planId === "pro" ? "⭐" : "🌱";
 
   return (
-    <Link href="/pricing">
+    <Link href={`/${locale}/pricing`}>
       <motion.div
         className={`inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 backdrop-blur-xl backdrop-saturate-150 ${badgeColor} text-[13px] font-semibold cursor-pointer transition-colors duration-300`}
         initial={{ opacity: 0 }}
@@ -33,7 +34,7 @@ export const SubscriptionBadge = ({ overHero = false }: { overHero?: boolean }) 
         transition={{ duration: 0.2 }}
       >
         <span aria-hidden>{badgeIcon}</span>
-        <span>{planName}</span>
+        <span className="font-medium">{planName}</span>
       </motion.div>
     </Link>
   );

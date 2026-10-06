@@ -27,6 +27,7 @@ import { SetupChecklist } from "@/components/app/dashboard/home/SetupChecklist";
 import { AddDataCard } from "@/components/app/dashboard/home/AddDataCard";
 import { BillingNotice } from "@/components/app/dashboard/home/BillingNotice";
 import { VuneliAiIcon } from "@/components/brand/VuneliAiIcon";
+import { toast } from "sonner";
 import { FirstVisitTour } from "@/components/app/dashboard/home/FirstVisitTour";
 import { AgentsDidPlate, MoneyPlate, NextDeadlinePlate, WhatChangedPlate } from "@/components/app/dashboard/home/HomePlates";
 
@@ -90,9 +91,21 @@ export default function ConsolePage() {
 
   const exportSummary = async () => {
     setPdfBusy(true);
+    const filename = exportFileName(data, "overview", "pdf", "-board-summary");
     try {
       const { downloadBoardSummary } = await import("@/lib/pdf/board-summary");
-      await downloadBoardSummary(data, exportFileName(data, "overview", "pdf", "-board-summary"));
+      await downloadBoardSummary(data, filename);
+      toast.success(
+        locale === "el"
+          ? `Η σύνοψη Δ.Σ. (PDF) αποθηκεύτηκε: ${filename}`
+          : `Board summary (PDF) saved: ${filename}`
+      );
+    } catch {
+      toast.error(
+        locale === "el"
+          ? "Η εξαγωγή της σύνοψης δεν ολοκληρώθηκε. Δοκιμάστε ξανά."
+          : "Board summary could not be prepared. Please try again."
+      );
     } finally {
       setPdfBusy(false);
     }

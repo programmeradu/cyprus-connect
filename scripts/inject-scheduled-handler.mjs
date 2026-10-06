@@ -33,6 +33,7 @@ if (!source.includes("process.env[k] = v.trim();")) {
       "async fetch(request, env, ctx) {",
       `async fetch(request, env, ctx) {
         if (env) {
+            globalThis.__CF_ENV = env;
             for (const [k, v] of Object.entries(env)) {
                 if (typeof v === "string") process.env[k] = v.trim();
             }

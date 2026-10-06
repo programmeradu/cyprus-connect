@@ -45,6 +45,7 @@ describe("units", () => {
   it("converts to footprint units and refuses mismatches", () => {
     expect(toFootprintUnit("water", 23, "m³")).toBe(23000);
     expect(toFootprintUnit("waste", 1.5, "tonnes")).toBe(1500);
+    expect(toFootprintUnit("gas", 350, "litres")).toBeCloseTo(410.32, 1);
     expect(toFootprintUnit("transport", 40, "litres")).toBeNull();
     expect(toFootprintUnit("electricity", 0, "kWh")).toBeNull();
   });
@@ -71,3 +72,28 @@ describe("spreadsheets", () => {
     expect(readConsumptionRows(parseCsv("Electricity kWh,Water m3\n1200,10"))).toBe("no_dates");
   });
 });
+
+describe("pdf edge cases (F28, F29)", () => {
+  it("rejects damaged/corrupt PDF bytes with corrupt_pdf", async () => {
+    const { readDocument } = await import("@/lib/documents/intake.server");
+    const corruptBytes = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]);
+    const res = await readDocument("test-user", corruptBytes, "pdf");
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe("corrupt_pdf");
+    }
+  });
+
+  it("rejects blank/empty PDF with empty_page", async () => {
+    const { readDocument } = await import("@/lib/documents/intake.server");
+    const blankPdf =
+      "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000052 00000 n \n0000000108 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n177\n%%EOF";
+    const bytes = new TextEncoder().encode(blankPdf);
+    const res = await readDocument("test-user", bytes, "pdf");
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.code).toBe("empty_page");
+    }
+  });
+});
+

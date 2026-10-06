@@ -39,7 +39,7 @@ export default function LeaderboardPage() {
   const columns: Column<LeaderboardEntry>[] = [
     {
       key: "rank",
-      header: t("globalRankings"),
+      header: t("x.rank"),
       numeric: true,
       width: "4rem",
       render: (row) => <span className="vck-num">#{row.rank}</span>
@@ -88,7 +88,13 @@ export default function LeaderboardPage() {
             <Metric label={t("x.credits")} value={currentUser.totalCredits.toLocaleString()} />
             <Metric
               label={t("x.percentile")}
-              value={t("topPercent", { percent: Math.round((currentUser.rank / leaderboard.length) * 100) })}
+              value={
+                currentUser.rank === 1
+                  ? t("topRankOne")
+                  : t("topPercent", {
+                      percent: Math.max(1, Math.min(99, Math.round(((currentUser.rank - 1) / leaderboard.length) * 100) || Math.round((currentUser.rank / leaderboard.length) * 100))),
+                    })
+              }
             />
           </MetricRow>
         </Section>

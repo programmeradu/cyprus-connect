@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { aiChat, aiResponsesJson, aiChatRaw, hasTextAi, hasImageAi, AiGatewayError } from "@/lib/vuneli-ai";
+import { aiChat, aiResponsesJson, aiChatRaw, hasTextAi, hasImageAi, AiGatewayError, GROQ_VISION_MODEL } from "@/lib/vuneli-ai";
 
 const realFetch = globalThis.fetch;
 afterEach(() => {
@@ -19,7 +19,6 @@ function mockFetch(content: string) {
 describe("AI provider routing", () => {
   it("sends text to Groq when GROQ_API_KEY is set", async () => {
     vi.stubEnv("GROQ_API_KEY", "gsk_test");
-    vi.stubEnv("LOVABLE_API_KEY", "");
     const calls = mockFetch("hello");
     expect(await aiChat({ messages: [{ role: "user", content: "hi" }] })).toBe("hello");
     expect(calls[0].url).toBe("https://api.groq.com/openai/v1/chat/completions");
@@ -42,15 +41,13 @@ describe("AI provider routing", () => {
 
   it("sends bill photos to the Groq vision model", async () => {
     vi.stubEnv("GROQ_API_KEY", "gsk_test");
-    vi.stubEnv("LOVABLE_API_KEY", "");
     const calls = mockFetch("{}");
     await aiChatRaw([{ role: "user", content: [{ type: "text", text: "read" }, { type: "image_url", image_url: { url: "data:image/png;base64,AAAA" } }] }], 0);
-    expect(calls[0].body.model).toBe("meta-llama/llama-4-scout-17b-16e-instruct");
+    expect(calls[0].body.model).toBe(GROQ_VISION_MODEL);
   });
 
   it("refuses a PDF with no text layer instead of guessing", async () => {
     vi.stubEnv("GROQ_API_KEY", "gsk_test");
-    vi.stubEnv("LOVABLE_API_KEY", "");
     mockFetch("{}");
     await expect(
       aiChatRaw([{ role: "user", content: [{ type: "file", file: { file_data: "data:application/pdf;base64,AAAA" } }] }]),
@@ -59,7 +56,7 @@ describe("AI provider routing", () => {
 
   it("reports AI as off with no keys", () => {
     vi.stubEnv("GROQ_API_KEY", "");
-    vi.stubEnv("LOVABLE_API_KEY", "");
+
     expect(hasTextAi()).toBe(false);
   });
 });

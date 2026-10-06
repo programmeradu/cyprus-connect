@@ -317,6 +317,14 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
     if (started.current) return;
     started.current = true;
     if (!item.file) return;
+
+    // F30: Instant client-side check for 10 MB limit before upload
+    const MAX_BYTES = 10 * 1024 * 1024;
+    if (item.file.size > MAX_BYTES) {
+      setPhase({ name: "rejected", code: "oversize", detail: `${(item.file.size / (1024 * 1024)).toFixed(1)} MB` });
+      return;
+    }
+
     const form = new FormData();
     form.append("file", item.file);
     workspaceRequest<IntakeAnswer>("/api/console/documents/intake", { method: "POST", body: form })
@@ -355,7 +363,7 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
           const v = Number(r.value.replace(",", "."));
           body[r.key] = Math.round((r.mode === "add" ? body[r.key] + v : v) * 100) / 100;
         }
-        await workspaceRequest(EMISSIONS, { method: "POST", body });
+        await workspaceRequest(EMISSIONS, { method: "POST", body: { ...body, source: "document" } });
       }
       const kept = await workspaceRequest<{ duplicate?: boolean }>(`/api/console/documents/intake/${phase.id}`, { method: "POST", body: { decision: "accept" } });
       if (item.taskId) {
@@ -374,6 +382,7 @@ function IntakeCard({ item, order, onPhase, onRemove }: { item: Item; order: num
   const discard = async () => {
     if (phase.name !== "review") return;
     await workspaceRequest(`/api/console/documents/intake/${phase.id}`, { method: "POST", body: { decision: "discard" } }).catch(() => undefined);
+    invalidateWorkspace([INTAKE]);
     setPhase({ name: "discarded" });
   };
 

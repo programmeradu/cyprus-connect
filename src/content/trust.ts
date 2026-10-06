@@ -25,9 +25,9 @@ const LAST_UPDATED_EN = "8 July 2026";
 const LAST_UPDATED_EL = "8 Ιουλίου 2026";
 
 const OWNER_EN =
-  "This page is maintained by Verde IQ (operated from Strovolos, Cyprus) to answer common privacy, security, and compliance questions about Vuneli. Contact: hello@vuneli.com.";
+  "This page is maintained by Vuneli Ltd (28 Oktovriou Ave, Strovolos, 2012 Nicosia, Cyprus, Reg HE 458921) to answer common privacy, security, and compliance questions about Vuneli. Contact: hello@vuneli.com.";
 const OWNER_EL =
-  "Η σελίδα αυτή συντηρείται από τη Verde IQ (με έδρα λειτουργίας τον Στρόβολο, Κύπρος) και απαντά σε συνήθεις ερωτήσεις για την ιδιωτικότητα, την ασφάλεια και τη συμμόρφωση του Vuneli. Επικοινωνία: hello@vuneli.com.";
+  "Η σελίδα αυτή συντηρείται από τη Vuneli Ltd (Λεωφόρος 28ης Οκτωβρίου, Στρόβολος, 2012 Λευκωσία, Κύπρος, Αρ. Μητρώου HE 458921) και απαντά σε συνήθεις ερωτήσεις για την ιδιωτικότητα, την ασφάλεια και τη συμμόρφωση του Vuneli. Επικοινωνία: hello@vuneli.com.";
 
 const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
   en: {
@@ -42,7 +42,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Data controller",
           body: [
-            "Verde IQ, operating from Strovolos, Cyprus, is the data controller for personal data processed through the Vuneli platform. For any privacy question, request, or complaint, contact hello@vuneli.com.",
+            "Vuneli Ltd (Reg HE 458921), with registered office at 28 Oktovriou Ave, Strovolos, 2012 Nicosia, Cyprus, is the data controller for personal data processed through the Vuneli platform. For any privacy question, request, or complaint, contact hello@vuneli.com.",
           ],
         },
         {
@@ -132,13 +132,13 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Intellectual property",
           body: [
-            "You own the data you upload. You grant Verde IQ a limited licence to process it solely to deliver the service. Vuneli software, branding, and generated benchmarks are owned by Verde IQ.",
+            "You own the data you upload. You grant Vuneli Ltd a limited licence to process it solely to deliver the service. Vuneli software, branding, and generated benchmarks are owned by Vuneli Ltd.",
           ],
         },
         {
           heading: "Liability",
           body: [
-            "To the maximum extent permitted by law, Verde IQ's aggregate liability for any claim is capped at the fees paid in the 12 months preceding the claim. Nothing in these Terms limits liability that cannot be limited under Cyprus or EU law.",
+            "To the maximum extent permitted by law, Vuneli Ltd's aggregate liability for any claim is capped at the fees paid in the 12 months preceding the claim. Nothing in these Terms limits liability that cannot be limited under Cyprus or EU law.",
           ],
         },
         {
@@ -157,20 +157,20 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
       eyebrow: "Trust",
       title: "Security & Platform",
       intro:
-        "This page describes the security controls currently enabled in Vuneli and the shared responsibility between Verde IQ (app owner), the underlying Lovable Cloud platform, and you (customer). This is not a certification.",
+        "This page describes the security controls currently enabled in Vuneli and the shared responsibility between Vuneli Ltd (app owner), our cloud infrastructure, and you (customer). This is not a certification.",
       lastUpdated: LAST_UPDATED_EN,
       ownerNote: OWNER_EN,
       sections: [
         {
           heading: "Hosting and platform",
           body: [
-            "Vuneli runs on Lovable Cloud, which provides managed PostgreSQL, authentication, storage, and serverless functions. Traffic is served over HTTPS with TLS terminated at the edge. Data is stored in EU regions where offered by the underlying provider.",
+            "Vuneli runs on Cloudflare Workers edge compute paired with managed PostgreSQL (Neon, EU region) providing resilient data storage, TLS-terminated edge routing, and authenticated sessions. Data is stored in EU regions.",
           ],
         },
         {
           heading: "Authentication and access",
           body: [
-            "Accounts use email + password with bcrypt-hashed credentials, or OAuth (Google, Apple) when enabled. Session tokens are issued as short-lived bearer tokens. Roles are stored in a dedicated user_roles table and checked server-side; admin actions require an explicit role grant.",
+            "Accounts use email + password with bcrypt-hashed credentials, or OAuth (Google) when enabled. Session tokens are issued as short-lived bearer tokens. Roles are stored in a dedicated user_roles table and checked server-side; admin actions require an explicit role grant.",
           ],
         },
         {
@@ -197,10 +197,10 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
             "Current sub-processors:",
           ],
           list: [
-            "Lovable Cloud — hosting, database, authentication, storage (EU where available).",
+            "Cloudflare, Inc. — edge application hosting, Cloudflare Workers, and transactional email sending via notify.vuneli.com.",
+            "Neon, Inc. — managed PostgreSQL database with Row-Level Security (EU region).",
             "Stripe Payments Europe, Ltd. — card processing and tax calculation for EU/EEA customers.",
-                    "Resend — transactional email delivery.",
-            "Lovable AI Gateway — AI inference for insights and document parsing.",
+            "AI inference gateways — Groq, Inc. and AI infrastructure for insights and document parsing.",
           ],
         },
         {
@@ -212,7 +212,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Shared responsibility",
           body: [
-            "Verde IQ maintains application code, access controls, and vendor selection. Lovable Cloud maintains platform-level security. You are responsible for account credential hygiene, choosing who has access inside your organization, and the accuracy of the data you upload.",
+            "Vuneli Ltd maintains application code, access controls, and vendor selection. Infrastructure providers maintain platform-level security. You are responsible for account credential hygiene, choosing who has access inside your organization, and the accuracy of the data you upload.",
           ],
         },
       ],
@@ -221,20 +221,20 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
       eyebrow: "Legal",
       title: "Data Processing Agreement",
       intro:
-        "This page summarises the Data Processing Agreement (DPA) between Verde IQ (processor) and you (controller) for personal data processed through Vuneli. A signed copy is available on request for customers who need one for their own GDPR records.",
+        "This page summarises the Data Processing Agreement (DPA) between Vuneli Ltd (processor) and you (controller) for personal data processed through Vuneli. A signed copy is available on request for customers who need one for their own GDPR records.",
       lastUpdated: LAST_UPDATED_EN,
       ownerNote: OWNER_EN,
       sections: [
         {
           heading: "Roles",
           body: [
-            "For personal data you enter into Vuneli about your employees, suppliers, or customers, you act as the controller and Verde IQ acts as the processor under GDPR Art. 28. For account data (name, email, billing), Verde IQ is an independent controller as described in the Privacy Policy.",
+            "For personal data you enter into Vuneli about your employees, suppliers, or customers, you act as the controller and Vuneli Ltd acts as the processor under GDPR Art. 28. For account data (name, email, billing), Vuneli Ltd is an independent controller as described in the Privacy Policy.",
           ],
         },
         {
           heading: "Scope and purpose",
           body: [
-            "Verde IQ processes personal data solely to (a) provide the Vuneli service, (b) prevent abuse and secure the platform, and (c) meet legal obligations. Data is not sold, rented, or used for advertising.",
+            "Vuneli Ltd processes personal data solely to (a) provide the Vuneli service, (b) prevent abuse and secure the platform, and (c) meet legal obligations. Data is not sold, rented, or used for advertising.",
           ],
         },
         {
@@ -264,7 +264,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Breach notification",
           body: [
-            "In the event of a personal data breach affecting your data, Verde IQ will notify you without undue delay and, in any case, within 72 hours of becoming aware, with the information required by GDPR Art. 33(3).",
+            "In the event of a personal data breach affecting your data, Vuneli Ltd will notify you without undue delay and, in any case, within 72 hours of becoming aware, with the information required by GDPR Art. 33(3).",
           ],
         },
         {
@@ -294,7 +294,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Υπεύθυνος επεξεργασίας",
           body: [
-            "Η Verde IQ, με έδρα λειτουργίας τον Στρόβολο Κύπρου, είναι ο υπεύθυνος επεξεργασίας για τα προσωπικά δεδομένα που επεξεργάζονται μέσω της πλατφόρμας Vuneli. Για κάθε ερώτημα, αίτημα ή παράπονο επικοινωνήστε στο hello@vuneli.com.",
+            "Η Vuneli Ltd (Αρ. Μητρώου HE 458921), με έδρα στη Λεωφόρο 28ης Οκτωβρίου, Στρόβολος, 2012 Λευκωσία, Κύπρος, είναι ο υπεύθυνος επεξεργασίας για τα προσωπικά δεδομένα που επεξεργάζονται μέσω της πλατφόρμας Vuneli. Για κάθε ερώτημα, αίτημα ή παράπονο επικοινωνήστε στο hello@vuneli.com.",
           ],
         },
         {
@@ -382,13 +382,13 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Πνευματική ιδιοκτησία",
           body: [
-            "Παραμένετε ιδιοκτήτης των δεδομένων που φορτώνετε. Παρέχετε στη Verde IQ περιορισμένη άδεια επεξεργασίας τους αποκλειστικά για την παροχή της υπηρεσίας. Το λογισμικό, το branding και τα benchmarks του Vuneli ανήκουν στη Verde IQ.",
+            "Παραμένετε ιδιοκτήτης των δεδομένων που φορτώνετε. Παρέχετε στη Vuneli Ltd περιορισμένη άδεια επεξεργασίας τους αποκλειστικά για την παροχή της υπηρεσίας. Το λογισμικό, το branding και τα benchmarks του Vuneli ανήκουν στη Vuneli Ltd.",
           ],
         },
         {
           heading: "Ευθύνη",
           body: [
-            "Στον μέγιστο βαθμό που επιτρέπει ο νόμος, η συνολική ευθύνη της Verde IQ για οποιαδήποτε αξίωση περιορίζεται στα ποσά που καταβλήθηκαν κατά τους 12 μήνες πριν την αξίωση. Καμία διάταξη δεν περιορίζει ευθύνη που δεν μπορεί να περιοριστεί κατά το κυπριακό ή ενωσιακό δίκαιο.",
+            "Στον μέγιστο βαθμό που επιτρέπει ο νόμος, η συνολική ευθύνη της Vuneli Ltd για οποιαδήποτε αξίωση περιορίζεται στα ποσά που καταβλήθηκαν κατά τους 12 μήνες πριν την αξίωση. Καμία διάταξη δεν περιορίζει ευθύνη που δεν μπορεί να περιοριστεί κατά το κυπριακό ή ενωσιακό δίκαιο.",
           ],
         },
         {
@@ -407,20 +407,20 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
       eyebrow: "Εμπιστοσύνη",
       title: "Ασφάλεια & Πλατφόρμα",
       intro:
-        "Η σελίδα αυτή περιγράφει τους ενεργοποιημένους ελέγχους ασφάλειας στο Vuneli και την κοινή ευθύνη μεταξύ Verde IQ (κάτοχος εφαρμογής), της υποκείμενης πλατφόρμας Lovable Cloud και εσάς (πελάτης). Δεν αποτελεί πιστοποίηση.",
+        "Η σελίδα αυτή περιγράφει τους ενεργοποιημένους ελέγχους ασφάλειας στο Vuneli και την κοινή ευθύνη μεταξύ Vuneli Ltd (κάτοχος εφαρμογής), της υποδομής νέφους και εσάς (πελάτης). Δεν αποτελεί πιστοποίηση.",
       lastUpdated: LAST_UPDATED_EL,
       ownerNote: OWNER_EL,
       sections: [
         {
           heading: "Φιλοξενία και πλατφόρμα",
           body: [
-            "Το Vuneli εκτελείται στο Lovable Cloud, το οποίο παρέχει διαχειριζόμενη PostgreSQL, ταυτοποίηση, αποθήκευση και serverless λειτουργίες. Η κίνηση εξυπηρετείται μέσω HTTPS με TLS. Τα δεδομένα αποθηκεύονται σε περιοχές ΕΕ όπου προσφέρεται από τον πάροχο.",
+            "Το Vuneli εκτελείται σε edge υποδομή Cloudflare Workers με διαχειριζόμενη PostgreSQL (Neon, περιοχή ΕΕ), παρέχοντας ανθεκτική αποθήκευση δεδομένων, δρομολόγηση με TLS και ασφαλείς συνεδρίες. Τα δεδομένα αποθηκεύονται σε περιοχές της ΕΕ.",
           ],
         },
         {
           heading: "Ταυτοποίηση και πρόσβαση",
           body: [
-            "Οι λογαριασμοί χρησιμοποιούν email + κωδικό με bcrypt hashing ή OAuth (Google, Apple) όπου είναι ενεργοποιημένο. Τα session tokens είναι βραχύβια bearer tokens. Οι ρόλοι αποθηκεύονται σε ξεχωριστό πίνακα user_roles και ελέγχονται server-side· οι διαχειριστικές ενέργειες απαιτούν ρητή εκχώρηση ρόλου.",
+            "Οι λογαριασμοί χρησιμοποιούν email + κωδικό με bcrypt hashing ή OAuth (Google) όπου είναι ενεργοποιημένο. Τα session tokens είναι βραχύβια bearer tokens. Οι ρόλοι αποθηκεύονται σε ξεχωριστό πίνακα user_roles και ελέγχονται server-side· οι διαχειριστικές ενέργειες απαιτούν ρητή εκχώρηση ρόλου.",
           ],
         },
         {
@@ -445,10 +445,10 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
           heading: "Υπεργολάβοι",
           body: ["Τρέχοντες υπεργολάβοι:"],
           list: [
-            "Lovable Cloud — φιλοξενία, βάση, ταυτοποίηση, αποθήκευση (ΕΕ όπου διαθέσιμο).",
-            "Stripe Payments Europe, Ltd. — επεξεργασία καρτών και φόρου για πελάτες ΕΕ/ΕΟΧ.",
-                    "Resend — παράδοση transactional email.",
-            "Lovable AI Gateway — AI inference για insights και ανάλυση εγγράφων.",
+            "Cloudflare, Inc. — edge φιλοξενία εφαρμογής, Cloudflare Workers και αποστολή συναλλακτικών email μέσω notify.vuneli.com.",
+            "Neon, Inc. — διαχειριζόμενη βάση δεδομένων PostgreSQL με Row-Level Security (περιοχή ΕΕ).",
+            "Stripe Payments Europe, Ltd. — επεξεργασία καρτών και υπολογισμός φόρου για πελάτες ΕΕ/ΕΟΧ.",
+            "AI gateways — Groq, Inc. και υποδομή AI για αναλύσεις και ανάγνωση εγγράφων.",
           ],
         },
         {
@@ -460,7 +460,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Κοινή ευθύνη",
           body: [
-            "Η Verde IQ διατηρεί τον κώδικα, τους ελέγχους πρόσβασης και την επιλογή προμηθευτών. Το Lovable Cloud διατηρεί την ασφάλεια σε επίπεδο πλατφόρμας. Εσείς είστε υπεύθυνοι για την υγιεινή των διαπιστευτηρίων, την επιλογή προσώπων με πρόσβαση εντός του οργανισμού σας και την ακρίβεια των δεδομένων που φορτώνετε.",
+            "Η Vuneli Ltd διατηρεί τον κώδικα, τους ελέγχους πρόσβασης και την επιλογή προμηθευτών. Οι πάροχοι υποδομής διατηρούν την ασφάλεια σε επίπεδο πλατφόρμας. Εσείς είστε υπεύθυνοι για την υγιεινή των διαπιστευτηρίων, την επιλογή προσώπων με πρόσβαση εντός του οργανισμού σας και την ακρίβεια των δεδομένων που φορτώνετε.",
           ],
         },
       ],
@@ -469,20 +469,20 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
       eyebrow: "Νομικά",
       title: "Συμφωνία Επεξεργασίας Δεδομένων",
       intro:
-        "Η σελίδα συνοψίζει τη Συμφωνία Επεξεργασίας Δεδομένων (DPA) μεταξύ Verde IQ (εκτελών επεξεργασία) και εσάς (υπεύθυνος επεξεργασίας) για προσωπικά δεδομένα που επεξεργάζονται μέσω του Vuneli. Υπογεγραμμένο αντίγραφο παρέχεται κατόπιν αιτήματος.",
+        "Η σελίδα συνοψίζει τη Συμφωνία Επεξεργασίας Δεδομένων (DPA) μεταξύ Vuneli Ltd (εκτελών επεξεργασία) και εσάς (υπεύθυνος επεξεργασίας) για προσωπικά δεδομένα που επεξεργάζονται μέσω του Vuneli. Υπογεγραμμένο αντίγραφο παρέχεται κατόπιν αιτήματος.",
       lastUpdated: LAST_UPDATED_EL,
       ownerNote: OWNER_EL,
       sections: [
         {
           heading: "Ρόλοι",
           body: [
-            "Για προσωπικά δεδομένα που καταχωρείτε στο Vuneli σχετικά με υπαλλήλους, προμηθευτές ή πελάτες σας, εσείς ενεργείτε ως υπεύθυνος επεξεργασίας και η Verde IQ ως εκτελών επεξεργασία βάσει του Άρθρου 28 GDPR. Για δεδομένα λογαριασμού (όνομα, email, χρέωση), η Verde IQ είναι ανεξάρτητος υπεύθυνος επεξεργασίας όπως περιγράφεται στην Πολιτική Απορρήτου.",
+            "Για προσωπικά δεδομένα που καταχωρείτε στο Vuneli σχετικά με υπαλλήλους, προμηθευτές ή πελάτες σας, εσείς ενεργείτε ως υπεύθυνος επεξεργασίας και η Vuneli Ltd ως εκτελών επεξεργασία βάσει του Άρθρου 28 GDPR. Για δεδομένα λογαριασμού (όνομα, email, χρέωση), η Vuneli Ltd είναι ανεξάρτητος υπεύθυνος επεξεργασίας όπως περιγράφεται στην Πολιτική Απορρήτου.",
           ],
         },
         {
           heading: "Πεδίο και σκοπός",
           body: [
-            "Η Verde IQ επεξεργάζεται προσωπικά δεδομένα αποκλειστικά για: (α) την παροχή της υπηρεσίας Vuneli, (β) την πρόληψη κατάχρησης και ασφάλεια της πλατφόρμας, και (γ) την εκπλήρωση νομικών υποχρεώσεων. Τα δεδομένα δεν πωλούνται, δεν ενοικιάζονται και δεν χρησιμοποιούνται για διαφήμιση.",
+            "Η Vuneli Ltd επεξεργάζεται προσωπικά δεδομένα αποκλειστικά για: (α) την παροχή της υπηρεσίας Vuneli, (β) την πρόληψη κατάχρησης και ασφάλεια της πλατφόρμας, και (γ) την εκπλήρωση νομικών υποχρεώσεων. Τα δεδομένα δεν πωλούνται, δεν ενοικιάζονται και δεν χρησιμοποιούνται για διαφήμιση.",
           ],
         },
         {
@@ -512,7 +512,7 @@ const CONTENT: Record<Locale, Record<TrustPageKey, TrustPageContent>> = {
         {
           heading: "Γνωστοποίηση παραβίασης",
           body: [
-            "Σε περίπτωση παραβίασης προσωπικών δεδομένων που αφορά τα δεδομένα σας, η Verde IQ θα σας ειδοποιήσει χωρίς αδικαιολόγητη καθυστέρηση και σε κάθε περίπτωση εντός 72 ωρών από τη στιγμή που έλαβε γνώση, με τις πληροφορίες του Άρθρου 33(3) GDPR.",
+            "Σε περίπτωση παραβίασης προσωπικών δεδομένων που αφορά τα δεδομένα σας, η Vuneli Ltd θα σας ειδοποιήσει χωρίς αδικαιολόγητη καθυστέρηση και σε κάθε περίπτωση εντός 72 ωρών από τη στιγμή που έλαβε γνώση, με τις πληροφορίες του Άρθρου 33(3) GDPR.",
           ],
         },
         {

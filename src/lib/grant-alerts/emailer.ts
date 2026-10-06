@@ -1,9 +1,5 @@
 import type { RawOpportunity } from "./types";
-
-// Resend transactional sender for grant-alert emails.
-// Requires RESEND_API_KEY. When absent, we log + skip so cron stays healthy.
-
-const RESEND_URL = "https://api.resend.com/emails";
+import { sendEmail } from "@/lib/email/send";
 
 function esc(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({
@@ -44,30 +40,15 @@ export async function sendGrantAlertEmail(params: {
   op: RawOpportunity;
   reasons: string[];
 }): Promise<{ sent: boolean; skipped?: string; error?: string }> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return { sent: false, skipped: "RESEND_API_KEY not configured" };
-
-  const from = process.env.GRANT_ALERTS_FROM || "Vuneli Grant Radar <alerts@vuneli.com>";
   const subject = `[Grant match] ${params.op.title}`.slice(0, 180);
 
   try {
-    const res = await fetch(RESEND_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: [params.to],
-        subject,
-        html: renderHtml(params.op, params.reasons),
-      }),
+    await sendEmail({
+      to: params.to,
+      subject,
+      text: `${params.op.title}\n\n${params.op.summary}\n\n${params.op.url}`,
+      html: renderHtml(params.op, params.reasons),
     });
-    if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      return { sent: false, error: `${res.status} ${body.slice(0, 200)}` };
-    }
     return { sent: true };
   } catch (e) {
     return { sent: false, error: (e as Error).message };

@@ -52,7 +52,7 @@ export interface Rule {
 }
 
 const TJ_PER_KWH = 0.0000036;
-const fmt = (n: number) => Math.round(n).toLocaleString("en-GB");
+const fmt = (n: number) => n.toLocaleString("en-GB", { maximumFractionDigits: 1 });
 const r = (en: string, el: string) => ({ en, el });
 
 /** Next 30 September on or after today, never before the first (2027). */

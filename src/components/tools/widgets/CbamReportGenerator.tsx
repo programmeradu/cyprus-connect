@@ -12,6 +12,7 @@
  */
 
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { usePersistedState } from "@/hooks/usePersistedState";
 import type { Locale } from "@/data/tools";
 import {
@@ -24,6 +25,8 @@ import officialDefaults from "@/data/cbam/widget-defaults.json";
 
 /** Official EU default values (IR 2025/2621 as corrected by 2026/1740): [direct, indirect, table]. */
 const OFFICIAL = officialDefaults as unknown as Record<string, Record<string, [number, number, string]>>;
+
+export const EORI_REGEX = /^[A-Z]{2}[A-Z0-9]{1,15}$/;
 
 type Props = { locale: Locale };
 
@@ -52,17 +55,17 @@ const QUARTERS: Array<{ q: 1 | 2 | 3 | 4; label: string }> = [
   { q: 4, label: "Q4 (Oct–Dec)" },
 ];
 
-const uid = () => Math.random().toString(36).slice(2, 9);
+const uid = () => `ln-${Math.random().toString(36).slice(2, 9)}`;
 
 const DEFAULT_STATE: State = {
-  quarter: (Math.floor(new Date().getMonth() / 3) + 1) as 1 | 2 | 3 | 4,
-  year: new Date().getFullYear(),
+  quarter: 4,
+  year: 2026,
   importerName: "",
   importerEori: "",
   lines: [
-    { id: uid(), cn: "7208", country: "TR", quantity: 500, directOverride: "", indirectOverride: "", carbonPricePaid: "" },
-    { id: uid(), cn: "7601", country: "CN", quantity: 120, directOverride: "", indirectOverride: "", carbonPricePaid: "" },
-    { id: uid(), cn: "2523 29 00", country: "EG", quantity: 800, directOverride: "", indirectOverride: "", carbonPricePaid: "" },
+    { id: "line-1", cn: "7208", country: "TR", quantity: 500, directOverride: "", indirectOverride: "", carbonPricePaid: "" },
+    { id: "line-2", cn: "7601", country: "CN", quantity: 120, directOverride: "", indirectOverride: "", carbonPricePaid: "" },
+    { id: "line-3", cn: "2523 29 00", country: "EG", quantity: 800, directOverride: "", indirectOverride: "", carbonPricePaid: "" },
   ],
 };
 
@@ -75,6 +78,7 @@ const T = {
     importerNameHint: "Name (as registered)",
     importerEori: "EORI number",
     importerEoriHint: "EU EORI identifier (e.g. CY123456789012345)",
+    eoriInvalid: "Invalid EORI format. Must start with 2 country letters (e.g. CY) followed by up to 15 alphanumeric characters.",
     goods: "Goods",
     cn: "CN code",
     country: "Country of origin",
@@ -97,11 +101,11 @@ const T = {
     downloadXml: "Download XML draft",
     print: "Save as PDF",
     reset: "Reset",
-    reportTitle: "CBAM quarterly report draft",
+    reportTitle: "CBAM declaration draft (Definitive period)",
     generatedOn: "Generated on",
     disclaimer:
-      "Draft only. Empty factor fields use the EU's official default values for the country of origin; actual values from your supplier are better and usually lower. Electricity has no default here: enter your supplier's value. Check in the CBAM Registry before submitting.",
-    sourcesNote: "Sources: Regulation (EU) 2023/956 · default values from Implementing Regulation (EU) 2025/2621 as corrected by (EU) 2026/1740.",
+      "Draft only. For imports from 2026, official EU default values include the mandatory +10% mark-up (IR 2025/2621) for default values; actual verified values from your supplier reduce liability. Check in the CBAM Registry before submitting.",
+    sourcesNote: "Sources: Regulation (EU) 2023/956 · Implementing Regulations (EU) 2025/2620 & 2025/2621 (definitive regime defaults & +10% mark-up) as corrected by (EU) 2026/1740.",
     perLine: "Line breakdown",
     sector: "Sector",
     tCO2e: "tCO₂e",
@@ -117,6 +121,7 @@ const T = {
     importerNameHint: "Όνομα (όπως έχει καταχωρηθεί)",
     importerEori: "Αριθμός EORI",
     importerEoriHint: "π.χ. CY123456789012345",
+    eoriInvalid: "Μη έγκυρος αριθμός EORI. Πρέπει να ξεκινά με 2 γράμματα χώρας (π.χ. CY) ακολουθούμενα από έως 15 χαρακτήρες.",
     goods: "Εμπορεύματα",
     cn: "CN κωδικός",
     country: "Χώρα προέλευσης",
@@ -139,11 +144,11 @@ const T = {
     downloadXml: "Λήψη XML",
     print: "Αποθήκευση PDF",
     reset: "Επαναφορά",
-    reportTitle: "Προσχέδιο τριμηνιαίας αναφοράς CBAM",
+    reportTitle: "Προσχέδιο δήλωσης CBAM (Οριστική περίοδος)",
     generatedOn: "Δημιουργήθηκε",
     disclaimer:
-      "Μόνο προσχέδιο. Τα κενά πεδία συντελεστών χρησιμοποιούν τις επίσημες προεπιλεγμένες τιμές της ΕΕ για τη χώρα προέλευσης· οι πραγματικές τιμές του προμηθευτή είναι καλύτερες και συνήθως χαμηλότερες. Για ηλεκτρική ενέργεια δεν υπάρχει προεπιλογή εδώ: εισαγάγετε την τιμή του προμηθευτή. Ελέγξτε στο Μητρώο CBAM πριν την υποβολή.",
-    sourcesNote: "Πηγές: Κανονισμός (ΕΕ) 2023/956 · προεπιλεγμένες τιμές από τον Εκτελεστικό Κανονισμό (ΕΕ) 2025/2621 όπως διορθώθηκε με τον (ΕΕ) 2026/1740.",
+      "Μόνο προσχέδιο. Για εισαγωγές από το 2026, οι επίσημες προεπιλεγμένες τιμές περιλαμβάνουν την υποχρεωτική προσαύξηση +10% (ΕΚ 2025/2621)· τα πραγματικά επαληθευμένα δεδομένα από τον προμηθευτή μειώνουν το κόστος.",
+    sourcesNote: "Πηγές: Κανονισμός (ΕΕ) 2023/956 · Εκτελεστικοί Κανονισμοί (ΕΕ) 2025/2620 & 2025/2621 (οριστικό καθεστώς & προσαύξηση +10%) όπως διορθώθηκε με τον (ΕΕ) 2026/1740.",
     perLine: "Ανάλυση γραμμών",
     sector: "Τομέας",
     tCO2e: "tCO₂e",
@@ -182,21 +187,26 @@ export default function CbamReportGenerator({ locale }: Props) {
   const fmt = (n: number, digits = 2) =>
     n.toLocaleString(numLocale, { maximumFractionDigits: digits, minimumFractionDigits: digits });
 
+  const isEoriValid = !state.importerEori || EORI_REGEX.test(state.importerEori.trim());
+
   const enriched = useMemo(() => {
+    const isDefinitive = state.year >= 2026;
     return state.lines.map((ln) => {
       const cn = findCn(ln.cn);
       const official = OFFICIAL[ln.cn]?.[ln.country] ?? null;
-      const dDef = official?.[0] ?? 0;
-      const iDef = official?.[1] ?? 0;
+      // In definitive period (2026+), defaults carry the official 10% secondary-data mark-up (IR 2025/2621)
+      const markup = isDefinitive && official ? 1.1 : 1.0;
+      const dDef = Math.round(((official?.[0] ?? 0) * markup) * 10000) / 10000;
+      const iDef = Math.round(((official?.[1] ?? 0) * markup) * 10000) / 10000;
       const dEF = ln.directOverride !== "" ? Number(ln.directOverride) : dDef;
       const iEF = ln.indirectOverride !== "" ? Number(ln.indirectOverride) : iDef;
       const direct = ln.quantity * dEF;
       const indirect = ln.quantity * iEF;
       const embedded = direct + indirect;
       const paid = Number(ln.carbonPricePaid || 0) * embedded;
-      return { ...ln, cnInfo: cn, dDef, iDef, hasDefault: official !== null, dEF, iEF, direct, indirect, embedded, paid };
+      return { ...ln, cnInfo: cn, dDef, iDef, hasDefault: official !== null, markupApplied: markup > 1.0, dEF, iEF, direct, indirect, embedded, paid };
     });
-  }, [state.lines]);
+  }, [state.lines, state.year]);
 
   const totals = useMemo(() => {
     return enriched.reduce(
@@ -268,6 +278,10 @@ export default function CbamReportGenerator({ locale }: Props) {
   };
 
   const downloadXml = () => {
+    if (state.importerEori && !isEoriValid) {
+      toast.error(l.eoriInvalid);
+      return;
+    }
     const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     const lines = enriched
       .map(
@@ -285,7 +299,7 @@ export default function CbamReportGenerator({ locale }: Props) {
       )
       .join("\n");
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<cbamQuarterlyReport xmlns="urn:eu:cbam:quarterly:draft:v1">
+<cbamReport xmlns="urn:eu:cbam:declaration:draft:v1">
   <reportingPeriod>
     <year>${state.year}</year>
     <quarter>${state.quarter}</quarter>
@@ -305,7 +319,7 @@ ${lines}
     <totalCarbonPricePaid unit="EUR">${totals.paid.toFixed(2)}</totalCarbonPricePaid>
   </totals>
   <disclaimer>Draft generated by Vuneli CBAM Report Generator - not an official submission.</disclaimer>
-</cbamQuarterlyReport>`;
+</cbamReport>`;
     const blob = new Blob([xml], { type: "application/xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -313,6 +327,7 @@ ${lines}
     a.download = `vuneli-cbam-${state.year}-Q${state.quarter}.xml`;
     a.click();
     URL.revokeObjectURL(url);
+    toast.success(locale === "el" ? "Το προσχέδιο XML δημιουργήθηκε και αποθηκεύτηκε." : "CBAM XML draft downloaded.");
   };
 
   const doPrint = () => window.print();
@@ -373,8 +388,13 @@ ${lines}
               value={state.importerEori}
               placeholder={l.importerEoriHint}
               onChange={(e) => set("importerEori", e.target.value.toUpperCase())}
-              className="mt-2 w-full border-0 border-b border-foreground/25 bg-transparent pb-1 text-[14px] tabular-nums tracking-[-0.005em] outline-none placeholder:text-foreground/30 focus:border-primary"
+              className={`mt-2 w-full border-0 border-b bg-transparent pb-1 text-[14px] tabular-nums tracking-[-0.005em] outline-none placeholder:text-foreground/30 focus:border-primary ${
+                state.importerEori && !isEoriValid ? "border-destructive text-destructive" : "border-foreground/25"
+              }`}
             />
+            {state.importerEori && !isEoriValid && (
+              <p className="mt-1 text-xs text-destructive">{l.eoriInvalid}</p>
+            )}
           </div>
         </div>
 

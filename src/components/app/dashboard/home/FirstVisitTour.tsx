@@ -55,6 +55,10 @@ export function FirstVisitTour({ workspaceId }: { workspaceId: string }) {
       /* ignore */
     }
     const replay = () => {
+      // Close open menus (e.g. More menu or Account menu) so tour popover doesn't collide
+      if (typeof document !== "undefined") {
+        document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      }
       decided.current = true;
       setIndex(0);
     };
@@ -76,7 +80,12 @@ export function FirstVisitTour({ workspaceId }: { workspaceId: string }) {
       /* ignore */
     }
     if (localDone) void run(TOUR_PATH, { body: { action: "done" }, invalidates: [TOUR_PATH] });
-    else setIndex(0);
+    else {
+      if (typeof document !== "undefined") {
+        document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+      }
+      setIndex(0);
+    }
   }, [status.data, workspaceId, run]);
 
   /* Steps whose target is not on screen (for example the queue is hidden on a

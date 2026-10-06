@@ -11,14 +11,19 @@ interface ActionCardProps {
   icon?: ReactNode;
   completed?: boolean;
   onComplete?: () => void;
-  difficulty?: "low" | "medium" | "high";
+  difficulty?: "low" | "medium" | "high" | "easy" | "hard" | string;
   points?: number;
+  costEur?: number | null;
+  savedEurYr?: number | null;
+  co2KgYr?: number | null;
+  paybackYrs?: number | null;
   className?: string;
 }
 
 /**
  * Workspace action plate. Bordered rectangular tag for impact level,
- * no pill chips, no decorative icon, full label text (never truncated).
+ * no pill chips, full label text (never truncated or empty),
+ * backed by verified savings/cost figures when available.
  */
 export const ActionCard = ({
   title,
@@ -27,20 +32,26 @@ export const ActionCard = ({
   completed = false,
   onComplete,
   difficulty = "medium",
+  costEur,
+  savedEurYr,
+  co2KgYr,
+  paybackYrs,
   className = ""
 }: ActionCardProps) => {
   const t = useTranslations("dashboard.actions.card");
 
-  const impactTone: Record<string, string> = {
-    low: "positive",
-    medium: "caution",
-    high: "critical"
-  };
-  const impactLabels = {
-    low: t("impactLow"),
-    medium: t("impactMedium"),
-    high: t("impactHigh")
-  };
+  // Normalize difficulty / impact keywords
+  const diffStr = (difficulty || "medium").toLowerCase();
+  const impStr = (impact || "").toLowerCase();
+
+  const isLow = diffStr === "low" || diffStr === "easy" || impStr === "low";
+  const isHigh = diffStr === "high" || diffStr === "hard" || impStr === "high";
+
+  const tone = isLow ? "positive" : isHigh ? "critical" : "caution";
+  const tagLabel = isLow ? t("impactLow") : isHigh ? t("impactHigh") : t("impactMedium");
+
+  // Only display impact as separate text if it's descriptive (e.g. "-15% Scope 2"), not a generic keyword
+  const hasDescriptiveImpact = impact && !["high", "medium", "low", "easy", "hard"].includes(impStr);
 
   return (
     <motion.div
@@ -57,17 +68,46 @@ export const ActionCard = ({
         {description}
       </p>
 
-      {impact && (
+      {hasDescriptiveImpact && (
         <p className="vck-meta mt-3">
           <span className="font-semibold text-foreground vck-num">{impact}</span>
         </p>
       )}
 
       <div className="mt-3">
-        <span className="vck-tag" data-tone={impactTone[difficulty]}>
-          {impactLabels[difficulty]}
+        <span className="vck-tag" data-tone={tone}>
+          {tagLabel}
         </span>
       </div>
+
+      {(savedEurYr || co2KgYr || paybackYrs || costEur) && (
+        <div className="mt-3.5 grid grid-cols-2 gap-2 text-xs border-t border-border/40 pt-2.5">
+          {savedEurYr !== undefined && savedEurYr !== null && (
+            <div>
+              <span className="text-muted-foreground block text-[0.7rem] uppercase tracking-wider">Est. Savings</span>
+              <span className="font-semibold text-emerald-600 dark:text-emerald-400 vck-num">€{Math.round(savedEurYr).toLocaleString()}/yr</span>
+            </div>
+          )}
+          {co2KgYr !== undefined && co2KgYr !== null && (
+            <div>
+              <span className="text-muted-foreground block text-[0.7rem] uppercase tracking-wider">Carbon Cut</span>
+              <span className="font-semibold text-foreground vck-num">-{Math.round(co2KgYr).toLocaleString()} kg CO2e</span>
+            </div>
+          )}
+          {paybackYrs !== undefined && paybackYrs !== null && (
+            <div>
+              <span className="text-muted-foreground block text-[0.7rem] uppercase tracking-wider">Payback</span>
+              <span className="font-semibold text-foreground vck-num">{paybackYrs.toFixed(1)} yrs</span>
+            </div>
+          )}
+          {costEur !== undefined && costEur !== null && (
+            <div>
+              <span className="text-muted-foreground block text-[0.7rem] uppercase tracking-wider">Est. Cost</span>
+              <span className="font-semibold text-foreground vck-num">€{Math.round(costEur).toLocaleString()}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex-1" />
 

@@ -51,7 +51,12 @@ function matches(shown: string, value: number, truth: number): boolean {
 }
 
 function sourceLabels(briefing: string): string[] {
-  const labels = new Set<string>(["metric", "reading", "record", "obligation", "task", "company details", "profile", "activity", "plan", "subscription", "upgrade", "tier", "pro", "enterprise"]);
+  const labels = new Set<string>([
+    "metric", "reading", "record", "obligation", "task", "company details",
+    "profile", "activity", "plan", "subscription", "upgrade", "tier",
+    "pro", "enterprise", "bill", "bills", "utility", "electricity",
+    "water", "eac", "footprint", "emissions",
+  ]);
   for (const m of briefing.matchAll(/^- ([a-z0-9_]+) "([^"]+)"/gm)) { labels.add(m[1]); labels.add(m[2].toLowerCase()); }
   for (const m of briefing.matchAll(/([A-Za-z]{3,}\s?\d{0,4})=/g)) labels.add(m[1].trim().toLowerCase());
   for (const m of briefing.matchAll(/^- (\S+) ([A-Za-z][A-Za-z/ -]+):/gm)) { labels.add(m[1].toLowerCase()); labels.add(m[2].toLowerCase()); }

@@ -24,6 +24,8 @@ export type IntakeKind =
 /** Why a document was refused. The page turns each code into a sentence. */
 export type RejectCode =
   | "unsupported"
+  | "corrupt_pdf"
+  | "empty_page"
   | "scanned_pdf"
   | "not_relevant"
   | "no_figures"
@@ -31,7 +33,8 @@ export type RejectCode =
   | "unreadable"
   | "sheet_no_dates"
   | "bank_image"
-  | "reader_off";
+  | "reader_off"
+  | "oversize";
 
 /** Notes a person should see before confirming. */
 export type WarningCode =
@@ -184,7 +187,11 @@ export function toFootprintUnit(key: FootprintKey, value: number, unit: string):
       if (u === "mwh") return value * 1000;
       return null;
     case "gas":
-      return u === "m3" || u === "cubicmetres" || u === "cubicmeters" ? value : null;
+      if (u === "m3" || u === "cubicmetres" || u === "cubicmeters") return value;
+      if (u === "l" || u === "litres" || u === "liters" || u === "litre" || u === "liter") {
+        return Math.round((value * (2.51 / 2.141)) * 100) / 100;
+      }
+      return null;
     case "water":
       if (u === "m3" || u === "cubicmetres" || u === "cubicmeters") return value * 1000;
       if (u === "l" || u === "litres" || u === "liters" || u === "litre" || u === "liter") return value;

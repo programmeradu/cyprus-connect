@@ -10,9 +10,10 @@
 
 .vc-copilot-fab {
   position: fixed;
-  left: 50%;
-  bottom: clamp(14px, 2.4vw, 28px);
-  transform: translateX(-50%);
+  right: clamp(18px, 2.5vw, 36px);
+  bottom: clamp(18px, 2.5vw, 32px);
+  left: auto;
+  transform: none;
   z-index: 65;
   display: inline-flex;
   align-items: center;
@@ -39,7 +40,7 @@
 }
 
 .vc-copilot-fab:hover {
-  transform: translateX(-50%) translateY(-2px);
+  transform: translateY(-2px);
   box-shadow: 0 22px 42px -18px rgba(20, 34, 26, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -699,6 +700,9 @@
 @media (max-width: 760px) {
   /* The dock owns the bottom edge, so the trigger sits above it, still centred. */
   .vc-copilot-fab {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
     bottom: calc(84px + env(safe-area-inset-bottom, 0px));
     height: 44px;
   }
@@ -770,6 +774,12 @@
 }
 .vc-copilot-prop-open:hover svg {
   transform: translateX(2px);
+}
+
+.dark .vc-copilot-prop-open {
+  color: var(--vc-lime-ink);
+  background: var(--vc-lime);
+  border: 1px solid color-mix(in srgb, var(--vc-lime) 60%, black 12%);
 }
 
 /* Figure check note under an answer (see src/lib/copilot/grounding.ts). */

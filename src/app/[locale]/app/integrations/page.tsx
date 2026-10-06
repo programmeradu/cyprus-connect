@@ -90,10 +90,16 @@ function IntegrationsContent() {
   useEffect(() => {
     const prov = searchParams.get("provider");
     const st = searchParams.get("status");
-    if (prov === "saltedge" && st === "connected") {
-      toast.success(L("Cyprus bank linked successfully via Salt Edge.", "Η κυπριακή τράπεζα συνδέθηκε επιτυχώς μέσω Salt Edge."));
-      res.reload();
-      router.replace("/app/integrations");
+    if (prov === "saltedge") {
+      if (st === "connected") {
+        toast.success(L("Cyprus bank linked successfully via Salt Edge.", "Η κυπριακή τράπεζα συνδέθηκε επιτυχώς μέσω Salt Edge."));
+        res.reload();
+        router.replace("/app/integrations");
+      } else if (st === "cancelled") {
+        toast.info(L("Bank linking cancelled.", "Η σύνδεση τράπεζας ακυρώθηκε."));
+        res.reload();
+        router.replace("/app/integrations");
+      }
     }
   }, [searchParams]);
 
@@ -235,11 +241,12 @@ function IntegrationsContent() {
     registrar: Boolean(d?.registry),
   };
   const liveCount = CONNECTORS.filter((c) => c.state === "live" && answered[c.id]).length;
-  const linkableCount = CONNECTORS.filter((c) => c.state === "oauth" || c.state === "upload").length;
-  const linkedCount =
+  const oauthLinkableCount = CONNECTORS.filter((c) => c.state === "oauth").length;
+  const oauthLinkedCount =
     (bank?.status === "active" ? 1 : 0) +
     (saltedge?.status === "active" ? 1 : 0) +
-    (nango?.connected ? 1 : 0) +
+    (nango?.connected ? 1 : 0);
+  const billUploadsActive =
     ((d?.eac?.bills.length ?? 0) > 0 ? 1 : 0) +
     ((d?.water?.bills.length ?? 0) > 0 ? 1 : 0);
   const num = new Intl.NumberFormat(loc, { maximumFractionDigits: 0 });
@@ -253,7 +260,7 @@ function IntegrationsContent() {
     agriculture: ["Agriculture", "Γεωργία"],
   };
   const scheduledCount = CONNECTORS.filter((c) => c.state === "scheduled").length;
-  const inUse = liveCount + linkedCount;
+  const inUse = liveCount + oauthLinkedCount + billUploadsActive;
   const coverage = Math.round((inUse / CONNECTORS.length) * 100);
 
   const statusFor = (c: Connector) => {
@@ -272,8 +279,9 @@ function IntegrationsContent() {
     }
     if (c.id === "bankofcyprus" && bank) {
       if (!bank.configured) return { word: L("Not set up yet", "Δεν έχει ρυθμιστεί"), tone: "idle" as const };
-      if (bank.status === "active") return bank.failed ? { word: L("Last read failed", "Η τελευταία ανάγνωση απέτυχε"), tone: "warn" as const } : { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
+      if (bank.status === "active") return bank.failed ? { word: L("Last read failed", "Η τελευταία ανάγνωση απέτυχε"), tone: "warn" as const } : { word: bank.environment === "sandbox" ? L("Linked (test mode)", "Συνδεδεμένο (δοκιμαστικό)") : L("Linked", "Συνδεδεμένο"), tone: "good" as const };
       if (bank.status === "expired") return { word: L("Consent ended", "Η συγκατάθεση έληξε"), tone: "bad" as const };
+      return { word: bank.environment === "sandbox" ? L("Ready to link (test mode)", "Έτοιμο για σύνδεση (δοκιμαστικό)") : L("Ready to link", "Έτοιμο για σύνδεση"), tone: "idle" as const };
     }
     if (c.id === "saltedge" && saltedge) {
       if (saltedge.status === "active") return { word: L("Linked", "Συνδεδεμένο"), tone: "good" as const };
@@ -873,11 +881,28 @@ function IntegrationsContent() {
         <Reading label={L("Live feeds", "Ενεργές ροές")} value={liveCount} note={L("no account needed", "χωρίς σύνδεση λογαριασμού")} />
         <Reading
           label={L("Linked accounts", "Συνδεδεμένοι λογαριασμοί")}
-          value={`${linkedCount} / ${linkableCount}`}
-          note={L("accounts you can link", "λογαριασμοί προς σύνδεση")}
+          value={`${oauthLinkedCount} / ${oauthLinkableCount}`}
+          note={
+            billUploadsActive > 0
+              ? (oauthLinkedCount > 0
+                  ? L(`${billUploadsActive} bill feed${billUploadsActive > 1 ? "s" : ""} also active`, `${billUploadsActive} ροές λογαριασμών επίσης ενεργές`)
+                  : L(`${billUploadsActive} bill feed${billUploadsActive > 1 ? "s" : ""} active (no bank linked)`, `${billUploadsActive} ροές λογαριασμών (χωρίς τράπεζα)`))
+              : L("banks & ERP to link", "τράπεζες & ERP προς σύνδεση")
+          }
         />
         <Reading label={L("Coming soon", "Έρχονται σύντομα")} value={scheduledCount} note={L("no controls until they work", "χωρίς κουμπιά μέχρι να λειτουργούν")} />
-        <Reading label={L("Sources in use", "Πηγές σε χρήση")} value={`${coverage}%`} note={<Bar pct={coverage} />} />
+        <Reading
+          label={L("Sources in use", "Πηγές σε χρήση")}
+          value={`${coverage}%`}
+          note={
+            <span
+              title={L("Active data sources contributing figures (live grid, registries, bank connections, bills) out of total available connectors.", "Ενεργές πηγές δεδομένων (δίκτυο, μητρώα, τράπεζες, λογαριασμοί) σε σχέση με το σύνολο των συνδέσμων.")}
+              className="flex items-center gap-1.5 cursor-help"
+            >
+              <Bar pct={coverage} />
+            </span>
+          }
+        />
       </ReadingRail>
 
       {CATEGORY_ORDER.map((cat) => {

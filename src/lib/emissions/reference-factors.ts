@@ -23,13 +23,19 @@ export type ReferenceFactor = {
   scope: 1 | 2 | 3;
 };
 
+import {
+  FACTOR_REGISTRY,
+  OFFICIAL_CYPRUS_GRID_FACTOR,
+  OFFICIAL_CYPRUS_WATER_PER_LITER,
+} from "@/lib/factors/registry";
+
 export const REFERENCE_FACTORS: Record<ReferenceFactor["key"], ReferenceFactor> = {
   electricity: {
     key: "electricity",
     unit: "kWh",
-    kgCo2ePerUnit: 0.61,
-    source: "Cyprus grid average carbon intensity (Electricity Maps / EEA)",
-    vintage: "2024",
+    kgCo2ePerUnit: OFFICIAL_CYPRUS_GRID_FACTOR, // 0.622 kg CO2e/kWh
+    source: FACTOR_REGISTRY["electricity-grid-cy-location"].sourceAuthority,
+    vintage: FACTOR_REGISTRY["electricity-grid-cy-location"].vintage,
     scope: 2,
   },
   gas: {
@@ -46,25 +52,25 @@ export const REFERENCE_FACTORS: Record<ReferenceFactor["key"], ReferenceFactor> 
     key: "water",
     unit: "liters",
     // 0.344 kg/m3 supply + 0.272 kg/m3 treatment = 0.616 kg/m3 = 0.000616 kg/litre.
-    kgCo2ePerUnit: 0.000616,
-    source: "UK DEFRA GHG conversion factors, water supply and treatment",
-    vintage: "2024",
+    kgCo2ePerUnit: OFFICIAL_CYPRUS_WATER_PER_LITER, // 0.000616
+    source: FACTOR_REGISTRY["water-lifecycle-liter"].sourceAuthority,
+    vintage: FACTOR_REGISTRY["water-lifecycle-liter"].vintage,
     scope: 3,
   },
   waste: {
     key: "waste",
     unit: "kg",
-    kgCo2ePerUnit: 0.4467,
-    source: "UK DEFRA GHG conversion factors, mixed commercial waste to landfill",
-    vintage: "2024",
+    kgCo2ePerUnit: FACTOR_REGISTRY["waste-landfill-kg"].kgCo2ePerUnit, // 0.4467
+    source: FACTOR_REGISTRY["waste-landfill-kg"].sourceAuthority,
+    vintage: FACTOR_REGISTRY["waste-landfill-kg"].vintage,
     scope: 3,
   },
   transport: {
     key: "transport",
     unit: "km",
-    kgCo2ePerUnit: 0.16843,
-    source: "UK DEFRA GHG conversion factors, average car, unknown fuel",
-    vintage: "2024",
+    kgCo2ePerUnit: FACTOR_REGISTRY["travel-car-km"].kgCo2ePerUnit, // 0.170
+    source: FACTOR_REGISTRY["travel-car-km"].sourceAuthority,
+    vintage: FACTOR_REGISTRY["travel-car-km"].vintage,
     scope: 3,
   },
 };

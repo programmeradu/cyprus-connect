@@ -36,7 +36,7 @@ export function ThemeToggle({ overHero = false }: { overHero?: boolean }) {
           : "text-foreground/80 hover:text-foreground hover:bg-foreground/5",
       ].join(" ")}
       whileTap={{ scale: 0.95 }}
-      aria-label={theme === "dark" ? t("label") + " — switch to light" : t("label") + " — switch to dark"}
+      aria-label={theme === "dark" ? t("switchToLight") : t("switchToDark")}
     >
       {/* Animated background glow */}
       <motion.div

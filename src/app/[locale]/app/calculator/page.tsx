@@ -88,9 +88,20 @@ export default function CalculatorPage() {
   const nowYear = new Date().getUTCFullYear();
   const years = [nowYear, nowYear - 1, nowYear - 2, nowYear - 3];
 
+  const SANITY_LIMIT = 100_000_000;
+  const SANITY_WARN_THRESHOLD = 1_000_000;
+  const [confirmedHighValue, setConfirmedHighValue] = useState(false);
+
+  // Check if any entered value exceeds sanity threshold or hard limit
+  const exceededHardLimit = FOOTPRINT_KEYS.find((k) => toNumber(amounts[k]) > SANITY_LIMIT);
+  const highValueKey = FOOTPRINT_KEYS.find((k) => toNumber(amounts[k]) > SANITY_WARN_THRESHOLD);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!hasValue || save.busy) return;
+    if (!hasValue || save.busy || exceededHardLimit) return;
+    if (highValueKey && !confirmedHighValue) {
+      return;
+    }
     const body = { year: period.year, month: period.month, ...Object.fromEntries(FOOTPRINT_KEYS.map((k) => [k, toNumber(amounts[k])])) };
     const saved = await save.run<SavedFootprint>(PATH, {
       body,
@@ -99,6 +110,7 @@ export default function CalculatorPage() {
     if (saved) {
       setResult(saved);
       setAmounts(EMPTY);
+      setConfirmedHighValue(false);
       toast.success(t("toasts.saved", { period: periodLabel(saved.year, saved.month) }));
       toForm();
     }
@@ -268,6 +280,44 @@ export default function CalculatorPage() {
               ))}
             </div>
 
+            {exceededHardLimit && (
+              <p className="text-sm my-1 break-words font-medium" role="alert" style={{ color: "var(--vc-negative, var(--destructive))" }}>
+                {t("form.sanityLimitExceeded", { unit: t(`units.${exceededHardLimit}`) })}
+              </p>
+            )}
+
+            {!exceededHardLimit && highValueKey && (
+              <div
+                className="p-3.5 rounded-lg border flex flex-col gap-2 my-1 text-sm"
+                style={{
+                  background: "var(--vc-accent-tint, rgba(234, 179, 8, 0.08))",
+                  borderColor: "var(--vc-accent, #eab308)",
+                  color: "var(--vc-ink)",
+                }}
+                role="region"
+                aria-label="Sanity warning"
+              >
+                <div className="flex items-start gap-2">
+                  <span className="font-bold text-amber-600 dark:text-amber-400">⚠️</span>
+                  <p className="leading-snug">
+                    {t("form.sanityWarning", {
+                      value: number.format(toNumber(amounts[highValueKey])),
+                      unit: t(`units.${highValueKey}`),
+                    })}
+                  </p>
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer font-medium select-none pt-1">
+                  <input
+                    type="checkbox"
+                    checked={confirmedHighValue}
+                    onChange={(e) => setConfirmedHighValue(e.target.checked)}
+                    className="rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
+                  />
+                  <span>{t("form.sanityConfirm")}</span>
+                </label>
+              </div>
+            )}
+
             {save.error && (
               <p className="text-sm mb-4 break-words" role="alert" style={{ color: "var(--vc-negative, var(--destructive))" }}>
                 {save.error}
@@ -282,7 +332,11 @@ export default function CalculatorPage() {
                     ? t("form.needValue")
                     : null}
               </p>
-              <button type="submit" className="vck-btn vck-btn-primary" disabled={!hasValue || save.busy}>
+              <button
+                type="submit"
+                className="vck-btn vck-btn-primary"
+                disabled={!hasValue || save.busy || !!exceededHardLimit || (!!highValueKey && !confirmedHighValue)}
+              >
                 {save.busy ? t("form.saving") : t("form.save")}
               </button>
             </div>

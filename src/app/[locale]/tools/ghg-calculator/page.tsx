@@ -60,12 +60,13 @@ const COPY = {
     methodology: [
       { label: "Natural gas (Scope 1)", value: "0.184 kg CO₂e / kWh gross CV · DEFRA 2024 combustion factor." },
       { label: "Diesel & petrol (Scope 1)", value: "2.51 kg / L diesel, 2.31 kg / L petrol · DEFRA 2024 mobile combustion, well-to-wheel." },
-      { label: "Grid electricity (Scope 2)", value: "Country-specific 2023 residual mix factors (EEA / national inventories). Range from 0.008 (SE) to 0.657 (PL) kg CO₂e / kWh." },
+      { label: "Grid electricity (Scope 2)", value: "Country-specific 2024 location-based grid factors (EEA / national inventories). Range from 0.008 (SE) to 0.657 (PL) kg CO₂e / kWh." },
       { label: "Business travel by car (Scope 3.6)", value: "0.170 kg / km · DEFRA 2024 average passenger vehicle." },
+      { label: "Employee commuting (Scope 3.7)", value: "0.140 kg / passenger-km · DEFRA 2024 mixed-mode commute proxy." },
       { label: "Flights (Scope 3.6)", value: "Short-haul 0.246 kg / passenger-km, long-haul 0.195 kg / passenger-km · DEFRA 2024 economy class, radiative forcing included." },
       { label: "Purchased goods & services (Scope 3.1)", value: "0.35 kg CO₂e / EUR - spend-based EEIO screening factor. Replace with supplier-specific data before disclosure." },
       { label: "Waste to landfill (Scope 3.5)", value: "0.467 kg / kg · DEFRA 2024 mixed municipal solid waste." },
-      { label: "Water supply (Scope 3.4)", value: "0.344 kg / m³ · DEFRA 2024 water supply + treatment combined." },
+      { label: "Water lifecycle (Scope 3.4)", value: "0.616 kg / m³ · Water supply (0.344) + wastewater treatment (0.272) combined (WDD / DEFRA 2024)." },
     ] as MethodologyItem[],
     workedExampleHeading: "A 45-person consultancy in Nicosia",
     workedExampleBody:
@@ -118,12 +119,13 @@ const COPY = {
     methodology: [
       { label: "Φυσικό αέριο (Scope 1)", value: "0,184 kg CO₂e / kWh · DEFRA 2024." },
       { label: "Πετρέλαιο & βενζίνη (Scope 1)", value: "2,51 kg / L πετρέλαιο, 2,31 kg / L βενζίνη · DEFRA 2024." },
-      { label: "Ηλεκτρισμός δικτύου (Scope 2)", value: "Συντελεστές 2023 ανά χώρα (EEA / εθνικά μητρώα). Από 0,008 (SE) έως 0,657 (PL) kg CO₂e / kWh." },
+      { label: "Ηλεκτρισμός δικτύου (Scope 2)", value: "Συντελεστές 2024 βάσει τοποθεσίας ανά χώρα (EEA / εθνικά μητρώα). Από 0,008 (SE) έως 0,657 (PL) kg CO₂e / kWh." },
       { label: "Επαγγελματικά ταξίδια - αυτοκίνητο (Scope 3.6)", value: "0,170 kg / km · DEFRA 2024." },
+      { label: "Μετακίνηση εργαζομένων (Scope 3.7)", value: "0,140 kg / πκμ · DEFRA 2024 μικτό μέσο." },
       { label: "Πτήσεις (Scope 3.6)", value: "Μικρή απόσταση 0,246 kg/πκμ, μεγάλη 0,195 kg/πκμ · DEFRA 2024 economy, με RF." },
       { label: "Αγορές αγαθών & υπηρεσιών (Scope 3.1)", value: "0,35 kg CO₂e / € - EEIO για προκαταρκτικό έλεγχο. Αντικαταστήστε με δεδομένα προμηθευτή." },
       { label: "Απόβλητα σε ΧΥΤΑ (Scope 3.5)", value: "0,467 kg / kg · DEFRA 2024." },
-      { label: "Παροχή νερού (Scope 3.4)", value: "0,344 kg / m³ · DEFRA 2024 (παροχή + επεξεργασία)." },
+      { label: "Κύκλος ζωής νερού (Scope 3.4)", value: "0,616 kg / m³ · Ύδρευση (0,344) + επεξεργασία λυμάτων (0,272) συνδυαστικά (WDD / DEFRA 2024)." },
     ] as MethodologyItem[],
     workedExampleHeading: "Συμβουλευτική εταιρεία 45 ατόμων στη Λευκωσία",
     workedExampleBody:

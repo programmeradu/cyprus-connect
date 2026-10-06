@@ -60,6 +60,58 @@ interface Data {
 
 const duration = (ms: number) => (ms < 1000 ? `${ms} ms` : `${(ms / 1000).toFixed(1)} s`);
 
+function renderInlineMarkdown(str: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  let lastIdx = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(str)) !== null) {
+    if (match.index > lastIdx) {
+      parts.push(str.slice(lastIdx, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith("**") && token.endsWith("**")) {
+      parts.push(<strong key={match.index}>{token.slice(2, -2)}</strong>);
+    } else if (token.startsWith("*") && token.endsWith("*")) {
+      parts.push(<em key={match.index}>{token.slice(1, -1)}</em>);
+    }
+    lastIdx = regex.lastIndex;
+  }
+  if (lastIdx < str.length) {
+    parts.push(str.slice(lastIdx));
+  }
+  return parts.length ? parts : [str];
+}
+
+function renderFormattedSummary(text: string): React.ReactNode {
+  if (!text) return null;
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  if (lines.length <= 1 && !lines[0]?.startsWith("- ") && !lines[0]?.startsWith("* ")) {
+    return renderInlineMarkdown(text);
+  }
+  return (
+    <span className="vck-run-summary-lines block space-y-1 text-left">
+      {lines.map((l, i) => {
+        const isBullet = l.startsWith("- ") || l.startsWith("* ");
+        const clean = isBullet ? l.replace(/^[-*]\s+/, "") : l;
+        return (
+          <span
+            key={i}
+            className={
+              isBullet
+                ? "block pl-3 relative before:content-['•'] before:absolute before:left-0 before:text-foreground/60"
+                : "block"
+            }
+          >
+            {renderInlineMarkdown(clean)}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
 const HISTORY = "/api/console/agents/history";
 /** Everything an agent run or switch can change. */
 const AGENT_DATA = ["/api/console/agents", "/api/console/cbam"];
@@ -273,7 +325,7 @@ export default function AgentsPage() {
         ) : (
           <ol className="vck-runs">
             {shownRuns.map((r) => {
-              const st = runStatusLabel(r.status, lang);
+              const st = runStatusLabel(r.status, lang, r.steps.failed);
               const isOpen = open === r.id;
               const s = steps[r.id];
               return (
@@ -281,7 +333,7 @@ export default function AgentsPage() {
                   <button type="button" className="vck-run-head" aria-expanded={isOpen} onClick={() => toggleRun(r.id)}>
                     <span className="vck-run-main">
                       <strong>{nameOf(r.agentKey)} · {tr("runNumber", { id: r.id })}</strong>
-                      <span className="vck-run-summary">{r.summary}</span>
+                      <span className="vck-run-summary">{renderFormattedSummary(r.summary)}</span>
                     </span>
                     <span className="vck-run-meta">
                       <State tone={st.tone}>{st.label}</State>

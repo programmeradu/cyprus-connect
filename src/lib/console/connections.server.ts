@@ -14,26 +14,35 @@ import type { ConsoleConnection } from "@/components/app/console/types";
 
 export async function liveConnections(accountId: string, workspaceId: string): Promise<ConsoleConnection[]> {
   const [accounting, customs, seLink, bocLink] = await Promise.all([
-    nangoSummary(accountId),
+    nangoSummary(accountId).catch(() => ({
+      configured: false,
+      connected: false,
+      connectionsCount: 0,
+      providers: [],
+      lastSyncAt: null,
+    })),
     db
       .select({
         count: sql<number>`count(*)::int`,
         last: sql<string | null>`max(${cbamImportLines.createdAt})`,
       })
       .from(cbamImportLines)
-      .where(eq(cbamImportLines.workspaceId, workspaceId)),
+      .where(eq(cbamImportLines.workspaceId, workspaceId))
+      .catch(() => [{ count: 0, last: null }]),
     db
       .select()
       .from(bankLinks)
       .where(and(eq(bankLinks.workspaceId, workspaceId), eq(bankLinks.provider, "saltedge")))
       .orderBy(desc(bankLinks.createdAt))
-      .limit(1),
+      .limit(1)
+      .catch(() => []),
     db
       .select()
       .from(bankLinks)
       .where(and(eq(bankLinks.workspaceId, workspaceId), eq(bankLinks.provider, "boc")))
       .orderBy(desc(bankLinks.createdAt))
-      .limit(1),
+      .limit(1)
+      .catch(() => []),
   ]);
 
   const lines = customs[0]?.count ?? 0;

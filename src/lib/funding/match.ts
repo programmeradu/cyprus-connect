@@ -119,9 +119,12 @@ export function checkFit(rules: CallRules, biz: BusinessPicture): FitResult {
     else add(failed, "sectors", `Aimed at ${sectors.join(", ")}.`, `Απευθύνεται σε: ${sectors.join(", ")}.`);
   }
 
+  const specificRules = new Set(["sectors", "employees", "revenue", "companyAge"]);
+  const hasSpecificMatch = met.some((m) => specificRules.has(m.rule));
+
   let verdict: Verdict = "hidden";
   if (failed.length === 0 && met.length >= MIN_MET && missing.length <= MAX_MISSING) {
-    verdict = missing.length === 0 ? "strong" : "needs_info";
+    verdict = missing.length === 0 ? (hasSpecificMatch ? "strong" : "hidden") : "needs_info";
   }
   return { verdict, met, missing, failed };
 }

@@ -23,11 +23,19 @@ export async function GET(req: NextRequest) {
     const compliantRegs = regulations.filter(r => r.status === 'compliant').length;
     const score = totalRegs > 0 ? Math.round((compliantRegs / totalRegs) * 100) : null; // No regulations tracked yet: no score, not a made-up one.
 
-    // Parse JSON fields
-    const parsedRegulations = regulations.map(reg => ({
-      ...reg,
-      requirements: JSON.parse(reg.requirements || '[]')
-    }));
+    // Parse JSON fields safely without throwing 500 on corrupted row
+    const parsedRegulations = regulations.map(reg => {
+      let requirements = [];
+      try {
+        requirements = JSON.parse(reg.requirements || '[]');
+      } catch {
+        requirements = [];
+      }
+      return {
+        ...reg,
+        requirements,
+      };
+    });
 
     return NextResponse.json({
       success: true,
@@ -39,7 +47,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Error fetching compliance data:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch compliance data' },
+      { error: 'Failed to fetch compliance data', success: false, regulations: [], documents: [], settings: null, score: null },
       { status: 500 }
     );
   }

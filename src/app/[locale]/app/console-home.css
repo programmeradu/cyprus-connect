@@ -138,7 +138,7 @@
 }
 
 /* Guided first visit */
-.vch-tour { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+.vch-tour { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
 .vch-tour-ring {
   position: fixed; border-radius: 22px; pointer-events: none;
   box-shadow: 0 0 0 2px var(--vc-lime), 0 0 0 9999px rgba(12, 18, 17, 0.45);

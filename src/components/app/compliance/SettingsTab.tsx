@@ -14,6 +14,7 @@ export function SettingsTab({ settings, onSave }: { settings: Settings; onSave: 
   }, [settings]);
 
   const jurisdictionOptions: { value: string; label: string }[] = [
+    { value: "Cyprus", label: t("settings.jurisdictionOptions.cyprus") },
     { value: "European Union", label: t("settings.jurisdictionOptions.eu") },
     { value: "United States", label: t("settings.jurisdictionOptions.us") },
     { value: "United Kingdom", label: t("settings.jurisdictionOptions.uk") },

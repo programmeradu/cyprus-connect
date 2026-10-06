@@ -37,11 +37,25 @@ export const authClient = {
   signUp: {
     email: async ({ email, name, password }: { email: string; name: string; password: string }) => {
       const redirectTo = `${window.location.origin}/en/auth/callback?next=/en/app`;
-      return (await getSupabaseBrowserClient()).auth.signUp({
+      const res = await (await getSupabaseBrowserClient()).auth.signUp({
         email,
         password,
         options: { data: { full_name: name }, emailRedirectTo: redirectTo },
       });
+      // Supabase Auth returns a fake user with identities: [] when the user already exists to prevent email enumeration,
+      // which results in false "Account created" messages with no confirmation email sent.
+      if (res.data?.user && Array.isArray(res.data.user.identities) && res.data.user.identities.length === 0) {
+        return {
+          data: res.data,
+          error: {
+            name: "AuthApiError",
+            message: "User already registered",
+            status: 422,
+            code: "USER_ALREADY_EXISTS",
+          } as any,
+        };
+      }
+      return res;
     },
   },
   signIn: {

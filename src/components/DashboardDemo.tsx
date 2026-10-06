@@ -625,6 +625,7 @@ export const DashboardDemo = ({ landingMode = false, focusTab }: DashboardDemoPr
       : { company: "", industry: "", period: "", location: "", employees: "", targetYear: "" }
   )
   const [reportResult, setReportResult] = useState("")
+  const [reportError, setReportError] = useState<string | null>(null)
   const [reportGenerating, setReportGenerating] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
   
@@ -786,7 +787,7 @@ export const DashboardDemo = ({ landingMode = false, focusTab }: DashboardDemoPr
       // Generate humidity insight
       const humidityPrompt = `Based on current humidity level of ${weather.current.relative_humidity_2m}% in ${location.city}, provide ONE short sustainability insight, fun-fact, joke, or tip (randomly choose one type). Format as: "[TYPE]: [one-liner]" where TYPE is either "Insight", "Fun-Fact", "Joke", or "Tip". Keep it under 15 words and relevant to business sustainability.`
       
-      const humidityResponse = await fetch('/api/gemini/analyze', {
+      const humidityResponse = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: humidityPrompt })
@@ -806,7 +807,7 @@ export const DashboardDemo = ({ landingMode = false, focusTab }: DashboardDemoPr
       // Generate wind insight
       const windPrompt = `Based on current wind speed of ${weather.current.wind_speed_10m} km/h in ${location.city}, provide ONE short sustainability insight, fun-fact, joke, or tip (randomly choose one type). Format as: "[TYPE]: [one-liner]" where TYPE is either "Insight", "Fun-Fact", "Joke", or "Tip". Keep it under 15 words and relevant to business sustainability.`
       
-      const windResponse = await fetch('/api/gemini/analyze', {
+      const windResponse = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: windPrompt })
@@ -874,7 +875,7 @@ Provide:
 
 Keep response concise and practical for SMEs. Format with clear sections.`
 
-      const response = await fetch('/api/gemini/analyze', {
+      const response = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
@@ -892,39 +893,51 @@ Keep response concise and practical for SMEs. Format with clear sections.`
   const generateReport = async () => {
     if (!reportInput.company || !reportInput.industry) return
     
+    // Client-side validation: employees >= 1, targetYear >= 2026
+    if (reportInput.employees) {
+      const emp = parseInt(reportInput.employees, 10);
+      if (isNaN(emp) || emp < 1) {
+        setReportError(t("report.employeesInvalid") || "Number of employees must be at least 1.");
+        return;
+      }
+    }
+    if (reportInput.targetYear) {
+      const yr = parseInt(reportInput.targetYear, 10);
+      if (isNaN(yr) || yr < 2026) {
+        setReportError(t("report.targetYearInvalid") || "Target net-zero year must be 2026 or later.");
+        return;
+      }
+    }
+
     setReportGenerating(true)
     setReportResult("")
+    setReportError(null)
     
     try {
-      const prompt = `Generate a professional sustainability report summary for:
-
-Company: ${reportInput.company}
-Industry: ${reportInput.industry}
-Period: ${reportInput.period || "Q1 2024"}
-Location: ${reportInput.location || "Not specified"}
-Number of Employees: ${reportInput.employees || "Not specified"}
-Target Net-Zero Year: ${reportInput.targetYear || "Not specified"}
-
-Include:
-1. Executive Summary (2-3 sentences)
-2. Key Metrics (3-4 relevant sustainability KPIs for this industry)
-3. Progress Highlights (2-3 achievements)
-4. Recommended Next Steps (3 actions)
-5. Compliance Status (brief regulatory overview)
-6. Carbon Reduction Targets
-
-Format professionally for SME stakeholders. Keep concise.`
-
-      const response = await fetch('/api/gemini/analyze', {
+      const response = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
+        body: JSON.stringify({
+          companyName: reportInput.company,
+          industry: reportInput.industry,
+          reportingPeriod: reportInput.period || "2025 Annual",
+          location: reportInput.location || "Nicosia, Cyprus",
+          employees: reportInput.employees ? parseInt(reportInput.employees, 10) : undefined,
+          netZeroYear: reportInput.targetYear ? parseInt(reportInput.targetYear, 10) : 2030,
+        })
       })
       
-      const data = await response.json()
-      setReportResult(data.text || t("report.generationFailed"))
+      const data = await response.json().catch(() => null)
+      if (!response.ok || !data?.text) {
+        setReportResult("")
+        setReportError(data?.error || t("report.generationFailed"))
+      } else {
+        setReportResult(data.text)
+        setReportError(null)
+      }
     } catch (error) {
-      setReportResult(t("report.generationFailed"))
+      setReportResult("")
+      setReportError(t("report.generationFailed"))
     } finally {
       setReportGenerating(false)
     }
@@ -1476,7 +1489,7 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     >
                       {reportGenerating ? t("report.generating") : t("report.generate")}
                     </button>
-                    {reportResult && (
+                    {reportResult && !reportError && (
                       <button
                         onClick={() => setShowPreview(true)}
                         className="px-4 py-2 rounded-lg bg-accent text-accent-foreground font-medium text-sm hover:opacity-90 transition-all"
@@ -1486,8 +1499,23 @@ CRITICAL INSTRUCTIONS FOR LOGO INTEGRATION:
                     )}
                   </div>
 
+                  {reportError && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm flex items-center justify-between gap-3"
+                    >
+                      <span>{reportError}</span>
+                      <button
+                        onClick={generateReport}
+                        className="px-3 py-1 rounded-md bg-destructive text-destructive-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
+                      >
+                        Retry
+                      </button>
+                    </motion.div>
+                  )}
 
-                  {reportResult && !showPreview && (
+                  {reportResult && !reportError && !showPreview && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}

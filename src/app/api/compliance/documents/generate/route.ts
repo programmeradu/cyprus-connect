@@ -75,17 +75,35 @@ Format the report professionally with clear sections.`;
 
     // Due date comes from the shared framework list; every new report starts as a draft.
     const def = frameworkByLabel(framework);
+    const isVoluntaryFramework = def ? !def.legalDeadline : true;
+
+    // For regulatory frameworks, check whether the company is in-scope or exempt (e.g. CSRD Omnibus SME threshold)
+    let isApplicable = !isVoluntaryFramework;
+    let applicabilityNote = '';
+    if (def?.regulationId === 'csrd') {
+      const emp = userInfo?.teamSize ? parseInt(userInfo.teamSize, 10) : null;
+      if (emp !== null && emp <= 1000) {
+        isApplicable = false;
+        applicabilityNote = ' (Voluntary SME Draft)';
+      }
+    }
+
+    const isVoluntaryDraft = isVoluntaryFramework || !isApplicable;
     const config = {
       status: 'draft',
-      dueDate: def ? def.nextDeadline() : `${new Date().getUTCFullYear()}-12-31`,
+      dueDate: isVoluntaryDraft ? '' : (def ? def.nextDeadline() : ''),
       regulationId: def ? def.regulationId : 'custom',
     };
+
+    const docTitle = isVoluntaryDraft
+      ? `${framework} Annual Report ${new Date().getFullYear()}${applicabilityNote || ' (Voluntary Draft)'}`
+      : `${framework} Annual Report ${new Date().getFullYear()}`;
 
     // Save document
     const document = await db.insert(complianceDocuments).values({
       userId,
       regulationId: config.regulationId,
-      title: `${framework} Annual Report ${new Date().getFullYear()}`,
+      title: docTitle,
       framework,
       status: config.status,
       content: reportContent,

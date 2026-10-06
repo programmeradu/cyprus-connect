@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decisionLabel, riskLabel, summarizeOutput, toolLabel, triggerLabel } from "@/lib/agents/step-labels";
+import { decisionLabel, riskLabel, runStatusLabel, summarizeOutput, toolLabel, triggerLabel } from "@/lib/agents/step-labels";
 
 describe("step labels", () => {
   it("names known tools and falls back for new ones", () => {
@@ -12,6 +12,9 @@ describe("step labels", () => {
     expect(riskLabel(3)).toBe("Legal or financial");
     expect(riskLabel(9)).toBe("Risk level 9");
     expect(triggerLabel("cron")).toBe("Scheduled");
+    expect(runStatusLabel("succeeded")).toEqual({ label: "Finished", tone: "good" });
+    expect(runStatusLabel("succeeded", "en", 1)).toEqual({ label: "Finished with errors", tone: "warn" });
+    expect(runStatusLabel("succeeded", "el", 2)).toEqual({ label: "Ολοκληρώθηκε με σφάλματα", tone: "warn" });
   });
   it("summarises outputs safely", () => {
     expect(summarizeOutput("executed", null)).toBeNull();

@@ -91,20 +91,43 @@ export async function GET(request: Request) {
 
           const clean = (s: string, max?: number) => {
             let out = decodeHTMLEntities(s);
-            out = out.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+            // Repeatedly decode in case of doubly encoded entities e.g. &amp;nbsp;
+            out = decodeHTMLEntities(out);
+            out = out.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
             if (max && out.length > max) out = out.substring(0, max).trimEnd() + "…";
             return out;
           };
 
           title = clean(title);
-          description = clean(description, 160);
+
+          // Strip Google News source suffix (e.g. "Headline - Source Name")
+          const cleanTitle = title.replace(/\s+[-—–]\s+[^-—–]+$/, "").trim();
+
+          // Clean description and avoid repeating the exact title
+          let cleanDesc = clean(description, 200);
+          if (cleanDesc.toLowerCase().startsWith(cleanTitle.toLowerCase()) || cleanDesc.toLowerCase().startsWith(title.toLowerCase())) {
+            // Summary just repeats the title; trim the title part or provide informative summary
+            cleanDesc = cleanDesc.slice(title.length).replace(/^[:\s—–-]+/, "").trim();
+          }
+          // Remove trailing source mentions with &nbsp; artifacts
+          cleanDesc = cleanDesc.replace(/[-—–]\s*[A-Za-z0-9\s.&]+$/, "").trim();
+
+          // Relevancy filter for Cyprus / SME sustainability & climate
+          const combined = `${title} ${cleanDesc}`.toLowerCase();
+          const isIrrelevant =
+            combined.includes("jinsa") ||
+            combined.includes("turkey gas link") ||
+            combined.includes("geopolitics of gas") ||
+            (combined.includes("bank of england") && combined.includes("financial-stability"));
+
+          if (isIrrelevant) continue;
 
           if (title && link && !items.some((existing) => existing.link === link)) {
             items.push({
               title,
               link,
               pubDate,
-              description: description || "Read full live coverage on source.",
+              description: cleanDesc || "Read full live coverage on source.",
               source,
             });
           }
@@ -113,6 +136,13 @@ export async function GET(request: Request) {
         console.error("Feed fetch error for", feedUrl, err);
       }
     }
+
+    // Sort strictly newest first by pubDate (F123)
+    items.sort((a, b) => {
+      const dateA = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+      const dateB = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+      return dateB - dateA;
+    });
 
     return NextResponse.json({ items }, {
       headers: {

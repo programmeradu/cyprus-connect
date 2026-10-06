@@ -20,6 +20,7 @@ export interface StudioSource {
     totalCo2e: number;
     electricity: number;
     gas: number;
+    water?: number;
     transport: number;
     periodMonth: number;
     periodYear: number;
@@ -70,6 +71,7 @@ export function studioFacts(context: StudioContext, s: StudioSource): string[] {
     facts.push(`Total: ${round(latest.totalCo2e, 2)} tCO2e`);
     if (latest.electricity > 0) facts.push(`Electricity: ${round(latest.electricity, 0)} kWh`);
     if (latest.gas > 0) facts.push(`Gas: ${round(latest.gas, 0)}`);
+    if (latest.water && latest.water > 0) facts.push(`Water: ${round(latest.water, 0)} m³`);
     if (latest.transport > 0) facts.push(`Transport: ${round(latest.transport, 0)} km`);
     return facts;
   }

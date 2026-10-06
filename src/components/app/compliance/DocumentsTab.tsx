@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Section, DataTable, Empty } from "@/components/app/console/kit";
 import type { DataTableColumn as Column } from "@/components/app/console/kit";
-import { FRAMEWORKS } from "@/lib/compliance/frameworks";
+import { FRAMEWORKS, frameworkByLabel } from "@/lib/compliance/frameworks";
 import { useUser } from "@/lib/user-context";
 import { markdownToSections } from "@/lib/pdf/markdown-sections";
 import type { ComplianceDocument } from "./types";
@@ -20,6 +20,8 @@ export function DocumentsTab({
   generating: boolean;
 }) {
   const t = useTranslations("dashboard.compliance");
+  const locale = useLocale();
+  const loc = locale === "el" ? "el-CY" : "en-GB";
   const { user } = useUser();
   const companyName = user?.companyName ?? "";
   const [busyId, setBusyId] = useState<number | null>(null);
@@ -51,7 +53,20 @@ export function DocumentsTab({
       key: "dueDate",
       header: t("documents.dueDate"),
       hideOnMobile: true,
-      render: (doc) => new Date(doc.dueDate).toLocaleDateString()
+      render: (doc) => {
+        const def = frameworkByLabel(doc.framework);
+        const isVoluntary = (def && !def.legalDeadline) || doc.title.toLowerCase().includes("voluntary") || !doc.dueDate;
+        if (isVoluntary || !doc.dueDate) {
+          return <span className="vck-meta">{t("documents.voluntaryNoDeadline")}</span>;
+        }
+        try {
+          const d = new Date(doc.dueDate);
+          if (isNaN(d.getTime())) return <span className="vck-meta">{t("documents.voluntaryNoDeadline")}</span>;
+          return <span>{d.toLocaleDateString(loc, { day: "2-digit", month: "2-digit", year: "numeric" })}</span>;
+        } catch {
+          return <span className="vck-meta">{t("documents.voluntaryNoDeadline")}</span>;
+        }
+      }
     },
     {
       key: "actions",

@@ -8,13 +8,15 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
 import { documents } from "@/db/schema";
 import type { IntakeProposal } from "@/lib/documents/intake";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { readUpload, type UploadKind } from "@/lib/validate";
 import { readDocument, mimeFor } from "@/lib/documents/intake.server";
+import { eacBills } from "@/lib/integrations/eac.server";
+import { waterBills } from "@/lib/integrations/water.server";
 import { logger } from "@/lib/log";
 
 export const dynamic = "force-dynamic";
@@ -31,21 +33,39 @@ export async function GET() {
     return NextResponse.json({ error: resolved.error, message: resolved.message }, { status: resolved.status });
   }
   try {
+    const userId = resolved.session.account.id;
     const rows = await db
       .select({ id: documents.id, fileName: documents.fileName, parsedData: documents.parsedData })
       .from(documents)
-      .where(and(eq(documents.userId, resolved.session.account.id), eq(documents.uploadSource, PENDING_SOURCE)))
+      .where(and(eq(documents.userId, userId), eq(documents.uploadSource, PENDING_SOURCE)))
       .orderBy(asc(documents.id))
       .limit(20);
-    const pending = rows.flatMap((r) => {
+    const parsed = rows.flatMap((r) => {
       try {
-        const d = JSON.parse(r.parsedData ?? "{}") as { proposal?: IntakeProposal; via?: string };
-        return d.proposal ? [{ id: r.id, fileName: r.fileName, proposal: d.proposal, via: d.via === "email" ? "email" : "upload" }] : [];
+        const d = JSON.parse(r.parsedData ?? "{}") as { proposal?: IntakeProposal; via?: string; bill?: { periodStart?: string; periodEnd?: string; accountNumber?: string | null; board?: string } | null };
+        return d.proposal ? [{ id: r.id, fileName: r.fileName, proposal: d.proposal, via: (d.via === "email" ? "email" : "upload") as "email" | "upload", bill: d.bill ?? null }] : [];
       } catch {
         return [];
       }
     });
-    return NextResponse.json({ pending });
+    // A bill already kept (same period and account) is not asked about twice.
+    const hasBills = parsed.some((p) => p.bill && (p.proposal.kind === "eac_bill" || p.proposal.kind === "water_bill"));
+    const [eac, water] = hasBills ? await Promise.all([eacBills(userId), waterBills(userId)]) : [[], []];
+    const sameBill = (a: { periodStart?: string; periodEnd?: string; accountNumber?: string | null }, b: { periodStart?: string; periodEnd?: string; accountNumber?: string | null }) =>
+      a.periodStart === b.periodStart && a.periodEnd === b.periodEnd && (a.accountNumber ?? "") === (b.accountNumber ?? "");
+    const stale: number[] = [];
+    const pending = parsed.filter((p) => {
+      if (!p.bill) return true;
+      const dup =
+        (p.proposal.kind === "eac_bill" && eac.some((b) => sameBill(b, p.bill!))) ||
+        (p.proposal.kind === "water_bill" && water.some((b) => sameBill(b, p.bill!) && b.board === p.bill!.board));
+      if (dup) stale.push(p.id);
+      return !dup;
+    });
+    if (stale.length > 0) {
+      await db.delete(documents).where(and(eq(documents.userId, userId), eq(documents.uploadSource, PENDING_SOURCE), inArray(documents.id, stale)));
+    }
+    return NextResponse.json({ pending: pending.map(({ bill: _bill, ...p }) => p) });
   } catch (error) {
     const ref = log.error("intake list failed", error);
     return NextResponse.json({ message: "Waiting documents could not be loaded.", ref }, { status: 500 });

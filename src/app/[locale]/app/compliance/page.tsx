@@ -77,11 +77,15 @@ export default function CompliancePage() {
     const ok = await writer.run("/api/compliance/documents/generate", {
       method: "POST",
       body: { framework },
-      invalidates: ["/api/compliance", "/api/reports"]
+      invalidates: ["/api/compliance/data", "/api/compliance", "/api/console/reports", "/api/reports"]
     });
     setGenerating(false);
-    if (ok) toast.success(t("toasts.generatedSuccess", { framework }));
-    else toast.error(t("toasts.generateFailed"));
+    if (ok) {
+      toast.success(t("toasts.generatedSuccess", { framework }));
+      void data.reload();
+    } else {
+      toast.error(t("toasts.generateFailed"));
+    }
   };
 
   const handleSaveSettings = async (newSettings: Settings) => {

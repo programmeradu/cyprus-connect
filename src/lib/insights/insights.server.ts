@@ -74,15 +74,32 @@ export interface ComplianceSummary {
   next: { name: string; deadline: string; daysLeft: number } | null;
 }
 
-export async function complianceSummary(userId: string, now = new Date()): Promise<ComplianceSummary> {
-  // Deadlines come from the shared rulebook rows on the account's workspace.
-  const [ws] = await db.select({ id: workspaces.id }).from(workspaces).where(eq(workspaces.ownerUserId, userId)).limit(1);
-  const regs = ws
-    ? (await db
-        .select({ name: obligations.title, match: obligations.match, dueDate: obligations.dueDate })
-        .from(obligations)
-        .where(eq(obligations.workspaceId, ws.id))).filter((r) => r.match === null || r.match === "applies")
-    : [];
+export async function complianceSummary(wsOrUserId: string, now = new Date()): Promise<ComplianceSummary> {
+  // Direct workspace ID or owner user ID.
+  let wsId = wsOrUserId;
+  if (!wsOrUserId.startsWith("ws_")) {
+    const [ws] = await db.select({ id: workspaces.id }).from(workspaces).where(eq(workspaces.ownerUserId, wsOrUserId)).limit(1);
+    if (ws) wsId = ws.id;
+  }
+
+  const load = () =>
+    db
+      .select({ name: obligations.title, match: obligations.match, dueDate: obligations.dueDate, ruleId: obligations.ruleId })
+      .from(obligations)
+      .where(eq(obligations.workspaceId, wsId));
+
+  let rows = await load();
+  if (rows.length === 0 || !rows.some((r) => r.ruleId)) {
+    try {
+      const { refreshObligations } = await import("@/lib/obligations/obligations.server");
+      await refreshObligations(wsId);
+      rows = await load();
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const regs = rows.filter((r) => (r.match === null || r.match === "applies") && /^\d{4}-\d{2}-\d{2}$/.test(r.dueDate));
   const day = 86_400_000;
   const upcoming = regs
     .map((r) => ({ name: r.name, deadline: r.dueDate, t: Date.parse(r.dueDate) }))

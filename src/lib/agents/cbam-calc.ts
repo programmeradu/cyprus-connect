@@ -368,12 +368,60 @@ export function parseImportCsv(text: string): { rows: ParsedImportRow[]; errors:
   const table = parseCsv(text);
   const errors: string[] = [];
   if (table.length < 2) return { rows: [], errors: ["The file has no data rows."] };
-  const head = table[0].map((h) => h.trim().toLowerCase().replace(/\s+/g, "_"));
-  const idx = (name: string) => head.indexOf(name);
-  for (const need of ["import_date", "cn_code", "origin_country", "supplier", "net_mass"]) {
-    if (idx(need) < 0) errors.push(`Missing column "${need}".`);
+  const EXPECTED_COLUMNS = [
+    "import_date",
+    "cn_code",
+    "description",
+    "origin_country",
+    "supplier",
+    "installation_id",
+    "net_mass",
+    "direct_see",
+    "indirect_see",
+    "customs_ref",
+  ];
+
+  const ALIASES: Record<string, string> = {
+    import_date: "import_date",
+    date: "import_date",
+    date_of_import: "import_date",
+    cn_code: "cn_code",
+    cn: "import_code",
+    hs_code: "cn_code",
+    commodity_code: "cn_code",
+    origin_country: "origin_country",
+    country_of_origin: "origin_country",
+    country: "origin_country",
+    origin: "origin_country",
+    supplier: "supplier",
+    supplier_name: "supplier",
+    vendor: "supplier",
+    vendor_name: "supplier",
+    net_mass: "net_mass",
+    mass: "net_mass",
+    net_mass_tonnes: "net_mass",
+    net_mass_t: "net_mass",
+    quantity: "net_mass",
+    quantity_tonnes: "net_mass",
+    weight: "net_mass",
+    description: "description",
+    installation_id: "installation_id",
+    direct_see: "direct_see",
+    indirect_see: "indirect_see",
+    customs_ref: "customs_ref",
+  };
+
+  const rawHead = table[0].map((h) => h.trim().toLowerCase().replace(/\s+/g, "_"));
+  const canonicalHead = rawHead.map((h) => ALIASES[h] ?? h);
+  const idx = (name: string) => canonicalHead.indexOf(name);
+  const REQUIRED = ["import_date", "cn_code", "origin_country", "supplier", "net_mass"];
+  const missing = REQUIRED.filter((need) => idx(need) < 0);
+  if (missing.length > 0) {
+    errors.push(
+      `Missing required column(s): ${missing.join(", ")}. Expected header row: ${EXPECTED_COLUMNS.join(", ")}.`,
+    );
+    return { rows: [], errors };
   }
-  if (errors.length) return { rows: [], errors };
   const get = (r: string[], name: string) => (idx(name) >= 0 ? (r[idx(name)] ?? "").trim() : "");
 
   const rows: ParsedImportRow[] = [];

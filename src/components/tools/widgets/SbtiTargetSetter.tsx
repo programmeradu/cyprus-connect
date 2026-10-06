@@ -44,7 +44,7 @@ const DEFAULT_INPUTS: Inputs = {
   scope2: "",
   scope3: "",
   scope12Ambition: "1.5C",
-  scope3Ambition: "WB2C",
+  scope3Ambition: "1.5C",
 };
 
 const T = {
@@ -96,6 +96,7 @@ const T = {
     netZeroHeading: "Long-term net-zero",
     statementHeading: "Draft target statement",
     kBaseYear: "Base year",
+    kTargetYear: "Target year",
     kHorizon: "Horizon",
     years: "years",
     kScope12: "Scope 1 & 2",
@@ -163,6 +164,7 @@ const T = {
     netZeroHeading: "Μακροπρόθεσμο net-zero",
     statementHeading: "Προσχέδιο δήλωσης στόχου",
     kBaseYear: "Έτος βάσης",
+    kTargetYear: "Έτος στόχος",
     kHorizon: "Ορίζοντας",
     years: "έτη",
     kScope12: "Scope 1 & 2",
@@ -216,10 +218,13 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
 
   const filledSteps = useMemo(() => {
     let n = 0;
-    if (inputs.company.trim() && inputs.sector.trim()) n += 1;
-    if (result.totalBase > 0) n += 1;
-    if (inputs.targetYear > inputs.baseYear) n += 1;
-    if (step >= 3) n += 1;
+    const hasProfile = Boolean(inputs.company.trim() && inputs.sector.trim());
+    const hasEmissions = result.totalBase > 0;
+    const hasAmbition = Boolean(inputs.targetYear > inputs.baseYear && inputs.scope12Ambition && inputs.scope3Ambition);
+    if (hasProfile) n += 1;
+    if (hasEmissions) n += 1;
+    if (hasProfile && hasEmissions && hasAmbition) n += 1;
+    if (step >= 3 && hasProfile && hasEmissions) n += 1;
     return n;
   }, [inputs, result.totalBase, step]);
   const percent = Math.round((filledSteps / TOTAL_STEPS) * 100);
@@ -385,14 +390,14 @@ export default function SbtiTargetSetter({ locale }: { locale: Locale }) {
                 <Stat label={l.kScope3Required} value={result.scope3Required ? l.yes : l.no} />
               </ResultCard>
               <ResultCard heading={l.targetHeading}>
-                <Stat label={l.kBaseYear} value={`${inputs.baseYear} → ${inputs.targetYear}`} />
-                <Stat label={l.kHorizon} value={`${result.horizonYears} ${l.years}`} />
+                <Stat label={l.kTargetYear} value={String(inputs.targetYear)} />
+                <Stat label={l.kHorizon} value={`${result.horizonYears} ${l.years} (${inputs.baseYear} → ${inputs.targetYear})`} />
                 <Stat label={`${l.kScope12} · ${l.reductionBy} ${inputs.targetYear}`} value={`−${formatPct(result.scope12TargetPct, locale)}`} />
                 <Stat label={`${l.kScope3} · ${l.reductionBy} ${inputs.targetYear}`} value={`−${formatPct(result.scope3TargetPct, locale)}`} />
                 <Stat label={`${l.kTotal} · ${l.residualBy} ${inputs.targetYear}`} value={`${formatTonnes(result.totalTarget, locale)} ${l.tCO2e}`} />
               </ResultCard>
               <ResultCard heading={l.netZeroHeading}>
-                <Stat label={l.kBaseYear} value={String(SBTI_NET_ZERO_YEAR)} />
+                <Stat label={l.kTargetYear} value={String(SBTI_NET_ZERO_YEAR)} />
                 <Stat label={l.reductionBy + " " + SBTI_NET_ZERO_YEAR} value={`−${formatPct(0.9, locale)}`} />
                 <Stat label={l.residualBy + " " + SBTI_NET_ZERO_YEAR} value={`${formatTonnes(result.netZeroTarget, locale)} ${l.tCO2e}`} />
               </ResultCard>

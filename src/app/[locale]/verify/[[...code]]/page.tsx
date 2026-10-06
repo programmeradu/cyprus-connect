@@ -19,15 +19,18 @@ const T = {
   en: {
     title: "Check a Vuneli document",
     intro: "Every PDF Vuneli issues carries a fingerprint and a QR code. Scan the code or type the fingerprint to confirm the document came from Vuneli and that its figures have not been changed.",
-    label: "Fingerprint or QR code",
-    placeholder: "e.g. 3f9a 1c02 … or the full 64-character fingerprint",
+    label: "Fingerprint, QR code or Document ID",
+    placeholder: "e.g. VNL-BS-20261004-928789, 3f9a 1c02 … or full 64-character fingerprint",
     check: "Check",
     found: "Issued by Vuneli",
     foundBody: "This document is in Vuneli’s register. Compare the full fingerprint below with the one printed on the last page — every character must match.",
+    foundDraft: "Verified Vuneli Draft",
+    foundDraftBody: "This is a valid unfinalised draft recorded in Vuneli’s register. It has not yet been electronically signed or formally issued.",
     notFound: "Not in our register",
-    notFoundBody: "We have no document with this fingerprint. Check for typing mistakes. If you scanned the QR code and still see this, the document was not issued by Vuneli or its contents were changed.",
-    bad: "A fingerprint has 64 characters (0–9, a–f); the QR code holds the first 16. Spaces are ignored.",
-    doc: "Document", type: "Type", company: "Company", issued: "Issued", full: "Full fingerprint",
+    notFoundBody: "We have no document with this fingerprint or ID. Check for typing mistakes. If you scanned the QR code and still see this, the document was not issued by Vuneli or its contents were changed.",
+    bad: "Enter a document ID (e.g. VNL-BS-...) or a fingerprint (12 to 64 hex characters).",
+    emptyError: "Enter a document ID or fingerprint to check.",
+    doc: "Document", type: "Type", status: "Status", company: "Company", issued: "Recorded", full: "Full fingerprint",
     kinds: { "board-summary": "Board summary", report: "Sustainability report", cbam: "CBAM declaration" },
     what: "What this proves",
     whatBody: "The fingerprint is a SHA-256 digest of exactly the data printed in the document. Matching fingerprints show the figures are the ones Vuneli produced on the issue date. It is not a qualified electronic signature and does not mean the figures were audited.",
@@ -48,15 +51,18 @@ const T = {
   el: {
     title: "Έλεγχος εγγράφου Vuneli",
     intro: "Κάθε PDF της Vuneli φέρει ψηφιακό αποτύπωμα και κωδικό QR. Σαρώστε τον κωδικό ή πληκτρολογήστε το αποτύπωμα για να επιβεβαιώσετε ότι το έγγραφο εκδόθηκε από τη Vuneli και ότι τα στοιχεία του δεν άλλαξαν.",
-    label: "Αποτύπωμα ή κωδικός QR",
-    placeholder: "π.χ. 3f9a 1c02 … ή ολόκληρο το αποτύπωμα 64 χαρακτήρων",
+    label: "Αποτύπωμα, κωδικός QR ή ID εγγράφου",
+    placeholder: "π.χ. VNL-BS-20261004-928789, 3f9a 1c02 … ή πλήρες αποτύπωμα 64 χαρακτήρων",
     check: "Έλεγχος",
     found: "Εκδόθηκε από τη Vuneli",
     foundBody: "Το έγγραφο υπάρχει στο μητρώο της Vuneli. Συγκρίνετε το πλήρες αποτύπωμα παρακάτω με αυτό που είναι τυπωμένο στην τελευταία σελίδα — κάθε χαρακτήρας πρέπει να ταιριάζει.",
+    foundDraft: "Επαληθευμένο Προσχέδιο Vuneli",
+    foundDraftBody: "Πρόκειται για έγκυρο μη οριστικοποιημένο προσχέδιο καταγεγραμμένο στο μητρώο της Vuneli. Δεν έχει ακόμη υπογραφεί ηλεκτρονικά ή εκδοθεί επίσημα.",
     notFound: "Δεν υπάρχει στο μητρώο μας",
-    notFoundBody: "Δεν βρέθηκε έγγραφο με αυτό το αποτύπωμα. Ελέγξτε για λάθη πληκτρολόγησης. Αν σαρώσατε τον κωδικό QR και βλέπετε αυτό το μήνυμα, το έγγραφο δεν εκδόθηκε από τη Vuneli ή το περιεχόμενό του άλλαξε.",
-    bad: "Το αποτύπωμα έχει 64 χαρακτήρες (0–9, a–f)· ο κωδικός QR περιέχει τους πρώτους 16. Τα κενά αγνοούνται.",
-    doc: "Έγγραφο", type: "Τύπος", company: "Εταιρεία", issued: "Έκδοση", full: "Πλήρες αποτύπωμα",
+    notFoundBody: "Δεν βρέθηκε έγγραφο με αυτό το αποτύπωμα ή κωδικό ID. Ελέγξτε για λάθη πληκτρολόγησης. Αν σαρώσατε τον κωδικό QR και βλέπετε αυτό το μήνυμα, το έγγραφο δεν εκδόθηκε από τη Vuneli ή το περιεχόμενό του άλλαξε.",
+    bad: "Εισαγάγετε ID εγγράφου (π.χ. VNL-BS-...) ή αποτύπωμα (12 έως 64 δεκαεξαδικούς χαρακτήρες).",
+    emptyError: "Εισαγάγετε ID εγγράφου ή αποτύπωμα για έλεγχο.",
+    doc: "Έγγραφο", type: "Τύπος", status: "Κατάσταση", company: "Εταιρεία", issued: "Καταγραφή", full: "Πλήρες αποτύπωμα",
     kinds: { "board-summary": "Σύνοψη διοικητικού συμβουλίου", report: "Έκθεση βιωσιμότητας", cbam: "Δήλωση CBAM" },
     what: "Τι αποδεικνύει",
     whatBody: "Το αποτύπωμα είναι σύνοψη SHA-256 ακριβώς των στοιχείων που τυπώνονται στο έγγραφο. Αν ταιριάζει, τα στοιχεία είναι αυτά που παρήγαγε η Vuneli την ημερομηνία έκδοσης. Δεν είναι εγκεκριμένη ηλεκτρονική υπογραφή και δεν σημαίνει ότι τα στοιχεία ελέγχθηκαν από ελεγκτή.",
@@ -105,9 +111,12 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
   if (!routing.locales.includes(locale as Locale)) notFound();
   const l = safeLocale(locale);
   const t = T[l];
-  const raw = (seg?.[0] ?? (await searchParams).code ?? "").slice(0, 200);
+  const sp = await searchParams;
+  const hasSubmittedEmpty = typeof sp.code === "string" && !sp.code.trim();
+  const raw = (seg?.[0] ?? sp.code ?? "").slice(0, 200);
   const code = normaliseCode(raw);
-  const valid = code.length === 16 || code.length === 64;
+  const isDocId = code.startsWith("VNL-") || code.startsWith("CBAM-");
+  const valid = (code.length >= 12 && code.length <= 64) || (isDocId && code.length >= 5);
   const doc = valid ? await findIssuedDocument(code).catch(() => null) : null;
   const issued = doc ? new Intl.DateTimeFormat(l === "el" ? "el-CY" : "en-GB", { dateStyle: "long", timeZone: "Europe/Nicosia" }).format(doc.issuedAt) : "";
 
@@ -140,7 +149,8 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
                 />
                 <button type="submit" className={LIME_BUTTON}>{t.check}</button>
               </div>
-              {raw && !valid && <p role="alert" className="mt-3 text-[14px] font-medium text-[var(--accent-lime)]">{t.bad}</p>}
+              {hasSubmittedEmpty && <p role="alert" className="mt-3 text-[14px] font-medium text-[var(--accent-lime)]">{t.emptyError}</p>}
+              {!hasSubmittedEmpty && raw && !valid && <p role="alert" className="mt-3 text-[14px] font-medium text-[var(--accent-lime)]">{t.bad}</p>}
             </form>
           </div>
 
@@ -161,14 +171,18 @@ export default async function VerifyPage({ params, searchParams }: { params: Par
             <div className={`rounded-2xl border bg-card p-6 shadow-[0_30px_60px_-40px_rgba(0,0,0,0.35)] sm:p-10 ${doc ? "border-[var(--accent-lime)] ring-1 ring-foreground/10" : "border-foreground/20"}`}>
               <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                 <div className="max-w-xl">
-                  <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${doc ? "text-foreground/70" : "text-destructive"}`}>{doc ? doc.docId : code.slice(0, 16)}</p>
+                  <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${doc ? "text-foreground/70" : "text-destructive"}`}>
+                    {doc ? `${doc.docId}${doc.isDraft ? " · DRAFT" : ""}` : (raw.length > 24 ? `${raw.slice(0, 16)}…${raw.slice(-8)}` : raw)}
+                  </p>
                   <h2 className="mt-3 font-[family-name:var(--editorial-display)] text-[1.9rem] font-semibold leading-[1.1] tracking-[-0.02em] sm:text-[2.3rem]">
-                    {doc ? t.found : t.notFound}
+                    {doc ? (doc.isDraft ? t.foundDraft : t.found) : t.notFound}
                   </h2>
-                  <p className="mt-3 text-[15.5px] leading-[1.65] text-muted-foreground">{doc ? t.foundBody : t.notFoundBody}</p>
+                  <p className="mt-3 text-[15.5px] leading-[1.65] text-muted-foreground">
+                    {doc ? (doc.isDraft ? t.foundDraftBody : t.foundBody) : t.notFoundBody}
+                  </p>
                 </div>
                 {doc && (
-                  <Image src={sealImage} alt="" aria-hidden width={160} height={160} className="order-first h-28 w-28 shrink-0 -rotate-6 drop-shadow-[0_12px_18px_rgba(0,0,0,0.18)] sm:h-36 sm:w-36 lg:order-none lg:h-40 lg:w-40" />
+                  <Image src={sealImage} alt="" aria-hidden width={160} height={160} className={`order-first h-28 w-28 shrink-0 -rotate-6 drop-shadow-[0_12px_18px_rgba(0,0,0,0.18)] sm:h-36 sm:w-36 lg:order-none lg:h-40 lg:w-40 ${doc.isDraft ? "opacity-60 grayscale" : ""}`} />
                 )}
               </div>
               {doc && (

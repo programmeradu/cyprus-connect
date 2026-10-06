@@ -84,7 +84,7 @@ export function buildInsights(data: ConsoleOverviewData, limit = 4, locale: stri
             `${highTasks.length} με υψηλή προτεραιότητα. ${highTasks[0].title}.`,
           )
         : tasks[0].title,
-      href: "/app/actions",
+      href: "/app#waiting",
       linkLabel: L("Open the approval queue", "Άνοιγμα εκκρεμοτήτων"),
     });
   }

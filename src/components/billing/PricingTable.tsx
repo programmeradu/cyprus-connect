@@ -7,26 +7,34 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatCurrency } from "@/hooks/useCurrencyFormatter";
 
 
+import { useSession } from "@/lib/auth-client";
+
 interface PricingTableProps {
   currentPlanId?: string;
 }
 
-export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
+export const PricingTable = ({ currentPlanId }: PricingTableProps) => {
   const [loading, setLoading] = useState<string | null>(null);
   const [interval, setInterval] = useState<BillingInterval>("month");
   const router = useRouter();
   const locale = useLocale();
+  const { data: session } = useSession();
+  const activePlanId = session?.user ? (currentPlanId ?? "free") : undefined;
   // Vuneli is Cyprus-only: every plan is billed in EUR, in both locales.
   const isEur = true;
 
   const t = useTranslations("billing.pricingTable");
 
   const handleSubscribe = async (planId: string) => {
+    if (!session?.user) {
+      router.push(`/auth?redirect=${encodeURIComponent(planId === "free" ? "/app" : `/app/billing?plan=${planId}&interval=${interval}`)}`);
+      return;
+    }
     if (planId === "free") {
       toast.info(t("alreadyFree"));
       return;
     }
-    if (planId === currentPlanId) {
+    if (planId === activePlanId) {
       toast.info(t("alreadyOnPlan"));
       return;
     }
@@ -37,7 +45,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: {
- "Content-Type": "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ type: "subscription", planId, interval, locale: locale === "el" ? "el" : "en" }),
@@ -92,7 +100,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
     </div>
     <div className="grid grid-cols-1 gap-px bg-border/60 md:grid-cols-3">
       {plans.map((plan, index) => {
-        const isCurrentPlan = plan.id === currentPlanId;
+        const isCurrentPlan = Boolean(activePlanId && plan.id === activePlanId);
         const isPopular = Boolean((plan as any).popular);
         const planName = t(`planNames.${plan.id as "free" | "pro" | "enterprise"}`);
         const features = t.raw(`features.${plan.id as "free" | "pro" | "enterprise"}`) as string[];
@@ -141,7 +149,7 @@ export const PricingTable = ({ currentPlanId = "free" }: PricingTableProps) => {
                 {t("vatIncluded", { pct: Math.round(CYPRUS_VAT_RATE * 100) })}
               </p>
             ) : (
-              <p className="mt-2 select-none text-[13.5px] text-transparent">.</p>
+              <p className="mt-2 text-[13.5px] font-medium text-foreground/55">{t("freeForever")}</p>
             )}
 
             {/* CTA */}

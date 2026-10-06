@@ -22,13 +22,22 @@ type Props = {
   storageKey?: string;
 };
 
+import {
+  LOCATION_BASED_GRID_FACTORS,
+  OFFICIAL_CYPRUS_WATER_FACTOR,
+  OFFICIAL_DIESEL_FACTOR,
+  OFFICIAL_PETROL_FACTOR,
+  OFFICIAL_GAS_FACTOR_KWH,
+  OFFICIAL_LPG_FACTOR_KG,
+} from "@/lib/factors/registry";
+
 /* ---------- Emission factors (kg CO2e per unit) ---------- */
 
 const SCOPE1 = {
-  naturalGas_kWh: 0.184, // DEFRA 2024 natural gas - kWh gross CV
-  diesel_L: 2.51, // DEFRA 2024 mobile combustion - diesel avg
-  petrol_L: 2.31, // DEFRA 2024 mobile combustion - petrol avg
-  lpg_kg: 2.94, // DEFRA 2024 LPG
+  naturalGas_kWh: OFFICIAL_GAS_FACTOR_KWH, // DEFRA 2024 natural gas - 0.184 kWh gross CV
+  diesel_L: OFFICIAL_DIESEL_FACTOR, // DEFRA 2024 mobile combustion - 2.51 diesel avg
+  petrol_L: OFFICIAL_PETROL_FACTOR, // DEFRA 2024 mobile combustion - 2.31 petrol avg
+  lpg_kg: OFFICIAL_LPG_FACTOR_KG, // DEFRA 2024 LPG - 2.94
 } as const;
 
 const SCOPE3 = {
@@ -38,28 +47,11 @@ const SCOPE3 = {
   commute_km: 0.140, // DEFRA 2024 mixed-mode commuting proxy
   spend_EUR: 0.35, // EEIO screening avg (indicative)
   waste_kg: 0.467, // DEFRA 2024 mixed municipal to landfill
-  water_m3: 0.344, // DEFRA 2024 water supply + treatment combined
+  water_m3: OFFICIAL_CYPRUS_WATER_FACTOR, // 0.616 kg CO2e / m3: Water supply (0.344) + Wastewater treatment (0.272) (F24, F104)
 } as const;
 
-/* Location-based grid factors (kg CO2e / kWh) - 2023 EEA / national inventories */
-const GRID_FACTORS = {
-  EU27: 0.253,
-  CY: 0.622,
-  GR: 0.371,
-  DE: 0.381,
-  FR: 0.056,
-  ES: 0.174,
-  IT: 0.257,
-  NL: 0.328,
-  IE: 0.296,
-  PT: 0.158,
-  BE: 0.148,
-  AT: 0.114,
-  SE: 0.008,
-  FI: 0.079,
-  PL: 0.657,
-  UK: 0.207,
-} as const;
+/* Location-based grid factors (kg CO2e / kWh) - 2024 EEA / national inventories */
+const GRID_FACTORS = LOCATION_BASED_GRID_FACTORS;
 
 type Region = keyof typeof GRID_FACTORS;
 

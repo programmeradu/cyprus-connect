@@ -69,16 +69,40 @@ export function OverviewTab({
     return `${d.toLocaleDateString(loc, { day: "numeric", month: "long", year: "numeric" })} · ${left}`;
   };
 
+const FRAMEWORK_EL: Record<string, string> = {
+  "Energy efficiency": "Ενεργειακή απόδοση",
+  "Consumer law": "Δίκαιο καταναλωτή",
+};
+
+function translateSourceLabel(label: string | null | undefined, isGreek: boolean): string {
+  if (!label) return "";
+  if (!isGreek) return label;
+  return label
+    .replace(/\bDirective\b/g, "Οδηγία")
+    .replace(/\bRegulation\b/g, "Κανονισμός")
+    .replace(/\bReg\.\b/g, "Καν.")
+    .replace(/\bArt\.\b/g, "Άρθρο")
+    .replace(/\(EU\)/g, "(ΕΕ)")
+    .replace(/\bas amended by\b/g, "όπως τροποποιήθηκε από");
+}
+
+  const frameworkLabel = (f: string) => (el && FRAMEWORK_EL[f] ? FRAMEWORK_EL[f] : f);
+
   const row = (o: Obligation) => (
     <div key={o.id} className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3 px-4 py-4">
       <div className="min-w-0 flex-1 basis-72">
         <p className="text-sm font-medium break-words">{(el && o.titleEl) || o.title}</p>
-        <p className="vck-meta mt-1 break-words">{o.match === "not" ? o.framework : when(o)}</p>
+        <p className="vck-meta mt-1 break-words">{o.match === "not" ? frameworkLabel(o.framework) : when(o)}</p>
         {(o.reason || o.detail) && <p className="mt-2 text-sm leading-relaxed break-words">{(el && o.reasonEl) || o.reason || o.detail}</p>}
         <p className="vck-meta mt-2 flex flex-wrap gap-x-3 gap-y-1">
           {o.sourceUrl && (
-            <a href={o.sourceUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2 break-words">
-              {o.sourceLabel ?? t("deadlines.source")}
+            <a
+              href={el && o.sourceUrl.includes("/TXT/?uri=CELEX") ? o.sourceUrl.replace("/TXT/?uri=CELEX", "/TXT/EL/?uri=CELEX") : o.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 break-words"
+            >
+              {translateSourceLabel(o.sourceLabel ?? t("deadlines.source"), el)}
             </a>
           )}
           {o.match === null && <span>{t("deadlines.addedByPerson")}</span>}
@@ -156,7 +180,7 @@ export function OverviewTab({
       </Section>
 
       {res.data?.checkedAt && (
-        <p className="vck-meta px-1">{t("deadlines.checkedAt", { date: new Date(res.data.checkedAt).toLocaleString(loc, { dateStyle: "medium", timeStyle: "short" }) })}</p>
+        <p className="vck-meta px-1">{t("deadlines.checkedAt", { date: new Date(res.data.checkedAt).toLocaleString(loc, { dateStyle: "medium", timeStyle: "short" }).replace(/\.+$/, "") })}</p>
       )}
     </>
   );

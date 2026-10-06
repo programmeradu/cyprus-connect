@@ -32,6 +32,12 @@ const LIVE: Partial<Record<FootprintKey, { id: string; param: string; unitKey: s
 };
 
 async function resolveLine(key: FootprintKey, value: number, region: string, live: boolean): Promise<FootprintLine> {
+  const normRegion = (region || "CY").toUpperCase().trim();
+  // Cyprus electricity always uses the canonical national grid factor (0.622 kg CO2e/kWh)
+  // to ensure 100% mathematical consistency with EAC bills and regulatory reporting (F14).
+  if (key === "electricity" && (normRegion === "CY" || normRegion === "CYPRUS")) {
+    return referenceLine(key, value);
+  }
   const spec = LIVE[key];
   if (!live || !spec || value <= 0) return referenceLine(key, value);
   try {

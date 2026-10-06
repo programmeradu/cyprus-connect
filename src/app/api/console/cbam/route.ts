@@ -23,9 +23,11 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { parseImportCsv, type CbamDraft } from "@/lib/agents/cbam-calc";
 import { exportGaps } from "@/lib/agents/cbam-registry-xml";
 import { sha256Hex, stableStringify } from "@/lib/agents/hash";
+import { logger } from "@/lib/log";
 
 export const dynamic = "force-dynamic";
 
+const log = logger("api.console.cbam");
 const MAX_BYTES = 1_000_000;
 const MAX_ROWS = 5_000;
 
@@ -38,77 +40,94 @@ export async function GET(req: Request) {
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
   const ws = s.session.workspace.id;
 
-  const yearRows = (await db.execute(
-    sql`select distinct year from cbam_import_lines where workspace_id = ${ws}
-        union select year from cbam_declarations where workspace_id = ${ws} order by 1 desc`,
-  )) as unknown as Array<{ year: number }>;
-  const years = yearRows.map((r) => Number(r.year));
-  const asked = Number(new URL(req.url).searchParams.get("year"));
-  const year = years.includes(asked) ? asked : years[0] ?? new Date().getUTCFullYear();
+  try {
+    const rawYearRows = await db.execute(
+      sql`select distinct year from cbam_import_lines where workspace_id = ${ws}
+          union select year from cbam_declarations where workspace_id = ${ws} order by 1 desc`,
+    );
+    const rowList: Array<{ year?: unknown }> = Array.isArray(rawYearRows)
+      ? rawYearRows
+      : Array.isArray((rawYearRows as unknown as { rows?: unknown[] })?.rows)
+        ? (rawYearRows as unknown as { rows: Array<{ year?: unknown }> }).rows
+        : [];
+    const years = rowList.map((r) => Number(r.year)).filter((y) => Number.isInteger(y) && y > 0);
+    const asked = Number(new URL(req.url).searchParams.get("year"));
+    const year = years.includes(asked) ? asked : years[0] ?? new Date().getUTCFullYear();
 
-  const [lines, [decl], suppliers, [declarant], requests] = await Promise.all([
-    db
-      .select()
-      .from(cbamImportLines)
-      .where(and(eq(cbamImportLines.workspaceId, ws), eq(cbamImportLines.year, year)))
-      .orderBy(asc(cbamImportLines.id)),
-    db
-      .select()
-      .from(cbamDeclarations)
-      .where(and(eq(cbamDeclarations.workspaceId, ws), eq(cbamDeclarations.year, year)))
-      .limit(1),
-    db.select().from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ws)).orderBy(asc(cbamSuppliers.supplierName)),
-    db.select().from(cbamDeclarants).where(eq(cbamDeclarants.workspaceId, ws)).limit(1),
-    db
-      .select({ supplierName: cbamSupplierRequests.supplierName, email: cbamSupplierRequests.email, sentAt: cbamSupplierRequests.sentAt, approvedBy: cbamSupplierRequests.approvedBy })
-      .from(cbamSupplierRequests)
-      .where(and(eq(cbamSupplierRequests.workspaceId, ws), eq(cbamSupplierRequests.year, year)))
-      .orderBy(desc(cbamSupplierRequests.sentAt))
-      .limit(200),
-  ]);
+    const [lines, [decl], suppliers, [declarant], requests] = await Promise.all([
+      db
+        .select()
+        .from(cbamImportLines)
+        .where(and(eq(cbamImportLines.workspaceId, ws), eq(cbamImportLines.year, year)))
+        .orderBy(asc(cbamImportLines.id)),
+      db
+        .select()
+        .from(cbamDeclarations)
+        .where(and(eq(cbamDeclarations.workspaceId, ws), eq(cbamDeclarations.year, year)))
+        .limit(1),
+      db.select().from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ws)).orderBy(asc(cbamSuppliers.supplierName)),
+      db.select().from(cbamDeclarants).where(eq(cbamDeclarants.workspaceId, ws)).limit(1),
+      db
+        .select({ supplierName: cbamSupplierRequests.supplierName, email: cbamSupplierRequests.email, sentAt: cbamSupplierRequests.sentAt, approvedBy: cbamSupplierRequests.approvedBy })
+        .from(cbamSupplierRequests)
+        .where(and(eq(cbamSupplierRequests.workspaceId, ws), eq(cbamSupplierRequests.year, year)))
+        .orderBy(desc(cbamSupplierRequests.sentAt))
+        .limit(200),
+    ]);
 
-  const openEmails = await db
-    .select({ id: agentTasks.id, pendingInput: agentTasks.pendingInput, createdAt: agentTasks.createdAt, result: agentTasks.result })
-    .from(agentTasks)
-    .where(and(eq(agentTasks.workspaceId, ws), eq(agentTasks.status, "open"), eq(agentTasks.pendingTool, "send_supplier_request")))
-    .orderBy(asc(agentTasks.id));
-  const pendingEmails = openEmails.flatMap((t) => {
-    try {
-      const i = JSON.parse(t.pendingInput ?? "{}") as { year: number; supplierName: string; to: string; replyTo: string | null; subject: string; body: string };
-      return i.year === year ? [{ taskId: t.id, supplierName: i.supplierName, to: i.to, replyTo: i.replyTo, subject: i.subject, body: i.body, lastError: t.result }] : [];
-    } catch {
-      return [];
+    const openEmails = await db
+      .select({ id: agentTasks.id, pendingInput: agentTasks.pendingInput, createdAt: agentTasks.createdAt, result: agentTasks.result })
+      .from(agentTasks)
+      .where(and(eq(agentTasks.workspaceId, ws), eq(agentTasks.status, "open"), eq(agentTasks.pendingTool, "send_supplier_request")))
+      .orderBy(asc(agentTasks.id));
+    const pendingEmails = openEmails.flatMap((t) => {
+      try {
+        const i = JSON.parse(t.pendingInput ?? "{}") as { year: number; supplierName: string; to: string; replyTo: string | null; subject: string; body: string };
+        return i.year === year ? [{ taskId: t.id, supplierName: i.supplierName, to: i.to, replyTo: i.replyTo, subject: i.subject, body: i.body, lastError: t.result }] : [];
+      } catch {
+        return [];
+      }
+    });
+
+    let draftObj: CbamDraft | null = null;
+    if (decl?.draft) {
+      try {
+        draftObj = JSON.parse(decl.draft) as CbamDraft;
+      } catch (err) {
+        log.warn("Invalid draft JSON in declaration", { id: decl.id, year, err });
+      }
     }
-  });
+    const who = { legalName: declarant?.legalName ?? null, eori: declarant?.eori ?? null, accountNumber: declarant?.accountNumber ?? null };
 
-  const draftObj = decl ? (JSON.parse(decl.draft) as CbamDraft) : null;
-  const who = { legalName: declarant?.legalName ?? null, eori: declarant?.eori ?? null, accountNumber: declarant?.accountNumber ?? null };
-
-  return NextResponse.json({
-    year,
-    years,
-    lines,
-    suppliers: suppliers.flatMap((c) => (c.email ? [c] : [])).map((c) => ({ supplierName: c.supplierName, email: c.email as string, contactName: c.contactName })),
-    declarant: { ...who, replyToEmail: declarant?.replyToEmail ?? null },
-    requests,
-    pendingEmails,
-    exportGaps:
-      decl && draftObj
-        ? exportGaps(draftObj, who, { status: decl.status, draftHash: decl.draftHash, signedBy: decl.signedBy, signedAt: null, signedHash: decl.signedHash })
+    return NextResponse.json({
+      year,
+      years,
+      lines,
+      suppliers: suppliers.flatMap((c) => (c.email ? [c] : [])).map((c) => ({ supplierName: c.supplierName, email: c.email as string, contactName: c.contactName })),
+      declarant: { ...who, replyToEmail: declarant?.replyToEmail ?? null },
+      requests,
+      pendingEmails,
+      exportGaps:
+        decl && draftObj
+          ? exportGaps(draftObj, who, { status: decl.status, draftHash: decl.draftHash, signedBy: decl.signedBy, signedAt: null, signedHash: decl.signedHash })
+          : null,
+      declaration: decl && draftObj
+        ? {
+            status: decl.status,
+            draftHash: decl.draftHash,
+            draft: draftObj,
+            signedBy: decl.signedBy,
+            signedAt: decl.signedAt,
+            signedHash: decl.signedHash,
+            updatedAt: decl.updatedAt,
+            runId: decl.runId,
+          }
         : null,
-    declaration: decl
-      ? {
-          status: decl.status,
-          draftHash: decl.draftHash,
-          draft: JSON.parse(decl.draft),
-          signedBy: decl.signedBy,
-          signedAt: decl.signedAt,
-          signedHash: decl.signedHash,
-          updatedAt: decl.updatedAt,
-          runId: decl.runId,
-        }
-      : null,
-  });
+    });
+  } catch (error) {
+    const ref = log.error("GET failed", error);
+    return NextResponse.json({ error: "server_error", message: "Failed to load CBAM data", ref }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
@@ -154,6 +173,12 @@ export async function POST(req: Request) {
       object: `${inserted.length} CBAM import line(s)`,
       detail: errors.length ? `${errors.length} row(s) skipped with errors.` : null,
     });
+    try {
+      const { refreshObligations } = await import("@/lib/obligations/obligations.server");
+      await refreshObligations(ws);
+    } catch (err) {
+      log.error("refreshObligations failed after CBAM import", err);
+    }
   }
   return NextResponse.json({ inserted: inserted.length, duplicates: rows.length - inserted.length, errors });
 }
@@ -176,5 +201,11 @@ export async function DELETE(req: Request) {
     object: `CBAM import line #${id}`,
     detail: `CN ${gone[0].cnCode}, ${gone[0].year}.`,
   });
+  try {
+    const { refreshObligations } = await import("@/lib/obligations/obligations.server");
+    await refreshObligations(s.session.workspace.id);
+  } catch (err) {
+    log.error("refreshObligations failed after CBAM delete", err);
+  }
   return NextResponse.json({ deleted: id });
 }

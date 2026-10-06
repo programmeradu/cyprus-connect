@@ -7,7 +7,7 @@
  */
 
 import { workspaceRequest } from "./workspace-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Btn, Plate, State } from "@/components/app/console/kit";
 
@@ -39,6 +39,12 @@ function SupplierRow({ name, contact, lastSent, needsData, waiting, onSaved }: {
   const [person, setPerson] = useState(contact?.contactName ?? "");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEmail(contact?.email ?? "");
+    setPerson(contact?.contactName ?? "");
+  }, [contact?.email, contact?.contactName]);
+
   const dirty = email.trim() !== (contact?.email ?? "") || person.trim() !== (contact?.contactName ?? "");
 
   const save = async () => {

@@ -14,6 +14,7 @@ export interface SupplierRequestInput {
   supplierName: string;
   contactName: string | null;
   importerName: string | null;
+  signatoryName?: string | null;
   lines: CbamLineResult[];
   dueDate: string;
 }
@@ -52,7 +53,8 @@ export function buildSupplierRequest(p: SupplierRequestInput): SupplierRequest {
   const needsInstallation = lines.some((l) => !l.installationId);
   const needsDirect = lines.some((l) => l.basis !== "actual");
   const needsIndirect = lines.some((l) => l.basis !== "actual" && l.sector && INDIRECT_SECTORS.has(l.sector));
-  const importer = p.importerName?.trim() || "our company";
+  const rawImporter = p.importerName?.trim();
+  const importer = rawImporter || "Our company";
   const replyBy = replyByFor(p.dueDate);
 
   // Group by CN code and installation so the supplier sees each product once.
@@ -77,6 +79,13 @@ export function buildSupplierRequest(p: SupplierRequestInput): SupplierRequest {
   asks.push("The monitoring method you used, and whether a verifier checked the values.");
   asks.push("Any carbon price you paid in the country of origin for these goods, if applicable.");
 
+  const signOff = [
+    "Thank you,",
+    p.signatoryName?.trim()
+      ? (rawImporter ? `${p.signatoryName.trim()}\n${rawImporter}` : p.signatoryName.trim())
+      : (rawImporter || "The Compliance Team"),
+  ].join("\n");
+
   const body = [
     `Dear ${p.contactName?.trim() || "Sir or Madam"},`,
     "",
@@ -91,8 +100,7 @@ export function buildSupplierRequest(p: SupplierRequestInput): SupplierRequest {
     "You can reply to this email with the values, or attach the European Commission's communication template for installation operators.",
     `Please reply by ${longDate(replyBy)}. Without your actual values, we must use the EU default values above, which are usually higher than actual values.`,
     "",
-    "Thank you,",
-    importer,
+    signOff,
   ].join("\n");
 
   return {

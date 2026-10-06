@@ -90,6 +90,7 @@
       "unexpected": "An unexpected error occurred. Please try again.",
       "googleFailed": "Failed to initiate Google sign-in. Please try again.",
       "accountCreated": "Account created! Check your email to confirm it before signing in.",
+      "emailNotConfirmed": "Your email address has not been confirmed yet. Please check your inbox for the confirmation link before signing in.",
       "passwordResetFailed": "We could not send a password-reset email. Please try again.",
       "passwordUpdated": "Your password has been updated. You can now sign in."
     },
@@ -147,6 +148,7 @@
       "you": "You",
       "rankLine": "Rank #{rank} • {credits} credits • {actions} actions",
       "topPercent": "Top {percent}%",
+      "topRankOne": "#1 Rank",
       "globally": "in Cyprus",
       "recentActions": "Recent Actions",
       "globalRankings": "Cyprus Rankings",
@@ -183,7 +185,7 @@
       "tons": "{value} tons",
       "byCategory": "Emissions by Category",
       "electricity": "Electricity",
-      "naturalGas": "Natural Gas",
+      "naturalGas": "Diesel & stationary fuels",
       "transportation": "Transportation",
       "other": "Other",
       "noBreakdown": "No breakdown data available",
@@ -446,6 +448,19 @@
       "tabProfile": "Profile",
       "tabBilling": "Billing & Plans",
       "tabNotifications": "Notifications",
+      "tabSecurity": "Security",
+      "security": "Security & Authentication",
+      "changePassword": "Change Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "updatePassword": "Update Password",
+      "passwordUpdated": "Password updated successfully",
+      "passwordMismatch": "Passwords do not match",
+      "passwordLength": "Password must be at least 8 characters",
+      "passwordUpdateFail": "Could not update password. Try again.",
+      "sessionSecurity": "Active Session",
+      "signOutAccount": "Sign out of your account",
+      "privacyLink": "Manage GDPR & Privacy Settings",
       "profileInformation": "Profile Information",
       "yourName": "Your Name",
       "email": "Email",
@@ -459,8 +474,14 @@
       "industries": {
         "technology": "Technology",
         "manufacturing": "Manufacturing",
+        "construction": "Construction",
+        "wholesale": "Wholesale & Trade / Import",
         "retail": "Retail",
-        "hospitality": "Hospitality",
+        "logistics": "Transport & Logistics",
+        "hospitality": "Hospitality & Tourism",
+        "food": "Food & Beverage",
+        "agriculture": "Agriculture & Fishing",
+        "services": "Professional Services",
         "healthcare": "Healthcare",
         "finance": "Finance"
       },
@@ -517,6 +538,7 @@
       "x": {
         "sitesError": "Enter a whole number of sites, at least 1.",
         "revenueError": "Enter yearly revenue as a number in euro, or leave it empty.",
+        "websiteError": "Enter a valid website address like acme.com.cy",
         "sites": "Number of sites",
         "sitesHint": "Offices, shops, plants or warehouses you run.",
         "revenue": "Yearly revenue (EUR)",
@@ -625,11 +647,14 @@
         "save": "Work out and save",
         "saving": "Working out…",
         "needValue": "Enter at least one amount above zero.",
+        "sanityWarning": "This figure seems unusually high for a monthly SME reading ({value} {unit}). Please check for typing mistakes.",
+        "sanityConfirm": "Confirm high value and save",
+        "sanityLimitExceeded": "Value exceeds maximum allowed limit (100,000,000 {unit}).",
         "region": "Factors for {country}"
       },
       "fields": {
         "electricity": "Electricity",
-        "gas": "Natural gas",
+        "gas": "Stationary fuel / LPG",
         "water": "Water",
         "waste": "Waste to landfill",
         "transport": "Car travel"
@@ -735,19 +760,21 @@
         "viewDetails": "View Details"
       },
       "documents": {
-        "aiTitle": "AI-Powered Report Generation",
-        "aiDescription": "Automatically generate compliance reports based on your emissions data and regulatory requirements",
+        "aiTitle": "Report generation",
+        "aiDescription": "Draft compliance and voluntary reports from your workspace's stored figures and records.",
         "generatePrefix": "Generate {framework}",
         "generating": "Generating...",
         "noDocuments": "No documents generated yet",
         "noDocumentsHint": "Click the generate buttons above to create your first compliance report",
         "framework": "Framework",
         "generatedLabel": "Generated",
-        "dueDate": "Due Date",
+        "dueDate": "Due date",
+        "voluntaryNoDeadline": "Voluntary · No legal deadline",
         "download": "Download"
       },
       "audit": {
         "activityLog": "Activity Log",
+        "event": "Event",
         "noActivity": "No activity logged yet",
         "by": "by {user}"
       },
@@ -755,6 +782,7 @@
         "jurisdictionsTitle": "Operating Jurisdictions",
         "jurisdictionsDescription": "Select the jurisdictions where your company operates to track relevant regulations",
         "jurisdictionOptions": {
+          "cyprus": "Cyprus",
           "eu": "European Union",
           "us": "United States",
           "uk": "United Kingdom",
@@ -762,9 +790,9 @@
         },
         "automationTitle": "Automation Preferences",
         "autoSubmitTitle": "Auto-submit reports",
-        "autoSubmitDesc": "Automatically submit ready reports",
+        "autoSubmitDesc": "Pre-compile verified declaration drafts for human review before any registry or external filing (never submits without human sign-off).",
         "emailNotificationsTitle": "Email notifications",
-        "emailNotificationsDesc": "Receive deadline reminders via email",
+        "emailNotificationsDesc": "Receive critical regulatory deadline reminders via your account email.",
         "save": "Save Settings",
         "aiConfigTitle": "AI Configuration",
         "aiConfigDesc": "The AI Autopilot monitors 195 countries' regulations in real-time and generates reports automatically",
@@ -997,7 +1025,7 @@
       }
     },
     "studio": {
-      "title": "Report Visuals",
+      "title": "Drafting studio",
       "subtitle": "Make images for reports and posts from your own records. Every figure comes from your workspace.",
       "recent": "Recent",
       "library": "Library",
@@ -1026,7 +1054,7 @@
         "custom": "No company figures are used, and none are drawn in.",
         "company_data": "Uses your company name, sector, team size and country from Settings.",
         "progress": "Uses your two latest emission periods and your completed actions.",
-        "insights": "Uses your latest emission period: total, electricity, gas and transport.",
+        "insights": "Uses your latest emission period: total, electricity, gas, water and transport.",
         "recommendations": "Uses up to three of your planned actions."
       },
       "placeholders": {
@@ -1132,7 +1160,7 @@
         "active": "Active"
       },
       "schedule": "Schedule",
-      "scheduleValue": "Once a day, checked every 15 min",
+      "scheduleValue": "Runs daily",
       "lastRun": "Last real run",
       "notRunYet": "Not run yet",
       "pausedBy": "Paused by",
@@ -1277,6 +1305,7 @@
       "noDraftBody": "Run the CBAM agent to build the declaration from these lines.",
       "signature": "Signature",
       "fingerprint": "Draft fingerprint {hash}",
+      "verifyLink": "Verify in register",
       "stale": "Lines changed since the last run. Run the agent to refresh the draft.",
       "needs": "What Border needs",
       "nothing": "Nothing",
@@ -1361,7 +1390,7 @@
         "final": "Final"
       },
       "emptyTitle": "No deliverable yet",
-      "emptyBody": "Ask the copilot for a report, for example 'draft the VSME report for 2026'. When you approve the proposal, the agent writes the draft and it appears here.",
+      "emptyBody": "Ask Verde for a report, for example 'draft the VSME report for 2026', or generate one under Report > Documents. When you approve the proposal, the draft appears here.",
       "d": {
         "report": "Report",
         "thisWorkspace": "This workspace",
@@ -1505,6 +1534,7 @@
       "savedMsg": "Saved the details for {name}.",
       "removedMsg": "Removed {name} from the list.",
       "removeConfirm": "Remove {name} from your supplier list? Bank payments and CBAM lines are kept.",
+      "invalidEmail": "Please enter a valid email address (e.g. name@company.com), or leave it empty.",
       "saveFailed": "That could not be saved. Try again.",
       "checkFailed": "That check could not be completed. Try again.",
       "loadFailed": "The supplier list could not be loaded.",
@@ -1598,6 +1628,8 @@
       },
       "reject": {
         "unsupported": "This file type can't be read. Use a PDF, a photo, a CSV or an Excel file.",
+        "corrupt_pdf": "This file is damaged and can't be opened.",
+        "empty_page": "This page is empty.",
         "scanned_pdf": "This PDF is a scanned picture with no text in it, and the reader for scanned files isn't switched on yet. Take a photo of the page and upload that instead.",
         "not_relevant": "This doesn't look like something that feeds your footprint. We accept energy, water, fuel and waste bills or invoices, bank statements and usage spreadsheets.",
         "no_figures": "We recognised the document but couldn't find a quantity with dates on it, like kWh, m³, kg or km. Money amounts alone aren't enough.",
@@ -1606,6 +1638,7 @@
         "sheet_no_dates": "The spreadsheet has usage columns but no date or month column, so we can't tell which month each figure belongs to. Add a date or month column and upload it again.",
         "bank_image": "Bank statements need to be the PDF or CSV export from your bank, not a photo, so every payment can be checked.",
         "reader_off": "The document reader isn't set up on this site yet. You can still type figures in below.",
+        "oversize": "The file is larger than 10 MB. Choose a smaller file or compress it before uploading.",
         "seen": "What we saw: {detail}"
       },
       "warnings": {
@@ -1613,7 +1646,7 @@
         "period_not_ended": "Part of the billing period falls in a month that hasn't ended yet. That part is left out for now.",
         "unverified_quote": "Some figures couldn't be matched word for word in the document. They start unticked. Check them against the document before you add them.",
         "unit_dropped": "Some figures were in a unit we can't use for that line, so they were left out.",
-        "fuel_litres": "Fuel litres were found but aren't added, because car travel is recorded in kilometres.",
+        "fuel_litres": "Fuel litres are converted into Scope 1 fuel consumption (2.51 kg CO₂e / L).",
         "spend_not_usage": "A bank statement shows money spent, not energy or water used, so it doesn't change your footprint figures. It's kept as evidence: these payments are matched to the bills you upload, and the payees help fill your suppliers list."
       },
       "review": {
@@ -1866,6 +1899,7 @@
     "toasts": {
       "noSession": "Session not found. Please log in again.",
       "updateFail": "Failed to update profile",
+      "updateCompanyFail": "Couldn't save company details, please try again",
       "welcome": "Welcome to Vuneli! 🌿",
       "genericError": "Something went wrong. Please try again."
     },
@@ -1873,9 +1907,15 @@
       "selectIndustry": "Select industry",
       "industries": {
         "technology": "Technology",
-        "retail": "Retail",
         "manufacturing": "Manufacturing",
-        "hospitality": "Hospitality",
+        "construction": "Construction",
+        "wholesale": "Wholesale & Trade / Import",
+        "retail": "Retail",
+        "logistics": "Transport & Logistics",
+        "hospitality": "Hospitality & Tourism",
+        "food": "Food & Beverage",
+        "agriculture": "Agriculture & Fishing",
+        "services": "Professional Services",
         "healthcare": "Healthcare",
         "finance": "Finance"
       },
@@ -2108,6 +2148,7 @@
         ]
       },
       "vatIncluded": "Incl. {pct}% VAT (Cyprus)",
+      "freeForever": "Free forever · No card required",
       "billingCycle": "Billing cycle",
       "monthly": "Monthly",
       "yearly": "Yearly",
@@ -2154,6 +2195,7 @@
       "noInvoices": "No invoices yet",
       "testMode": "Test mode: payments here are not real.",
       "paymentsOffBanner": "Payments aren't switched on yet, so plans can't be bought right now.",
+      "checkoutCanceled": "Checkout was cancelled. No payment was taken.",
       "invoice": {
         "paid": "Paid",
         "open": "Open",
@@ -2166,7 +2208,9 @@
     }
   },
   "themeToggle": {
-    "label": "Toggle theme"
+    "label": "Toggle theme",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
   },
   "creditPurchase": {
     "title": "Purchase AI Credits",
@@ -2803,9 +2847,15 @@
       "lookUpRegistry": "Look up in Registrar",
       "industry": {
         "technology": "Technology",
-        "retail": "Retail",
         "manufacturing": "Manufacturing",
-        "hospitality": "Hospitality",
+        "construction": "Construction",
+        "wholesale": "Wholesale & Trade / Import",
+        "retail": "Retail",
+        "logistics": "Transport & Logistics",
+        "hospitality": "Hospitality & Tourism",
+        "food": "Food & Beverage",
+        "agriculture": "Agriculture & Fishing",
+        "services": "Professional Services",
         "healthcare": "Healthcare",
         "finance": "Finance"
       },

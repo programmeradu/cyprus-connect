@@ -80,14 +80,18 @@ export async function workspaceRequest<T>(path: string, options: RequestOptions 
       parsed = null;
     }
   }
-  const record = (parsed ?? {}) as { message?: string; error?: string; ref?: string };
+  const record = (parsed ?? {}) as { message?: string; error?: string; ref?: string; issues?: { field: string; message: string }[] };
 
   if (res.status === 401) {
     signInRedirect();
     throw new WorkspaceRequestError(record.message ?? "Please sign in to open your workspace.", 401);
   }
   if (!res.ok) {
+    const issueText = record.issues?.length
+      ? record.issues.map((i) => (i.field && i.field !== "(body)" ? `${i.field}: ${i.message}` : i.message)).join("; ")
+      : null;
     const base =
+      issueText ??
       record.message ??
       (typeof record.error === "string" && record.error.includes(" ") ? record.error : null) ??
       `The server could not complete this (answer ${res.status}).`;

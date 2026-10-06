@@ -5,7 +5,7 @@
  * Shared by Home and the Agents page so both always show the same queue.
  */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
@@ -41,6 +41,13 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   const agentName = (key: string) => data?.agents.find((a) => a.key === key)?.name ?? key;
   const shown = showAll ? tasks : tasks.slice(0, SHOWN);
 
+  // Auto-expand and scroll into view when linked with #waiting-queue
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash.includes("waiting")) {
+      setShowAll(true);
+    }
+  }, []);
+
   const decide = async (task: ConsoleTask, decision: "approve" | "reject") => {
     setBusy(task.id);
     setFailed(null);
@@ -61,7 +68,7 @@ export function WaitingForYou({ compact = false }: { compact?: boolean }) {
   };
 
   return (
-    <section className="vc-plate vch-waiting" data-tour="waiting" aria-labelledby="vch-waiting-title">
+    <section className="vc-plate vch-waiting" id="waiting-queue" data-tour="waiting" aria-labelledby="vch-waiting-title">
       <header>
         <span id="vch-waiting-title">{t("title")}</span>
         <strong>{tasks.length === 0 ? t("clear") : t("count", { count: tasks.length })}</strong>
@@ -162,7 +169,20 @@ const FACT_QUESTION: Record<string, { en: string; el: string }> = {
 /** Yes/no deadline facts and the company field each answer saves to. */
 const YES_NO: Record<string, string> = { cbam_goods: "importsCbamGoods", eudr_goods: "eudrCommodities", consumer_claims: "consumerClaims" };
 
-const INDUSTRIES = ["technology", "retail", "manufacturing", "hospitality", "healthcare", "finance"] as const;
+const INDUSTRIES = [
+  "technology",
+  "manufacturing",
+  "construction",
+  "wholesale",
+  "retail",
+  "logistics",
+  "hospitality",
+  "food",
+  "agriculture",
+  "services",
+  "healthcare",
+  "finance",
+] as const;
 
 /** One-field answer that saves through the shared company record. */
 function FactAnswer({ fact, disabled, onError }: { fact: string; disabled: boolean; onError: (m: string) => void }) {

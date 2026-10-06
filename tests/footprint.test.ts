@@ -4,7 +4,7 @@ import { isFutureMonth, previousMonth, referenceLine, summarise, trendPercent } 
 describe("footprint", () => {
   it("uses the published factor per line", () => {
     const l = referenceLine("electricity", 1000);
-    expect(l.tonnes).toBeCloseTo(0.61, 6);
+    expect(l.tonnes).toBeCloseTo(0.622, 6);
     expect(l.scope).toBe(2);
     expect(l.basis).toBe("reference");
   });
@@ -18,9 +18,9 @@ describe("footprint", () => {
     ]);
     expect(f.lines.map((l) => l.key)).toEqual(["electricity", "gas", "transport"]);
     expect(f.scopes.scope1).toBeCloseTo(0.2141, 4);
-    expect(f.scopes.scope2).toBeCloseTo(0.61, 6);
+    expect(f.scopes.scope2).toBeCloseTo(0.622, 6);
     expect(f.scopes.scope3).toBeCloseTo(0.2, 6);
-    expect(f.totalTonnes).toBeCloseTo(1.0241, 4);
+    expect(f.totalTonnes).toBeCloseTo(1.0361, 4);
     expect(f.basis).toBe("mixed");
   });
 

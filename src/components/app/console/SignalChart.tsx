@@ -21,8 +21,8 @@ const WAVE_BOTTOM = 132;
 const COMB_TOP = 156;
 const COMB_BASE = 200;
 
-/** Catmull-Rom to cubic bezier. Gives the concept's soft signal line. */
-function smoothPath(pts: [number, number][]) {
+/** Catmull-Rom to cubic bezier. Clamps to prevent dipping below baseline or overshooting extrema. */
+function smoothPath(pts: [number, number][], clampBottom = WAVE_BOTTOM, clampTop = WAVE_TOP) {
   if (pts.length < 2) return "";
   let d = `M ${pts[0][0]} ${pts[0][1]}`;
   for (let i = 0; i < pts.length - 1; i += 1) {
@@ -30,10 +30,29 @@ function smoothPath(pts: [number, number][]) {
     const p1 = pts[i];
     const p2 = pts[i + 1];
     const p3 = pts[i + 2] ?? p2;
-    d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(2)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(2)}, ${(
-      p2[0] -
-      (p3[0] - p1[0]) / 6
-    ).toFixed(2)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(2)}, ${p2[0]} ${p2[1]}`;
+
+    let cp1x = p1[0] + (p2[0] - p0[0]) / 6;
+    let cp1y = p1[1] + (p2[1] - p0[1]) / 6;
+    let cp2x = p2[0] - (p3[0] - p1[0]) / 6;
+    let cp2y = p2[1] - (p3[1] - p1[1]) / 6;
+
+    // In SVG, higher Y coordinate means lower value on the chart.
+    // If both points are at or above the bottom line, clamp control points so the curve never dips below WAVE_BOTTOM
+    if (p1[1] <= clampBottom && p2[1] <= clampBottom) {
+      cp1y = Math.min(clampBottom, Math.max(clampTop, cp1y));
+      cp2y = Math.min(clampBottom, Math.max(clampTop, cp2y));
+    }
+
+    // Monotonic constraint: if one of the points is a local valley, prevent control point from dipping lower than the lowest point
+    const maxLocalY = Math.max(p1[1], p2[1]);
+    if (cp1y > maxLocalY && p0[1] <= p1[1] && p2[1] <= p1[1]) {
+      cp1y = p1[1];
+    }
+    if (cp2y > maxLocalY && p1[1] <= p2[1] && p3[1] <= p2[1]) {
+      cp2y = p2[1];
+    }
+
+    d += ` C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${p2[0]} ${p2[1]}`;
   }
   return d;
 }
@@ -43,7 +62,10 @@ function scaleTicks(min: number, max: number, precision: number) {
   const steps = 4;
   return Array.from({ length: steps + 1 }, (_, i) => {
     const t = i / steps;
-    return { t, value: max - t * (max - min), text: fmtNumber(max - t * (max - min), precision) };
+    let v = max - t * (max - min);
+    if (min >= 0 && v < 0) v = 0;
+    if (Math.abs(v) < 1e-9) v = 0;
+    return { t, value: v, text: fmtNumber(v, precision) };
   });
 }
 
@@ -59,7 +81,8 @@ export function SignalChart({ metric, emptyNote }: { metric: ConsoleMetric; empt
     const lo = Math.min(...values);
     const hi = Math.max(...values);
     const pad = (hi - lo) * 0.34 || Math.abs(hi) * 0.2 || 1;
-    const min = lo - pad;
+    const nonNegative = values.every((v) => v >= 0);
+    const min = nonNegative ? Math.max(0, lo - pad) : lo - pad;
     const max = hi + pad;
     const step = points.length > 1 ? W / (points.length - 1) : W;
     const xs = points.map((_, i) => i * step);

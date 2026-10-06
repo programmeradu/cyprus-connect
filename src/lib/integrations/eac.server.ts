@@ -41,6 +41,19 @@ export interface EacSummary {
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+function toIsoDate(d: string): string {
+  d = d.trim();
+  if (ISO_DATE.test(d)) return d;
+  const m = d.match(/^(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{4})$/);
+  if (m) {
+    const day = m[1].padStart(2, "0");
+    const month = m[2].padStart(2, "0");
+    const year = m[3];
+    return `${year}-${month}-${day}`;
+  }
+  return d;
+}
+
 /** Pure check of the reader's answer, exported for tests. */
 export function checkEacAnswer(raw: unknown): { ok: true; bill: EacBill } | { ok: false; reason: string } {
   if (!raw || typeof raw !== "object") return { ok: false, reason: "The bill could not be read." };
@@ -50,8 +63,8 @@ export function checkEacAnswer(raw: unknown): { ok: true; bill: EacBill } | { ok
   if (!Number.isFinite(kwh) || kwh <= 0 || kwh > 10_000_000) {
     return { ok: false, reason: "The kWh used could not be read from the bill." };
   }
-  const start = String(r.period_start ?? "");
-  const end = String(r.period_end ?? "");
+  const start = toIsoDate(String(r.period_start ?? ""));
+  const end = toIsoDate(String(r.period_end ?? ""));
   if (!ISO_DATE.test(start) || !ISO_DATE.test(end) || Number.isNaN(Date.parse(start)) || Date.parse(end) < Date.parse(start)) {
     return { ok: false, reason: "The billing period could not be read from the bill." };
   }
@@ -78,6 +91,7 @@ Return ONLY a JSON object:
 {"is_eac_bill": true|false, "account_number": string|null, "period_start": "YYYY-MM-DD", "period_end": "YYYY-MM-DD", "kwh": number, "amount_eur": number|null}
 - kwh: total electricity consumed in the billing period (Κατανάλωση kWh). Not the meter reading.
 - amount_eur: total amount payable including VAT.
+- period_start and period_end: convert any DD/MM/YYYY or Cyprus date format to ISO YYYY-MM-DD.
 - Use null for anything not printed on the bill. Never estimate.`;
 
 export async function readEacBill(bytes: Uint8Array, mime: string): Promise<{ ok: true; bill: EacBill } | { ok: false; reason: string }> {

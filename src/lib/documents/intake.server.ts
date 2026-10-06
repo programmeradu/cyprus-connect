@@ -52,14 +52,60 @@ export function mimeFor(kind: UploadKind) {
 
 const TEXT_BUDGET = 60_000;
 
-async function pdfText(bytes: Uint8Array): Promise<string> {
+type PdfInspectionResult =
+  | { status: "corrupt" }
+  | { status: "empty" }
+  | { status: "scanned" }
+  | { status: "ok"; text: string };
+
+async function inspectPdf(bytes: Uint8Array): Promise<PdfInspectionResult> {
   try {
-    const { extractText, getDocumentProxy } = await import("unpdf");
-    const pdf = await getDocumentProxy(new Uint8Array(bytes));
-    const { text } = await extractText(pdf, { mergePages: true });
-    return (text ?? "").trim();
+    const { extractText, extractImages, getDocumentProxy } = await import("unpdf");
+    let pdf: any;
+    try {
+      pdf = await getDocumentProxy(new Uint8Array(bytes));
+    } catch {
+      return { status: "corrupt" };
+    }
+
+    if (!pdf || pdf.numPages === 0) {
+      return { status: "empty" };
+    }
+
+    let text = "";
+    try {
+      const res = await extractText(pdf, { mergePages: true });
+      text = (res?.text ?? "").trim();
+    } catch {
+      text = "";
+    }
+
+    if (text.length > 0) {
+      return { status: "ok", text };
+    }
+
+    // No text layer: check if there are images (scanned document) or if it's blank
+    let hasImages = false;
+    const pageCheckCount = Math.min(pdf.numPages, 10);
+    for (let page = 1; page <= pageCheckCount; page++) {
+      try {
+        const images = await extractImages(pdf, page);
+        if (images && images.length > 0) {
+          hasImages = true;
+          break;
+        }
+      } catch {
+        // ignore image extraction errors for a single page
+      }
+    }
+
+    if (!hasImages) {
+      return { status: "empty" };
+    }
+
+    return { status: "scanned" };
   } catch {
-    return "";
+    return { status: "corrupt" };
   }
 }
 
@@ -146,7 +192,7 @@ Return ONLY JSON:
 Rules:
 - Only quantities actually used (kWh, m³, litres, kg, km). Never money amounts, never meter readings.
 - quote must be copied character for character from the document.
-- transport is distance driven in km. A fuel receipt shows litres: put them in fuel_litres and leave value 0.
+- Fuel receipts or invoices for diesel, petrol or generator fuel show litres: set activity to "gas" (Scope 1 stationary/fuel combustion), put the litres in value, set unit to "litres", and set fuel_litres to the number of litres.
 - A sewerage bill (Συμβούλιο Αποχετεύσεων), a municipal tax or licence bill, or a telephone / internet / TV bill (Cablenet, Cyta, Epic, Primetel) is "other" with no figures, even if it is a utility bill.
 - If the document is not about energy, water, waste, fuel or travel (an ID card, a contract, a menu, a CV), use "other" and no figures.
 - If a date is not printed, leave the figure out. Never estimate.`;
@@ -179,12 +225,22 @@ async function general(userId: string, bytes: Uint8Array, mime: string, text: st
   const figures: ProposedFigure[] = [];
   for (const raw of (Array.isArray(parsed.figures) ? parsed.figures : []).slice(0, 24)) {
     const f = raw as Record<string, unknown>;
-    if (Number(f.fuel_litres) > 0) warnings.push("fuel_litres");
-    const key = f.activity as FootprintKey;
+    const fuelLitres = Number(f.fuel_litres);
+    let key = f.activity as FootprintKey;
+    let rawVal = Number(f.value);
+    let rawUnit = String(f.unit ?? "");
+
+    if (fuelLitres > 0 || (rawUnit.toLowerCase().startsWith("l") && (kind === "fuel_receipt" || key === "gas"))) {
+      warnings.push("fuel_litres");
+      if (key !== "gas") key = "gas";
+      if (!Number.isFinite(rawVal) || rawVal <= 0) rawVal = fuelLitres;
+      rawUnit = "litres";
+    }
+
     if (!["electricity", "gas", "water", "waste", "transport"].includes(key)) continue;
-    const value = toFootprintUnit(key, Number(f.value), String(f.unit ?? ""));
+    const value = toFootprintUnit(key, rawVal, rawUnit);
     if (value === null) {
-      if (Number(f.value) > 0) warnings.push("unit_dropped");
+      if (rawVal > 0) warnings.push("unit_dropped");
       continue;
     }
     const start = String(f.period_start ?? "");
@@ -198,10 +254,10 @@ async function general(userId: string, bytes: Uint8Array, mime: string, text: st
       periodEnd: end,
       quote,
       // A photo has no text layer to check against, so its figures always need a person's eye.
-      verified: text ? quoteSupports(text, quote, Number(f.value)) : false,
+      verified: text ? quoteSupports(text, quote, rawVal) : false,
     });
   }
-  if (figures.length === 0) return { ok: false, code: warnings.includes("fuel_litres") ? "fuel_only" : "no_figures", detail: description };
+  if (figures.length === 0) return { ok: false, code: "no_figures", detail: description };
   return { ok: true, proposal: finish(kind, "ai", figures, { warnings, description }) };
 }
 
@@ -225,24 +281,33 @@ export async function readDocument(userId: string, bytes: Uint8Array, kind: Uplo
     return { ok: false, code: "not_relevant" };
   }
 
-  if (!hasDocumentAi()) return { ok: false, code: "reader_off" };
   const mime = MIME[kind];
 
   if (kind === "pdf") {
-    const text = await pdfText(bytes);
-    if (!text) {
-      // Scanned PDF: only the image-capable reader can look at it.
+    const inspection = await inspectPdf(bytes);
+    if (inspection.status === "corrupt") {
+      return { ok: false, code: "corrupt_pdf" };
+    }
+    if (inspection.status === "empty") {
+      return { ok: false, code: "empty_page" };
+    }
+    if (inspection.status === "scanned") {
       if (!hasImageAi()) return { ok: false, code: "scanned_pdf" };
       return general(userId, bytes, mime, null);
     }
+
+    const text = inspection.text;
     const seen = recogniseText(text);
     if (seen === "eac_bill") return eac(userId, bytes, mime, "code");
     if (seen === "water_bill") return water(userId, bytes, mime, "code");
     if (seen === "bank_statement") return bankFromText(text);
     const refused = refuseText(text);
     if (refused) return { ok: false, code: "not_relevant", detail: refused };
+
+    if (!hasDocumentAi()) return { ok: false, code: "reader_off" };
     return general(userId, bytes, mime, text);
   }
 
+  if (!hasDocumentAi()) return { ok: false, code: "reader_off" };
   return general(userId, bytes, mime, null);
 }

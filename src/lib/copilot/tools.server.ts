@@ -45,20 +45,38 @@ export function verdeTools(ctx: ToolContext) {
         "Latest readings for every metric in the workspace (emissions, energy, water, intensity) with the previous period for comparison. Use for any question about figures or trends.",
       inputSchema: z.object({}),
       execute: async () => {
-        const [defs, rows] = await Promise.all([
+        const [defs, rows, eac, water] = await Promise.all([
           db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder)),
           db
             .select()
             .from(metricReadings)
             .where(eq(metricReadings.workspaceId, ctx.workspaceId))
             .orderBy(asc(metricReadings.periodStart)),
+          eacSummary(ctx.accountId).catch(() => null),
+          waterSummary(ctx.accountId).catch(() => null),
         ]);
         const metrics = defs
           .map((d) => {
             const points = rows.filter((r) => r.metricKey === d.key && r.site === null);
             const cur = points.at(-1);
             const prev = points.at(-2);
-            if (!cur) return null;
+            if (!cur) {
+              if (d.key === "electricity_kwh" && eac && eac.bills.length > 0) {
+                const latest = eac.bills[0];
+                const prevBill = eac.bills[1];
+                return {
+                  key: d.key,
+                  label: d.label,
+                  unit: d.unit,
+                  value: Math.round(latest.kwh),
+                  period: `${latest.periodStart} to ${latest.periodEnd}`,
+                  previous: prevBill ? { value: Math.round(prevBill.kwh), period: `${prevBill.periodStart} to ${prevBill.periodEnd}` } : null,
+                  betterWhen: d.goodDirection,
+                  source: "EAC bill",
+                };
+              }
+              return null;
+            }
             return {
               key: d.key,
               label: d.label,
@@ -71,7 +89,22 @@ export function verdeTools(ctx: ToolContext) {
             };
           })
           .filter(Boolean);
-        return { source: "metric_readings", metrics };
+        return {
+          source: "metric_readings",
+          metrics,
+          utilityBills: {
+            electricity: eac?.bills?.map((b) => ({
+              period: `${b.periodStart} to ${b.periodEnd}`,
+              kwh: b.kwh,
+              kgCo2e: Math.round(b.kgCo2e),
+            })) ?? [],
+            water: water?.bills?.map((b) => ({
+              period: `${b.periodStart} to ${b.periodEnd}`,
+              m3: b.m3,
+              kgCo2e: Math.round(b.kgCo2e),
+            })) ?? [],
+          },
+        };
       },
     }),
 

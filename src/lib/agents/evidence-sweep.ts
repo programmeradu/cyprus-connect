@@ -16,6 +16,8 @@ export interface MetricState {
   key: string;
   label: string;
   latestPeriod: string | null;
+  readings?: number;
+  everNonZero?: boolean;
 }
 export interface ObligationState {
   id: string;
@@ -44,6 +46,8 @@ export const EVIDENCE_SOURCES: Record<string, string> = {
 export function findStaleMetrics(metrics: MetricState[], now: Date): MetricState[] {
   return metrics.filter((m) => {
     if (!(m.key in EVIDENCE_SOURCES)) return false;
+    // If a company has zero Scope 1 activity recorded, asking for Scope 1 fuel receipts is false alarm
+    if (m.key === "scope1" && m.everNonZero === false) return false;
     if (!m.latestPeriod) return true;
     const t = Date.parse(m.latestPeriod);
     return !Number.isFinite(t) || now.getTime() - t > STALE_DAYS * DAY;
@@ -65,10 +69,11 @@ export async function runEvidenceSweep(rt: AgentRuntime, now = new Date()) {
   if (metricsStep.decision !== "executed" || obligationsStep.decision !== "executed") {
     throw new Error("Could not read the workspace records.");
   }
-  const metrics = metricsStep.output ?? [];
-  const open = obligationsStep.output ?? [];
+  const metrics: MetricState[] = metricsStep.output ?? [];
+  const open: ObligationState[] = obligationsStep.output ?? [];
 
   const stale = findStaleMetrics(metrics, now);
+  const staleKeys = new Set(stale.map((m) => m.key));
   const atRisk = findAtRiskObligations(open, now);
   let created = 0;
 
@@ -84,6 +89,17 @@ export async function runEvidenceSweep(rt: AgentRuntime, now = new Date()) {
     });
     if (r.decision === "executed" && r.output?.created) created += 1;
   }
+
+  // Auto-close open evidence tasks for metrics that are now covered or do not apply
+  for (const m of metrics) {
+    if (m.key in EVIDENCE_SOURCES && !staleKeys.has(m.key)) {
+      await rt.call("close_evidence_task", {
+        title: `Upload evidence for ${m.label}`,
+        reason: `${m.label} now has valid evidence on file.`,
+      }).catch(() => undefined);
+    }
+  }
+
   for (const o of atRisk) {
     const overdue = Date.parse(o.dueDate) < now.getTime();
     const r = await rt.call("create_task", {

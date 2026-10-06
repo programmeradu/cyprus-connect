@@ -21,6 +21,11 @@ describe("funding fit check", () => {
     expect(r.failed).toHaveLength(0);
   });
 
+  it("hides calls that only match generic applicant type and country (avoids false-positive strong fit)", () => {
+    const r = checkFit({ ...none, countries: ["CY"], applicantTypes: ["company"] }, biz);
+    expect(r.verdict).toBe("hidden");
+  });
+
   it("fails a consortium-only call for a single company", () => {
     expect(checkFit({ ...none, countries: ["CY"], applicantTypes: ["company"], consortiumRequired: true }, biz).verdict).toBe("hidden");
   });

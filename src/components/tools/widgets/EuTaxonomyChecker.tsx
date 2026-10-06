@@ -61,10 +61,12 @@ const T = {
     verdictAligned: "Taxonomy aligned",
     verdictPartial: "Partially aligned",
     verdictNot: "Not aligned",
-    verdictEmpty: "Complete the steps to see your verdict.",
+    verdictIncomplete: "Incomplete screening",
+    verdictEmpty: "Select an activity to begin screening.",
     verdictAlignedBody: "The activity is eligible under the Delegated Acts, you have confirmed substantial contribution, all applicable DNSH checks pass, and minimum safeguards are met. Document your evidence and disclose alignment under Art. 8.",
-    verdictPartialBody: "The activity is eligible but at least one DNSH or safeguards check is not met (or unanswered). Report as eligible-but-not-aligned in your Art. 8 disclosure and remediate the failing check.",
-    verdictNotBody: "The activity is eligible but a DNSH check has failed. It cannot be reported as aligned; address the issue before reclaiming alignment.",
+    verdictPartialBody: "The activity is eligible and answered, but at least one DNSH or safeguards check is not met. Report as eligible-but-not-aligned in your Art. 8 disclosure and remediate the failing check.",
+    verdictNotBody: "The activity is eligible but a DNSH check has failed ('No'). It cannot be reported as aligned; address the issue before reclaiming alignment.",
+    verdictIncompleteBody: "The activity is eligible, but one or more DNSH or minimum safeguards checks are still unanswered. Complete all checklist items to determine your alignment verdict.",
     print: "Save as PDF",
     csv: "Download CSV",
     reset: "Reset",
@@ -82,7 +84,7 @@ const T = {
     step04: "Ελάχιστες εγγυήσεις (Άρθρο 18)",
     step05: "Αποτέλεσμα",
     search: "Αναζήτηση με NACE ή λέξη-κλειδί",
-    searchPlaceholder: "π.χ. 35.11, ηλιακά, τσιμέντο, κτίρια",
+    searchPlaceholder: "π.χ. 35.11, ηλιακά, τσιμέντο, κτίρια, hotel",
     selectedNone: "Δεν έχει επιλεγεί δραστηριότητα.",
     selectedActivity: "Επιλεγμένη δραστηριότητα",
     nace: "NACE",
@@ -97,10 +99,12 @@ const T = {
     verdictAligned: "Ευθυγραμμισμένο με το Taxonomy",
     verdictPartial: "Μερικώς ευθυγραμμισμένο",
     verdictNot: "Μη ευθυγραμμισμένο",
-    verdictEmpty: "Ολοκληρώστε τα βήματα για να δείτε την ετυμηγορία.",
+    verdictIncomplete: "Μη ολοκληρωμένος έλεγχος",
+    verdictEmpty: "Επιλέξτε δραστηριότητα για να ξεκινήσετε.",
     verdictAlignedBody: "Η δραστηριότητα είναι επιλέξιμη, η ουσιαστική συμβολή επιβεβαιώθηκε, όλοι οι έλεγχοι DNSH περνούν και οι ελάχιστες εγγυήσεις πληρούνται. Δημοσιοποιήστε την ευθυγράμμιση κατά το Άρθρο 8.",
     verdictPartialBody: "Η δραστηριότητα είναι επιλέξιμη αλλά ένας έλεγχος DNSH ή εγγυήσεων δεν επιβεβαιώθηκε. Αναφέρετε ως επιλέξιμη-όχι-ευθυγραμμισμένη και αποκαταστήστε τον έλεγχο.",
-    verdictNotBody: "Η δραστηριότητα είναι επιλέξιμη αλλά ένας έλεγχος DNSH απέτυχε. Δεν μπορεί να αναφερθεί ως ευθυγραμμισμένη πριν την αποκατάσταση.",
+    verdictNotBody: "Η δραστηριότητα είναι επιλέξιμη αλλά ένας έλεγχος DNSH απέτυχε ('Όχι'). Δεν μπορεί να αναφερθεί ως ευθυγραμμισμένη πριν την αποκατάσταση.",
+    verdictIncompleteBody: "Η δραστηριότητα είναι επιλέξιμη, αλλά ένας ή περισσότεροι έλεγχοι DNSH ή ελάχιστων εγγυήσεων παραμένουν αναπάντητοι. Συμπληρώστε όλες τις ερωτήσεις για τελική ετυμηγορία.",
     print: "Αποθήκευση PDF",
     csv: "Λήψη CSV",
     reset: "Επαναφορά",
@@ -130,7 +134,8 @@ export default function EuTaxonomyChecker({ locale }: Props) {
         a.nace.toLowerCase().includes(q) ||
         a.ref.toLowerCase().includes(q) ||
         a[locale].name.toLowerCase().includes(q) ||
-        a[locale].description.toLowerCase().includes(q),
+        a[locale].description.toLowerCase().includes(q) ||
+        (a.aliases && a.aliases.some((alias) => alias.toLowerCase().includes(q))),
     );
   }, [query, locale]);
 
@@ -163,13 +168,17 @@ export default function EuTaxonomyChecker({ locale }: Props) {
     safeAnswers.every((x) => x !== "");
   const allYesOrNa = [...dnshAnswers, ...safeAnswers].every((x) => x === "yes" || x === "na");
 
-  let verdict: "aligned" | "partial" | "not" | "empty" = "empty";
-  if (allComplete) {
-    if (anyFailure) verdict = "not";
-    else if (allYesOrNa) verdict = "aligned";
-    else verdict = "partial";
-  } else if (activity && state.primary) {
-    verdict = anyFailure ? "not" : "partial";
+  let verdict: "aligned" | "partial" | "not" | "incomplete" | "empty" = "empty";
+  if (!activity || !state.primary) {
+    verdict = "empty";
+  } else if (anyFailure) {
+    verdict = "not";
+  } else if (!allComplete) {
+    verdict = "incomplete";
+  } else if (allYesOrNa) {
+    verdict = "aligned";
+  } else {
+    verdict = "partial";
   }
 
   const downloadCsv = () => {
@@ -402,19 +411,29 @@ export default function EuTaxonomyChecker({ locale }: Props) {
               verdict === "aligned"
                 ? "border-primary/40 bg-primary/5"
                 : verdict === "not"
-                  ? "border-foreground"
-                  : "border-foreground/40"
+                  ? "border-destructive bg-destructive/5"
+                  : verdict === "incomplete"
+                    ? "border-foreground/30 bg-foreground/[0.02]"
+                    : "border-foreground/40"
             }`}
           >
             <h3 className="text-[22px] font-medium tracking-[-0.015em] text-foreground">
-              {verdict === "aligned" ? l.verdictAligned : verdict === "not" ? l.verdictNot : l.verdictPartial}
+              {verdict === "aligned"
+                ? l.verdictAligned
+                : verdict === "not"
+                  ? l.verdictNot
+                  : verdict === "incomplete"
+                    ? l.verdictIncomplete
+                    : l.verdictPartial}
             </h3>
             <p className="mt-3 max-w-2xl text-[13.5px] leading-[1.65] text-foreground/70">
               {verdict === "aligned"
                 ? l.verdictAlignedBody
                 : verdict === "not"
                   ? l.verdictNotBody
-                  : l.verdictPartialBody}
+                  : verdict === "incomplete"
+                    ? l.verdictIncompleteBody
+                    : l.verdictPartialBody}
             </p>
             <p className="viq-print-note mt-4 hidden print:block">
               {l.generatedOn} {new Date().toLocaleDateString(locale === "el" ? "el-CY" : "en-GB")}

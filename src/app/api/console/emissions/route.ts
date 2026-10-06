@@ -14,7 +14,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { activityEvents, dashboardMetrics, emissions, metricReadings } from "@/db/schema";
+import { activityEvents, dashboardMetrics, documents, emissions, metricReadings } from "@/db/schema";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { readJson } from "@/lib/validate";
 import { logger } from "@/lib/log";
@@ -39,6 +39,7 @@ const bodySchema = z
     water: amount,
     waste: amount,
     transport: amount,
+    source: z.enum(["manual", "document", "eac_bill", "water_bill", "bank_statement"]).optional(),
   })
   .refine((b) => b.electricity + b.gas + b.water + b.waste + b.transport > 0, {
     message: "Enter at least one amount above zero.",
@@ -159,28 +160,49 @@ export async function POST(request: Request) {
         createdAt: now,
       });
 
+      const existingDocs = await tx
+        .select({ id: documents.id, source: documents.uploadSource })
+        .from(documents)
+        .where(and(eq(documents.userId, userId), eq(documents.processingStatus, "completed")))
+        .limit(10);
+      const isDocumentBacked = Boolean(input.source === "document" || existingDocs.length > 0);
+      const readingSource = input.source ?? (existingDocs.length > 0 ? "document" : "manual");
+      const readingConfidence = isDocumentBacked ? 0.95 : (footprint.basis === "climatiq" ? 1 : 0.8);
+
       const keys = ["co2e_total", "scope1", "scope2", "scope3"];
+      const allKeys = [...keys, "data_coverage"];
       await tx
         .delete(metricReadings)
-        .where(and(eq(metricReadings.workspaceId, workspace.id), eq(metricReadings.periodStart, periodStart), inArray(metricReadings.metricKey, keys)));
+        .where(and(eq(metricReadings.workspaceId, workspace.id), eq(metricReadings.periodStart, periodStart), inArray(metricReadings.metricKey, allKeys)));
       const values: Record<string, number> = {
         co2e_total: footprint.totalTonnes,
         scope1: footprint.scopes.scope1,
         scope2: footprint.scopes.scope2,
         scope3: footprint.scopes.scope3,
       };
-      await tx.insert(metricReadings).values(
-        keys.map((metricKey) => ({
+      const readingsToInsert = keys.map((metricKey) => ({
+        workspaceId: workspace.id,
+        metricKey,
+        periodStart,
+        periodLabel,
+        value: values[metricKey],
+        source: readingSource,
+        confidence: readingConfidence,
+        site: null,
+      }));
+      if (isDocumentBacked) {
+        readingsToInsert.push({
           workspaceId: workspace.id,
-          metricKey,
+          metricKey: "data_coverage",
           periodStart,
           periodLabel,
-          value: values[metricKey],
-          source: "manual",
-          confidence: footprint.basis === "climatiq" ? 1 : 0.8,
+          value: 85,
+          source: "document",
+          confidence: 0.95,
           site: null,
-        })),
-      );
+        });
+      }
+      await tx.insert(metricReadings).values(readingsToInsert);
 
       await tx.insert(activityEvents).values({
         workspaceId: workspace.id,

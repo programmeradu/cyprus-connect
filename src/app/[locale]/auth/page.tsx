@@ -113,6 +113,7 @@ export default function AuthPage() {
         }
 
         toast.success(t("toast.accountCreated"));
+        setIsLoading(false);
         setMode("login");
       } else {
         const { error } = await authClient.signIn.email({
@@ -123,7 +124,10 @@ export default function AuthPage() {
         });
 
         if (error) {
-          toast.error(t("toast.loginInvalid"));
+          const isEmailNotConfirmed =
+            error.message?.toLowerCase().includes("email not confirmed") ||
+            (error as any).code === "email_not_confirmed";
+          toast.error(isEmailNotConfirmed ? t("toast.emailNotConfirmed") : t("toast.loginInvalid"));
           setIsLoading(false);
           return;
         }

@@ -3,7 +3,7 @@ import { readJson } from "@/lib/validate";
 import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { activityEvents, agentTasks, reports, user as userTable, workspaces } from "@/db/schema";
+import { activityEvents, agentTasks, documents, reports, user as userTable, workspaces } from "@/db/schema";
 import { bindSessionUser } from "@/lib/api-auth";
 import { executeApprovedTask, reopenTask } from "@/lib/agents/approvals";
 import { logger } from "@/lib/log";
@@ -15,6 +15,7 @@ export const dynamic = "force-dynamic";
 const Body = z.object({
   decision: z.enum(["approve", "reject"]),
   note: z.string().trim().max(500).optional(),
+  documentId: z.number().int().positive().optional(),
 });
 
 /**
@@ -32,7 +33,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   }
   const parsed = await readJson(request, Body, 16 * 1024);
   if (!parsed.ok) return parsed.response;
-  const { decision, note } = parsed.data;
+  const { decision, note, documentId } = parsed.data;
 
   const [ws] = await db
     .select()
@@ -40,6 +41,50 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     .where(eq(workspaces.ownerUserId, bound.userId))
     .limit(1);
   if (!ws) return NextResponse.json({ error: "No workspace for this account." }, { status: 404 });
+
+  const [targetTask] = await db
+    .select()
+    .from(agentTasks)
+    .where(and(eq(agentTasks.id, taskId), eq(agentTasks.workspaceId, ws.id)))
+    .limit(1);
+
+  if (!targetTask) {
+    return NextResponse.json(
+      { error: "This task is already decided or does not belong to your workspace." },
+      { status: 404 }
+    );
+  }
+
+  // Evidence Guard (F88, F57):
+  // An evidence task cannot be approved without supporting evidence attached or uploaded.
+  if (decision === "approve" && (targetTask.kind === "evidence" || /\bevidence\b/i.test(targetTask.title))) {
+    let hasEvidence = false;
+    if (documentId) {
+      const [doc] = await db
+        .select({ id: documents.id })
+        .from(documents)
+        .where(and(eq(documents.id, documentId), eq(documents.userId, bound.userId)))
+        .limit(1);
+      hasEvidence = Boolean(doc);
+    } else {
+      const [anyDoc] = await db
+        .select({ id: documents.id })
+        .from(documents)
+        .where(eq(documents.userId, bound.userId))
+        .limit(1);
+      hasEvidence = Boolean(anyDoc);
+    }
+
+    if (!hasEvidence) {
+      return NextResponse.json(
+        {
+          error: "Supporting evidence is required to complete this task. Please upload an invoice, bill, or receipt first.",
+          code: "EVIDENCE_REQUIRED",
+        },
+        { status: 422 }
+      );
+    }
+  }
 
   const [actor] = await db
     .select({ name: userTable.name })

@@ -21,14 +21,14 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
     tocLabel: "On this page",
     introduction: [
       "Operating a small or medium enterprise in Cyprus in 2026 comes with distinct commercial and operational realities. As island-specific energy tariffs, high grid carbon intensity, and EU regulatory mandates converge, Cypriot business owners face growing pressure to report environmental performance.",
-      "Whether supplying European tour operators in Paphos, exporting food and wine from Limassol, or handling port logistics in Larnaca, local SMEs can no longer ignore carbon accounting. Because Cyprus operates as an isolated power grid reliant on heavy fuel oil generation at Vasilikos and Dhekelia power stations, national electricity grid emissions average between 0.535 and 0.845 kg CO2e per kWh—significantly higher than continental Europe. Generic international software often fails to account for Cyprus's specific energy mix, bilingual business environment, and local legal frameworks.",
+      "Whether supplying European tour operators in Paphos, exporting food and wine from Limassol, or handling port logistics in Larnaca, local SMEs can no longer ignore carbon accounting. Because Cyprus operates as an isolated power grid reliant on heavy fuel oil generation at Vasilikos and Dhekelia power stations, national electricity grid emissions stand at 0.622 kg CO2e per kWh (UNFCCC NIR / EEA national inventory)—significantly higher than continental Europe. Generic international software often fails to account for Cyprus's specific energy mix, bilingual business environment, and local legal frameworks.",
       "Following the European Commission’s adoption of the updated EFRAG VSME standard on July 3, 2026, and the activation of the definitive Carbon Border Adjustment Mechanism (CBAM) phase, this technical report identifies the top 7 operational features Cypriot SMEs require when choosing sustainability and carbon accounting software."
     ],
     sections: [
       {
         heading: "1. EAC Electricity Grid & Solar PV Net-Billing Integration",
         body: [
-          "Because Cyprus operates an isolated power grid without subsea interconnections to mainland Europe, thermal electricity generation by the Electricity Authority of Cyprus (EAC) yields a high location-based carbon intensity factor (~0.642 kg CO2e/kWh). Generic software relying on UK DEFRA or French ADEME grid averages understates a Cypriot firm's Scope 2 footprint.",
+          "Because Cyprus operates an isolated power grid without subsea interconnections to mainland Europe, thermal electricity generation by the Electricity Authority of Cyprus (EAC) yields an official location-based carbon intensity factor of 0.622 kg CO2e/kWh. Generic software relying on UK DEFRA or French ADEME grid averages understates a Cypriot firm's Scope 2 footprint.",
           "Furthermore, with widespread rooftop solar adoption across commercial facilities in Nicosia, Limassol, and Paphos, software must accurately calculate CERA net-metering and net-billing solar offsets (under EAC Commercial Tariffs 21 and 31) to reflect true net Scope 2 emissions."
         ]
       },
@@ -105,7 +105,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
     heroSubtitle: "Οι κυπριακές μικρομεσαίες επιχειρήσεις αντιμετωπίζουν ιδιαίτερες ενεργειακές και ρυθμιστικές προκλήσεις. Δείτε τις 7 απαραίτητες δυνατότητες λογισμικού για Λευκωσία, Λεμεσό, Λάρνακα και Πάφο.",
     tocLabel: "Σε αυτή τη σελίδα",
     introduction: [
-      "Η λειτουργία μιας ΜμΕ στην Κύπρο το 2026 συνοδεύεται από ιδιαίτερες προκλήσεις. Καθώς η Κύπρος λειτουργεί ως απομονωμένο ηλεκτρικό δίκτυο που βασίζεται στους ηλεκτροπαραγωγούς σταθμούς Βασιλικού και Δεκέλειας, ο μέσος συντελεστής εκπομπών κυμαίνεται μεταξύ 0,535 και 0,845 kg CO2e ανά kWh—σημαντικά υψηλότερος από την ηπειρωτική Ευρώπη. Τα γενικά ξένα λογισμικά αποτυγχάνουν να καλύψουν το ενεργειακό μίγμα της Κύπρου και το δίγλωσσο περιβάλλον.",
+      "Η λειτουργία μιας ΜμΕ στην Κύπρο το 2026 συνοδεύεται από ιδιαίτερες προκλήσεις. Καθώς η Κύπρος λειτουργεί ως απομονωμένο ηλεκτρικό δίκτυο που βασίζεται στους ηλεκτροπαραγωγούς σταθμούς Βασιλικού και Δεκέλειας, ο επίσημος συντελεστής εκπομπών του δικτύου ανέρχεται σε 0,622 kg CO2e ανά kWh (εθνική απογραφή UNFCCC / EEA)—σημαντικά υψηλότερος από την ηπειρωτική Ευρώπη. Τα γενικά ξένα λογισμικά αποτυγχάνουν να καλύψουν το ενεργειακό μίγμα της Κύπρου και το δίγλωσσο περιβάλλον.",
       "Είτε τροφοδοτείτε ευρωπαϊκές τουριστικές επιχειρήσεις στην Πάφο, είτε εξάγετε τρόφιμα από τη Λεμεσό, είτε διαχειρίζεστε logistics στο λιμάνι Λάρνακας, η ανθρακική λογιστική είναι πλέον απαραίτητη.",
       "Μετά την υιοθέτηση του αναθεωρημένου προτύπου EFRAG VSME στις 3 Ιουλίου 2026 και την ενεργοποίηση της οριστικής φάσης CBAM, αυτή η τεχνική αναφορά καταγράφει τα 7 απαραίτητα χαρακτηριστικά που χρειάζονται οι κυπριακές ΜμΕ."
     ],
@@ -113,7 +113,7 @@ export const sustainabilitySoftwareNeedsCyprusSmes = makePillar({
       {
         heading: "1. Ενσωμάτωση Δικτύου ΑΗΚ & Φωτοβολταϊκών (Net-Metering / Net-Billing)",
         body: [
-          "Η παραγωγή ηλεκτρισμού στην Κύπρο βασίζεται στο μαζούτ στους σταθμούς Βασιλικού και Δεκέλειας, με αποτέλεσμα υψηλό συντελεστή εκπομπών (~0,642 kg CO2e ανά kWh) σε σύγκριση με την ηπειρωτική Ευρώπη (μέσος όρος ΕΕ 0,230 kg CO2e/kWh). Το λογισμικό πρέπει να περιλαμβάνει τους ενημερωμένους συντελεστές της ΑΗΚ.",
+          "Η παραγωγή ηλεκτρισμού στην Κύπρο βασίζεται στο μαζούτ στους σταθμούς Βασιλικού και Δεκέλειας, με αποτέλεσμα υψηλό επίσημο συντελεστή εκπομπών (0,622 kg CO2e ανά kWh) σε σύγκριση με την ηπειρωτική Ευρώπη (μέσος όρος ΕΕ 0,230 kg CO2e/kWh). Το λογισμικό πρέπει να περιλαμβάνει τους επίσημους συντελεστές της ΑΗΚ.",
           "Επιπλέον, λόγω της ευρείας χρήσης φωτοβολταϊκών, το λογισμικό πρέπει να υπολογίζει ακριβώς τον συμψηφισμό net-metering και net-billing (υπό τα Τιμολόγια 21 & 31 της ΑΗΚ) για τον υπολογισμό των πραγματικών εκπομπών Scope 2."
         ]
       },

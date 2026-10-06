@@ -7,6 +7,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   Btn,
   ConsolePage,
@@ -167,14 +168,17 @@ export default function CbamPage() {
     [changed, t],
   );
 
-  const downloadTemplate = () => {
-    const url = URL.createObjectURL(new Blob(["\uFEFF" + TEMPLATE], { type: "text/csv;charset=utf-8" }));
+  const downloadTemplate = useCallback(() => {
+    const blob = new Blob(["\uFEFF" + TEMPLATE], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "vuneli-cbam-import-template.csv";
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
-  };
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }, []);
 
   const decl = data?.declaration ?? null;
   const draft = decl?.draft ?? null;
@@ -292,8 +296,22 @@ export default function CbamPage() {
 
             {decl && (
               <PlateGrid columns={2}>
-                <Plate label={t("signature")} meta={<State tone={STATUS_TONE[decl.status] ?? "idle"}>{statusLabel(decl.status)}</State>}
-                  foot={<span className="vck-cbam-hash">{t("fingerprint", { hash: decl.draftHash })}</span>}>
+                <Plate
+                  label={t("signature")}
+                  meta={<State tone={STATUS_TONE[decl.status] ?? "idle"}>{statusLabel(decl.status)}</State>}
+                  foot={
+                    <span className="vck-cbam-hash">
+                      {t("fingerprint", { hash: decl.draftHash })}{" "}
+                      <Link
+                        href={`/verify/${encodeURIComponent(decl.draftHash)}`}
+                        className="vck-link"
+                        style={{ marginLeft: "0.5rem" }}
+                      >
+                        {t("verifyLink")} &rarr;
+                      </Link>
+                    </span>
+                  }
+                >
                   <p className="vck-cbam-note">{signatureText}</p>
                   {stale && <p className="vck-cbam-note" data-tone="warn">{t("stale")}</p>}
                 </Plate>

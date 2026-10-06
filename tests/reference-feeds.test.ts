@@ -51,6 +51,10 @@ describe("EAC bill check", () => {
     const r = checkEacAnswer(good);
     expect(r).toEqual({ ok: true, bill: { accountNumber: "123456-7", periodStart: "2026-06-01", periodEnd: "2026-07-31", kwh: 1234.57, amountEur: 310.4 } });
   });
+  it("normalizes Cyprus DD/MM/YYYY dates to ISO", () => {
+    const r = checkEacAnswer({ ...good, period_start: "01/06/2026", period_end: "31/07/2026" });
+    expect(r).toEqual({ ok: true, bill: { accountNumber: "123456-7", periodStart: "2026-06-01", periodEnd: "2026-07-31", kwh: 1234.57, amountEur: 310.4 } });
+  });
   it("refuses a bill without kWh, never guessing", () => {
     expect(checkEacAnswer({ ...good, kwh: null }).ok).toBe(false);
     expect(checkEacAnswer({ ...good, kwh: 0 }).ok).toBe(false);

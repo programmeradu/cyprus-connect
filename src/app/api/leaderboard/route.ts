@@ -4,6 +4,8 @@ import { db } from '@/db';
 import { user, userActions, actions } from '@/db/schema';
 import { gt, desc, eq, sql } from 'drizzle-orm';
 import { logoDomain } from '@/lib/company-logo';
+import { auth } from '@/lib/auth';
+import { QA_ACCOUNT, QA_COOKIE, QA_HEADER, isQaRequest } from '@/lib/qa-bypass';
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,6 +25,18 @@ export async function GET(request: NextRequest) {
       limit = Math.min(parsedLimit, 100); // Max 100
     }
 
+    // Determine caller identity to show their own details while anonymizing peers
+    const cookieHeader = request.headers.get("cookie") || "";
+    const qaCookie =
+      cookieHeader
+        .split(";")
+        .map((part) => part.trim())
+        .find((part) => part.startsWith(`${QA_COOKIE}=`))
+        ?.slice(QA_COOKIE.length + 1) ?? null;
+    const qa = isQaRequest({ cookie: qaCookie, header: request.headers.get(QA_HEADER) });
+    const session = qa ? null : await auth.api.getSession({ headers: request.headers }).catch(() => null);
+    const callerUserId = qa ? QA_ACCOUNT.id : session?.user?.id ?? null;
+
     // Get users with credits > 0, sorted by totalCredits DESC
     const topUsers = await db
       .select({
@@ -32,15 +46,32 @@ export async function GET(request: NextRequest) {
         totalCredits: user.totalCredits,
         website: user.companyWebsite,
         email: user.email,
+        companyIndustry: user.companyIndustry,
+        countryCode: user.countryCode,
       })
       .from(user)
       .where(gt(user.totalCredits, 0))
       .orderBy(desc(user.totalCredits))
       .limit(limit);
 
+    const prettyIndustry: Record<string, string> = {
+      technology: "Technology",
+      tech: "Technology",
+      manufacturing: "Manufacturing",
+      retail: "Retail",
+      hospitality: "Hospitality",
+      healthcare: "Healthcare",
+      finance: "Financial Services",
+      logistics: "Logistics",
+      agriculture: "Agriculture",
+      construction: "Construction",
+      energy: "Energy",
+      food: "Food & Beverage",
+    };
+
     // Get action counts and details for each user
     const leaderboardWithActions = await Promise.all(
-      topUsers.map(async ({ website, email, ...userRecord }, index) => {
+      topUsers.map(async ({ website, email, companyIndustry, countryCode, ...userRecord }, index) => {
         // Get count of completed actions
         const completedActions = await db
           .select({
@@ -66,13 +97,24 @@ export async function GET(request: NextRequest) {
           .orderBy(desc(userActions.completedAt))
           .limit(3);
 
+        const isSelf = Boolean(callerUserId && userRecord.userId === callerUserId);
+
+        const indKey = (companyIndustry || "").trim().toLowerCase();
+        const indLabel =
+          prettyIndustry[indKey] ||
+          (companyIndustry ? companyIndustry.charAt(0).toUpperCase() + companyIndustry.slice(1) : "Enterprise");
+        const region = countryCode?.toUpperCase() === "CY" ? "Cyprus" : "EU";
+        const peerCompany = `${indLabel} Peer · ${region}`;
+
         return {
           rank: index + 1,
-          ...userRecord,
-          // Only the company domain leaves the server, never the email address.
-          logoDomain: logoDomain(website, email),
+          userId: isSelf ? userRecord.userId : `peer-${index + 1}`,
+          name: isSelf ? userRecord.name : undefined,
+          companyName: isSelf ? (userRecord.companyName || userRecord.name) : peerCompany,
+          logoDomain: isSelf ? logoDomain(website, email) : null,
+          totalCredits: userRecord.totalCredits,
           actionsCompleted: actionCount,
-          recentActions: recentActions.filter(a => a.title !== null), // Filter out any null joins
+          recentActions: recentActions.filter(a => a.title !== null),
         };
       })
     );

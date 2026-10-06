@@ -105,8 +105,24 @@ describe("CBAM CSV", () => {
     expect(errors[0]).toMatch(/Row 3/);
   });
 
-  it("names missing columns", () => {
-    expect(parseImportCsv("a,b\n1,2").errors[0]).toMatch(/import_date/);
+  it("names missing columns and includes expected header list", () => {
+    const err = parseImportCsv("a,b\n1,2").errors[0];
+    expect(err).toMatch(/import_date/);
+    expect(err).toMatch(/Expected header row/);
+  });
+
+  it("accepts common column aliases such as country_of_origin and quantity_tonnes", () => {
+    const csv =
+      "import_date,cn_code,country_of_origin,supplier_name,quantity_tonnes\n" +
+      "2026-03-14,7208 51,TR,Example Steel AS,24.5\n";
+    const { rows, errors } = parseImportCsv(csv);
+    expect(errors).toHaveLength(0);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      originCountry: "TR",
+      supplierName: "Example Steel AS",
+      netMass: 24.5,
+    });
   });
 });
 

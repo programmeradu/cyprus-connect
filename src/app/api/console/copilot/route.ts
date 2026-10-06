@@ -30,6 +30,8 @@ import { resolveConsoleSession } from "@/lib/console-session";
 import { readCompany } from "@/lib/company-update.server";
 import { toolSystemPrompt } from "@/lib/copilot/prompt";
 import { checkGrounding } from "@/lib/copilot/grounding";
+import { eacSummary } from "@/lib/integrations/eac.server";
+import { waterSummary } from "@/lib/integrations/water.server";
 
 export const dynamic = "force-dynamic";
 
@@ -108,7 +110,7 @@ function round(value: number, precision: number): string {
  */
 async function buildBriefing(workspaceId: string, accountId: string) {
   const company = await readCompany(accountId, workspaceId).catch(() => null);
-  const [defs, readings, roster, tasks, obs, events] = await Promise.all([
+  const [defs, readings, roster, tasks, obs, events, eac, water] = await Promise.all([
     db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder)),
     db
       .select()
@@ -133,6 +135,8 @@ async function buildBriefing(workspaceId: string, accountId: string) {
       .where(eq(activityEvents.workspaceId, workspaceId))
       .orderBy(desc(activityEvents.createdAt))
       .limit(10),
+    eacSummary(accountId).catch(() => null),
+    waterSummary(accountId).catch(() => null),
   ]);
 
   const byMetric = new Map<string, typeof readings>();
@@ -161,9 +165,37 @@ async function buildBriefing(workspaceId: string, accountId: string) {
     ? `- name ${company.companyName ?? "not set"}; industry ${company.industry ?? "not set"}; team size ${company.teamSize ?? "not set"}; country ${company.country}; sites ${company.sites}; yearly revenue ${company.revenueEur ?? "not set"} EUR`
     : "- could not be read";
 
+  const utilityLines: string[] = [];
+  if (eac && eac.bills.length > 0) {
+    const billDetails = eac.bills
+      .slice(0, 4)
+      .map((b) => `${b.periodStart} to ${b.periodEnd}: ${b.kwh} kWh (${Math.round(b.kgCo2e)} kg CO2e)`)
+      .join(", ");
+    utilityLines.push(
+      `- Electricity (EAC): ${eac.bills.length} bills, total ${Math.round(eac.totalKwh)} kWh (${Math.round(eac.totalKgCo2e)} kg CO2e at ${eac.factor.kgPerKwh} kg/kWh). Recent bills: ${billDetails}`,
+    );
+  } else {
+    utilityLines.push("- Electricity (EAC): no bills uploaded");
+  }
+
+  if (water && water.bills.length > 0) {
+    const billDetails = water.bills
+      .slice(0, 4)
+      .map((b) => `${b.periodStart} to ${b.periodEnd}: ${b.m3} m³ (${Math.round(b.kgCo2e)} kg CO2e)`)
+      .join(", ");
+    utilityLines.push(
+      `- Water: ${water.bills.length} bills, total ${Math.round(water.totalM3)} m³ (${Math.round(water.totalKgCo2e)} kg CO2e at ${water.factor.kgPerM3} kg/m³). Recent bills: ${billDetails}`,
+    );
+  } else {
+    utilityLines.push("- Water: no bills uploaded");
+  }
+
   return [
     "COMPANY DETAILS (profile + workspace)",
     companyLine,
+    "",
+    "UTILITY BILLS (EAC electricity + water)",
+    utilityLines.join("\n"),
     "",
     "METRICS (metric_definitions + metric_readings)",
     metricLines.join("\n") || "- none recorded",
@@ -294,7 +326,18 @@ export async function POST(req: Request) {
     onEnd: async ({ responseMessage }) => {
       try {
         const parts = (responseMessage as UIMessage).parts ?? [];
-        const visible = parts
+        const cleanedParts = parts.map((p) => {
+          if ((p as { type?: string }).type === "text" && typeof (p as { text?: unknown }).text === "string") {
+            return {
+              ...p,
+              text: (p as { text: string }).text
+                .replace(/\(\s*read_[a-z_]+(?:,\s*[^)]*)?\)/gi, "")
+                .replace(/\s{2,}/g, " "),
+            };
+          }
+          return p;
+        });
+        const visible = cleanedParts
           .filter((p): p is { type: "text"; text: string } => p.type === "text")
           .map((p) => p.text)
           .join("\n")
@@ -305,7 +348,7 @@ export async function POST(req: Request) {
             workspaceId: workspace.id,
             role: "assistant",
             content: visible || "I prepared the cards below.",
-            parts: parts as unknown[],
+            parts: cleanedParts as unknown[],
           })
           .returning();
         // Proposals filed during this answer belong to it.

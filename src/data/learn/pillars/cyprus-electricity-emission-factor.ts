@@ -33,7 +33,7 @@ export const cyprusElectricityEmissionFactor = makePillar({
       {
         heading: "Which number to use for Cyprus",
         body: [
-          "Recent published estimates for the Cyprus grid sit around 0.6 kg CO2e per kWh. Vuneli currently uses 0.61 kg CO2e/kWh for the 2024 vintage, based on the Cyprus grid average carbon intensity published by Electricity Maps and the European Environment Agency. Every figure Vuneli calculates shows this source and year next to it.",
+          "Recent official verified figures for the Cyprus grid sit at 0.622 kg CO2e per kWh. Vuneli uses 0.622 kg CO2e/kWh for the 2024 vintage, based on the official European Environment Agency (EEA) greenhouse gas intensity indicator and Cyprus's National Inventory Report. Every figure Vuneli calculates shows this source and year next to it.",
           "For comparison, the EU-wide average is well under half of that. Using a generic EU factor for a Cypriot site is the most common Scope 2 error we see in supplier questionnaires.",
           "If your auditor, bank or customer asks for a different official source, use theirs and record which one you used. What matters most is that the factor is published, dated and applied the same way every year.",
         ],
@@ -57,14 +57,14 @@ export const cyprusElectricityEmissionFactor = makePillar({
       {
         heading: "A worked example",
         body: [
-          "A Limassol office uses 18,400 kWh in a year across six bills. Location-based Scope 2 is 18,400 × 0.61 = 11,224 kg, or about 11.2 tonnes CO2e.",
-          "If the same office installs rooftop solar that covers 6,000 kWh of its own use, grid consumption falls to 12,400 kWh and Scope 2 to about 7.6 tonnes. The reduction is real and easy to evidence: the bills show it.",
+          "A Limassol office uses 18,400 kWh in a year across six bills. Location-based Scope 2 is 18,400 × 0.622 = 11,445 kg, or about 11.4 tonnes CO2e.",
+          "If the same office installs rooftop solar that covers 6,000 kWh of its own use, grid consumption falls to 12,400 kWh and Scope 2 to about 7.7 tonnes. The reduction is real and easy to evidence: the bills show it.",
         ],
       },
     ],
     keyTakeaways: [
       "Cyprus has an isolated, mostly oil-fired grid, so its electricity factor is among the highest in the EU.",
-      "Vuneli uses 0.61 kg CO2e/kWh (2024 vintage, Electricity Maps / EEA) and shows the source next to every figure.",
+      "Vuneli uses 0.622 kg CO2e/kWh (2024 vintage, EEA / Cyprus National Inventory) and shows the source next to every figure.",
       "Use kWh from the bill, never euros, and keep every billing period for the year.",
       "Report location-based Scope 2 first; add market-based only with contracts and guarantees of origin to back it.",
       "Rooftop solar lowers Scope 2 directly because it reduces the kWh you buy.",
@@ -116,7 +116,7 @@ export const cyprusElectricityEmissionFactor = makePillar({
       {
         heading: "Ποιον αριθμό να χρησιμοποιήσετε για την Κύπρο",
         body: [
-          "Οι πρόσφατες δημοσιευμένες εκτιμήσεις για το κυπριακό δίκτυο κινούνται γύρω στα 0,6 kg CO2e ανά kWh. Η Vuneli χρησιμοποιεί σήμερα 0,61 kg CO2e/kWh για το έτος 2024, με βάση τη μέση ένταση άνθρακα του κυπριακού δικτύου που δημοσιεύουν η Electricity Maps και ο Ευρωπαϊκός Οργανισμός Περιβάλλοντος. Κάθε αριθμός στη Vuneli δείχνει δίπλα την πηγή και το έτος.",
+          "Οι επίσημες επαληθευμένες εκτιμήσεις για το κυπριακό δίκτυο ανέρχονται σε 0,622 kg CO2e ανά kWh. Η Vuneli χρησιμοποιεί 0,622 kg CO2e/kWh για το έτος 2024, με βάση τον δείκτη έντασης αερίων θερμοκηπίου του Ευρωπαϊκού Οργανισμού Περιβάλλοντος (ΕΟΠ) και την Εθνική Έκθεση Απογραφής της Κύπρου. Κάθε αριθμός στη Vuneli δείχνει δίπλα την πηγή και το έτος.",
           "Ο μέσος όρος της ΕΕ είναι αρκετά κάτω από το μισό. Η χρήση γενικού συντελεστή ΕΕ για κυπριακή εγκατάσταση είναι το πιο συχνό λάθος Scope 2 που βλέπουμε σε ερωτηματολόγια προμηθευτών.",
           "Αν ο ελεγκτής, η τράπεζα ή ο πελάτης σας ζητά άλλη επίσημη πηγή, χρησιμοποιήστε τη δική τους και καταγράψτε ποια χρησιμοποιήσατε. Το σημαντικό είναι ο συντελεστής να είναι δημοσιευμένος, χρονολογημένος και να εφαρμόζεται με τον ίδιο τρόπο κάθε χρόνο.",
         ],
@@ -140,14 +140,14 @@ export const cyprusElectricityEmissionFactor = makePillar({
       {
         heading: "Ένα παράδειγμα",
         body: [
-          "Ένα γραφείο στη Λεμεσό καταναλώνει 18.400 kWh τον χρόνο σε έξι λογαριασμούς. Οι εκπομπές Scope 2 με βάση την τοποθεσία είναι 18.400 × 0,61 = 11.224 kg, δηλαδή περίπου 11,2 τόνοι CO2e.",
-          "Αν το ίδιο γραφείο εγκαταστήσει φωτοβολταϊκά στη στέγη που καλύπτουν 6.000 kWh της δικής του κατανάλωσης, η κατανάλωση από το δίκτυο πέφτει στις 12.400 kWh και οι εκπομπές Scope 2 σε περίπου 7,6 τόνους. Η μείωση είναι πραγματική και αποδεικνύεται εύκολα από τους λογαριασμούς.",
+          "Ένα γραφείο στη Λεμεσό καταναλώνει 18.400 kWh τον χρόνο σε έξι λογαριασμούς. Οι εκπομπές Scope 2 με βάση την τοποθεσία είναι 18.400 × 0,622 = 11.445 kg, δηλαδή περίπου 11,4 τόνοι CO2e.",
+          "Αν το ίδιο γραφείο εγκαταστήσει φωτοβολταϊκά στη στέγη που καλύπτουν 6.000 kWh της δικής του κατανάλωσης, η κατανάλωση από το δίκτυο πέφτει στις 12.400 kWh και οι εκπομπές Scope 2 σε περίπου 7,7 τόνους. Η μείωση είναι πραγματική και αποδεικνύεται εύκολα από τους λογαριασμούς.",
         ],
       },
     ],
     keyTakeaways: [
       "Η Κύπρος έχει απομονωμένο δίκτυο που βασίζεται κυρίως στο πετρέλαιο, γι' αυτό ο συντελεστής της είναι από τους υψηλότερους στην ΕΕ.",
-      "Η Vuneli χρησιμοποιεί 0,61 kg CO2e/kWh (έτος 2024, Electricity Maps / ΕΟΠ) και δείχνει την πηγή δίπλα σε κάθε αριθμό.",
+      "Η Vuneli χρησιμοποιεί 0,622 kg CO2e/kWh (έτος 2024, ΕΟΠ / Εθνική Απογραφή Κύπρου) και δείχνει την πηγή δίπλα σε κάθε αριθμό.",
       "Χρησιμοποιήστε kWh από τον λογαριασμό, ποτέ ευρώ, και κρατήστε όλες τις περιόδους της χρονιάς.",
       "Δηλώστε πρώτα Scope 2 με βάση την τοποθεσία· προσθέστε τον τρόπο με βάση την αγορά μόνο με συμβάσεις και εγγυήσεις προέλευσης.",
       "Τα φωτοβολταϊκά στη στέγη μειώνουν απευθείας το Scope 2, γιατί μειώνουν τις kWh που αγοράζετε.",

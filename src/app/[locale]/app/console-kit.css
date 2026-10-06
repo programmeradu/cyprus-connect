@@ -896,14 +896,30 @@
   border-color: var(--vc-rule);
 }
 
+.vc select {
+  color-scheme: light;
+}
+
+.dark .vc select {
+  color-scheme: dark;
+}
+
 .vc select option {
-  background-color: var(--vc-rail, #ffffff);
-  color: var(--vc-ink, #1c2827);
+  background-color: #ffffff;
+  color: #1c2827;
 }
 
 .dark .vc select option {
-  background-color: var(--vc-rail, #1c1c1c);
-  color: var(--vc-ink, #f2f3f1);
+  background-color: #222423;
+  color: #f2f3f1;
+}
+
+.vc select option:disabled {
+  color: #8c9693;
+}
+
+.dark .vc select option:disabled {
+  color: #727b78;
 }
 
 .vc input::placeholder,
@@ -1207,6 +1223,49 @@
   line-height: 1.68;
   color: var(--vc-ink-2);
   margin: 0;
+  white-space: pre-line;
+}
+
+.dark .vc .vcr-sec h3 {
+  color: #f2f3f1;
+}
+
+.dark .vc .vcr-sec > p {
+  color: rgba(242, 243, 241, 0.92);
+}
+
+.dark .vc .vcr-figs > div {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.dark .vc .vcr-figs dt {
+  color: rgba(242, 243, 241, 0.72);
+}
+
+.dark .vc .vcr-figs dd strong {
+  color: #f2f3f1;
+}
+
+.dark .vc .vcr-figs dd small {
+  color: rgba(242, 243, 241, 0.65);
+}
+
+.dark .vc .vcr-gaps {
+  background: rgba(224, 178, 92, 0.07);
+  border: 1px dashed rgba(224, 178, 92, 0.35);
+}
+
+.dark .vc .vcr-gaps > span {
+  color: #e0b25c;
+}
+
+.dark .vc .vcr-gaps li {
+  color: rgba(242, 243, 241, 0.88);
+}
+
+.dark .vc .vcr-gaps li::marker {
+  color: #e0b25c;
 }
 
 .vc .vcr-figs {

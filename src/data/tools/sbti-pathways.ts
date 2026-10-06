@@ -76,7 +76,8 @@ export function computePathway(input: PathwayInput): PathwayResult {
   const scope3Base = Math.max(0, scope3);
   const totalBase = scope12Base + scope3Base;
   const scope3Share = totalBase > 0 ? scope3Base / totalBase : 0;
-  const scope3Required = scope3Share > SBTI_SCOPE3_THRESHOLD;
+  // SBTi criterion C15: Scope 3 target required if Scope 3 is 40% or more of total
+  const scope3Required = scope3Share >= SBTI_SCOPE3_THRESHOLD - 0.0001;
 
   const horizon = Math.max(0, targetYear - baseYear);
   const r12 = SBTI_ANNUAL_LINEAR_RATE[scope12Ambition];

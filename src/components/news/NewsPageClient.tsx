@@ -126,45 +126,34 @@ const REGULATORY_DEADLINES = [
   {
     date: "2026-12-31",
     en: {
-      title: "VSME adoption window closes on FY26 data",
-      body: "SMEs that want a VSME report for 2026 must have the year of data collected before the books close.",
+      title: "VSME voluntary baseline for FY26",
+      body: "SMEs compiling voluntary reports collect 2026 calendar-year data before the books close.",
     },
     el: {
-      title: "Παράθυρο VSME για δεδομένα 2026",
-      body: "ΜμΕ που θέλουν έκθεση VSME για το 2026 πρέπει να έχουν συλλέξει τα δεδομένα πριν κλείσει η χρήση.",
+      title: "Εθελοντική βάση VSME για το 2026",
+      body: "ΜμΕ που συντάσσουν εθελοντική έκθεση συλλέγουν τα δεδομένα του 2026 πριν κλείσει η χρήση.",
     },
   },
   {
-    date: "2027-01-01",
+    date: "2027-09-30",
     en: {
-      title: "CSRD Wave 3 - listed SMEs begin",
-      body: "Listed SMEs start sustainability reporting on FY26, unless they use the two-year opt-out.",
+      title: "First CBAM annual declaration (2026 imports)",
+      body: "Authorised declarants declare embedded emissions of 2026 goods and surrender certificates in the CBAM Registry.",
     },
     el: {
-      title: "CSRD Κύμα 3 - εισηγμένες ΜμΕ",
-      body: "Εισηγμένες ΜμΕ ξεκινούν αναφορές βιωσιμότητας για το FY26, εκτός αν χρησιμοποιήσουν τη διετή εξαίρεση.",
-    },
-  },
-  {
-    date: "2027-05-31",
-    en: {
-      title: "First CBAM annual declaration",
-      body: "Importers declare 2026 embedded emissions and surrender the matching CBAM certificates.",
-    },
-    el: {
-      title: "Πρώτη ετήσια δήλωση CBAM",
-      body: "Οι εισαγωγείς δηλώνουν τις ενσωματωμένες εκπομπές του 2026 και παραδίδουν τα αντίστοιχα πιστοποιητικά.",
+      title: "Πρώτη ετήσια δήλωση CBAM (εισαγωγές 2026)",
+      body: "Οι εγκεκριμένοι δηλούντες δηλώνουν τις ενσωματωμένες εκπομπές του 2026 και παραδίδουν πιστοποιητικά στο Μητρώο CBAM.",
     },
   },
   {
     date: "2028-01-01",
     en: {
-      title: "CSRD Wave 4 - non-EU parent groups",
-      body: "Non-EU parents with large EU turnover report on FY28 under the separate ESRS standard.",
+      title: "CSRD Wave 3 - listed SMEs (LSME)",
+      body: "Listed SMEs report under simplified LSME standards from FY28 (following the 2-year Omnibus delay).",
     },
     el: {
-      title: "CSRD Κύμα 4 - μη-ΕΕ όμιλοι",
-      body: "Μη-ΕΕ μητρικές με μεγάλο κύκλο εργασιών στην ΕΕ αναφέρουν για το FY28 με ξεχωριστό πρότυπο ESRS.",
+      title: "CSRD Κύμα 3 - εισηγμένες ΜμΕ (LSME)",
+      body: "Εισηγμένες ΜμΕ αναφέρουν με το απλοποιημένο πρότυπο LSME από τη χρήση 2028 (μετά τη διετή αναβολή Omnibus).",
     },
   },
 ];

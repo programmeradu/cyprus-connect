@@ -783,36 +783,45 @@
 }
 
 .vc-pop-cta,
-.vc-pop a[role="menuitem"] {
+.vc-pop a[role="menuitem"],
+.vc-pop button[role="menuitem"] {
   display: block;
+  width: 100%;
   margin-top: 10px;
   padding: 9px 12px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 800;
   text-align: left;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
   background: rgba(255, 255, 255, 0.4);
   transition: background 0.15s ease;
 }
 
 .dark .vc-pop-cta,
-.dark .vc-pop a[role="menuitem"] {
+.dark .vc-pop a[role="menuitem"],
+.dark .vc-pop button[role="menuitem"] {
   background: rgba(255, 255, 255, 0.07);
 }
 
 .vc-pop-cta { text-align: center; }
 
 .vc-pop-cta:hover,
-.vc-pop a[role="menuitem"]:hover {
+.vc-pop a[role="menuitem"]:hover,
+.vc-pop button[role="menuitem"]:hover {
   background: var(--vc-lime-soft);
 }
 
 .vc-palette-scrim {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 1000;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   padding: clamp(56px, 12vh, 140px) 16px 16px;
   background: rgba(18, 28, 28, 0.42);
   backdrop-filter: blur(6px);
@@ -821,6 +830,7 @@
 
 .vc-palette {
   width: min(620px, 100%);
+  min-height: 160px;
   max-height: 70vh;
   overflow: hidden;
   display: flex;

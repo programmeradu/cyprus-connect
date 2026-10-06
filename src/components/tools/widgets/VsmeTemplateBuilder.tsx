@@ -42,6 +42,11 @@ const T = {
     disclaimer: "This tool produces a structured working document following the VSME Basic Module. It is a template - a full VSME report requires review by qualified sustainability staff and, where relevant, external assurance.",
     reviewIntro: "Review your entries below, then export as PDF or CSV. Everything stays in your browser.",
     empty: "Not answered",
+    stepCountNote: "12 disclosures (B1–B12) plus Overview & Review",
+    errNegativeScope1: "Scope 1 emissions cannot be negative.",
+    errRenewableExceeds: "Renewable energy cannot exceed total energy consumption.",
+    errNegativeValue: "Value cannot be negative.",
+    autoCalculated: "Auto-calculated from Scope 1 + 2 and Net revenue (B1)",
   },
   el: {
     interactive: "Διαδραστικό εργαλείο",
@@ -67,6 +72,11 @@ const T = {
     disclaimer: "Το εργαλείο παράγει δομημένο έγγραφο εργασίας. Πλήρης αναφορά VSME απαιτεί έλεγχο από ειδικευμένο προσωπικό.",
     reviewIntro: "Ελέγξτε τις καταχωρίσεις σας και εξάγετε ως PDF ή CSV. Όλα παραμένουν στο πρόγραμμα περιήγησής σας.",
     empty: "Δεν απαντήθηκε",
+    stepCountNote: "12 αποκαλύψεις (B1–B12) συν Επισκόπηση & Έλεγχος",
+    errNegativeScope1: "Οι εκπομπές Scope 1 δεν μπορούν να είναι αρνητικές.",
+    errRenewableExceeds: "Η ανανεώσιμη ενέργεια δεν μπορεί να υπερβαίνει τη συνολική κατανάλωση.",
+    errNegativeValue: "Η τιμή δεν μπορεί να είναι αρνητική.",
+    autoCalculated: "Υπολογίστηκε αυτόματα από Scope 1 + 2 και Καθαρά έσοδα (B1)",
   },
 } as const;
 
@@ -77,11 +87,78 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
 
   const totalSteps = VSME_BASIC.length + 2;
 
-  const setField = (disclosureId: string, fieldId: string, value: string) =>
-    setValues((v) => ({
-      ...v,
-      [disclosureId]: { ...(v[disclosureId] ?? {}), [fieldId]: value },
-    }));
+  // Auto-calculate GHG intensity per EUR M revenue when Scope 1, Scope 2, and B1 revenue are provided
+  const derivedValues = useMemo(() => {
+    const v = { ...values };
+    const b3 = v["B3"] || {};
+    const b1 = v["B1"] || {};
+    const revenue = parseFloat(b1["netRevenue"] || "");
+    const s1 = parseFloat(b3["scope1"] || "");
+    const s2 = parseFloat(b3["scope2Location"] || b3["scope2Market"] || "");
+
+    if (!isNaN(revenue) && revenue > 0 && (!isNaN(s1) || !isNaN(s2))) {
+      const totalGhg = (isNaN(s1) ? 0 : s1) + (isNaN(s2) ? 0 : s2);
+      const intensity = (totalGhg / revenue).toFixed(2);
+      // Auto-set if intensityRevenue is not manually locked or is empty
+      if (!b3["intensityRevenue"] || b3["_intensityAuto"] === "true") {
+        v["B3"] = {
+          ...b3,
+          intensityRevenue: intensity,
+          _intensityAuto: "true",
+        };
+      }
+    }
+    return v;
+  }, [values]);
+
+  const setField = (disclosureId: string, fieldId: string, value: string) => {
+    setValues((prev) => {
+      const disclosureValues = { ...(prev[disclosureId] ?? {}) };
+      if (disclosureId === "B3" && fieldId === "intensityRevenue") {
+        // User manually typed intensity, remove auto flag
+        delete disclosureValues["_intensityAuto"];
+      }
+      return {
+        ...prev,
+        [disclosureId]: { ...disclosureValues, [fieldId]: value },
+      };
+    });
+  };
+
+  // Validation rules for current disclosure
+  const currentValidationErrors = useMemo(() => {
+    const errors: Record<string, string> = {};
+    if (step >= 1 && step <= VSME_BASIC.length) {
+      const disc = VSME_BASIC[step - 1];
+      const vals = derivedValues[disc.id] || {};
+
+      if (disc.id === "B3") {
+        const total = parseFloat(vals["energyTotal"] || "");
+        const ren = parseFloat(vals["energyRenewable"] || "");
+        const s1 = parseFloat(vals["scope1"] || "");
+
+        if (!isNaN(s1) && s1 < 0) {
+          errors["scope1"] = l.errNegativeScope1;
+        }
+        if (!isNaN(total) && !isNaN(ren) && ren > total) {
+          errors["energyRenewable"] = l.errRenewableExceeds;
+        }
+      }
+
+      // Disallow negative numbers on all numeric fields
+      for (const f of disc.fields) {
+        if (f.type === "number") {
+          const num = parseFloat(vals[f.id] || "");
+          if (!isNaN(num) && num < 0 && !errors[f.id]) {
+            errors[f.id] = l.errNegativeValue;
+          }
+        }
+      }
+    }
+    return errors;
+  }, [step, derivedValues, l]);
+
+  const hasBlockingErrors = Object.keys(currentValidationErrors).length > 0;
 
   const answeredCount = useMemo(() => {
     let n = 0;
@@ -146,6 +223,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
               <strong>{onOverview ? l.stepOverview : onReview ? l.stepFinal : currentDisclosure?.code}</strong>
               <span>{answeredCount} {l.of} {VSME_BASIC.length} {l.complete}</span>
             </p>
+            <p className="mt-1 text-[11px] text-foreground/50">{l.stepCountNote}</p>
             <div className="mt-3 h-1.5 w-full max-w-md bg-foreground/10">
               <div
                 className="h-full bg-primary transition-all"
@@ -250,11 +328,18 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
 
             <div className="mt-6 space-y-5">
               {currentDisclosure.fields.map((f) => {
-                const val = values[currentDisclosure.id]?.[f.id] ?? "";
+                const val = (derivedValues[currentDisclosure.id]?.[f.id] ?? values[currentDisclosure.id]?.[f.id]) ?? "";
+                const fieldError = currentValidationErrors[f.id];
+                const isAutoCalc = currentDisclosure.id === "B3" && f.id === "intensityRevenue" && derivedValues["B3"]?.["_intensityAuto"] === "true";
                 const commonLabel = (
                   <label className="viq-field-label block">
                     {f.label[locale]}
                     {f.unit ? <span className="ml-2 font-normal normal-case tracking-normal text-foreground/45">({f.unit})</span> : null}
+                    {isAutoCalc && (
+                      <span className="ml-2 text-[11px] font-normal text-primary">
+                        ({l.autoCalculated})
+                      </span>
+                    )}
                   </label>
                 );
                 return (
@@ -268,7 +353,9 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
                         value={val}
                         onChange={(e) => setField(currentDisclosure.id, f.id, e.target.value)}
                         rows={4}
-                        className="mt-2 block w-full border border-foreground/25 bg-transparent px-3 py-2 text-[14px] text-foreground outline-none transition focus:border-foreground"
+                        className={`mt-2 block w-full border bg-transparent px-3 py-2 text-[14px] text-foreground outline-none transition ${
+                          fieldError ? "border-destructive focus:border-destructive" : "border-foreground/25 focus:border-foreground"
+                        }`}
                       />
                     )}
                     {f.type === "shorttext" && (
@@ -276,7 +363,9 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
                         type="text"
                         value={val}
                         onChange={(e) => setField(currentDisclosure.id, f.id, e.target.value)}
-                        className="mt-2 block w-full max-w-md border border-foreground/25 bg-transparent px-3 py-2 text-[14px] text-foreground outline-none transition focus:border-foreground"
+                        className={`mt-2 block w-full max-w-md border bg-transparent px-3 py-2 text-[14px] text-foreground outline-none transition ${
+                          fieldError ? "border-destructive focus:border-destructive" : "border-foreground/25 focus:border-foreground"
+                        }`}
                       />
                     )}
                     {f.type === "number" && (
@@ -285,8 +374,15 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
                         inputMode="decimal"
                         value={val}
                         onChange={(e) => setField(currentDisclosure.id, f.id, e.target.value)}
-                        className="mt-2 block w-full max-w-xs border border-foreground/25 bg-transparent px-3 py-2 text-[14px] tabular-nums text-foreground outline-none transition focus:border-foreground"
+                        className={`mt-2 block w-full max-w-xs border bg-transparent px-3 py-2 text-[14px] tabular-nums text-foreground outline-none transition ${
+                          fieldError ? "border-destructive focus:border-destructive" : "border-foreground/25 focus:border-foreground"
+                        }`}
                       />
+                    )}
+                    {fieldError && (
+                      <p className="mt-1.5 text-[12px] font-medium text-destructive">
+                        {fieldError}
+                      </p>
                     )}
                     {f.type === "yesno" && (
                       <div className="mt-2 flex gap-2">
@@ -355,7 +451,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
                   </div>
                   <dl className="space-y-2">
                     {d.fields.map((f) => {
-                      const raw = values[d.id]?.[f.id] ?? "";
+                      const raw = (derivedValues[d.id]?.[f.id] ?? values[d.id]?.[f.id]) ?? "";
                       let display: string = raw;
                       if (f.type === "yesno") display = raw === "yes" ? l.yes : raw === "no" ? l.no : "";
                       if (f.type === "select" && f.options) {
@@ -401,7 +497,7 @@ export default function VsmeTemplateBuilder({ locale }: Props) {
           <button
             type="button"
             onClick={goNext}
-            disabled={step === totalSteps - 1}
+            disabled={step === totalSteps - 1 || hasBlockingErrors}
             className="viq-button inline-flex h-9 items-center border border-foreground bg-foreground px-4 text-background transition hover:bg-foreground/85 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {l.next} →

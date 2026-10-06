@@ -7,7 +7,7 @@
  * is the proof that an approval produced something a person can open.
  */
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useWorkspaceResource } from "@/components/app/console/workspace-store";
 import { ConsolePage, Plate, ConsoleTable, State, Empty } from "@/components/app/console/kit";

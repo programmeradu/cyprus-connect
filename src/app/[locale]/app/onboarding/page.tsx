@@ -109,13 +109,25 @@ export default function OnboardingPage() {
     setFormError(null);
     try {
       // Company facts go through the one company record every page reads.
-      const saved = await writer.run("/api/console/company", {
+      const payload = { companyName: companyName.trim(), website: websiteDomain, industry, teamSize, country };
+      let saved = await writer.run("/api/console/company", {
         method: "PATCH",
-        body: { companyName: companyName.trim(), website: websiteDomain, industry, teamSize, country },
+        body: payload,
         invalidates: ["/api/console", "/api/users", "/api/analytics", "/api/leaderboard"],
       });
+
+      // Auto-retry once on transient network drop (F9)
       if (!saved) {
-        setFormError(writer.error ?? t("toasts.updateFail"));
+        await new Promise((r) => setTimeout(r, 400));
+        saved = await writer.run("/api/console/company", {
+          method: "PATCH",
+          body: payload,
+          invalidates: ["/api/console", "/api/users", "/api/analytics", "/api/leaderboard"],
+        });
+      }
+
+      if (!saved) {
+        setFormError(writer.error ?? t("toasts.updateCompanyFail"));
         return;
       }
       if (!(await finishAccount())) {

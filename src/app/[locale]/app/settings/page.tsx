@@ -3,7 +3,8 @@
 import { useState, useEffect, Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/lib/user-context";
-import { useSession } from "@/lib/auth-client";
+import { useSession, authClient } from "@/lib/auth-client";
+import { Link } from "@/i18n/navigation";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -41,7 +42,7 @@ function SettingsContent() {
   const { refreshCurrency } = useCurrency();
   const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<"profile" | "billing" | "notifications">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "billing" | "notifications" | "security">("profile");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -55,9 +56,16 @@ function SettingsContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [avatarStyle, setAvatarStyle] = useAvatarStyle();
 
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab === "billing") setActiveTab("billing");
+    if (tab === "billing" || tab === "notifications" || tab === "security") {
+      setActiveTab(tab);
+    }
   }, [searchParams]);
 
   const [notificationPrefs, setNotificationPrefs] = useState({
@@ -135,6 +143,12 @@ function SettingsContent() {
     const revenueEur = revenueText === "" ? null : Number(revenueText);
     if (revenueEur !== null && (!Number.isFinite(revenueEur) || revenueEur < 0)) {
       setFormError(t("x.revenueError"));
+      setIsSaving(false);
+      return;
+    }
+    const trimmedWebsite = website.trim();
+    if (trimmedWebsite && !normalizeDomain(trimmedWebsite)) {
+      setFormError(t("x.websiteError"));
       setIsSaving(false);
       return;
     }
@@ -216,10 +230,43 @@ function SettingsContent() {
     }
   };
 
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    if (newPassword.length < 8) {
+      setPasswordError(t("passwordLength"));
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError(t("passwordMismatch"));
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const { error } = await authClient.updatePassword(newPassword);
+      if (error) {
+        setPasswordError(error.message || t("passwordUpdateFail"));
+        toast.error(error.message || t("passwordUpdateFail"));
+      } else {
+        toast.success(t("passwordUpdated"));
+        setNewPassword("");
+        setConfirmPassword("");
+      }
+    } catch (err) {
+      console.error("Password update error:", err);
+      setPasswordError(t("passwordUpdateFail"));
+      toast.error(t("passwordUpdateFail"));
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
   const tabs = [
     { key: "profile" as const, label: t("tabProfile") },
     { key: "billing" as const, label: t("tabBilling") },
-    { key: "notifications" as const, label: t("tabNotifications") }
+    { key: "notifications" as const, label: t("tabNotifications") },
+    { key: "security" as const, label: t("tabSecurity") }
   ];
 
   return (
@@ -274,12 +321,19 @@ function SettingsContent() {
                     inputMode="url"
                     autoComplete="url"
                     value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
+                    onChange={(e) => {
+                      setWebsite(e.target.value);
+                      if (formError === t("x.websiteError")) setFormError(null);
+                    }}
                     placeholder="acme.com.cy"
-                    className={`${inputClass} min-w-0 flex-1`}
+                    className={`${inputClass} min-w-0 flex-1 ${formError === t("x.websiteError") ? "border-destructive focus:ring-destructive/30" : ""}`}
                   />
                 </div>
-                <p className="vck-meta mt-1.5">{t("x.websiteHelp")}</p>
+                {formError === t("x.websiteError") ? (
+                  <p role="alert" className="text-xs text-destructive mt-1.5 font-medium">{formError}</p>
+                ) : (
+                  <p className="vck-meta mt-1.5">{t("x.websiteHelp")}</p>
+                )}
               </div>
               {company.data && (company.data.country || "CY") === "CY" && (
                 <RegistryLink registry={company.data.registry ?? null} companyName={company.data.companyName || ""} />
@@ -289,14 +343,39 @@ function SettingsContent() {
                   <label className="vck-label block mb-1.5" htmlFor="company-industry">{t("industry")}</label>
                   <select id="company-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} className={inputClass}>
                     <option value="">{t("selectIndustry")}</option>
-                    <option value="technology">{t("industries.technology")}</option>
-                    <option value="manufacturing">{t("industries.manufacturing")}</option>
-                    <option value="retail">{t("industries.retail")}</option>
-                    <option value="hospitality">{t("industries.hospitality")}</option>
-                    <option value="healthcare">{t("industries.healthcare")}</option>
-                    <option value="finance">{t("industries.finance")}</option>
+                    {(
+                      [
+                        "technology",
+                        "manufacturing",
+                        "construction",
+                        "wholesale",
+                        "retail",
+                        "logistics",
+                        "hospitality",
+                        "food",
+                        "agriculture",
+                        "services",
+                        "healthcare",
+                        "finance",
+                      ] as const
+                    ).map((k) => (
+                      <option key={k} value={k}>{t(`industries.${k}` as any)}</option>
+                    ))}
                     {industry &&
-                      !["technology", "manufacturing", "retail", "hospitality", "healthcare", "finance"].includes(industry) && (
+                      ![
+                        "technology",
+                        "manufacturing",
+                        "construction",
+                        "wholesale",
+                        "retail",
+                        "logistics",
+                        "hospitality",
+                        "food",
+                        "agriculture",
+                        "services",
+                        "healthcare",
+                        "finance",
+                      ].includes(industry) && (
                         <option value={industry}>{industry}</option>
                       )}
                   </select>
@@ -417,9 +496,9 @@ function SettingsContent() {
           <Section title={t("dangerZone")}>
             <div className="vck-card p-4 border-[var(--destructive)]">
               <p className="text-sm text-muted-foreground mb-4">{t("dangerBody")}</p>
-              <button className="vck-btn border-[var(--destructive)] text-[var(--destructive)]">
+              <Link href="/app/settings/privacy" className="vck-btn border-[var(--destructive)] text-[var(--destructive)] inline-block">
                 {t("deleteAccount")}
-              </button>
+              </Link>
             </div>
           </Section>
         </>
@@ -472,6 +551,93 @@ function SettingsContent() {
             </div>
           )}
         </Section>
+      )}
+
+      {activeTab === "security" && (
+        <>
+          <Section title={t("changePassword")} description={t("security")}>
+            <div className="vck-card p-4">
+              <form onSubmit={handlePasswordUpdate} className="space-y-4 max-w-md">
+                <div>
+                  <label className="vck-label block mb-1.5" htmlFor="new-password">
+                    {t("newPassword")}
+                  </label>
+                  <input
+                    id="new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className={inputClass}
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    required
+                    minLength={8}
+                  />
+                </div>
+                <div>
+                  <label className="vck-label block mb-1.5" htmlFor="confirm-password">
+                    {t("confirmPassword")}
+                  </label>
+                  <input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={inputClass}
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    required
+                    minLength={8}
+                  />
+                </div>
+                {passwordError && (
+                  <p role="alert" className="text-sm text-destructive break-words">
+                    {passwordError}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  className="vck-btn vck-btn-primary"
+                  disabled={isUpdatingPassword || !newPassword || !confirmPassword}
+                >
+                  {isUpdatingPassword ? tc("saving") : t("updatePassword")}
+                </button>
+              </form>
+            </div>
+          </Section>
+
+          <Section title={t("sessionSecurity")}>
+            <div className="vck-card p-4 space-y-4">
+              <div className="vck-inset p-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">{session?.user?.email ?? user?.email ?? "Account session"}</p>
+                  <p className="vck-meta mt-0.5">
+                    {session?.user?.id ? `ID: ${session.user.id}` : "Signed in"}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await authClient.signOut();
+                    window.location.href = "/auth";
+                  }}
+                  className="vck-btn border-[var(--destructive)] text-[var(--destructive)]"
+                >
+                  {tc("signOut")}
+                </button>
+              </div>
+
+              <div>
+                <Link
+                  href="/app/settings/privacy"
+                  className="text-sm text-primary underline underline-offset-4 hover:opacity-80 inline-flex items-center gap-1.5"
+                >
+                  {t("privacyLink")} →
+                </Link>
+              </div>
+            </div>
+          </Section>
+        </>
       )}
     </PageShell>
   );

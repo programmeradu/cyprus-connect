@@ -68,6 +68,28 @@ const COPY = {
   },
 };
 
+const TOPIC_EL: Record<string, string> = {
+  "CBAM": "CBAM",
+  "Sustainability reporting": "Εκθέσεις βιωσιμότητας",
+  "EU Taxonomy": "Ευρωπαϊκή Ταξινομία",
+  "Due diligence": "Δέουσα επιμέλεια",
+  "Emissions trading": "Εμπορία εκπομπών",
+  "Greenhouse gases": "Αέρια θερμοκηπίου",
+  "Energy": "Ενέργεια",
+  "Batteries": "Μπαταρίες",
+  "Ecodesign and products": "Οικολογικός σχεδιασμός & προϊόντα",
+  "Packaging and waste": "Συσκευασία & απόβλητα",
+  "Deforestation": "Αποψίλωση δασών",
+  "Climate": "Κλίμα",
+};
+
+const ACT_EL: Record<string, string> = {
+  "Regulation": "Κανονισμός",
+  "Directive": "Οδηγία",
+  "Decision": "Απόφαση",
+  "Corrigendum": "Διορθωτικό",
+};
+
 const daysUntil = (iso: string, today: string) => Math.round((Date.parse(iso) - Date.parse(today)) / 86_400_000);
 
 /**
@@ -78,6 +100,8 @@ export function EuFeedPanel({ source }: { source: "ted" | "eurlex" }) {
   const lang = useLocale() === "el" ? "el" : "en";
   const c = COPY[lang];
   const fmtLocale = lang === "el" ? "el-CY" : "en-GB";
+  const topicLabel = (t: string) => (lang === "el" && TOPIC_EL[t] ? TOPIC_EL[t] : t);
+  const actLabel = (a: string | null) => (a && lang === "el" && ACT_EL[a] ? ACT_EL[a] : a);
   const [greenOnly, setGreenOnly] = useState(true);
   const [topic, setTopic] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -116,7 +140,7 @@ export function EuFeedPanel({ source }: { source: "ted" | "eurlex" }) {
             <>
               <button type="button" className={chip(topic === null)} aria-pressed={topic === null} onClick={() => setTopic(null)}>{c.allTopics} · {feed.data.items.length}</button>
               {topics.slice(0, 6).map(([t, n]) => (
-                <button key={t} type="button" className={chip(topic === t)} aria-pressed={topic === t} onClick={() => setTopic(t)}>{t} · {n}</button>
+                <button key={t} type="button" className={chip(topic === t)} aria-pressed={topic === t} onClick={() => setTopic(t)}>{topicLabel(t)} · {n}</button>
               ))}
             </>
           )}
@@ -149,7 +173,7 @@ export function EuFeedPanel({ source }: { source: "ted" | "eurlex" }) {
                     <p className="vck-meta mt-1 break-words">
                       {source === "ted"
                         ? [i.buyer, i.valueEur ? `${c.est} ${money(i.valueEur)}` : null, i.green ? c.green : null].filter(Boolean).join(" · ")
-                        : [i.actType, ...i.topics].filter(Boolean).join(" · ")}
+                        : [actLabel(i.actType), ...i.topics.map(topicLabel)].filter(Boolean).join(" · ")}
                     </p>
                   </div>
                   <div className="shrink-0 sm:text-right">

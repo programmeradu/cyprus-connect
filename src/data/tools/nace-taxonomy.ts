@@ -33,6 +33,8 @@ export type TaxonomyActivity = {
   el: { name: string; description: string };
   /** Objectives the activity can substantially contribute to. */
   objectives: TaxonomyObjective[];
+  /** Search aliases or keywords (e.g. hotel, hospitality, cloud) */
+  aliases?: string[];
 };
 
 export const ACTIVITIES: TaxonomyActivity[] = [
@@ -84,6 +86,7 @@ export const ACTIVITIES: TaxonomyActivity[] = [
     en: { name: "Installation of energy efficiency equipment in buildings", description: "Installation, maintenance and repair of energy-efficient technologies (insulation, windows, heat pumps)." },
     el: { name: "Εγκατάσταση εξοπλισμού ενεργειακής απόδοσης", description: "Εγκατάσταση, συντήρηση, επισκευή τεχνολογιών ενεργ. απόδοσης." },
     objectives: ["CCM", "CCA"],
+    aliases: ["hotel", "hospitality", "ξενοδοχείο", "ξενοδοχεία", "hvac", "heat pump", "insulation"],
   },
   {
     nace: "F43.21",
@@ -98,6 +101,7 @@ export const ACTIVITIES: TaxonomyActivity[] = [
     en: { name: "Acquisition and ownership of buildings", description: "Buying real estate and exercising ownership over that real estate; EPC A or top 15% of stock." },
     el: { name: "Αγορά και ιδιοκτησία κτιρίων", description: "Αγορά ακινήτου και άσκηση ιδιοκτησίας· EPC A ή top 15%." },
     objectives: ["CCM", "CCA"],
+    aliases: ["hotel", "hospitality", "ξενοδοχείο", "ξενοδοχεία", "real estate", "premises"],
   },
   {
     nace: "H49.10, H49.20",
@@ -156,11 +160,12 @@ export const ACTIVITIES: TaxonomyActivity[] = [
     objectives: ["CCM"],
   },
   {
-    nace: "J61",
+    nace: "J63.11",
     ref: "CCM 8.1",
     en: { name: "Data processing, hosting and related activities", description: "Storage, manipulation, management, movement, control, display of data with adherence to the European Code of Conduct for Data Centre Energy Efficiency." },
     el: { name: "Επεξεργασία δεδομένων, φιλοξενία", description: "Data-centre λειτουργίες βάσει EU CoC for Data Centre Energy Efficiency." },
     objectives: ["CCM", "CCA"],
+    aliases: ["cloud", "hosting", "data center", "datacenter", "servers"],
   },
   {
     nace: "E36.00",

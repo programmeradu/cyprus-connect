@@ -88,6 +88,7 @@ export async function runCbamAgent(rt: AgentRuntime, now = new Date()): Promise<
         supplierName,
         contactName: contact.contactName,
         importerName: info.importerName,
+        signatoryName: info.signatoryName,
         lines: draft.lines,
         dueDate: draft.dueDate,
       });

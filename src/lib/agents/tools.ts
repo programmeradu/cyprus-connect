@@ -18,9 +18,12 @@ import {
   metricDefinitions,
   metricReadings,
   obligations,
+  user,
   workspaceFacts,
+  workspaces,
 } from "@/db/schema";
 import { sendEmail } from "@/lib/email/send";
+import { eacBills } from "@/lib/integrations/eac.server";
 import type { RiskLevel } from "./policy";
 import { INTEGRATION_TOOLS } from "./tools-integrations";
 import { FUNDING_TOOLS } from "./tools-funding";
@@ -56,22 +59,34 @@ export const readMetrics = tool({
   description: "Latest reading date and value for every metric in the workspace.",
   input: z.object({}),
   run: async (ctx) => {
-    const [defs, readings] = await Promise.all([
+    const [defs, readings, [ws]] = await Promise.all([
       db.select().from(metricDefinitions).orderBy(asc(metricDefinitions.sortOrder)),
       db
         .select()
         .from(metricReadings)
         .where(eq(metricReadings.workspaceId, ctx.workspaceId))
         .orderBy(asc(metricReadings.periodStart)),
+      db.select({ ownerUserId: workspaces.ownerUserId }).from(workspaces).where(eq(workspaces.id, ctx.workspaceId)).limit(1),
     ]);
-    const latest = new Map<string, { periodStart: string; value: number; count: number }>();
-    for (const r of readings) {
-      const prev = latest.get(r.metricKey);
-      latest.set(r.metricKey, {
-        periodStart: r.periodStart,
-        value: r.value,
+    const latest = new Map<string, { periodStart: string; value: number; count: number; nonZero: boolean }>();
+    const note = (key: string, periodStart: string, value: number) => {
+      const prev = latest.get(key);
+      const newer = !prev || periodStart >= prev.periodStart;
+      latest.set(key, {
+        periodStart: newer ? periodStart : prev!.periodStart,
+        value: newer ? value : prev!.value,
         count: (prev?.count ?? 0) + 1,
+        nonZero: (prev?.nonZero ?? false) || value > 0,
       });
+    };
+    for (const r of readings) note(r.metricKey, r.periodStart, r.value);
+    // Kept EAC bills are the evidence for electricity and energy spend, whichever door they came through.
+    if (ws?.ownerUserId) {
+      const bills = await eacBills(ws.ownerUserId).catch(() => []);
+      for (const b of bills) {
+        note("electricity_kwh", b.periodStart, b.kwh);
+        if (b.amountEur != null) note("cost_eur", b.periodStart, b.amountEur);
+      }
     }
     return defs.map((d) => ({
       key: d.key,
@@ -79,6 +94,7 @@ export const readMetrics = tool({
       unit: d.unit,
       latestPeriod: latest.get(d.key)?.periodStart ?? null,
       readings: latest.get(d.key)?.count ?? 0,
+      everNonZero: latest.get(d.key)?.nonZero ?? false,
     }));
   },
 });
@@ -286,7 +302,7 @@ export const readCbamSuppliers = tool({
   description: "Supplier contacts, the declarant profile, recent supplier requests and open email approvals for one year.",
   input: z.object({ year: z.number().int().min(2026).max(2100) }),
   run: async (ctx, input) => {
-    const [contacts, [declarant], sent, open] = await Promise.all([
+    const [contacts, [declarant], sent, open, [ws]] = await Promise.all([
       db.select().from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ctx.workspaceId)),
       db.select().from(cbamDeclarants).where(eq(cbamDeclarants.workspaceId, ctx.workspaceId)).limit(1),
       db
@@ -304,7 +320,27 @@ export const readCbamSuppliers = tool({
             eq(agentTasks.pendingTool, "send_supplier_request"),
           ),
         ),
+      db
+        .select({ name: workspaces.name, legalName: workspaces.legalName, ownerUserId: workspaces.ownerUserId })
+        .from(workspaces)
+        .where(eq(workspaces.id, ctx.workspaceId))
+        .limit(1),
     ]);
+
+    let ownerUser: { name: string; email: string; companyName: string | null } | null = null;
+    if (ws?.ownerUserId) {
+      const [u] = await db
+        .select({ name: user.name, email: user.email, companyName: user.companyName })
+        .from(user)
+        .where(eq(user.id, ws.ownerUserId))
+        .limit(1);
+      ownerUser = u ?? null;
+    }
+
+    const importerName = declarant?.legalName || ws?.legalName || ws?.name || ownerUser?.companyName || null;
+    const replyTo = declarant?.replyToEmail || ownerUser?.email || null;
+    const signatoryName = ownerUser?.name || null;
+
     const lastSent: Record<string, string> = {};
     for (const s of sent) if (!lastSent[s.supplierName]) lastSent[s.supplierName] = s.sentAt.toISOString();
     const openRequests = open.flatMap((t) => {
@@ -319,8 +355,9 @@ export const readCbamSuppliers = tool({
     });
     return {
       contacts: contacts.flatMap((c) => (c.email ? [{ supplierName: c.supplierName, email: c.email, contactName: c.contactName }] : [])),
-      importerName: declarant?.legalName ?? null,
-      replyTo: declarant?.replyToEmail ?? null,
+      importerName,
+      signatoryName,
+      replyTo,
       lastSent,
       openRequests,
     };
@@ -347,6 +384,29 @@ export const withdrawApprovalRequest = tool({
       )
       .returning({ id: agentTasks.id });
     return { withdrawn: rows.length === 1 };
+  },
+});
+
+export const closeEvidenceTask = tool({
+  name: "close_evidence_task",
+  risk: 1,
+  description: "Close this agent's own open evidence request because the evidence is now on file or no longer applies.",
+  input: z.object({ title: z.string().min(3).max(200), reason: z.string().min(3).max(300) }),
+  run: async (ctx, input) => {
+    const rows = await db
+      .update(agentTasks)
+      .set({ status: "withdrawn", result: `Closed by the agent: ${input.reason}` })
+      .where(
+        and(
+          eq(agentTasks.workspaceId, ctx.workspaceId),
+          eq(agentTasks.agentKey, ctx.agentKey),
+          eq(agentTasks.status, "open"),
+          eq(agentTasks.kind, "evidence"),
+          eq(agentTasks.title, input.title),
+        ),
+      )
+      .returning({ id: agentTasks.id });
+    return { closed: rows.length };
   },
 });
 
@@ -397,6 +457,7 @@ export const TOOLS = {
   sign_cbam_declaration: signCbamDeclaration,
   read_cbam_suppliers: readCbamSuppliers,
   withdraw_approval_request: withdrawApprovalRequest,
+  close_evidence_task: closeEvidenceTask,
   send_supplier_request: sendSupplierRequest,
   ...INTEGRATION_TOOLS,
   ...FUNDING_TOOLS,

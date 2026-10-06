@@ -382,6 +382,10 @@ export async function createSaltEdgeConnectSession(
   try {
     const customerId = await ensureSaltEdgeCustomer(cfg, workspaceId);
 
+    const cancelUrl = returnUrl.includes("status=connected")
+      ? returnUrl.replace("status=connected", "status=cancelled")
+      : `${returnUrl}&status=cancelled`;
+
     const payload: Record<string, unknown> = {
       customer_id: customerId,
       consent: {
@@ -389,6 +393,7 @@ export async function createSaltEdgeConnectSession(
       },
       attempt: {
         return_to: returnUrl,
+        cancel_to: cancelUrl,
       },
     };
 

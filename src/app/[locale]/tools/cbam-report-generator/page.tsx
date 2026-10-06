@@ -54,15 +54,15 @@ const COPY = {
   en: {
     methodologyHeading: "How the report is built",
     methodologyIntro:
-      "Every goods line multiplies the reported quantity by an embedded-emission factor (direct and indirect) and, if entered, deducts the effective carbon price already paid in the country of origin. Default factors are the European Commission's transitional-period fallbacks; from January 2026 only actual verified data is accepted. The XML export mirrors the Transitional Registry data model so you can validate the shape before you file.",
+      "Every goods line multiplies the reported quantity by an embedded-emission factor (direct and indirect) and, if entered, deducts the effective carbon price already paid in the country of origin. Default factors follow Implementing Regulations (EU) 2025/2620 & 2025/2621 (definitive regime default values with secondary data +10% mark-up). From 2026, the definitive regime governs imports, requiring annual declarations by 30 September 2027 while quarterly monitoring ensures continuous customs compliance.",
     methodology: [
-      { label: "Legal basis", value: "Regulation (EU) 2023/956 (CBAM) · Commission Implementing Regulation (EU) 2023/1773 · Annex I in-scope CN codes." },
+      { label: "Legal basis", value: "Regulation (EU) 2023/956 (CBAM) · Implementing Regulations (EU) 2025/2620 & (EU) 2025/2621 (definitive regime) · Annex I in-scope CN codes." },
       { label: "Sectors covered", value: "Cement, iron & steel, aluminium, fertilisers, hydrogen, electricity - the six in-scope Annex I sectors." },
-      { label: "Default embedded emissions", value: "DG TAXUD default values, February 2024 update. Permitted only during the transitional period (until 31 Dec 2025 for most goods)." },
-      { label: "Reporting periodicity", value: "Quarterly during the transitional period (submitted within one month of quarter-end); annual CBAM declaration from 31 May 2027 for 2026 imports." },
+      { label: "Default embedded emissions", value: "Official EU definitive defaults (IR 2025/2621 as corrected by 2026/1740) with standard +10% secondary-data mark-up for 2026+ imports." },
+      { label: "Reporting periodicity", value: "Quarterly tracking for ongoing imports; first definitive annual CBAM declaration due 30 September 2027 for 2026 imports (Regulation (EU) 2025/2620)." },
       { label: "Indirect emissions", value: "In scope for cement, fertilisers, hydrogen and - from 2026 - some iron & steel goods per Annex III." },
       { label: "Effective carbon price", value: "Deducted per Article 9 - must be evidenced by a verified statement from the country of origin's carbon-pricing authority." },
-      { label: "XML shape", value: "Aligns with the CBAM Transitional Registry quarterly report data model (v1). Draft namespace - do not submit directly; upload via the official Registry." },
+      { label: "XML shape", value: "Aligns with the CBAM Registry declaration data model. Draft namespace - do not submit directly; upload via the official Registry." },
       { label: "Storage", value: "All values stay in your browser. Nothing is uploaded to Vuneli." },
     ] as MethodologyItem[],
     workedExampleHeading: "A Cyprus construction group importing rebar and cement",
@@ -87,15 +87,15 @@ const COPY = {
   el: {
     methodologyHeading: "Πώς κατασκευάζεται η αναφορά",
     methodologyIntro:
-      "Κάθε γραμμή εμπορευμάτων πολλαπλασιάζει την ποσότητα με τους συντελεστές ενσωματωμένων εκπομπών (άμεσων και έμμεσων) και αφαιρεί την πραγματική τιμή άνθρακα που καταβλήθηκε στη χώρα προέλευσης. Οι προεπιλεγμένες τιμές ισχύουν μόνο στη μεταβατική περίοδο· από τον Ιανουάριο 2026 απαιτούνται πραγματικά επαληθευμένα δεδομένα.",
+      "Κάθε γραμμή εμπορευμάτων πολλαπλασιάζει την ποσότητα με τους συντελεστές ενσωματωμένων εκπομπών (άμεσων και έμμεσων) και αφαιρεί την πραγματική τιμή άνθρακα που καταβλήθηκε στη χώρα προέλευσης. Οι προεπιλεγμένες τιμές ακολουθούν τους Εκτελεστικούς Κανονισμούς (ΕΕ) 2025/2620 & 2025/2621 (οριστικό καθεστώς με προσαύξηση +10% για δευτερογενή δεδομένα). Από το 2026, η πρώτη ετήσια δήλωση υποβάλλεται έως τις 30 Σεπτεμβρίου 2027.",
     methodology: [
-      { label: "Νομική βάση", value: "Κανονισμός (ΕΕ) 2023/956 · Εκτελεστικός Κανονισμός (ΕΕ) 2023/1773 · CN κωδικοί Annex I." },
+      { label: "Νομική βάση", value: "Κανονισμός (ΕΕ) 2023/956 · Εκτελεστικοί Κανονισμοί (ΕΕ) 2025/2620 & 2025/2621 (οριστικό καθεστώς) · CN κωδικοί Annex I." },
       { label: "Τομείς", value: "Τσιμέντο, σίδηρος & χάλυβας, αλουμίνιο, λιπάσματα, υδρογόνο, ηλεκτρισμός." },
-      { label: "Προεπιλεγμένες τιμές", value: "DG TAXUD default values, Φεβ 2024 - μόνο μεταβατική περίοδος." },
-      { label: "Περιοδικότητα", value: "Τριμηνιαία στη μεταβατική περίοδο· ετήσια δήλωση από 31 Μαΐου 2027." },
+      { label: "Προεπιλεγμένες τιμές", value: "Επίσημες προεπιλογές ΕΕ (ΕΚ 2025/2621 όπως διορθώθηκε με τον 2026/1740) με προσαύξηση +10% για το 2026+." },
+      { label: "Περιοδικότητα", value: "Τριμηνιαία παρακολούθηση· πρώτη ετήσια δήλωση οριστικού καθεστώτος έως 30 Σεπτεμβρίου 2027 για εισαγωγές 2026." },
       { label: "Έμμεσες εκπομπές", value: "Στο πεδίο για τσιμέντο, λιπάσματα, υδρογόνο." },
       { label: "Τιμή άνθρακα", value: "Άρθρο 9 - απαιτείται επαληθευμένη δήλωση από τη χώρα προέλευσης." },
-      { label: "Δομή XML", value: "Ευθυγραμμισμένη με το μοντέλο δεδομένων του Transitional Registry v1." },
+      { label: "Δομή XML", value: "Ευθυγραμμισμένη με το μοντέλο δεδομένων δηλώσεων CBAM." },
       { label: "Αποθήκευση", value: "Όλα τα δεδομένα παραμένουν στο πρόγραμμα περιήγησής σας." },
     ] as MethodologyItem[],
     workedExampleHeading: "Κυπριακός όμιλος κατασκευών με εισαγωγές χάλυβα και τσιμέντου",

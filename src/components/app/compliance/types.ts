@@ -33,7 +33,7 @@ export interface Settings {
   emailNotifications: boolean;
 }
 
-export const DEFAULT_JURISDICTIONS = ["European Union", "Global"];
+export const DEFAULT_JURISDICTIONS = ["Cyprus", "European Union", "Global"];
 
 /** Whole days from now to a date; negative when past. */
 export function daysUntil(date: string, now = Date.now()): number {

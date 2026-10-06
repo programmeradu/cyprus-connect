@@ -24,7 +24,7 @@ export async function GET() {
     const [grid, months, compliance] = await Promise.all([
       gridToday(country),
       footprintMonths(account.id),
-      complianceSummary(account.id),
+      complianceSummary(workspace.id),
     ]);
     return NextResponse.json({
       country,

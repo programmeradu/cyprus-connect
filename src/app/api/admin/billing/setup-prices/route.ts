@@ -23,9 +23,11 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/** Admin only. Lets the Plan page know to show the admin tools. */
+/** Check admin status. Lets the Plan page know if admin tools should be shown without a noisy 403. */
 export async function GET(req: NextRequest) {
   const admin = await requireAdmin(req);
-  if (!admin.ok) return admin.response;
+  if (!admin.ok) {
+    return NextResponse.json({ admin: false, mode: null }, { headers: { 'Cache-Control': 'no-store' } });
+  }
   return NextResponse.json({ admin: true, mode: currentStripeMode() }, { headers: { 'Cache-Control': 'no-store' } });
 }

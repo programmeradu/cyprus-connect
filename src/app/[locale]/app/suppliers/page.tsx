@@ -78,10 +78,15 @@ function AddSupplier({ onDone }: { onDone: (msg: string) => void }) {
   const [err, setErr] = useState<string | null>(null);
   if (!open) return <Btn variant="primary" onClick={() => setOpen(true)}>{t("add")}</Btn>;
   const save = async () => {
+    const trimmedEmail = f.email.trim();
+    if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setErr(t("invalidEmail"));
+      return;
+    }
     setBusy(true);
     setErr(null);
     try {
-      await workspaceRequest(PATH, { method: "PUT", body: { name: f.name, email: f.email || null, contactName: f.contactName || null, source: "manual" } });
+      await workspaceRequest(PATH, { method: "PUT", body: { name: f.name.trim(), email: trimmedEmail || null, contactName: f.contactName.trim() || null, source: "manual" } });
       invalidateWorkspace([PATH, "/api/console/cbam"]);
       onDone(t("addedMsg", { name: f.name.trim() }));
       setF({ name: "", email: "", contactName: "" });
@@ -181,13 +186,19 @@ function SupplierRow({ s, onMsg }: { s: Supplier; onMsg: (msg: string, tone?: "g
       setBusy(null);
     }
   };
-  const save = () =>
+  const save = () => {
+    const trimmedEmail = f.email.trim();
+    if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      onMsg(t("invalidEmail"), "warn");
+      return;
+    }
     run("save", async () => {
-      await workspaceRequest(PATH, { method: "PUT", body: { name: s.name, email: f.email || null, contactName: f.contactName || null, notes: f.notes || null, source: s.saved ? undefined : "cbam" } });
+      await workspaceRequest(PATH, { method: "PUT", body: { name: s.name, email: trimmedEmail || null, contactName: f.contactName.trim() || null, notes: f.notes.trim() || null, source: s.saved ? undefined : "cbam" } });
       invalidateWorkspace([PATH, "/api/console/cbam"]);
       setEdit(false);
       return t("savedMsg", { name: s.name });
     });
+  };
   const wiki = () =>
     run("wiki", async () => {
       const r = await workspaceRequest<{ found: boolean }>(PATH, { method: "POST", body: { action: "check_wikirate", name: s.name } });

@@ -4,6 +4,7 @@
  * the project then asks the person (or their installer) for the figure.
  */
 import { REFERENCE_FACTORS } from "@/lib/emissions/reference-factors";
+import { OFFICIAL_DIESEL_FACTOR, FACTOR_REGISTRY } from "@/lib/factors/registry";
 
 export interface SourcedValue {
   value: number;
@@ -33,11 +34,11 @@ export const ACTION_CONSTANTS = {
   },
   /** Diesel, average biofuel blend, per litre. */
   dieselKgPerLitre: {
-    value: 2.51,
+    value: OFFICIAL_DIESEL_FACTOR,
     unit: "kg CO2e/litre",
-    source: "UK DEFRA GHG conversion factors, diesel (average biofuel blend)",
-    url: "https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting",
-    vintage: "2024",
+    source: FACTOR_REGISTRY["fuel-diesel-litre"].sourceAuthority,
+    url: FACTOR_REGISTRY["fuel-diesel-litre"].sourceUrl,
+    vintage: FACTOR_REGISTRY["fuel-diesel-litre"].vintage,
   },
   /**
    * Yearly output of a rooftop PV system in Cyprus. PVGIS gives roughly

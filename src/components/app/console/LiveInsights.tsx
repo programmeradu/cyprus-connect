@@ -103,8 +103,8 @@ export function LiveInsights() {
               />
             </MetricRow>
             <div className="vck-card p-4 mt-4">
-              <div className="h-56">
-                <ResponsiveContainer width="100%" height="100%">
+              <div className="h-56 min-h-[14rem] w-full">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
                   <AreaChart data={gridChart} margin={{ left: -12, right: 4, top: 4, bottom: 0 }}>
                     <defs>
                       <linearGradient id="gridFill" x1="0" y1="0" x2="0" y2="1">
@@ -156,8 +156,8 @@ export function LiveInsights() {
             </MetricRow>
             {months.length > 1 && (
               <div className="vck-card p-4 mt-4">
-                <div className="h-56">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div className="h-56 min-h-[14rem] w-full">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={200}>
                     <BarChart data={monthChart} margin={{ left: -12, right: 4, top: 4, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--vc-rule-soft)" />
                       <XAxis dataKey="label" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} minTickGap={8} />

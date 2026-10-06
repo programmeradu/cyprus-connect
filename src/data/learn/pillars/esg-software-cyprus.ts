@@ -22,7 +22,7 @@ export const esgSoftwareCyprus = makePillar({
     {
       "heading": "Cyprus-specific requirements",
       "body": [
-        "EAC grid emission factor: as of 2025 published data, roughly 0.66 kgCO2e/kWh — one of the highest in the EU due to heavy fuel oil generation. Any tool that defaults to an EU average will materially understate your Scope 2.",
+        "EAC grid emission factor: as of 2024 official EEA / Cyprus National Inventory data, 0.622 kgCO2e/kWh — one of the highest in the EU due to heavy fuel oil generation. Any tool that defaults to an EU average will materially understate your Scope 2.",
         "Bilingual reporting (Greek and English): required for many domestic disclosures and helpful for both Registrar submissions and international counterparties.",
         "Awareness of Cypriot public-interest entities: banks, insurers, and listed shipping/hospitality groups are the CSRD Wave 1 and 2 cohort locally."
       ]

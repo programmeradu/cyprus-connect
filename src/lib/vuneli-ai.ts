@@ -1,23 +1,20 @@
 /**
- * Lovable AI Gateway client.
+ * Vuneli AI Client.
  *
- * One place for every model call in this app. The gateway is OpenAI
- * compatible and authenticates with LOVABLE_API_KEY, which Lovable
- * provisions for this project. No Google key is necessary.
+ * One place for every model call in this app. Text and multimodal vision
+ * route directly to Groq (https://api.groq.com/openai/v1) using GROQ_API_KEY.
  *
  * Server side only. Never import this file from a browser component.
  */
 
-const GATEWAY = "https://ai.gateway.lovable.dev/v1";
-
 /** Text and reasoning. */
-export const CHAT_MODEL = "google/gemini-2.5-flash";
+export const CHAT_MODEL = "openai/gpt-oss-120b";
 /** Longer analysis where quality is more important than speed. */
-export const CHAT_MODEL_PRO = "google/gemini-2.5-pro";
-/** Image generation and image editing. */
-export const IMAGE_MODEL = "google/gemini-2.5-flash-image";
-/** Text embeddings. */
-export const EMBEDDING_MODEL = "openai/text-embedding-3-small";
+export const CHAT_MODEL_PRO = "openai/gpt-oss-120b";
+/** Image generation model placeholder. */
+export const IMAGE_MODEL = "image-model";
+/** Text embeddings model placeholder. */
+export const EMBEDDING_MODEL = "embedding-model";
 
 export class AiGatewayError extends Error {
   status: number;
@@ -29,74 +26,60 @@ export class AiGatewayError extends Error {
 }
 
 /* ---------------------------------------------------------------- providers
- * Text work (chat, Verde, agents, translations, rule reading) goes to Groq
- * when GROQ_API_KEY is set, else to the Lovable gateway. Image generation and
- * embeddings exist only on the Lovable gateway. Bill reading prefers the
- * Lovable gateway (reads scanned PDFs); with Groq only, photos go to Groq's
- * vision model and PDFs are turned into text by code first.
+ * Text work (chat, Verde, agents, translations, rule reading) and vision
+ * (bill photos) go directly to Groq.
  */
 
 const GROQ = "https://api.groq.com/openai/v1";
 /** Groq text model: tool calling, strict JSON schema, 131k context. */
 export const GROQ_TEXT_MODEL = "openai/gpt-oss-120b";
-/** Groq model that can look at pictures (bill photos). */
-export const GROQ_VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+/** Groq model that can look at pictures (bill photos). Per console.groq.com/docs/vision;
+ *  llama-3.2-11b-vision-preview is decommissioned and returns 400. */
+export const GROQ_VISION_MODEL = process.env.GROQ_VISION_MODEL || "qwen/qwen3.8-27b";
 
-type Provider = "groq" | "lovable";
+type Provider = "groq";
 
 function groqKey(): string | undefined {
   return process.env.GROQ_API_KEY || undefined;
 }
-function lovableKey(): string | undefined {
-  return process.env.LOVABLE_API_KEY || undefined;
-}
 
 /** Chat, Verde, agents, translations and rule reading can run. */
 export function hasTextAi(): boolean {
-  return Boolean(groqKey() || lovableKey());
+  return Boolean(groqKey());
 }
 /** Bills and documents can be read (photos and PDFs). */
 export function hasDocumentAi(): boolean {
-  return Boolean(groqKey() || lovableKey());
+  return Boolean(groqKey());
 }
-/** Image generation and editing can run (Lovable gateway only). */
+/** Image generation is disabled without active image service. */
 export function hasImageAi(): boolean {
-  return Boolean(lovableKey());
+  return false;
 }
-/** Embeddings can run (Lovable gateway only). */
+/** Embeddings are disabled without active embedding service. */
 export function hasEmbeddingAi(): boolean {
-  return Boolean(lovableKey());
+  return false;
 }
-/** @deprecated Use hasTextAi / hasDocumentAi / hasImageAi / hasEmbeddingAi. */
+/** @deprecated Kept for backward compatibility. */
 export function hasLovableAi(): boolean {
-  return Boolean(lovableKey());
+  return false;
 }
 
 function textProvider(): Provider {
   if (groqKey()) return "groq";
-  if (lovableKey()) return "lovable";
   throw new AiGatewayError(503, "AI is not configured on this deployment.");
-}
-
-function requireKey(): string {
-  const key = lovableKey();
-  if (!key) {
-    throw new AiGatewayError(503, "AI is not configured on this deployment.");
-  }
-  return key;
-}
-
-function headers(key: string): Record<string, string> {
-  return {
-    "Content-Type": "application/json",
-    "Lovable-API-Key": key,
-    "X-Lovable-AIG-SDK": "fetch",
-  };
 }
 
 /** Lovable model names map to the Groq text model; Groq names pass through. */
 function groqModel(model: string | undefined): string {
-  if (model && (model.startsWith("meta-llama/") || model === GROQ_TEXT_MODEL || model.startsWith("qwen/") || model.startsWith("moonshotai/"))) {
+  if (
+    model &&
+    (model.startsWith("llama-3.2-") ||
+      model.startsWith("meta-llama/") ||
+      model === GROQ_TEXT_MODEL ||
+      model === GROQ_VISION_MODEL ||
+      model.startsWith("qwen/") ||
+      model.startsWith("moonshotai/"))
+  ) {
     return model;
   }
   return process.env.GROQ_MODEL || GROQ_TEXT_MODEL;
@@ -150,21 +133,19 @@ interface ChatOptions {
 async function post(
   body: Record<string, unknown>,
   signal?: AbortSignal,
-  provider: Provider = textProvider(),
 ): Promise<Response> {
-  const groq = provider === "groq";
-  const payload = groq ? { ...body, model: groqModel(body.model as string | undefined) } : body;
-  const res = await fetch(`${groq ? GROQ : GATEWAY}/chat/completions`, {
+  const key = groqKey();
+  if (!key) throw new AiGatewayError(503, "AI is not configured on this deployment.");
+  const payload = { ...body, model: groqModel(body.model as string | undefined) };
+  const res = await fetch(`${GROQ}/chat/completions`, {
     method: "POST",
-    headers: groq
-      ? { "Content-Type": "application/json", Authorization: `Bearer ${groqKey()}` }
-      : headers(requireKey()),
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify(payload),
     signal,
   });
   if (!res.ok) {
     const detail = (await res.text()).slice(0, 400);
-    throw new AiGatewayError(res.status, `${groq ? "Groq" : "AI gateway"} ${res.status}: ${detail}`);
+    throw new AiGatewayError(res.status, `Groq ${res.status}: ${detail}`);
   }
   return res;
 }
@@ -195,23 +176,16 @@ export async function aiChatRaw(
   temperature?: number,
   model: string = CHAT_MODEL,
 ): Promise<string> {
-  // Documents prefer the Lovable gateway, which reads scanned PDFs natively.
-  if (lovableKey()) {
-    const res = await post({ model, messages, ...(temperature !== undefined ? { temperature } : {}) }, undefined, "lovable");
-    const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
-    return data.choices?.[0]?.message?.content ?? "";
-  }
   if (!groqKey()) throw new AiGatewayError(503, "AI is not configured on this deployment.");
 
   const prepared = await prepareForGroq(messages);
   const res = await post(
     {
-      model: prepared.hasImage ? GROQ_VISION_MODEL : GROQ_TEXT_MODEL,
+      model: prepared.hasImage ? GROQ_VISION_MODEL : groqModel(model),
       messages: prepared.messages,
       ...(temperature !== undefined ? { temperature } : {}),
     },
     undefined,
-    "groq",
   );
   const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
   return data.choices?.[0]?.message?.content ?? "";
@@ -356,62 +330,19 @@ export interface ImageInput {
  * style. The answer is a PNG data URL.
  */
 export async function aiImage(
-  prompt: string,
-  images: ImageInput[] = [],
-  model: string = IMAGE_MODEL,
+  _prompt: string,
+  _images: ImageInput[] = [],
+  _model: string = IMAGE_MODEL,
 ): Promise<string> {
-  const parts: Array<Record<string, unknown>> = images.map((image) => ({
-    type: "image_url",
-    image_url: {
-      url: image.data.startsWith("data:")
-        ? image.data
-        : `data:${image.mimeType ?? "image/png"};base64,${image.data}`,
-    },
-  }));
-  parts.push({ type: "text", text: prompt });
-
-  const res = await post(
-    {
-      model,
-      modalities: ["image", "text"],
-      messages: [{ role: "user", content: parts }],
-    },
-    undefined,
-    "lovable",
-  );
-
-  const data = (await res.json()) as {
-    choices?: Array<{
-      message?: { images?: Array<{ image_url?: { url?: string } }>; content?: string };
-    }>;
-  };
-  const url = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-  if (!url) {
-    throw new AiGatewayError(502, "The AI service returned no image.");
-  }
-  return url;
+  throw new AiGatewayError(503, "Image generation is not configured on this deployment.");
 }
 
 /** Embeddings for one or more texts. */
 export async function aiEmbed(
-  input: string[],
-  dimensions?: number,
+  _input: string[],
+  _dimensions?: number,
 ): Promise<number[][]> {
-  const res = await fetch(`${GATEWAY}/embeddings`, {
-    method: "POST",
-    headers: headers(requireKey()),
-    body: JSON.stringify({
-      model: EMBEDDING_MODEL,
-      input,
-      ...(dimensions ? { dimensions } : {}),
-    }),
-  });
-  if (!res.ok) {
-    const detail = (await res.text()).slice(0, 400);
-    throw new AiGatewayError(res.status, `AI gateway ${res.status}: ${detail}`);
-  }
-  const data = (await res.json()) as { data?: Array<{ embedding: number[] }> };
-  return (data.data ?? []).map((row) => row.embedding);
+  throw new AiGatewayError(503, "Embeddings are not configured on this deployment.");
 }
 
 /* ------------------------------------------------------------- tool calling */
@@ -479,103 +410,38 @@ export async function aiResponsesJson<T>(options: {
   schema: Record<string, unknown>;
   signal?: AbortSignal;
 }): Promise<T | null> {
-  if (textProvider() === "groq") {
-    const res = await post(
-      {
-        model: GROQ_TEXT_MODEL,
-        reasoning_effort: "low",
-        messages: [
-          { role: "system", content: options.system },
-          { role: "user", content: options.user },
-        ],
-        response_format: {
-          type: "json_schema",
-          json_schema: { name: options.schemaName, schema: options.schema, strict: true },
-        },
-      },
-      options.signal,
-      "groq",
-    );
-    const data = (await res.json()) as {
-      choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }>;
-    };
-    const message = data.choices?.[0]?.message;
-    if (!message?.content || message.refusal) return null;
-    return parseJsonAnswer<T>(message.content);
-  }
-  const res = await fetch(`${GATEWAY}/responses`, {
-    method: "POST",
-    headers: headers(requireKey()),
-    signal: options.signal,
-    body: JSON.stringify({
-      model: RESPONSES_MODEL,
-      stream: true,
-      store: false,
-      reasoning: { effort: "low" },
-      input: [
+  const res = await post(
+    {
+      model: GROQ_TEXT_MODEL,
+      reasoning_effort: "low",
+      messages: [
         { role: "system", content: options.system },
         { role: "user", content: options.user },
       ],
-      text: { format: { type: "json_schema", name: options.schemaName, schema: options.schema, strict: true } },
-    }),
-  });
-  if (!res.ok) {
-    const detail = (await res.text()).slice(0, 400);
-    throw new AiGatewayError(res.status, `AI gateway ${res.status}: ${detail}`);
-  }
-  if (!res.body) return null;
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let text = "";
-  let refused = false;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("data:")) continue;
-      const payload = trimmed.slice(5).trim();
-      if (!payload || payload === "[DONE]") continue;
-      try {
-        const ev = JSON.parse(payload) as { type?: string; delta?: string; response?: { error?: { message?: string } } };
-        if (ev.type === "response.output_text.delta" && ev.delta) text += ev.delta;
-        else if (ev.type === "response.refusal.delta") refused = true;
-        else if (ev.type === "response.failed" || ev.type === "error") {
-          throw new AiGatewayError(502, ev.response?.error?.message ?? "The AI run failed.");
-        }
-      } catch (e) {
-        if (e instanceof AiGatewayError) throw e;
-      }
-    }
-  }
-  if (refused || !text) return null;
-  return parseJsonAnswer<T>(text);
+      response_format: {
+        type: "json_schema",
+        json_schema: { name: options.schemaName, schema: options.schema, strict: true },
+      },
+    },
+    options.signal,
+  );
+  const data = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string | null; refusal?: string | null } }>;
+  };
+  const message = data.choices?.[0]?.message;
+  if (!message?.content || message.refusal) return null;
+  return parseJsonAnswer<T>(message.content);
 }
 
 /* ------------------------------------------------------- AI SDK model factory */
 
 /**
  * The text model as an AI SDK language model, for streamed tool-using chat
- * (Verde). Same switch as every other text call: Groq when keyed, else the
- * Lovable gateway. Create it inside the request; env is read per call.
+ * (Verde). Configured directly on Groq.
  */
 export async function textLanguageModel() {
   const groq = groqKey();
-  if (groq) {
-    const { createGroq } = await import("@ai-sdk/groq");
-    return { provider: "groq" as const, model: createGroq({ apiKey: groq })(process.env.GROQ_MODEL || GROQ_TEXT_MODEL) };
-  }
-  const key = lovableKey();
-  if (!key) throw new AiGatewayError(503, "AI is not configured on this deployment.");
-  const { createOpenAICompatible } = await import("@ai-sdk/openai-compatible");
-  const lovable = createOpenAICompatible({
-    name: "lovable",
-    baseURL: GATEWAY,
-    headers: { "Lovable-API-Key": key, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
-  });
-  return { provider: "lovable" as const, model: lovable(CHAT_MODEL) };
+  if (!groq) throw new AiGatewayError(503, "AI is not configured on this deployment.");
+  const { createGroq } = await import("@ai-sdk/groq");
+  return { provider: "groq" as const, model: createGroq({ apiKey: groq })(process.env.GROQ_MODEL || GROQ_TEXT_MODEL) };
 }

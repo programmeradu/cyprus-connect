@@ -71,7 +71,7 @@ const COPY = {
     faqHeading: "Double materiality, answered",
     faq: [
       { q: "What is double materiality?", a: "A topic is material if it meets either an impact test (the company's impact on people and the environment is significant) OR a financial test (the topic creates a risk or opportunity that affects the company's development, performance or position). Under ESRS, either is enough." },
-      { q: "Do I need this for CSRD?", a: "Yes. ESRS 1 §3 makes the double materiality assessment the entry point for the entire CSRD report. Everything you disclose under E1–G1 flows from what your assessment identifies as material." },
+      { q: "Do I need this for CSRD?", a: "For large undertakings and listed companies within CSRD scope, yes — ESRS 1 §3 makes double materiality mandatory before any topical standard (E1–G1) is reported. However, for non-listed SMEs adopting voluntary standards (VSME), double materiality is optional; non-listed SMEs can complete the Basic module without a double materiality assessment." },
       { q: "Is 2.5 the right threshold?", a: "There is no legally required threshold - EFRAG deliberately left it open. 2.5 on a 0–5 scale is a common starting point. What matters is that your threshold rationale is documented and applied consistently across all topics. The assessment is auditable; the threshold logic is what auditors ask about first." },
       { q: "What if a topic is only impact-material?", a: "It is material - the assessment must cover the E1–G1 disclosures for it. That is the point of double materiality: environmental and social impacts that do not affect financial position still trigger disclosure obligations." },
       { q: "Do I have to score all ten ESRS topics?", a: "No - you can conclude a topic is not material after screening. But under ESRS 2 §54, you must document why. This tool's Monitor column is your evidence trail for non-material topics." },
@@ -104,7 +104,7 @@ const COPY = {
     faqHeading: "Συχνές ερωτήσεις",
     faq: [
       { q: "Τι είναι η διπλή ουσιαστικότητα;", a: "Ένα θέμα είναι ουσιώδες αν πληροί είτε το τεστ επίπτωσης (σημαντική επίπτωση σε ανθρώπους/περιβάλλον) είτε το οικονομικό (κίνδυνος/ευκαιρία για την επιχείρηση)." },
-      { q: "Το χρειάζομαι για CSRD;", a: "Ναι - το ESRS 1 §3 το ορίζει ως αφετηρία όλης της αναφοράς CSRD." },
+      { q: "Το χρειάζομαι για CSRD;", a: "Για μεγάλες και εισηγμένες επιχειρήσεις που εμπίπτουν στο πεδίο CSRD, ναι — το ESRS 1 §3 το ορίζει ως υποχρεωτική αφετηρία. Ωστόσο, για μη εισηγμένες ΜμΕ που ακολουθούν το εθελοντικό πρότυπο VSME, η διπλή ουσιαστικότητα είναι προαιρετική· μπορούν να αναφέρουν μόνο τη Βασική Ενότητα (Basic Module)." },
       { q: "Είναι σωστό το κατώφλι 2,5;", a: "Δεν υπάρχει νομικά υποχρεωτικό κατώφλι. Το 2,5 σε κλίμακα 0–5 είναι κοινή αφετηρία. Τεκμηριώστε τη λογική και εφαρμόστε τη συνεπώς." },
       { q: "Τι γίνεται αν ένα θέμα είναι μόνο ουσιώδες στην επίπτωση;", a: "Είναι ουσιώδες - απαιτούνται οι αντίστοιχες αποκαλύψεις. Αυτός είναι ο σκοπός της διπλής ουσιαστικότητας." },
       { q: "Πρέπει να βαθμολογήσω και τα 10 ESRS θέματα;", a: "Όχι - μπορείτε να καταλήξετε ότι δεν είναι ουσιώδη μετά από έλεγχο. Αλλά το ESRS 2 §54 απαιτεί τεκμηρίωση." },

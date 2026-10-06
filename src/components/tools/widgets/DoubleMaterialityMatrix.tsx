@@ -287,14 +287,15 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
               <line x1={thrX} y1={PAD} x2={thrX} y2={SIZE - PAD} strokeDasharray="4 4" className="stroke-primary/60" />
               <line x1={PAD} y1={thrY} x2={SIZE - PAD} y2={thrY} strokeDasharray="4 4" className="stroke-primary/60" />
               {/* Gridlines */}
-              {[1, 2, 3, 4].map((g) => (
+              {/* Gridlines & ticks for 0 to 5 */}
+              {[0, 1, 2, 3, 4, 5].map((g) => (
                 <g key={g}>
-                  <line x1={scale(g)} y1={PAD} x2={scale(g)} y2={SIZE - PAD} className="stroke-foreground/10" />
-                  <line x1={PAD} y1={SIZE - scale(g)} x2={SIZE - PAD} y2={SIZE - scale(g)} className="stroke-foreground/10" />
-                  <text x={scale(g)} y={SIZE - PAD + 16} textAnchor="middle" className="fill-foreground/40 text-[10px] tabular-nums">
+                  <line x1={scale(g)} y1={PAD} x2={scale(g)} y2={SIZE - PAD} className={g === 0 || g === 5 ? "stroke-foreground/25" : "stroke-foreground/10"} />
+                  <line x1={PAD} y1={SIZE - scale(g)} x2={SIZE - PAD} y2={SIZE - scale(g)} className={g === 0 || g === 5 ? "stroke-foreground/25" : "stroke-foreground/10"} />
+                  <text x={scale(g)} y={SIZE - PAD + 16} textAnchor="middle" className="fill-foreground/45 text-[10px] tabular-nums font-medium">
                     {g}
                   </text>
-                  <text x={PAD - 8} y={SIZE - scale(g) + 3} textAnchor="end" className="fill-foreground/40 text-[10px] tabular-nums">
+                  <text x={PAD - 8} y={SIZE - scale(g) + 3} textAnchor="end" className="fill-foreground/45 text-[10px] tabular-nums font-medium">
                     {g}
                   </text>
                 </g>
@@ -306,25 +307,47 @@ export default function DoubleMaterialityMatrix({ locale }: Props) {
               <text x={-SIZE / 2} y={14} textAnchor="middle" transform="rotate(-90)" className="fill-foreground/65 text-[12px] font-semibold">
                 {l.axisFinancial}
               </text>
-              {/* Points */}
+              {/* Points & collision-offset labels */}
               {rows.map((r, i) => {
                 const cx = scale(r.impact);
                 const cy = SIZE - scale(r.financial);
                 const isActive = selected === r.id;
+
+                // Alternate or shift labels if near the right edge or to avoid nearby points
+                const isNearRightEdge = cx > SIZE - PAD - 55;
+                const textAnchor = isNearRightEdge ? "end" : "start";
+                const labelX = isNearRightEdge ? cx - 12 : cx + 12;
+                // Stagger vertical offset based on index and position to prevent overlapping text
+                const verticalStagger = (i % 2 === 0 ? -4 : 6);
+                const labelY = cy + verticalStagger;
+
                 return (
-                  <g key={r.id} className="cursor-pointer" onClick={() => setSelected(r.id)}>
+                  <g key={r.id} className="cursor-pointer group" onClick={() => setSelected(r.id)}>
                     <circle
                       cx={cx}
                       cy={cy}
-                      r={isActive ? 9 : 7}
-                      className={r.material ? "fill-primary/90" : "fill-foreground/30"}
-                      stroke="white"
+                      r={isActive ? 9 : 6.5}
+                      className={r.material ? "fill-primary/90" : "fill-foreground/40"}
+                      stroke="var(--background, #ffffff)"
                       strokeWidth={2}
                     />
+                    {/* Background badge for label legibility */}
                     <text
-                      x={cx + 12}
-                      y={cy + 4}
-                      className={`text-[12px] font-semibold tabular-nums ${isActive ? "fill-foreground" : "fill-foreground/60"}`}
+                      x={labelX}
+                      y={labelY}
+                      textAnchor={textAnchor}
+                      stroke="var(--background, #ffffff)"
+                      strokeWidth={3}
+                      strokeLinejoin="round"
+                      className="text-[11px] font-semibold tabular-nums opacity-90 select-none pointer-events-none"
+                    >
+                      {String(i + 1).padStart(2, "0")} {r.esrs}
+                    </text>
+                    <text
+                      x={labelX}
+                      y={labelY}
+                      textAnchor={textAnchor}
+                      className={`text-[11px] font-semibold tabular-nums select-none ${isActive ? "fill-primary font-bold" : "fill-foreground/80 group-hover:fill-foreground"}`}
                     >
                       {String(i + 1).padStart(2, "0")} {r.esrs}
                     </text>
