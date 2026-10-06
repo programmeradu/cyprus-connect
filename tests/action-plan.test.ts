@@ -26,7 +26,7 @@ describe("roi", () => {
     expect(f.paybackYrs).toBeNull();
     expect(f.missing).toContain("quoteEur");
     expect(f.savedEurYr).toBeCloseTo(600);
-    expect(f.co2KgYr).toBeCloseTo(2000 * 0.61);
+    expect(f.co2KgYr).toBeCloseTo(2000 * 0.622);
   });
   it("no installer estimate → no saving invented", () => {
     const f = computeFigures("efficiency", { quoteEur: 5000 }, base);

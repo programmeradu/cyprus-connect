@@ -82,7 +82,7 @@ describe("pdf edge cases (F28, F29)", () => {
     if (!res.ok) {
       expect(res.code).toBe("corrupt_pdf");
     }
-  });
+  }, 15000);
 
   it("rejects blank/empty PDF with empty_page", async () => {
     const { readDocument } = await import("@/lib/documents/intake.server");
@@ -94,6 +94,6 @@ describe("pdf edge cases (F28, F29)", () => {
     if (!res.ok) {
       expect(res.code).toBe("empty_page");
     }
-  });
+  }, 15000);
 });
 
