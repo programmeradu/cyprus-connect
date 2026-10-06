@@ -15,6 +15,7 @@
         "@headlessui/react": "^2.2.9",
         "@heroicons/react": "^2.2.0",
         "@hookform/resolvers": "^5.1.1",
+        "@jungherz-de/glasskit": "^1.19.1",
         "@myriaddreamin/typst-ts-web-compiler": "0.6.0",
         "@myriaddreamin/typst.ts": "0.6.0",
         "@number-flow/react": "^0.5.10",
@@ -645,6 +646,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@jungherz-de/glasskit": ["@jungherz-de/glasskit@1.21.2", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@jungherz-de/glasskit/-/glasskit-1.21.2.tgz", {}, "sha512-NK5cMGfDqOO3S5ZtNm3rr9fSjzjK+fv2Y2nQFpmjJ6Xe0DnFoxPuEytzMxOUQXmfaYyOxEF4V/qrOm+l0PwuEw=="],
 
     "@libsql/client": ["@libsql/client@0.15.15", "", { "dependencies": { "@libsql/core": "^0.15.14", "@libsql/hrana-client": "^0.7.0", "js-base64": "^3.7.5", "libsql": "^0.5.22", "promise-limit": "^2.7.0" } }, "sha512-twC0hQxPNHPKfeOv3sNT6u2pturQjLcI+CnpTM0SjRpocEGgfiZ7DWKXLNnsothjyJmDqEsBQJ5ztq9Wlu470w=="],
 
