@@ -144,6 +144,21 @@ export function purchaseCheck(evidence: { kind: string }[], candidates: number, 
   return { kind: "purchase", status: "needed", reason: bankLinked ? "upload_invoice" : "upload_invoice_no_bank" };
 }
 
+/** Supplier data is proven by an uploaded declaration/invoice or actual declared SEE figures in the registry. */
+export function supplierCheck(
+  evidence: { kind: string }[],
+  hasDeclaredData: boolean,
+  hasActiveRequest: boolean,
+): CheckResult {
+  if (evidence.some((e) => e.kind === "invoice" || e.kind === "supplier_declaration") || hasDeclaredData) {
+    return { kind: "supplier_data", status: "passed", reason: "data_on_file" };
+  }
+  if (hasActiveRequest) {
+    return { kind: "supplier_data", status: "waiting", reason: "request_sent_waiting" };
+  }
+  return { kind: "supplier_data", status: "needed", reason: "request_or_upload" };
+}
+
 export function allPassed(def: ProjectDef, checks: CheckResult[]): boolean {
   return def.checks.every((k) => checks.find((c) => c.kind === k)?.status === "passed");
 }

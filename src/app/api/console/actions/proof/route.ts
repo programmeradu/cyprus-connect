@@ -70,16 +70,23 @@ export async function POST(request: Request) {
         updatedAt: now,
       })
       .returning({ id: documents.id });
+    const kind = project.type === "supplier_data" ? "supplier_declaration" : "invoice";
     await db.insert(actionEvidence).values({
       projectId,
       workspaceId: ws.id,
-      kind: "invoice",
+      kind,
       documentId: doc.id,
       fileName: up.file.name.slice(0, 200),
       quotes: read.quotes,
       createdBy: s.session.account.id,
     });
-    await recordActivity(s.session, "added proof", `Action plan: ${project.type} project`, `Invoice read: ${read.quotes.supplier} · ${read.quotes.date} · “${read.quotes.item}”`);
+    await recordActivity(s.session, "added proof", `Action plan: ${project.type} project`, `${project.type === "supplier_data" ? "Declaration" : "Invoice"} read: ${read.quotes.supplier} · ${read.quotes.date} · “${read.quotes.item}”`);
+    try {
+      const { recheckActionPlan } = await import("@/lib/actions/projects.server");
+      await recheckActionPlan(s.session);
+    } catch {
+      // Non-blocking
+    }
     return NextResponse.json({ ok: true, quotes: read.quotes });
   } catch (e) {
     const ref = log.error("proof failed", e);

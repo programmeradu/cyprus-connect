@@ -101,6 +101,18 @@ export function computeFigures(type: ProjectType, inputs: ProjectInputs, base: U
     savedUnit = "litres";
     if (!savedQtyYr) missing.push("savedLitresYr");
     if (!savedEurYr) missing.push("savedEurYr");
+  } else if (type === "supplier_data") {
+    savedQtyYr = pos(inputs.savedKgCo2eYr);
+    savedUnit = null;
+    if (!savedQtyYr) missing.push("savedKgCo2eYr");
+    co2KgYr = savedQtyYr;
+    if (co2KgYr) {
+      basis.push({
+        label: "Primary supplier emissions reduction",
+        value: `${round(co2KgYr).toLocaleString("en-GB")} kg CO₂e/yr`,
+        source: inputs.supplierName ? `${inputs.supplierName} verified declaration` : "Supplier declaration on file",
+      });
+    }
   }
 
   if (savedQtyYr) {
@@ -114,14 +126,14 @@ export function computeFigures(type: ProjectType, inputs: ProjectInputs, base: U
       co2KgYr = savedQtyYr * C.dieselKgPerLitre.value;
       basis.push({ label: "Diesel factor", value: `${C.dieselKgPerLitre.value} ${C.dieselKgPerLitre.unit}`, source: `${C.dieselKgPerLitre.source}, ${C.dieselKgPerLitre.vintage}` });
     }
-    if (!savedEurYr && savedUnit !== "litres" && base?.unitPrice) savedEurYr = savedQtyYr * base.unitPrice;
+    if (!savedEurYr && savedUnit && savedUnit !== "litres" && base?.unitPrice) savedEurYr = savedQtyYr * base.unitPrice;
   }
 
-  const costEur = pos(inputs.quoteEur);
-  if (!costEur) missing.unshift("quoteEur");
+  const costEur = typeof inputs.quoteEur === "number" && Number.isFinite(inputs.quoteEur) && inputs.quoteEur >= 0 ? inputs.quoteEur : null;
+  if (costEur === null) missing.unshift("quoteEur");
   const grant = pos(inputs.grantEur) ?? 0;
   const netCostEur = costEur !== null ? Math.max(0, costEur - grant) : null;
-  const paybackYrs = netCostEur !== null && savedEurYr ? netCostEur / savedEurYr : null;
+  const paybackYrs = netCostEur !== null && savedEurYr ? (netCostEur === 0 ? 0 : netCostEur / savedEurYr) : null;
 
   return { savedQtyYr, savedUnit, savedEurYr, co2KgYr, costEur, netCostEur, paybackYrs, suggestedKwp, basis, missing };
 }

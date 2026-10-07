@@ -19,6 +19,7 @@ import { recordActivity } from "@/lib/activity.server";
 import { readJson } from "@/lib/validate";
 import { EAC_SOURCE, eacBills, type EacBill } from "@/lib/integrations/eac.server";
 import { WATER_SOURCE, waterBills, type WaterBill } from "@/lib/integrations/water.server";
+import { recheckActionPlan } from "@/lib/actions/projects.server";
 import type { IntakeProposal } from "@/lib/documents/intake";
 import { logger } from "@/lib/log";
 
@@ -91,6 +92,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         .where(mine);
     }
     await recordActivity(resolved.session, `added ${LABEL[kind]}`, row.fileName, stored.proposal?.description ?? null);
+    try {
+      await recheckActionPlan(resolved.session);
+    } catch (e) {
+      log.warn("action plan recheck deferred", { error: String(e) });
+    }
     return NextResponse.json({ ok: true });
   } catch (error) {
     const ref = log.error("intake decision failed", error);

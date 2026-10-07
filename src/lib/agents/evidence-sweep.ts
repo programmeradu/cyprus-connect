@@ -123,6 +123,16 @@ export async function runEvidenceSweep(rt: AgentRuntime, now = new Date()) {
     sourceHash: await sha256Hex(basis),
   });
 
+  try {
+    const { recheckActionPlan } = await import("@/lib/actions/projects.server");
+    await recheckActionPlan({
+      account: { id: rt.ctx.approvedBy ?? rt.ctx.agentKey, email: null, name: "Ledger agent" },
+      workspace: { id: rt.ctx.workspaceId },
+    });
+  } catch {
+    // Non-blocking
+  }
+
   return {
     summary: `Checked ${sourced.length} document-based metrics and ${open.length} obligations. ${stale.length} need new evidence, ${atRisk.length} obligations at risk. ${created} new tasks.`,
     itemsProcessed: sourced.length + open.length,

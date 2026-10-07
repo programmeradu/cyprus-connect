@@ -5,13 +5,13 @@
  */
 import { and, desc, eq, gte, inArray } from "drizzle-orm";
 import { db } from "@/db";
-import { actionEvidence, actionProjects, bankLinks, bankTransactions, fundingMatches, grantOpportunities } from "@/db/schema";
+import { actionEvidence, actionProjects, bankLinks, bankTransactions, cbamImportLines, cbamSupplierRequests, cbamSuppliers, fundingMatches, grantOpportunities } from "@/db/schema";
 import { eacBills } from "@/lib/integrations/eac.server";
 import { waterBills } from "@/lib/integrations/water.server";
 import { recordActivity, type ActivitySession } from "@/lib/activity.server";
 import { CATALOG, PROJECT_TYPES, type ProjectInputs, type ProjectType, type Stage } from "./catalog";
 import { baselineFrom, computeFigures, type Figures, type MeterBill, type UsageBaseline } from "./roi";
-import { allPassed, billDrop, paymentCandidates, purchaseCheck, type BankLine, type CheckResult } from "./verify";
+import { allPassed, billDrop, paymentCandidates, purchaseCheck, supplierCheck, type BankLine, type CheckResult } from "./verify";
 
 export interface FundingLink { id: number; title: string; url: string; verdict: string; deadline: string | null }
 
@@ -41,10 +41,11 @@ export interface ActionPlan {
 const ENERGY = /energ|solar|photovolta|renewab|efficien|heat pump|ενεργ|φωτοβολτα|εξοικονόμ|ανανεώσιμ/i;
 const WATER = /water|irrigat|νερ|ύδατ|άρδευ/i;
 const MOBILITY = /electric vehicle|e-?mobility|charging|ηλεκτροκίνη|φόρτισ/i;
+const SUPPLY = /supplier|supply chain|scope.?3|esg|value chain|προμηθευτ|εφοδιαστικ/i;
 
 async function inputsFor(ws: { id: string }, userId: string) {
   const since = new Date(Date.now() - 400 * 86_400_000).toISOString().slice(0, 10);
-  const [eac, water, links, lines, matches] = await Promise.all([
+  const [eac, water, links, lines, matches, suppliers, cbamLines, requests] = await Promise.all([
     eacBills(userId).catch(() => []),
     waterBills(userId).catch(() => []),
     db.select({ id: bankLinks.id, status: bankLinks.status }).from(bankLinks).where(eq(bankLinks.workspaceId, ws.id)),
@@ -59,6 +60,9 @@ async function inputsFor(ws: { id: string }, userId: string) {
       .from(fundingMatches)
       .innerJoin(grantOpportunities, eq(grantOpportunities.id, fundingMatches.opportunityId))
       .where(and(eq(fundingMatches.workspaceId, ws.id), inArray(fundingMatches.verdict, ["strong", "needs_info"]))),
+    db.select({ id: cbamSuppliers.id, supplierName: cbamSuppliers.supplierName }).from(cbamSuppliers).where(eq(cbamSuppliers.workspaceId, ws.id)),
+    db.select({ id: cbamImportLines.id, supplierName: cbamImportLines.supplierName, directSee: cbamImportLines.directSee, indirectSee: cbamImportLines.indirectSee }).from(cbamImportLines).where(eq(cbamImportLines.workspaceId, ws.id)),
+    db.select({ id: cbamSupplierRequests.id, supplierName: cbamSupplierRequests.supplierName }).from(cbamSupplierRequests).where(eq(cbamSupplierRequests.workspaceId, ws.id)),
   ]);
   const today = new Date().toISOString().slice(0, 10);
   const open = matches.filter((m) => !m.deadline || m.deadline.slice(0, 10) >= today);
@@ -68,11 +72,14 @@ async function inputsFor(ws: { id: string }, userId: string) {
     bankLinked: links.some((l) => l.status === "active"),
     lines: lines as (BankLine & { category: string })[],
     funding: open,
+    suppliers,
+    cbamLines,
+    supplierRequests: requests,
   };
 }
 
 function fundingFor(type: ProjectType, calls: Awaited<ReturnType<typeof inputsFor>>["funding"]): FundingLink[] {
-  const re = type === "water" ? WATER : type === "fleet" ? MOBILITY : ENERGY;
+  const re = type === "water" ? WATER : type === "fleet" ? MOBILITY : type === "supplier_data" ? SUPPLY : ENERGY;
   return calls
     .filter((c) => re.test(`${c.title} ${c.summary} ${c.program ?? ""}`))
     .sort((a, b) => (a.verdict === b.verdict ? 0 : a.verdict === "strong" ? -1 : 1))
@@ -98,6 +105,11 @@ export async function buildActionPlan(session: ActivitySession & { workspace: { 
   }
   if (src.water.length) triggers.water = { key: "water_bills", values: { bills: src.water.length, m3: Math.round(base.water.annual ?? 0) } };
   if (fuel.length) triggers.fleet = { key: "fuel_payments", values: { payments: fuel.length, eur: Math.round(fuel.reduce((n, l) => n + Math.abs(l.amount), 0)) } };
+  if (src.suppliers.length) {
+    triggers.supplier_data = { key: "suppliers_tracked", values: { suppliers: src.suppliers.length } };
+  } else if (src.cbamLines.length) {
+    triggers.supplier_data = { key: "cbam_imports", values: { imports: src.cbamLines.length } };
+  }
 
   const projects: PlanProject[] = [];
   for (const type of PROJECT_TYPES) {
@@ -111,8 +123,27 @@ export async function buildActionPlan(session: ActivitySession & { workspace: { 
     const myEv = ev.filter((e) => e.projectId === row?.id);
     const usedTx = new Set(ev.map((e) => e.bankTransactionId).filter(Boolean));
     const cands = row ? paymentCandidates(src.lines, inputs.supplierName, inputs.quoteEur, row.startedOn).filter((l) => !usedTx.has(l.id)) : [];
+    const sName = (inputs.supplierName ?? "").trim().toLowerCase();
+    const hasDeclared = Boolean(
+      sName &&
+        src.cbamLines.some(
+          (l) => l.supplierName.trim().toLowerCase() === sName && (l.directSee !== null || l.indirectSee !== null),
+        ),
+    );
+    const hasActiveReq = Boolean(
+      sName &&
+        src.supplierRequests.some(
+          (r) => r.supplierName.trim().toLowerCase() === sName,
+        ),
+    );
     const checks: CheckResult[] = row
-      ? def.checks.map((k) => (k === "purchase" ? purchaseCheck(myEv, cands.length, src.bankLinked) : billDrop(meterBills, row.installedOn)))
+      ? def.checks.map((k) =>
+          k === "purchase"
+            ? purchaseCheck(myEv, cands.length, src.bankLinked)
+            : k === "supplier_data"
+              ? supplierCheck(myEv, hasDeclared, hasActiveReq)
+              : billDrop(meterBills, row.installedOn),
+        )
       : [];
 
     let stage: Stage = row ? (row.stage as Stage) : "idea";
@@ -162,4 +193,9 @@ export async function buildActionPlan(session: ActivitySession & { workspace: { 
       confirmedCo2KgYr: confirmed.length ? confirmed.reduce((n, p) => n + (p.figures.co2KgYr ?? 0), 0) : null,
     },
   };
+}
+
+/** Re-evaluates action projects for a workspace, moving any with passed checks to confirmed. */
+export async function recheckActionPlan(session: ActivitySession & { workspace: { id: string; ownerUserId?: string | null } }): Promise<ActionPlan> {
+  return buildActionPlan(session);
 }

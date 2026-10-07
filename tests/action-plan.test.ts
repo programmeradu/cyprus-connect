@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CATALOG } from "@/lib/actions/catalog";
 import { baselineFrom, computeFigures, type MeterBill } from "@/lib/actions/roi";
-import { allPassed, billDrop, paymentCandidates, purchaseCheck, readProofText } from "@/lib/actions/verify";
+import { allPassed, billDrop, paymentCandidates, purchaseCheck, readProofText, supplierCheck } from "@/lib/actions/verify";
 
 const bill = (start: string, end: string, qty: number, amountEur: number | null = null): MeterBill => ({ start, end, qty, amountEur });
 const monthly = (year: number, qty: number, price = 0.3) =>
@@ -41,6 +41,18 @@ describe("roi", () => {
   });
   it("fleet needs both litres and euro saved", () => {
     expect(computeFigures("fleet", { savedLitresYr: 1000 }, null).missing).toContain("savedEurYr");
+  });
+  it("supplier_data accepts declared CO2 cut and handles free or costed quotes", () => {
+    const free = computeFigures("supplier_data", { savedKgCo2eYr: 1500, quoteEur: 0 }, null);
+    expect(free.co2KgYr).toBe(1500);
+    expect(free.costEur).toBe(0);
+    expect(free.netCostEur).toBe(0);
+    expect(free.missing).not.toContain("quoteEur");
+    expect(free.missing).not.toContain("savedKgCo2eYr");
+
+    const missingFig = computeFigures("supplier_data", {}, null);
+    expect(missingFig.missing).toContain("quoteEur");
+    expect(missingFig.missing).toContain("savedKgCo2eYr");
   });
 });
 
@@ -83,5 +95,12 @@ describe("verification", () => {
     expect(allPassed(CATALOG.fleet, [purchase])).toBe(true);
     expect(purchaseCheck([], 2, true).status).toBe("confirm");
     expect(purchaseCheck([], 0, false).status).toBe("needed");
+  });
+  it("supplier data check passes with document on file or declared registry data", () => {
+    expect(supplierCheck([{ kind: "supplier_declaration" }], false, false).status).toBe("passed");
+    expect(supplierCheck([], true, false).status).toBe("passed");
+    expect(supplierCheck([], false, true).status).toBe("waiting");
+    expect(supplierCheck([], false, false).status).toBe("needed");
+    expect(allPassed(CATALOG.supplier_data, [supplierCheck([], true, false)])).toBe(true);
   });
 });

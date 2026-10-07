@@ -1788,12 +1788,18 @@
         "fleet": {
           "title": "Electric or hybrid vehicles",
           "body": "Replace a fuel vehicle and pay less at the pump."
+        },
+        "supplier_data": {
+          "title": "Supplier emissions data",
+          "body": "Collect primary emissions data from key suppliers to replace default estimates with verified figures."
         }
       },
       "trigger": {
         "electricity_bills": "Based on {bills} electricity bills ({kwh} kWh a year)",
         "water_bills": "Based on {bills} water bills ({m3} m³ a year)",
         "fuel_payments": "Based on {payments} fuel payments in your bank (€{eur})",
+        "suppliers_tracked": "Based on {suppliers} suppliers in your records",
+        "cbam_imports": "Based on {imports} imported goods in your CBAM records",
         "started": "Started by you"
       },
       "suggestedKwp": "About {kwp} kWp would cover your yearly use.",
@@ -1817,6 +1823,7 @@
         "savedM3Yr": "Water saved a year (m³)",
         "savedLitresYr": "Fuel saved a year (litres)",
         "savedEurYr": "Money saved a year (€)",
+        "savedKgCo2eYr": "Projected CO₂ cut from supplier decarbonisation (kg/yr)",
         "save": "Save figures",
         "saved": "Figures saved.",
         "locked": "Figures are locked once a project is confirmed."
@@ -1836,6 +1843,7 @@
         "title": "How Vuneli checks it",
         "purchase": "Proof of purchase",
         "bill_drop": "Lower bills after installation",
+        "supplier_data": "Supplier data on file",
         "status": {
           "passed": "Passed",
           "waiting": "Waiting",
@@ -1853,9 +1861,13 @@
           "need_bills_after": "Waiting for bills after installation: {after} of {needed}.",
           "need_bills_before": "Vuneli needs last year's bills for the same months to compare: {matched} of {needed} found. Upload them on Add data.",
           "drop_seen": "Daily use fell {dropPct}% against the same months last year ({beforeDaily} → {afterDaily} a day).",
-          "no_drop_yet": "No drop seen yet: {dropPct}% against the same months last year. Vuneli keeps checking each new bill."
+          "no_drop_yet": "No drop seen yet: {dropPct}% against the same months last year. Vuneli keeps checking each new bill.",
+          "data_on_file": "Primary emissions data or verified declaration on file",
+          "request_sent_waiting": "Data request sent to supplier; waiting for figures",
+          "request_or_upload": "Send a data request from Suppliers or upload their declaration PDF"
         },
         "upload": "Upload invoice (PDF)",
+        "uploadDeclaration": "Upload declaration (PDF)",
         "uploading": "Reading…",
         "accepted": "Invoice accepted.",
         "refused": "Vuneli could not confirm this file. Missing: {list}. It was not saved.",

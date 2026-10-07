@@ -105,7 +105,7 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: (next
       invalidateWorkspace([PATH]);
       const nextStage: Stage =
         p.stage === "being_checked"
-          ? p.checks.filter((c) => c.kind !== "purchase").every((c) => c.status === "passed")
+          ? p.checks.filter((c) => c.kind !== "purchase" && c.kind !== "supplier_data").every((c) => c.status === "passed")
             ? "confirmed"
             : "being_checked"
           : p.stage;
@@ -241,11 +241,11 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: (next
                           ))}
                         </ul>
                       )}
-                      {kind === "purchase" && status !== "passed" && !locked && (
+                      {(kind === "purchase" || kind === "supplier_data") && status !== "passed" && !locked && (
                         <div className="mt-2">
                           <input ref={fileRef} type="file" accept="application/pdf" className="sr-only" id={`proof-${p.type}`} onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])} />
                           <label htmlFor={`proof-${p.type}`} className={`vck-btn inline-flex cursor-pointer ${busy ? "pointer-events-none opacity-60" : ""}`} aria-disabled={busy !== null}>
-                            {busy === "upload" ? t("proof.uploading") : t("proof.upload")}
+                            {busy === "upload" ? t("proof.uploading") : kind === "supplier_data" ? t("proof.uploadDeclaration") : t("proof.upload")}
                           </label>
                         </div>
                       )}

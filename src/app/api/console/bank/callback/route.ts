@@ -76,6 +76,12 @@ export async function GET(request: NextRequest) {
   try {
     const r = await syncLink(active);
     await logBankEvent(workspace.id, who, "read", `${r.read} payment(s) from the last 90 days`);
+    try {
+      const { recheckActionPlan } = await import("@/lib/actions/projects.server");
+      await recheckActionPlan({ account, workspace });
+    } catch {
+      // Non-blocking background recheck
+    }
     return back(request, "connected");
   } catch (error) {
     log.error("first read failed", error);

@@ -4,14 +4,14 @@
  * it confirmed. Browser-safe: no server imports.
  */
 
-export const PROJECT_TYPES = ["solar", "efficiency", "water", "fleet"] as const;
+export const PROJECT_TYPES = ["solar", "efficiency", "water", "fleet", "supplier_data"] as const;
 export type ProjectType = (typeof PROJECT_TYPES)[number];
 
 export const STAGES = ["idea", "under_way", "being_checked", "confirmed"] as const;
 export type Stage = (typeof STAGES)[number];
 
-/** purchase = invoice read by Vuneli or a bank payment the person confirmed; bill_drop = later bills fall. */
-export type CheckKind = "purchase" | "bill_drop";
+/** purchase = invoice read by Vuneli or a bank payment the person confirmed; bill_drop = later bills fall; supplier_data = declared figure on file. */
+export type CheckKind = "purchase" | "bill_drop" | "supplier_data";
 
 export interface ProjectInputs {
   supplierName?: string | null;
@@ -29,13 +29,15 @@ export interface ProjectInputs {
   savedLitresYr?: number | null;
   /** Yearly euro saved when it cannot be worked out from bills (fleet). */
   savedEurYr?: number | null;
+  /** Yearly CO2 cut from supplier primary data or decarbonisation, kg (supplier_data). */
+  savedKgCo2eYr?: number | null;
 }
 
 export type InputKey = keyof ProjectInputs;
 
 export interface ProjectDef {
   type: ProjectType;
-  /** Which bills show the result; null = no meter (checked by purchase only). */
+  /** Which bills show the result; null = no meter (checked by purchase or declaration only). */
   meter: "electricity" | "water" | null;
   checks: CheckKind[];
   /** Figures the card asks for, in order. */
@@ -72,6 +74,13 @@ export const CATALOG: Record<ProjectType, ProjectDef> = {
     checks: ["purchase"],
     inputs: ["supplierName", "quoteEur", "grantEur", "savedLitresYr", "savedEurYr"],
     proofWords: /electric|\bev\b|hybrid|charger|charging|wallbox|ηλεκτρικ|υβριδικ|φορτιστ|φόρτισ/i,
+  },
+  supplier_data: {
+    type: "supplier_data",
+    meter: null,
+    checks: ["supplier_data"],
+    inputs: ["supplierName", "quoteEur", "grantEur", "savedKgCo2eYr"],
+    proofWords: /declaration|emissions|carbon|footprint|scope.?3|\bpcf\b|\bghg\b|certificate|supplier|δήλωση|εκπομπ|ανθρακ|πιστοποιητ|προμηθευτ/i,
   },
 };
 
