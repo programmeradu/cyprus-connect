@@ -192,5 +192,6 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 - [ ] Signed-in check of Add data on vuneli.com with a real bill and statement
 
 ## Action plan rebuild (plan: Action plan costed projects + proof)
-- [ ] Approve plan, then build: schema, catalog/maths, verification, page, dossier
+- [x] Action plan rebuild: costed projects from bills, proof checks (invoice + bill drop), stage tabs, dossier PDF
+- [ ] Live: run scripts/sql/0043_action_projects.sql (founder)
 - [x] Compliance > Documents downloads the designed report PDF instead of a .md text file
