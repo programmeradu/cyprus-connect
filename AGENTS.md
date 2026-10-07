@@ -25,3 +25,4 @@ Scoped rules: `src/lib/agents/AGENTS.md` (agent runtime, approvals, CBAM), `src/
 - Model calls go only through `src/lib/vuneli-ai.ts` (text and vision: Groq); gate features with `hasTextAi`/`hasDocumentAi`/`hasImageAi`/`hasEmbeddingAi`. Why: one switch.
 - All /app document uploads go through one intake reader (`src/lib/documents/`, `/api/console/documents/intake`); nothing is saved until the person confirms. Why: one door, no silent or duplicate figures.
 - Stripe: own account, one `STRIPE_SECRET_KEY` (prefix = test/live), webhook `/api/public/payments/webhook` dedupes via `stripe_events`; plan lists match built features. Why: no client-chosen mode, no unkept promises.
+- Decarbonisation projects live in `action_projects`/`action_evidence`, built and checked by `src/lib/actions/`; see `src/lib/actions/AGENTS.md`. Why: one evidence-backed plan, no tick-box completion.

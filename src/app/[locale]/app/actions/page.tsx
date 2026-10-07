@@ -128,7 +128,7 @@ export default function ActionsPage() {
         ) : (
           <div className="flex flex-col gap-4">
             {shown.map((p) => (
-              <ProjectCard key={`${p.type}-${p.id ?? "idea"}-${p.stage}`} p={p} onChanged={(next) => { if (next) setChosen(next); plan.reload(); }} />
+              <ProjectCard key={`${p.type}-${p.id ?? "idea"}-${p.stage}`} p={p} onChanged={(next) => { setChosen(next ?? null); plan.reload(); }} />
             ))}
           </div>
         )}
