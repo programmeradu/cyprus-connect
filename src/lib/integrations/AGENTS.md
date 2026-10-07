@@ -1,0 +1,3 @@
+# Integration rules
+
+- Utility bills (EAC, water) arrive by upload or by forwarding to a per-account `<token>@BILL_INBOX_DOMAIN` (Cloudflare Email Routing → worker `email` handler → `/api/public/inbound/bill-email`); both paths use the same readers, and bills are matched to bank payments in `src/lib/integrations/bill-match.ts`. Outbound transactional emails and agent notifications dispatch via Cloudflare Email Sending on the dedicated subdomain `notify.vuneli.com` (`notifications@notify.vuneli.com`), keeping the apex domain `vuneli.com` free and decoupled for personal/business mailboxes. Why: these boards have no API so email + bank are the automatic sources; isolating outbound email protects the apex domain's reputation and MX records.

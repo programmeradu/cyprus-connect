@@ -370,3 +370,6 @@ What to do:
 4. Buy Pro with test card 4242 4242 4242 4242; check the Plan page shows Pro and an invoice.
 5. Swap in the live keys in Cloudflare and press the button once more.
 - 2026-10-03 live check: prices exist, VAT handling on (CY), checkout opens (card only). Still missing: webhook endpoint (none in Stripe), SEPA off, no VAT registration added in Stripe Tax. Code now takes payment methods from the Stripe dashboard.
+
+## Action plan (projects with proof)
+- Run `scripts/sql/0043_action_projects.sql` on the production database before publishing (already applied to the preview database).
