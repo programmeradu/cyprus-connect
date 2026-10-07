@@ -1220,4 +1220,24 @@ export const inboundQuestionnaires = pgTable('inbound_questionnaires', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Hospitality profiles and Hotel Carbon Measurement Initiative (HCMI) metrics (scripts/sql/0046). */
+export const hospitalityProfiles = pgTable('hospitality_profiles', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull().unique().references(() => workspaces.id, { onDelete: 'cascade' }),
+  propertyName: text('property_name').notNull(),
+  hotelCategory: text('hotel_category').notNull().default('4-star'),
+  totalRooms: integer('total_rooms').notNull().default(50),
+  annualOccupiedRooms: integer('annual_occupied_rooms').notNull().default(12000),
+  annualGuestNights: integer('annual_guest_nights').notNull().default(24000),
+  hasPool: boolean('has_pool').notNull().default(true),
+  hasRestaurant: boolean('has_restaurant').notNull().default(true),
+  hasSpa: boolean('has_spa').notNull().default(false),
+  hasLaundryOnSite: boolean('has_laundry_on_site').notNull().default(true),
+  ecoLabel: text('eco_label'),
+  tourOperatorPartners: text('tour_operator_partners'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+
 

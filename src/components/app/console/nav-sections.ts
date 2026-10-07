@@ -94,6 +94,8 @@ const NAV_EL: Record<string, string> = {
   "Upload EAC bills, water bills, fuel receipts, invoices": "Μεταφόρτωση λογαριασμών ΑΗΚ, νερού, αποδείξεων καυσίμων, τιμολογίων",
   "Questionnaires": "Ερωτηματολόγια",
   "Inbound customer ESG questionnaires": "Εισερχόμενα ερωτηματολόγια ESG πελατών",
+  "Hospitality Pack": "Πακέτο Φιλοξενίας",
+  "HCMI hotel carbon, water & tour operator compliance": "HCMI άνθρακας, νερό ξενοδοχείων & συμμόρφωση tour operators",
   "Loading the workspace": "Φόρτωση χώρου εργασίας",
   "Signed in": "Συνδεδεμένος",
 };
