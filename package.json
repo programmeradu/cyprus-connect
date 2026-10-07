@@ -43,6 +43,7 @@
     "@jungherz-de/glasskit": "^1.19.1",
     "@myriaddreamin/typst-ts-web-compiler": "0.6.0",
     "@myriaddreamin/typst.ts": "0.6.0",
+    "@noble/ciphers": "^1.3.0",
     "@number-flow/react": "^0.5.10",
     "@paystack/inline-js": "^2.22.7",
     "@radix-ui/react-accordion": "^1.2.11",

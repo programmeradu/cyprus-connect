@@ -22,7 +22,17 @@ function Fig({ label, value, missing }: { label: string; value: string | null; m
   return (
     <div className="min-w-0">
       <dt className="vck-meta">{label}</dt>
-      <dd className={`mt-0.5 break-words ${value ? "vck-num text-[0.9375rem] font-semibold" : "text-sm text-muted-foreground"}`}>{value ?? missing}</dd>
+      <dd className={`mt-0.5 break-words ${value ? "vck-num text-[0.9375rem] font-semibold" : "text-sm text-muted-foreground"}`}>
+        {value ? (
+          value
+        ) : (
+          <>
+            <span className="hidden sm:inline">{missing}</span>
+            <span className="sm:hidden text-muted-foreground/60 select-none" aria-hidden="true">—</span>
+            <span className="sr-only sm:hidden">{missing}</span>
+          </>
+        )}
+      </dd>
     </div>
   );
 }
@@ -93,7 +103,13 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: (next
       }
       toast.success(t("proof.accepted"));
       invalidateWorkspace([PATH]);
-      onChanged();
+      const nextStage: Stage =
+        p.stage === "being_checked"
+          ? p.checks.filter((c) => c.kind !== "purchase").every((c) => c.status === "passed")
+            ? "confirmed"
+            : "being_checked"
+          : p.stage;
+      onChanged(nextStage);
     } catch (e) {
       toast.error(e instanceof WorkspaceRequestError ? e.message : t("errors.generic"));
     } finally {
@@ -104,6 +120,7 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: (next
 
   const unit = f.savedUnit === "kWh" ? "kWh" : f.savedUnit === "m3" ? "m³" : f.savedUnit === "litres" ? "L" : "";
   const triggerText = t(`trigger.${p.trigger.key}` as never, Object.fromEntries(Object.entries(p.trigger.values).map(([k, v]) => [k, num(v)])) as never);
+  const hasMissing = f.costEur === null || f.netCostEur === null || f.savedEurYr === null || f.co2KgYr === null || f.paybackYrs === null;
 
   return (
     <article className="vck-card flex flex-col gap-5 p-5" aria-labelledby={`proj-${p.type}`}>
@@ -126,6 +143,9 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: (next
         <Fig label={t("fig.co2")} value={f.co2KgYr !== null ? `${num(f.co2KgYr / 1000, 1)} t` : null} missing={t("fig.missing")} />
         <Fig label={t("fig.payback")} value={f.paybackYrs !== null ? `${num(f.paybackYrs, 1)} ${t("summary.years")}` : null} missing={t("fig.missing")} />
       </dl>
+      {hasMissing && (
+        <p className="vck-meta -mt-2 text-xs sm:hidden">{t("fig.missing")}</p>
+      )}
 
       <details className="group">
         <summary className="vck-meta cursor-pointer select-none font-medium text-foreground">{t("basis.title")}</summary>
