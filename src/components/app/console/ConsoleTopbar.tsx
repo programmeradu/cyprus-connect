@@ -47,6 +47,7 @@ export const NAV_ITEMS = [
  */
 export const MORE_ITEMS = [
   { href: "/app/passport", label: "VSME Passport", detail: "Share verified ESG disclosures with buyers and banks" },
+  { href: "/app/bank-pack", label: "Bank ESG Pack", detail: "BoC & Hellenic Bank borrower questionnaire auto-pack" },
   { href: "/app/reports", label: "Deliverables", detail: "Every document an agent drafted" },
   { href: "/app/leaderboard", label: "Benchmarks", detail: "Compare with similar companies" },
 ];
