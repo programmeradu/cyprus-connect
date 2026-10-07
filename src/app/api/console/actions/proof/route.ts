@@ -50,7 +50,8 @@ export async function POST(request: Request) {
     const text = await pdfText(up.bytes);
     const read = readProofText(text, CATALOG[project.type], supplier, project.startedOn);
     if (!read.ok) {
-      return NextResponse.json({ ok: false, missing: read.missing }, { status: 422 });
+      // Answered with 200 so the page can name what was missing; nothing is stored.
+      return NextResponse.json({ ok: false, missing: read.missing });
     }
 
     const now = new Date().toISOString();

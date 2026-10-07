@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { workspaceRequest, WorkspaceRequestError, invalidateWorkspace } from "@/components/app/console/workspace-store";
-import { CATALOG, type InputKey, type ProjectInputs } from "@/lib/actions/catalog";
+import { CATALOG, type InputKey, type ProjectInputs, type Stage } from "@/lib/actions/catalog";
 import type { PlanProject } from "@/lib/actions/projects.server";
 
 const PATH = "/api/console/actions";
@@ -27,7 +27,7 @@ function Fig({ label, value, missing }: { label: string; value: string | null; m
   );
 }
 
-export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: () => void }) {
+export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: (next?: Stage) => void }) {
   const t = useTranslations("dashboard.projects");
   const { eur, num, date } = useFormat();
   const def = CATALOG[p.type];
@@ -42,13 +42,13 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: () =>
   const locked = p.stage === "confirmed";
   const today = new Date().toISOString().slice(0, 10);
 
-  async function call(key: string, body: unknown, ok?: string) {
+  async function call(key: string, body: unknown, ok?: string, next?: Stage) {
     setBusy(key);
     try {
       await workspaceRequest(PATH, { method: "POST", body });
       if (ok) toast.success(ok);
       invalidateWorkspace([PATH, "/api/console/overview"]);
-      onChanged();
+      onChanged(next);
       return true;
     } catch (e) {
       toast.error(e instanceof WorkspaceRequestError ? e.message : t("errors.generic"));
@@ -85,14 +85,17 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: () =>
     fd.set("file", file);
     fd.set("projectId", String(p.id));
     try {
-      await workspaceRequest(`${PATH}/proof`, { method: "POST", body: fd });
+      const r = await workspaceRequest<{ ok: boolean; missing?: string[] }>(`${PATH}/proof`, { method: "POST", body: fd });
+      if (!r.ok) {
+        const list = (r.missing ?? []).map((m) => t(`proof.missing.${m}` as never)).join(", ");
+        toast.error(t("proof.refused", { list }), { duration: 9000 });
+        return;
+      }
       toast.success(t("proof.accepted"));
       invalidateWorkspace([PATH]);
       onChanged();
     } catch (e) {
-      const missing = (e instanceof WorkspaceRequestError ? ((e as unknown as { body?: { missing?: string[] } }).body?.missing ?? null) : null);
-      if (missing?.length) toast.error(t("proof.refused", { list: missing.map((m) => t(`proof.missing.${m}` as never)).join(", ") }), { duration: 9000 });
-      else toast.error(e instanceof WorkspaceRequestError ? e.message : t("errors.generic"));
+      toast.error(e instanceof WorkspaceRequestError ? e.message : t("errors.generic"));
     } finally {
       setBusy(null);
       if (fileRef.current) fileRef.current.value = "";
@@ -159,7 +162,7 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: () =>
 
       {p.id === null ? (
         <div className="flex justify-end">
-          <button type="button" className="vck-btn vck-btn-primary" disabled={busy !== null} onClick={() => call("start", { op: "start", type: p.type }, t("do.started"))}>
+          <button type="button" className="vck-btn vck-btn-primary" disabled={busy !== null} onClick={() => call("start", { op: "start", type: p.type }, t("do.started"), "under_way")}>
             {t("do.start")}
           </button>
         </div>
@@ -266,9 +269,9 @@ export function ProjectCard({ p, onChanged }: { p: PlanProject; onChanged: () =>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
                   <label className="flex flex-col gap-1.5 text-sm">
                     <span>{t("do.installedOn")}</span>
-                    <input type="date" className="vck-input rounded-md border border-[var(--vc-rule)] bg-transparent px-3 py-2 text-sm" value={installedOn} min={p.startedOn ?? undefined} max={today} onChange={(e) => setInstalledOn(e.target.value)} />
+                    <input type="date" className="vck-input rounded-md border border-[var(--vc-rule)] bg-transparent px-3 py-2 text-sm" value={installedOn} max={today} onChange={(e) => setInstalledOn(e.target.value)} />
                   </label>
-                  <button type="button" className="vck-btn vck-btn-primary" disabled={busy !== null || !installedOn} onClick={() => call("installed", { op: "installed", id: p.id, installedOn }, t("do.installedDone"))}>
+                  <button type="button" className="vck-btn vck-btn-primary" disabled={busy !== null || !installedOn} onClick={() => call("installed", { op: "installed", id: p.id, installedOn }, t("do.installedDone"), "being_checked")}>
                     {t("do.confirmInstalled")}
                   </button>
                 </div>

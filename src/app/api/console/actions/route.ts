@@ -98,8 +98,9 @@ export async function POST(request: Request) {
     }
 
     if (body.op === "installed") {
-      if (body.installedOn < project.startedOn) return NextResponse.json({ error: "The install date is before the project started." }, { status: 400 });
-      await db.update(actionProjects).set({ stage: "being_checked", installedOn: body.installedOn, updatedAt: new Date() }).where(eq(actionProjects.id, project.id));
+      // A project already done before it was added: the plan starts at the install date. Proof is still required.
+      const startedOn = body.installedOn < project.startedOn ? body.installedOn : project.startedOn;
+      await db.update(actionProjects).set({ stage: "being_checked", installedOn: body.installedOn, startedOn, updatedAt: new Date() }).where(eq(actionProjects.id, project.id));
       await recordActivity(s.session, "reported installed", `Action plan: ${project.type} project`, `In place since ${body.installedOn}. Vuneli is now checking bills and proof.`);
       return NextResponse.json({ ok: true });
     }
