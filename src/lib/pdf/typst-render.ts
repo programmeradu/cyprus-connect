@@ -22,7 +22,7 @@ const FONT_FILES = [
 /** Static files every template may reference by bare name. */
 const SHARED_ASSETS = ["logo.svg", "logo-white.svg", "contours-soft.png", "contours-ondark.png", "cover-band.jpg", "strip-band.jpg"];
 
-export type TypstTemplate = "board.typ" | "report.typ" | "cbam.typ";
+export type TypstTemplate = "board.typ" | "report.typ" | "cbam.typ" | "passport.typ";
 
 type Compiler = Awaited<ReturnType<typeof makeCompiler>>;
 let compilerPromise: Promise<Compiler> | null = null;
@@ -97,8 +97,8 @@ export function downloadBytes(bytes: Uint8Array, fileName: string) {
  * Records the document so its QR code resolves on the public check page.
  * Waits briefly; a failure never blocks the download, it is only logged.
  */
-export async function registerDocument(kind: "board-summary" | "report" | "cbam", data: { hash: string; docId: unknown; company?: unknown; title?: unknown }, issuedAt = new Date()) {
-  const fallback = { "board-summary": "Board summary", report: "Sustainability report", cbam: "CBAM declaration" }[kind];
+export async function registerDocument(kind: "board-summary" | "report" | "cbam" | "passport", data: { hash: string; docId: unknown; company?: unknown; title?: unknown }, issuedAt = new Date()) {
+  const fallback = { "board-summary": "Board summary", report: "Sustainability report", cbam: "CBAM declaration", passport: "VSME Passport" }[kind];
   try {
     const r = await fetch("/api/console/documents", {
       method: "POST",

@@ -46,6 +46,7 @@ export const NAV_ITEMS = [
  * one menu instead of disappearing from the product.
  */
 export const MORE_ITEMS = [
+  { href: "/app/passport", label: "VSME Passport", detail: "Share verified ESG disclosures with buyers and banks" },
   { href: "/app/reports", label: "Deliverables", detail: "Every document an agent drafted" },
   { href: "/app/leaderboard", label: "Benchmarks", detail: "Compare with similar companies" },
 ];

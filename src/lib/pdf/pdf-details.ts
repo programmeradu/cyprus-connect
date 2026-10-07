@@ -13,7 +13,7 @@ import { PDFDocument, PDFName, PDFString, type PDFDict } from "pdf-lib";
 // pdf-lib marks getInfoDict private, but it is the only way to add custom Info entries.
 const infoOf = (pdf: PDFDocument) => (pdf as unknown as { getInfoDict(): PDFDict }).getInfoDict();
 
-export type PdfKind = "board-summary" | "report" | "cbam";
+export type PdfKind = "board-summary" | "report" | "cbam" | "passport";
 
 export interface PdfDetails {
   kind: PdfKind;
@@ -28,6 +28,7 @@ const KIND_LABEL: Record<PdfKind, string> = {
   "board-summary": "Board summary",
   report: "Sustainability report",
   cbam: "CBAM declaration",
+  passport: "VSME Passport",
 };
 
 export const verifyLink = (hash: string) => `https://vuneli.com/verify/${hash}`;

@@ -19,7 +19,7 @@ const log = logger("api.console.documents");
 
 const Body = z.object({
   hash: z.string().regex(/^[0-9a-f]{64}$/),
-  kind: z.enum(["board-summary", "report", "cbam"]),
+  kind: z.enum(["board-summary", "report", "cbam", "passport"]),
   docId: z.string().min(3).max(64),
   title: z.string().min(1).max(200),
   company: z.string().min(1).max(200),

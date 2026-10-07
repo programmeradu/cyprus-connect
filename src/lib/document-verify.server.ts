@@ -4,7 +4,7 @@ import { cbamDeclarants, cbamDeclarations, documentFingerprints } from "@/db/sch
 
 export type VerifiedDocument = {
   hash: string;
-  kind: "board-summary" | "report" | "cbam";
+  kind: "board-summary" | "report" | "cbam" | "passport";
   docId: string;
   title: string;
   company: string;

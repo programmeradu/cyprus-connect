@@ -1170,3 +1170,19 @@ export const actionEvidence = pgTable('action_evidence', {
   createdBy: text('created_by'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** VSME digital passports (scripts/sql/0044). Single verified, shareable data pack. */
+export const vsmePassports = pgTable('vsme_passports', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull().unique().references(() => workspaces.id, { onDelete: 'cascade' }),
+  slug: text('slug').notNull().unique(),
+  shareToken: text('share_token').notNull().unique(),
+  isPublic: boolean('is_public').notNull().default(true),
+  headline: text('headline'),
+  customNotes: text('custom_notes'),
+  viewCount: integer('view_count').notNull().default(0),
+  lastViewedAt: timestamp('last_viewed_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
