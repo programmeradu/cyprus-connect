@@ -193,5 +193,7 @@ External actions for the founder: docs/FOUNDER_EXTERNAL_SETUP.md (updated every 
 
 ## Action plan rebuild (plan: Action plan costed projects + proof)
 - [x] Action plan rebuild: costed projects from bills, proof checks (invoice + bill drop), stage tabs, dossier PDF
-- [ ] Live: run scripts/sql/0043_action_projects.sql (founder)
+- [x] Live: run scripts/sql/0043_action_projects.sql (executed and verified on database)
+- [x] Background re-verification on bill intake, bank sync and agent heartbeat
+- [x] Fifth project category: supplier emissions data request & declarations
 - [x] Compliance > Documents downloads the designed report PDF instead of a .md text file
