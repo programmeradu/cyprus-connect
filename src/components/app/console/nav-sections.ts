@@ -22,6 +22,7 @@ export const SECTIONS: Section[] = [
     pages: [
       { href: "/app/analytics", label: { en: "Footprint", el: "Αποτύπωμα" } },
       { href: "/app/calculator", label: { en: "Add data", el: "Προσθήκη δεδομένων" } },
+      { href: "/app/questionnaires", label: { en: "Questionnaires", el: "Ερωτηματολόγια" } },
     ],
   },
   {
@@ -91,6 +92,8 @@ const NAV_EL: Record<string, string> = {
   "Subscription tier, invoices and usage": "Επίπεδο συνδρομής, τιμολόγια και χρήση",
   "Add Data & Footprint": "Προσθήκη Δεδομένων & Αποτύπωμα",
   "Upload EAC bills, water bills, fuel receipts, invoices": "Μεταφόρτωση λογαριασμών ΑΗΚ, νερού, αποδείξεων καυσίμων, τιμολογίων",
+  "Questionnaires": "Ερωτηματολόγια",
+  "Inbound customer ESG questionnaires": "Εισερχόμενα ερωτηματολόγια ESG πελατών",
   "Loading the workspace": "Φόρτωση χώρου εργασίας",
   "Signed in": "Συνδεδεμένος",
 };

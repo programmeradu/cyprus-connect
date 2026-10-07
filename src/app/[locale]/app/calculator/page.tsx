@@ -155,6 +155,11 @@ export default function CalculatorPage() {
               {(["eac_bill", "water_bill", "utility_invoice", "waste_invoice", "bank_statement", "consumption_sheet"] as const).map((k) => (
                 <li key={k}>{ti(`kinds.${k}`)}</li>
               ))}
+              <li>
+                <Link href="/app/questionnaires" className="text-emerald-700 underline dark:text-emerald-400">
+                  {locale.startsWith("el") ? "Ερωτηματολόγια πελατών (.xlsx, .csv, .pdf)" : "Customer questionnaires (.xlsx, .csv, .pdf)"}
+                </Link>
+              </li>
             </ul>
             <p className="vck-meta">{ti("accept.not")}</p>
           </div>

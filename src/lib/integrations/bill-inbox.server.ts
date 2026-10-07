@@ -172,14 +172,79 @@ export async function receiveBillEmail(raw: Uint8Array, envelopeTo: string): Pro
   for (const a of candidates) {
     const bytes = a.content instanceof Uint8Array ? a.content : new Uint8Array(a.content as ArrayBuffer);
     const name = (a.filename || "bill").slice(0, 200);
-    const verdict = checkUpload(bytes, ["pdf", "png", "jpeg", "webp"]);
-    if (!verdict.ok) continue; // not a bill format: skipped quietly
-    if (verdict.kind !== "pdf" && (bytes.length < MIN_IMAGE_BYTES || a.disposition === "inline" || a.contentId)) continue;
+    const verdict = checkUpload(bytes, ["pdf", "png", "jpeg", "webp", "xlsx", "csv"]);
+    if (!verdict.ok) continue; // not an allowed format: skipped quietly
+    if (verdict.kind !== "pdf" && verdict.kind !== "xlsx" && verdict.kind !== "csv" && (bytes.length < MIN_IMAGE_BYTES || a.disposition === "inline" || a.contentId)) continue;
     if (read >= MAX_ATTACHMENTS) {
       results.push({ file: name, kind: null, ok: false, duplicate: false, reason: `Only the first ${MAX_ATTACHMENTS} attachments of a message are read.` });
       continue;
     }
     read++;
+
+    // Check if attachment is a questionnaire (spreadsheet or keyword in name)
+    const lowerName = name.toLowerCase();
+    const isQuestionnaire = lowerName.includes("questionnaire") || lowerName.includes("esg") || lowerName.includes("survey") || lowerName.includes("audit") || verdict.kind === "xlsx" || verdict.kind === "csv";
+
+    if (isQuestionnaire && (verdict.kind === "xlsx" || verdict.kind === "csv" || verdict.kind === "pdf")) {
+      try {
+        const { parseQuestionnaireRows, parseQuestionnaireText, loadWorkspaceMetricsForQuestionnaire, buildQuestionnaireRecord } = await import("@/lib/questionnaires/questionnaire.server");
+        const ctx = await loadWorkspaceMetricsForQuestionnaire(inbox.workspaceId, inbox.userId);
+
+        let questions: import("@/lib/questionnaires/questionnaire.server").QuestionnaireQuestion[] = [];
+        if (verdict.kind === "csv") {
+          const { parseCsv } = await import("@/lib/documents/intake");
+          const rows = parseCsv(new TextDecoder("utf-8").decode(bytes));
+          questions = await parseQuestionnaireRows(rows, ctx);
+        } else if (verdict.kind === "xlsx") {
+          const XLSX = await import("xlsx");
+          const book = XLSX.read(bytes, { type: "array" });
+          const sheet = book.Sheets[book.SheetNames[0]];
+          const { parseCsv } = await import("@/lib/documents/intake");
+          const rows = sheet ? parseCsv(XLSX.utils.sheet_to_csv(sheet, { FS: ";" })) : [];
+          questions = await parseQuestionnaireRows(rows, ctx);
+        } else if (verdict.kind === "pdf") {
+          const { extractText, getDocumentProxy } = await import("unpdf");
+          let text = "";
+          try {
+            const pdf = await getDocumentProxy(new Uint8Array(bytes));
+            const res = await extractText(pdf, { mergePages: true });
+            text = (res?.text ?? "").trim();
+          } catch {
+            text = "";
+          }
+          questions = await parseQuestionnaireText(text, ctx);
+        }
+
+        if (questions.length > 0) {
+          const record = await buildQuestionnaireRecord({
+            workspaceId: inbox.workspaceId,
+            title: subject ? `Questionnaire: ${subject.slice(0, 80)}` : `Buyer Questionnaire (${name})`,
+            source: "email",
+            fileName: name,
+            fileType: verdict.kind as "xlsx" | "csv" | "pdf",
+            requesterName: from ?? undefined,
+            requesterEmail: from ?? undefined,
+            questions,
+          });
+
+          const { inboundQuestionnaires } = await import("@/db/schema");
+          await db.insert(inboundQuestionnaires).values(record);
+
+          results.push({
+            file: name,
+            kind: null,
+            ok: true,
+            duplicate: false,
+            reason: null,
+            pending: true,
+          });
+          continue;
+        }
+      } catch (err) {
+        console.error("[bill-email] failed to parse inbound questionnaire:", err);
+      }
+    }
+
     if (!hasDocumentAi()) {
       results.push({ file: name, kind: null, ok: false, duplicate: false, reason: "The bill reader is not set up yet." });
       continue;

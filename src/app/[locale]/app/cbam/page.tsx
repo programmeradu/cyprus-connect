@@ -294,6 +294,52 @@ export default function CbamPage() {
               <Empty title={t("noDraftTitle")} body={t("noDraftBody")} />
             )}
 
+            {/* 50-Tonne De-Minimis Threshold Tracker (S-04) */}
+            {draft && (
+              <Plate
+                label={t("threshold.title", { default: "50-Tonne Annual De-Minimis Threshold (Reg. EU 2025/2083)" })}
+                meta={`${n(draft.totals.massTonnesCounted, 1)} / 50.0 t`}
+                metaTone={draft.totals.massTonnesCounted >= 50 ? "bad" : draft.totals.massTonnesCounted >= 35 ? "warn" : "good"}
+                tight
+              >
+                <div style={{ margin: "0.5rem 0 1rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "0.25rem" }}>
+                    <span className="vck-quiet">
+                      {draft.totals.massTonnesCounted >= 50
+                        ? t("threshold.exceeded", { default: "Exceeded: In scope for full annual CBAM declaration & certificates." })
+                        : draft.totals.massTonnesCounted >= 45
+                        ? t("threshold.alert90", { default: "Critical Alert: 90%+ of de-minimis quota utilized." })
+                        : draft.totals.massTonnesCounted >= 35
+                        ? t("threshold.alert70", { default: "Warning: 70%+ of de-minimis quota utilized." })
+                        : t("threshold.exempt", { default: "Exempt: Net imports under 50 tonnes/year have zero CBAM purchase obligations." })}
+                    </span>
+                    <strong className="vck-num">{Math.min(100, Math.round((draft.totals.massTonnesCounted / 50) * 100))}%</strong>
+                  </div>
+                  <div style={{ height: "8px", width: "100%", backgroundColor: "var(--vck-line, #e5e7eb)", borderRadius: "4px", overflow: "hidden" }}>
+                    <div
+                      style={{
+                        height: "100%",
+                        width: `${Math.min(100, (draft.totals.massTonnesCounted / 50) * 100)}%`,
+                        backgroundColor:
+                          draft.totals.massTonnesCounted >= 50
+                            ? "#ef4444"
+                            : draft.totals.massTonnesCounted >= 35
+                            ? "#f59e0b"
+                            : "#10b981",
+                        transition: "width 0.3s ease",
+                      }}
+                    />
+                  </div>
+                </div>
+                <p className="vck-cbam-note" style={{ fontSize: "0.75rem", color: "var(--vck-text-quiet, #6b7280)", margin: 0 }}>
+                  {t("threshold.rules", {
+                    default:
+                      "Under Regulation (EU) 2025/2083, importers below 50 tonnes net mass per calendar year (electricity and hydrogen excluded) are exempt from purchasing CBAM certificates. Crossing 50 tonnes brings the full year's cumulative volume into mandatory surrender.",
+                  })}
+                </p>
+              </Plate>
+            )}
+
             {decl && (
               <PlateGrid columns={2}>
                 <Plate

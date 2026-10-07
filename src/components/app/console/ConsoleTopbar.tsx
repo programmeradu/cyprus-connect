@@ -117,6 +117,12 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         detail: "Supply chain carbon accounting and EU sanctions screening",
       },
       {
+        href: "/app/questionnaires",
+        group: "Go to",
+        title: "Questionnaires",
+        detail: "Inbound customer ESG questionnaires & automated responses",
+      },
+      {
         href: "/app/settings",
         group: "Go to",
         title: "Workspace Settings",

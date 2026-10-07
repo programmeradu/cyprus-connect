@@ -1186,3 +1186,38 @@ export const vsmePassports = pgTable('vsme_passports', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** Inbound customer & buyer ESG questionnaires (scripts/sql/0045). Reverse questionnaire inbox. */
+export const inboundQuestionnaires = pgTable('inbound_questionnaires', {
+  id: serial('id').primaryKey(),
+  workspaceId: text('workspace_id').notNull().references(() => workspaces.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  source: text('source').notNull().default('upload'), // 'upload' | 'email'
+  fileName: text('file_name').notNull(),
+  fileType: text('file_type').notNull(), // 'xlsx' | 'csv' | 'pdf'
+  fileUrl: text('file_url'),
+  requesterName: text('requester_name'),
+  requesterEmail: text('requester_email'),
+  totalQuestions: integer('total_questions').notNull().default(0),
+  answeredQuestions: integer('answered_questions').notNull().default(0),
+  verifiedQuestions: integer('verified_questions').notNull().default(0),
+  status: text('status').notNull().default('ready'), // 'parsing' | 'ready' | 'exported'
+  questions: jsonb('questions').$type<Array<{
+    id: string;
+    code: string;
+    questionEn: string;
+    questionEl: string;
+    module: "general" | "energy" | "scope1" | "scope2" | "water" | "waste" | "workforce" | "governance";
+    answerEn: string;
+    answerEl: string;
+    unit?: string;
+    source: string;
+    confidence: "high" | "medium" | "low" | "none";
+    isVerified: boolean;
+    needsInput: boolean;
+  }>>().notNull().default([]),
+  hash: text('hash').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+
