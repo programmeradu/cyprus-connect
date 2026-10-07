@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
 import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
-import type { VsmePassportData } from "@/lib/reports/passport.server";
+import type { VsmePassportData } from "@/lib/reports/types";
 import {
   PageShell,
   PageHeader,

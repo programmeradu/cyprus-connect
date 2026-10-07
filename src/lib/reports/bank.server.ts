@@ -20,54 +20,8 @@ import { waterBills } from "@/lib/integrations/water.server";
 import { OFFICIAL_CYPRUS_GRID_FACTOR, OFFICIAL_CYPRUS_WATER_FACTOR } from "@/lib/factors/registry";
 import { fingerprint } from "@/lib/pdf/kit/fingerprint";
 import { docId, longDate } from "@/lib/pdf/format";
-
-export type BankTarget = "boc" | "hellenic";
-
-export interface BankQuestionResponse {
-  id: string;
-  category: "Environmental (E)" | "Social (S)" | "Governance (G)";
-  code: string;
-  questionEn: string;
-  questionEl: string;
-  answer: string | number;
-  unit?: string;
-  auditTrail: string;
-  sourceDocCount: number;
-  isVerified: boolean;
-  qualifiesGreenCovenant?: boolean;
-}
-
-export interface BankBorrowerPackData {
-  targetBank: BankTarget;
-  bankName: string;
-  company: {
-    name: string;
-    legalName: string | null;
-    registrationNo: string | null;
-    sector: string;
-    sites: number;
-    employees: number;
-    revenueEur: number | null;
-    bankLinked: boolean;
-  };
-  metrics: {
-    annualElectricityKwh: number;
-    scope1Tonnes: number;
-    scope2Tonnes: number;
-    waterM3: number;
-    greenMarginDiscountBps: number;
-    estimatedAnnualInterestSavedEur: number | null;
-  };
-  covenantEligibility: {
-    qualifies: boolean;
-    tier: "Tier 1 (-35 to -50 bps)" | "Tier 2 (-25 bps)" | "Standard";
-    reasonsEn: string[];
-    reasonsEl: string[];
-  };
-  questionnaire: BankQuestionResponse[];
-  merkleRootHash: string;
-  generatedAt: string;
-}
+import type { BankTarget, BankQuestionResponse, BankBorrowerPackData } from "./types";
+export type { BankTarget, BankQuestionResponse, BankBorrowerPackData };
 
 export const BANK_METADATA: Record<BankTarget, { nameEn: string; nameEl: string; frameworkRef: string }> = {
   boc: {

@@ -6,7 +6,8 @@
  * and public verification registers.
  */
 
-import { buildPassportPdfData, type VsmePassportData } from "@/lib/reports/passport.server";
+import type { VsmePassportData } from "@/lib/reports/types";
+import { buildPassportPdfData } from "./builders";
 
 export async function downloadPassportPdf(passport: VsmePassportData, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");

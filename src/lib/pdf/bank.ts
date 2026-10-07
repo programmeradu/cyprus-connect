@@ -6,7 +6,8 @@
  * public verification register.
  */
 
-import { buildBankPackPdfData, type BankBorrowerPackData } from "@/lib/reports/bank.server";
+import type { BankBorrowerPackData } from "@/lib/reports/types";
+import { buildBankPackPdfData } from "./builders";
 
 export async function downloadBankPackPdf(data: BankBorrowerPackData, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");

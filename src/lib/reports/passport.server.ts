@@ -30,64 +30,8 @@ import { waterBills } from "@/lib/integrations/water.server";
 import { OFFICIAL_CYPRUS_GRID_FACTOR, OFFICIAL_CYPRUS_WATER_FACTOR } from "@/lib/factors/registry";
 import { fingerprint } from "@/lib/pdf/kit/fingerprint";
 import { docId, longDate } from "@/lib/pdf/format";
-
-export interface VsmeMetricItem {
-  id: string;
-  code: string;
-  labelEn: string;
-  labelEl: string;
-  value: string | number | null;
-  unit?: string;
-  source: string;
-  isVerified: boolean;
-  notes?: string;
-}
-
-export interface VsmeDisclosureBlock {
-  code: string; // e.g. "B1", "B2", "B3"
-  titleEn: string;
-  titleEl: string;
-  summaryEn: string;
-  summaryEl: string;
-  items: VsmeMetricItem[];
-  completenessPct: number;
-}
-
-export interface VsmePassportData {
-  passport: {
-    id: number;
-    slug: string;
-    shareToken: string;
-    isPublic: boolean;
-    headline: string | null;
-    customNotes: string | null;
-    viewCount: number;
-    lastViewedAt: string | null;
-  };
-  company: {
-    name: string;
-    legalName: string | null;
-    sector: string;
-    country: string;
-    employees: number;
-    revenueEur: number | null;
-    registrationNo: string | null;
-    baselineYear: number;
-  };
-  metrics: {
-    totalEnergyMwh: number;
-    scope1Tonnes: number;
-    scope2Tonnes: number;
-    waterM3: number;
-    wasteTonnes: number;
-    overallCompletenessPct: number;
-  };
-  disclosures: VsmeDisclosureBlock[];
-  verifiedDocumentsCount: number;
-  confirmedActionsCount: number;
-  generatedAt: string;
-  merkleRootHash: string;
-}
+import type { VsmeMetricItem, VsmeDisclosureBlock, VsmePassportData } from "./types";
+export type { VsmeMetricItem, VsmeDisclosureBlock, VsmePassportData };
 
 /** Generate a clean URL-safe slug from company name. */
 export function generateSlug(companyName: string): string {

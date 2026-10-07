@@ -5,7 +5,8 @@
  * stamping it into the public verification register with a 64-character SHA-256 Merkle root.
  */
 
-import { buildHospitalityPdfData, type HospitalityPackData } from "@/lib/reports/hospitality.server";
+import type { HospitalityPackData } from "@/lib/reports/types";
+import { buildHospitalityPdfData } from "./builders";
 
 export async function downloadHospitalityPdf(data: HospitalityPackData, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");

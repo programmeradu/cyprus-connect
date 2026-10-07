@@ -24,7 +24,7 @@ import {
 } from "@/components/app/console/kit";
 import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { toast } from "sonner";
-import type { HospitalityPackData } from "@/lib/reports/hospitality.server";
+import type { HospitalityPackData } from "@/lib/reports/types";
 
 const PATH = "/api/console/hospitality";
 

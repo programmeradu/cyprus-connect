@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
 import { useWorkspaceResource } from "@/components/app/console/workspace-store";
-import type { BankBorrowerPackData, BankTarget } from "@/lib/reports/bank.server";
+import type { BankBorrowerPackData, BankTarget } from "@/lib/reports/types";
 import {
   PageShell,
   PageHeader,

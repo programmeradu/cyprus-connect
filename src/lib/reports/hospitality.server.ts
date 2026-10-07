@@ -26,50 +26,8 @@ import { waterBills } from "@/lib/integrations/water.server";
 import { OFFICIAL_CYPRUS_GRID_FACTOR } from "@/lib/factors/registry";
 import { fingerprint } from "@/lib/pdf/kit/fingerprint";
 import { docId, longDate } from "@/lib/pdf/format";
-
-export interface HospitalityPackData {
-  profile: {
-    propertyName: string;
-    hotelCategory: string;
-    totalRooms: number;
-    annualOccupiedRooms: number;
-    annualGuestNights: number;
-    hasPool: boolean;
-    hasRestaurant: boolean;
-    hasSpa: boolean;
-    hasLaundryOnSite: boolean;
-    ecoLabel: string;
-    tourOperatorPartners: string;
-  };
-  company: {
-    name: string;
-    legalName: string | null;
-    country: string;
-    baselineYear: number;
-  };
-  hcmiMetrics: {
-    totalElectricityKwh: number;
-    totalScope1KgCo2e: number;
-    totalScope2KgCo2e: number;
-    totalWaterLiters: number;
-    // Intensity metrics
-    energyPerOccupiedRoomKwh: number;
-    carbonPerOccupiedRoomKg: number;
-    carbonPerGuestNightKg: number;
-    waterPerGuestNightLiters: number;
-    // Tour operator benchmarks
-    tuiCarbonBenchmarkDiffPct: number; // vs Cyprus 4-star average ~18.5 kg CO2e / room-night
-    waterBenchmarkDiffPct: number; // vs Cyprus average ~380 L / guest-night
-    tourOperatorReadinessScore: number; // 0 to 100
-  };
-  verifiedBills: {
-    eacBillsCount: number;
-    waterBillsCount: number;
-    allMetered: boolean;
-  };
-  merkleRootHash: string;
-  generatedAt: string;
-}
+import type { HospitalityPackData } from "./types";
+export type { HospitalityPackData };
 
 const CYPRUS_HOTEL_BENCHMARK = {
   carbonPerOccupiedRoomKg: 18.5,
