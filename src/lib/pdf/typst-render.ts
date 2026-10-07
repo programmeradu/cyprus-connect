@@ -57,7 +57,7 @@ async function fetchOk(url: string) {
   return r;
 }
 
-export const verifyUrl = (hash: string) => `https://vuneli.com/verify/${hash.slice(0, 16)}`;
+export const verifyUrl = (hash: string) => `https://vuneli.com/verify/${hash}`;
 
 /**
  * Compile `template` with `data` to PDF bytes. `base` is where static files

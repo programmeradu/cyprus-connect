@@ -29,6 +29,7 @@ import {
   OFFICIAL_PETROL_FACTOR,
   OFFICIAL_GAS_FACTOR_KWH,
   OFFICIAL_LPG_FACTOR_KG,
+  OFFICIAL_WASTE_LANDFILL_KG,
 } from "@/lib/factors/registry";
 
 /* ---------- Emission factors (kg CO2e per unit) ---------- */
@@ -46,7 +47,7 @@ const SCOPE3 = {
   longHaulFlight_km: 0.195, // DEFRA 2024 long-haul economy incl. RF
   commute_km: 0.140, // DEFRA 2024 mixed-mode commuting proxy
   spend_EUR: 0.35, // EEIO screening avg (indicative)
-  waste_kg: 0.467, // DEFRA 2024 mixed municipal to landfill
+  waste_kg: OFFICIAL_WASTE_LANDFILL_KG, // DEFRA 2024 commercial mixed waste to landfill (0.4467)
   water_m3: OFFICIAL_CYPRUS_WATER_FACTOR, // 0.616 kg CO2e / m3: Water supply (0.344) + Wastewater treatment (0.272) (F24, F104)
 } as const;
 

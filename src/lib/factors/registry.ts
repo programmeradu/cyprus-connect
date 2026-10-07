@@ -308,6 +308,7 @@ export const OFFICIAL_DIESEL_FACTOR = FACTOR_REGISTRY["fuel-diesel-litre"].kgCo2
 export const OFFICIAL_PETROL_FACTOR = FACTOR_REGISTRY["fuel-petrol-litre"].kgCo2ePerUnit; // 2.31
 export const OFFICIAL_GAS_FACTOR_KWH = FACTOR_REGISTRY["fuel-natural-gas-kwh"].kgCo2ePerUnit; // 0.184
 export const OFFICIAL_LPG_FACTOR_KG = FACTOR_REGISTRY["fuel-lpg-kg"].kgCo2ePerUnit; // 2.94
+export const OFFICIAL_WASTE_LANDFILL_KG = FACTOR_REGISTRY["waste-landfill-kg"].kgCo2ePerUnit; // 0.4467
 
 /**
  * Retrieves the location-based grid emission factor for a given country code (e.g. "CY", "GR", "DE").

@@ -20,6 +20,7 @@ const COPY = {
     tools: "Tools",
     learn: "Guides",
     glossary: "Glossary",
+    methodology: "Methodology",
     news: "News",
     about: "About",
     contact: "Contact",
@@ -57,6 +58,7 @@ const COPY = {
     tools: "Εργαλεία",
     learn: "Οδηγοί",
     glossary: "Γλωσσάρι",
+    methodology: "Μεθοδολογία",
     news: "Ειδήσεις",
     about: "Σχετικά",
     contact: "Επικοινωνία",
@@ -306,6 +308,7 @@ export function SiteFooter() {
           <ul className="space-y-1">
             <li><Link href={`/${locale}/learn`} className={linkCls}>{t.learn}</Link></li>
             <li><Link href={`/${locale}/glossary`} className={linkCls}>{t.glossary}</Link></li>
+            <li><Link href={`/${locale}/methodology`} className={linkCls}>{t.methodology}</Link></li>
             <li><Link href={`/${locale}/news`} className={linkCls}>{t.news}</Link></li>
           </ul>
         </div>
