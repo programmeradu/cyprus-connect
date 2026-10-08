@@ -24,11 +24,14 @@ import {
 } from "@/components/app/console/kit";
 import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
 import { toast } from "sonner";
+import { ConsolePage, Empty } from "@/components/app/console/kit";
+import { Link } from "@/i18n/navigation";
+import { isHospitalitySector } from "@/lib/sector";
 import type { HospitalityPackData } from "@/lib/reports/types";
 
 const PATH = "/api/console/hospitality";
 
-export default function HospitalityPage() {
+function HospitalityPack() {
   const locale = useLocale();
   const isEl = locale.startsWith("el");
   const t = (en: string, el: string) => (isEl ? el : en);
@@ -322,5 +325,35 @@ export default function HospitalityPage() {
         </>
       )}
     </PageShell>
+  );
+}
+
+/** The pack only applies to hotels and other accommodation businesses. */
+export default function HospitalityPage() {
+  const isEl = useLocale().startsWith("el");
+  const company = useWorkspaceResource<{ industry: string | null }>("/api/console/company");
+  if (company.data && isHospitalitySector(company.data.industry)) return <HospitalityPack />;
+  return (
+    <ConsolePage
+      title={isEl ? "Πακέτο Φιλοξενίας" : "Hospitality Pack"}
+      purpose={isEl ? "Για ξενοδοχεία και καταλύματα." : "For hotels and other places to stay."}
+      loading={!company.data && !company.error}
+      error={company.error}
+      onRetry={company.reload}
+    >
+      <Empty
+        title={isEl ? "Δεν ισχύει για την επιχείρησή σας" : "This doesn't apply to your business"}
+        body={
+          isEl
+            ? "Το πακέτο είναι για ξενοδοχεία. Αν διαχειρίζεστε κατάλυμα, ορίστε τον κλάδο σας στις ρυθμίσεις και θα εμφανιστεί εδώ."
+            : "This pack is for hotels. If you run a place to stay, set your industry in settings and it will show here."
+        }
+      />
+      <p style={{ marginTop: 12 }}>
+        <Link href={"/app/settings" as never} className="vck-link">
+          {isEl ? "Άνοιγμα ρυθμίσεων εταιρείας" : "Open company settings"}
+        </Link>
+      </p>
+    </ConsolePage>
   );
 }

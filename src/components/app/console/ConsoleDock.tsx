@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { IcoClose, IcoGrid, IcoDoc, IcoLeaf, IcoPulse, IcoMeasure, IcoAct, IcoVuneliAi, IcoMenu } from "./icons";
-import { MORE_ITEMS, navActive } from "./ConsoleTopbar";
+import { useMoreItems, navActive } from "./ConsoleTopbar";
 import { navText, onPage } from "./nav-sections";
 import { useLocale } from "next-intl";
 
@@ -24,13 +24,11 @@ const DOCK_ITEMS = [
   { href: "/app/agents", label: "Agents", icon: IcoVuneliAi },
 ];
 
-const SHEET_ITEMS = [
-  { href: "/app/integrations", label: "Connect", detail: "Data sources and tariffs" },
-  ...MORE_ITEMS,
-];
 
 export function ConsoleDock() {
   const locale = useLocale();
+  const more = useMoreItems();
+  const SHEET_ITEMS = [{ href: "/app/integrations", label: "Connect", detail: "Data sources and tariffs" }, ...more];
   const pathname = usePathname();
   const path = pathname.replace(/^\/(en|el)(?=\/|$)/, "") || "/";
   const [sheet, setSheet] = useState(false);

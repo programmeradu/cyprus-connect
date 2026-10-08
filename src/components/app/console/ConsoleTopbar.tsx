@@ -28,6 +28,8 @@ import {
 import { ConsoleAvatar } from "./ConsoleAvatar";
 import { navText, onPage, sectionFor } from "./nav-sections";
 import { useLocale } from "next-intl";
+import { useWorkspaceResource } from "./workspace-store";
+import { isHospitalitySector } from "@/lib/sector";
 import { useConsole } from "./ConsoleData";
 import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
@@ -48,10 +50,19 @@ export const NAV_ITEMS = [
 export const MORE_ITEMS = [
   { href: "/app/passport", label: "VSME Passport", detail: "Share verified ESG disclosures with buyers and banks" },
   { href: "/app/bank-pack", label: "Bank ESG Pack", detail: "BoC & Hellenic Bank borrower questionnaire auto-pack" },
-  { href: "/app/hospitality", label: "Hospitality Pack", detail: "HCMI hotel carbon, water & tour operator compliance" },
+  { href: "/app/hospitality", label: "Hospitality Pack", detail: "HCMI hotel carbon, water & tour operator compliance", hotelsOnly: true },
   { href: "/app/reports", label: "Deliverables", detail: "Every document an agent drafted" },
   { href: "/app/leaderboard", label: "Benchmarks", detail: "Compare with similar companies" },
 ];
+
+/** More items for this company: the hotel pack only shows for hospitality businesses. */
+export function useMoreItems() {
+  const { data } = useWorkspaceResource<{ industry: string | null }>("/api/console/company");
+  return useMemo(
+    () => MORE_ITEMS.filter((item) => !("hotelsOnly" in item) || isHospitalitySector(data?.industry)),
+    [data?.industry],
+  );
+}
 
 /** A top tab is open on its own page and on every page of its section. */
 export function navActive(item: { href: string; section?: string }, path: string): boolean {
@@ -82,6 +93,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const [queue, setQueue] = useState(false);
   const [account, setAccount] = useState(false);
   const [more, setMore] = useState(false);
+  const moreItems = useMoreItems();
   const [query, setQuery] = useState("");
   const field = useRef<HTMLInputElement>(null);
   const bar = useRef<HTMLElement>(null);
@@ -99,7 +111,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         title: item.label,
         detail: item.href,
       })),
-      ...MORE_ITEMS.map((item) => ({
+      ...moreItems.map((item) => ({
         href: item.href,
         group: "Go to",
         title: item.label,
@@ -180,7 +192,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
       });
     }
     return list;
-  }, [data]);
+  }, [data, moreItems]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -277,7 +289,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
     }
     router.push(href as never);
   };
-  const moreActive = MORE_ITEMS.some((item) => onPage(path, item.href));
+  const moreActive = moreItems.some((item) => onPage(path, item.href));
 
   return (
     <header className="vc-nav" ref={bar} data-tour="nav">
@@ -320,7 +332,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
 
           {more && (
             <div className="vc-pop vc-pop-menu" role="menu" aria-label="More of the workspace">
-              {MORE_ITEMS.map((item) => (
+              {moreItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href as never}
