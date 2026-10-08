@@ -120,20 +120,23 @@ export async function loadVsmePassport(workspaceId: string, isPublicView = false
     db
       .select({ id: actionProjects.id, type: actionProjects.type, confirmedFigures: actionProjects.confirmedFigures })
       .from(actionProjects)
-      .where(and(eq(actionProjects.workspaceId, ws.id), eq(actionProjects.stage, "confirmed"))),
+      .where(and(eq(actionProjects.workspaceId, ws.id), eq(actionProjects.stage, "confirmed")))
+      .catch(() => []),
     rawWs.ownerUserId
       ? db
           .select({ id: documents.id, fileName: documents.fileName, ocrText: documents.ocrText })
           .from(documents)
           .where(and(eq(documents.userId, rawWs.ownerUserId), eq(documents.processingStatus, "processed")))
           .limit(100)
+          .catch(() => [])
       : [],
     db
       .select({ metricKey: metricReadings.metricKey, value: metricReadings.value, periodLabel: metricReadings.periodLabel })
       .from(metricReadings)
       .where(eq(metricReadings.workspaceId, ws.id))
       .orderBy(desc(metricReadings.createdAt))
-      .limit(50),
+      .limit(50)
+      .catch(() => []),
   ]);
 
   // Aggregate Energy & Scope 2

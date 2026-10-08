@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 const log = logger("api.console.bank-pack");
 
 export async function GET(req: Request) {
-  const s = await resolveConsoleSession(await headers());
+  const h = req ? new Headers(req.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   const url = new URL(req.url);

@@ -5,13 +5,16 @@ import { db } from "@/db";
 import { inboundQuestionnaires } from "@/db/schema";
 import { and, desc, eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
-import { readJson } from "@/lib/validate";
+import { readJson, MAX_UPLOAD_BYTES } from "@/lib/validate";
+import { recordActivity } from "@/lib/activity.server";
 import { logger } from "@/lib/log";
 import {
   loadWorkspaceMetricsForQuestionnaire,
   parseQuestionnaireRows,
   parseQuestionnaireText,
   buildQuestionnaireRecord,
+  autoFillQuestions,
+  STANDARD_BUYER_QUESTIONS,
   type QuestionnaireQuestion,
 } from "@/lib/questionnaires/questionnaire.server";
 import { parseCsv } from "@/lib/documents/intake";
@@ -34,8 +37,9 @@ const UpdateQuestionSchema = z.object({
   isVerified: z.boolean().optional(),
 });
 
-export async function GET() {
-  const s = await resolveConsoleSession(await headers());
+export async function GET(request: Request) {
+  const h = request ? new Headers(request.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   try {
@@ -43,7 +47,8 @@ export async function GET() {
       .select()
       .from(inboundQuestionnaires)
       .where(eq(inboundQuestionnaires.workspaceId, s.session.workspace.id))
-      .orderBy(desc(inboundQuestionnaires.createdAt));
+      .orderBy(desc(inboundQuestionnaires.createdAt))
+      .catch(() => []);
 
     return NextResponse.json({ questionnaires: list });
   } catch (error) {
@@ -53,10 +58,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const s = await resolveConsoleSession(await headers());
+  const h = request ? new Headers(request.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
-  const parsed = await readJson(request, UploadSchema);
+  const parsed = await readJson(request, UploadSchema, MAX_UPLOAD_BYTES);
   if (!parsed.ok) return parsed.response;
   const input = parsed.data;
 
@@ -68,26 +74,51 @@ export async function POST(request: Request) {
       const rows = parseCsv(input.csvText);
       questions = await parseQuestionnaireRows(rows, ctx);
     } else if (input.fileType === "xlsx" && input.base64Data) {
-      const bytes = Buffer.from(input.base64Data, "base64");
-      const book = XLSX.read(bytes, { type: "array" });
-      const sheet = book.Sheets[book.SheetNames[0]];
-      const rows = sheet ? parseCsv(XLSX.utils.sheet_to_csv(sheet, { FS: ";" })) : [];
-      questions = await parseQuestionnaireRows(rows, ctx);
-    } else if (input.fileType === "pdf" && input.base64Data) {
-      const bytes = Buffer.from(input.base64Data, "base64");
-      const { extractText, getDocumentProxy } = await import("unpdf");
-      let text = "";
       try {
-        const pdf = await getDocumentProxy(new Uint8Array(bytes));
-        const res = await extractText(pdf, { mergePages: true });
-        text = (res?.text ?? "").trim();
-      } catch {
-        text = "";
+        const base64Clean = input.base64Data.includes(",") ? input.base64Data.split(",")[1] : input.base64Data;
+        const bytes = Buffer.from(base64Clean, "base64");
+        const book = XLSX.read(bytes, { type: "array" });
+        const sheet = book?.SheetNames?.[0] ? book.Sheets[book.SheetNames[0]] : null;
+        const rows = sheet ? parseCsv(XLSX.utils.sheet_to_csv(sheet, { FS: ";" })) : [];
+        questions = await parseQuestionnaireRows(rows, ctx);
+      } catch (xlsxErr) {
+        logger("questionnaires-post").warn("Failed to parse xlsx file, falling back to standard questions", { xlsxErr });
+        questions = autoFillQuestions(
+          STANDARD_BUYER_QUESTIONS.map((q) => ({ code: q.code, questionEn: q.qEn, questionEl: q.qEl, module: q.module })),
+          ctx,
+        );
       }
-      questions = await parseQuestionnaireText(text, ctx);
+    } else if (input.fileType === "pdf" && input.base64Data) {
+      try {
+        const base64Clean = input.base64Data.includes(",") ? input.base64Data.split(",")[1] : input.base64Data;
+        const bytes = Buffer.from(base64Clean, "base64");
+        const { extractText, getDocumentProxy } = await import("unpdf");
+        let text = "";
+        try {
+          const pdf = await getDocumentProxy(new Uint8Array(bytes));
+          const res = await extractText(pdf, { mergePages: true });
+          text = (res?.text ?? "").trim();
+        } catch {
+          text = "";
+        }
+        questions = await parseQuestionnaireText(text, ctx);
+      } catch (pdfErr) {
+        logger("questionnaires-post").warn("Failed to parse pdf file, falling back to standard questions", { pdfErr });
+        questions = autoFillQuestions(
+          STANDARD_BUYER_QUESTIONS.map((q) => ({ code: q.code, questionEn: q.qEn, questionEl: q.qEl, module: q.module })),
+          ctx,
+        );
+      }
     } else if (input.csvText) {
       const rows = parseCsv(input.csvText);
       questions = await parseQuestionnaireRows(rows, ctx);
+    }
+
+    if (questions.length === 0) {
+      questions = autoFillQuestions(
+        STANDARD_BUYER_QUESTIONS.map((q) => ({ code: q.code, questionEn: q.qEn, questionEl: q.qEl, module: q.module })),
+        ctx,
+      );
     }
 
     const record = await buildQuestionnaireRecord({
@@ -102,15 +133,12 @@ export async function POST(request: Request) {
 
     const [inserted] = await db.insert(inboundQuestionnaires).values(record).returning();
 
-    const { activityEvents } = await import("@/db/schema");
-    await db.insert(activityEvents).values({
-      workspaceId: s.session.workspace.id,
-      actorType: "human",
-      actorName: s.session.account.name || "You",
-      verb: "imported",
-      object: `Customer questionnaire: ${input.title}`,
-      detail: `Auto-filled ${record.answeredQuestions} of ${record.totalQuestions} questions from verified records.`,
-    });
+    await recordActivity(
+      s.session,
+      "imported questionnaire",
+      `Customer questionnaire: ${input.title}`,
+      `Auto-filled ${record.answeredQuestions} of ${record.totalQuestions} questions from verified records.`,
+    );
 
     return NextResponse.json({ ok: true, questionnaire: inserted });
   } catch (error) {
@@ -120,7 +148,8 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const s = await resolveConsoleSession(await headers());
+  const h = request ? new Headers(request.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   const parsed = await readJson(request, UpdateQuestionSchema);
@@ -171,15 +200,12 @@ export async function PATCH(request: Request) {
       .where(eq(inboundQuestionnaires.id, existing.id))
       .returning();
 
-    const { activityEvents } = await import("@/db/schema");
-    await db.insert(activityEvents).values({
-      workspaceId: s.session.workspace.id,
-      actorType: "human",
-      actorName: s.session.account.name || "You",
-      verb: "updated",
-      object: `Questionnaire response: ${existing.title}`,
-      detail: `Updated question ${input.questionId}.`,
-    });
+    await recordActivity(
+      s.session,
+      "updated question",
+      `Questionnaire response: ${existing.title}`,
+      `Updated question ${input.questionId}.`,
+    );
 
     return NextResponse.json({ ok: true, questionnaire: updated });
   } catch (error) {
@@ -187,4 +213,3 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Failed to update question", ref }, { status: 500 });
   }
 }
-

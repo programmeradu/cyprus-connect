@@ -204,7 +204,15 @@ async function general(userId: string, bytes: Uint8Array, mime: string, text: st
     const url = `data:${mime};base64,${Buffer.from(bytes).toString("base64")}`;
     content.push(mime.startsWith("image/") ? { type: "image_url", image_url: { url } } : { type: "file", file: { filename: "document.pdf", file_data: url } });
   }
-  const answer = await aiChatRaw([{ role: "user", content }], 0);
+  let answer: string;
+  try {
+    answer = await aiChatRaw([{ role: "user", content }], 0);
+  } catch (err) {
+    if (err && typeof err === "object" && "status" in err && (err as { status: number }).status === 422) {
+      return { ok: false, code: "scanned_pdf" };
+    }
+    return { ok: false, code: "unreadable" };
+  }
   const parsed = parseJsonAnswer<{ document_type?: string; description?: string; figures?: unknown[] }>(answer);
   if (!parsed) return { ok: false, code: "unreadable" };
   const description = typeof parsed.description === "string" ? parsed.description.slice(0, 120) : null;
@@ -266,12 +274,21 @@ async function general(userId: string, bytes: Uint8Array, mime: string, text: st
 export async function readDocument(userId: string, bytes: Uint8Array, kind: UploadKind): Promise<IntakeResult> {
   if (kind === "csv" || kind === "xlsx") {
     let rows: string[][];
-    if (kind === "csv") rows = parseCsv(new TextDecoder("utf-8").decode(bytes));
-    else {
-      const book = XLSX.read(bytes, { type: "array" });
-      const sheet = book.Sheets[book.SheetNames[0]];
-      if (!sheet) return { ok: false, code: "unreadable" };
-      rows = parseCsv(XLSX.utils.sheet_to_csv(sheet, { FS: ";" }));
+    if (kind === "csv") {
+      try {
+        rows = parseCsv(new TextDecoder("utf-8").decode(bytes));
+      } catch {
+        return { ok: false, code: "unreadable" };
+      }
+    } else {
+      try {
+        const book = XLSX.read(bytes, { type: "array" });
+        const sheet = book?.SheetNames?.[0] ? book.Sheets[book.SheetNames[0]] : null;
+        if (!sheet) return { ok: false, code: "unreadable" };
+        rows = parseCsv(XLSX.utils.sheet_to_csv(sheet, { FS: ";" }));
+      } catch {
+        return { ok: false, code: "unreadable" };
+      }
     }
     const bank = readBankRows(rows);
     if (bank) return { ok: true, proposal: finish("bank_statement", "code", [], { bank, warnings: ["spend_not_usage"] }) };

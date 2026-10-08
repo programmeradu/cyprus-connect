@@ -53,14 +53,20 @@ export async function loadBankBorrowerPack(
     db
       .select({ id: actionProjects.id, type: actionProjects.type, confirmedFigures: actionProjects.confirmedFigures })
       .from(actionProjects)
-      .where(and(eq(actionProjects.workspaceId, ws.id), eq(actionProjects.stage, "confirmed"))),
-    db.select({ id: bankLinks.id, status: bankLinks.status }).from(bankLinks).where(eq(bankLinks.workspaceId, ws.id)),
+      .where(and(eq(actionProjects.workspaceId, ws.id), eq(actionProjects.stage, "confirmed")))
+      .catch(() => []),
+    db
+      .select({ id: bankLinks.id, status: bankLinks.status })
+      .from(bankLinks)
+      .where(eq(bankLinks.workspaceId, ws.id))
+      .catch(() => []),
     db
       .select({ metricKey: metricReadings.metricKey, value: metricReadings.value })
       .from(metricReadings)
       .where(eq(metricReadings.workspaceId, ws.id))
       .orderBy(desc(metricReadings.createdAt))
-      .limit(50),
+      .limit(50)
+      .catch(() => []),
   ]);
 
   const annualElectricityKwh = eacRows.reduce((sum, b) => sum + (b.kwh || 0), 0);

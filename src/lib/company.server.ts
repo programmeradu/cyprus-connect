@@ -47,7 +47,8 @@ export function withCompanyFacts(workspace: Workspace, profile: CompanyProfile |
   };
 }
 
-export async function readCompanyProfile(accountId: string): Promise<CompanyProfile | null> {
+export async function readCompanyProfile(accountId?: string | null): Promise<CompanyProfile | null> {
+  if (!accountId) return null;
   const [row] = await db
     .select({
       companyName: user.companyName,

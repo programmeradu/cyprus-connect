@@ -64,19 +64,20 @@ export async function getOrCreateHospitalityProfile(workspaceId: string, company
   return inserted;
 }
 
-export async function loadHospitalityPack(workspaceId: string, accountId: string): Promise<HospitalityPackData> {
+export async function loadHospitalityPack(workspaceId: string, accountId?: string | null): Promise<HospitalityPackData> {
   const [wsRow] = await db.select().from(workspaces).where(eq(workspaces.id, workspaceId)).limit(1);
   if (!wsRow) throw new Error("Workspace not found");
 
-  const profile = await readCompanyProfile(accountId);
+  const effectiveUserId = accountId || wsRow.ownerUserId || undefined;
+  const profile = effectiveUserId ? await readCompanyProfile(effectiveUserId) : null;
   const company = withCompanyFacts(wsRow, profile);
 
   const hotel = await getOrCreateHospitalityProfile(workspaceId, company.legalName || company.name);
 
   const [eacRows, waterRows, readings] = await Promise.all([
-    eacBills(accountId).catch(() => []),
-    waterBills(accountId).catch(() => []),
-    db.select().from(metricReadings).where(eq(metricReadings.workspaceId, workspaceId)),
+    effectiveUserId ? eacBills(effectiveUserId).catch(() => []) : [],
+    effectiveUserId ? waterBills(effectiveUserId).catch(() => []) : [],
+    db.select().from(metricReadings).where(eq(metricReadings.workspaceId, workspaceId)).catch(() => []),
   ]);
 
   const totalElectricityKwh = eacRows.reduce((sum, b) => sum + (b.kwh || 0), 0);

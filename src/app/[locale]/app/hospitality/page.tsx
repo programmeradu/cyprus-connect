@@ -11,7 +11,7 @@
  * - Allows configuration of property rooms, occupancy, and on-site facilities.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import {
   PageShell,
@@ -52,6 +52,19 @@ function HospitalityPack() {
   const [spa, setSpa] = useState(data?.profile.hasSpa ?? false);
   const [laundry, setLaundry] = useState(data?.profile.hasLaundryOnSite ?? true);
   const [ecoLabel, setEcoLabel] = useState(data?.profile.ecoLabel ?? "None");
+
+  useEffect(() => {
+    if (data?.profile) {
+      setRooms(data.profile.totalRooms);
+      setOccupied(data.profile.annualOccupiedRooms);
+      setGuests(data.profile.annualGuestNights);
+      setPool(data.profile.hasPool);
+      setRestaurant(data.profile.hasRestaurant);
+      setSpa(data.profile.hasSpa);
+      setLaundry(data.profile.hasLaundryOnSite);
+      setEcoLabel(data.profile.ecoLabel || "None");
+    }
+  }, [data?.profile]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();

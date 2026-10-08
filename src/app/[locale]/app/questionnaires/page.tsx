@@ -87,25 +87,31 @@ export default function QuestionnairesPage() {
           toast.success(t("Questionnaire imported and auto-filled!", "Το ερωτηματολόγιο εισήχθη και συμπληρώθηκε αυτόματα!"));
         }
       } else {
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const base64 = (reader.result as string).split(",")[1];
-          const res = await action.run<{ ok: boolean; questionnaire: InboundQuestionnaireDetail }>(PATH, {
-            method: "POST",
-            body: {
-              title: file.name.replace(/\.[^/.]+$/, ""),
-              fileName: file.name,
-              fileType: ext as "xlsx" | "pdf",
-              base64Data: base64,
-            },
-            invalidates: [PATH],
-          });
-          if (res?.questionnaire) {
-            setSelectedId(res.questionnaire.id);
-            toast.success(t("Questionnaire imported and auto-filled!", "Το ερωτηματολόγιο εισήχθη και συμπληρώθηκε αυτόματα!"));
-          }
-        };
-        reader.readAsDataURL(file);
+        const base64 = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            const data = result.includes(",") ? result.split(",")[1] : result;
+            resolve(data);
+          };
+          reader.onerror = () => reject(new Error("Failed to read file"));
+          reader.readAsDataURL(file);
+        });
+
+        const res = await action.run<{ ok: boolean; questionnaire: InboundQuestionnaireDetail }>(PATH, {
+          method: "POST",
+          body: {
+            title: file.name.replace(/\.[^/.]+$/, ""),
+            fileName: file.name,
+            fileType: ext as "xlsx" | "pdf",
+            base64Data: base64,
+          },
+          invalidates: [PATH],
+        });
+        if (res?.questionnaire) {
+          setSelectedId(res.questionnaire.id);
+          toast.success(t("Questionnaire imported and auto-filled!", "Το ερωτηματολόγιο εισήχθη και συμπληρώθηκε αυτόματα!"));
+        }
       }
     } catch {
       toast.error(t("Failed to process questionnaire.", "Αποτυχία επεξεργασίας ερωτηματολογίου."));

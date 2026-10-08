@@ -6,6 +6,7 @@ import { hospitalityProfiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { resolveConsoleSession } from "@/lib/console-session";
 import { readJson } from "@/lib/validate";
+import { recordActivity } from "@/lib/activity.server";
 import { logger } from "@/lib/log";
 import { loadHospitalityPack } from "@/lib/reports/hospitality.server";
 
@@ -23,8 +24,9 @@ const UpdateProfileSchema = z.object({
   tourOperatorPartners: z.string().max(200).optional(),
 });
 
-export async function GET() {
-  const s = await resolveConsoleSession(await headers());
+export async function GET(request: Request) {
+  const h = request ? new Headers(request.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   try {
@@ -37,7 +39,8 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
-  const s = await resolveConsoleSession(await headers());
+  const h = request ? new Headers(request.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   const parsed = await readJson(request, UpdateProfileSchema);
@@ -76,15 +79,12 @@ export async function PATCH(request: Request) {
       });
     }
 
-    const { activityEvents } = await import("@/db/schema");
-    await db.insert(activityEvents).values({
-      workspaceId: s.session.workspace.id,
-      actorType: "human",
-      actorName: s.session.account.name || "You",
-      verb: "updated",
-      object: "Hospitality ESG profile",
-      detail: "Updated hotel operating capacity and tour operator credentials.",
-    });
+    await recordActivity(
+      s.session,
+      "updated hospitality profile",
+      "Hospitality ESG profile",
+      "Updated hotel operating capacity and tour operator credentials.",
+    );
 
     const updatedData = await loadHospitalityPack(s.session.workspace.id, s.session.account.id);
     return NextResponse.json(updatedData);

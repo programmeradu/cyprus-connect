@@ -19,8 +19,9 @@ const PatchBody = z.object({
   customNotes: z.string().max(1000).nullable().optional(),
 });
 
-export async function GET() {
-  const s = await resolveConsoleSession(await headers());
+export async function GET(request: Request) {
+  const h = request ? new Headers(request.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   try {
@@ -36,7 +37,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  const s = await resolveConsoleSession(await headers());
+  const h = req ? new Headers(req.headers) : await headers();
+  const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
   const parsed = await readJson(req, PatchBody);

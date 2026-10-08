@@ -128,19 +128,26 @@ export const STANDARD_BUYER_QUESTIONS = [
 ];
 
 /** Fetch context metrics for pre-filling. */
-export async function loadWorkspaceMetricsForQuestionnaire(workspaceId: string, accountId: string) {
+export async function loadWorkspaceMetricsForQuestionnaire(workspaceId: string, accountId?: string | null) {
   const [wsRow] = await db.select().from(workspaces).where(eq(workspaces.id, workspaceId)).limit(1);
   if (!wsRow) throw new Error("Workspace not found");
 
-  const profile = await readCompanyProfile(accountId);
+  const effectiveUserId = accountId || wsRow.ownerUserId || undefined;
+  const profile = effectiveUserId ? await readCompanyProfile(effectiveUserId) : null;
   const company = withCompanyFacts(wsRow, profile);
 
   const [eacRows, waterRows, readings, confirmedActions, docRows] = await Promise.all([
-    eacBills(accountId).catch(() => []),
-    waterBills(accountId).catch(() => []),
-    db.select().from(metricReadings).where(eq(metricReadings.workspaceId, workspaceId)),
-    db.select().from(actionProjects).where(eq(actionProjects.workspaceId, workspaceId)),
-    db.select({ count: documents.id }).from(documents).where(eq(documents.userId, accountId)),
+    effectiveUserId ? eacBills(effectiveUserId).catch(() => []) : [],
+    effectiveUserId ? waterBills(effectiveUserId).catch(() => []) : [],
+    db.select().from(metricReadings).where(eq(metricReadings.workspaceId, workspaceId)).catch(() => []),
+    db.select().from(actionProjects).where(eq(actionProjects.workspaceId, workspaceId)).catch(() => []),
+    effectiveUserId
+      ? db
+          .select({ id: documents.id })
+          .from(documents)
+          .where(eq(documents.userId, effectiveUserId))
+          .catch(() => [])
+      : [],
   ]);
 
   const annualElectricityKwh = eacRows.reduce((sum, b) => sum + (b.kwh || 0), 0);
