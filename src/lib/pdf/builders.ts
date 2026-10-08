@@ -1,5 +1,5 @@
 import { docId, longDate } from "@/lib/pdf/format";
-import type { BankBorrowerPackData, HospitalityPackData, VsmePassportData } from "./types";
+import type { BankBorrowerPackData, HospitalityPackData, VsmePassportData } from "@/lib/reports/types";
 
 /** Prepares printable Typst PDF data for Bank ESG Submission memo. */
 export function buildBankPackPdfData(b: BankBorrowerPackData, issuedAt = new Date()) {
