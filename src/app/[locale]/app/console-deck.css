@@ -1527,3 +1527,9 @@
 .vc .vc-legend p span { min-width: 0; overflow-wrap: anywhere; }
 .vc .vc-legend p strong { margin-left: auto; font-variant-numeric: tabular-nums; }
 .vc .vc-legend p span + a, .vc .vc-legend p span + button { margin-left: 2px; }
+
+/* The menu sits inside the nowrap top bar; let its two-line items wrap. */
+.vc-pop-menu { white-space: normal; width: min(340px, calc(100vw - 32px)); }
+.vc-pop-menu a[role="menuitem"] strong,
+.vc-pop-menu a[role="menuitem"] span { white-space: normal; overflow-wrap: anywhere; text-wrap: pretty; }
+.vc-pop-menu a[role="menuitem"] strong { line-height: 1.3; }
