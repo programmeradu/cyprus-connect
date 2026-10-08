@@ -28,6 +28,8 @@ import {
 import { ConsoleAvatar } from "./ConsoleAvatar";
 import { navText, onPage, sectionFor } from "./nav-sections";
 import { useLocale } from "next-intl";
+import { useWorkspaceResource } from "./workspace-store";
+import { isHospitalitySector } from "@/lib/sector";
 import { useConsole } from "./ConsoleData";
 import { daysUntil, relativeTime, type ConsoleOverviewData } from "./types";
 
@@ -48,10 +50,19 @@ export const NAV_ITEMS = [
 export const MORE_ITEMS = [
   { href: "/app/passport", label: "VSME Passport", detail: "Share verified ESG disclosures with buyers and banks" },
   { href: "/app/bank-pack", label: "Bank ESG Pack", detail: "BoC & Hellenic Bank borrower questionnaire auto-pack" },
-  { href: "/app/hospitality", label: "Hospitality Pack", detail: "HCMI hotel carbon, water & tour operator compliance" },
+  { href: "/app/hospitality", label: "Hospitality Pack", detail: "HCMI hotel carbon, water & tour operator compliance", hotelsOnly: true },
   { href: "/app/reports", label: "Deliverables", detail: "Every document an agent drafted" },
   { href: "/app/leaderboard", label: "Benchmarks", detail: "Compare with similar companies" },
 ];
+
+/** More items for this company: the hotel pack only shows for hospitality businesses. */
+export function useMoreItems() {
+  const { data } = useWorkspaceResource<{ industry: string | null }>("/api/console/company");
+  return useMemo(
+    () => MORE_ITEMS.filter((item) => !("hotelsOnly" in item) || isHospitalitySector(data?.industry)),
+    [data?.industry],
+  );
+}
 
 /** A top tab is open on its own page and on every page of its section. */
 export function navActive(item: { href: string; section?: string }, path: string): boolean {
