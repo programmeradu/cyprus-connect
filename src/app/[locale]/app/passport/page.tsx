@@ -1,329 +1,259 @@
 "use client";
 
+/**
+ * VSME Passport (/app/passport).
+ *
+ * One page for the company's VSME data: what is backed by records, what is
+ * still a company statement, and whether a public link is switched on.
+ * "Checked" means a figure comes from bills or documents in the workspace;
+ * anything else is shown as a statement, never as verified.
+ */
+
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import { toast } from "sonner";
 import { useWorkspaceResource, useWorkspaceAction } from "@/components/app/console/workspace-store";
-import type { VsmePassportData } from "@/lib/reports/types";
+import type { VsmePassportData, VsmeDisclosureBlock } from "@/lib/reports/types";
 import {
-  PageShell,
-  PageHeader,
-  PageToolbar,
-  ToolbarTabs,
-  Section,
-  Metric,
-  MetricRow,
+  ConsolePage,
+  ConsoleTabs,
+  Plate,
+  PlateGrid,
+  Ledger,
+  Reading,
+  ReadingRail,
+  Btn,
+  State,
+  Bar,
   Empty,
 } from "@/components/app/console/kit";
-import { downloadPassportPdf } from "@/lib/pdf/passport";
+import type { LedgerItem } from "@/components/app/console/kit";
 
 const PATH = "/api/console/passport";
+type Tab = "overview" | "disclosures" | "share";
+
+function fmt(n: number, loc: string, digits = 1) {
+  return n.toLocaleString(loc, { maximumFractionDigits: digits });
+}
 
 export default function PassportConsolePage() {
   const locale = useLocale();
   const isEl = locale === "el";
-  const passportRes = useWorkspaceResource<VsmePassportData>(PATH);
-  const data = passportRes.data;
-  const { run: updatePassport, busy: isUpdating } = useWorkspaceAction();
+  const loc = isEl ? "el-CY" : "en-GB";
+  const t = (en: string, el: string) => (isEl ? el : en);
 
-  const [activeTab, setActiveTab] = useState<"overview" | "disclosures" | "share">("overview");
+  const res = useWorkspaceResource<VsmePassportData>(PATH);
+  const data = res.data;
+  const { run, busy } = useWorkspaceAction();
+  const [tab, setTab] = useState<Tab>("overview");
   const [downloading, setDownloading] = useState(false);
 
-  async function handleTogglePublic(isPublic: boolean) {
-    const res = await updatePassport(
-      PATH,
-      {
-        method: "PATCH",
-        body: { isPublic },
-      }
-    );
-    if (res !== null) {
-      toast.success(
-        isPublic
-          ? (isEl ? "Το διαβατήριο είναι δημόσιο" : "Passport made public")
-          : (isEl ? "Το διαβατήριο έγινε ιδιωτικό" : "Passport made private")
-      );
-      passportRes.reload();
+  const shareUrl =
+    typeof window !== "undefined" && data ? `${window.location.origin}/${locale}/passport/${data.passport.slug}` : "";
+
+  async function setPublic(isPublic: boolean) {
+    const out = await run(PATH, { method: "PATCH", body: { isPublic }, invalidates: [PATH] });
+    if (out !== null) {
+      toast.success(isPublic ? t("Public link switched on", "Ο δημόσιος σύνδεσμος ενεργοποιήθηκε") : t("Public link switched off", "Ο δημόσιος σύνδεσμος απενεργοποιήθηκε"));
+      res.reload();
     }
   }
 
-  async function handleDownloadPdf() {
+  async function download() {
     if (!data) return;
     setDownloading(true);
     try {
-      const fileName = `VSME-Passport-${data.company.name.replace(/[^a-zA-Z0-9]/g, "-")}.pdf`;
-      await downloadPassportPdf(data, fileName);
-      toast.success(isEl ? "Το επίσημο PDF λήφθηκε επιτυχώς" : "Official VSME Passport PDF downloaded");
-    } catch (err) {
-      console.error(err);
-      toast.error(isEl ? "Σφάλμα κατά τη δημιουργία του PDF" : "Failed to compile Passport PDF");
+      const { downloadPassportPdf } = await import("@/lib/pdf/passport");
+      const safe = (data.company.legalName || data.company.name).replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "") || "company";
+      await downloadPassportPdf(data, `VSME-Passport-${safe}.pdf`);
+      toast.success(t("PDF downloaded", "Το PDF λήφθηκε"));
+    } catch {
+      toast.error(t("The PDF could not be made. Try again.", "Το PDF δεν δημιουργήθηκε. Δοκιμάστε ξανά."));
     } finally {
       setDownloading(false);
     }
   }
 
-  const shareUrl = typeof window !== "undefined" && data
-    ? `${window.location.origin}/${locale}/passport/${data.passport.slug}`
-    : "";
-
-  function copyShareLink() {
+  async function copy() {
     if (!shareUrl) return;
-    navigator.clipboard.writeText(shareUrl);
-    toast.success(isEl ? "Ο σύνδεσμος αντιγράφηκε στο πρόχειρο" : "Share link copied to clipboard");
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success(t("Link copied", "Ο σύνδεσμος αντιγράφηκε"));
+    } catch {
+      toast.error(t("Copy failed. Select the link and copy it.", "Η αντιγραφή απέτυχε. Επιλέξτε τον σύνδεσμο."));
+    }
   }
 
+  const items = data ? data.disclosures.flatMap((d) => d.items) : [];
+  const checked = items.filter((i) => i.isVerified).length;
+  const missing = items.filter((i) => i.value === null || i.value === undefined || i.value === "").length;
+
   return (
-    <PageShell
-      loading={passportRes.loading}
-      error={passportRes.error ? (isEl ? "Αδυναμία φόρτωσης διαβατηρίου" : "Could not load VSME Passport") : null}
-      onRetry={passportRes.reload}
-      header={
-        <PageHeader
-          title={isEl ? "Ψηφιακό Διαβατήριο VSME" : "VSME Digital Passport"}
-          purpose={
-            isEl
-              ? "Επίσημη, επαληθευμένη αναφορά κατά το πρότυπο EFRAG VSME. Μοιραστείτε την με τράπεζες, πελάτες και ελεγκτές με έναν σύνδεσμο."
-              : "Single verified EFRAG VSME data pack. Share with enterprise buyers, credit underwriters and auditors with one consent link."
-          }
-          actions={
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={copyShareLink}
-                disabled={!data?.passport.isPublic}
-                className="h-9 px-4 text-xs font-semibold rounded-md border border-foreground/20 hover:bg-foreground/5 transition disabled:opacity-40"
-              >
-                {isEl ? "Αντιγραφή Συνδέσμου" : "Copy Share Link"}
-              </button>
-              <button
-                type="button"
-                onClick={handleDownloadPdf}
-                disabled={downloading || !data}
-                className="h-9 px-4 text-xs font-semibold rounded-md bg-[var(--accent-lime)] text-[var(--accent-lime-foreground)] transition hover:opacity-95 disabled:opacity-50"
-              >
-                {downloading ? (isEl ? "Δημιουργία..." : "Compiling...") : (isEl ? "Λήψη Επίσημου PDF" : "Download Official PDF")}
-              </button>
-            </div>
-          }
-        />
+    <ConsolePage
+      title={t("VSME Passport", "Διαβατήριο VSME")}
+      purpose={t(
+        "Your VSME figures in one place, ready to send to a bank or a customer.",
+        "Τα στοιχεία VSME σας σε ένα σημείο, έτοιμα για τράπεζα ή πελάτη.",
+      )}
+      loading={res.loading && !data}
+      error={res.error ? t("The passport could not be loaded.", "Το διαβατήριο δεν φορτώθηκε.") : null}
+      onRetry={res.reload}
+      actions={
+        <Btn variant="primary" onClick={download} disabled={!data || downloading}>
+          {downloading ? t("Preparing PDF…", "Προετοιμασία PDF…") : t("Download PDF", "Λήψη PDF")}
+        </Btn>
       }
       toolbar={
-        <PageToolbar>
-          <ToolbarTabs
-            value={activeTab}
-            onChange={(v) => setActiveTab(v as typeof activeTab)}
-            options={[
-              { value: "overview", label: isEl ? "Σύνοψη" : "Overview" },
-              {
-                value: "disclosures",
-                label: isEl ? "Αποκαλύψεις EFRAG" : "EFRAG Disclosures",
-                count: data?.disclosures.length,
-              },
-              { value: "share", label: isEl ? "Κοινοποίηση & Έλεγχος" : "Share & Access" },
-            ]}
-          />
-        </PageToolbar>
+        <ConsoleTabs
+          value={tab}
+          onChange={(k) => setTab(k as Tab)}
+          items={[
+            { key: "overview", label: t("Overview", "Σύνοψη") },
+            { key: "disclosures", label: t("Disclosures", "Γνωστοποιήσεις"), count: data?.disclosures.length },
+            { key: "share", label: t("Sharing", "Κοινοποίηση") },
+          ]}
+        />
       }
     >
       {data && (
         <>
-          {/* Key Metrics */}
-          <MetricRow>
-            <Metric
-              label={isEl ? "Πληρότητα EFRAG VSME" : "VSME Completeness"}
+          <ReadingRail>
+            <Reading
+              label={t("Complete", "Πληρότητα")}
               value={`${data.metrics.overallCompletenessPct}%`}
+              tone={data.metrics.overallCompletenessPct >= 80 ? "good" : "warn"}
+              note={t(`${checked} of ${items.length} items checked against records`, `${checked} από ${items.length} στοιχεία ελεγμένα με παραστατικά`)}
             />
-            <Metric
-              label={isEl ? "Ενέργεια (Scope 2)" : "Grid Electricity (Scope 2)"}
-              value={`${data.metrics.totalEnergyMwh} MWh`}
-              note={`${data.metrics.scope2Tonnes} t CO₂e`}
-            />
-            <Metric
-              label={isEl ? "Άμεσες Εκπομπές (Scope 1)" : "Direct Fuels (Scope 1)"}
-              value={`${data.metrics.scope1Tonnes} t`}
-              note="CO₂e"
-            />
-            <Metric
-              label={isEl ? "Απορρόφηση Νερού" : "Water Withdrawal"}
-              value={`${data.metrics.waterM3} m³`}
-              note="WDD / municipal"
-            />
-          </MetricRow>
+            <Reading label={t("Electricity", "Ηλεκτρισμός")} value={fmt(data.metrics.totalEnergyMwh, loc, 2)} unit="MWh" note={`${fmt(data.metrics.scope2Tonnes, loc, 2)} t CO₂e · Scope 2`} />
+            <Reading label={t("Fuel", "Καύσιμα")} value={fmt(data.metrics.scope1Tonnes, loc, 2)} unit="t CO₂e" note="Scope 1" />
+            <Reading label={t("Water", "Νερό")} value={fmt(data.metrics.waterM3, loc, 0)} unit="m³" note={t("From water bills", "Από λογαριασμούς νερού")} />
+          </ReadingRail>
 
-          {/* Tab 1: Overview */}
-          {activeTab === "overview" && (
-            <div className="space-y-6">
-              <Section
-                title={isEl ? "Ταυτότητα Εταιρείας & Νομικό Πλαίσιο" : "Corporate Identity & Legal Framework"}
-                description={isEl ? "Στοιχεία εγγραφής στην Κυπριακή Δημοκρατία και όρια αναφοράς" : "Registration in the Republic of Cyprus and reporting boundary"}
-              >
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <div className="rounded-lg border border-foreground/10 p-4 bg-foreground/[0.01]">
-                    <div className="text-xs uppercase text-foreground/50">{isEl ? "Επωνυμία" : "Legal Entity"}</div>
-                    <div className="mt-1 font-semibold text-base">{data.company.legalName || data.company.name}</div>
-                  </div>
-                  <div className="rounded-lg border border-foreground/10 p-4 bg-foreground/[0.01]">
-                    <div className="text-xs uppercase text-foreground/50">{isEl ? "Αριθμός Εγγραφής / ΑΦΜ" : "Registration / VAT"}</div>
-                    <div className="mt-1 font-semibold text-base">{data.company.registrationNo || (isEl ? "Επαληθευμένη ΜμΕ" : "Verified Cyprus SME")}</div>
-                  </div>
-                  <div className="rounded-lg border border-foreground/10 p-4 bg-foreground/[0.01]">
-                    <div className="text-xs uppercase text-foreground/50">{isEl ? "Κλάδος Δραστηριότητας" : "Sector"}</div>
-                    <div className="mt-1 font-semibold text-base">{data.company.sector}</div>
-                  </div>
-                  <div className="rounded-lg border border-foreground/10 p-4 bg-foreground/[0.01]">
-                    <div className="text-xs uppercase text-foreground/50">{isEl ? "Προσωπικό" : "Headcount"}</div>
-                    <div className="mt-1 font-semibold text-base">{data.company.employees} {isEl ? "εργαζόμενοι" : "employees"}</div>
-                  </div>
-                  <div className="rounded-lg border border-foreground/10 p-4 bg-foreground/[0.01]">
-                    <div className="text-xs uppercase text-foreground/50">{isEl ? "Έτος Βάσης" : "Baseline Year"}</div>
-                    <div className="mt-1 font-semibold text-base">{data.company.baselineYear}</div>
-                  </div>
-                  <div className="rounded-lg border border-foreground/10 p-4 bg-foreground/[0.01]">
-                    <div className="text-xs uppercase text-foreground/50">{isEl ? "Καθεστώς Προστασίας" : "Omnibus I Cap"}</div>
-                    <div className="mt-1 font-semibold text-base text-[var(--accent-emerald)]">VSME Standard Ceiling</div>
-                  </div>
+          {tab === "overview" && (
+            <PlateGrid columns={2}>
+              <Plate label={t("Company", "Εταιρεία")}>
+                <Ledger
+                  items={[
+                    { id: "name", title: t("Legal name", "Επωνυμία"), value: data.company.legalName || data.company.name },
+                    {
+                      id: "reg",
+                      title: t("Registration number", "Αριθμός εγγραφής"),
+                      value: data.company.registrationNo || t("Not added yet", "Δεν έχει προστεθεί"),
+                      valueTone: data.company.registrationNo ? undefined : "warn",
+                    },
+                    { id: "sector", title: t("Industry", "Κλάδος"), value: data.company.sector || "—" },
+                    { id: "staff", title: t("Staff", "Προσωπικό"), value: data.company.employees > 0 ? String(data.company.employees) : "—" },
+                    { id: "year", title: t("Reporting year", "Έτος αναφοράς"), value: String(data.company.baselineYear) },
+                  ]}
+                />
+              </Plate>
+
+              <Plate label={t("What backs these figures", "Τι στηρίζει τα στοιχεία")}>
+                <Ledger
+                  items={[
+                    { id: "docs", title: t("Bills and documents on file", "Λογαριασμοί και έγγραφα"), value: String(data.verifiedDocumentsCount) },
+                    { id: "proj", title: t("Projects confirmed with proof", "Έργα επιβεβαιωμένα με αποδείξεις"), value: String(data.confirmedActionsCount) },
+                    {
+                      id: "gaps",
+                      title: t("Items with no figure yet", "Στοιχεία χωρίς τιμή"),
+                      value: String(missing),
+                      valueTone: missing > 0 ? "warn" : "good",
+                    },
+                  ]}
+                />
+                <div className="vck-fingerprint">
+                  <small>{t("Fingerprint of this version (SHA-256)", "Αποτύπωμα αυτής της έκδοσης (SHA-256)")}</small>
+                  <code>{data.merkleRootHash}</code>
+                  <small>
+                    {t(
+                      "It changes whenever a figure changes. Anyone can check a downloaded PDF at vuneli.com/verify.",
+                      "Αλλάζει όταν αλλάζει κάποιο στοιχείο. Κάθε PDF ελέγχεται στο vuneli.com/verify.",
+                    )}
+                  </small>
                 </div>
-              </Section>
-
-              <Section
-                title={isEl ? "Αδιάσειστα Τεκμήρια Ελέγχου" : "Cryptographic Audit Anchors"}
-                description={isEl ? "Κάθε αριθμός συνδέεται με πρωτότυπα τιμολόγια και το δημόσιο μητρώο επαλήθευσης" : "Every figure is anchored by raw utility invoices and verifiable via Merkle hash"}
-              >
-                <div className="rounded-xl border border-foreground/10 p-5 bg-foreground/[0.01] space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-foreground/10 pb-4">
-                    <div>
-                      <div className="text-sm font-semibold">{isEl ? "Ρίζα Merkle (SHA-256 Hash)" : "Merkle Root Hash (SHA-256)"}</div>
-                      <div className="font-mono text-xs text-foreground/60 break-all">{data.merkleRootHash}</div>
-                    </div>
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[var(--accent-lime)]/20 text-foreground">
-                      {isEl ? "Επαληθεύσιμο στο /verify" : "Verified at /verify"}
-                    </span>
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2 text-sm text-foreground/80">
-                    <div>
-                      <strong>{data.verifiedDocumentsCount}</strong> {isEl ? "επαληθευμένοι λογαριασμοί κοινής ωφέλειας" : "metered utility invoices read and matched"}
-                    </div>
-                    <div>
-                      <strong>{data.confirmedActionsCount}</strong> {isEl ? "επιβεβαιωμένα έργα απαλλαγής από άνθρακα" : "confirmed decarbonisation capital projects"}
-                    </div>
-                  </div>
-                </div>
-              </Section>
-            </div>
+              </Plate>
+            </PlateGrid>
           )}
 
-          {/* Tab 2: Disclosures */}
-          {activeTab === "disclosures" && (
-            <div className="space-y-6">
-              {data.disclosures.map((block) => (
-                <Section
-                  key={block.code}
-                  title={`${block.code}: ${isEl ? block.titleEl : block.titleEn}`}
-                  description={isEl ? block.summaryEl : block.summaryEn}
-                  action={
-                    <span className="text-xs font-medium text-foreground/60">
-                      {block.completenessPct}% {isEl ? "ολοκληρωμένο" : "complete"}
-                    </span>
-                  }
-                >
-                  <div className="divide-y divide-foreground/10 border border-foreground/10 rounded-lg overflow-hidden bg-background">
-                    {block.items.map((item) => (
-                      <div key={item.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-foreground/[0.01] transition">
-                        <div>
-                          <div className="text-xs font-mono text-foreground/45">{item.code}</div>
-                          <div className="text-sm font-medium">{isEl ? item.labelEl : item.labelEn}</div>
-                          <div className="text-xs text-foreground/60">{item.source}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold text-sm">
-                            {item.value !== null && item.value !== undefined ? (
-                              <span>
-                                {item.value} {item.unit}
-                              </span>
-                            ) : (
-                              <span className="text-foreground/40 italic">{isEl ? "Δεν καταχωρήθηκε" : "Not recorded"}</span>
-                            )}
-                          </div>
-                          <div>
-                            {item.isVerified ? (
-                              <span className="text-[11px] font-medium text-[var(--accent-emerald)]">✓ {isEl ? "Επαληθευμένο" : "Verified"}</span>
-                            ) : (
-                              <span className="text-[11px] font-medium text-foreground/40">{isEl ? "Εκκρεμεί" : "Pending"}</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Section>
-              ))}
-            </div>
-          )}
+          {tab === "disclosures" &&
+            (data.disclosures.length === 0 ? (
+              <Empty title={t("No disclosures yet", "Δεν υπάρχουν γνωστοποιήσεις")} body={t("Add bills to start filling the VSME items.", "Προσθέστε λογαριασμούς για να ξεκινήσετε.")} />
+            ) : (
+              <PlateGrid columns={1}>
+                {data.disclosures.map((block) => (
+                  <DisclosurePlate key={block.code} block={block} isEl={isEl} />
+                ))}
+              </PlateGrid>
+            ))}
 
-          {/* Tab 3: Share & Access */}
-          {activeTab === "share" && (
-            <div className="space-y-6">
-              <Section
-                title={isEl ? "Σύνδεσμος Κοινοποίησης για Αγοραστές & Τράπεζες" : "Buyer & Banking Consent Share Link"}
-                description={isEl ? "Δώστε πρόσβαση σε μεγάλους πελάτες ή πιστωτικούς οργανισμούς χωρίς να στέλνετε αρχεία Excel" : "Provide corporate buyers or lending officers instant live access without emailing spreadsheets"}
+          {tab === "share" && (
+            <PlateGrid columns={2}>
+              <Plate
+                label={t("Public link", "Δημόσιος σύνδεσμος")}
+                meta={<State tone={data.passport.isPublic ? "live" : "idle"}>{data.passport.isPublic ? t("On", "Ενεργός") : t("Off", "Ανενεργός")}</State>}
               >
-                <div className="rounded-xl border border-foreground/10 p-6 bg-foreground/[0.01] space-y-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-base">{isEl ? "Δημόσια Πρόσβαση Συνδέσμου" : "Public Share Link Access"}</div>
-                      <div className="text-xs text-foreground/60 mt-0.5">
-                        {isEl ? "Όποιος διαθέτει τον σύνδεσμο μπορεί να δει μόνο τις επίσημες αποκαλύψεις VSME." : "Anyone with this URL can view verified EFRAG VSME disclosures."}
-                      </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={data.passport.isPublic}
-                        disabled={isUpdating}
-                        onChange={(e) => handleTogglePublic(e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-foreground/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent-lime)]"></div>
-                    </label>
+                <p className="vck-prose">
+                  {data.passport.isPublic
+                    ? t("Anyone with this link can see the figures on this page. Bills and documents stay private.", "Όποιος έχει τον σύνδεσμο βλέπει τα στοιχεία. Λογαριασμοί και έγγραφα μένουν ιδιωτικά.")
+                    : t("Switch the link on to send the passport to a bank or customer. You can switch it off at any time.", "Ενεργοποιήστε τον σύνδεσμο για να τον στείλετε. Μπορείτε να τον απενεργοποιήσετε όποτε θέλετε.")}
+                </p>
+                {data.passport.isPublic && (
+                  <div className="vck-fingerprint">
+                    <code>{shareUrl}</code>
                   </div>
-
-                  {data.passport.isPublic && (
-                    <div className="space-y-3 pt-2">
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <input
-                          type="text"
-                          readOnly
-                          value={shareUrl}
-                          className="h-10 px-3 flex-1 rounded-md border border-foreground/15 bg-background font-mono text-xs select-all outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={copyShareLink}
-                          className="h-10 px-4 text-xs font-semibold rounded-md bg-foreground text-background transition hover:opacity-90"
-                        >
-                          {isEl ? "Αντιγραφή" : "Copy"}
-                        </button>
-                      </div>
-
-                      <div className="text-xs text-foreground/60 flex items-center gap-4 pt-1">
-                        <span>
-                          {isEl ? "Προβολές:" : "Views:"} <strong>{data.passport.viewCount}</strong>
-                        </span>
-                        {data.passport.lastViewedAt && (
-                          <span>
-                            {isEl ? "Τελευταία προβολή:" : "Last accessed:"} {new Date(data.passport.lastViewedAt).toLocaleDateString()}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                )}
+                <div className="vck-row-actions">
+                  {data.passport.isPublic && <Btn onClick={copy}>{t("Copy link", "Αντιγραφή")}</Btn>}
+                  <Btn variant={data.passport.isPublic ? "text" : "primary"} disabled={busy} onClick={() => setPublic(!data.passport.isPublic)}>
+                    {data.passport.isPublic ? t("Switch off", "Απενεργοποίηση") : t("Switch on public link", "Ενεργοποίηση συνδέσμου")}
+                  </Btn>
                 </div>
-              </Section>
-            </div>
+              </Plate>
+
+              <Plate label={t("Views", "Προβολές")}>
+                <Ledger
+                  items={[
+                    { id: "views", title: t("Times opened", "Φορές που άνοιξε"), value: String(data.passport.viewCount) },
+                    {
+                      id: "last",
+                      title: t("Last opened", "Τελευταία προβολή"),
+                      value: data.passport.lastViewedAt
+                        ? new Date(data.passport.lastViewedAt).toLocaleString(loc, { dateStyle: "medium", timeStyle: "short" })
+                        : t("Not opened yet", "Δεν έχει ανοιχτεί"),
+                    },
+                  ]}
+                />
+              </Plate>
+            </PlateGrid>
           )}
         </>
       )}
-    </PageShell>
+    </ConsolePage>
+  );
+}
+
+function DisclosurePlate({ block, isEl }: { block: VsmeDisclosureBlock; isEl: boolean }) {
+  const ledger: LedgerItem[] = block.items.map((item) => {
+    const empty = item.value === null || item.value === undefined || item.value === "";
+    return {
+      id: item.id,
+      lead: item.code,
+      title: isEl ? item.labelEl : item.labelEn,
+      detail: item.source,
+      value: empty ? (isEl ? "Δεν καταχωρήθηκε" : "Not recorded") : `${item.value}${item.unit ? ` ${item.unit}` : ""}`,
+      valueTone: empty ? "warn" : undefined,
+      note: empty ? undefined : item.isVerified ? (isEl ? "Ελεγμένο με παραστατικά" : "Checked against records") : isEl ? "Δήλωση εταιρείας" : "Company statement",
+    };
+  });
+  return (
+    <Plate
+      label={`${block.code} · ${isEl ? block.titleEl : block.titleEn}`}
+      meta={`${block.completenessPct}%`}
+      metaTone={block.completenessPct >= 80 ? "good" : "warn"}
+      foot={<Bar pct={block.completenessPct} tone={block.completenessPct >= 80 ? "lime" : "warn"} />}
+    >
+      <p className="vck-prose">{isEl ? block.summaryEl : block.summaryEn}</p>
+      <Ledger items={ledger} />
+    </Plate>
   );
 }
