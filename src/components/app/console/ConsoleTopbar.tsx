@@ -192,7 +192,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
       });
     }
     return list;
-  }, [data]);
+  }, [data, moreItems]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
