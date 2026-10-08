@@ -93,6 +93,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
   const [queue, setQueue] = useState(false);
   const [account, setAccount] = useState(false);
   const [more, setMore] = useState(false);
+  const moreItems = useMoreItems();
   const [query, setQuery] = useState("");
   const field = useRef<HTMLInputElement>(null);
   const bar = useRef<HTMLElement>(null);
@@ -110,7 +111,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
         title: item.label,
         detail: item.href,
       })),
-      ...MORE_ITEMS.map((item) => ({
+      ...moreItems.map((item) => ({
         href: item.href,
         group: "Go to",
         title: item.label,
@@ -288,7 +289,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
     }
     router.push(href as never);
   };
-  const moreActive = MORE_ITEMS.some((item) => onPage(path, item.href));
+  const moreActive = moreItems.some((item) => onPage(path, item.href));
 
   return (
     <header className="vc-nav" ref={bar} data-tour="nav">
@@ -331,7 +332,7 @@ export function ConsoleTopbar({ data }: { data: ConsoleOverviewData | null }) {
 
           {more && (
             <div className="vc-pop vc-pop-menu" role="menu" aria-label="More of the workspace">
-              {MORE_ITEMS.map((item) => (
+              {moreItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href as never}
