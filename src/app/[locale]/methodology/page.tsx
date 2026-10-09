@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -44,12 +45,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       siteName: "Vuneli",
       type: "website",
       locale: isEl ? "el_CY" : "en_US",
-      images: [{ url: `${SITE_URL}/opengraph-image.png`, width: 1200, height: 630, alt: title }],
+      images: [{ url: `${SITE_URL}/assets/methodology/hero.jpg`, width: 1600, height: 1200, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [`${SITE_URL}/assets/methodology/hero.jpg`],
     },
   };
 }
@@ -150,7 +152,8 @@ export default async function MethodologyPage({ params }: { params: Params }) {
               "repeating-linear-gradient(180deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 34px)",
           }}
         />
-        <div className="relative mx-auto max-w-6xl px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-40">
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-40 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-center lg:gap-14">
+          <div className="min-w-0">
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-white/65">{t.eyebrow}</p>
           <h1
             className="mt-4 max-w-3xl text-[2.4rem] font-semibold leading-[1.03] tracking-[-0.025em] sm:text-[3.6rem]"
@@ -184,6 +187,17 @@ export default async function MethodologyPage({ params }: { params: Params }) {
               </dd>
             </div>
           </dl>
+          </div>
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-white/10">
+            <Image
+              src="/assets/methodology/hero.jpg"
+              alt={isEl ? "Λογαριασμός ΑΗΚ δίπλα σε πίνακα συντελεστών εκπομπών" : "An EAC electricity bill next to a table of emission factors"}
+              fill
+              priority
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="object-cover"
+            />
+          </div>
         </div>
       </section>
 
