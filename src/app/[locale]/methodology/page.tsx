@@ -300,7 +300,7 @@ export default async function MethodologyPage({ params }: { params: Params }) {
             </p>
 
             <div className="mt-8 rounded-lg border border-foreground/15 bg-background p-5 font-mono text-xs text-foreground/80">
-              <div className="text-foreground/50">// Merkle Document Root Digest Structure</div>
+              <div className="text-foreground/50">// Document fingerprint (SHA-256)</div>
               <div className="mt-2 text-[var(--accent-emerald)]">
                 SHA256( raw_bill_sha256 + activity_kwh + factor_id + timestamp + tenant_id )
               </div>

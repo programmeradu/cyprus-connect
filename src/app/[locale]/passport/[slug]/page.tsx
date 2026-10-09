@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     ? `${companyName} — Επαληθευμένο Ψηφιακό Διαβατήριο VSME | Vuneli`
     : `${companyName} — Verified VSME Sustainability Passport | Vuneli`;
   const description = isEl
-    ? `Επίσημη αναφορά βιωσιμότητας κατά το πρότυπο EFRAG VSME για την ${companyName}, βασισμένη σε μετρημένα δεδομένα ΑΗΚ και κρυπτογραφικό αποτύπωμα Merkle.`
-    : `Official EFRAG VSME voluntary sustainability profile for ${companyName}. Fully traceable to metered bills with a 64-character Merkle root hash.`;
+    ? `Επίσημη αναφορά βιωσιμότητας κατά το πρότυπο EFRAG VSME για την ${companyName}, με στοιχεία από τους λογαριασμούς της επιχείρησης.`
+    : `Official EFRAG VSME voluntary sustainability profile for ${companyName}. Figures come from the company’s own bills.`;
 
   return {
     title,
@@ -102,7 +102,7 @@ export default async function PublicPassportPage({ params }: { params: Params })
           </h1>
 
           <p className="mt-4 max-w-2xl text-[16.5px] font-medium leading-[1.62] text-white/80 sm:text-[18px]">
-            {data.passport.headline || (isEl ? "Επαληθευμένη αναφορά βιωσιμότητας κατά το ευρωπαϊκό πρότυπο EFRAG VSME." : "Verified voluntary sustainability data pack compliant with the EU Omnibus I value-chain cap.")}
+            {data.passport.headline || (isEl ? "Στοιχεία βιωσιμότητας κατά το πρότυπο EFRAG VSME, από τους λογαριασμούς της επιχείρησης." : "Sustainability figures under the EFRAG VSME standard, taken from the company’s bills.")}
           </p>
 
           <dl className="mt-10 grid max-w-3xl grid-cols-2 gap-x-8 gap-y-5 border-t border-white/20 pt-6 sm:grid-cols-4">
@@ -110,7 +110,7 @@ export default async function PublicPassportPage({ params }: { params: Params })
               <dt className="text-[12px] font-semibold uppercase tracking-[0.1em] text-white/55">
                 {isEl ? "Δικαιοδοσία" : "Jurisdiction"}
               </dt>
-              <dd className="mt-1 text-sm font-semibold text-white">{data.company.country === "CY" ? "Cyprus (EU)" : data.company.country}</dd>
+              <dd className="mt-1 text-sm font-semibold text-white">{data.company.country === "CY" ? (isEl ? "Κύπρος (ΕΕ)" : "Cyprus (EU)") : data.company.country}</dd>
             </div>
             <div>
               <dt className="text-[12px] font-semibold uppercase tracking-[0.1em] text-white/55">
@@ -212,7 +212,7 @@ export default async function PublicPassportPage({ params }: { params: Params })
                           )}
                         </div>
                         <div className="text-[11px] text-[var(--accent-emerald)]">
-                          {item.isVerified ? `✓ ${isEl ? "Επαληθευμένο" : "Verified"}` : ""}
+                          {item.isVerified ? (isEl ? "Από παραστατικά" : "From records") : ""}
                         </div>
                       </div>
                     </div>
@@ -227,19 +227,19 @@ export default async function PublicPassportPage({ params }: { params: Params })
         <section className="rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 sm:p-12">
           <div className="max-w-3xl">
             <h2 className="text-xl font-semibold tracking-tight sm:text-2xl" style={{ fontFamily: "var(--editorial-display)" }}>
-              {isEl ? "Κρυπτογραφικό Αποτύπωμα Ελέγχου" : "Cryptographic Audit Provenance"}
+              {isEl ? "Αποτύπωμα έκδοσης" : "Version fingerprint"}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-foreground/75">
               {isEl
-                ? "Τα δεδομένα αυτού του προφίλ είναι κρυπτογραφικά σφραγισμένα με κατακερματισμό SHA-256 Merkle root. Μπορείτε να επιβεβαιώσετε τη γνησιότητα των δεδομένων στο "
-                : "The figures in this passport are bound by an immutable SHA-256 Merkle root hash. Any credit institution or enterprise buyer can verify this passport at "}
+                ? "Αυτή η έκδοση έχει αποτύπωμα SHA-256. Αν αλλάξει κάποιος αριθμός, αλλάζει και το αποτύπωμα. Ένα PDF του διαβατηρίου ελέγχεται στο "
+                : "This version has a SHA-256 fingerprint. If any figure changes, so does the fingerprint. A PDF of this passport can be checked at "}
               <Link href={`/${locale}/verify`} className="font-semibold underline underline-offset-4">
                 vuneli.com/verify
               </Link>.
             </p>
 
             <div className="mt-6 rounded-lg border border-foreground/15 bg-background p-4 font-mono text-xs text-foreground/80 break-all">
-              <span className="text-foreground/50">SHA256 Root Hash: </span>
+              <span className="text-foreground/50">SHA-256: </span>
               <span className="text-[var(--accent-emerald)] font-bold">{data.merkleRootHash}</span>
             </div>
           </div>
