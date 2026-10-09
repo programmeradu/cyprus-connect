@@ -24,10 +24,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const isEl = locale === "el";
   const title = isEl
     ? "Μεθοδολογία Υπολογισμού & Συντελεστές Εκπομπών | Vuneli"
-    : "Calculation Methodology & Emission Factors | Vuneli";
+    : "Methodology and emission factors | Vuneli";
   const description = isEl
     ? "Επίσημη μεθοδολογία υπολογισμού εκπομπών GHG, πηγές συντελεστών (ΑΗΚ, ΤΑΥ, DEFRA, EEA) και αρχές επαλήθευσης αποτυπώματος για κυπριακές ΜμΕ."
-    : "Authoritative carbon accounting methodology, statutory emission factors (EAC, WDD, DEFRA, EEA), and verification standards for Cyprus SMEs.";
+    : "How Vuneli works out a Cyprus business footprint from its bills: the emission factors we use, where they come from, and how figures are checked.";
   const url = `${SITE_URL}/${locale}/methodology`;
   const languages: Record<string, string> = {};
   for (const l of routing.locales) languages[l === "el" ? "el-CY" : l] = `${SITE_URL}/${l}/methodology`;
@@ -56,74 +56,74 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 const T = {
   en: {
-    eyebrow: "Scientific & Statutory Governance",
-    title: "Emission Accounting Methodology",
+    eyebrow: "Methodology",
+    title: "How Vuneli works out your footprint",
     subtitle:
-      "Every number issued by Vuneli is mathematically deterministic, traceable to its source bill or meter, and governed by authoritative statutory standards.",
+      "We start from your bills, multiply by published emission factors, and show which source each figure came from. When something is missing, we leave it blank instead of guessing.",
     lastUpdated: "October 2026",
-    frameworksTitle: "Statutory Standards & Frameworks",
+    frameworksTitle: "Standards we follow",
     frameworksDesc:
-      "Vuneli implements international greenhouse gas accounting frameworks tailored to the legal and electrical realities of the Republic of Cyprus.",
-    factorsTitle: "Canonical Emission Factor Registry",
+      "We use the GHG Protocol and the EFRAG VSME standard, with factors chosen for how electricity is made in Cyprus.",
+    factorsTitle: "Emission factors",
     factorsDesc:
-      "All platform features—including automated bill intake, reports, the Verde copilot, and public calculators—read from an immutable, single-source registry.",
+      "The app, reports, Verde and the free calculators all read these factors from the same list, so a figure is the same wherever you see it.",
     factorsHeaders: {
-      category: "Category / Activity",
-      factor: "Conversion Factor",
-      scope: "GHG Scope",
-      authority: "Statutory Authority",
-      vintage: "Vintage",
+      category: "Activity",
+      factor: "Factor",
+      scope: "Scope",
+      authority: "Source",
+      vintage: "Year",
     },
-    provenanceTitle: "Audit Provenance & Merkle Fingerprinting",
+    provenanceTitle: "Tracing a figure back to its bill",
     provenanceText1:
-      "Figures in Vuneli are never naked estimates. When an EAC electricity bill or Petrolina fuel invoice is ingested, the system extracts the physical activity data (kWh or Litres) and creates a deterministic cryptographic audit trail.",
+      "When you add an EAC electricity bill or a fuel receipt, we read the amount used (kWh or litres) and keep the bill with the figure. You can open the bill behind any number.",
     provenanceText2:
-      "Every issued document receives a 64-character SHA-256 Merkle root hash. This hash covers the precise inputs, factor IDs, calculation methodology, and timestamp. Anyone holding a printed or digital copy can verify its integrity instantly at",
-    verifiedActionsTitle: "Action Plan Verification Standards",
+      "Each PDF we issue carries a SHA-256 fingerprint of its contents. If anything in the document is changed, the fingerprint no longer matches. Anyone with a copy can check it at",
+    verifiedActionsTitle: "When a project counts as done",
     verifiedActionsText:
-      "Unlike generic task trackers, decarbonisation actions in Vuneli (such as rooftop solar PV or HVAC retrofits) cannot be manually ticked 'complete'. A project reaches 'Confirmed' status only when verified against two immutable anchors:",
-    verifiedAnchor1Title: "Proof of Execution",
-    verifiedAnchor1Desc: "A valid supplier invoice PDF showing the exact VAT number, billing date, and installed capacity, or an reconciled open-banking debit payment.",
-    verifiedAnchor2Title: "Empirical Bill Drop",
-    verifiedAnchor2Desc: "Subsequent utility bills demonstrate an empirical drop in consumption exceeding the project's engineering threshold against the prior-year seasonal baseline.",
-    ctaTitle: "Independent Assurance & Inquiries",
-    ctaDesc: "Auditors, banking credit officers, and corporate sustainability teams with questions regarding our factor registry or calculation models can reach our verification desk.",
-    ctaButton: "Contact Verification Desk",
+      "Projects in the Action plan, such as rooftop solar or a new heat pump, can't be ticked off by hand. A project is confirmed only when every check for its type passes:",
+    verifiedAnchor1Title: "Proof of purchase",
+    verifiedAnchor1Desc: "A supplier invoice we can read, showing the supplier, the date and what was installed, or a bank payment you link to the project.",
+    verifiedAnchor2Title: "Lower bills afterwards",
+    verifiedAnchor2Desc: "Where the project should cut use, later bills must be clearly lower than the same months a year before.",
+    ctaTitle: "Questions about our numbers",
+    ctaDesc: "Auditors, banks and customers can ask us how any figure was worked out.",
+    ctaButton: "Contact us",
   },
   el: {
-    eyebrow: "Επιστημονική & Κανονιστική Διακυβέρνηση",
-    title: "Μεθοδολογία Υπολογισμού Εκπομπών",
+    eyebrow: "Μεθοδολογία",
+    title: "Πώς η Vuneli υπολογίζει το αποτύπωμά σας",
     subtitle:
-      "Κάθε αριθμός που εκδίδει η Vuneli είναι μαθηματικά ντετερμινιστικός, πλήρως ανιχνεύσιμος στον πρωτότυπο λογαριασμό ή μετρητή, και βασίζεται σε επίσημα κανονιστικά πρότυπα.",
+      "Ξεκινάμε από τους λογαριασμούς σας, πολλαπλασιάζουμε με δημοσιευμένους συντελεστές και δείχνουμε από πού προέρχεται κάθε αριθμός. Όταν κάτι λείπει, το αφήνουμε κενό αντί να μαντέψουμε.",
     lastUpdated: "Οκτώβριος 2026",
-    frameworksTitle: "Κανονιστικά Πρότυπα & Πλαίσια",
+    frameworksTitle: "Πρότυπα που ακολουθούμε",
     frameworksDesc:
-      "Η Vuneli εφαρμόζει διεθνή πρότυπα υπολογισμού αερίων θερμοκηπίου, προσαρμοσμένα στις νομικές και ηλεκτρικές ιδιαιτερότητες της Κυπριακής Δημοκρατίας.",
-    factorsTitle: "Κανονιστικό Μητρώο Συντελεστών Εκπομπών",
+      "Χρησιμοποιούμε το GHG Protocol και το πρότυπο EFRAG VSME, με συντελεστές για τον τρόπο παραγωγής ρεύματος στην Κύπρο.",
+    factorsTitle: "Συντελεστές εκπομπών",
     factorsDesc:
-      "Όλες οι λειτουργίες της πλατφόρμας—η αυτόματη ανάγνωση λογαριασμών, οι εκθέσεις, ο βοηθός Verde και οι δημόσιοι υπολογιστές—αντλούν δεδομένα από ένα ενιαίο, αμετάβλητο μητρώο.",
+      "Η εφαρμογή, οι εκθέσεις, ο Verde και οι δωρεάν υπολογιστές διαβάζουν τους ίδιους συντελεστές, οπότε ένας αριθμός είναι ίδιος παντού.",
     factorsHeaders: {
-      category: "Κατηγορία / Δραστηριότητα",
-      factor: "Συντελεστής Μετατροπής",
-      scope: "Πεδίο GHG",
-      authority: "Επίσημη Αρχή",
-      vintage: "Έκδοση",
+      category: "Δραστηριότητα",
+      factor: "Συντελεστής",
+      scope: "Πεδίο",
+      authority: "Πηγή",
+      vintage: "Έτος",
     },
-    provenanceTitle: "Ιχνηλασιμότητα Ελέγχου & Ψηφιακό Αποτύπωμα Merkle",
+    provenanceTitle: "Από τον αριθμό στον λογαριασμό",
     provenanceText1:
-      "Τα στοιχεία στη Vuneli δεν αποτελούν ποτέ γενικές εκτιμήσεις. Κατά την εισαγωγή ενός λογαριασμού ΑΗΚ ή τιμολογίου καυσίμων, το σύστημα εξάγει τα φυσικά δεδομένα κατανάλωσης (kWh ή Λίτρα) και δημιουργεί ένα αδιάσειστο κρυπτογραφικό μονοπάτι ελέγχου.",
+      "Όταν προσθέτετε λογαριασμό ΑΗΚ ή απόδειξη καυσίμων, διαβάζουμε την κατανάλωση (kWh ή λίτρα) και κρατάμε τον λογαριασμό μαζί με τον αριθμό. Μπορείτε να ανοίξετε τον λογαριασμό πίσω από κάθε αριθμό.",
     provenanceText2:
-      "Κάθε εκδιδόμενο έγγραφο λαμβάνει έναν μοναδικό κατακερματισμό SHA-256 64 χαρακτήρων (Merkle root). Ο κωδικός αυτός καλύπτει τα ακριβή δεδομένα εισόδου, τους συντελεστές και τη μεθοδολογία. Οποιοσδήποτε κρατά ένα έντυπο ή ψηφιακό αντίγραφο μπορεί να ελέγξει άμεσα τη γνησιότητά του στο",
-    verifiedActionsTitle: "Πρότυπα Επαλήθευσης Πλάνου Δράσης",
+      "Κάθε PDF που εκδίδουμε έχει αποτύπωμα SHA-256 του περιεχομένου του. Αν αλλάξει κάτι στο έγγραφο, το αποτύπωμα δεν ταιριάζει πια. Όποιος έχει αντίγραφο μπορεί να το ελέγξει στο",
+    verifiedActionsTitle: "Πότε ένα έργο θεωρείται ολοκληρωμένο",
     verifiedActionsText:
-      "Σε αντίθεση με απλές λίστες εργασιών, τα έργα απαλλαγής από τον άνθρακα στη Vuneli (όπως φωτοβολταϊκά ή αντικατάσταση κλιματισμού) δεν μπορούν να σημειωθούν χειροκίνητα ως 'ολοκληρωμένα'. Ένα έργο επιβεβαιώνεται ('Confirmed') μόνο μέσω δύο αποδείξεων:",
-    verifiedAnchor1Title: "Απόδειξη Εκτέλεσης",
-    verifiedAnchor1Desc: "Έγκυρο τιμολόγιο προμηθευτή σε PDF με ΑΦΜ, ημερομηνία και εγκατεστημένη ισχύ, ή ταυτοποιημένη πληρωμή μέσω τραπεζικού λογαριασμού.",
-    verifiedAnchor2Title: "Εμπειρική Μείωση Κατανάλωσης",
-    verifiedAnchor2Desc: "Μεταγενέστεροι λογαριασμοί κοινής ωφέλειας αποδεικνύουν πραγματική πτώση στην κατανάλωση που υπερβαίνει το τεχνικό όριο του έργου σε σχέση με την εποχική βάση του προηγούμενου έτους.",
-    ctaTitle: "Ανεξάρτητος Έλεγχος & Ερωτήσεις",
-    ctaDesc: "Ορκωτοί ελεγκτές, τραπεζικοί αναλυτές πιστωτικού κινδύνου και ομάδες βιωσιμότητας με απορίες σχετικά με τους συντελεστές ή τα υπολογιστικά μοντέλα μπορούν να επικοινωνήσουν απευθείας μαζί μας.",
-    ctaButton: "Επικοινωνία με το Τμήμα Επαλήθευσης",
+      "Τα έργα στο Σχέδιο δράσης, όπως φωτοβολταϊκά ή αντλία θερμότητας, δεν σημειώνονται με το χέρι. Ένα έργο επιβεβαιώνεται μόνο όταν περάσουν όλοι οι έλεγχοι του τύπου του:",
+    verifiedAnchor1Title: "Απόδειξη αγοράς",
+    verifiedAnchor1Desc: "Τιμολόγιο προμηθευτή που μπορούμε να διαβάσουμε, με προμηθευτή, ημερομηνία και τι εγκαταστάθηκε, ή τραπεζική πληρωμή που συνδέετε με το έργο.",
+    verifiedAnchor2Title: "Χαμηλότεροι λογαριασμοί μετά",
+    verifiedAnchor2Desc: "Όπου το έργο πρέπει να μειώσει την κατανάλωση, οι επόμενοι λογαριασμοί πρέπει να είναι σαφώς χαμηλότεροι από τους ίδιους μήνες του προηγούμενου έτους.",
+    ctaTitle: "Ερωτήσεις για τους αριθμούς μας",
+    ctaDesc: "Ελεγκτές, τράπεζες και πελάτες μπορούν να μας ρωτήσουν πώς υπολογίστηκε κάθε αριθμός.",
+    ctaButton: "Επικοινωνία",
   },
 } as const;
 
@@ -173,7 +173,7 @@ export default async function MethodologyPage({ params }: { params: Params }) {
               <dt className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-white/55">
                 {isEl ? "Δικαιοδοσία" : "Primary Jurisdiction"}
               </dt>
-              <dd className="mt-1.5 text-[15.5px] font-semibold text-white">Republic of Cyprus (EU)</dd>
+              <dd className="mt-1.5 text-[15.5px] font-semibold text-white">{isEl ? "Κυπριακή Δημοκρατία (ΕΕ)" : "Republic of Cyprus (EU)"}</dd>
             </div>
             <div>
               <dt className="text-[12.5px] font-semibold uppercase tracking-[0.1em] text-white/55">
@@ -300,7 +300,7 @@ export default async function MethodologyPage({ params }: { params: Params }) {
             </p>
 
             <div className="mt-8 rounded-lg border border-foreground/15 bg-background p-5 font-mono text-xs text-foreground/80">
-              <div className="text-foreground/50">// Merkle Document Root Digest Structure</div>
+              <div className="text-foreground/50">// Document fingerprint (SHA-256)</div>
               <div className="mt-2 text-[var(--accent-emerald)]">
                 SHA256( raw_bill_sha256 + activity_kwh + factor_id + timestamp + tenant_id )
               </div>

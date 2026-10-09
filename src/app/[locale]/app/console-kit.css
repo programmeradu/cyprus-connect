@@ -2001,3 +2001,10 @@ body:has(.vcm) [data-slot="dialog-overlay"] { z-index: 90; }
 .vc .vck-months-detail dt { font-size: 13px; font-weight: 600; color: var(--vc-ink-2); }
 .vc .vck-months-detail dd { margin: 2px 0 0; font-family: var(--font-mono, ui-monospace, monospace); font-variant-numeric: tabular-nums; }
 @media (max-width: 560px) { .vc .vck-hide-sm { display: none; } .vc .vck-months-table th, .vc .vck-months-table td { padding: 10px; } }
+
+/* Passport: plain prose, row of actions, and a wrapped hash/link box. */
+.vck-prose { margin: 0 0 12px; font-size: 13.5px; line-height: 1.55; color: var(--vc-ink-2); max-width: 64ch; }
+.vck-row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.vck-fingerprint { display: grid; gap: 6px; margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: var(--vc-soft, rgba(127,127,127,0.07)); }
+.vck-fingerprint code { font-family: var(--font-mono, "IBM Plex Mono", monospace); font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; word-break: break-all; color: var(--vc-ink); }
+.vck-fingerprint small { font-size: 12px; line-height: 1.45; color: var(--vc-ink-3); }
