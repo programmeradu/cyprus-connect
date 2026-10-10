@@ -143,17 +143,22 @@ export default async function MethodologyPage({ params }: { params: Params }) {
       <MarketingHeader />
 
       {/* Hero Section */}
-      <section data-dark-hero className="relative isolate overflow-hidden bg-[oklch(0.19_0.02_150)] text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(180deg, rgba(255,255,255,0.9) 0px, rgba(255,255,255,0.9) 1px, transparent 1px, transparent 34px)",
-          }}
-        />
-        <div className="relative mx-auto grid max-w-6xl gap-10 px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-40 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:items-center lg:gap-14">
-          <div className="min-w-0">
+      <section data-dark-hero className="relative isolate overflow-hidden text-white">
+        <div className="absolute inset-0 -z-10">
+          <Image
+            src="/assets/methodology/hero.jpg"
+            alt={isEl ? "Λογαριασμός ΑΗΚ δίπλα σε πίνακα συντελεστών εκπομπών" : "An EAC electricity bill next to a table of emission factors"}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[65%_center]"
+          />
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/10" />
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent" />
+        </div>
+        <div className="mx-auto max-w-6xl px-5 pb-16 pt-32 sm:px-8 sm:pb-20 sm:pt-40">
+          <div className="max-w-3xl">
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-white/65">{t.eyebrow}</p>
           <h1
             className="mt-4 max-w-3xl text-[2.4rem] font-semibold leading-[1.03] tracking-[-0.025em] sm:text-[3.6rem]"
@@ -187,16 +192,6 @@ export default async function MethodologyPage({ params }: { params: Params }) {
               </dd>
             </div>
           </dl>
-          </div>
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-white/10">
-            <Image
-              src="/assets/methodology/hero.jpg"
-              alt={isEl ? "Λογαριασμός ΑΗΚ δίπλα σε πίνακα συντελεστών εκπομπών" : "An EAC electricity bill next to a table of emission factors"}
-              fill
-              priority
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              className="object-cover"
-            />
           </div>
         </div>
       </section>
