@@ -1,8 +1,7 @@
 /**
  * Hospitality Pack PDF generator.
  *
- * Typesets a Tour Operator ESG & HCMI compliance dossier using Typst,
- * stamping it into the public verification register with a 64-character SHA-256 Merkle root.
+ * Hotel footprint PDF, rendered with the shared report template and registered by fingerprint.
  */
 
 import type { HospitalityPackData } from "@/lib/reports/types";
@@ -22,7 +21,7 @@ export async function downloadHospitalityPdf(data: HospitalityPackData, fileName
     docId: String(json.docId),
     hash: json.hash,
     issuedAt,
-    title: String(json.title || "Tour Operator ESG & HCMI Compliance Pack"),
+    title: String(json.title || "Hotel footprint"),
     company: String(json.company || "Hotel Property"),
   });
 

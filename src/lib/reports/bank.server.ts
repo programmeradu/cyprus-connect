@@ -20,14 +20,23 @@ import { fingerprint } from "@/lib/pdf/kit/fingerprint";
 import type { LenderAnswer, LenderPackData } from "./types";
 export type { LenderAnswer, LenderPackData };
 
-/** Distinct calendar months covered by a set of bills. */
-export function monthsCovered(bills: { periodStart?: string | Date | null; periodEnd?: string | Date | null; date?: string | Date | null }[]): number {
+/**
+ * Distinct calendar months covered by a set of bills. A bill counts every
+ * month from its period start to its period end (EAC bills are often two months).
+ */
+export function monthsCovered(bills: { periodStart?: string | null; periodEnd?: string | null }[]): number {
   const months = new Set<string>();
   for (const b of bills) {
-    const raw = b.periodEnd ?? b.date ?? b.periodStart;
-    if (!raw) continue;
-    const d = new Date(raw);
-    if (!Number.isNaN(d.getTime())) months.add(`${d.getUTCFullYear()}-${d.getUTCMonth()}`);
+    const end = b.periodEnd ? new Date(b.periodEnd) : null;
+    if (!end || Number.isNaN(end.getTime())) continue;
+    const startRaw = b.periodStart ? new Date(b.periodStart) : end;
+    const start = Number.isNaN(startRaw.getTime()) ? end : startRaw;
+    const cur = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+    let guard = 0;
+    while (cur <= end && guard++ < 24) {
+      months.add(`${cur.getUTCFullYear()}-${cur.getUTCMonth()}`);
+      cur.setUTCMonth(cur.getUTCMonth() + 1);
+    }
   }
   return months.size;
 }

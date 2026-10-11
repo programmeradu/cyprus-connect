@@ -1,32 +1,23 @@
-/**
- * Bank ESG Borrower Pack PDF generator.
- *
- * Typesets an executive banking credit submission memo and borrower ESG
- * dossier with green lending covenants using Typst, stamping it into the
- * public verification register.
- */
+/** Lender pack PDF: renders with the shared report template and registers the fingerprint. */
 
-import type { BankBorrowerPackData } from "@/lib/reports/types";
-import { buildBankPackPdfData } from "./builders";
+import type { LenderPackData } from "@/lib/reports/types";
+import { buildLenderPackPdfData } from "./builders";
 
-export async function downloadBankPackPdf(data: BankBorrowerPackData, fileName: string) {
+export async function downloadLenderPackPdf(data: LenderPackData, fileName: string) {
   const { renderTypst, downloadBytes, siteBase, registerDocument } = await import("./typst-render");
   const { stampPdfDetails } = await import("./pdf-details");
 
   const issuedAt = new Date();
-  const json = buildBankPackPdfData(data, issuedAt);
-
+  const json = buildLenderPackPdfData(data, issuedAt);
   const raw = await renderTypst("report.typ", json, { base: siteBase() });
-
   const bytes = await stampPdfDetails(raw, {
     kind: "report",
     docId: String(json.docId),
     hash: json.hash,
     issuedAt,
-    title: String(json.title || "Bank ESG Borrower Credit Pack"),
+    title: json.title,
     company: String(json.company || "Unnamed company"),
   });
-
   await registerDocument("report", json, issuedAt);
   downloadBytes(bytes, fileName);
 }

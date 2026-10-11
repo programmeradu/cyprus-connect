@@ -1,61 +1,45 @@
 import { docId, longDate } from "@/lib/pdf/format";
-import type { BankBorrowerPackData, HospitalityPackData, VsmePassportData } from "@/lib/reports/types";
+import type { LenderAnswer, LenderPackData, HospitalityPackData, VsmePassportData } from "@/lib/reports/types";
 
-/** Prepares printable Typst PDF data for Bank ESG Submission memo. */
-export function buildBankPackPdfData(b: BankBorrowerPackData, issuedAt = new Date()) {
-  const hash = b.merkleRootHash;
+/** Lender pack PDF: a plain ESG summary for any bank. Blank answers are listed as gaps. */
+export function buildLenderPackPdfData(b: LenderPackData, issuedAt = new Date()) {
+  const fmt = (a: LenderAnswer) => (a.value === null ? "Not yet recorded" : `${a.value.toLocaleString("en-GB")}${a.unit ? ` ${a.unit}` : ""}`);
+  const backed = b.answers.filter((a) => a.fromRecords).length;
   return {
     lang: "en",
-    hash,
-    docId: docId("BANK", hash, issuedAt),
+    hash: b.hash,
+    docId: docId("LENDER", b.hash, issuedAt),
     issued: longDate(issuedAt),
-    title: `${b.bankName} — Borrower ESG Credit Submission Pack`,
-    framework: "BANK-ESG",
-    headLabel: "Bank ESG Borrower Submission",
-    period: "Annual Credit Review & Green Loan Facility",
+    title: "ESG summary for lenders",
+    framework: "LENDER",
+    headLabel: "ESG summary for lenders",
+    period: `Bills on file: ${b.coverage.electricityMonths} months electricity, ${b.coverage.waterMonths} months water`,
     company: b.company.legalName || b.company.name,
     draft: false,
-    draftNote: `Official submission dossier for ${b.bankName}. Green covenant qualification: ${b.covenantEligibility.tier}.`,
+    draftNote: `${backed} of ${b.answers.length} answers come from bills or documents. The rest are company statements or blank.`,
     coverFacts: [
-      { label: "Target Institution", value: b.bankName.slice(0, 30) },
-      { label: "Borrower Entity", value: b.company.legalName || b.company.name },
-      { label: "Green Margin Discount", value: `${b.metrics.greenMarginDiscountBps} bps (${b.covenantEligibility.tier})` },
-      { label: "Verified Data Points", value: `${b.questionnaire.filter((q) => q.isVerified).length} of ${b.questionnaire.length}` },
+      { label: "Company", value: b.company.legalName || b.company.name },
+      { label: "Registration", value: b.company.registrationNo || "Not given" },
+      { label: "Electricity bills", value: `${b.coverage.electricityMonths} months` },
+      { label: "From records", value: `${backed} of ${b.answers.length}` },
     ],
     summary: [
-      `This credit submission dossier is prepared for the Corporate Credit Underwriting Committee of ${b.bankName}. It satisfies all mandatory borrower Scope 1, Scope 2, and utility footprint disclosure requirements under European Banking Authority (EBA) ESG ITS standards.`,
-      `Green Lending Covenant Qualification: Based on empirical evidence, this borrower qualifies for a ${b.metrics.greenMarginDiscountBps} basis point interest margin reduction. All utility and emission data points are anchored to statutory utility invoices and cryptographically fingerprinted with a 64-character SHA-256 Merkle root.`,
+      "This summary answers the energy, emissions and water questions banks usually ask borrowers. Each figure shows where it came from.",
+      "It is not a bank form and does not claim any loan terms. Your bank decides whether and how it uses these figures.",
     ],
     chapters: [
       {
         n: "01",
-        title: "Green Lending Margin Eligibility Certification",
-        paras: b.covenantEligibility.reasonsEn,
-        figures: [
-          { label: "Margin reduction", value: `-${b.metrics.greenMarginDiscountBps} bps`, source: "Green credit framework evaluation" },
-          { label: "Covenant tier", value: b.covenantEligibility.tier, source: "Borrower energy intensity & renewables" },
-          ...(b.metrics.estimatedAnnualInterestSavedEur
-            ? [{ label: "Est. annual interest saved", value: `€${b.metrics.estimatedAnnualInterestSavedEur.toLocaleString()}`, source: "Based on illustrative credit facility" }]
-            : []),
-        ],
-        gaps: [],
-      },
-      {
-        n: "02",
-        title: "Borrower ESG Questionnaire Responses",
-        paras: ["Detailed line-by-line responses to statutory banking credit questions with full audit citations:"],
-        figures: b.questionnaire.map((q) => ({
-          label: `${q.code} ${q.questionEn}`,
-          value: q.unit ? `${q.answer} ${q.unit}` : String(q.answer),
-          source: q.auditTrail,
-        })),
-        gaps: b.questionnaire.filter((q) => !q.isVerified).map((q) => `${q.code}: awaiting supplementary documentation`),
+        title: "Answers",
+        paras: [],
+        figures: b.answers.map((a) => ({ label: a.questionEn, value: fmt(a), source: a.sourceEn })),
+        gaps: b.answers.filter((a) => a.value === null).map((a) => `${a.questionEn}: no record yet`),
       },
     ],
     sources: [
-      "Electricity Authority of Cyprus (EAC) metered billing records",
-      "Republic of Cyprus Water Development Department (WDD) records",
-      "Vuneli Canonical Republic of Cyprus Emission Factor Registry",
+      "Electricity Authority of Cyprus (EAC) bills added to Vuneli",
+      "Water board bills added to Vuneli",
+      "Cyprus grid emission factor, see vuneli.com/methodology",
     ],
   };
 }
@@ -106,66 +90,60 @@ export function buildPassportPdfData(p: VsmePassportData, issuedAt = new Date())
   };
 }
 
-/** Prepares printable Typst PDF data for Tour Operator HCMI / ESG pack. */
+/** Hotel footprint PDF: intensity figures from the hotel's own facts and bills. */
 export function buildHospitalityPdfData(h: HospitalityPackData, issuedAt = new Date()) {
-  const hash = h.merkleRootHash;
+  const p = h.profile;
+  const m = h.metrics;
+  const show = (v: number | null, unit: string) => (v === null ? "Not enough data" : `${v.toLocaleString("en-GB")} ${unit}`);
   return {
     lang: "en",
-    hash,
-    docId: docId("HOSP", hash, issuedAt),
+    hash: h.hash,
+    docId: docId("HOTEL", h.hash, issuedAt),
     issued: longDate(issuedAt),
-    title: `${h.profile.propertyName} — Tour Operator ESG & HCMI Compliance Pack`,
-    framework: "HCMI-HWMI",
-    headLabel: "Tour Operator Sustainability Pack",
-    period: `${h.company.baselineYear} Operational Period`,
+    title: `${p?.propertyName || h.company.name}: hotel footprint per room-night`,
+    framework: "HOTEL",
+    headLabel: "Hotel footprint",
+    period: `Bills on file: ${h.bills.electricityMonths} months electricity, ${h.bills.waterMonths} months water`,
     company: h.company.legalName || h.company.name,
     draft: false,
-    draftNote: `Official Tour Operator compliance dossier. Hotel Category: ${h.profile.hotelCategory}. Readiness Score: ${h.hcmiMetrics.tourOperatorReadinessScore}/100.`,
+    draftNote: "Room and guest-night figures are entered by the hotel. Energy and water come from bills.",
     coverFacts: [
-      { label: "Property", value: h.profile.propertyName },
-      { label: "Eco-Label / Standard", value: h.profile.ecoLabel },
-      { label: "Readiness Score", value: `${h.hcmiMetrics.tourOperatorReadinessScore} / 100` },
-      { label: "Verified Utility Bills", value: `${h.verifiedBills.eacBillsCount} EAC + ${h.verifiedBills.waterBillsCount} Water Board` },
+      { label: "Rooms", value: p ? String(p.totalRooms) : "Not given" },
+      { label: "Carbon / room-night", value: show(m.carbonPerOccupiedRoomKg, "kg CO2e") },
+      { label: "Water / guest-night", value: show(m.waterPerGuestNightLiters, "L") },
+      { label: "Bills", value: `${h.bills.electricity + h.bills.water}` },
     ],
     summary: [
-      `This compliance pack compiles statutory verified carbon and water metrics for ${h.profile.propertyName} strictly compliant with the Hotel Carbon Measurement Initiative (HCMI v3.1) and Hotel Water Measurement Initiative (HWMI).`,
-      `Tour Operator Supply Chain Alignment: Data is verified against EAC metered utility records and Republic of Cyprus Water Board invoices, cryptographically fingerprinted with a 64-character SHA-256 Merkle root.`,
+      "Figures follow the per-room-night and per-guest-night approach used by the Hotel Carbon and Water Measurement Initiatives (HCMI, HWMI). Scope 2 uses the Cyprus grid factor.",
     ],
     chapters: [
       {
         n: "01",
-        title: "HCMI Hotel Carbon & Energy Intensity Metrics",
-        paras: [
-          `Annual occupied room-nights: ${h.profile.annualOccupiedRooms.toLocaleString("en-GB")}. Annual guest-nights: ${h.profile.annualGuestNights.toLocaleString("en-GB")}.`,
-          `Location-based emissions calculated using Cyprus statutory EAC grid emission factor (0.622 kg CO2e/kWh).`,
-        ],
+        title: "Energy and carbon",
+        paras: p ? [`Occupied room-nights: ${p.annualOccupiedRooms.toLocaleString("en-GB")}. Guest-nights: ${p.annualGuestNights.toLocaleString("en-GB")}.`] : [],
         figures: [
-          { label: "Energy per Occupied Room", value: `${h.hcmiMetrics.energyPerOccupiedRoomKwh} kWh / room-night`, source: "EAC utility meter audit" },
-          { label: "Carbon per Occupied Room", value: `${h.hcmiMetrics.carbonPerOccupiedRoomKg} kg CO2e / room-night`, source: "HCMI calculation standard" },
-          { label: "Carbon per Guest-Night", value: `${h.hcmiMetrics.carbonPerGuestNightKg} kg CO2e / guest-night`, source: "Total operational carbon / guests" },
-          { label: "Benchmark Variance", value: `${h.hcmiMetrics.tuiCarbonBenchmarkDiffPct > 0 ? "+" : ""}${h.hcmiMetrics.tuiCarbonBenchmarkDiffPct}%`, source: "vs Cyprus 4-star average (18.5 kg)" },
+          { label: "Electricity", value: `${Math.round(m.totalElectricityKwh).toLocaleString("en-GB")} kWh`, source: `${h.bills.electricity} EAC bills` },
+          { label: "Energy per occupied room-night", value: show(m.energyPerOccupiedRoomKwh, "kWh"), source: "Electricity / occupied room-nights" },
+          { label: "Carbon per occupied room-night", value: show(m.carbonPerOccupiedRoomKg, "kg CO2e"), source: "Scope 1 + 2 / occupied room-nights" },
+          { label: "Carbon per guest-night", value: show(m.carbonPerGuestNightKg, "kg CO2e"), source: "Scope 1 + 2 / guest-nights" },
         ],
-        gaps: [],
+        gaps: h.bills.electricity === 0 ? ["No EAC bills added yet"] : [],
       },
       {
         n: "02",
-        title: "HWMI Water Consumption Intensity",
-        paras: [
-          `Water withdrawals sourced from municipal water board distribution networks.`,
-          `On-site facilities: Pool (${h.profile.hasPool ? "Yes" : "No"}), Restaurant (${h.profile.hasRestaurant ? "Yes" : "No"}), Spa (${h.profile.hasSpa ? "Yes" : "No"}), In-house Laundry (${h.profile.hasLaundryOnSite ? "Yes" : "No"}).`,
-        ],
+        title: "Water",
+        paras: p ? [`Facilities: pool ${p.hasPool ? "yes" : "no"}, restaurant ${p.hasRestaurant ? "yes" : "no"}, spa ${p.hasSpa ? "yes" : "no"}, own laundry ${p.hasLaundryOnSite ? "yes" : "no"}.`] : [],
         figures: [
-          { label: "Total Water Consumed", value: `${(h.hcmiMetrics.totalWaterLiters / 1000).toLocaleString("en-GB")} m3`, source: "Water Board metered bills" },
-          { label: "Water per Guest-Night", value: `${h.hcmiMetrics.waterPerGuestNightLiters} Litres / guest-night`, source: "HWMI calculation standard" },
-          { label: "Water Benchmark Variance", value: `${h.hcmiMetrics.waterBenchmarkDiffPct > 0 ? "+" : ""}${h.hcmiMetrics.waterBenchmarkDiffPct}%`, source: "vs Cyprus tourism average (380 L)" },
+          { label: "Water used", value: `${m.totalWaterM3.toLocaleString("en-GB")} m3`, source: `${h.bills.water} water board bills` },
+          { label: "Water per guest-night", value: show(m.waterPerGuestNightLiters, "L"), source: "Water / guest-nights" },
         ],
-        gaps: [],
+        gaps: h.bills.water === 0 ? ["No water bills added yet"] : [],
       },
     ],
     sources: [
-      "Electricity Authority of Cyprus (EAC) metered billing records",
-      "Republic of Cyprus Water Board / Water Development Department (WDD)",
-      "Hotel Carbon Measurement Initiative (HCMI v3.1) / WTTC / Sustainable Hospitality Alliance",
+      "Electricity Authority of Cyprus (EAC) bills added to Vuneli",
+      "Water board bills added to Vuneli",
+      "Room and guest-night figures entered by the hotel",
     ],
   };
 }
