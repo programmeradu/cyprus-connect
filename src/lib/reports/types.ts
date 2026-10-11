@@ -1,90 +1,60 @@
-export type BankTarget = "boc" | "hellenic";
-
-export interface BankQuestionResponse {
+export interface LenderAnswer {
   id: string;
-  category: "Environmental (E)" | "Social (S)" | "Governance (G)";
-  code: string;
+  topic: "E" | "S" | "G";
   questionEn: string;
   questionEl: string;
-  answer: string | number;
+  /** null when no record backs the answer; the pack lists it as a gap. */
+  value: number | null;
   unit?: string;
-  auditTrail: string;
-  sourceDocCount: number;
-  isVerified: boolean;
-  qualifiesGreenCovenant?: boolean;
+  sourceEn: string;
+  sourceEl: string;
+  /** True only when the value comes from bills or documents in the workspace. */
+  fromRecords: boolean;
 }
 
-export interface BankBorrowerPackData {
-  targetBank: BankTarget;
-  bankName: string;
+export interface LenderPackData {
   company: {
     name: string;
     legalName: string | null;
     registrationNo: string | null;
     sector: string;
-    sites: number;
     employees: number;
-    revenueEur: number | null;
-    bankLinked: boolean;
   };
-  metrics: {
-    annualElectricityKwh: number;
-    scope1Tonnes: number;
-    scope2Tonnes: number;
-    waterM3: number;
-    greenMarginDiscountBps: number;
-    estimatedAnnualInterestSavedEur: number | null;
-  };
-  covenantEligibility: {
-    qualifies: boolean;
-    tier: "Tier 1 (-35 to -50 bps)" | "Tier 2 (-25 bps)" | "Standard";
-    reasonsEn: string[];
-    reasonsEl: string[];
-  };
-  questionnaire: BankQuestionResponse[];
-  merkleRootHash: string;
+  coverage: { electricityMonths: number; waterMonths: number };
+  answers: LenderAnswer[];
+  hash: string;
   generatedAt: string;
 }
 
+/** Facts the hotel enters itself. Nothing here is ever filled in for them. */
+export interface HotelFacts {
+  propertyName: string;
+  totalRooms: number;
+  annualOccupiedRooms: number;
+  annualGuestNights: number;
+  hasPool: boolean;
+  hasRestaurant: boolean;
+  hasSpa: boolean;
+  hasLaundryOnSite: boolean;
+  ecoLabel: string | null;
+}
+
 export interface HospitalityPackData {
-  profile: {
-    propertyName: string;
-    hotelCategory: string;
-    totalRooms: number;
-    annualOccupiedRooms: number;
-    annualGuestNights: number;
-    hasPool: boolean;
-    hasRestaurant: boolean;
-    hasSpa: boolean;
-    hasLaundryOnSite: boolean;
-    ecoLabel: string;
-    tourOperatorPartners: string;
-  };
-  company: {
-    name: string;
-    legalName: string | null;
-    country: string;
-    baselineYear: number;
-  };
-  hcmiMetrics: {
+  /** null until the hotel saves its own room and night figures. */
+  profile: HotelFacts | null;
+  company: { name: string; legalName: string | null };
+  metrics: {
     totalElectricityKwh: number;
-    totalScope1KgCo2e: number;
-    totalScope2KgCo2e: number;
-    totalWaterLiters: number;
-    energyPerOccupiedRoomKwh: number;
-    carbonPerOccupiedRoomKg: number;
-    carbonPerGuestNightKg: number;
-    waterPerGuestNightLiters: number;
-    tuiCarbonBenchmarkDiffPct: number;
-    waterBenchmarkDiffPct: number;
-    tourOperatorReadinessScore: number;
+    totalCarbonKg: number;
+    totalWaterM3: number;
+    /** null when there are no bills or no hotel facts to divide by. */
+    energyPerOccupiedRoomKwh: number | null;
+    carbonPerOccupiedRoomKg: number | null;
+    carbonPerGuestNightKg: number | null;
+    waterPerGuestNightLiters: number | null;
   };
-  verifiedBills: {
-    eacBillsCount: number;
-    waterBillsCount: number;
-    allMetered: boolean;
-  };
-  merkleRootHash: string;
+  bills: { electricity: number; water: number; electricityMonths: number; waterMonths: number };
+  hash: string;
   generatedAt: string;
 }
 

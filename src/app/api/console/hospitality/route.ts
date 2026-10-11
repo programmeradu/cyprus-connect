@@ -10,18 +10,17 @@ import { recordActivity } from "@/lib/activity.server";
 import { logger } from "@/lib/log";
 import { loadHospitalityPack } from "@/lib/reports/hospitality.server";
 
-const UpdateProfileSchema = z.object({
-  propertyName: z.string().min(1).max(200).optional(),
-  hotelCategory: z.string().max(50).optional(),
-  totalRooms: z.number().int().positive().optional(),
-  annualOccupiedRooms: z.number().int().positive().optional(),
-  annualGuestNights: z.number().int().positive().optional(),
-  hasPool: z.boolean().optional(),
-  hasRestaurant: z.boolean().optional(),
-  hasSpa: z.boolean().optional(),
-  hasLaundryOnSite: z.boolean().optional(),
-  ecoLabel: z.string().max(50).optional(),
-  tourOperatorPartners: z.string().max(200).optional(),
+// The hotel enters every figure itself. Nothing is defaulted on its behalf.
+const HotelFactsSchema = z.object({
+  propertyName: z.string().trim().min(1).max(200),
+  totalRooms: z.number().int().positive().max(10_000),
+  annualOccupiedRooms: z.number().int().positive().max(5_000_000),
+  annualGuestNights: z.number().int().positive().max(20_000_000),
+  hasPool: z.boolean(),
+  hasRestaurant: z.boolean(),
+  hasSpa: z.boolean(),
+  hasLaundryOnSite: z.boolean(),
+  ecoLabel: z.string().trim().max(50).nullable(),
 });
 
 export async function GET(request: Request) {
@@ -43,47 +42,31 @@ export async function PATCH(request: Request) {
   const s = await resolveConsoleSession(h);
   if (!s.ok) return NextResponse.json({ error: s.error, message: s.message }, { status: s.status });
 
-  const parsed = await readJson(request, UpdateProfileSchema);
+  const parsed = await readJson(request, HotelFactsSchema);
   if (!parsed.ok) return parsed.response;
   const input = parsed.data;
+  if (input.annualOccupiedRooms > input.totalRooms * 366) {
+    return NextResponse.json({ message: "Occupied room-nights can't be more than rooms × 366." }, { status: 400 });
+  }
 
   try {
+    const values = { ...input, ecoLabel: input.ecoLabel || null, tourOperatorPartners: null, updatedAt: new Date() };
     const [existing] = await db
-      .select()
+      .select({ id: hospitalityProfiles.id })
       .from(hospitalityProfiles)
       .where(eq(hospitalityProfiles.workspaceId, s.session.workspace.id))
       .limit(1);
-
     if (existing) {
-      await db
-        .update(hospitalityProfiles)
-        .set({
-          ...input,
-          updatedAt: new Date(),
-        })
-        .where(eq(hospitalityProfiles.id, existing.id));
+      await db.update(hospitalityProfiles).set(values).where(eq(hospitalityProfiles.id, existing.id));
     } else {
-      await db.insert(hospitalityProfiles).values({
-        workspaceId: s.session.workspace.id,
-        propertyName: input.propertyName || s.session.workspace.name,
-        hotelCategory: input.hotelCategory || "4-star",
-        totalRooms: input.totalRooms || 50,
-        annualOccupiedRooms: input.annualOccupiedRooms || 12000,
-        annualGuestNights: input.annualGuestNights || 24000,
-        hasPool: input.hasPool !== undefined ? input.hasPool : true,
-        hasRestaurant: input.hasRestaurant !== undefined ? input.hasRestaurant : true,
-        hasSpa: input.hasSpa !== undefined ? input.hasSpa : false,
-        hasLaundryOnSite: input.hasLaundryOnSite !== undefined ? input.hasLaundryOnSite : true,
-        ecoLabel: input.ecoLabel || "None",
-        tourOperatorPartners: input.tourOperatorPartners || "TUI, Jet2",
-      });
+      await db.insert(hospitalityProfiles).values({ workspaceId: s.session.workspace.id, ...values });
     }
 
     await recordActivity(
       s.session,
       "updated hospitality profile",
       "Hospitality ESG profile",
-      "Updated hotel operating capacity and tour operator credentials.",
+      "Updated rooms, nights and facilities.",
     );
 
     const updatedData = await loadHospitalityPack(s.session.workspace.id, s.session.account.id);
